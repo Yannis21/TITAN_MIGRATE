@@ -18,11 +18,13 @@ Open MIORDD
 Open MIAREAS
 Open MICities
 Open MITOWNS
-Open MICOUNTR 
+Open MICOUNTR
 
 Open MINOMOS
-Open MIDHMOS 
+Open MIDHMOS
 Open MIDRAST
+
+// REMARKS With TOLIS 23/10/2017
 
 
 Activate_View Activate_ExportDeopNew1 for ExportDEOPNew1
@@ -38,11 +40,11 @@ Object ExportDEOPNew1 is a dbView
     Procedure Activate_View Returns Integer
         Integer rVal
         Forward Get MSG_Activate_View to rVal
-    
+
         Send IGNORE_ERROR to ERROR_INFO_OBJECT 4358
         Make_Directory "C:\TitanMig"
         Send TRAP_ERROR to ERROR_INFO_OBJECT 4358
-    
+
         Procedure_Return rVal
     End_Procedure
 
@@ -60,7 +62,7 @@ Object ExportDEOPNew1 is a dbView
         Set Value item 0 to "C:\TitanMig\SMSMI_DEOP_Header.csv"
 
         //AB-StoreStart
-                                                                                                                                                                                                                                                                                                                        
+
         Procedure Prompt
             Boolean bSave
             String sFileTitle sFileName
@@ -71,49 +73,49 @@ Object ExportDEOPNew1 is a dbView
                 Set Value of frmFileName item 0 to sFileName
             End
         End_Procedure
-        
+
         //AB-StoreEnd
 
     End_Object    // frmFileName
-    
+
     Object Button5 is a Button
 
         //AB-StoreTopStart
-                
+
         Property String psNotFoundClientDhmos Public ""
         Property String psNotFoundClientNomos Public ""
         Property String psNotFoundClientDrast Public ""
         Property String psNotFoundClientTrPlh Public ""
-        
+
         Property String psNotFoundErgoDhmos Public ""
         Property String psNotFoundErgoNomos Public ""
         Property String psNotFoundErgoDrast Public ""
         Property String psNotFoundErgoTrPlh Public ""
-        
+
         Property String psNotFoundPrespDhmos Public ""
         Property String psNotFoundPrespNomos Public ""
         Property String psNotFoundPrespDrast Public ""
         Property String psNotFoundPrespTrPlh Public ""
-        
+
         Property String psNotFoundMhxanDhmos Public ""
         Property String psNotFoundMhxanNomos Public ""
         Property String psNotFoundMhxanDrast Public ""
         Property String psNotFoundMhxanTrPlh Public ""
-        
+
         Property String psNotFoundConstrDhmos Public ""
         Property String psNotFoundConstrNomos Public ""
         Property String psNotFoundConstrDrast Public ""
         Property String psNotFoundConstrTrPlh Public ""
-        
+
         Property String psNotFoundSalesDhmos Public ""
         Property String psNotFoundSalesNomos Public ""
         Property String psNotFoundSalesDrast Public ""
         Property String psNotFoundSalesTrPlh Public ""
-        
-        
+
+
         Function fsTropoiPlhromhsPelath String asOurCode Returns String
             String sTheirCode
-        
+
             If      (asOurCode="K000") Move "G000" to sTheirCode
             Else If (asOurCode="K030") Move "G030" to sTheirCode
             Else If (asOurCode="K060") Move "G060" to sTheirCode
@@ -133,8 +135,8 @@ Object ExportDEOPNew1 is a dbView
             End
             Function_Return sTheirCode
         End_Function
-        
-        
+
+
         //AB-StoreTopEnd
 
         Set Label to "ÑçÄÇóÇÜ ÉÑÉéãÑåóå"
@@ -145,7 +147,7 @@ Object ExportDEOPNew1 is a dbView
         Set Form_TypeFace item 0 to "MS Sans Serif"
 
         //AB-StoreStart
-                
+
         Procedure OnClick
             String sFilename sLabel
             Integer bIsCreated
@@ -156,40 +158,40 @@ Object ExportDEOPNew1 is a dbView
                 Send Stop_Box "í¶ Ê§¶£ò ´¶¨ ò®úÂ¶¨ úÂ§ò† °ú§Ê" "ë≠·¢£ò 1002"
                 Procedure_Return
             End
-        
+
             Direct_Output channel 9 sFilename
-        
+
             String sFileName1
             Move "C:\TitanMig\SMSMI_DEOP_Details1.csv" to sFileName1
             Direct_Output channel 7 sFileName1
-        
+
             String sFileName2
             Move "C:\TitanMig\SMSMI_DEOP_Details2.csv" to sFileName2
             Direct_Output channel 8 sFileName2
-        
+
             String sFileName3
             Move "C:\TitanMig\SMSMI_DEOP_Details3.csv" to sFileName3
             Direct_Output channel 6 sFileName3
-        
+
             Integer iCnt iFS
             Move 0 to iCnt
             File_Size MIClient to iFS
             String sMess
-        
+
             Clear MIORDH
             Find GE MIORDH.Recnum
             While (Found)
                 Add 1 to iCnt
                 Move (String(iCnt)+"/"+String(iFS)) to sMess
-                Set Label to sMess  
-                
-                
+                Set Label to sMess
+
+
                 Send Output_Clients_Deop
                 Send Output_All_DEOP
-                
+
                 Find GT MIORDH.Recnum
             Loop
-        
+
             Close_Output channel 9
             Close_Output channel 8
             Close_Output channel 7
@@ -197,7 +199,7 @@ Object ExportDEOPNew1 is a dbView
             Set Label to sLabel
             Send Info_Box "Process Finished, the file is saved" "Information"
         End_Procedure // OnClick
-        
+
         
         Procedure Output_All_DEOP
         End_Procedure
