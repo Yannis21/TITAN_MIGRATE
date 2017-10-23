@@ -1,0 +1,80 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : CITIES.DD
+// Class Name: Cities_DataDictionary
+// Revision  : 14
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Cities
+Open Clients
+Open Towns
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl198  sl198.SL
+Register_Object sl198
+//DDB-SelectionEnd
+
+Class Cities_DataDictionary  is a DataDictionary_Sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Cities.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Clients.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Towns.File_Number
+
+        // Field-based properties.......................
+
+        // Cities.City_Id
+        Set Field_Options          Field Cities.City_Id To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Cities.City_Id To (sl198(Self))
+        Set Key_Field_State        Field Cities.City_Id To TRUE
+
+        // Cities.City_Descr
+        Set Field_Prompt_Object    Field Cities.City_Descr To (sl198(Self))
+
+        // Cities.Town_Id
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Cities_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl198.SL         // sl198
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

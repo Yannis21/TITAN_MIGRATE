@@ -1,0 +1,129 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : RP2.DD
+// Class Name: Rp2_DataDictionary
+// Revision  : 11
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Rp2
+Open Rp3
+Open Rp1
+Open Sysrec
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl245  sl245.sl
+Register_Object sl245
+//DDB-SelectionEnd
+
+Class Rp2_DataDictionary  is a DataDictionary_Sec
+ 
+    Procedure Update
+        Forward Send Update
+        If (rp2.relates_to=0) Move rp2.seira_emfanishs to rp2.relates_to
+    End_Procedure   // Update
+ 
+//    Procedure Request_Save
+//        Integer iRec iErr iRec2
+//        Forward Send Request_Save
+//        If (Operation_Origin=Self) Begin
+//            Move (Err) to iErr
+//            If (Not(iErr)) Begin
+//                Get Field_Current_Value Field rp2.Arxeio_ID         to iRec
+//                Get Field_Current_Value Field rp2.Arxeio_ID_Pedio   to iRec2
+//                Reread rp2
+//                Clear Arxeia
+//                Move rp2.Arxeio_ID to Arxeia.Arxeio_ID
+//                Find Eq Arxeia By Index.1
+//                Move Arxeia.Arxeio_Name to rp2.Arxeio
+//                Clear Arxeia
+//                Move rp2.Arxeio_ID_Pedio to Arxeia.Arxeio_ID
+//                Find Eq Arxeia By Index.1
+//                Move Arxeia.Arxeio_Name to rp2.Arxeio_Pedio
+//                Saverecord rp2
+//                Unlock
+//            End
+//        End
+//    End_Procedure
+    
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Rp2.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Rp3.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Rp1.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrec.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrec.Rp2_Aa  To Rp2.Aa
+
+        // Field-based properties.......................
+
+        // Rp2.Rp1_Kodikos
+
+        // Rp2.Seira_Emfanishs
+        Set Field_Options          Field Rp2.Seira_Emfanishs To DD_AUTOFIND   
+
+        // Rp2.Descr
+
+        // Rp2.Aa
+
+        // Rp2.Arxeio
+
+        // Rp2.Epiloges
+
+        // Rp2.Synthikes
+
+        // Rp2.Arxeio_Id
+        Set Field_Prompt_Object    Field Rp2.Arxeio_Id To (sl245(Self))
+
+        // Rp2.Relates_To
+
+        // Rp2.Arxeio_Id_Pedio
+        Set Field_Prompt_Object    Field Rp2.Arxeio_Id_Pedio To (sl245(Self))
+
+        // Rp2.Arxeio_Pedio
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Rp2_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl245.sl         // sl245
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

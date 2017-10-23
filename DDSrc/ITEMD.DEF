@@ -1,0 +1,66 @@
+-----------------------------------------------------------------------------
+  DATE: 27/08/113      TIME: 13:12                                  PAGE:  1
+  FILE DEFINITION FOR FILE: ITEMD (# 47)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : ITEMD
+  USER DISPLAY NAME         : itemd
+  DATAFLEX FILE NAME        : ITEMD
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 170       ( USED: 153 )
+  MAX NUMBER OF RECORDS     : 10000     ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  ITEM_CODE        ASC     20     1  1   
+  2  ITEM_RECR        ASC     12    21      
+  3  ITEMD_CODE       ASC     20    33  1   
+  4  ITEMD_REC0       NUM   14.0    53      
+  5  ITEMD_RECR       ASC     12    60  2   
+  6  ITEMD_QTY        NUM   14.8    72      
+  7  ITEMD_FPA        NUM    2.0    83      
+  8  ITEMD_AXIA       NUM   14.8    84      
+  9  ITEMD_TOTAL      NUM   14.8    95      
+ 10  COMPANY          ASC     10   106  1   
+ 11  BRANCH           ASC     10   116  1   
+ 12  ITEMTEHN_RECR    ASC     12   126  5   ITEMTEHN.FIELD_5 (110,5)
+ 13  SAP_AA           NUM    4.0   138      
+ 14  SAP_CC           NUM    4.0   140  4   
+ 15  ITEMTEHN_CODE    ASC     12   142  1   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY         NO  NO       72     5       5     ON-LINE
+       BRANCH          NO  NO 
+       ITEMTEHN_CODE   NO  NO 
+       ITEM_CODE       NO  NO 
+       ITEMD_CODE      NO  NO 
+
+  2    ITEMD_RECR      NO  NO       12     3       1     ON-LINE
+
+  3    COMPANY         NO  NO       72     5       5     ON-LINE
+       BRANCH          NO  NO 
+       ITEMTEHN_CODE   NO  NO 
+       ITEMD_CODE      NO  NO 
+       ITEM_CODE       NO  NO 
+
+  4    COMPANY         NO  NO       74     6       6     ON-LINE
+       BRANCH          NO  NO 
+       ITEMTEHN_CODE   NO  NO 
+       SAP_CC          NO  NO 
+       ITEM_CODE       NO  NO 
+       ITEMD_CODE      NO  NO 
+
+  5    ITEMTEHN_RECR   NO  NO       24     4       2     ON-LINE
+       ITEMD_RECR      NO  NO 
+

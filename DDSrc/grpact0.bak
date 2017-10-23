@@ -1,0 +1,70 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GRPACT0.DD
+// Class Name: Grpact0_DataDictionary
+// Revision  : 1
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Grpact0
+Open Oth
+
+//DDB-HeaderEnd
+
+Class Grpact0_DataDictionary  is a DataDictionary_sec
+ 
+    Procedure Update
+        Forward Send Update
+        Move Oth.View_ID    to GrpAct0.View_ID
+        Move Oth.View_Label to GrpAct0.View_Label
+    End_Procedure   // Update
+ 
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Grpact0.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Oth.File_Number
+
+        // Field-based properties.......................
+
+        // Grpact0.Group_Id
+
+        // Grpact0.View_Name
+
+        // Grpact0.View_Id
+
+        // Grpact0.View_Label
+
+        // Grpact0.Allow
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Grpact0_DataDictionary
+//DDB-FileEnd

@@ -1,0 +1,42 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: GRPOTH (# 239)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:GRPOTH
+  USER DISPLAY NAME         : GrpOth
+  DATAFLEX FILE NAME        : GRPOTH
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 312       ( USED: 312 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 8 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  USER_ID          NUM    4.0     1  1   USERS.FIELD_2 (250,2)
+  2  VIEWFLDS_RECR    NUM   14.0     3  1   VIEWFLDS.FIELD_4 (238,4)
+  3  ALLOW_READ       ASC      1    10      
+  4  ALLOW_CHANGE     ASC      1    11      
+  5  ALLOW_COPY       ASC      1    12      
+  6  VIEW_NAME        ASC    100    13  2   
+  7  SCR_FIELD_NAME   ASC    100   113  2   
+  8  USR_FIELD_NAME   ASC    100   213      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    USER_ID         NO  NO       9      3       2     ON-LINE
+       VIEWFLDS_RECR   NO  NO 
+
+  2    USER_ID         NO  NO       202    3       3     ON-LINE
+       VIEW_NAME       NO  NO 
+       SCR_FIELD_NAME  NO  NO 
+

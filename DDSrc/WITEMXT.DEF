@@ -1,0 +1,65 @@
+-----------------------------------------------------------------------------
+  DATE: 23/11/110      TIME: 10:28                                  PAGE:  1
+  FILE DEFINITION FOR FILE: WITEMXT (# 189)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:WITEMXT
+  USER DISPLAY NAME         : WITEMXT
+  DATAFLEX FILE NAME        : WITEMXT
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 139       ( USED: 139 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 4 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC     10     1  1   
+  2  BRANCH_CODE      ASC     10    11  1   
+  3  YEAR_YEAR        NUM    4.0    21  1   
+  4  WITEMXT_REC0     NUM   14.0    23  2   
+  5  WITEMX_RECR      ASC     12    30  4   WITEMX.FIELD_8 (17,8)
+  6  AXIA             NUM   14.8    42      
+  7  AXIA0            NUM   14.8    53      
+  8  AXIA00           NUM   14.8    64      
+  9  AXIAR            NUM   14.8    75      
+ 10  VALUE_DATE       DAT      3    86  1   
+ 11  QTY              NUM   14.2    89  1   
+ 12  PCDISC           NUM    2.2    97      
+ 13  ORIO             NUM   14.2    99      
+ 14  PAGIOORIO        NUM   14.8   107      
+ 15  PCDISCANTLIA     NUM    2.2   118      
+ 16  ITEM_CODE        ASC     20   120  5   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY_CODE    NO  NO       45     3       6     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       WITEMX_RECR     NO  NO 
+       VALUE_DATE      NO  NO 
+       QTY             NO  NO 
+
+  2    WITEMXT_REC0    NO  NO       7      3       1     ON-LINE
+
+  3    WITEMXT_REC0    NO  NO       19     3       2     ON-LINE
+       WITEMX_RECR     NO  NO 
+
+  4    WITEMX_RECR     NO  NO       19     3       2     ON-LINE
+       WITEMXT_REC0    NO  NO 
+
+  5    COMPANY_CODE    NO  NO       61     3       6     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       ITEM_CODE       NO  NO 
+       WITEMX_RECR     NO  NO 
+       WITEMXT_REC0    NO  NO 
+

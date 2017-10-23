@@ -1,0 +1,52 @@
+-----------------------------------------------------------------------------
+  DATE: 18/03/115      TIME: 15:18                                  PAGE:  1
+  FILE DEFINITION FOR FILE: ITEMTEHN (# 110)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:ITEMTEHN
+  USER DISPLAY NAME         : Itemtehn
+  DATAFLEX FILE NAME        : ITEMTEHN
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 79        ( USED: 79 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 5242 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  ITEM_CODE        ASC     20     1  1   ITEM.FIELD_5 (26,5)
+  2  HMNIA            DAT      3    21  3   
+  3  AA               NUM    4.0    24      
+  4  REC0             NUM   14.0    26      
+  5  RECR             ASC     12    33  2   
+  6  COMPANY          ASC     10    45  1   
+  7  BRANCH           ASC     10    55  1   
+  8  CODE             ASC     12    65  1   
+  9  SAP_HMNIA        DAT      3    77  4   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY         NO  NO       52     3       4     ON-LINE
+       BRANCH          NO  NO 
+       CODE            NO  NO 
+       ITEM_CODE       NO  NO 
+
+  2    RECR            NO  NO       12     3       1     ON-LINE
+
+  3    COMPANY         NO  NO       55     3       5     ON-LINE
+       BRANCH          NO  NO 
+       HMNIA           NO  NO 
+       CODE            NO  NO 
+       ITEM_CODE       NO  NO 
+
+  4    SAP_HMNIA       NO  NO       6      3       2     ON-LINE
+       RECNUM          NO  NO 
+

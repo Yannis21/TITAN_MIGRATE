@@ -1,0 +1,105 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : BSUM.DD
+// Class Name: Bsum_DataDictionary
+// Revision  : 11
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Bsum
+Open Barticl
+Open Sysrecb
+
+//DDB-HeaderEnd
+Class Bsum_DataDictionary  is a DataDictionary_Sec
+
+    // Creating:
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Bsum.Bsum_Rec0)))))) to Bsum.Bsum_Recr
+    End_Procedure   // Creating
+
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Bsum.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Barticl.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecb.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecb.Bsum_Rec0  To Bsum.Bsum_Rec0
+
+        // Field-based properties.......................
+
+        // Bsum.Barticl_Recr
+
+        // Bsum.Baxiokat_Recr
+
+        // Bsum.Bsum_Sv2
+
+        // Bsum.Bsum_Sv0
+
+        // Bsum.Bsum_Sv00
+
+        // Bsum.Bsum_Svr
+
+        // Bsum.Gmove_Srec0
+
+        // Bsum.Bsum_Rec0
+
+        // Bsum.Bsum_Recr
+
+        //DDB-DefineFieldEnd
+
+        Set Main_File            To Bsum.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Barticl.File_Number
+
+        // Field-based properties.......................
+
+        // Bsum.Barticl_Rec0
+
+        // Bsum.Baxiokat_Rec0
+
+        // Bsum.Bsum_Sv2
+
+        // Bsum.Bsum_Sv0
+
+        // Bsum.Bsum_Sv00
+
+        // Bsum.Bsum_Svr
+
+        // Bsum.Gmove_Srec0
+
+    End_Procedure    // Define_Fields
+
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Bsum_DataDictionary
+//DDB-FileEnd

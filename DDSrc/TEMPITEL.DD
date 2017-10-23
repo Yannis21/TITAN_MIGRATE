@@ -1,0 +1,77 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : TEMPITEL.DD
+// Class Name: Tempitel_DataDictionary
+// Revision  : 0
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Tempitel
+
+//DDB-HeaderEnd
+open Tempitem
+
+Set_attribute  DF_FILE_ALIAS of Tempitel.File_number to DF_FILE_IS_ALIAS
+Set_attribute  DF_FILE_ALIAS of Tempitem.File_number  to DF_FILE_IS_MASTER
+
+Class Tempitel_DataDictionary  is a DataDictionary_sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Tempitel.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Field-based properties.......................
+
+        // Tempitel.Company_Code
+
+        // Tempitel.Branch_Code
+
+        // Tempitel.Year_Year
+
+        // Tempitel.Item_Code
+
+        // Tempitel.Witemx_Code
+
+        // Tempitel.Wax_Recr
+
+        // Tempitel.Wcmove_Axia
+
+        // Tempitel.Wcmove_Status_E
+
+        // Tempitel.Wcmove_Qty
+
+        // Tempitel.Wcmove_Qty_Exa
+
+        // Tempitel.Wcmove_Qty_Eisa
+
+        // Tempitel.Client_Id
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Tempitel_DataDictionary
+//DDB-FileEnd

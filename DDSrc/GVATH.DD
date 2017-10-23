@@ -1,0 +1,74 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GVATH.DD
+// Class Name: Gvath_DataDictionary
+// Revision  : 7
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Gvath
+Open Gvatd
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl071  Sl071.sl
+Register_Object sl071
+//DDB-SelectionEnd
+
+Class Gvath_DataDictionary  is a DataDictionary_Sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Gvath.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Gvatd.File_Number
+
+        // Field-based properties.......................
+
+        // Gvath.Gvath_Code
+        Set Field_Options          Field Gvath.Gvath_Code To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Gvath.Gvath_Code To (sl071(Self))
+        Set Key_Field_State        Field Gvath.Gvath_Code To TRUE
+
+        // Gvath.Gvath_Descr
+        Set Field_Prompt_Object    Field Gvath.Gvath_Descr To (sl071(Self))
+
+        // Gvath.Gvath_Pct
+
+        // Gvath.Gvath_Recr
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+End_Class    // Gvath_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use Sl071.sl         // sl071
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

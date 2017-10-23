@@ -1,0 +1,222 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : CONSTRCT.DD
+// Class Name: Constrct_DataDictionary
+// Revision  : 51
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Constrct
+Open Cn
+Open Sysrecc
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Constrct_Cnt_Doy_VT1
+
+Object Constrct_Cnt_Doy_VT1  is a CodeValidationTable
+    Set Type_Value        To "DOY"
+    Set Allow_Blank_State To TRUE
+    Set Table_Title       To "€¨®œå¦ ƒ.Ž.“"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Constrct_Cnt_Doy_VT1
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl109  sl109.SL
+//DDB/ ExternalSelectionList sl198  sl198.sl
+//DDB/ ExternalSelectionList sl197  sl197.SL
+Register_Object sl109
+Register_Object sl198
+Register_Object sl197
+//DDB-SelectionEnd
+
+Class Constrct_DataDictionary  is a DataDictionary_Sec
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move SysCurXR.Company_Code  to constrct.Company_Code
+        Move SysCurXR.Branch_Code   to constrct.Branch_Code
+        Move SysCurXR.Year_Year     to constrct.Year_Year
+        //Move Custprom.Custprom_Code to Clients.Custprom_Code
+        Move (constrct.Xreosh-Constrct.Pistosh)   to Constrct.Ypoloipo
+        Move (constrct.Plafon-Constrct.Ypoloipo)  to Constrct.Overhead
+
+        //betolink
+        Move SysCurXR.Beto_Site      to Constrct.cnt_SiteW
+        Move Constrct.cnt_Rec0        to Constrct.cnt_SN
+        Move Constrct.cnt_id          to constrct.cnt_Repm
+
+    End_Procedure   // Update
+
+     Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Constrct.cnt_Rec0))))));
+                                    to Constrct.Cnt_Recr
+        Move '1'                    to Constrct.Cnt_Active
+        Get fsgCode_With_Zeroes Constrct.Cnt_Rec0 Sysfile.Client_Digits SysCurXr.Company_Code SysCurXr.Branch_Code  to Constrct.cnt_ID
+    End_Procedure   // Creating
+
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Constrct.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Cn.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Constrct_Rec0  To Constrct.Cnt_Rec0
+
+        // Field-based properties.......................
+
+        // Constrct.Company_Code
+
+        // Constrct.Branch_Code
+
+        // Constrct.Year_Year
+
+        // Constrct.Cnt_Id
+        Set Field_Options          Field Constrct.Cnt_Id To DD_AUTOFIND    DD_NOPUT      
+        Set Field_Prompt_Object    Field Constrct.Cnt_Id To (sl109(Self))
+        Set Key_Field_State        Field Constrct.Cnt_Id To TRUE
+
+        // Constrct.Cnt_Name
+        Set Field_Prompt_Object    Field Constrct.Cnt_Name To (sl109(Self))
+
+        // Constrct.Cnt_Afm
+
+        // Constrct.Cnt_Rec0
+
+        // Constrct.Cnt_Recr
+
+        // Constrct.Last_Xreosh
+
+        // Constrct.Last_Pistosh
+
+        // Constrct.Last_Order
+
+        // Constrct.Cnt_Doy
+        Set Field_Value_Table      Field Constrct.Cnt_Doy To (Constrct_Cnt_Doy_VT1(Self))
+
+        // Constrct.Cnt_Address
+
+        // Constrct.Cnt_City
+        Set Field_Prompt_Object    Field Constrct.Cnt_City To (sl198(Self))
+
+        // Constrct.Cnt_Area
+        Set Field_Prompt_Object    Field Constrct.Cnt_Area To (sl197(Self))
+
+        // Constrct.Cnt_Job
+
+        // Constrct.Cnt_Respons
+
+        // Constrct.Cnt_Zipcode
+
+        // Constrct.Cnt_Phone
+
+        // Constrct.Cnt_Fax
+
+        // Constrct.Cnt_Mobile
+
+        // Constrct.Cnt_Aoh
+
+        // Constrct.Cnt_Email
+
+        // Constrct.Cnt_Class
+
+        // Constrct.Cnt_Details
+
+        // Constrct.Cnt_Sitew
+
+        // Constrct.Cnt_Codem
+
+        // Constrct.Cnt_Categfpa
+
+        // Constrct.Cnt_Fpa
+
+        // Constrct.Cnt_Public
+
+        // Constrct.Cnt_Sn
+
+        // Constrct.Cnt_Repm
+
+        // Constrct.Cnt_Active
+
+        // Constrct.Cnt_Reported
+
+        // Constrct.Cnt_Pelprom
+
+        // Constrct.Cnt_Lastupdated
+
+        // Constrct.Cnt_Markexp
+
+        // Constrct.Cnt_Catjob
+
+        // Constrct.Xreosh
+
+        // Constrct.Pistosh
+
+        // Constrct.Ypoloipo
+
+        // Constrct.Plafon
+
+        // Constrct.Overhead
+
+        // Constrct.Cnt_Add_No
+
+        // Constrct.Cnt_Nomos
+
+        // Constrct.Cnt_Xora
+
+        // Constrct.Polh_Recr
+
+        // Constrct.Exportflag
+
+        // Constrct.Exportstatus
+
+        // Constrct.Exportdate
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Constrct.Cnt_Doy To "0"
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Constrct_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl109.SL         // sl109
+Use sl198.sl         // sl198
+Use sl197.SL         // sl197
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

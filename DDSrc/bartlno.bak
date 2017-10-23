@@ -1,0 +1,104 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : BARTLNO.DD
+// Class Name: Bartlno_DataDictionary
+// Revision  : 8
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Bartlno
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList SL031  sl031.sl
+//DDB/ ExternalSelectionList sl001  sl001.sl
+Register_Object SL031
+Register_Object sl001
+//DDB-SelectionEnd
+
+Class Bartlno_DataDictionary  Is A DataDictionary_Sec
+ 
+    Procedure Operation_Not_Allowed Integer iError_Num
+              String lsError_Message
+
+              Case Begin
+                   //_ù validate save
+                   Case (iError_Num = 1001)
+                        Move "DDC 225: â‡õ °Â§û©û™ £ûõú§†°Ê™ " To lsError_Message
+                   Case Break
+                   Case (iError_Num = 1002)
+                        Move "DDC 225: Éú§ ¨ß·®Æú† Ñ´ò†®Âò " To lsError_Message
+                   Case Break
+                   Case Else
+                        Forward Send Operation_Not_Allowed iError_Num
+              Case End
+
+              Error iError_Num lsError_Message
+    End_Procedure // operation_not_allowed
+
+
+    Function Validate_Save Returns Integer
+             Integer iReturnVal
+
+             Forward Get Validate_Save To iReturnVal
+
+             If (Not(iReturnVal));
+             Begin
+                  If (BartlNo.Btypkin_Code=0) Send Operation_Not_Allowed 1001
+                  Else If (BartlNo.Company_Code=0) Send Operation_Not_Allowed 1002
+             End //_ôÍ__ _†_ˇ__ validation
+             Function_Return iReturnVal
+    End_Function   // validate_save
+
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Bartlno.File_Number
+
+
+        // Field-based properties.......................
+
+        // Bartlno.Btypkin_Code
+        Set Field_Prompt_Object    Field Bartlno.Btypkin_Code To (SL031(Self))
+
+        // Bartlno.Company_Code
+        Set Field_Options          Field Bartlno.Company_Code To DD_DISPLAYONLY
+        Set Field_Prompt_Object    Field Bartlno.Company_Code To (sl001(Self))
+
+        // Bartlno.Last_No
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Bartlno_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl031.sl         // SL031
+Use sl001.sl         // sl001
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

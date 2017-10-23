@@ -1,0 +1,104 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : RP3.DD
+// Class Name: Rp3_DataDictionary
+// Revision  : 11
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Rp3
+Open Rp4
+Open Rp2
+Open Sysrec
+
+//DDB-HeaderEnd
+
+Class Rp3_DataDictionary  is a DataDictionary_Sec
+ 
+    // Update:
+ 
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move rp1.Kodikos            to rp3.rp1_kodikos
+        Move rp2.seira_emfanishs    to rp3.seira_emfanishs
+        Move rp2.Descr              to rp3.Descr
+    End_Procedure   // Update
+ 
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Rp3.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Rp4.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Rp2.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrec.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrec.Rp3_Aa  To Rp3.Rp3_Aa
+
+        // Field-based properties.......................
+
+        // Rp3.Rp1_Kodikos
+        Set Key_Field_State        Field Rp3.Rp1_Kodikos To TRUE
+
+        // Rp3.Seira_Emfanishs
+        Set Key_Field_State        Field Rp3.Seira_Emfanishs To TRUE
+
+        // Rp3.Descr
+
+        // Rp3.Rp2_Aa
+        Set Key_Field_State        Field Rp3.Rp2_Aa To TRUE
+
+        // Rp3.Rp3_Aa
+
+        // Rp3.Mainfile
+
+        // Rp3.Mainfile_Field
+
+        // Rp3.Tmp_File
+
+        // Rp3.Tmp_Field
+
+        // Rp3.Mainfilen
+
+        // Rp3.Mainfile_Fieldn
+
+        // Rp3.Tmp_Filen
+
+        // Rp3.Tmp_Fieldn
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Rp3_DataDictionary
+//DDB-FileEnd

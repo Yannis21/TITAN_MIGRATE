@@ -1,0 +1,155 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : CLIENTSA.DD
+// Class Name: Clientsa_DataDictionary
+// Revision  : 2
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Clientsa
+Open Cmovesa
+
+//DDB-HeaderEnd
+
+//define alias-master condition
+Set_Attribute DF_FILE_ALIAS of Clientsa.File_Number to DF_FILE_IS_ALIAS
+Set_Attribute DF_FILE_ALIAS of Clients.File_Number  to DF_FILE_IS_MASTER
+Set_Relate Clientsa.Client_City_ID   to |FN0,0
+
+Class Clientsa_DataDictionary  is a DataDictionary_Sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Clientsa.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Cmovesa.File_Number
+
+        // Field-based properties.......................
+
+        // Clientsa.Company_Code
+
+        // Clientsa.Branch_Code
+
+        // Clientsa.Year_Year
+
+        // Clientsa.Custprom_Code
+
+        // Clientsa.Client_Id
+
+        // Clientsa.Client_Name
+
+        // Clientsa.Client_Afm
+
+        // Clientsa.Client_Rec0
+
+        // Clientsa.Custprom_Recr
+
+        // Clientsa.Client_Recr
+
+        // Clientsa.Last_Xreosh
+
+        // Clientsa.Last_Pistosh
+
+        // Clientsa.Last_Order
+
+        // Clientsa.Client_Doy
+
+        // Clientsa.Client_Address
+
+        // Clientsa.Client_City_Id
+
+        // Clientsa.Client_Area
+
+        // Clientsa.Client_Job
+
+        // Clientsa.Client_Respons
+
+        // Clientsa.Client_Zipcode
+
+        // Clientsa.Client_Phone
+
+        // Clientsa.Client_Fax
+
+        // Clientsa.Client_Mobile
+
+        // Clientsa.Client_Aoh
+
+        // Clientsa.Client_Email
+
+        // Clientsa.Client_Class
+
+        // Clientsa.Client_Details
+
+        // Clientsa.Client_Sitew
+
+        // Clientsa.Client_Codem
+
+        // Clientsa.Client_Categfpa
+
+        // Clientsa.Client_Fpa
+
+        // Clientsa.Client_Public
+
+        // Clientsa.Client_Sn
+
+        // Clientsa.Client_Repm
+
+        // Clientsa.Client_Active
+
+        // Clientsa.Client_Reported
+
+        // Clientsa.Client_Pelprom
+
+        // Clientsa.Client_Lastupd
+
+        // Clientsa.Client_Markexp
+
+        // Clientsa.Client_Catjob
+
+        // Clientsa.Is_Promhtheyths
+
+        // Clientsa.Xreosh
+
+        // Clientsa.Pistosh
+
+        // Clientsa.Ypoloipo
+
+        // Clientsa.Plafon
+
+        // Clientsa.Overhead
+
+        // Clientsa.Client_Company
+
+        // Clientsa.Client_Repmatch
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Clientsa_DataDictionary
+//DDB-FileEnd

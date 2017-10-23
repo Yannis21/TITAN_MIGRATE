@@ -1,0 +1,51 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: TMPSEL (# 74)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : tmpSel
+  USER DISPLAY NAME         : tmpSel
+  DATAFLEX FILE NAME        : TMPSEL
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 384       ( USED: 338 )
+  MAX NUMBER OF RECORDS     : 1000000   ( USED: 10 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  FULL_PATH_NAME   ASC    100     1  1   
+  2  IS_SELECTED      ASC      1   101  2   
+  3  EXTENSION        ASC      6   102  3   
+  4  LAST_INIT_PATH   ASC    100   108      
+  5  FILENAME         ASC     30   208  4   
+  6  PATHNAME         ASC    100   238  4   
+  7  EXIST_IN_DBASE   ASC      1   338  6   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    FULL_PATH_NAME  NO  NO       100    9       1     ON-LINE
+
+  2    IS_SELECTED     NO  NO       101    9       2     ON-LINE
+       FULL_PATH_NAME  NO  NO 
+
+  3    EXTENSION       NO  NO       106    10      2     ON-LINE
+       FULL_PATH_NAME  NO  NO 
+
+  4    FILENAME        NO  NO       130    13      2     ON-LINE
+       PATHNAME        NO  NO 
+
+  5    PATHNAME        NO  NO       130    13      2     ON-LINE
+       FILENAME        NO  NO 
+
+  6    EXIST_IN_DBASE  NO  NO       101    9       2     ON-LINE
+       FULL_PATH_NAME  NO  NO 
+

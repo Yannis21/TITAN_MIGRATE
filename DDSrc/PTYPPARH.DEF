@@ -1,0 +1,60 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: PTYPPARH (# 21)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:PTYPPARH
+  USER DISPLAY NAME         : Ptypparh
+  DATAFLEX FILE NAME        : PTYPPARH
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 81        ( USED: 81 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 5 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC      3     1  1   
+  2  BRANCH_CODE      ASC      3     4  1   
+  3  YEAR_YEAR        ASC      3     7  1   
+  4  PTYPPAR_RECR     ASC     12    10  1   PTYPPAR.FIELD_12 (12,12)
+  5  PTYPPAR_CODE     ASC      3    22      
+  6  GTYPKIN_CODE     NUM    6.0    25  1   
+  7  CODEGL           ASC     40    28  1   
+  8  ORDER            NUM    2.0    68  2   
+  9  SIGN             ASC      1    69      
+ 10  XP               ASC      1    70      
+ 11  FROMWHERE        ASC      4    71      
+ 12  AXIA             ASC      1    75      
+ 13  TYPE             ASC      4    76      
+ 14  FLAGGL           ASC      2    80  1   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY_CODE    NO  NO       66     3       7     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       PTYPPAR_RECR    NO  NO 
+       GTYPKIN_CODE    NO  NO 
+       FLAGGL          NO  NO 
+       CODEGL          NO  NO 
+
+  2    COMPANY_CODE    NO  NO       27     3       7     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       PTYPPAR_RECR    NO  NO 
+       GTYPKIN_CODE    NO  NO 
+       ORDER           NO  NO 
+       FLAGGL          NO  NO 
+
+  3    PTYPPAR_RECR    NO  NO       15     3       2     ON-LINE
+       RECNUM          NO  NO 
+

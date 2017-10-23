@@ -1,0 +1,103 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : CNZONES.DD
+// Class Name: Cnzones_DataDictionary
+// Revision  : 8
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Cnzones
+Open Cn
+Open Brzones
+Open Sysrecc
+
+//DDB-HeaderEnd
+
+Class Cnzones_DataDictionary  is a DataDictionary_Sec
+ 
+    Procedure Save_Main_File
+        If (Operation_Origin<>Self) Begin
+            If CnZones.Recnum Eq 0 Procedure_Return
+        End
+        If ((Trim(Cn.Cn_Code         )='') Or ;
+            (Trim(BrZones.BrZone_Recr)='') Or ;
+            (CnZones.Cnzone_Rec0      = 0)) Error 1150 '† œšš¨˜­ã œå¤˜  ¡œ¤ã. ƒœ¤ ¡˜«˜®à¨œå«˜ '
+        Forward Send Save_Main_File
+    End_Procedure
+ 
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move Branch.Beto_Site   to CnZones.Beto_Site_3
+        Move Branch.Branch_Recr to CnZones.Branch_Recr
+        Move Zones.Zone_ID      to CnZones.Zone_ID
+    End_Procedure   // Update
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                         (Trim(String(Cnzones.Cnzone_Rec0))))));
+                        to Cnzones.Cnzone_Recr
+    End_Procedure   // Creating
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Cnzones.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Cn.File_Number
+        Send Add_Server_File  Brzones.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Cnzone_Rec0  To Cnzones.Cnzone_Rec0
+
+        // Field-based properties.......................
+
+        // Cnzones.Cn_Code
+
+        // Cnzones.Brzone_Recr
+        Set Field_Options          Field Cnzones.Brzone_Recr To DD_AUTOFIND   
+
+        // Cnzones.Cnzone_Rec0
+
+        // Cnzones.Cnzone_Recr
+
+        // Cnzones.Branch_Recr
+
+        // Cnzones.Beto_Site_3
+
+        // Cnzones.Zone_Id
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Cnzones_DataDictionary
+//DDB-FileEnd

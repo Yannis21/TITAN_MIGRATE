@@ -1,0 +1,41 @@
+-----------------------------------------------------------------------------
+  DATE: 13/12/105      TIME: 16:17                                  PAGE:  1
+  FILE DEFINITION FOR FILE: PAGKAT (# 80)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : PAGKAT
+  USER DISPLAY NAME         : Pagkat
+  DATAFLEX FILE NAME        : PAGKAT
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 128       ( USED: 128 )
+  MAX NUMBER OF RECORDS     : 1000000   ( USED: 6 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  PAGKAT_CODE      ASC     20     1  1   
+  2  PAGKAT_REC0      NUM   14.0    21      
+  3  PAGKAT_DESCR     ASC     40    28  3   
+  4  PAGKAT_RECR      ASC     12    68  2   
+  5  PAGIA_CODE       NUM   14.0    80      
+  6  PAGKAT_POSOSTO   NUM    4.0    87      
+  7  CODEGL           ASC     40    89      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    PAGKAT_CODE     NO  NO       20     5       1     ON-LINE
+
+  2    PAGKAT_RECR     NO  NO       12     4       1     ON-LINE
+
+  3    PAGKAT_DESCR    NO  NO       52     7       2     ON-LINE
+       PAGKAT_RECR     NO  NO 
+

@@ -1,0 +1,79 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : OTH.DD
+// Class Name: Oth_DataDictionary
+// Revision  : 9
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Oth
+Open Viewflds
+Open Tabview
+Open Grpact0
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList Oth  Oth.SL
+Register_Object Oth
+//DDB-SelectionEnd
+
+Class Oth_DataDictionary  is a DataDictionary_Sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Oth.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Viewflds.File_Number
+        Send Add_Client_File  Tabview.File_Number
+        Send Add_Client_File  Grpact0.File_Number
+
+        // Field-based properties.......................
+
+        // Oth.View_Id
+        Set Field_Prompt_Object    Field Oth.View_Id To (Oth(Self))
+
+        // Oth.View_Name
+        Set Field_Prompt_Object    Field Oth.View_Name To (Oth(Self))
+
+        // Oth.View_Label
+        Set Field_Prompt_Object    Field Oth.View_Label To (Oth(Self))
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Oth_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use Oth.SL           // Oth
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

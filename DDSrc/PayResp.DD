@@ -1,0 +1,543 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : PAYRESP.DD
+// Class Name: Payresp_DataDictionary
+// Revision  : 85
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Payresp
+Open Prspbank
+Open Tppresp
+Open Clients
+Open Sysrecc
+Open Gmove
+Open Sysrecg
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Payresp_Presp_Doy_VT
+Register_Object Payresp_Presp_Categfpa_VT
+Register_Object Payresp_Feregios_VT
+
+Object Payresp_Presp_Doy_VT  is a CodeValidationTable
+    Set Type_Value        To "DOY"
+    Set Allow_Blank_State To TRUE
+    Set Table_Title       To "Ä®ÆúÂ¶ É.é.ì"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Payresp_Presp_Doy_VT
+
+Object Payresp_Presp_Categfpa_VT  is a CodeValidationTable
+    Set Type_Value        To "VAT_STATUS"
+    Set Validate_State    To FALSE
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Payresp_Presp_Categfpa_VT
+
+Object Payresp_Feregios_VT  is a CodeValidationTable
+    Set Type_Value        To "FEREGIOS"
+    Set Allow_Blank_State To TRUE
+    Set Table_Title       To "ÉúÂ°´ú™ îú®úöö¨Ê´û´ò™ î¶®‚‡§"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Payresp_Feregios_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl111  sl111.SL
+//DDB/ ExternalSelectionList sl198  sl198.sl
+//DDB/ ExternalSelectionList sl197  sl197.SL
+Register_Object sl111
+Register_Object sl198
+Register_Object sl197
+//DDB-SelectionEnd
+
+Open Year
+
+Class Payresp_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Property Integer piCheckPlaf        Public 0
+        //------------------------------------------------
+        // Properties gia na kraththoun oi palies times
+        // ton pedion Ef' oson to Sysfile.Use_Audit pedio
+        // einai 1     js 03/12/2007
+        //------------------------------------------------
+        Property Integer piCreateNew            Public  0
+        Property String  psAud_Old_Pelaths      Public ""
+        Property String  psAud_Old_PelathsN     Public ""
+        Property String  psAud_Old_AFM          Public ""
+        Property String  psAud_Old_DOY          Public ""
+        Property String  psAud_Old_DOYN         Public ""
+        Property Integer piAud_Old_HPAL         Public  0
+        Property Integer piAud_Old_HPSO         Public  0
+        Property String  psAud_Old_PartlRecr    Public ""
+        Property String  psAud_Old_PmsRecr      Public ""
+        //------------------------------------------------
+
+    End_procedure
+
+    Procedure New_Current_Record  Integer iOldRec  Integer iNewRec
+        Forward Send New_Current_Record  iOldRec iNewRec
+        //------------------------------------------------
+        // Properties gia na kraththoun oi palies times
+        // ton pedion js 03/12/2007
+        //------------------------------------------------
+        Set psAud_Old_Pelaths      to Payresp.Presp_ID
+        Set psAud_Old_PelathsN     to Payresp.Presp_Name
+        Set psAud_Old_AFM          to Payresp.Presp_AFM
+        Set psAud_Old_DOY          to Payresp.Presp_Doy
+        Set psAud_Old_DOYN         to (gsfCode_Mast("DOY",Payresp.Presp_Doy))
+        Set piAud_Old_HPAL         to Payresp.Stoxos_IPAL
+        Set piAud_Old_HPSO         to Payresp.Stoxos_IPSO
+        Set psAud_Old_PartlRecr    to Payresp.Presp_Recr
+        Set psAud_Old_PmsRecr      to Payresp.Presp_Recr
+        //------------------------------------------------
+     End_Procedure   // New_Current_Record
+
+    Procedure Delete_Main_File
+        //---------------------------------------------
+        // Auditing / Katagrafh allagon
+        String  sUser sText sTime sMin sHour sSec
+        Date    dDate  Shmer
+        Integer iMin iHour iSec iLen
+        Sysdate dDate iHour iMin iSec
+        Move iHour  to sHour
+        Move iMin   to sMin
+        Move iSec   to sSec
+        If (Length(sHour)=1) Insert "0" in sHour at 1
+        If (Length(sMin )=1) Insert "0" in sMin  at 1
+        If (Length(sSec )=1) Insert "0" in sSec  at 1
+        Move (Trim(sHour)+":"+Trim(sMin)+"."+Trim(sSec)) to sTime
+
+        // Auditing / Diagrafh
+        If ((Sysfile.Use_Audit=1) And (Operation_Mode=MODE_DELETING) And (OPERATION_ORIGIN=Self)) Begin
+            Get fsLoginUserID to sUser
+            clear gmove
+            move syscurxr.company_code  to gmove.company_code
+            move syscurxr.branch_code   to gmove.branch_code
+            move syscurxr.year_year     to gmove.year_year
+            move  3                     to gmove.gtypkin_code// Apo Clients
+            move ddate                  to gmove.garticl_hmnia
+            move suser                  to gmove.gplan_code
+            move Payresp.Presp_Recr    to gmove.garticl_recr
+            reread sysrecg
+            move (sysrecg.gmove_rec0+1) to sysrecg.gmove_rec0
+            move (sysrecg.gmove_rec0+1) to gmove.gmove_rec0
+            saverecord sysrecg
+            unlock
+            Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
+                                                to Gmove.Gmove_Recr
+            Move (Trim(sUser))                  to Gmove.Login_ID
+            Move dDate                          to Gmove.Hmnia_Metabolhs
+            Move sTime                          to Gmove.Ora_Metabolhs
+
+            Move (psAud_Old_Pelaths  (Self))    to Gmove.Prev_ID
+            Move (psAud_Old_PelathsN (Self))    to Gmove.Prev_Name
+            Move (psAud_Old_AFM      (Self))    to Gmove.Prev_AFM
+            Move (psAud_Old_DOY      (Self))    to Gmove.Prev_Doy
+            Move (psAud_Old_DOYN     (Self))    to Gmove.Txt3
+            Move (piAud_Old_HPAL     (Self))    to Gmove.Prev_Stoxos1
+            Move (piAud_Old_HPSO     (Self))    to Gmove.Prev_Stoxos2
+
+
+            Move "É†òö®ò≠„ úöö®ò≠„™ ìßú¨üÁ§¶¨ è¢û®‡£È§"     to gmove.gmove_aitiol
+            Move "D"                            to Gmove.Eidos_Metabolhs
+            saverecord gmove
+        End
+        Forward Send Delete_Main_File
+
+    End_Procedure
+
+    Procedure Update
+        Forward Send Update
+        Move SysCurXR.Company_Code  to payresp.Company_Code
+        Move SysCurXR.Branch_Code   to payresp.Branch_Code
+        Move SysCurXR.Year_Year     to payresp.Year_Year
+        //Move Custprom.Custprom_Code to Clients.Custprom_Code
+        Move (payresp.Xreosh-payresp.Pistosh)   to payresp.Ypoloipo
+        Move (payresp.Plafon-payresp.ypoloipo)  to payresp.Overhead
+
+        //betolink
+        Move SysCurXR.Beto_Site      to payresp.presp_SiteW
+        Move payresp.presp_Rec0      to payresp.presp_SN
+        Move payresp.presp_id        to payresp.presp_Repm
+
+
+        If (Operation_ORIGIN=Self) Begin
+            Move 1      to payresp.ExportFlag
+            Move "SEND" to payresp.ExportStatus
+        End
+
+
+        //---------------------------------------------
+        // Auditing / Katagrafh allagon
+        String  sUser sText sTime sMin sHour sSec
+        Date    dDate  Shmer
+        Integer iMin iHour iSec iLen
+        Sysdate dDate iHour iMin iSec
+        Move iHour  to sHour
+        Move iMin   to sMin
+        Move iSec   to sSec
+        If (Length(sHour)=1) Insert "0" in sHour at 1
+        If (Length(sMin )=1) Insert "0" in sMin  at 1
+        If (Length(sSec )=1) Insert "0" in sSec  at 1
+        Move (Trim(sHour)+":"+Trim(sMin)+"."+Trim(sSec)) to sTime
+
+        // Auditing / Dhmiourgia - Diorthosh
+        If ((Sysfile.Use_Audit=1)  And (Operation_ORIGIN=Self)) Begin
+            Get fsLoginUserID to sUser
+            If (piCreateNew(Self)=1) Begin
+                clear gmove
+                move syscurxr.company_code  to gmove.company_code
+                move syscurxr.branch_code   to gmove.branch_code
+                move syscurxr.year_year     to gmove.year_year
+                move  3                     to gmove.gtypkin_code// Apo Clients
+                move ddate                  to gmove.garticl_hmnia
+                move suser                  to gmove.gplan_code
+                move Payresp.Presp_Recr     to gmove.garticl_recr
+                reread sysrecg
+                move (sysrecg.gmove_rec0+1) to sysrecg.gmove_rec0
+                move (sysrecg.gmove_rec0+1) to gmove.gmove_rec0
+                saverecord sysrecg
+                unlock
+                Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
+                                                    to Gmove.Gmove_Recr
+                Move (Trim(sUser))                  to Gmove.Login_ID
+                Move dDate                          to Gmove.Hmnia_Metabolhs    
+                Move sTime                          to Gmove.Ora_Metabolhs
+                Move Payresp.Presp_ID               to Gmove.Cur_ID
+                Move Payresp.Presp_Name             to Gmove.Cur_Name
+                Move Payresp.Presp_Recr             to Gmove.Partl_Recr 
+                Move Payresp.Presp_Recr             to Gmove.Pms_Recr          
+                Move Payresp.Presp_AFM              to Gmove.Cur_AFM
+                Move Payresp.Presp_DOY              to Gmove.Cur_DOY
+                Move (gsfCode_Mast("DOY",Payresp.Presp_Doy)) to Gmove.Txt4
+                Move Payresp.Stoxos_IPAL            to Gmove.Prev_Stoxos1
+                Move Payresp.Stoxos_IPSO            to Gmove.Prev_Stoxos2
+                Move "Éû£†¶¨®öÂò §‚¶¨ ìßú¨üÁ§¶¨ è¢û®‡£È§" to Gmove.Gmove_Aitiol
+                Move "N" to Gmove.Eidos_Metabolhs
+                saverecord gmove
+                Set piCreateNew to 0
+            End
+            Else If ((Operation_Mode=MODE_SAVING) And (piCreateNew(Self)<>1) And (OPERATION_ORIGIN=Self)) Begin                                
+                Integer isChanged
+                Move 0 to isChanged
+                
+                     If (psAud_Old_Pelaths  (Self)<>Payresp.Presp_ID   ) Move 1 to isChanged
+                Else If (psAud_Old_PelathsN (Self)<>Payresp.Presp_Name ) Move 1 to isChanged
+                Else If (psAud_Old_AFM      (Self)<>Payresp.Presp_AFM  ) Move 1 to isChanged
+                Else If (psAud_Old_DOY      (Self)<>Payresp.Presp_DOY  ) Move 1 to isChanged
+                Else If (piAud_Old_HPAL     (Self)<>Payresp.Stoxos_IPAL) Move 1 to isChanged
+                Else If (piAud_Old_HPSO     (Self)<>Payresp.Stoxos_IPSO) Move 1 to isChanged
+                
+                If (isChanged>0) Begin  
+                    clear gmove
+                    move syscurxr.company_code  to gmove.company_code
+                    move syscurxr.branch_code   to gmove.branch_code
+                    move syscurxr.year_year     to gmove.year_year
+                    move  3                     to gmove.gtypkin_code// Apo Clients
+                    move ddate                  to gmove.garticl_hmnia
+                    move suser                  to gmove.gplan_code
+                    move Payresp.Presp_Recr    to gmove.garticl_recr
+                    reread sysrecg
+                    move (sysrecg.gmove_rec0+1) to sysrecg.gmove_rec0
+                    move (sysrecg.gmove_rec0+1) to gmove.gmove_rec0
+                    saverecord sysrecg
+                    unlock
+                    Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
+                                                        to Gmove.Gmove_Recr
+                    Move (Trim(sUser))                  to Gmove.Login_ID
+                    Move dDate                          to Gmove.Hmnia_Metabolhs    
+                    Move sTime                          to Gmove.Ora_Metabolhs
+                    Move Payresp.Presp_Recr             to Gmove.Partl_Recr 
+                    Move Payresp.Presp_Recr             to Gmove.Pms_Recr          
+                    //--
+                    Move Payresp.Presp_ID               to Gmove.Cur_ID
+                    Move Payresp.Presp_Name             to Gmove.Cur_Name
+                    Move Payresp.Presp_AFM              to Gmove.Cur_AFM
+                    Move Payresp.Presp_DOY              to Gmove.Cur_DOY
+                    Move (gsfCode_Mast("DOY",Payresp.Presp_Doy)) to Gmove.Txt4
+                    Move Payresp.Stoxos_IPAL            to Gmove.Prev_Stoxos1
+                    Move Payresp.Stoxos_IPSO            to Gmove.Prev_Stoxos2
+                    //--
+                    Move (psAud_Old_Pelaths  (Self))    to Gmove.Prev_ID
+                    Move (psAud_Old_PelathsN (Self))    to Gmove.Prev_Name
+                    Move (psAud_Old_AFM      (Self))    to Gmove.Prev_AFM
+                    Move (psAud_Old_DOY      (Self))    to Gmove.Prev_Doy 
+                    Move (psAud_Old_DOYN     (Self))    to Gmove.Txt3
+                    Move (piAud_Old_HPAL     (Self))    to Gmove.Prev_Stoxos1
+                    Move (piAud_Old_HPSO     (Self))    to Gmove.Prev_Stoxos2
+                    Move "É†Ê®ü‡©û úöö®ò≠„™ ìßú¨üÁ§¶¨ è¢û®‡£È§"  to gmove.gmove_aitiol
+                    Move "E"                            to Gmove.Eidos_Metabolhs
+                    saverecord gmove
+                    Set piCreateNew to 0
+                End
+            End
+        End
+
+    End_Procedure   // Update
+
+     Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(payresp.presp_Rec0))))));
+                                    to payresp.presp_Recr
+        Move '1'                    to payresp.presp_Active
+        get fsgCode_With_Zeroes payresp.presp_Rec0 Sysfile.Client_Digits SysCurXr.Company_Code SysCurXr.Branch_Code  to payresp.presp_ID
+        clear year
+        move syscurxr.branch_code   to year.branch_code
+        move syscurxr.company_code  to year.company_code
+        move syscurxr.year_year     to YEAR.year_year
+        find eq year by index.1
+        if (found=1) begin
+            move year.payresp_plafon to payresp.plafon
+            move year.payresp_ofeilh to payresp.orio_syn_ofeilh
+        end
+        Set piCreateNew to 1
+    End_Procedure   // Creating
+
+   Function Validate_Save  Returns Integer
+        Integer iReturnVal iCheck iYes
+        Forward Get Validate_Save  To iReturnVal
+        If (Not(iReturnVal)) Begin
+
+            If (Sysfile.Check_Afm=1) Begin
+                Move (Check_AFM(payresp.presp_Afm)) to iCheck
+                If (iCheck) Begin
+                         If (iCheck=1) Move 4001 to iReturnVal
+                    Else If (iCheck=2) Move 4002 to iReturnVal
+                    Else If (iCheck=3) Move 4003 to iReturnVal
+                End
+            End
+
+           If (piCheckPlaf(Self)=1) Begin
+                If ((PayResp.Plafon>0) And ((PayResp.Ypoloipo+PayResp.Posa_Apo_Dap)>PayResp.Plafon)) Begin
+                        Get YesNo_Box 'é ¨ß.ß¢û®‡£È§ ‚Æú† ¨ß‚®ôò©û ò§¶†Æ´¶Á ä¶ö/£¶Á\nåò ©¨§úÆÂ©‡ ;' 'Ñß†ôúôòÂ‡©û 5000 Payresp'  to iYes
+                        If (iYes=MBR_NO) Error 4004 'DDC111: É†ò°¶ß„ õ†òõ†°ò©Âò™ òß¶ ´¶§ Æ®„©´û'  //Move 4004 to iReturnVal
+                End
+                Else If ((PayResp.Orio_Syn_Ofeilh>0) And (PayResp.Synolikh_Ofeilh>PayResp.Orio_Syn_Ofeilh)) Begin
+                        Get YesNo_Box 'é ¨ß.ß¢û®‡£È§ ‚Æú† ¨ß‚®ôò©û ©¨§¶¢†°„™ ¶≠ú†¢„™\nåò ©¨§úÆÂ©‡ ;' 'Ñß†ôúôòÂ‡©û 5001 Payresp' to iYes
+                        If (iYes=MBR_NO) Error 4005 'DDC111: É†ò°¶ß„ õ†òõ†°ò©Âò™ òß¶ ´¶§ Æ®„©´û'  //Move 4005 to iReturnVal
+                End
+           End
+        If (iReturnVal) Send Operation_Not_Allowed iReturnVal
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+
+    Procedure Operation_Not_Allowed Integer iError_Num
+        String lsError_Message
+        Case Begin
+            Case (iError_Num = 4001)
+                Move "DDC 100: äò§üò©£‚§¶ Äîã ìßú¨ü.è¢û®‡£È§" to lsError_Message
+              Case Break
+            Case (iError_Num = 4002)
+                Move "DDC 100: í¶ Äîã ìßú¨ü.è¢û®‡£È§ õú§ úÂ§ò† 9 Ø„≠†¶" to lsError_Message
+              Case Break
+            Case (iError_Num = 4003)
+                Move "DDC 100: Ä°ò´·¢¢û¢¶™ Æò®ò°´„®ò™ ©´¶ Äîã ìßú¨ü.è¢û®‡£È§ " to lsError_Message
+              Case Break
+            Case (iError_Num = 4004)
+                Move "DDC 100: Ñö†§ú ¨ß‚®ôò©û ò§¶†Æ´¶Á ä¶ö/£¶Á" to lsError_Message
+              Case Break
+            Case (iError_Num = 4005)
+                Move "DDC 100: Ñö†§ú ¨ß‚®ôò©û ©¨§¶¢†°„™ ¶≠ú†¢„™" to lsError_Message
+              Case Break
+            Case Else
+                Forward Send Operation_Not_Allowed iError_Num
+        Case End
+        Error iError_Num lsError_Message
+    End_Procedure // operation_not_allowed
+
+
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Payresp.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Prspbank.File_Number
+        Send Add_Client_File  Tppresp.File_Number
+        Send Add_Client_File  Clients.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Gmove.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Payresp_Rec0  To Payresp.Presp_Rec0
+
+        // Field-based properties.......................
+
+        // Payresp.Company_Code
+
+        // Payresp.Branch_Code
+
+        // Payresp.Year_Year
+
+        // Payresp.Custprom_Code
+
+        // Payresp.Presp_Id
+        Set Field_Options          Field Payresp.Presp_Id To DD_AUTOFIND    DD_NOPUT      
+        Set Field_Prompt_Object    Field Payresp.Presp_Id To (sl111(Self))
+        Set Key_Field_State        Field Payresp.Presp_Id To TRUE
+
+        // Payresp.Presp_Name
+        Set Field_Prompt_Object    Field Payresp.Presp_Name To (sl111(Self))
+
+        // Payresp.Presp_Afm
+
+        // Payresp.Presp_Rec0
+
+        // Payresp.Custprom_Recr
+
+        // Payresp.Presp_Recr
+
+        // Payresp.Last_Xreosh
+
+        // Payresp.Last_Pistosh
+
+        // Payresp.Last_Order
+
+        // Payresp.Presp_Doy
+        Set Field_Value_Table      Field Payresp.Presp_Doy To (Payresp_Presp_Doy_VT(Self))
+
+        // Payresp.Presp_Address
+
+        // Payresp.Presp_City_Id
+        Set Field_Prompt_Object    Field Payresp.Presp_City_Id To (sl198(Self))
+
+        // Payresp.Presp_Area
+        Set Field_Prompt_Object    Field Payresp.Presp_Area To (sl197(Self))
+
+        // Payresp.Presp_Job
+
+        // Payresp.Presp_Respons
+
+        // Payresp.Presp_Zipcode
+
+        // Payresp.Presp_Phone
+
+        // Payresp.Presp_Fax
+
+        // Payresp.Presp_Mobile
+
+        // Payresp.Presp_Aoh
+
+        // Payresp.Presp_Email
+
+        // Payresp.Presp_Class
+
+        // Payresp.Presp_Details
+
+        // Payresp.Presp_Sitew
+
+        // Payresp.Presp_Codem
+
+        // Payresp.Presp_Categfpa
+        Set Field_Value_Table      Field Payresp.Presp_Categfpa To (Payresp_Presp_Categfpa_VT(Self))
+
+        // Payresp.Presp_Fpa
+
+        // Payresp.Presp_Public
+
+        // Payresp.Presp_Sn
+
+        // Payresp.Presp_Repm
+
+        // Payresp.Presp_Active
+
+        // Payresp.Presp_Reported
+
+        // Payresp.Presp_Pelprom
+
+        // Payresp.Presp_Lastupd
+
+        // Payresp.Presp_Markexp
+
+        // Payresp.Presp_Catjob
+
+        // Payresp.Is_Promhtheyths
+
+        // Payresp.Xreosh
+
+        // Payresp.Pistosh
+
+        // Payresp.Ypoloipo
+
+        // Payresp.Plafon
+
+        // Payresp.Overhead
+
+        // Payresp.Presp_Add_No
+
+        // Payresp.Presp_Nomos
+
+        // Payresp.Presp_Xora
+
+        // Payresp.Polh_Recr
+
+        // Payresp.Synolikh_Ofeilh
+
+        // Payresp.Stoxos_Ipal
+
+        // Payresp.Stoxos_Ipso
+
+        // Payresp.Poso_Se_Apait
+
+        // Payresp.Orio_Syn_Ofeilh
+
+        // Payresp.Posa_Apo_Dap
+
+        // Payresp.Feregios
+        Set Field_Value_Table      Field Payresp.Feregios To (Payresp_Feregios_VT(Self))
+
+        // Payresp.Exportflag
+
+        // Payresp.Exportstatus
+
+        // Payresp.Exportdate
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Payresp.Presp_Doy To "0"
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Payresp_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl111.SL         // sl111
+Use sl198.sl         // sl198
+Use sl197.SL         // sl197
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

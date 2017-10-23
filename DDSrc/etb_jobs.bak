@@ -1,0 +1,81 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : ETB_JOBS.DD
+// Class Name: Etb_Jobs_DataDictionary
+// Revision  : 1
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Etb_Jobs
+Open Cmn_Clnt
+Open Cmn_Salm
+
+//DDB-HeaderEnd
+
+Class Etb_Jobs_DataDictionary  is a DataDictionary_sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Etb_Jobs.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Cmn_Clnt.File_Number
+        Send Add_Server_File  Cmn_Salm.File_Number
+
+        // Field-based properties.......................
+
+        // Etb_Jobs.Job_Code
+
+        // Etb_Jobs.Clnt_Code
+
+        // Etb_Jobs.Yp_Plhromhs
+
+        // Etb_Jobs.Polhths
+
+        // Etb_Jobs.Address
+
+        // Etb_Jobs.Zip
+
+        // Etb_Jobs.City
+
+        // Etb_Jobs.Topos_Paradoshs
+
+        // Etb_Jobs.Enarxh_Ergou
+
+        // Etb_Jobs.Sxolia
+
+        // Etb_Jobs.Description
+
+        // Etb_Jobs.Plant_Code
+
+        // Etb_Jobs.Area_Code
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Etb_Jobs_DataDictionary
+//DDB-FileEnd

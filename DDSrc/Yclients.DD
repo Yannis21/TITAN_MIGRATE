@@ -1,0 +1,189 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : YCLIENTS.DD
+// Class Name: Yclients_DataDictionary
+// Revision  : 17
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Yclients
+Open Ypoprosf
+Open Sysrecc
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Yclients_Doy_VT
+Register_Object Yclients_Job_VT
+
+Object Yclients_Doy_VT  is a CodeValidationTable
+    Set Type_Value        To "DOY"
+    Set Allow_Blank_State To TRUE
+    Set Table_Title       To "€¨®œå¦ ƒ.Ž.“"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Yclients_Doy_VT
+
+Object Yclients_Job_VT  is a CodeValidationTable
+    Set Type_Value        To "JOB"
+    Set Allow_Blank_State To TRUE
+    Set Table_Title       To "‰˜«á¢¦š¦ª „§˜ššœ¢£á«à¤"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Yclients_Job_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl91  sl91.SL
+//DDB/ ExternalSelectionList Cities  cities.sl
+//DDB/ ExternalSelectionList sl197  sl197.SL
+//DDB/ ExternalSelectionList SL100  sl100.sl
+//DDB/ ExternalSelectionList sl111  sl111.sl
+Register_Object sl91
+Register_Object Cities
+Register_Object sl197
+Register_Object SL100
+Register_Object sl111
+//DDB-SelectionEnd
+
+Class Yclients_DataDictionary  is a DataDictionary_sec
+    
+     Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(YClients.Rec0))))));
+                                    to Yclients.Recr
+       
+        get fsgCode_With_Zeroes YClients.Rec0 Sysfile.Client_Digits SysCurXr.Company_Code SysCurXr.Branch_Code  to Yclients.ID
+        sysdate4 YClients.fdate
+        move 'DOY' to yclients.codetype 
+        move 'JOB' to yclients.codetype_job 
+    End_Procedure   // Creating
+    
+                                       
+    
+    
+    
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Yclients.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Ypoprosf.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Yclients_Rec0  To Yclients.Rec0
+
+        // Field-based properties.......................
+
+        // Yclients.Id
+        Set Field_Prompt_Object    Field Yclients.Id To (sl91(Self))
+
+        // Yclients.Name
+        Set Field_Prompt_Object    Field Yclients.Name To (sl91(Self))
+
+        // Yclients.Afm
+
+        // Yclients.Rec0
+
+        // Yclients.Recr
+
+        // Yclients.Doy
+        Set Field_Value_Table      Field Yclients.Doy To (Yclients_Doy_VT(Self))
+
+        // Yclients.Address
+
+        // Yclients.City
+        Set Field_Prompt_Object    Field Yclients.City To (Cities(Self))
+
+        // Yclients.Area
+        Set Field_Prompt_Object    Field Yclients.Area To (sl197(Self))
+
+        // Yclients.Job
+        Set Field_Value_Table      Field Yclients.Job To (Yclients_Job_VT(Self))
+
+        // Yclients.Respons
+
+        // Yclients.Zipcode
+
+        // Yclients.Phone
+
+        // Yclients.Fax
+
+        // Yclients.Mobile
+
+        // Yclients.Aoh
+
+        // Yclients.Email
+
+        // Yclients.Class
+
+        // Yclients.Details
+
+        // Yclients.Codem
+        Set Field_Prompt_Object    Field Yclients.Codem To (SL100(Self))
+
+        // Yclients.Active
+
+        // Yclients.Fdate
+
+        // Yclients.Cdate
+
+        // Yclients.Add_No
+
+        // Yclients.Nomos
+
+        // Yclients.Xora
+
+        // Yclients.Payresp
+        Set Field_Prompt_Object    Field Yclients.Payresp To (sl111(Self))
+
+        // Yclients.Codetype
+
+        // Yclients.Codetype_Job
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Yclients.Job To "0"
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Yclients_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl91.SL          // sl91
+Use cities.sl        // Cities
+Use sl197.SL         // sl197
+Use sl100.sl         // SL100
+Use sl111.sl         // sl111
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

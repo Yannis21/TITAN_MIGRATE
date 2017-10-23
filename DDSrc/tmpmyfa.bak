@@ -1,0 +1,132 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : TMPMYFA.DD
+// Class Name: TmpmyfA_DataDictionary
+// Revision  : 0
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Tmpmyfa
+
+//DDB-HeaderEnd
+
+//open master file
+Open tmpMyf
+
+//define alias-master condition
+Set_Attribute DF_FILE_ALIAS of tmpMyf.File_Number  to DF_FILE_IS_MASTER
+Set_Attribute DF_FILE_ALIAS of tmpMyfA.File_Number to DF_FILE_IS_ALIAS
+
+Class TmpmyfA_DataDictionary  is a DataDictionary_Sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Tmpmyfa.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Field-based properties.......................
+
+        // Tmpmyfa.Company_Code
+
+        // Tmpmyfa.Branch_Code
+
+        // Tmpmyfa.Myf_Year
+
+        // Tmpmyfa.Module
+
+        // Tmpmyfa.Typos_Record
+
+        // Tmpmyfa.Aa
+
+        // Tmpmyfa.Afm
+
+        // Tmpmyfa.Client_Id
+
+        // Tmpmyfa.Client_Name
+
+        // Tmpmyfa.Job
+
+        // Tmpmyfa.Ypoxreos
+
+        // Tmpmyfa.Polh
+
+        // Tmpmyfa.Odos
+
+        // Tmpmyfa.Arithmos
+
+        // Tmpmyfa.Tk
+
+        // Tmpmyfa.Plhthos
+
+        // Tmpmyfa.Axia
+
+        // Tmpmyfa.Agroths
+
+        // Tmpmyfa.Dhmosio_Aney
+
+        // Tmpmyfa.R1_Doy
+
+        // Tmpmyfa.R1_Ar_Fakel
+
+        // Tmpmyfa.R1_Eponymia
+
+        // Tmpmyfa.R1_Afm
+
+        // Tmpmyfa.R1_Antikeimeno
+
+        // Tmpmyfa.R1_Polh
+
+        // Tmpmyfa.R1_Odos
+
+        // Tmpmyfa.R1_Arithmos
+
+        // Tmpmyfa.R1_Tk
+
+        // Tmpmyfa.R1_Thlefono
+
+        // Tmpmyfa.R1_Fax
+
+        // Tmpmyfa.R1_Email
+
+        // Tmpmyfa.R1_Eidos
+
+        // Tmpmyfa.S_Plhthos_Kan
+
+        // Tmpmyfa.S_Plhthos_Dhm
+
+        // Tmpmyfa.S_Plhthos_Total
+
+        // Tmpmyfa.S_Axia_Kan
+
+        // Tmpmyfa.S_Axia_Dhm
+
+        // Tmpmyfa.S_Axia_Total
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Tmpmyfa_DataDictionary
+//DDB-FileEnd

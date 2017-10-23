@@ -1,0 +1,294 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : CLORDERD.DD
+// Class Name: Clorderd_DataDictionary
+// Revision  : 52
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Clorderd
+Open Clorder
+Open Sysrecc
+Open Iteml
+Open Witemcl
+
+//DDB-HeaderEnd
+
+Open Clorder
+
+Class Clorderd_DataDictionary  is a DataDictionary_Sec
+
+       Procedure Creating
+        string sitem sprom
+        Forward Send Creating
+        // Insert Code Here
+        if (clorder.module <> '01') move '02' to clorder.module
+        if (clorderd.module = '01') begin
+           move (sysrecc.clorderdc_rec0 + 1) to clorderd.rec0
+           move clorderd.rec0 to sysrecc.clorderdc_rec0
+           saverecord sysrecc
+        end
+        else begin
+           move (sysrecc.clorderd_rec0 + 1) to clorderd.rec0
+           move clorderd.rec0 to sysrecc.clorderd_rec0
+           saverecord sysrecc
+        end
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                         (Trim(String(clorderd.rec0)))))) to clorderd.recr
+
+        if (clorder.module = '02') Begin
+          clear witemcl
+          Move clorderd.item_code   to witemcl.item_code
+          Move clorder.clients_code to witemcl.client_code
+          find eq witemcl by index.1
+          move witemcl.client_itemcode to clorderd.client_item
+        end
+
+       End_Procedure   // Creating
+
+
+    // Backout:
+
+    Procedure Backout
+        Forward Send Backout
+
+        // Insert Code Here
+        sub clorderd.Qty            from clorder.qty
+        sub clorderd.posofpa        from clorder.fpa
+        sub clorderd.posodisc       from clorder.disc
+        sub clorderd.posoextra      from clorder.extra
+        sub clorderd.posototal      from clorder.total
+        sub clorderd.net            from clorder.net
+        sub clorderd.kinish_posothta from clorder.qtydtl
+        sub clorderd.kinhsh_poso     from clorder.posodtl
+    End_Procedure   // Backout
+
+
+
+    Procedure Update
+        Forward Send Update
+        number nQtykinhsh nTimhMon nQtyTimhMon nPctEkpt nPosoEkpt nPosoNet
+        number nPctFpa nPosoFpa npososynolo
+        move syscurxr.company_code to clorderd.company_code
+        move syscurxr.branch_code  to clorderd.branch_code
+        move syscurxr.year_year    to clorderd.year_year
+        move clorder.aapar         to clorderd.aa_par
+        move clorder.clients_code  to clorderd.clients_code
+        move clorder.date          to clorderd.date
+        move clorder.module        to clorderd.module
+        if (clorderd.ourdate = "") begin
+            move clorder.our_date to clorderd.ourdate
+        end
+        Move (round_number((clorderd.qty*clorderd.unitprice),2))   to clorderd.net
+        Move (Round_number(((clorderd.net*clorderd.pcdisc/100)),2)) ;
+                                                           to clorderd.posodisc
+        Move (clorderd.net-clorderd.posodisc)              to clorderd.net
+        Move (Round_number(((clorderd.net*clorderd.pcfpa/100)),2));
+                                                           to clorderd.posofpa
+        Move (clorderd.net+clorderd.posofpa+clorderd.posoextra) to clorderd.posototal
+        Add clorderd.Qty          to clorder.qty
+        Add clorderd.posofpa      to clorder.fpa
+        Add clorderd.posodisc     to clorder.disc
+        Add clorderd.posoextra    to clorder.extra
+        Add clorderd.posototal    to clorder.total
+        add clorderd.net          to clorder.net
+
+
+        move clorderd.kinish_posothta to nQtykinhsh
+        move clorderd.unitprice   To nTimhMon
+        if ((nQtykinhsh<>0) or (nTimhMon<>0)) begin
+           Move (round_number((nQtykinhsh*nTimhMon),2)) to nQtyTimhMon
+           move clorderd.pcdisc     To nPctEkpt
+           move clorderd.posodisc   To nPosoEkpt
+           Move  (Round_number(((nQtyTimhMon*nPctEkpt/100)),2)) to nPosoEkpt
+           Move (nQtyTimhMon-nPosoEkpt)                         To nPosoNet
+           move nPosonet to clorderd.kinhsh_net
+           move clorderd.pcfpa      To nPctFpa
+           move clorderd.posofpa    To nPosoFpa
+           Move (Round_number(((nPosoNet*nPctFpa/100)),2)) to nPosoFpa
+           move nPosoFpa to clorderd.kinhsh_fpa
+           Move (nPosoNet+nPosoFpa) to npososynolo
+           move npososynolo to clorderd.kinhsh_poso
+           add clorderd.kinish_posothta to clorder.qtydtl
+           add clorderd.kinhsh_poso     to clorder.posodtl
+        end
+
+
+
+
+        // Insert Code Here
+    End_Procedure   // Update
+
+    Procedure Entry_clorder_fpa Integer iField number nfpa
+         Local Integer Changed
+         string sitem
+         Get Field_Changed_State iField to Changed
+         If ( Changed=0 AND nfpa = 0) Begin
+            clear item
+            move clorderd.item_code to sitem
+            move sitem to iteml.item_code
+            find eq iteml by index.5
+            move iteml.fpa_pososto to nfpa
+            Set Field_Default_Value iField to nfpa
+         End
+    end_procedure
+
+  // Procedure entry_clorderd_itemcode Integer iField string itemcode
+  //   Local Integer Changed
+  //   string sitem sprom
+  //   If (itemcode <>'') Begin
+  //      clear witemcl
+  //      get field_current_value of clorderd_dd field clorderd.item_code   to sitem
+  //      get field_current_value of clorder_dd  field clorder.clients_code to sprom
+  //      move sitem to witemcl.item_code
+  //      move sprom to witemcl.client_code
+  //      find eq witemcl by index.1
+  //      move witemcl.client_itemcode to itemcode
+  //      Set Field_Default_Value (iField+2) to itemcode
+  //   end
+  // end_Procedure
+
+    Procedure entry_clorderd_price Integer iField number nprice
+      Local Integer Changed
+      string sitem sprom
+      Get Field_Changed_State iField to Changed
+      If ( Changed=0 AND nprice = 0) Begin
+         clear witemcl                              
+         Get File_Field_Current_Value File_Field clorder.clients_code   to sProm
+         Get File_Field_Current_Value File_Field clorderd.item_code     to sItem
+//         get field_current_value of clorderd_dd field clorderd.item_code   to sitem
+//         get field_current_value of clorder_dd  field clorder.clients_code to sprom
+         move sitem to witemcl.item_code
+         move sprom to witemcl.client_code
+         find eq witemcl by index.1
+         move witemcl.client_price to nprice
+         Set Field_Default_Value iField to nprice
+      end
+    end_Procedure
+
+
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Clorderd.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Clorder.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Iteml.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Witemcl.File_Number  DD_LOCK_ON_ALL
+
+        // Field-based properties.......................
+
+        // Clorderd.Company_Code
+
+        // Clorderd.Branch_Code
+
+        // Clorderd.Year_Year
+
+        // Clorderd.Clients_Code
+
+        // Clorderd.Aa_Par
+
+        // Clorderd.Rec0
+
+        // Clorderd.Item_Code
+
+        // Clorderd.Client_Item
+
+        // Clorderd.Qty
+
+        // Clorderd.Net
+
+        // Clorderd.Pcdisc
+
+        // Clorderd.Pcfpa
+        Set Field_Entry_msg        Field Clorderd.Pcfpa To Entry_clorder_fpa
+
+        // Clorderd.Posodisc
+
+        // Clorderd.Posofpa
+
+        // Clorderd.Posoextra
+
+        // Clorderd.Posototal
+
+        // Clorderd.Unitprice
+        Set Field_Entry_msg        Field Clorderd.Unitprice To entry_clorderd_price
+
+        // Clorderd.Ourdate
+        Set Field_Mask_Type        Field Clorderd.Ourdate To MASK_DATE_WINDOW
+
+        // Clorderd.Rial_Date
+        Set Field_Mask_Type        Field Clorderd.Rial_Date To MASK_DATE_WINDOW
+
+        // Clorderd.Finish
+        Set Field_Mask             Field Clorderd.Finish To "#"
+        Set Field_Mask_Type        Field Clorderd.Finish To MASK_NUMERIC_WINDOW
+
+        // Clorderd.Clorder_Recr
+
+        // Clorderd.Kinish_Posothta
+
+        // Clorderd.Kinhsh_Poso
+
+        // Clorderd.Kinhsh_Fpa
+
+        // Clorderd.Kinhsh_Net
+
+        // Clorderd.Rial_Qty
+
+        // Clorderd.Akyrh
+        Set Field_Mask             Field Clorderd.Akyrh To "#"
+        Set Field_Mask_Type        Field Clorderd.Akyrh To MASK_NUMERIC_WINDOW
+
+        // Clorderd.Ypol_Qty
+
+        // Clorderd.Akyrh_Qty
+
+        // Clorderd.Epistrofh_Qty
+
+        // Clorderd.Status
+        Set Field_Mask             Field Clorderd.Status To "#"
+        Set Field_Mask_Type        Field Clorderd.Status To MASK_NUMERIC_WINDOW
+
+        // Clorderd.Date
+        Set Field_Mask_Type        Field Clorderd.Date To MASK_DATE_WINDOW
+
+        // Clorderd.Recr
+
+        // Clorderd.Wax_Recr
+
+        // Clorderd.Pmoves_Recr
+
+        // Clorderd.Module
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Clorderd_DataDictionary
+//DDB-FileEnd

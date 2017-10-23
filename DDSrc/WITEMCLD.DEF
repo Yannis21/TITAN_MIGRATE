@@ -1,0 +1,46 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: WITEMCLD (# 39)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:WITEMCLD
+  USER DISPLAY NAME         : Witemcld
+  DATAFLEX FILE NAME        : WITEMCLD
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 92        ( USED: 92 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  ITEM_CODE        ASC     20     1  1   
+  2  CLIENT_CODE      ASC     20    21  1   
+  3  REC0             NUM   14.0    41  2   WITEMCL.FIELD_7 (186,7)
+  4  VALUE_DATE       DAT      3    48  1   
+  5  AXIA00           NUM   14.8    51      
+  6  QTY              NUM   14.2    62  1   
+  7  PCDISC           NUM    2.2    70      
+  8  ORIO             NUM   14.2    72      
+  9  PAGIOORIO        NUM   14.8    80      
+ 10  PCDISCANTLIA     NUM    2.2    91      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    ITEM_CODE       NO  NO       51     3       4     ON-LINE
+       CLIENT_CODE     NO  NO 
+       VALUE_DATE      NO  NO 
+       QTY             NO  NO 
+
+  2    ITEM_CODE       NO  NO       30     3       3     ON-LINE
+       REC0            NO  NO 
+       RECNUM          NO  NO 
+

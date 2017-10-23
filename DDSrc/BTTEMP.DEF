@@ -1,0 +1,53 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: BTTEMP (# 195)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : BTTEMP
+  USER DISPLAY NAME         : bttemp
+  DATAFLEX FILE NAME        : BTTEMP
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 256       ( USED: 218 )
+  MAX NUMBER OF RECORDS     : 10000     ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  VCOMPANY         ASC     10     1      
+  2  VSITE            ASC     10    11      
+  3  VDATE            DAT      6    21      
+  4  VSERIES          ASC      5    24  1   
+  5  VSN              ASC     20    29  1   
+  6  VPARAST          ASC     20    49      
+  7  VPRODECODE       ASC     20    69      
+  8  VUNITPRICE       NUM   14.6    89  2   
+  9  VQTY             NUM   14.6    99      
+ 10  VAMBD            NUM   14.6   109      
+ 11  VDISCAM          NUM   14.6   119      
+ 12  VAMAFTDISC       NUM   14.6   129      
+ 13  VVATAM           NUM   14.6   139      
+ 14  VPAYABLE         NUM   14.6   149      
+ 15  VWITEMX          ASC     20   159      
+ 16  VUNITS           ASC     10   179      
+ 17  VWAPOKAT         ASC     10   189      
+ 18  VWAPOMAST        ASC     10   199      
+ 19  VWITEMKAT        ASC     10   209      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    VSERIES         NO  NO       25     4       2     ON-LINE
+       VSN             NO  NO 
+
+  2    VUNITPRICE      NO  NO       35     4       3     ON-LINE
+       VSERIES         NO  NO 
+       VSN             NO  NO 
+

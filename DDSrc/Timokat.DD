@@ -1,0 +1,108 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : TIMOKAT.DD
+// Class Name: Timokat_DataDictionary
+// Revision  : 8
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Timokat
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Timokat_Panokato_VT
+
+Object Timokat_Panokato_VT  is a DescriptionValidationTable
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "0"  "€ç¥ž©ž"
+        Send Add_Table_Value  "1"  "‹œåà©ž"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Timokat_Panokato_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList SL22s  sl22s.sl
+Register_Object SL22s
+//DDB-SelectionEnd
+Open Item
+
+Class Timokat_DataDictionary  is a DataDictionary_sec
+ 
+    // Update:
+ 
+    Procedure Update
+        Forward Send Update
+        Clear Item
+        Move Timokat.Item_Code  to Item.Item_Code
+        Find Eq Item by index.5
+        Move Item.WitemKat_Code to Timokat.Witemkat_Code
+    End_Procedure   // Update
+ 
+
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Timokat.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Field-based properties.......................
+
+        // Timokat.Witemkat_Code
+
+        // Timokat.Item_Code
+        Set Field_Prompt_Object    Field Timokat.Item_Code To (SL22s(Self))
+
+        // Timokat.Poiothta
+
+        // Timokat.Panokato
+        Set Field_Value_Table      Field Timokat.Panokato To (Timokat_Panokato_VT(Self))
+
+        // Timokat.Poso
+
+        // Timokat.Pososto
+
+        // Timokat.Palia_Timh
+
+        // Timokat.Nea_Timh
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Timokat_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl22s.sl         // SL22s
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

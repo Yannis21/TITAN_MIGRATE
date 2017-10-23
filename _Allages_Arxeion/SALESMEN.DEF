@@ -1,0 +1,98 @@
+-----------------------------------------------------------------------------
+  DATE: 11/07/117      TIME: 12:06                                  PAGE:  1
+  FILE DEFINITION FOR FILE: SALESMEN (# 108)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:SALESMEN
+  USER DISPLAY NAME         : Salesmen
+  DATAFLEX FILE NAME        : SALESMEN
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 1038      ( USED: 1038 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 9 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC     10     1  1   
+  2  BRANCH_CODE      ASC     10    11  1   
+  3  YEAR_YEAR        NUM    4.0    21  1   
+  4  SLS_ID           ASC     20    23  4   
+  5  SLS_NAME         ASC     80    43  3   
+  6  SLS_AFM          ASC     20   123      
+  7  SLS_REC0         NUM   14.0   143      
+  8  SLS_RECR         ASC     12   150  2   
+  9  LAST_XREOSH      DAT      3   162      
+ 10  LAST_PISTOSH     DAT      3   165      
+ 11  LAST_ORDER       DAT      3   168      
+ 12  SLS_DOY          ASC      5   171      
+ 13  SLS_ADDRESS      ASC     40   176      
+ 14  SLS_CITY         NUM    8.0   216      
+ 15  SLS_AREA         NUM    8.0   220      
+ 16  SLS_JOB          ASC     50   224      
+ 17  SLS_RESPONS      ASC     80   274      
+ 18  SLS_ZIPCODE      ASC     20   354      
+ 19  SLS_PHONE        ASC     50   374      
+ 20  SLS_FAX          ASC     30   424      
+ 21  SLS_MOBILE       ASC     30   454      
+ 22  SLS_AOH          ASC     50   484      
+ 23  SLS_EMAIL        ASC     80   534      
+ 24  SLS_CLASS        ASC      5   614      
+ 25  SLS_DETAILS      ASC    255   619      
+ 26  SLS_SITEW        ASC     10   874      
+ 27  SLS_CODEM        ASC     20   884      
+ 28  SLS_CATEGFPA     NUM    4.0   904      
+ 29  SLS_FPA          NUM    4.0   906      
+ 30  SLS_PUBLIC       NUM    4.0   908      
+ 31  SLS_SN           NUM   10.0   910      
+ 32  SLS_REPM         ASC     20   915      
+ 33  SLS_ACTIVE       ASC      1   935      
+ 34  SLS_REPORTED     ASC      1   936      
+ 35  SLS_LASTUPD      DAT      3   937      
+ 36  SLS_MARKEXP      ASC      1   940      
+ 37  SLS_CATJOB       NUM   14.0   941      
+ 38  XREOSH           NUM   14.8   948      
+ 39  PISTOSH          NUM   14.8   959      
+ 40  YPOLOIPO         NUM   14.8   970      
+ 41  PLAFON           NUM   14.8   981      
+ 42  OVERHEAD         NUM   14.8   992      
+ 43  SLS_ADD_NO       ASC      5  1003      
+ 44  SLS_NOMOS        ASC      5  1008      
+ 45  SLS_XORA         ASC      5  1013      
+ 46  POLH_RECR        ASC     12  1018      
+ 47  EXPORTFLAG       NUM    2.0  1030  5   
+ 48  EXPORTSTATUS     ASC      5  1031  5   
+ 49  EXPORTDATE       DAT      3  1036  5   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY_CODE    NO  NO       42     3       4     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       SLS_ID          NO  NO 
+
+  2    SLS_RECR        NO  NO       12     3       1     ON-LINE
+
+  3    SLS_NAME        NO  NO       92     3       2     ON-LINE
+       SLS_RECR        NO  NO 
+
+  4    SLS_ID          NO  NO       20     3       1     ON-LINE
+
+  5    EXPORTFLAG      NO  NO       12     3       4     ON-LINE
+       EXPORTSTATUS    NO  NO 
+       EXPORTDATE      NO  NO 
+       RECNUM          NO  NO 
+
+  6    EXPORTSTATUS    NO  NO       12     3       4     ON-LINE
+       EXPORTFLAG      NO  NO 
+       EXPORTDATE      NO  NO 
+       RECNUM          NO  NO 
+

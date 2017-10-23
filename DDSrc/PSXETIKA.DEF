@@ -1,0 +1,80 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: PSXETIKA (# 48)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:PSXETIKA
+  USER DISPLAY NAME         : Psxetika
+  DATAFLEX FILE NAME        : PSXETIKA
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 511       ( USED: 511 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC      3     1  1   
+  2  BRANCH_CODE      ASC      3     4  1   
+  3  YEAR_YEAR        NUM    4.0     7  1   
+  4  CTYPKIN_CODE     ASC      3     9  1   
+  5  WTYPKIN_CODE     ASC      3    12  1   
+  6  PTYPPAR_CODE     ASC      3    15  1   
+  7  PSEIRA_SEIRA     ASC      3    18  1   
+  8  CUSTPROM_CODE    ASC     30    21  1   
+  9  CLIENT_ID        ASC     20    51  1   
+ 10  PARTL_NO         NUM   14.0    71  1   
+ 11  PARTL_HMNIA      DAT      3    78  1   
+ 12  PARTL_RECR       ASC     12    81  4   PARTICLE.FIELD_43 (14,43)
+ 13  PSX_PARTL_RECR   ASC     12    93  1   
+ 14  PSXETIKA_RECR    ASC     12   105  2   
+ 15  PSXETIKA_REC0    NUM   14.0   117      
+ 16  SX_COMPANY_CODE  ASC      3   124      
+ 17  SX_BRANCH_CODE   ASC      3   127      
+ 18  SX_YEAR_YEAR     NUM    4.0   130      
+ 19  SX_CTYPKIN_CODE  ASC      3   132      
+ 20  SX_WTYPKIN_CODE  ASC      3   135      
+ 21  SX_PTYPPAR_CODE  ASC      3   138      
+ 22  SX_PSEIRA_SEIRA  ASC      3   141      
+ 23  SX_CUSTPROMCODE  ASC     30   144      
+ 24  SX_CLIENT_ID     ASC     20   174      
+ 25  SX_PARTL_NO      NUM   14.0   194      
+ 26  SX_PARTL_HMNIA   DAT      3   201      
+ 27  SX_CTYPKIN_DESC  ASC     60   204      
+ 28  SX_WTYPKIN_DESC  ASC     60   264      
+ 29  SX_PTYPPAR_DESC  ASC     60   324      
+ 30  SX_CUSTPROMDESC  ASC     60   384      
+ 31  SX_CLIENT_DESC   ASC     60   444      
+ 32  PMS_SX_QTY       NUM   14.2   504      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY_CODE    NO  NO       92     3       12    ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       CUSTPROM_CODE   NO  NO 
+       CLIENT_ID       NO  NO 
+       CTYPKIN_CODE    NO  NO 
+       WTYPKIN_CODE    NO  NO 
+       PTYPPAR_CODE    NO  NO 
+       PARTL_HMNIA     NO  NO 
+       PSEIRA_SEIRA    NO  NO 
+       PARTL_NO        NO  NO 
+       PSX_PARTL_RECR  NO  NO 
+
+  2    PSXETIKA_RECR   NO  NO       12     3       1     ON-LINE
+
+  3    PSX_PARTL_RECR  NO  NO       24     3       2     ON-LINE
+       PARTL_RECR      NO  NO 
+
+  4    PARTL_RECR      NO  NO       24     3       2     ON-LINE
+       PSX_PARTL_RECR  NO  NO 
+

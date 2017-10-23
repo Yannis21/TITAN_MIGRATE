@@ -1,0 +1,1647 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GARTICL.DD
+// Class Name: Garticl_DataDictionary
+// Revision  : 135
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Garticl
+Open Gmove
+Open Gmovea
+Open Gtypkin
+Open Gthaa
+Open Sysrecg
+Open Gbridgeh
+Open Gbridged
+Open Barticl
+Open Particle
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Garticl_Garticl_A_Code_VT
+Register_Object Garticl_Garticl_C_Code2_VT
+Register_Object Garticl_Garticl_Statuse_VT
+Register_Object Garticl_Garticl_M_Code_VT
+
+Object Garticl_Garticl_A_Code_VT  is a CodeValidationTable
+    Set Type_Value        To "AITIOL"
+    Set Validate_State    To FALSE
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Garticl_Garticl_A_Code_VT
+
+Object Garticl_Garticl_C_Code2_VT  is a CodeValidationTable
+    Set Type_Value        To "CURRENCY"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Garticl_Garticl_C_Code2_VT
+
+Object Garticl_Garticl_Statuse_VT  is a DescriptionValidationTable
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "0"  "¨¦©à¨ ¤ã"
+        Send Add_Table_Value  "1"  "„¤£œ¨à£â¤"
+        Send Add_Table_Value  "-1"  "‹œ¨ ¡ã"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Garticl_Garticl_Statuse_VT
+
+Object Garticl_Garticl_M_Code_VT  is a CodeValidationTable
+    Set Type_Value        To "MODULE"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Garticl_Garticl_M_Code_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList Garticl  Garticl.SL
+Register_Object Garticl
+//DDB-SelectionEnd
+Open Rates
+
+Register_Object oDo_Change_Garticl
+//Use Docnggar.bp
+
+Use Gmovea.dd //®¨œ áœ«˜  ¦§à›ã§¦«œ, › æ«  œå¤˜  alias file ¡˜ 
+              //©«¤ begin_transaction §¨¦¡˜¢œå deadlock
+
+Class Garticl_DataDictionary  is a DataDictionary_Sec
+ 
+      //private
+      //¡˜¢œå«˜  ˜§¦ «¤ request_save ¡˜  £›œ¤åœ  æ¢˜ «˜ properties
+      Procedure private.Initialize_Properties
+                 //£›œ¤ ©£æª §˜¢˜ é¤
+                 Set psB_Gtypkin_Recr    to ''
+                 Set pdB_Garticl_Hmnia   to 0
+                 Set piB_Garticl_No      to 0
+                 Set psB_Garticl_C_Code2 to ""
+                 Set pnB_Garticl_Rate0   to 0
+                 Set pnB_Garticl_Rate00  to 0
+                 Set pnB_Garticl_RateR   to 0
+                 Set piB_Garticl_Aa      to 0
+
+                 //£›œ¤ ©£æª ¤âà¤
+                 Set psA_Gtypkin_Recr    to ''
+                 Set pdA_Garticl_Hmnia   to 0
+                 Set piA_Garticl_No      to 0
+                 Set psA_Garticl_C_Code2 to ""
+                 Set pnA_Garticl_Rate0   to 0
+                 Set pnA_Garticl_Rate00  to 0
+                 Set pnA_Garticl_RateR   to 0
+                 Set piA_Garticl_Aa      to 0
+
+                 //properties š ˜ «¦¤ â¢œš®¦ «¦¬ ˜˜
+                 Set pnA_Garticl_SX2     to 0
+                 Set pnA_Garticl_SP2     to 0
+                 Set pnA_Garticl_SX0     to 0
+                 Set pnA_Garticl_SP0     to 0
+                 Set pnA_Garticl_SX00    to 0
+                 Set pnA_Garticl_SP00    to 0
+                 Set pnA_Garticl_SXR     to 0
+                 Set pnA_Garticl_SPR     to 0
+                 Set pnA_Garticl_SX1     to 0
+                 Set pnA_Garticl_SP1     to 0
+
+                 Set pnB_Garticl_SX2     to 0
+                 Set pnB_Garticl_SP2     to 0
+                 Set pnB_Garticl_SX0     to 0
+                 Set pnB_Garticl_SP0     to 0
+                 Set pnB_Garticl_SX00    to 0
+                 Set pnB_Garticl_SP00    to 0
+                 Set pnB_Garticl_SXR     to 0
+                 Set pnB_Garticl_SPR     to 0
+                 Set pnB_Garticl_SX1     to 0
+                 Set pnB_Garticl_SP1     to 0
+
+      End_Procedure //private.Initialize_Properties
+
+
+    //private
+    //¡˜¢œå«˜  ˜§¦ «¤ update ¡˜  ©œ«á¨œ  hard-coded to garticl_statuse
+    // š ˜ ¤˜ Ÿœà¨Ÿœå â¤˜ á¨Ÿ¨¦ âš¡¬¨¦ §¨¦©à¨ ¤æ, §¨â§œ 
+    // 1. ¤˜ â®œ  æ¢˜ «¦¬ «˜ ¬§æ¢¦ §˜ ¡˜  ©«˜ 4 ¤¦£å©£˜«˜ £›œ¤ ¡á
+    // Garticl.Garticl_Syp0  = 0 and
+    // Garticl.Garticl_Syp00 = 0 and
+    // Garticl.Garticl_Sypr  = 0 and
+    // Garticl.Garticl_Syp2  = 0
+    // 2. ¤˜ â®œ  «¦¬¢á® ©«¦¤ 1 š¨˜££ã ®¨âà©ª ¡˜  1 š¨˜££ã §å©«à©ª
+    // Garticl.Garticl_Xreline >= 1 and
+    // Garticl.Garticl_Pisline >= 1
+    // 3. ¤˜ â®œ  «¦¬¢á® ©«¦¤ 2 gmoves (˜¬«æ £á¢¢¦¤ œå¤˜  §¢œ¦¤˜©£æª)
+    // Garticl.Garticl_Mlines >= 2
+    // „á¤ â©«à ¡˜  £å˜ ˜§¦ « ª §˜¨˜§á¤à 3 ©¬¤Ÿã¡œª ›â¤  ©®çœ , «æ«œ
+    // «¦ á¨Ÿ¨¦ Ÿœà¨œå«˜  under construction ¡˜  â®œ  statuse=(-1)
+    //
+    // „§å©ª, œá¤ ¡˜  ¦  3 §˜¨˜§á¤à ©¬¤Ÿã¡œª  ©®ç¦¬¤ (¦§æ«œ â®à statuse=0,
+    // «æ«œ:
+    // ap) „á¤ flag 06 (˜¬¥á¤œ  ‹“” à¢ã©œà¤ (+§¢ãŸ¦ª)
+    //     ap.1. ¨â§œ  ¤˜ â®œ  «¦¤ ˜¨ Ÿ£æ 1 ©«¦     Garticl_MyfNump and
+    //     ap.2. ¨â§œ  ¤˜ â®œ  valid Gplan_Code ©«¦ Garticl_MyfCodp and
+    //     ap.3. ¨â§œ  ¤˜ â®œ  «¦¤ ˜¨ £æ 1 ©«¦      Garticl_MyfChkp
+    // bp) „á¤ flag 07 (˜¬¥á¤œ  ‹“” à¢ã©œà¤ (+˜¥å˜)
+    //     bp.1. ¨â§œ  ¤˜ â®œ  Ÿœ« ¡ã « £ã  ©«¦     Garticl_MyfValp and
+    //     bp.2. ¨â§œ  ¤˜ â®œ  valid Gplan_Code ©«¦ Garticl_MyfCodp and
+    //     bp.3. ¨â§œ  ¤˜ â®œ  «¦¤ ˜¨ £æ 1 ©«¦      Garticl_MyfChkp
+    // cp) „á¤ flag 08 (£œ é¤œ  ‹“” à¢ã©œà¤ (-§¢ãŸ¦ª)
+    //     cp.1. ¨â§œ  ¤˜ â®œ  «¦¤ ˜¨ Ÿ£æ (-1) ©«¦  Garticl_MyfNump and
+    //     cp.2. ¨â§œ  ¤˜ â®œ  valid Gplan_Code ©«¦ Garticl_MyfCodp and
+    //     cp.3. ¨â§œ  ¤˜ â®œ  «¦¤ ˜¨ £æ 1 ©«¦      Garticl_MyfChkp
+    // dp) „á¤ flag 09 (£œ é¤œ  ‹“” à¢ã©œà¤ (-˜¥å˜)
+    //     dp.1. ¨â§œ  ¤˜ â®œ  ˜¨¤« ¡ã « £ã  ©«¦   Garticl_MyfValp and
+    //     dp.2. ¨â§œ  ¤˜ â®œ  valid Gplan_Code ©«¦ Garticl_MyfCodp and
+    //     dp.3. ¨â§œ  ¤˜ â®œ  «¦¤ ˜¨ £æ 1 ©«¦      Garticl_MyfChkp
+    // ˜¨æ£¦ œª ©¬¤Ÿã¡œª  ©®ç¦¬¤ ¡˜  š ˜ «¤ ‹“” ˜š¦¨é¤ (aa ba ca da)
+    //œá¤ «¦ á¨Ÿ¨¦ œå¤˜  âš¡¬¨¦ §¨¦©à¨ ¤á ¡˜  â®œ  ˜˜ > 0 , «æ«œ œå¤˜  âš¡¬¨¦ œ¤£œ¨à£â¤¦
+    Function private.fiCurrent_Garticl_Status Returns Integer
+
+             //************************************************************
+             //*        „ Š „ ‚ •  ‘    “   Š  ˆ  — Œ                *
+             //************************************************************
+
+             //â¢œš®¦ª ©¬¤Ÿã¡ª 1 (§¨¦©¦®ã ©«˜ ¬§æ¢¦ §˜ ¢æšà  ©¦« £å˜ª!!!!
+             //                    ›â¤ £›œ¤å¦¬¤, œá¤ ›â¤ «¨â¥œ   check_Arthro_for_ypoloipo
+             If (Not(;
+                 (Garticl.Garticl_Syp0  = 0) and;
+                 (Garticl.Garticl_Syp00 = 0) and;
+                 (Garticl.Garticl_Sypr  = 0) and;
+                 (Garticl.Garticl_Syp2  = 0);
+                )) Function_Return (-1)
+
+             //â¢œš®¦ª ©¬¤Ÿã¡ª 2
+             If (Not(;
+                 (Garticl.Garticl_Xreline >= 1) and;
+                 (Garticl.Garticl_Pisline >= 1);
+                )) Function_Return (-1)
+
+             //â¢œš®¦ª ©¬¤Ÿã¡ª 3
+             If (Not(;
+                 (Garticl.Garticl_Mlines >= 2);
+                )) Function_Return (-1)
+
+             //************************************************************
+             //*        ‹ “ ”     — Š † ‘ „ — Œ                          *
+             //************************************************************
+             //â¢œš®¦ª ©¬¤Ÿã¡ª ap {flag 06:˜¬¥á¤œ  ‹“” à¢ã©œà¤ (+§¢ãŸ¦ª)}
+             If (Gtypkin.Gtypkin_Flag06 = TRUE);
+             Begin
+                  If (Not(;
+                      (Garticl.Garticl_Myfnump  = 1 )   and;
+                      (Garticl.Garticl_MyfCodp <> "") and;
+                      (Garticl.Garticl_Myfchkp  = 1 );
+                     )) Function_Return (-1)
+             End
+
+             //â¢œš®¦ª ©¬¤Ÿã¡ª bp {(flag 07:˜¬¥á¤œ  ‹“” à¢ã©œà¤ (+˜¥å˜)}
+             If (Gtypkin.Gtypkin_Flag07 = TRUE);
+             Begin
+                  If (Not(;
+                      (Garticl.Garticl_MyfValp  > 0 ) and;
+                      (Garticl.Garticl_MyfCodp <> "") and;
+                      (Garticl.Garticl_Myfchkp  = 1 );
+                     )) Function_Return (-1)
+             End
+
+             //â¢œš®¦ª ©¬¤Ÿã¡ª cp {flag 08:£œ é¤œ  ‹“” à¢ã©œà¤ (-§¢ãŸ¦ª)}
+             If (Gtypkin.Gtypkin_Flag08 = TRUE);
+             Begin
+                  If (Not(;
+                      (Garticl.Garticl_Myfnump  = (-1)) and;
+                      (Garticl.Garticl_MyfCodp <>  "" ) and;
+                      (Garticl.Garticl_Myfchkp  =   1 );
+                     )) Function_Return (-1)
+             End
+
+             //â¢œš®¦ª ©¬¤Ÿã¡ª dp {(flag 07:£œ é¤œ  ‹“” à¢ã©œà¤ (-˜¥å˜)}
+             If (Gtypkin.Gtypkin_Flag09 = TRUE);
+             Begin
+                  If (Not(;
+                      (Garticl.Garticl_MyfValp <  0 ) and;
+                      (Garticl.Garticl_MyfCodp <> "") and;
+                      (Garticl.Garticl_Myfchkp  = 1 );
+                     )) Function_Return (-1)
+             End
+
+             //************************************************************
+             //*        ‹ “ ”    € ‚   — Œ                              *
+             //************************************************************
+             //â¢œš®¦ª ©¬¤Ÿã¡ª aa {flag 10:˜¬¥á¤œ  ‹“” €š¦¨é¤ (+§¢ãŸ¦ª)}
+             If (Gtypkin.Gtypkin_Flag10 = TRUE);
+             Begin
+                  If (Not(;
+                      (Garticl.Garticl_Myfnuma  = 1 )   and;
+                      (Garticl.Garticl_MyfCoda <> "") and;
+                      (Garticl.Garticl_Myfchka  = 1 );
+                     )) Function_Return (-1)
+             End
+
+             //â¢œš®¦ª ©¬¤Ÿã¡ª ba {(flag 11:˜¬¥á¤œ  ‹“” €š¦¨é¤ (+˜¥å˜)}
+             If (Gtypkin.Gtypkin_Flag11 = TRUE);
+             Begin
+                  If (Not(;
+                      (Garticl.Garticl_MyfVala  > 0 ) and;
+                      (Garticl.Garticl_MyfCoda <> "") and;
+                      (Garticl.Garticl_Myfchka  = 1 );
+                     )) Function_Return (-1)
+             End
+
+             //â¢œš®¦ª ©¬¤Ÿã¡ª ca {flag 12:£œ é¤œ  ‹“” €š¦¨é¤ (-§¢ãŸ¦ª)}
+             If (Gtypkin.Gtypkin_Flag12 = TRUE);
+             Begin
+                  If (Not(;
+                      (Garticl.Garticl_Myfnuma  = (-1)) and;
+                      (Garticl.Garticl_MyfCoda <>  "" ) and;
+                      (Garticl.Garticl_Myfchka  =   1 );
+                     )) Function_Return (-1)
+             End
+
+             //â¢œš®¦ª ©¬¤Ÿã¡ª da {(flag 13:£œ é¤œ  ‹“” €š¦¨é¤ (-˜¥å˜)}
+             If (Gtypkin.Gtypkin_Flag13 = TRUE);
+             Begin
+                  If (Not(;
+                      (Garticl.Garticl_MyfVala <  0 ) and;
+                      (Garticl.Garticl_MyfCoda <> "") and;
+                      (Garticl.Garticl_Myfchka  = 1 );
+                     )) Function_Return (-1)
+             End
+
+             //œá¤ œå¤˜  æ¢˜ ok ¡˜  «¦ garticl œå¤˜  ¦¨ ©« ¡¦§¦ £â¤¦,
+             //«æ«œ statuse = 1
+             If (Garticl.Garticl_Aa > 0) Function_Return 1 //valid œ¤£œ¨à£â¤
+             Else                        Function_Return 0 //valid §¨¦©à¨ ¤ã
+    End_Function //private.ficurrent_garticl_status
+
+
+      //private
+      //™¨å©¡œ  œá¤ œ§ «¨â§œ«˜   «¨¦§¦§¦å© (edit) «¦¬ «¨â®¦¤«¦ª Gmove record
+      //©œ ©¬¤á¨«© £œ «¦¤ ˜/˜ «¦¬ á¨Ÿ¨¦¬.
+      //¡˜¢œå«˜  ˜§æ validate_save, ¡˜  ¢œ «¦¬¨šœå £œ «¤ œ¥ãª ¢¦š ¡ã:
+      //1.æ¢˜ «˜ ¤â˜ Gmove §¨â§œ  ¤˜ â®¦¬ ˜˜=0
+      //2.£æ¤¦¤ ¦  bp's Do_Cascade_Update
+      //                xorigise_aa           (limode=1)
+      //                zero_aa               (limode=2)
+      //£§¦¨¦ç¤ ¤˜ ˜¢¢á¥¦¬¤ «¦¤ ˜˜
+      //©œ æ¢œª « ª á¢¢œª §œ¨ §«é©œ ª, œá¤ ˜˜>0 ˜§˜š¦¨œçœ«˜  «¦ edit «à¤ ¡¨å© £à¤ §œ›åà¤
+
+      Function private.fiCheck_Garticl_Aa Returns Integer
+               Integer  liCurrent_Record liCheck
+               Integer  lbAll_Critical_Fields_Are_Not_Changed
+               Integer  lbAll_Computed_Fields_Are_Not_Changed
+
+               Integer  liMode
+
+               String   lsB_Gtypkin_Recr     lsA_Gtypkin_Recr
+               Date     ldB_Garticl_Hmnia    ldA_Garticl_Hmnia
+               Integer  liB_Garticl_No       liA_Garticl_No
+               String   lsB_Garticl_C_Code2  lsA_Garticl_C_Code2
+               Number   lnB_Garticl_Rate0    lnA_Garticl_Rate0
+               Number   lnB_Garticl_Rate00   lnA_Garticl_Rate00
+               Number   lnB_Garticl_RateR    lnA_Garticl_RateR
+               Integer  liB_Garticl_Aa       liA_Garticl_Aa
+
+               Number   lnB_Garticl_SX2      lnA_Garticl_SX2
+               Number   lnB_Garticl_SP2      lnA_Garticl_SP2
+               Number   lnB_Garticl_SX0      lnA_Garticl_SX0
+               Number   lnB_Garticl_SP0      lnA_Garticl_SP0
+               Number   lnB_Garticl_SX00     lnA_Garticl_SX00
+               Number   lnB_Garticl_SP00     lnA_Garticl_SP00
+               Number   lnB_Garticl_SXR      lnA_Garticl_SXR
+               Number   lnB_Garticl_SPR      lnA_Garticl_SPR
+               Number   lnB_Garticl_SX1      lnA_Garticl_SX1
+               Number   lnB_Garticl_SP1      lnA_Garticl_SP1
+
+               Get piMode to liMode
+
+               //â¢œš®¦ª œá¤ ›£ ¦¬¨šé ¤â¦ record
+               Get Current_Record to liCurrent_Record
+               If (liCurrent_Record = 0);
+               Begin //›£ ¦¬¨šå˜ ¤â¦¬ garticl £æ¤¦¤ £œ limode=0 ¡˜  ˜˜=0
+                 If (liMode             <> 0) Function_Return 1 //not valid
+                 If (Garticl.Garticl_Aa <> 0) Function_Return 1 //not valid
+                 Else                         Function_Return 0 //valid
+               End
+
+               //˜¤áš¤à© §˜¢˜ é¤ « £é¤
+               Get psB_Gtypkin_Recr     to lsB_Gtypkin_Recr
+               Get pdB_Garticl_Hmnia    to ldB_Garticl_Hmnia
+               Get piB_Garticl_No       to liB_Garticl_No
+               Get psB_Garticl_C_Code2  to lsB_Garticl_C_Code2
+               Get pnB_Garticl_Rate0    to lnB_Garticl_Rate0
+               Get pnB_Garticl_Rate00   to lnB_Garticl_Rate00
+               Get pnB_Garticl_RateR    to lnB_Garticl_RateR
+               Get piB_Garticl_Aa       to liB_Garticl_Aa
+
+               Get pnB_Garticl_SX2      to lnB_Garticl_SX2
+               Get pnB_Garticl_SP2      to lnB_Garticl_SP2
+               Get pnB_Garticl_SX0      to lnB_Garticl_SX0
+               Get pnB_Garticl_SP0      to lnB_Garticl_SP0
+               Get pnB_Garticl_SX00     to lnB_Garticl_SX00
+               Get pnB_Garticl_SP00     to lnB_Garticl_SP00
+               Get pnB_Garticl_SXR      to lnB_Garticl_SXR
+               Get pnB_Garticl_SPR      to lnB_Garticl_SPR
+               Get pnB_Garticl_SX1      to lnB_Garticl_SX1
+               Get pnB_Garticl_SP1      to lnB_Garticl_SP1
+
+               //˜¤áš¤à© ¤âà¤ « £é¤
+               Get psA_Gtypkin_Recr     to lsA_Gtypkin_Recr
+               Get pdA_Garticl_Hmnia    to ldA_Garticl_Hmnia
+               Get piA_Garticl_No       to liA_Garticl_No
+               Get psA_Garticl_C_Code2  to lsA_Garticl_C_Code2
+               Get pnA_Garticl_Rate0    to lnA_Garticl_Rate0
+               Get pnA_Garticl_Rate00   to lnA_Garticl_Rate00
+               Get pnA_Garticl_RateR    to lnA_Garticl_RateR
+               Get piA_Garticl_Aa       to liA_Garticl_Aa
+
+               Get pnA_Garticl_SX2      to lnA_Garticl_SX2
+               Get pnA_Garticl_SP2      to lnA_Garticl_SP2
+               Get pnA_Garticl_SX0      to lnA_Garticl_SX0
+               Get pnA_Garticl_SP0      to lnA_Garticl_SP0
+               Get pnA_Garticl_SX00     to lnA_Garticl_SX00
+               Get pnA_Garticl_SP00     to lnA_Garticl_SP00
+               Get pnA_Garticl_SXR      to lnA_Garticl_SXR
+               Get pnA_Garticl_SPR      to lnA_Garticl_SPR
+               Get pnA_Garticl_SX1      to lnA_Garticl_SX1
+               Get pnA_Garticl_SP1      to lnA_Garticl_SP1
+
+               //œá¤ æ¢œª ¦  §˜¨á£œ«¨¦  before+after œå¤˜  å©œª,
+               //«æ«œ ˜§¦›â®¦£˜  «¦ validation
+               Move (;
+                     (lsB_Gtypkin_Recr   = lsA_Gtypkin_Recr   ) and;
+                     (ldB_Garticl_Hmnia  = ldA_Garticl_Hmnia  ) and;
+                     (liB_Garticl_No     = liA_Garticl_No     ) and;
+                     (lsB_Garticl_C_Code2= lsA_Garticl_C_Code2) and;
+                     (lnB_Garticl_Rate0  = lnA_Garticl_Rate0  ) and;
+                     (lnB_Garticl_Rate00 = lnA_Garticl_Rate00 ) and;
+                     (lnB_Garticl_RateR  = lnA_Garticl_RateR  )    ;
+                    ) to lbAll_Critical_Fields_Are_Not_Changed
+
+               Move (;
+                     (lnB_Garticl_SX2    = lnA_Garticl_SX2    ) and;
+                     (lnB_Garticl_SP2    = lnA_Garticl_SP2    ) and;
+                     (lnB_Garticl_SX0    = lnA_Garticl_SX0    ) and;
+                     (lnB_Garticl_SP0    = lnA_Garticl_SP0    ) and;
+                     (lnB_Garticl_SX00   = lnA_Garticl_SX00   ) and;
+                     (lnB_Garticl_SP00   = lnA_Garticl_SP00   ) and;
+                     (lnB_Garticl_SXR    = lnA_Garticl_SXR    ) and;
+                     (lnB_Garticl_SPR    = lnA_Garticl_SPR    )    ;
+                    ) to lbAll_Computed_Fields_Are_Not_Changed
+
+               Case Begin
+                    Case (liMode = 0) //normal operation (edit)
+                         If (;
+                              (liB_Garticl_Aa = 0) and;
+                              (liA_Garticl_Aa = 0)    ;
+                            )  Function_Return 0 //valid
+                         If (;
+                             (lbAll_Critical_Fields_Are_Not_Changed = TRUE          ) and;
+                             (lbAll_Computed_Fields_Are_Not_Changed = TRUE          ) and;
+                             (liB_Garticl_Aa                        = liA_Garticl_Aa)    ;
+                             ) Function_Return 0 //valid
+                         Else  Function_Return 1 //not valid
+                    Case Break
+
+                    Case (liMode = 1) //®¦¨ãš© ˜/˜
+                         Function_Return 0 //14/02/2000  1
+                         If (;
+                             (lbAll_Critical_Fields_Are_Not_Changed = TRUE) and;
+                             (lbAll_Computed_Fields_Are_Not_Changed = TRUE) and;
+                             (liB_Garticl_Aa                        = 0   ) and;
+                             (liA_Garticl_Aa                        > 0   )    ;
+                             ) Function_Return 0 //valid
+                         Else  Function_Return 1 //not valid
+                         //  (lnB_Garticl_SX1                       = 0   ) and;
+                         //  (lnA_Garticl_SX1                      <> 0   ) and;
+                         //  (lnB_Garticl_SP1                       = 0   ) and;
+                         //  (lnA_Garticl_SP1                      <> 0   )    ;
+                    Case Break
+
+                    Case (liMode = 2) //£›œ¤ ©£æª ˜/˜
+                         Function_Return 0 //14/02/2000 1
+                         If (;
+                             (lbAll_Critical_Fields_Are_Not_Changed = TRUE) and;
+                             (lbAll_Computed_Fields_Are_Not_Changed = TRUE) and;
+                             (liB_Garticl_Aa                        > 0   ) and;
+                             (liA_Garticl_Aa                        = 0   )    ;
+                             ) Function_Return 0 //valid
+                         Else  Function_Return 1 //not valid
+                         //  (lnB_Garticl_SX1                      <> 0   ) and;
+                         //  (lnA_Garticl_SX1                       = 0   ) and;
+                         //  (lnB_Garticl_SP1                      <> 0   ) and;
+                         //  (lnA_Garticl_SP1                       = 0   )    ;
+                    Case Break
+               Case End
+
+
+               Function_Return 1 //not valid
+      End_Function //private.fiGarticl_Aa
+
+
+    //private
+    //™¨å©¡œ  š ˜ «¦ ©¬š¡œ¡¨ £â¤¦ Ÿœà¨£â¤¦ £œ¨¦¢æš ¦,
+    //«¤ «œ¢œ¬«˜å˜ £œ¨¦£¤å˜ ®¦¨ãš©ª €/€.
+    //œá¤ ›â¤ ¬§á¨®œ  «â«¦ ˜ £œ¨¦£¤å˜, œ§ ©«¨â­œ  «¤ §¨é« £œ¨¦£¤å˜ «ª ®¨ã©œàª
+    //¡˜¢œå«˜  ˜§æ:1. validate_save
+    //             2. private.Xorigise_Aa «ª bp oDo_GL_Maintainance (doGlMntn.bp)
+    Function private.fdGthaa_Last_Hmnia Integer liGthHmgio_Code Returns Date
+             Clear GthAA
+             Move SyscurGL.Company_Code to Gthaa.Company_Code
+             Move SyscurGL.Branch_Code  to Gthaa.Branch_Code
+             Move SyscurGL.Year_Year    to Gthaa.Year_Year
+             Move liGthHmgio_Code       to Gthaa.GthHmgio_Code
+             Find Eq Gthaa By Index.1 //company_code+branch_code+year_year+gthhmgio_code
+             If (Found =1);
+                  Begin //â®œ  ›¦Ÿœå §¨¦š¦¬£â¤àª ˜˜
+                   Function_Return Gthaa.Gthaa_Lhmnia
+                  End
+             Else Begin //›â¤ â®œ  ›¦Ÿœå ˜˜
+                    Function_Return SyscurGL.Year_XrhshFrom
+                  End
+    End_Function //private.fdgthaa_last_hmnia
+
+    //private
+    //™¨å©¡œ  š ˜ «¦ ©¬š¡œ¡¨ £â¤¦ Ÿœà¨£â¤¦ £œ¨¦¢æš ¦,
+    //«¦¤ «œ¢œ¬«˜å¦ ˜¨ Ÿ£æ €/€.
+    //œá¤ ›â¤ ¬§á¨®œ  «â«¦ ¦ª, œ§ ©«¨â­œ  0
+    //¡˜¢œå«˜  ˜§æ:1. validate_save
+    //             2. private.Xorigise_Aa «ª bp oDo_GL_Maintainance (doGlMntn.bp)
+    Function private.fiGthaa_Last_Aa Integer liGthHmgio_Code Returns Integer
+             Clear GthAA
+             Move SyscurGL.Company_Code to Gthaa.Company_Code
+             Move SyscurGL.Branch_Code  to Gthaa.Branch_Code
+             Move SyscurGL.Year_Year    to Gthaa.Year_Year
+             Move liGthHmgio_Code       to Gthaa.GthHmgio_Code
+             Find Eq Gthaa By Index.1 //company_code+branch_code+year_year+gthhmgio_code
+             If (Found =1);
+                  Begin //â®œ  ›¦Ÿœå §¨¦š¦¬£â¤àª ˜˜
+                   Function_Return Gthaa.Gthaa_Laa
+                  End
+             Else Begin //›â¤ â®œ  ›¦Ÿœå ˜˜
+                    Function_Return 0
+                  End
+    End_Function //private.fdgthaa_last_aa
+
+
+    //private
+    //™¨å©¡œ  š ˜ «¦ ©¬š¡œ¡¨ £â¤¦ ¤æ£ ©£˜ & £/¤å˜ œšš¨˜­ãª
+    //«¦ ˜¤«å©«¦ ®¦ record «¦¬ rates ¡˜  ©œ«á¨œ  «˜ 3 properties.
+    //œá¤ ›â¤ ¬§á¨®œ  record  ©¦« £ é¤, ©œ«á¨œ  «˜ properties ©œ -1.
+    // function ˜¬«ã, ¡á¤œ  2 ›¦¬¢œ âª:
+    //˜) ™¨å©¡œ  «¤  ©¦« £å˜ 0 š ˜ «¤ £œ«˜«¨¦§ã «¦¬ ¤¦£å©£˜«¦ª œšš¨˜­ãª
+    //   ©œ ¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©ª, ©œ«á¨¦¤«˜ª ˜¤«å©«¦ ®˜ «¦ pnA_Garticl_Rate0,
+    // ¡˜ 
+    //™) ™¨å©¡œ  « ª  ©¦« £åœª 00 ¡˜  r š ˜ «¤ £œ«˜«¨¦§ã «¦¬ ¤¦£å©£˜«¦ª œšš¨˜­ãª
+    //   ©œ ›œ¬«œ¨œç¦¤ ¤æ£ ©£˜ ®¨ã©ª ¡˜  ¤æ£ ©£˜ reporting,
+    //   ©œ«á¨¦¤«˜ª ˜¤«å©«¦ ®˜ «˜ pnA_Garticl_Rate00 ¡˜  pnA_Garticl_Rater,
+    //   á©®œ«˜ £œ «˜ flags 3 ¡˜  4.
+
+    //****************************************************************************
+    //p r o s o x i   sta rates 2->00 kai 2->r kai 2->0 !!!!!!                   *
+    //****************************************************************************
+
+    //¡˜¢œå«˜  ˜§¦ «¤ update
+    Procedure private.Find_Rates String lsCurrency_C_Code;
+                                 Date   ldRates_Hmnia
+
+              If (lsCurrency_C_Code = "");
+              Begin //›â¤ â®œ  ¦¨ ©Ÿœå ¤æ£ ©£˜ œšš¨˜­ãª ¡˜  ›â¤ £§¦¨é ¤˜ ™¨é  ©¦« £åœª
+               Set pnA_Garticl_Rate0  to (-1)
+               Set pnA_Garticl_Rate00 to (-1)
+               Set pnA_Garticl_RateR  to (-1)
+               Procedure_Return
+              End
+
+              If (lsCurrency_C_Code = Year.Year_C_Code0);
+              Begin //«¦ ¤æ£ ©£˜ œšš¨˜­ãª  ©¦ç«˜  £œ «¦ ¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©ª
+               Set pnA_Garticl_Rate0  to 1
+               //Set pnA_Garticl_Rate00 to 1
+               //Set pnA_Garticl_RateR  to 1
+               //Procedure_Return               sosososo ! ! ! !
+              End
+
+              //If (ldRates_Hmnia = 0);
+              //Begin //›â¤ â®œ  ¦¨ ©Ÿœå £œ¨¦£¤å˜ œšš¨˜­ãª ¡˜  ›â¤ £§¦¨é ¤˜ ™¨é  ©¦« £åœª??????
+              // Set pnA_Garticl_Rate0  to (-1)
+              // Set pnA_Garticl_Rate00 to (-1)
+              // Set pnA_Garticl_RateR  to (-1)
+              // Procedure_Return
+              //End
+
+
+              Clear Rates
+              Move lsCurrency_C_Code to Rates.Currency_C_Code
+              Move ldRAtes_Hmnia     to Rates.Rates_Hmnia
+              Find Eq Rates by Index.1 //currency_c_code+rates_hnmnia
+              If (Found = 1) Begin
+                              Set pnA_Garticl_Rate0  to Rates.Rates_Rate0
+                              Set pnA_Garticl_Rate00 to Rates.Rates_Rate00
+                              Set pnA_Garticl_RateR  to Rates.Rates_RateR
+                             End
+              Else           Begin
+                              Set pnA_Garticl_Rate0  to (-1)
+                              Set pnA_Garticl_Rate00 to (-1)
+                              Set pnA_Garticl_RateR  to (-1)
+
+                             End
+    End_Procedure //private.find_rates
+
+
+    Procedure Construct_Object
+              Forward Send Construct_Object
+
+              Property String  psA_Gtypkin_Recr     ''
+              Property Date    pdA_Garticl_Hmnia    0
+              Property Integer piA_Garticl_No       0
+              Property String  psA_Garticl_C_Code2  ""
+              Property Number  pnA_Garticl_Rate0    0
+              Property Number  pnA_Garticl_Rate00   0
+              Property Number  pnA_Garticl_RateR    0
+              Property Integer piA_Garticl_Aa       0
+
+              Property String  psB_Gtypkin_Recr     ''
+              Property Date    pdB_Garticl_Hmnia    0
+              Property Integer piB_Garticl_No       0
+              Property String  psB_Garticl_C_Code2  ""
+              Property Number  pnB_Garticl_Rate0    0
+              Property Number  pnB_Garticl_Rate00   0
+              Property Number  pnB_Garticl_RateR    0
+              Property Integer piB_Garticl_Aa       0
+
+              Property Integer piDo_Change_Garticl  0 //object id «ª business process
+                                                      //§¦¬ ˜¢¢áœ  «˜ 8 §œ›å˜ ©«¦ Gmove
+
+              //-----------------------------------------properties š ˜ «¦¤ â¢œš®¦ «¦¬ ˜˜
+              Property Integer piMode               0  // 0 : regular data entry operation
+                                                       // 1 : ®¦¨ãš© ˜/˜
+                                                       // 2 : £›œ¤ ©£æª ˜/˜
+
+              Property Number  pnB_Garticl_SX2      0  //X2          2:¤¦£ ©£˜ œšš¨˜­ãª
+              Property Number  pnB_Garticl_SP2      0  //P2
+              Property Number  pnB_Garticl_SX0      0  //x0          0:¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©ª
+              Property Number  pnB_Garticl_SP0      0  //p0
+              Property Number  pnB_Garticl_SX00     0  //x00         00:›œ¬«œ¨œç¦¤ ¤æ£ ©£˜ ®¨ã©ª
+              Property Number  pnB_Garticl_SP00     0  //p00
+              Property Number  pnB_Garticl_SXR      0  //xr          r:¤æ£ ©£˜ reporting
+              Property Number  pnB_Garticl_SPR      0  //pr
+              Property Number  pnB_Garticl_SX1      0  //X1          0:¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©ª ¦¨ ©« ¡¦§¦ £â¤˜
+              Property Number  pnB_Garticl_SP1      0  //P1
+
+              Property Number  pnA_Garticl_SX2      0  //X2          2:¤¦£ ©£˜ œšš¨˜­ãª
+              Property Number  pnA_Garticl_SP2      0  //P2
+              Property Number  pnA_Garticl_SX0      0  //x0          0:¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©ª
+              Property Number  pnA_Garticl_SP0      0  //p0
+              Property Number  pnA_Garticl_SX00     0  //x00         00:›œ¬«œ¨œç¦¤ ¤æ£ ©£˜ ®¨ã©ª
+              Property Number  pnA_Garticl_SP00     0  //p00
+              Property Number  pnA_Garticl_SXR      0  //xr          r:¤æ£ ©£˜ reporting
+              Property Number  pnA_Garticl_SPR      0  //pr
+              Property Number  pnA_Garticl_SX1      0  //X1          0:¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©ª ¦¨ ©« ¡¦§¦ £â¤˜
+              Property Number  pnA_Garticl_SP1      0  //P1
+
+
+              Property Integer piButton_id          0  //š ˜ ¤˜ £¦¬ ›œå®¤œ   cascade update
+                                                       //«˜ gmove recnums
+              //-----------------------------------------properties š ˜ «¦¤ â¢œš®¦ «¦¬ ˜˜
+
+              Property Integer piMustNotConstrain Public 0
+
+              Property Integer piDoNotValidateMe  Public 0
+    End_Procedure   //construct_object
+
+
+    Procedure End_Construct_Object
+              Forward Send End_Construct_Object
+              Set piDo_Change_Garticl to (oDo_Change_Garticl(Self))
+              Send Remove_Client_File Gmovea.File_Number
+    End_Procedure   //end_construct_object
+
+
+    Procedure OnConstrain
+        Forward Send OnConstrain
+        If (piMustNOTConstrain(Self)) Begin
+        End
+        Else Begin
+            Constrain Garticl.Company_Code  eq SysCurGL.Company_Code
+            Constrain Garticl.Branch_Code   eq SysCurGL.Branch_Code
+            Constrain Garticl.Year_Year     eq SysCurGL.Year_Year
+        End
+    End_Procedure
+
+    //˜) œ¤£â¨à© £ã related §œ›åà¤
+    //™) ˜¤áš¤à© properties
+    //š) › ˜®œå¨ © calculated §œ›åà¤
+    //›) œ¤£â¨à© ˜Ÿ¨¦ ©«é¤ (adjust_balances)
+    //œ) œ¤£â¨à© properties after
+    Procedure Update
+              Number lnIsotimia## lnIsotimia1##
+              Forward Send Update
+
+              //˜) œ¤£â¨à© £ã related §œ›åà¤
+              Move SyscurGL.Company_Code  to Garticl.Company_Code
+              Move SyscurGL.Branch_Code   to Garticl.Branch_Code
+              Move SyscurGL.Year_Year     to Garticl.Year_Year
+              Move Gtypkin.Gtypkin_Code   to Garticl.Gtypkin_Code
+
+              Move Gthhmgio.Gthhmgio_Code to Garticl.Gthhmgio_Code
+
+              //™) ˜¤áš¤à© properties
+
+              //š) › ˜®œå¨ © calculated §œ›åà¤ 01:garticl_hmnia
+              //                                02:garticl_rate0
+              //                                03:garticl_rate00
+              //                                04:garticl_rater
+              //                                05:garticl_c_code2
+              //                                06:garticl_MyfNump
+              //                                07:garticl_MyfNuma
+              //                                08:garticl_statuse
+
+              //š.01:› ˜®œå¨ © £œ¨¦£¤å˜ª
+              If (Gthhmgio.Gthhmgio_Period <> 0);
+              Begin //£ã ¡˜¤¦¤ ¡âª §œ¨å¦›¦ 
+               If (Gthhmgio.Gthhmgio_Period < 0);
+                    Move SysCurGL.Year_XrhshFrom to Garticl.Garticl_Hmnia //§œ¨å¦›¦  ˜§¦š¨˜­ãª
+               Else Move SysCurGL.Year_XrhshTo   to Garticl.Garticl_Hmnia //§œ¨å¦›¦   ©¦¢¦š ©£¦ç
+              End
+
+              //£â©à «à¤ flags 2 3 4 6 8 10 12, › ˜®œ ¨ æ£˜©«œ «˜ §˜¨˜¡á«à
+              //calculated §œ›å˜:
+              //š.02:› ˜®œå¨ © rate0  ¡˜ 
+              //š.03:› ˜®œå¨ © rate00 ¡˜ 
+              //š.04:› ˜®œå¨ © rater  ¡˜ 
+              //š.05:› ˜®œå¨ © c_code_2
+              //š.06:garticl_MyfNump
+              //š.07:garticl_MyfNuma
+
+              //************************************************************************
+              //flag 2:˜¥åœª 2 ©œ ¥â¤¦ ¤æ£ ©£˜                                         *
+              //************************************************************************
+              //«¦ garticl §¨â§œ  ¦§à©§ã§¦«œ ¤˜ â®œ  ¤æ£ ©£˜ ¡˜  rate0 !
+              //œá¤  ¡å¤© œ§ «¨â§œ  ˜¥åœª ©œ ¥â¤¦ ¤æ£ ©£˜, «æ«œ:
+              //       ˜) œá¤ ¦ user ›é©œ  ¡˜¨­à«æ rate, «æ«œ  ©®çœ  ˜¬«æ,
+              //          ˜¢¢¦ éª, œá¤ ¦ user ›é©œ  0 rate, «¦ ™¨å©¡¦¬£œ (œá¤ ¬§á¨®œ ) ˜§¦ «¦çª § ¤˜¡œª  ©¦« £ é¤,
+              //          ¡˜  ©œ«á¨¦¬£œ «˜ á¢¢˜ 2 rates.
+              //       ™) œá¤ ¦ user ›é©œ  ¡˜¨­à«æ ¤æ£ ©£˜ œšš¨˜­ãª, «æ«œ  ©®çœ  ˜¬«æ,
+              //          ˜¢¢¦ éª ©œ«á¨¦¬£œ by default ©œ year_c_code0, ¡˜  ˜§¦ §å¤˜¡œª  ©¦« £ é¤
+              //          ©œ«á¨¦¬£œ «˜ á¢¢˜ 2 rates.
+              If (Gtypkin.Gtypkin_Flag02= TRUE );
+                   Begin //œç¨œ© rate £œ«˜«¨¦§ãª ˜¥å˜ª 2 -> 0
+                    If (Garticl.Garticl_C_Code2= "" ) Move Year.Year_C_Code0 to Garticl.Garticl_C_Code2
+                    Send private.Find_Rates Garticl.Garticl_C_Code2 Garticl.Garticl_Hmnia
+                    If (Garticl.Garticl_Rate0  = 0  ) Get pnA_Garticl_Rate0  to Garticl.Garticl_Rate0
+                   End
+              //œá¤  ¡å¤© ›â¤ œ§ «¨â§œ  ˜¥åœª ©œ ¥â¤¦ ¤æ£ ©£˜, «æ«œ
+              //       ©œ«á¨¦¬£œ «¦ rate0 ©œ 1 ¡˜  «¦ c_code2 ©œ year_c_code0
+              Else Begin //˜¥åœª £æ¤¦¤ ©œ ¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©ª
+                    Move Year.Year_C_Code0 to Garticl.Garticl_C_Code2
+                    Move 1                 to Garticl.Garticl_Rate0
+                    Send private.Find_Rates Garticl.Garticl_C_Code2 Garticl.Garticl_Hmnia
+                   End
+
+              //************************************************************************
+              //flag 3:£œ«˜«¨¦§ã ˜¥ é¤ ©œ ›œ¬«œ¨œç¦¤ ¤æ£ ©£˜ ®¨ã©ª                    *
+              //************************************************************************
+              //â®œ  ã› «¨â¥œ   private.Find_Rates, ¡˜  œ›é ˜§¢éª «© £§á£œ «˜ rates,
+              //«˜ ¦§¦å˜ «˜ â®¦¬£œ ã› â«¦ £˜ !
+              If (Gtypkin.Gtypkin_Flag03 = TRUE);
+                   Begin //˜¤áš¤à© rate £œ«˜«¨¦§ãª ˜¥å˜ª 2 -> 00
+                    If (Garticl.Garticl_Rate00 = 0  ) Get pnA_Garticl_Rate00 to Garticl.Garticl_Rate00
+                   End
+              Else Begin //¦  ˜¥åœª ›â¤ £œ«˜«¨â§¦¤«˜  ©œ ›œ¬«œ¨œç¦¤ ¤æ£ ©£˜ ®¨ã©ª
+                    Move 0 to Garticl.Garticl_Rate00
+                    Set pnA_Garticl_Rate00 to 0
+                   End
+
+              //************************************************************************
+              //flag 4:£œ«˜«¨¦§ã ˜¥ é¤ ©œ ¤æ£ ©£˜ reporting                            *
+              //************************************************************************
+              //â®œ  ã› «¨â¥œ   private.Find_Rates, ¡˜  œ›é ˜§¢éª «© £§á£œ «˜ rates,
+              //«˜ ¦§¦å˜ «˜ â®¦¬£œ ã› â«¦ £˜ !
+              If (Gtypkin.Gtypkin_Flag04 = TRUE);
+                   Begin //˜¤áš¤à© rate £œ«˜«¨¦§ãª ˜¥å˜ª 2 -> R
+                    If (Garticl.Garticl_RateR  = 0  ) Get pnA_Garticl_RateR  to Garticl.Garticl_RateR
+                   End
+              Else Begin //¦  ˜¥åœª ›â¤ £œ«˜«¨â§¦¤«˜  ©œ ¤æ£ ©£˜ reporting
+                    Move 0 to Garticl.Garticl_RateR
+                    Set pnA_Garticl_RateR  to 0
+                   End
+
+
+
+              //*********************************************************
+              //flag 6:˜¬¥á¤œ  ‹“” §à¢ã©œà¤ (+§¢ãŸ¦ª)                   *
+              //*********************************************************
+              If (Gtypkin.Gtypkin_Flag06 = TRUE);
+                   Begin
+                    Move 1 to Garticl.Garticl_MyfNump //sos æ®  š ˜ ›¦¨Ÿà« ¡âª ‹“” !
+                   End
+
+
+
+//sososo ¤˜ œ¢œšŸœå ¦ ¡é› ¡˜ª š ˜ «¦ myfnump+a ! ! ! ! ! ! !
+              //*********************************************************
+              //flag 8:£œ é¤œ  ‹“” §à¢ã©œà¤ (-§¢ãŸ¦ª)                   *
+              //*********************************************************
+     Else     If (Gtypkin.Gtypkin_Flag08 = TRUE);
+                   Begin
+                    Move (-1) to Garticl.Garticl_MyfNump
+                   End
+     Else           Move 0 to Garticl.Garticl_MyfNump //sos æ®  š ˜ ›¦¨Ÿà« ¡âª ‹“” !
+
+
+
+              //*********************************************************
+              //flag 10:˜¬¥á¤œ  ‹“” ˜š¦¨é¤ (+§¢ãŸ¦ª)                    *
+              //*********************************************************
+              If (Gtypkin.Gtypkin_Flag10 = TRUE);
+                   Begin
+                    Move 1 to Garticl.Garticl_MyfNuma
+                   End
+
+              //*********************************************************
+              //flag 12:£œ é¤œ  ‹“” ˜š¦¨é¤ (-§¢ãŸ¦ª)                    *
+              //*********************************************************
+     Else     If (Gtypkin.Gtypkin_Flag12 = TRUE);
+                   Begin
+                    Move (-1) to Garticl.Garticl_MyfNuma
+                   End
+     Else           Move   0  to Garticl.Garticl_MyfNuma
+
+
+
+              //š.08:› ˜®œå¨ © statuse
+              Move (private.fiCurrent_Garticl_Status(Self)) to Garticl.Garticl_Statuse
+
+
+              //›) œ¤£â¨à© ˜Ÿ¨¦ ©«é¤ (adjust_balances)
+
+              //œ) œ¤£â¨à© properties after (˜§æ parent buffers!)
+              Set psA_Gtypkin_Recr    to Gtypkin.Gtypkin_Recr
+              Set pdA_Garticl_Hmnia   to Garticl.Garticl_Hmnia
+              Set piA_Garticl_No      to Garticl.Garticl_No
+              Set psA_Garticl_C_Code2 to Garticl.Garticl_C_Code2
+              Set pnA_Garticl_Rate0   to Garticl.Garticl_Rate0
+              Set pnA_Garticl_Rate00  to Garticl.Garticl_Rate00
+              Set pnA_Garticl_RateR   to Garticl.Garticl_RateR
+              Set piA_Garticl_Aa      to Garticl.Garticl_Aa
+
+              //properties š ˜ «¦¤ â¢œš®¦ «¦¬ ˜˜
+              Set pnA_Garticl_SX2     to Garticl.Garticl_SX2
+              Set pnA_Garticl_SP2     to Garticl.Garticl_SP2
+              Set pnA_Garticl_SX0     to Garticl.Garticl_SX0
+              Set pnA_Garticl_SP0     to Garticl.Garticl_SP0
+              Set pnA_Garticl_SX00    to Garticl.Garticl_SX00
+              Set pnA_Garticl_SP00    to Garticl.Garticl_SP00
+              Set pnA_Garticl_SXR     to Garticl.Garticl_SXR
+              Set pnA_Garticl_SPR     to Garticl.Garticl_SPR
+              Set pnA_Garticl_SX1     to Garticl.Garticl_SX1
+              Set pnA_Garticl_SP1     to Garticl.Garticl_SP1
+
+    End_Procedure   //update
+
+
+    Procedure Backout
+              Forward Send Backout
+
+              //œ) œ¤£â¨à© properties before (˜§æ current buffer)
+              Set psB_Gtypkin_Recr    to Garticl.Gtypkin_Recr
+              Set pdB_Garticl_Hmnia   to Garticl.Garticl_Hmnia
+              Set piB_Garticl_No      to Garticl.Garticl_No
+              Set psB_Garticl_C_Code2 to Garticl.Garticl_C_Code2
+              Set pnB_Garticl_Rate0   to Garticl.Garticl_Rate0
+              Set pnB_Garticl_Rate00  to Garticl.Garticl_Rate00
+              Set pnB_Garticl_RateR   to Garticl.Garticl_RateR
+              Set piB_Garticl_Aa      to Garticl.Garticl_Aa
+
+              //properties š ˜ «¦¤ â¢œš®¦ «¦¬ ˜˜
+              Set pnB_Garticl_SX2     to Garticl.Garticl_SX2
+              Set pnB_Garticl_SP2     to Garticl.Garticl_SP2
+              Set pnB_Garticl_SX0     to Garticl.Garticl_SX0
+              Set pnB_Garticl_SP0     to Garticl.Garticl_SP0
+              Set pnB_Garticl_SX00    to Garticl.Garticl_SX00
+              Set pnB_Garticl_SP00    to Garticl.Garticl_SP00
+              Set pnB_Garticl_SXR     to Garticl.Garticl_SXR
+              Set pnB_Garticl_SPR     to Garticl.Garticl_SPR
+              Set pnB_Garticl_SX1     to Garticl.Garticl_SX1
+              Set pnB_Garticl_SP1     to Garticl.Garticl_SP1
+    End_Procedure   // backout
+
+
+    Procedure Creating
+            Forward Send Creating
+
+            Move (Append('',((Trim(SysCurGL.Branch_Site))+;
+                             (Trim(String(Garticl.Garticl_Rec0)))))) to Garticl.Garticl_Recr
+
+              //Add 1 to Year.Year_NumGarticl //˜¨ Ÿ£æª á¨Ÿ¨à¤ «ª ®¨ã©ª
+              If (piDoNotValidateMe(Self)=0);
+                  Move gs_Module_Code to Garticl.Garticl_M_Code //module œšš¨˜­ãª
+
+              //************************************************************************
+              //flag 5:˜¬«æ£˜« ˜¨åŸ£©                                               *
+              //************************************************************************
+              If (Gtypkin.Gtypkin_Flag05 = TRUE);
+                   Begin //«¦ á¨Ÿ¨¦ â®œ  ˜¬«æ£˜« ˜¨åŸ£©
+                    Add 1 to Gtypkin.Gtypkin_L_No
+                    Move Gtypkin.Gtypkin_L_No to Garticl.Garticl_No
+                   End
+              Else Begin //«¦ á¨Ÿ¨¦ â®œ  ®œ ¨¦¡å¤« ˜¨åŸ£©
+                   End
+    End_Procedure //creating
+
+
+    Procedure Deleting
+              Forward Send Deleting
+              //Sub 1 from Year.Year_NumGarticl //˜¨ Ÿ£æª á¨Ÿ¨à¤ «ª ®¨ã©ª
+    End_Procedure //deleting
+
+
+    Procedure Save_Main_File
+              Forward Send Save_Main_File
+
+              //œ¤£â¨à© gthaa, œá¤ «¦ garticl œå¤˜  ¦¨ ©« ¡¦§¦ £â¤¦
+              If (Garticl.Garticl_Aa > 0);
+              Begin
+                  Clear GthAA
+                  Move SysCurGL.Company_Code    to Gthaa.Company_Code
+                  Move SysCurGL.Branch_Code     to Gthaa.Branch_Code
+                  Move SysCurGL.Year_Year       to Gthaa.Year_Year
+                  Move Gthhmgio.GthHmgio_Code   to Gthaa.GthHmgio_Code
+                  Find Eq Gthaa By Index.1 //company_code+branch_code+year_year+gthhmgio_code
+                  If (Found=0);
+                  Begin //›£ ¦¬¨šå˜ ¤â¦¬ record ghthaa
+                       Add 1 to SysrecG.Gthaa_Rec0
+                       Saverecord SysrecG
+                       Move SysrecG.Gthaa_Rec0      to Gthaa.Gthaa_Rec0
+                       Move (Append('',((Trim(SysCurGL.Branch_Site))+;
+                                        (Trim(String(Gthaa.Gthaa_Rec0)))))) to Gthaa.Gthaa_Recr
+
+                       //œ¤£â¨à© related §œ›å¦¬
+                       Move Gthhmgio.Gthhmgio_Recr to Gthaa.Gthhmgio_Recr
+                       Move SysCurGL.Year_Recr     to Gthaa.Year_Recr
+                  End //«â¢¦ª ›£ ¦¬¨šå˜s ¤â¦¬ record gthaa
+
+                  Move (Garticl.Garticl_Hmnia Max Gthaa.Gthaa_Lhmnia) to Gthaa.Gthaa_Lhmnia
+                  Move (Garticl.Garticl_Aa    Max Gthaa.Gthaa_Laa   ) to Gthaa.Gthaa_Laa
+                  Saverecord Gthaa
+              End
+    End_Procedure//save_main_file
+
+    Procedure Operation_Not_Allowed Integer iError_Num
+              String lsError_Message
+              Date   ldGthaa_Hmnia
+              Case Begin
+                   //˜§æ validate save
+                   Case (iError_Num = 1001)
+                        Move ("DDC 156:€¡˜«á¢¢¢ †£œ¨¦£¤å˜ !\n\n‹ ¡¨æ«œ¨ «ª œ¤á¨¥œàª ®¨ã©œàª ("+;
+                        (String(Year.Year_XrhshFrom))+")") to lsError_Message
+                        Case Break
+                   Case (iError_Num = 1002)
+                        Move ("DDC 156:€¡˜«á¢¢¢ †£œ¨¦£¤å˜ !\n\n‹œš˜¢ç«œ¨ «ª ¢ã¥œàª ®¨ã©œàª ("+;
+                        (String(Year.Year_XrhshTo))+")") to lsError_Message
+                        Case Break
+                   Case (iError_Num = 1003)
+                        Move (private.fdGthaa_Last_Hmnia(Self,GthHmgio.GthHmgio_Code)) to ldGthaa_Hmnia
+                        Move ("DDC 156:€¡˜«á¢¢¢ †£œ¨¦£¤å˜ !\n\n‹ ¡¨æ«œ¨/å© «ª «œ¢œ¬«˜å˜ª £œ¨¦£¤å˜ª ®¦¨ãš©ª\n\n€/€ ©«¦ Ÿœà¨£â¤¦ £œ¨¦¢æš ¦ ("+;
+                        (String(ldGthaa_Hmnia))+")") to lsError_Message
+                        Case Break
+                   Case (iError_Num = 1004)
+                        Move ("DDC 156:€¡˜«á¢¢¢ „šš¨˜­ã (rate1) !\n\nƒâ¤ â®œ  ¦¨ ©Ÿœå  ©¦« £å˜ £œ«˜«¨¦§ãª ©œ ¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©œàª !");
+                        to lsError_Message
+                        Case Break
+                   Case (iError_Num = 1005)
+                        Move ("DDC 156:€¡˜«á¢¢¢ „šš¨˜­ã (rate2) !\n\nƒâ¤ â®œ  ¦¨ ©Ÿœå  ©¦« £å˜ £œ«˜«¨¦§ãª ©œ ›œ¬«œ¨â¬¦¤ ¤æ£ ©£˜ ®¨ã©œàª !");
+                        to lsError_Message
+                        Case Break
+                   Case (iError_Num = 1006)
+                        Move ("DDC 156:€¡˜«á¢¢¢ „šš¨˜­ã (rate3) !\n\nƒâ¤ â®œ  ¦¨ ©Ÿœå  ©¦« £å˜ £œ«˜«¨¦§ãª ©œ ¤æ£ ©£˜ reporting !");
+                        to lsError_Message
+                        Case Break
+                   Case (iError_Num = 1007)
+                        Move ("DDC 156:€¡˜«á¢¢¢ „šš¨˜­ã !\n\n‹›œ¤ ¡æª ˜¨ Ÿ£æª §˜¨˜©«˜« ¡¦ç !");
+                        to lsError_Message
+                        Case Break
+                   Case (iError_Num = 1008)
+                        Move ("DDC 156:€›ç¤˜«  «¨¦§¦§¦å© !\n\nì œšš¨˜­ã œå¤˜  ¦¨ ©« ¡ã !");
+                        to lsError_Message
+                        Case Break
+                   Case (iError_Num = 1009)
+                        Clear Codemast
+                        Move "MODULE" to Codemast.Type
+                        Move Garticl.Garticl_M_Code to Codemast.Code
+                        Find Eq Codemast by Index.1 //type+code
+                        Move ("DDC 156:€›ç¤˜«  „šš¨˜­ã\n\n(’¦ á¨Ÿ¨¦ «¨¦§¦§¦ œå«˜  £æ¤¦¤ ˜§æ "+;
+                        (Trim(Codemast.Description))+" )") to lsError_Message
+                        Case Break
+                   Case (iError_Num = 1010)
+                        Move ("DDC 156:€›ç¤˜«  „šš¨˜­ã\n\n(ƒâ¤ â®œ  ¦¨ ©Ÿœå ¤æ£ ©£˜ !)");
+                        to lsError_Message
+                        Case Break
+                   Case (iError_Num = 1011)
+                        Move ("DDC 156:€›ç¤˜«  „šš¨˜­ã\n\n(ƒâ¤ â®œ  ¦¨ ©Ÿœå module !)");
+                        to lsError_Message
+                        Case Break
+                   Case (iError_Num = 1012)
+                        Move ("DDC 156:€›ç¤˜«  „šš¨˜­ã\n\n(ƒâ¤ â®œ  ¦¨ ©Ÿœå delimiter š ˜ «¤ «¨â®¦¬©˜ ®¨ã© !)");
+                        to lsError_Message
+                        Case Break
+                   Case (iError_Num = 1100)
+                        Move "DDC 156:‹ ˜§¦›œ¡«ã „«˜ ¨å˜-•¨ã©" to lsError_Message
+                        Case Break
+
+                   //˜§æ validate delete
+                   Case (iError_Num = 2001)
+                        Move ("DDC 156:€›ç¤˜«  › ˜š¨˜­ã!\n\n’¦ á¨Ÿ¨¦ â®œ  ¦¨ ©« ¡¦§¦ Ÿœå (€/€= "+;
+                        (String(Garticl.Garticl_AA))+" )") to lsError_Message
+                        Case Break
+                   Case (iError_Num = 2002)
+                        Clear Codemast
+                        Move "MODULE" to Codemast.Type
+                        Move Garticl.Garticl_M_Code to Codemast.Code
+                        Find Eq Codemast by Index.1 //type+code
+                        Move ("DDC 156:€›ç¤˜«  › ˜š¨˜­ã!\n\n(’¦ á¨Ÿ¨¦ › ˜š¨á­œ«˜  £æ¤¦¤ ˜§æ "+;
+                        (Trim(Codemast.Description))+" )") to lsError_Message
+                        Case Break
+                   Case (iError_Num = 2100)
+                        Move "DDC 059:‹ ˜§¦›œ¡«ã „«˜ ¨å˜-•¨ã©"  to lsError_Message
+                        Case Break
+
+                   Case Else
+                        Forward Send Operation_Not_Allowed iError_Num
+              Case End
+
+              Error iError_Num lsError_Message
+    End_Procedure // operation_not_allowed
+
+    Procedure Shmera integer iField  Date dDate
+        Local Integer Changed
+        Get Field_Changed_State iField to Changed
+        If (Changed=0 AND dDate =0) Begin
+            SysDate4 dDate
+            Set Field_Default_Value iField to dDate
+        End
+    End_Procedure   // Shmera
+    //1001:gartcl_hmnia >= year_xrhsh From
+    //1002:gartcl_hmnia <= year_xrhsh To
+    //1003:gartcl_hmnia >  gthaa_lhmnia
+
+    //????:gartcl_aa    >= gthaa_laa
+
+
+    //1004:gartcl_rate0 > 0
+    //1005:If flag03 then garticl_rate0 > 0
+    //1006:If flag04 then garticl_rateR > 0
+    //1007:garticl_no > 0
+
+    //1008:garticl_aa = 0:œ§ «¨â§œ«˜  save £æ¤¦¤ ©œ §¨¦©à¨ ¤âª ¡ ¤ã©œ ª-«˜ ¦¨ ©« ¡á á¨Ÿ¨˜ ›â¤ ˜¢¦ é¤¦¤«˜ 
+    //                   (§¨¦©¦®ã ©«¤ ®¦¨ã©© ˜˜ : §¨é«˜ ©éà Gmove ¡˜  £œ«á garticl!)
+    //                   § Ÿ˜¤æ¤ ¦ â¢œš®¦ª ˜¬«æª ¤˜ šå¤œ  £œ «¦ statuse
+    //                   «œ¢ ¡á, ¦ â¢œš®¦ª ˜¬«æª šå¤œ«˜  £œ «¤ pibgarticl_aa
+
+    //1009:m_code: œšš¨˜­ã œ§ «¨â§œ«˜  £æ¤¦¤ ˜§¦ ¦ module §¦¬ «¤ ›£ ¦ç¨š©œ
+    //1010:«¦ c_code2 § á¤œ«˜  ˜§¦ «¦ validation table (no blanks allowed!)
+    //     ›¬©«¬®éª, ¢æšà «¦¬ šœš¦¤æ«¦ª æ«  §¨é«˜ «¨â®œ  «¦ validation «¦¬ deo,
+    //     ¬§¦®¨œæ¤¦£˜  ¤˜ ™áà blaks allowed, ¡˜  ¤˜ validaro œ›é,
+    //     › æ«  «¨â®¦¬¤ ¡˜  bp's ®à¨åª deo's.
+    //1011:m_code (š ˜ «¦¬ª å› ¦¬ª ¢æš¦¬ª «¦¬ c_code_2
+    //1012:year_delimiter <> ""
+    //1013:aa >= gthaa if aa>0  !!!!!!!
+    //1100:cby = globals
+
+    //period (fixed date)????
+    //????:garticl_hmnia <= year_entry_date
+    //     :flag
+
+
+    Function Validate_Save Returns Integer
+             Integer iReturnVal liGthaa_Last_Aa
+             Date    ldGthaa_Last_Hmnia
+
+             Forward Get Validate_Save to iReturnVal
+
+             If (Not(iReturnVal));
+             Begin
+              //œç¨œ© «œ¢œ¬«˜å˜ª £œ¨¦£¤å˜ª ®¦¨ãš©ª ˜/˜ ©«¦ Ÿœà¨£â¤¦ £œ¨¦¢æš ¦
+              Move (private.fdGthaa_Last_Hmnia(Self,GthHmgio.GthHmgio_Code)) to ldGthaa_Last_Hmnia
+              //‘•† ! ˜¬«æ ›â¤ œ¢âš®œ«˜  !
+              //œç¨œ© «œ¢œ¬«˜å¦¬ ˜¨ Ÿ£¦ç ˜/˜ ©«¦ Ÿœà¨£â¤¦ £œ¨¦¢æš ¦
+              Move (private.fiGthaa_Last_Aa   (Self,GthHmgio.GthHmgio_Code)) to liGthaa_Last_Aa
+
+              // 10/05/2002
+              // Gia na mhn xtypaei h BP doEnhmGL sthn request_save
+              // dioti gia kapoio logo pou den exoume akoma brei
+              // erxetai edo me thn hmeromhnia kenh
+
+              If (piDoNotValidateMe(Self)=0) Begin
+                  //1001+1002+1003:â¢œš®¦  £œ¨¦£¤å˜ª
+                  If (Not(Garticl.Garticl_Hmnia >= SysCurGL.Year_XrhshFrom )) Send Operation_Not_Allowed 1001
+                  If (Not(Garticl.Garticl_Hmnia <= SysCurGL.Year_XrhshTo   )) Send Operation_Not_Allowed 1002
+
+                //sosososososo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                //§¨â§œ  ¤˜ £§œå > ¡˜  æ®  >=, › æ«  â®œ  §¨æ™¢£˜  ¨¦¬«å¤˜ ˜˜
+                //pimode=1 š ˜ «¤ ®¦¨ãš© ˜˜
+                //pimode=2 š ˜ «¦¤ £›œ¤ ©£æ ˜˜
+                //«¦ pimode â®œ  « ª œ¥ãª « £âª : 0 : regular data entry operation
+                //                                1 : ®¦¨ãš© ˜/˜
+                //                                2 : £›œ¤ ©£æª ˜/˜
+
+                  If (((piMode(Self)) = 0) and (liGthaa_Last_Aa<>0));
+                  Begin //regular data entry, â¢œš®¦ª £/¤å˜ª ¢¦š ©« ¡¦§¦å©ª
+                       If (Not(Garticl.Garticl_Hmnia >   ldGthaa_Last_Hmnia  )) Send Operation_Not_Allowed 1003
+                  End
+
+                  Else;
+                  If ((piMode(Self)) = 1);
+                  Begin //®¦¨ãš© ˜/˜
+                       If (Not(Garticl.Garticl_Hmnia >=  ldGthaa_Last_Hmnia  )) Send Operation_Not_Allowed 1003
+                  End
+
+                  Else;
+                  If ((piMode(Self)) = 2);
+                  Begin //£›œ¤ ©£æª ˜/˜
+                       If (Not(Garticl.Garticl_Hmnia <=  ldGthaa_Last_Hmnia  )) Send Operation_Not_Allowed 1003
+                  End
+
+    //              Else;
+    //              If ((piMode(Self)) = 0);
+    //              Begin //regular data entry
+    //                   //1009:â¢œš®¦ª module œšš¨˜­ãª
+    //                   If (Not(Garticl.Garticl_M_Code = gs_Module_Code))       Send Operation_Not_Allowed 1009
+    //              End
+    ////sosososososo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+              End
+
+
+              //1004:â¢œš®¦ª  ©¦« £å˜ª 0 //sosososo ¤˜ œ¢œšŸœå  ¢¦š ¡ã
+              If (Not(Garticl.Garticl_Rate0  >  0                  )) Send Operation_Not_Allowed 1004
+              //1004:â¢œš®¦ª  ©¦« £å˜ª 00
+              If ((Gtypkin.Gtypkin_Flag03 = TRUE) and;
+              (Not(Garticl.Garticl_Rate00 > 0));
+                 )                                                    Send Operation_Not_Allowed 1005
+              //1005:â¢œš®¦ª  ©¦« £å˜ª r
+              If ((Gtypkin.Gtypkin_Flag04 = TRUE) and;
+              (Not(Garticl.Garticl_RateR  > 0));
+                 )                                                    Send Operation_Not_Allowed 1006
+
+              //1007:â¢œš®¦ª ˜¨ Ÿ£¦ç §˜¨˜©«˜« ¡¦ç
+              If (Not(Garticl.Garticl_No     >  0                  )) Send Operation_Not_Allowed 1007
+
+              //1008:â¢œš®¦ª ˜/˜ (¢¦š ©« ¡¦§¦å©ª)
+              If (Not((private.fiCheck_Garticl_Aa(Self)) = 0))        Send Operation_Not_Allowed 1008
+
+//â­¬šœ ˜§æ œ›é, › æ«  œå®œ §¨æ™¢£˜  ¨¦¬«å¤˜ ®¦¨ãš©ª-£›œ¤ ©£¦ç ˜/˜
+//----------> //1009:â¢œš®¦ª module œšš¨˜­ãª
+//----------> If (Not(Garticl.Garticl_M_Code = gs_Module_Code))       Send Operation_Not_Allowed 1009
+
+              //1010:â¢œš®¦ª £ã ¡œ¤¦ç ¤¦£å©£˜«¦ª
+              If (Not(Garticl.Garticl_C_Code2 <> ""          ))       move syscurgl.c_code0 to Garticl.Garticl_C_Code2
+
+              //1011:â¢œš®¦ª £ã ¡œ¤¦ç module œšš¨˜­ãª
+              If (Not(Garticl.Garticl_M_Code <> ""           ))       Send Operation_Not_Allowed 1011
+
+              //1012:â¢œš®¦ª £ã ¡œ¤¦ç year_delimiter
+        //      If (Not(Year.Year_Delimiter <> ""              ))       Send Operation_Not_Allowed 1012
+
+              //1100:cby = globals
+              If ( ;
+                  (Not(Garticl.Company_Code = gs_Selected_Company_Code)) or;
+                  (Not(Garticl.Branch_Code  = gs_Selected_Branch_Code )) or;
+                  (Not(Garticl.Year_Year    = gi_Selected_Year        ));
+                  )                                                   Send Operation_Not_Allowed 1100
+
+              //â¢œš®¦ª £œ¨¦£¤å˜ª œ¨š˜©å˜ª
+              //If (Not(Garticl.Garticl_Hmnia <= Year.Year_Entry_Date)) Send Operation_Not_Allowed 999
+
+             End //«â¢¦ª ¡é› ¡˜ validation
+             Function_Return iReturnVal
+    End_Function   // validate_save
+
+
+    //2001:«˜ ¦¨ ©« ¡¦§¦ £â¤˜ á¨Ÿ¨˜ ›â¤ › ˜š¨á­¦¤«˜ 
+    //2002:«¦ á¨Ÿ¨¦ › ˜š¨á­œ«˜  £æ¤¦¤ ˜§¦ «¦ module §¦¬ «¦ ›£ ¦ç¨š©œ
+    //2100:cby = globals
+    Function Validate_Delete  Returns Integer
+             Integer iReturnVal
+             Forward Get Validate_Delete  To iReturnVal
+             If (Not(iReturnVal));
+             Begin
+             //2001:â¢œš®¦ª ˜/˜ (¢¦š ©« ¡¦§¦å©ª)
+              If (Garticl.Garticl_AA > 0                      )       Send Operation_Not_Allowed 2001
+
+              //2002:â¢œš®¦ª module œšš¨˜­ãª 13/05/02 removed from georg
+              //If (Not(Garticl.Garticl_M_Code = gs_Module_Code))       Send Operation_Not_Allowed 2002
+
+              //2100:cby = globals
+              If ( ;
+                   (Not(Garticl.Company_Code = SysCurGL.Company_Code)) or;
+                   (Not(Garticl.Branch_Code  = SysCurGL.Branch_Code )) or;
+                   (Not(Garticl.Year_Year    = SysCurGL.Year_Year   ));
+                  )                                                   Send Operation_Not_Allowed 2100
+             End //«â¢¦ª ¡é› ¡˜ validation
+             Function_Return iReturnVal
+    End_Function   // Validate_Delete
+
+     Procedure Request_Save
+               Integer liDo_Change_Garticl liTrexe_Result
+
+               //***************
+               BEGIN_TRANSACTION
+               //***************
+               Set Smart_Filemode_State to False
+               Forward Send Request_Save
+               Set Smart_Filemode_State to True
+
+               If (Not(Err));
+                    Begin //œ­'æ©¦¤ «¦ garticl record ©éŸ¡œ ¡˜¤¦¤ ¡á, §¨¦®à¨áà ©«¤ bpo
+                     Get piDo_Change_Garticl to liDo_Change_Garticl
+                     Get Trexe of liDo_Change_Garticl (Self) to liTrexe_Result
+
+                     If (liTrexe_Result <> 0);
+                        Begin //œ­'æ©¦¤  bpo ›â¤ â«¨œ¥œ ©à©«á, ˜¡¬¨é¤à «¦ transaction
+                         //***************
+                         ABORT_TRANSACTION
+                         //***************
+                         //£›œ¤ ©£æª properties š ˜ œ§æ£œ¤ ¡å¤©
+                         Send private.Initialize_Properties
+                         Indicate Err False
+                         Procedure_Return
+                        End
+                     //œ§˜¤˜­¦¨á «¦¬ system indicator err
+                     Indicate Err False
+                    End
+
+               Else Begin //œ­'æ©¦¤ «¦ Gmove record ›â¤ ©éŸ¡œ, ˜¡¬¨é¤à «¦ transaction
+                     //***************
+                     ABORT_TRANSACTION
+                     //***************
+                     Send private.Initialize_Properties
+                     Indicate Err False
+                     Procedure_Return
+                    End
+
+             //œ­'æ©¦¤ ¡˜  «¦ garticl record ©éŸ¡œ ¡˜¤¦¤ ¡á,
+             //¡˜   bpo â«¨œ¥œ ®à¨åª error,  ¡˜«˜®à¨é «¦ transaction
+             //***************
+             END_TRANSACTION
+             //***************
+             //£›œ¤ ©£æª properties š ˜ œ§æ£œ¤ ¡å¤©
+             Send private.Initialize_Properties
+             //œ§˜¤˜­¦¨á «¦¬ system indicator err
+             //?????Indicate Err False
+    End_Procedure   // Request_Save
+
+
+     //¡˜¢œå«˜  ˜§¦ á¢¢˜ modules £œ©˜ ˜§¦ transaction,
+     //á¨˜ œå¤˜  å› ˜ £œ «¤ original request_save, £æ¤¦¤ §¦¬
+     //›â¤ ¡á¤œ  begin-abort-end transaction
+     //sososo please check logic with err indicator !
+     //¡˜¢œå«˜  ˜§æ:1.private.Transaction_Bmove_Update_Gmove «ª oDo_GL_Maintainance
+     //                ¦§¦å˜ £œ «¤ ©œ ¨á «ª ¡˜¢œå«˜  ˜§¦ «¤ request_save «¦¬ bmove.dd
+     Procedure Request_Save_No_Transaction
+               Integer liDo_Change_Garticl liTrexe_Result
+
+               Forward Send Request_Save
+
+               If (Not(Err));
+                    Begin //œ­'æ©¦¤ «¦ garticl record ©éŸ¡œ ¡˜¤¦¤ ¡á, §¨¦®à¨áà ©«¤ bpo
+                     Get piDo_Change_Garticl to liDo_Change_Garticl
+                     Get Trexe of liDo_Change_Garticl (Self) to liTrexe_Result
+
+                     If (liTrexe_Result <> 0);
+                        Begin //œ­'æ©¦¤  bpo ›â¤ â«¨œ¥œ ©à©«á, ˜¡¬¨é¤à «¦ transaction
+                         //£›œ¤ ©£æª properties š ˜ œ§æ£œ¤ ¡å¤©
+                         Send private.Initialize_Properties
+                         Indicate Err False
+                         Procedure_Return
+                        End
+                     //œ§˜¤˜­¦¨á «¦¬ system indicator err
+                     Indicate Err False
+                    End
+
+               Else Begin //œ­'æ©¦¤ «¦ Gmove record ›â¤ ©éŸ¡œ, ˜¡¬¨é¤à «¦ transaction
+                     Send private.Initialize_Properties
+                     Procedure_Return
+                    End
+
+             //œ­'æ©¦¤ ¡˜  «¦ garticl record ©éŸ¡œ ¡˜¤¦¤ ¡á,
+             //¡˜   bpo â«¨œ¥œ ®à¨åª error,  ¡˜«˜®à¨é «¦ transaction
+             //£›œ¤ ©£æª properties š ˜ œ§æ£œ¤ ¡å¤©
+             Send private.Initialize_Properties
+             //œ§˜¤˜­¦¨á «¦¬ system indicator err
+             //?????Indicate Err False
+    End_Procedure   // request_save_no_transaction
+
+
+
+//------------------------------------------------------START OF DEO REQUIRED FUNCTIONS
+
+    Procedure pFindIsotimia String  Curr_Code##;
+                            Date    ldArticle_Date##
+                            Integer liModeF57##
+
+              Clear Rates
+              Move Curr_Code##      to Rates.Currency_C_code
+              Move ldArticle_Date## to Rates.Rates_Hmnia
+
+              Find Eq Rates By Index.1 //currency_c_code+rates_hmnia
+
+              If (Found = 0);
+                   Begin //œá¤ ›â¤ ™¨é  ©¦« £å˜
+                    //If (gsC_Code0 = Curr_Code##);
+                    //     Begin //œá¤ «¦ ¤æ£ ©£˜ œšš¨˜­ãª œå¤˜  «¦ å› ¦ £œ «¦ ¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©œàª
+                    //      Set Field_Changed_Value Field Garticl.Garticl_Rate0 to 1
+                    //      //Set pnRateFind to 1
+                    //     End
+                   End
+              Else Begin //œá¤ ™¨é  ©¦« £å˜
+                    //If (gsC_Code0 = Curr_Code##);
+                    //     Begin //œá¤ «¦ ¤æ£ ©£˜ œšš¨˜­ãª œå¤˜  «¦ å› ¦ £œ «¦ ¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©œàª
+                    //      Set Field_Changed_Value Field Garticl.Garticl_Rate0 to 1
+                    //      //Set pnRateFind to 1
+                    //     End
+                    //Else Begin //œá¤ «¦ ¤æ£ ©£˜ œšš¨˜­ãª ƒ„Œ œå¤˜  «¦ å› ¦ £œ «¦ ¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©œàª
+                    //      Set Field_Changed_Value Field Garticl.Garticl_Rate0 to Rates.Rates_Rate0
+                    //      //Set pnRateFind to Rates.Rates_Rate0
+                    //     End
+                    End
+
+              //if (liModeF57## eq 0 ) set Field_Changed_Value Field Garticl.Garticl_Rate0 to Rates.Rates_Rate0
+    End_Procedure //pfindisotimia
+
+
+
+
+    // fiValidateGarticlFields_iexit:
+
+    Function fiCheckDate Integer liField ;
+                         Date    ldArticle_Date;
+                         Date    ldAllowedDateFrom ;
+                         Date    ldAllowedDateTo ;
+                         Integer liMode;
+                         Integer liHmgio_X##;
+                         Returns Integer
+
+        Integer liReturnVal##
+
+        Move 0 to liReturnVal##
+        If (liMode = 1);
+             Begin //mode 1 =?
+              If (ldArticle_Date < ldAllowedDateFrom) Function_Return 127
+              If (ldArticle_Date > ldAllowedDateTo  ) Function_Return 127
+             End
+        If (liMode = 2);
+             Begin //mode 2 = ?
+              If (ldArticle_Date < ldAllowedDateFrom) Move 127 to liReturnVal##
+              If (ldArticle_Date > ldAllowedDateTo  ) Move 127 to liReturnVal##
+             End
+//telika pia i diafora mode 1 kai 2 ?
+        Function_Return liReturnVal##
+    End_Function //fiCheckDate
+
+
+    Function fiValidateGarticlFields_iExit Integer liField##;
+                                           String lsFieldvalue##;
+                                           Returns Integer
+        Integer iReturnVal
+function_return 0 //sososososo
+        Date    ldAllowedDateFrom## //=Year_OpenFrom+Year.Year_DateAA
+        Date    ldAllowedDateTo##   //=Year_OpenTo
+        Date    ldArticl_Hmnia##
+        Date    ldDateAA##
+        String  sName##
+        Integer iMainFile## liReturnVal## liReturnValb## liHmgioCode_X##
+        Number  lnGtypkin_Code## lnIsot##
+
+        Get Main_File to iMainFile##
+        Get_Attribute DF_FIELD_NAME of iMainFile## liField## to sName##
+
+        //â¢œš®¦ª £œ¨¦£¤å˜ª á¨Ÿ¨¦¬
+        If (sName## = 'GARTICL_HMNIA');
+             Begin
+              Move (Trim(lsFieldvalue##)) to lsFieldvalue##
+              Get Field_Current_Value of (Year_DD    (Self)) Field SysCurGL.Year_OpenFrom     to ldAllowedDateFrom##
+              Get Field_Current_Value of (Year_DD    (Self)) Field SysCurGL.Year_OpenTo       to ldAllowedDateTo##
+              Get Field_Current_Value of (GThHmgio_DD(Self)) Field GThHmgio.GthHmgio_Code to liHmgioCode_X##
+
+              Move (fiCheckDate(self,liField##,;
+                                     lsFieldvalue##,;
+                                     ldAllowedDateFrom##,;
+                                     ldAllowedDateTo##,;
+                                     1,;
+                                     liHmgioCode_X##);
+                               ) to liReturnVal##
+              If (liReturnval## <> 0);
+                   Begin
+                    Error 127 " Invalid Date !!!!!"
+                    Function_return 127
+                   End
+
+              Get Field_Current_Value of (Year_DD(Self)) Field Year.Year_DateAA to ldAllowedDateFrom##
+              Move (fiCheckDate(Self,liField##,;
+                                     lsFieldvalue##,;
+                                     ldAllowedDateFrom##,;
+                                     ldAllowedDateTo##,;
+                                     2,;
+                                     liHmgioCode_X##);
+                               ) to liReturnVal##
+              If (liReturnval## <> 0);
+                   Begin
+                     Error 127 " Invalid Date !!!!!"
+                     Function_return 127
+                   End
+
+             End
+
+             //â¢œš®¦ª ¤¦£å©£˜«¦ª œšš¨˜­ãª
+             If (sName## = 'GARTICL_C_CODE2');
+                  Begin
+                   Move (trim(lsFieldvalue##)) to lsFieldvalue##
+                   Get Field_Current_Value Field Garticl.Garticl_Hmnia  to ldArticl_Hmnia##
+                   Get Field_Current_Value Field Garticl.Garticl_Rate0  to lnIsot##
+                   If (lnIsot## = 0 ) Send pFindIsotimia lsFieldValue## ldArticl_Hmnia## 0
+                  End
+
+             Move 0 to iReturnVal
+
+             Function_Return iReturnVal
+    End_Function // fiValidateGarticlFields_iexit
+//------------------------------------------------------END OF DEO REQUIRED FUNCTIONS
+
+
+
+
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Garticl.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Gmove.File_Number
+        Send Add_Client_File  Gmovea.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Gtypkin.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Gthaa.File_Number  DD_LOCK_ON_SAVE
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_NEW_SAVE
+        Send Add_System_File  Gbridgeh.File_Number  DD_LOCK_ON_DELETE
+        Send Add_System_File  Gbridged.File_Number  DD_LOCK_ON_DELETE
+        Send Add_System_File  Barticl.File_Number  DD_LOCK_ON_DELETE
+        Send Add_System_File  Particle.File_Number  DD_LOCK_ON_DELETE
+
+        Define_Auto_Increment  Sysrecg.Garticle_Rec0  To Garticl.Garticl_Rec0
+
+        // Field-based properties.......................
+
+        // Garticl.Company_Code
+        //DDB/ Comment_Short       Field Garticl.Company_Code To "„¤£œ¨é¤œ«˜  ©«¤ Update"
+
+        // Garticl.Branch_Code
+        //DDB/ Comment_Short       Field Garticl.Branch_Code To "„¤£œ¨é¤œ«˜  ©«¤ Update"
+
+        // Garticl.Year_Year
+        //DDB/ Comment_Short       Field Garticl.Year_Year To "„¤£œ¨é¤œ«˜  ©«¤ Update"
+
+        // Garticl.Gtypkin_Code
+        //DDB/ Comment_Short       Field Garticl.Gtypkin_Code To "„¤£œ¨é¤œ«˜  ©«¤ Update"
+
+        // Garticl.Garticl_Hmnia
+        //DDB/ Comment_Short       Field Garticl.Garticl_Hmnia To "„¤£œ¨é¤œ«˜  ©«¤ Update £æ¤¦¤ š ˜ £/š ˜  ©¦¢¦š ©£¦ç & ˜§¦š¨˜­ãª"
+        Set Field_Entry_msg        Field Garticl.Garticl_Hmnia To Shmera
+        Set Field_Prompt_Object    Field Garticl.Garticl_Hmnia To (Garticl(Self))
+
+        // Garticl.Garticl_No
+
+        // Garticl.Garticl_Rec0
+
+        // Garticl.Gtypkin_Recr
+
+        // Garticl.Gthhmgio_Code
+        //DDB/ Comment_Short       Field Garticl.Gthhmgio_Code To "„¤£œ¨é¤œ«˜  ©«¤ Update"
+
+        // Garticl.Garticl_Recr
+        Set Field_Prompt_Object    Field Garticl.Garticl_Recr To (Garticl(Self))
+
+        // Garticl.Garticl_Aa
+
+        // Garticl.Garticl_Aitiol
+        Set Field_Value_Table      Field Garticl.Garticl_Aitiol To (Garticl_Garticl_A_Code_VT(Self))
+
+        // Garticl.Garticl_C_Code2
+        Set Field_Value_Table      Field Garticl.Garticl_C_Code2 To (Garticl_Garticl_C_Code2_VT(Self))
+
+        // Garticl.Garticl_Rate0
+        //DDB/ Comment_Short       Field Garticl.Garticl_Rate0 To "„¤£œ¨é¤œ«˜  ©«¤ Update if not  User Inputed"
+
+        // Garticl.Garticl_Rate00
+        //DDB/ Comment_Short       Field Garticl.Garticl_Rate00 To "„¤£œ¨é¤œ«˜  ©«¤ Update if not  User Inputed"
+
+        // Garticl.Garticl_Rater
+        //DDB/ Comment_Short       Field Garticl.Garticl_Rater To "„¤£œ¨é¤œ«˜  ©«¤ Update if not  User Inputed"
+
+        // Garticl.Garticl_Statuse
+        //DDB/ Comment_Short       Field Garticl.Garticl_Statuse To "„¤£œ¨é¤œ«˜  ©«¤ Update"
+        Set Field_Value_Table      Field Garticl.Garticl_Statuse To (Garticl_Garticl_Statuse_VT(Self))
+
+        // Garticl.Garticl_Statusa
+
+        // Garticl.Garticl_M_Code
+        //DDB/ Comment_Short       Field Garticl.Garticl_M_Code To "Module „šš¨˜­ãª"
+        Set Field_Value_Table      Field Garticl.Garticl_M_Code To (Garticl_Garticl_M_Code_VT(Self))
+
+        // Garticl.Garticl_Sx0
+
+        // Garticl.Garticl_Sp0
+
+        // Garticl.Garticl_Syp0
+
+        // Garticl.Garticl_Syp0k
+
+        // Garticl.Garticl_Sx00
+
+        // Garticl.Garticl_Sp00
+
+        // Garticl.Garticl_Syp00
+
+        // Garticl.Garticl_Syp00k
+
+        // Garticl.Garticl_Sx1
+
+        // Garticl.Garticl_Sp1
+
+        // Garticl.Garticl_Sx2
+
+        // Garticl.Garticl_Sp2
+
+        // Garticl.Garticl_Syp2
+
+        // Garticl.Garticl_Sxr
+
+        // Garticl.Garticl_Spr
+
+        // Garticl.Garticl_Sypr
+
+        // Garticl.Garticl_Syprk
+
+        // Garticl.Garticl_Xreline
+
+        // Garticl.Garticl_Pisline
+
+        // Garticl.Garticl_Inc
+
+        // Garticl.Gartcl_Exp
+
+        // Garticl.Garticl_Cash
+
+        // Garticl.Garticl_Omada
+
+        // Garticl.Garticl_Other
+
+        // Garticl.Garticl_Mlines
+
+        // Garticl.Garticl_Myfvalp
+
+        // Garticl.Garticl_Myfcodp
+
+        // Garticl.Garticl_Myfnump
+        //DDB/ Comment_Short       Field Garticl.Garticl_Myfnump To "„¤£œ¨é¤œ«˜  ©«¤ Update"
+
+        // Garticl.Garticl_Myfchkp
+
+        // Garticl.Garticl_Myfvala
+
+        // Garticl.Garticl_Myfcoda
+
+        // Garticl.Garticl_Myfnuma
+        //DDB/ Comment_Short       Field Garticl.Garticl_Myfnuma To "„¤£œ¨é¤œ«˜  ©«¤ Update"
+
+        // Garticl.Garticl_Myfchka
+
+        // Garticl.Apo_Gbridge
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Garticl.Garticl_C_Code2 To "EUR"
+        Set Field_Changed_Value   Field Garticl.Garticl_Statuse To -1
+        Set Field_Changed_Value   Field Garticl.Garticl_Statusa To 0
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+End_Class    // Garticle_DataDictionary
+
+
+
+Use doCngGar.bp //defines business process oDoChangeKin
+
+///////////////If ((Gtypkin.Gtypkin_Code ne Garticl.Gtypkin_Code) and (Current_Record(Srv##) ne 0)) Send Operation_Not_Allowedmove 129
+//                send pFindIsotimia Garticl.Garticl_C_Code2 Garticl.Garticl_Hmnia 0
+
+//           if Garticl.Garticl_AA gt 0 move 131 to iReturnVal SOS!!!
+//            move (fiValidateCheck_Save(self)) to iReturnVal
+
+
+
+//  Procedure Request_Save0
+//            Integer libpo_02
+//            Number lnRateBF lnRateAF
+//            String lsCurrBF lsCurrAF
+//
+//            Forward Send Request_Save
+//
+//            Get psCurrBF to lsCurrBF
+//            Get pnRateBF to lnRateBF
+//
+//            Get psCurrAF to lsCurrAF
+//            Get pnRateAF to lnRateAF
+//
+//
+//            If (;
+//                 (lnRateBF <> lnRateAF) or;
+//                 (lsCurrBF <> lsCurrAF);
+//                ) Begin
+//                   Move (oDoChangeKin(Self)) to liBpo_02
+//                   Send Change_Gtypkin_Code  to liBpo_02 lsCurrAF lnRateAF Garticl.Recnum
+//                  End
+//
+//            Set psCurrBF to ""
+//            Set pnRateBF to 0
+//
+//            Set psCurrAF to ""
+//            Set pnRateAF to 0
+//
+//            Set pnRateFind to 0
+//  End_Procedure   // Request_Save0
+
+
+
+//  Procedure Destroying0 //£á¢¢¦¤ ›â¤ ®¨œ áœ«˜ , › æ«   creating «¦ ¡á¤œ  ˜§¦ £æ¤ «ª
+//         Forward Send  Destroying
+//        //************************************************************************
+//        //flag 5:˜¬«æ£˜« ˜¨åŸ£©                                               *
+//        //************************************************************************
+//        If (Gtypkin.Gtypkin_Flags Contains "-5-");
+//             Begin //«¦ á¨Ÿ¨¦ â®œ  ˜¬«æ£˜« ˜¨åŸ£©
+//              Set piA_Flag05 to TRUE
+//              Sub 1 to Gtypkin.Gtypkin_L_No
+//             End
+//        Else Begin //«¦ á¨Ÿ¨¦ â®œ  ®œ ¨¦¡å¤« ˜¨åŸ£©
+//              Set piA_Flag05 to FALSE
+//             End
+//  End_Procedure //Destroying0
+
+
+
+//    Function fiValidateCheck_Save  Returns Integer
+//        Local Integer iReturnVal
+//
+//                 if Garticl.Garticl_Hmnia   lt Year.Year_XrhshFrom Function_Return 131
+//            else if Garticl.Garticl_Hmnia   lt Year.Year_XrhshTo   Function_Return 131
+//            else if Garticl.Garticl_Hmnia   eq ""                  move 128 to ireturnVal
+//            else if Garticl.Garticl_Hmnia   lt Year.Year_DateAA    move 128 to ireturnVal //For Timologhsh
+//            else if Gtypkin.Gtypkin_Code    eq 0                   move 128 to ireturnVal //Gtypkin
+//            else if Garticl.Garticl_C_Code2 eq ""                  move 128 to ireturnVal //Currency
+//            else if Garticl.Garticl_Rate0   eq 0                   move 128 to ireturnVal //Isotimia
+//
+//        Function_Return iReturnVal
+//    End_Function
+
+////Procedure Set_ZeroAA Integer liStatusAA##
+////////Set piZeroAA to liStatusAA##
+////End_Procedure //set_zeroaa
+
+
+
+
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use Garticl.SL       // Garticl
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

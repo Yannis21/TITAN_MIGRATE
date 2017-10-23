@@ -1,0 +1,98 @@
+-----------------------------------------------------------------------------
+  DATE: 25/07/2017      TIME: 14:17                                  PAGE:  1
+  FILE DEFINITION FOR FILE: MIMHXAN (# 136)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : MIMHXAN
+  USER DISPLAY NAME         : MIMHXAN
+  DATAFLEX FILE NAME        : MIMHXAN
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 1152      ( USED: 1040 )
+  MAX NUMBER OF RECORDS     : 1000000   ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC     10     1  1   
+  2  BRANCH_CODE      ASC     10    11  1   
+  3  YEAR_YEAR        NUM    4.0    21  1   
+  4  MHX_ID           ASC     20    23  4   
+  5  MHX_NAME         ASC     80    43  3   
+  6  MHX_AFM          ASC     20   123      
+  7  MHX_REC0         NUM   14.0   143      
+  8  MHX_RECR         ASC     12   150  2   
+  9  LAST_XREOSH      DAT      6   162      
+ 10  LAST_PISTOSH     DAT      6   165      
+ 11  LAST_ORDER       DAT      6   168      
+ 12  MHX_DOY          ASC      5   171      
+ 13  MHX_ADDRESS      ASC     40   176      
+ 14  MHX_CITY         NUM    8.0   216      
+ 15  MHX_AREA         NUM    8.0   220      
+ 16  MHX_JOB          ASC     50   224      
+ 17  MHX_RESPONS      ASC     80   274      
+ 18  MHX_ZIPCODE      ASC     20   354      
+ 19  MHX_PHONE        ASC     50   374      
+ 20  MHX_FAX          ASC     30   424      
+ 21  MHX_MOBILE       ASC     30   454      
+ 22  MHX_AOH          ASC     50   484      
+ 23  MHX_EMAIL        ASC     80   534      
+ 24  MHX_CLASS        ASC      5   614      
+ 25  MHX_DETAILS      ASC    255   619      
+ 26  MHX_SITEW        ASC     10   874      
+ 27  MHX_CODEM        ASC     20   884      
+ 28  MHX_CATEGFPA     NUM    4.0   904      
+ 29  MHX_FPA          NUM    4.0   906      
+ 30  MHX_PUBLIC       NUM    4.0   908      
+ 31  MHX_SN           NUM   14.0   910      
+ 32  MHX_REPM         ASC     20   917      
+ 33  MHX_ACTIVE       ASC      1   937      
+ 34  MHX_REPORTED     ASC      1   938      
+ 35  MHX_LASTUPD      DAT      6   939      
+ 36  MHX_MARKEXP      ASC      1   942      
+ 37  MHX_CATJOB       NUM   14.0   943      
+ 38  XREOSH           NUM   14.8   950      
+ 39  PISTOSH          NUM   14.8   961      
+ 40  YPOLOIPO         NUM   14.8   972      
+ 41  PLAFON           NUM   14.8   983      
+ 42  OVERHEAD         NUM   14.8   994      
+ 43  MHX_ADD_NO       ASC      5  1005      
+ 44  MHX_NOMOS        ASC      5  1010      
+ 45  MHX_XORA         ASC      5  1015      
+ 46  POLH_RECR        ASC     12  1020      
+ 47  EXPORTFLAG       NUM    2.0  1032  5   
+ 48  EXPORTSTATUS     ASC      5  1033  5   
+ 49  EXPORTDATE       DAT      6  1038  5   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY_CODE    NO  NO       42     6       4     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       MHX_ID          NO  NO 
+
+  2    MHX_RECR        NO  NO       12     4       1     ON-LINE
+
+  3    MHX_NAME        NO  NO       92     9       2     ON-LINE
+       MHX_RECR        NO  NO 
+
+  4    MHX_ID          NO  NO       20     5       1     ON-LINE
+
+  5    EXPORTFLAG      NO  NO       12     4       4     ON-LINE
+       EXPORTSTATUS    NO  NO 
+       EXPORTDATE      NO  NO 
+       Recnum          NO  NO 
+
+  6    EXPORTSTATUS    NO  NO       12     4       4     ON-LINE
+       EXPORTFLAG      NO  NO 
+       EXPORTDATE      NO  NO 
+       Recnum          NO  NO 
+

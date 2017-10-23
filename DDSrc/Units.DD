@@ -1,0 +1,104 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : UNITS.DD
+// Class Name: Units_DataDictionary
+// Revision  : 17
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Units
+Open Item
+Open Sysrecw
+Open Syscurxr
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl025  sl025.SL
+Register_Object sl025
+//DDB-SelectionEnd
+
+Class Units_DataDictionary  is a DataDictionary
+
+    Procedure Save_Main_File
+        If (Operation_Origin<>Self) Begin
+            If Units.Recnum Eq 0 Procedure_Return
+        End
+        Forward Send Save_Main_File
+    End_Procedure
+
+
+     Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Units.Units_Rec0)))))) to Units.Units_Recr
+    End_Procedure   // Creating
+
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Units.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Item.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecw.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Syscurxr.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecw.Units_Rec0  To Units.Units_Rec0
+
+        // Field-based properties.......................
+
+        // Units.Units_Code
+        Set Field_Options          Field Units.Units_Code To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Units.Units_Code To (sl025(Self))
+
+        // Units.Units_Rec0
+        Set Field_Options          Field Units.Units_Rec0 To DD_AUTOFIND   
+
+        // Units.Units_Descr
+        Set Field_Prompt_Object    Field Units.Units_Descr To (sl025(Self))
+
+        // Units.Units_Recr
+        Set Field_Options          Field Units.Units_Recr To DD_AUTOFIND   
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Units_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl025.SL         // sl025
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

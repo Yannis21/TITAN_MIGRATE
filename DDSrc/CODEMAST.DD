@@ -1,0 +1,97 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : CODEMAST.DD
+// Class Name: Codemast_DataDictionary
+// Revision  : 14
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Codemast
+Open Codetype
+Open Sysfile
+
+//DDB-HeaderEnd
+
+Class Codemast_DataDictionary is a DataDictionary
+ 
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here 
+        string stype  sdescr
+        integer icode       
+        if (codetype.type='DOY') begin
+           move (sysfile.aadoy+1) to sysfile.aadoy
+           saverecord sysfile
+           move sysfile.aadoy to codemast.code 
+        end   
+        
+        if (codetype.type='JOB') begin
+           move (sysfile.aajob+1) to sysfile.aajob
+           saverecord sysfile
+           move sysfile.aajob to codemast.code 
+        end  
+    End_Procedure   // Creating
+ 
+
+    // Disallow blank codes
+    Function Validate_Save Returns Integer
+        If CodeMast.Code eq '' Begin
+            Error 300 'âú§‚™ ´†£‚™ õú§ úß†´®‚ß¶§´ò†.'
+            Function_Return 1
+        End
+    End_Function // Validate_Save
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Codemast.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Codetype.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysfile.File_Number  DD_LOCK_ON_ALL
+
+        // Field-based properties.......................
+
+        // Codemast.Type
+        Set Field_Options          Field Codemast.Type To DD_CAPSLOCK   
+        Set Key_Field_State        Field Codemast.Type To TRUE
+
+        // Codemast.Code
+        Set Field_Options          Field Codemast.Code To DD_AUTOFIND    DD_CAPSLOCK   
+        Set Key_Field_State        Field Codemast.Code To TRUE
+        Set Status_Help            Field Codemast.Code To "è®òö£ò´†°„ ´†£„ °‡õ†°¶Á ©´û ô·©û ö†' ò¨´Ê ´¶§ ´Áß¶/°ò´ûö¶®Âò."
+
+        // Codemast.Description
+        Set Status_Help            Field Codemast.Description To "èú®†ö®ò≠„ ´û™ ´†£„™ ´¶¨ °‡õ†°¶Á."
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+    
+End_Class    //  Codemast_DataDictionary
+//DDB-FileEnd

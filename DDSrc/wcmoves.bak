@@ -1,0 +1,599 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : WCMOVES.DD
+// Class Name: Wcmoves_DataDictionary
+// Revision  : 72
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Wcmoves
+Open Wtypkin
+Open Wax
+Open Witemx
+Open Sysrecw
+Open Wam
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl045  sl045.SL
+//DDB/ ExternalSelectionList slNomism  slnomism.sl
+Register_Object sl045
+Register_Object slNomism
+//DDB-SelectionEnd
+
+Class Wcmoves_DataDictionary  is a DataDictionary_Sec
+
+   Procedure Construct_Object
+        Forward Send Construct_Object
+        Property Integer piFromxrhsh Public 0 //œ¤›œ ¥ž ¦«  œ¨®œ«˜  ˜§¦ €§¦š¨˜­ã ˜§¦Ÿã¡žª
+    End_Procedure
+
+    Function Validate_Save  Returns Integer
+        Integer iReturnVal iOpen_Items ifromxrhsh
+        String sModule
+        get pifromxrhsh to ifromxrhsh
+        Forward Get Validate_Save  To iReturnVal
+        If (Not(iReturnVal)) Begin
+            Clear Branch
+            Move SyscurXr.Company_Code  to Branch.Company_Code
+            Move SyscurXr.Branch_Code   to Branch.Branch_Code
+            Find Eq Branch By Index.1
+            If (Not(Found)) Send Operation_Not_Allowed 6666
+            Else If ((Branch.Locked_Until<>'') And (WCmoves.WCmove_Hmnia<=Branch.Locked_Until)) Send Operation_Not_Allowed 6667
+
+            If (WCmoves.Prn_Theor='1') Move 8878 to iReturnVal
+            // ˜§¦ ˜§¦š¨˜­ã
+            Else If ((WCmoves.WCmove_Hmnia<SYSCURXR.YEAR_XRHSHFROM and ifromxrhsh<>1) Or ;
+                     (WCmoves.WCmove_Hmnia>SYSCURXR.YEAR_XRHSHTO and ifromxrhsh<>1))     ;
+                    Move 8877 to iReturnVal
+            Else If ((WCmoves.WCmove_QTY =0) And (WCmoves.Unit_Price=0)) Move 8833 to iReturnVal
+//                     (WCmoves.WCmove_Axia=0))    ;
+// js Allagh 26/08/2002 Gia na mporei na yparxei kinhsh Wcmoves
+//    me synolikh axia 0 (na exei timh monados alla p.x. ekptosh 100%)
+//    s' ena timologio polhshs.
+            If (iReturnVal) Send Operation_Not_Allowed iReturnVal
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+
+    Function Validate_Delete  Returns Integer
+        Integer iReturnVal
+        String sModule
+        Forward Get Validate_Delete  To iReturnVal
+        If (Not(iReturnVal)) Begin
+
+            Clear Branch
+            Move SyscurXr.Company_Code  to Branch.Company_Code
+            Move SyscurXr.Branch_Code   to Branch.Branch_Code
+            Find Eq Branch By Index.1
+            If (Not(Found)) Send Operation_Not_Allowed 6668
+            Else If ((Branch.Locked_Until<>'') And (WCmoves.WCmove_Hmnia<=Branch.Locked_Until)) Send Operation_Not_Allowed 6669
+
+            If (WCmoves.Prn_Theor='1') Move 8879 to iReturnVal
+            If (iReturnVal) Send Operation_Not_Allowed iReturnVal
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Delete
+
+    Procedure Operation_Not_Allowed Integer iError_Num
+        String lsError_Message
+        Case Begin
+
+            Case (iError_Num = 6666)
+                Move "DDC 045: ‘­á¢£˜ 6666 €›ç¤˜«ž ž œšš¨˜­ž!\nƒœ¤ ™¨âŸž¡œ «¦ ˜¨®œå¦ ¬§¦¡˜«˜©«ž£á«à¤" to lsError_Message
+            Case Break
+
+            Case (iError_Num = 6667)
+                Move "DDC 045: ‘­á¢£˜ 6667 €›ç¤˜«ž ž œšš¨˜­ž!\n†£/¤å˜ ¡å¤ž©žª §¨¦šœ¤â©«œ¨ž ž£/¤å˜ª ¡¢œ ›é£˜«¦ª" to lsError_Message
+            Case Break
+
+            Case (iError_Num = 6668)
+                Move "DDC 045: ‘­á¢£˜ 6668 €›ç¤˜«ž ž › ˜š¨˜­ã!\nƒœ¤ ™¨âŸž¡œ «¦ ˜¨®œå¦ ¬§¦¡˜«˜©«ž£á«à¤" to lsError_Message
+            Case Break
+
+            Case (iError_Num = 6669)
+                Move "DDC 045: ‘­á¢£˜ 6669 €›ç¤˜«ž ž › ˜š¨˜­ã!\n†£/¤å˜ ¡å¤ž©žª §¨¦šœ¤â©«œ¨ž ž£/¤å˜ª ¡¢œ ›é£˜«¦ª" to lsError_Message
+            Case Break
+
+
+            Case (iError_Num = 8833)
+                Move "DDC 045:€›ç¤˜«ž ž œšš¨˜­ã!\n˜¥å˜ ¡˜  §¦©æ«ž«˜ œå¤˜  0" to lsError_Message
+            Case Break
+            Case (iError_Num = 8844)
+                Move "DDC 045: ’¦ ¬§æ¢¦ §¦ §¦©æ«ž«˜ª ˜§¦Ÿã¡žª §¨¦¡ç§«œ  ˜¨¤ž« ¡æ \n† «¨â®¦¬©˜ ¡å¤ž©ž ƒ„Œ Ÿ˜ ¡˜«˜®à¨žŸœå" to lsError_Message
+            Case Break
+            Case (iError_Num = 8877)
+                Move "DDC 045:€›ç¤˜«ž ž œšš¨˜­ž!\n\n†£œ¨¦£ž¤åœª œ¡«æª ¦¨åà¤ ®¨ã©žª" to lsError_Message
+            Case Break
+            Case (iError_Num = 8878)
+                Move "DDC 045:€›ç¤˜«ž ž œšš¨˜­ã!\n\„®œ  «¬§àŸœ  Ÿœà¨ž£â¤¦" to lsError_Message
+            Case Break
+            Case (iError_Num = 8879)
+                Move "DDC 045:€›ç¤˜«ž ž › ˜š¨˜­ã!\n\„®œ  «¬§àŸœ  Ÿœà¨ž£â¤¦" to lsError_Message
+            Case Break
+            Case Else
+                Forward Send Operation_Not_Allowed iError_Num
+        Case End
+        Error iError_Num lsError_Message
+    End_Procedure // operation_not_allowed
+
+    Procedure Save_Main_File
+        If (Operation_Origin<>Self) Begin
+            If Wcmoves.Recnum Eq 0 Procedure_Return
+        End
+        If (WCmoves.Cn_Code<>'') Begin
+            Clear Cn
+            Move WCmoves.Cn_Code    to Cn.Cn_Code
+            Find Eq Cn By Index.5 // Cn:Index.5:Cn_Code
+            Move Cn.Cn_Sls_ID       to WCmoves.Sls_ID
+            Move Cn.CN_Cnt_ID       to WCmoves.Cnt_ID
+            Move Cn.Cn_Recr         to WCmoves.Cn_Recr
+            Move Cn.mhxanik_id      to Wcmoves.mhxanik_ID
+        End
+        Else Begin
+            Move ''     to WCmoves.Sls_ID
+            Move ''     to WCmoves.Cnt_ID
+            Move ''     to WCmoves.Cn_Recr
+            Move ''     to Wcmoves.Mhxanik_ID
+        End
+
+        Forward Send Save_Main_File
+    End_Procedure   // Save_Main_File
+
+    Procedure Enhm_Wam Number anQtyEisa Number anQtyExa Number anXre Number anPis Integer iSign
+        Integer isFound ifromxrhsh
+        get pifromxrhsh to ifromxrhsh
+        Move 0 to isFound
+
+        // 02/10/2001 js
+        // Klhsh apo Backout kai Update
+        Clear Wam
+        Move SysCurXR.Company_Code  to Wam.Company_Code
+        Move SysCurXR.Branch_Code   to Wam.Branch_Code
+        // ¡ ¤ã©œ ª ˜§¦š¨˜­ãª ¤˜ œ¤ž£œ¨é©¦¬¤ ˜§æŸœ£˜ ¤â˜ª ®¨ã©žª
+        if (ifromxrhsh=1) move (syscurxr.year_year+1) to wam.year_year
+        else              Move SysCurXR.Year_Year     to Wam.Year_Year
+        Move Wapokat.Wapokat_Code   to Wam.Wapokat_Code
+        Move Wapomast.Wapomast_Code to Wam.Wapomast_Code
+        Move Wax.Wax_Code           to Wam.Wax_Code
+        Move Witemkat.Witemkat_Code to Wam.Witemkat_Code
+        Move Units.Units_Code       to Wam.Units_Code
+        Move Item.Item_Code         to Wam.Item_Code
+        Move Witemx.Witemx_Code     to Wam.Witemx_Code
+        Find Eq Wam By Index.1
+        If (Not(Found)) Begin
+            Move (SysrecW.Wam_Rec0+1)   to Wam.Wam_Rec0
+            Move (SysrecW.Wam_Rec0+1)   to SysrecW.Wam_Rec0
+            Saverecord SysrecW
+            Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                             (Trim(String(Wam.Wam_Rec0)))))) to Wam.Wam_Recr
+            Move Witemx.Witemx_Recr to Wam.Witemx_Recr
+            Move Wax.Wax_Recr       to Wam.Wax_Recr
+        End
+        Add (anQtyEisa*iSign)       to Wam.Wam_qty_Eisa
+        Add (anQtyExa *iSign)       to Wam.Wam_qty_Exa
+        Add (anXre    *iSign)       to Wam.Wam_Amt_Eisa
+        Add (anPis    *iSign)       to Wam.Wam_Amt_Exa
+
+        Move (Wam.Wam_Qty_Eisa-Wam.Wam_Qty_Exa) to Wam.Wam_Qty_Apoth
+        Move (Wam.Wam_Amt_Eisa-Wam.Wam_Amt_Exa) to Wam.Wam_Amt_Apoth
+
+        Saverecord Wam
+
+        If (Sysfile.Chk_Apothema='1') Begin
+            If ((Wam.Wam_qty_Exa  >Wam.Wam_qty_Eisa) Or ;
+                (Wam.Wam_Qty_Apoth<0)) Send Operation_Not_Allowed 8844
+        End
+        // 02/10/2001 js
+    End_Procedure
+
+    // Update:
+    Procedure Update
+        integer ifromxrhsh
+        Number nx np nqtyx nqtyp
+        Forward Send Update
+        get pifromxrhsh to ifromxrhsh
+        // Insert Code Here
+        Move SysCurXR.Company_Code  to WCmoves.Company_Code
+        Move SysCurXR.Branch_Code   to WCmoves.Branch_Code
+        // ¤˜ š¨á¯œ  ˜§¦š¨˜­ã ©«¦ œ«¦ª + 1
+        if (ifromxrhsh=1) move (syscurxr.year_year+1) to wcmoves.year_year
+        else              Move SysCurXR.Year_Year     to Wcmoves.Year_Year
+       // Move SysCurXR.Year_Year     to WCmoves.Year_Year
+        Move Wtypkin.Wtypkin_Code   to WCmoves.Wtypkin_Code
+        Move Wapokat.Wapokat_Code   to WCmoves.Wapokat_Code
+        Move Wapomast.Wapomast_Code to WCmoves.Wapomast_Code
+        Move Wax.Wax_Code           to WCmoves.Wax_Code
+        Move Witemkat.Witemkat_Code to WCmoves.Witemkat_Code
+        Move Units.Units_Code       to WCmoves.Units_Code
+        Move Item.Item_Code         to WCmoves.Item_Code
+        Move Witemx.Witemx_Code     to WCmoves.Witemx_Code
+
+
+        Move 0 to nx
+        Move 0 to np
+        Move 0 to nqtyx
+        Move 0 to nqtyp
+
+        // js 13/02/2002
+        // An ta extra pedia timon den exoun timh tote to wcmoves enhmeronei me axies
+        If (Wcmoves.Wcmov_Axia=0) Begin
+                 If (Wcmoves.Wcmove_X0<>0)  Move Wcmoves.Wcmov_Totamad0 to nx
+            Else If (Wcmoves.Wcmove_P0<>0)  Move Wcmoves.Wcmov_Totamad0 to np
+        End
+        // An ta extra pedia posothton den exoun timh tote to wcmoves enhmeronei me posothtes
+        If ((Wcmoves.Sx_Posothta_Eis=0) And (Wcmoves.Sx_Posothta_Ex=0)) Begin
+                 If (Wcmoves.Wcmove_Qty_Eisa<>0) Move Wcmoves.Wcmove_Qty_Eisa   to nqtyx
+            Else If (Wcmoves.Wcmove_Qty_Exa <>0) Move Wcmoves.Wcmove_Qty_Exa    to nqtyp
+        End
+
+        Add nqtyx   to witemx.qty_xre
+        Add nqtyp   to witemx.qty_pis
+        Add nx      to witemx.axia_xre
+        Add np      to witemx.axia_pis
+
+        // 02/10/2001 Enhmerosh arxeiou WAM
+        Send Enhm_Wam   nqtyx   ;
+                        nqtyp   ;
+                        nx      ;
+                        np      ;
+                        1
+
+        If (Wcmoves.Wcmove_SC_Code2='') ;
+             Move SyscurXr.C_Code0 to Wcmoves.Wcmove_SC_Code2
+
+
+    End_Procedure   // Update
+
+     // Backout:
+    Procedure Backout
+        Number nx np nqtyx nqtyp
+        Forward Send Backout
+
+        Move 0 to nx
+        Move 0 to np
+        Move 0 to nqtyx
+        Move 0 to nqtyp
+
+        // js 13/02/2002
+        // An ta extra pedia timon den exoun timh tote to wcmoves enhmeronei me axies
+        If (Wcmoves.Wcmov_Axia=0) Begin
+                 If (Wcmoves.Wcmove_X0<>0)  Move Wcmoves.Wcmov_Totamad0 to nx
+            Else If (Wcmoves.Wcmove_P0<>0)  Move Wcmoves.Wcmov_Totamad0 to np
+        End
+        // An ta extra pedia posothton den exoun timh tote to wcmoves enhmeronei me posothtes
+        If ((Wcmoves.Sx_Posothta_Eis=0) And (Wcmoves.Sx_Posothta_Ex=0)) Begin
+                 If (Wcmoves.Wcmove_Qty_Eisa<>0) Move Wcmoves.Wcmove_Qty_Eisa   to nqtyx
+            Else If (Wcmoves.Wcmove_Qty_Exa <>0) Move Wcmoves.Wcmove_Qty_Exa    to nqtyp
+        End
+
+        Sub nqtyx  From witemx.qty_xre
+        Sub nqtyp  From witemx.qty_pis
+        Sub nx     From witemx.axia_xre
+        Sub np     From witemx.axia_pis
+
+        // 02/10/2001 Enhmerosh arxeiou WAM
+        Send Enhm_Wam   nqtyx   ;
+                        nqtyp   ;
+                        nx      ;
+                        np      ;
+                        -1
+    End_Procedure   // Backout
+
+
+    // Creating:
+     Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Wcmoves.Wcmove_Rec0)))))) to Wcmoves.Wcmove_Recr
+        If (Wcmoves.Wcmove_SC_Code2='') Move SyscurXr.C_Code0 to Wcmoves.Wcmove_SC_Code2
+    End_Procedure   // Creating
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+   Procedure Entry_wcmoves_date Integer iField Date dDate
+         Local Integer Changed
+         Get Field_Changed_State iField to Changed
+         If ( Changed=0 AND dDate = 0) Begin
+           SysDate4 dDate
+           Set Field_Default_Value iField to dDate
+         End
+   End_Procedure
+
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Wcmoves.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Wtypkin.File_Number
+        Send Add_Server_File  Wax.File_Number
+        Send Add_Server_File  Witemx.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecw.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Wam.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecw.Wcmoves_Rec0  To Wcmoves.Wcmove_Rec0
+
+        // Field-based properties.......................
+
+        // Wcmoves.Company_Code
+
+        // Wcmoves.Branch_Code
+
+        // Wcmoves.Year_Year
+
+        // Wcmoves.Wtypkin_Code
+
+        // Wcmoves.Wapokat_Code
+
+        // Wcmoves.Wapomast_Code
+
+        // Wcmoves.Wax_Code
+
+        // Wcmoves.Witemkat_Code
+
+        // Wcmoves.Units_Code
+
+        // Wcmoves.Item_Code
+
+        // Wcmoves.Witemx_Code
+
+        // Wcmoves.Wcmove_Recr
+
+        // Wcmoves.Wcmove_Rec0
+
+        // Wcmoves.Wcmove_Hmnia
+        Set Field_Entry_msg        Field Wcmoves.Wcmove_Hmnia To Entry_wcmoves_date
+        Set Field_Mask_Type        Field Wcmoves.Wcmove_Hmnia To MASK_DATE_WINDOW
+        Set Field_Prompt_Object    Field Wcmoves.Wcmove_Hmnia To (sl045(Self))
+
+        // Wcmoves.Wtypkin_Recr
+
+        // Wcmoves.Wax_Recr
+
+        // Wcmoves.Witemx_Recr
+
+        // Wcmoves.Wcmove_Par
+
+        // Wcmoves.Partl_Recr
+
+        // Wcmoves.Wcmove_Axia
+
+        // Wcmoves.Wcmove_X0
+
+        // Wcmoves.Wcmove_P0
+
+        // Wcmoves.Wcmove_X00
+
+        // Wcmoves.Wcmove_P00
+
+        // Wcmoves.Wcmove_X1
+
+        // Wcmoves.Wcmove_P1
+
+        // Wcmoves.Wcmove_X2
+
+        // Wcmoves.Wcmove_P2
+
+        // Wcmoves.Wcmove_Dlixis
+
+        // Wcmoves.Wcmove_A_Code
+
+        // Wcmoves.Wcmove_Status_E
+
+        // Wcmoves.Wcmove_Status_A
+
+        // Wcmoves.Wcmove_S0
+
+        // Wcmoves.Wcmove_Ys0
+
+        // Wcmoves.Wcmove_S1
+
+        // Wcmoves.Wcmove_Ys1
+
+        // Wcmoves.Wcmove_S2
+
+        // Wcmoves.Wcmove_Ys2
+
+        // Wcmoves.Wcmove_Sc_Code2
+        Set Field_Prompt_Object    Field Wcmoves.Wcmove_Sc_Code2 To (slNomism(Self))
+
+        // Wcmoves.Wcmove_Open
+
+        // Wcmoves.Wcmove_Aopen
+
+        // Wcmoves.Wcmove_Yn_Myf
+
+        // Wcmoves.Wcmove_Myf_Axia
+
+        // Wcmoves.Wcmove_Kk
+
+        // Wcmoves.Wcmove_C_Code2
+        Set Field_Prompt_Object    Field Wcmoves.Wcmove_C_Code2 To (slNomism(Self))
+
+        // Wcmoves.Client_Recr
+
+        // Wcmoves.Cn_Code
+
+        // Wcmoves.Wcmove_Qty
+
+        // Wcmoves.Wcmov_Totambd0
+
+        // Wcmoves.Wcmov_Discam0
+
+        // Wcmoves.Wcmov_Totamad0
+
+        // Wcmoves.Wcmov_Vatam0
+
+        // Wcmoves.Wcmov_Extra0
+
+        // Wcmoves.Wcmov_Totambd00
+
+        // Wcmoves.Wcmov_Discam00
+
+        // Wcmoves.Wcmov_Totamad00
+
+        // Wcmoves.Wcmov_Vatam00
+
+        // Wcmoves.Wcmov_Extra00
+
+        // Wcmoves.Wcmov_Totambd1
+
+        // Wcmoves.Wcmov_Discam1
+
+        // Wcmoves.Wcmov_Totamad1
+
+        // Wcmoves.Wcmov_Vatam1
+
+        // Wcmoves.Wcmov_Extra1
+
+        // Wcmoves.Wcmove_Qty_Exa
+
+        // Wcmoves.Wcmove_Qty_Eisa
+
+        // Wcmoves.Client_Id
+
+        // Wcmoves.Module_From
+
+        // Wcmoves.Unit_Price0
+
+        // Wcmoves.Unit_Price00
+
+        // Wcmoves.Unit_Pricer
+
+        // Wcmoves.Cn_Recr
+
+        // Wcmoves.Sls_Id
+
+        // Wcmoves.Cnt_Id
+
+        // Wcmoves.Presp_Id
+
+        // Wcmoves.Mhxanik_Id
+
+        // Wcmoves.Prn_Theor
+
+        // Wcmoves.Extra_Axia
+
+        // Wcmoves.Extra_Axia0
+
+        // Wcmoves.Extra_Axia00
+
+        // Wcmoves.Extra_Axiar
+
+        // Wcmoves.Disc_Axia
+
+        // Wcmoves.Disc_Axia0
+
+        // Wcmoves.Disc_Axia00
+
+        // Wcmoves.Disc_Axiar
+
+        // Wcmoves.Unit_Price
+
+        // Wcmoves.Particle_Recr
+
+        // Wcmoves.Sx_Posothta_Eis
+
+        // Wcmoves.Sx_Posothta_Ex
+
+        // Wcmoves.Wcmov_Axia
+
+        // Wcmoves.Wcmov_X0
+
+        // Wcmoves.Wcmov_X00
+
+        // Wcmoves.Wcmov_X1
+
+        // Wcmoves.Wcmov_X2
+
+        // Wcmoves.Wcmov_P0
+
+        // Wcmoves.Wcmov_P00
+
+        // Wcmoves.Wcmov_P1
+
+        // Wcmoves.Wcmov_P2
+
+        // Wcmoves.Unit_Pric0
+
+        // Wcmoves.Unit_Pric00
+
+        // Wcmoves.Unit_Pricr
+
+        // Wcmoves.Wcmo_Totambd0
+
+        // Wcmoves.Wcmo_Totambd00
+
+        // Wcmoves.Wcmo_Totambd1
+
+        // Wcmoves.Wcmo_Discam0
+
+        // Wcmoves.Wcmo_Discam00
+
+        // Wcmoves.Wcmo_Discam1
+
+        // Wcmoves.Wcmo_Totamad0
+
+        // Wcmoves.Wcmo_Totamad00
+
+        // Wcmoves.Wcmo_Totamad1
+
+        // Wcmoves.Wcmo_Vatam0
+
+        // Wcmoves.Wcmo_Vatam00
+
+        // Wcmoves.Wcmo_Vatam1
+
+        // Wcmoves.Wcmo_Extra0
+
+        // Wcmoves.Wcmo_Extra00
+
+        // Wcmoves.Wcmo_Extra1
+
+        // Wcmoves.Sap_Hmnia
+
+        // Wcmoves.Texnikh
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+
+
+End_Class    // Wcmoves_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl045.SL         // sl045
+Use slnomism.sl      // slNomism
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

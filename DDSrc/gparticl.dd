@@ -1,0 +1,276 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GPARTICL.DD
+// Class Name: Gparticl_DataDictionary
+// Revision  : 24
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Gparticl
+Open Gpmoves
+Open Gtypkin
+Open Sysrecg
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Garticl_Garticl_C_Code2_VT
+
+Object Garticl_Garticl_C_Code2_VT  is a CodeValidationTable
+    Set Type_Value        To "CURRENCY"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Garticl_Garticl_C_Code2_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl163  Sl163.sl
+Register_Object sl163
+//DDB-SelectionEnd
+
+Class Gparticl_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurGL.Branch_Site))+;
+                         (Trim(String(Gparticl.Garticl_Rec0)))))) to Gparticl.Garticl_Recr
+    End_Procedure   // Creating
+
+
+    //2100:cby = globals
+    // Validate_Delete:
+    // This function is used to perform validation checking before a
+    // delete operation. It should return zero if the deletion is
+    // allowed otherwise it should return non-zero or generate an error
+    // to prevent deletion. By default it returns zero to allow
+    // deletion. This function is intended to check for possible data-
+    // integrity violations.
+
+    //
+
+    Function Validate_Delete  Returns Integer
+        Integer iReturnVal
+        Forward Get Validate_Delete  To iReturnVal
+        If (Not(iReturnVal)) Begin
+            // Insert Code Here
+            //2100:cby = globals
+            If ( ;
+                (Not(Gparticl.Garticl_Company = SysCurGL.Company_Code)) or;
+                (Not(Gparticl.Garticl_Branch  = SysCurGL.Branch_Code )) or;
+                (Not(Gparticl.Garticl_Year    = SysCurGL.Year_Year   ));
+                ) Send Operation_Not_Allowed 2100
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Delete
+
+
+    // Deleting:
+    // This message is sent each time a record is deleted in the main
+    // file. You should use this to perform database actions that apply
+    // to the deletion of a record. Deleting is invoked while the
+    // database is locked, before the Backout message is sent and before
+    // the record is deleted.
+
+    Procedure Deleting
+        Forward Send Deleting
+        // Insert Code Here
+    End_Procedure   // Deleting
+
+
+    // Update:
+    // Use this message to effect changes in related-to files. The
+    // Backout message should be designed to reverse the effects of this
+    // message. It is invoked while the database is locked.
+
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move Gthhmgio.Gthhmgio_Code to GParticl.Gthhmgio_Code
+        Move Gthhmgio.Gthhmgio_Recr to GParticl.Gthhmgio_Recr
+        Move Gtypkin.Gtypkin_Code   to GParticl.Gtypkin_Code
+        Move SysCurGL.Company_Code  to GParticl.Garticl_Company
+        Move SysCurGL.Branch_Code   to GParticl.Garticl_Branch
+        Move SysCurGL.Year_Year     to GParticl.Garticl_Year
+        Move SysCurGL.Year_Recr     to GParticl.Year_Recr
+    End_Procedure   // Update
+
+
+    //1100:cby = globals
+   // Validate_Save:
+
+    Function Validate_Save  Returns Integer
+        Local Integer iReturnVal iField##
+        locaL string lsVal##
+        Forward Get Validate_Save  To iReturnVal
+
+        If (Not(iReturnVal))Begin
+            //1100:cby = globals
+            If ( ;
+                (Not(Gparticl.Garticl_Company = SysCurGL.Company_Code)) or;
+                (Not(Gparticl.Garticl_Branch  = SysCurGL.Branch_Code )) or;
+                (Not(Gparticl.Garticl_Year    = SysCurGL.Year_Year   ));
+                )                                                   Send Operation_Not_Allowed 1100
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+
+
+    Procedure Operation_Not_Allowed  Integer iError_Num
+        Case Begin
+            Case (iError_Num = 1100)
+                Error 1100 "DDC 163:‹ž ˜§¦›œ¡«ã „«˜ ¨å˜-•¨ã©ž"
+                Case Break
+
+            Case (iError_Num = 2100)
+                Error 2100 "DDC 163:‹ž ˜§¦›œ¡«ã „«˜ ¨å˜-•¨ã©ž"
+                Case Break
+
+            Case Else
+                Forward Send Operation_Not_Allowed  iError_Num
+        Case End
+    End_Procedure   //operation_not_allowed
+
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Gparticl.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Gpmoves.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Gtypkin.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecg.Gparticl_Rec0  To Gparticl.Garticl_Rec0
+
+        // Field-based properties.......................
+
+        // Gparticl.Garticl_Company
+
+        // Gparticl.Garticl_Branch
+
+        // Gparticl.Garticl_Year
+
+        // Gparticl.Gtypkin_Code
+        Set Field_Options          Field Gparticl.Gtypkin_Code To DD_REQUIRED   
+
+        // Gparticl.Garticl_Rec0
+
+        // Gparticl.Gtypkin_Recr
+
+        // Gparticl.Gthhmgio_Code
+
+        // Gparticl.Gthhmgio_Recr
+
+        // Gparticl.Garticl_Par
+        Set Field_Prompt_Object    Field Gparticl.Garticl_Par To (sl163(Self))
+
+        // Gparticl.Garticl_A_Code
+
+        // Gparticl.Garticl_C_Code2
+        Set Field_Options          Field Gparticl.Garticl_C_Code2 To DD_REQUIRED   
+        Set Field_Value_Table      Field Gparticl.Garticl_C_Code2 To (Garticl_Garticl_C_Code2_VT(Self))
+
+        // Gparticl.Garticl_Rate0
+
+        // Gparticl.Garticl_Rate1
+
+        // Gparticl.Garticl_Drate0
+
+        // Gparticl.Garticl_Drate1
+
+        // Gparticl.Garticl_Sx0
+
+        // Gparticl.Garticl_Sp0
+
+        // Gparticl.Garticl_Syp0
+
+        // Gparticl.Gartcl_Syp0k
+
+        // Gparticl.Garticl_Sx00
+
+        // Gparticl.Garticl_Sp00
+
+        // Gparticl.Garticl_Syp00
+
+        // Gparticl.Garticl_Syp00k
+
+        // Gparticl.Garticl_Sx1
+
+        // Gparticl.Garticl_Sp1
+
+        // Gparticl.Garticl_Sx2
+
+        // Gparticl.Garticl_Sp2
+
+        // Gparticl.Garticl_Syp2
+
+        // Gparticl.Garticl_Sxr
+
+        // Gparticl.Garticl_Spr
+
+        // Gparticl.Garticl_Sypr
+
+        // Gparticl.Garticl_Syprk
+
+        // Gparticl.Garticl_Xreline
+
+        // Gparticl.Garticl_Pisline
+
+        // Gparticl.Garticl_Inc
+
+        // Gparticl.Garticl_Exp
+
+        // Gparticl.Garticl_Cash
+
+        // Gparticl.Garticl_Omada
+
+        // Gparticl.Garticl_Other
+
+        // Gparticl.Garticl_Mlines
+
+        // Gparticl.Year_Recr
+
+        // Gparticl.Garticl_Recr
+        Set Field_Prompt_Object    Field Gparticl.Garticl_Recr To (sl163(Self))
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+End_Class    // Gparticl_DataDictionary
+
+
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use Sl163.sl         // sl163
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

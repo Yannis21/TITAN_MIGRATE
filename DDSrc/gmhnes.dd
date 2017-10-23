@@ -1,0 +1,319 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GMHNES.DD
+// Class Name: Gmhnes_DataDictionary
+// Revision  : 68
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Gmhnes
+Open Ghmnies
+Open Gplan
+Open Sysrecg
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Gmhnes_Gmhnes_Period_VT
+
+Object Gmhnes_Gmhnes_Period_VT  is a CodeValidationTable
+    Set Type_Value        To "PERIOD"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Gmhnes_Gmhnes_Period_VT
+//DDB-ValidationEnd
+
+/ImageCalcMhnes
+______________.  ______________.  ______________.
+/*
+
+
+
+Class Gmhnes_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurGL.Branch_Site))+;
+                         (Trim(String(Gmhnes.Gmhnes_Rec0)))))) to Gmhnes.Gmhnes_Recr
+    End_Procedure   // Creating
+
+
+    //1100:cby = globals
+    // Validate_Save:
+
+    Function Validate_Save  Returns Integer
+        Local Integer iReturnVal
+        Forward Get Validate_Save To iReturnVal
+        If (Not(iReturnVal)) Begin
+            If (Gmhnes.Gmhnes_YYYY  =0 ) Send Operation_Not_Allowed 1001
+            If (Gmhnes.Gmhnes_Period=0 ) Send Operation_Not_Allowed 1002
+            //1100:cby = globals
+            If ( ;
+                (Not(Gmhnes.Company_Code = SyscurGL.Company_Code)) or;
+                (Not(Gmhnes.Branch_Code  = SyscurGL.Branch_Code )) or;
+                (Not(Gmhnes.Year_Year    = SyscurGL.Year_Year   ));
+                ) Send Operation_Not_Allowed 1100
+        End
+
+        Function_Return iReturnVal
+    End_Function   //validate_save
+
+
+
+    //2100:cby = globals
+    // Validate_Delete:
+
+    Function Validate_Delete  Returns Integer
+        Local Integer iReturnVal
+        Forward Get Validate_Delete  To iReturnVal
+        If (Not(iReturnVal)) Begin
+            If (Gmhnes.Gmhnes_GhmNoRec <> 0) Send Operation_Not_Allowed 2001
+            //2100:cby = globals
+            If ( ;
+                (Not(Gmhnes.Company_Code = SyscurGL.Company_Code)) or;
+                (Not(Gmhnes.Branch_Code  = SyscurGL.Branch_Code )) or;
+                (Not(Gmhnes.Year_Year    = SyscurGL.Year_Year   ));
+                )                                                   Send Operation_Not_Allowed 2100
+        End
+        Function_Return iReturnVal
+    End_Function   // validate_delete
+
+
+
+    Procedure Operation_Not_Allowed  Integer iError_Num
+        Case Begin
+            Case (iError_Num = 1001)
+                Error 1001 "DDC 059:ãûõú§†°Ê Ñ´¶™!"
+                Case Break
+            Case (iError_Num = 1002)
+                Error 1001 "DDC 059:ãûõú§†°Ê™ ã„§ò™!"
+                Case Break
+            Case (iError_Num = 1100)
+                Error 1100 "DDC 059:ãû òß¶õú°´„ Ñ´ò†®Âò-ï®„©û"
+                Case Break
+
+            Case (iError_Num = 2001)
+                Error 2001 "DDC 059:ÄõÁ§ò´û û õ†òö®ò≠„!\n\nìß·®Æ¶¨§ û£ú®¶£û§Âú™"
+                Case Break
+            Case (iError_Num = 2100)
+                Error 2100 "DDC 059:ãû òß¶õú°´„ Ñ´ò†®Âò-ï®„©û"
+                Case Break
+
+            Case Else
+                Forward Send Operation_Not_Allowed  iError_Num
+        Case End
+    End_Procedure   //operation_not_allowed
+
+
+    // Request_DeleteBpo:
+
+    Procedure Request_Deletebpo
+              //If (Gmhnes.Gmhnes_Ghmnorec = 0) Send Request_Delete
+              Local Integer liGmhnes_Number_of_Ghmnies_Recs
+              Get Field_Current_Value Field Gmhnes.Gmhnes_GhmNoRec to liGmhnes_Number_of_Ghmnies_Recs
+              If (liGmhnes_Number_of_Ghmnies_Recs = 0 );
+                 Begin
+                  Send Request_Delete
+                 End
+    End_Procedure   // Request_DeleteBpo
+
+
+    Procedure Update
+        Forward Send Update
+
+        //ú§û£‚®‡©û £û related ßúõÂ‡§
+        Move Company.Company_Code to Gmhnes.Company_Code
+        Move Branch.Branch_Code   to Gmhnes.Branch_Code
+        Move Year.Year_Year       to Gmhnes.Year_Year
+        Move Year.Year_Recr       to Gmhnes.Year_Recr
+        Move Gplan.Gplan_Code     to Gmhnes.Gplan_Code
+    End_Procedure   //update
+
+
+
+    // fnCalcMhnes_Ypol:
+    // Used from anal_kath to calculate ypol's up to aiMhnasTo## and liYearYYYY##
+    //   liMode## = 1  On_Line    Ê¢ò
+    //   liMode## = 0  Theorimeno  £Ê§¶§ ´ò ¢¶ö†©´†°¶ß¶†û£‚§ò
+    //   liCurrMode## = 1  Book    °Á®†¶ §Ê£†©£ò Æ®„©û™
+    //   liCurrMode## = 2  Euro    õú¨´ú®Á¶§ §Ê£†©£ò Æ®„©û™
+    //   liCurrMode## = 3  Reporting §Ê£†©£ò reporting
+    //   liCurrMode## = 0  Record Currency §Ê£†©£ò úöö®ò≠„™
+
+    Function fnCalcMhnes_Ypol Integer aiMode;
+                              Integer aiMhnasTo;
+                              Integer aiYearYYYY;
+                              String  asGplan_Code;
+                              Integer aiCurrMode;
+                              Returns Number
+
+        Integer liCurrRecnum liYearYYYY
+        Number lnSynxre2 lnSynPist2 lnSynYpol2 lnSynxre0 lnSynPist0 lnSynYpol0
+
+
+        // Insert Code Here
+        //keep record.number
+
+        Move 0  to ImageCalcMhnes.1
+        Move 0  to ImageCalcMhnes.2
+
+        Move Gmhnes.recnum to liCurrRecnum //sos must ne integer
+
+        If (aiMhnasTo <> "") begin
+
+            Move (TheYearSegment(Year.Year_XrhshFrom)) to liYearYYYY
+
+            clear Gmhnes
+            // move olo to pkid sto index
+            Move SysCurGL.Company_Code to Gmhnes.Company_Code
+            Move SysCurGL.Branch_Code  to Gmhnes.Branch_code
+            Move SysCurGL.Year_Year    to Gmhnes.Year_Year
+            Move asGplan_Code          to Gmhnes.Gplan_Code
+            Move liYearYYYY            to Gmhnes.Gmhnes_YYYY
+            Move -999                  to Gmhnes.Gmhnes_Period  //Pkid
+
+            find ge Gmhnes By Index.1
+
+            CalcAgain1:
+            If (Found ne 0) begin
+                If ((Gmhnes.Company_Code = SysCurGL.Company_Code) and;
+                    (Gmhnes.Branch_code  = SysCurGL.Branch_Code) and;
+                    (Gmhnes.Year_Year    = SysCurGL.Year_Year)) begin
+                    if  ((Gmhnes.Gplan_code = asGplan_Code) and;
+                         ((Gmhnes.Gmhnes_YYYY < aiYearYYYY) or ;
+                          ((Gmhnes.Gmhnes_YYYY = aiYearYYYY) and;
+                          (Gmhnes.Gmhnes_Period < aiMhnasTo)))) begin
+
+                         If (aiMode = 1) Begin //On_Line
+                            if (aiCurrMode = 1)  begin //Book
+                                move (lnSynxre0  + Gmhnes.Gmhnes_Sx2) to LnSynxre0
+                                move (lnSynPist0 + Gmhnes.Gmhnes_Sp2) to LnSynPist0
+                            end
+                            if (aiCurrMode = 2)  begin //Euro
+                                move (lnSynxre0  + Gmhnes.Gmhnes_Sx00) to LnSynxre0
+                                move (lnSynPist0 + Gmhnes.Gmhnes_Sp00) to LnSynPist0
+                            end
+                            if (aiCurrMode = 3)  begin //Reporting
+                                move (lnSynxre0  + Gmhnes.Gmhnes_SxR) to LnSynxre0
+                                move (lnSynPist0 + Gmhnes.Gmhnes_SpR) to LnSynPist0
+                            end
+                            if (aiCurrMode = 0)  begin //Record Currency
+                                move (lnSynxre0  + Gmhnes.Gmhnes_Sx2) to LnSynxre0
+                                move (lnSynPist0 + Gmhnes.Gmhnes_Sp2) to LnSynPist0
+                            end
+                         end //of aiMode
+                         else If (aiMode = 0) Begin //Theorimeno
+                                move (lnSynxre0  + Gmhnes.Gmhnes_Sx1) to LnSynxre0
+                                move (lnSynPist0 + Gmhnes.Gmhnes_Sp1) to LnSynPist0
+                         end
+
+                            find gt Gmhnes By Index.1
+                            Goto CalcAgain1
+                    end
+                end
+                //>>exit
+            end
+
+            move (lnSynxre0-LnSynPist0) to LnSynYpol0
+            move lnSynxre0  to ImageCalcMhnes.1
+            move LnSynPist0 to ImageCalcMhnes.2
+        end
+
+        //restore record
+        Clear Gmhnes
+        Move liCurrRecnum to Gmhnes.recnum
+        Find Eq Gmhnes.Recnum
+
+        Function_Return lnSynYpol0
+    End_Function   // fnCalcMhnes_Ypol
+
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Gmhnes.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Ghmnies.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Gplan.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecg.Gmhnes_Rec0  To Gmhnes.Gmhnes_Rec0
+
+        // Field-based properties.......................
+
+        // Gmhnes.Company_Code
+
+        // Gmhnes.Branch_Code
+
+        // Gmhnes.Year_Year
+
+        // Gmhnes.Gplan_Code
+
+        // Gmhnes.Gmhnes_Yyyy
+
+        // Gmhnes.Gmhnes_Period
+        Set Field_Value_Table      Field Gmhnes.Gmhnes_Period To (Gmhnes_Gmhnes_Period_VT(Self))
+
+        // Gmhnes.Gmhnes_Rec0
+
+        // Gmhnes.Gplan_Recr
+
+        // Gmhnes.Gmhnes_Sx0
+
+        // Gmhnes.Gmhnes_Sp0
+
+        // Gmhnes.Gmhnes_Sx00
+
+        // Gmhnes.Gmhnes_Sp00
+
+        // Gmhnes.Gmhnes_Sx1
+
+        // Gmhnes.Gmhnes_Sp1
+
+        // Gmhnes.Gmhnes_Sx2
+
+        // Gmhnes.Gmhnes_Sp2
+
+        // Gmhnes.Gmhnes_Sxr
+
+        // Gmhnes.Gmhnes_Spr
+
+        // Gmhnes.Gmhnes_Ghmnorec
+        //DDB/ Comment_Short       Field Gmhnes.Gmhnes_Ghmnorec To "è¢„ü¶™ úöö®ò≠È§ ghmnies"
+
+        // Gmhnes.Year_Recr
+
+        // Gmhnes.Gmhnes_Recr
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+End_Class    // Gmhnes_DataDictionary
+//DDB-FileEnd

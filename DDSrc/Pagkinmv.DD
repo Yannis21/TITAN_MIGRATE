@@ -1,0 +1,146 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : PAGKINMV.DD
+// Class Name: Pagkinmv_DataDictionary
+// Revision  : 15
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Pagkinmv
+Open Pagkin
+Open Sysrecg
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Pagkinmv_Sign_VT
+Register_Object Pagkinmv_Xp_VT
+Register_Object Pagkinmv_Flaggl_VT
+
+Object Pagkinmv_Sign_VT  is a DescriptionValidationTable
+    Set Table_Title       To "Ñß†¢¶ö„ ß®¶©Â£¶¨"
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "+"  "áú´†°Ê"
+        Send Add_Table_Value  "-"  "Ä®§û´†°Ê"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Pagkinmv_Sign_VT
+
+Object Pagkinmv_Xp_VT  is a DescriptionValidationTable
+    Set Table_Title       To "Ñß†¢¶ö„ °Â§û©û™"
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "ï"  "ï®‚‡©û"
+        Send Add_Table_Value  "è"  "èÂ©´‡©û"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Pagkinmv_Xp_VT
+
+Object Pagkinmv_Flaggl_VT  is a DescriptionValidationTable
+    Set Table_Title       To "ìßÊõú†•û  ¢¶ö/©£¶Á ö†ò ö‚≠¨®ò £ú Ç.ä"
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "01"  "ÄßÊ °ò®´‚¢ò ßòöÂ¶¨"
+        Send Add_Table_Value  "02"  "Ñ§û£‚®‡©û ô·©û ¢¶ö/©£¶Á ß¶Á üò úß†¢‚•‡"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Pagkinmv_Flaggl_VT
+//DDB-ValidationEnd
+
+Class Pagkinmv_DataDictionary  is a DataDictionary_sec
+ 
+    // Update:
+ 
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here 
+        move pagkin.pagkin_code  to pagkinmv.pagkin_code
+        move pagkin.gtypkin_code to pagkinmv.gtypkin_code 
+    End_Procedure   // Update
+ 
+    
+   Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(pagkinmv.pagkinmv_Rec0)))))) to pagkinmv.pagkinmv_Recr
+    End_Procedure   // Creating
+    
+    
+    
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Pagkinmv.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Pagkin.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecg.Pagkinmv_Rec0  To Pagkinmv.Pagkinmv_Rec0
+
+        // Field-based properties.......................
+
+        // Pagkinmv.Pagkin_Recr
+
+        // Pagkinmv.Pagkinmv_Rec0
+
+        // Pagkinmv.Pagkinmv_Recr
+
+        // Pagkinmv.Pagkin_Code
+
+        // Pagkinmv.Gtypkin_Code
+
+        // Pagkinmv.Codegl
+
+        // Pagkinmv.Order
+
+        // Pagkinmv.Sign
+        Set Field_Value_Table      Field Pagkinmv.Sign To (Pagkinmv_Sign_VT(Self))
+
+        // Pagkinmv.Xp
+        Set Field_Value_Table      Field Pagkinmv.Xp To (Pagkinmv_Xp_VT(Self))
+
+        // Pagkinmv.Type
+
+        // Pagkinmv.Flaggl
+        Set Field_Value_Table      Field Pagkinmv.Flaggl To (Pagkinmv_Flaggl_VT(Self))
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Pagkinmv_DataDictionary
+//DDB-FileEnd

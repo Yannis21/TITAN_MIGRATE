@@ -1,0 +1,45 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: HMCTYP (# 102)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:HMCTYP
+  USER DISPLAY NAME         : HmCtyp
+  DATAFLEX FILE NAME        : HMCTYP
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 51        ( USED: 51 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 105 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  HMGIO_CODE       NUM   14.0     1  1   HMGIO.FIELD_1 (101,1)
+  2  CTYPKIN_RECR     ASC     12     8  2   CTYPKIN.FIELD_6 (7,6)
+  3  COMPANY_CODE     ASC     10    20  3   
+  4  BRANCH_CODE      ASC     10    30  3   
+  5  YEAR_YEAR        NUM    4.0    40  3   
+  6  CTYPKIN_CODE     ASC     10    42  3   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    HMGIO_CODE      NO  NO       19     3       2     ON-LINE
+       CTYPKIN_RECR    NO  NO 
+
+  2    CTYPKIN_RECR    NO  NO       19     3       2     ON-LINE
+       HMGIO_CODE      NO  NO 
+
+  3    COMPANY_CODE    NO  NO       39     3       5     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       CTYPKIN_CODE    NO  NO 
+       HMGIO_CODE      NO  NO 
+

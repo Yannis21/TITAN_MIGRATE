@@ -1,0 +1,845 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : BARTICL.DD
+// Class Name: Barticl_DataDictionary
+// Revision  : 93
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Barticl
+Open Bmove
+Open Bsum
+Open Btypkin
+Open Sysrecb
+Open Cn
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Barticl_Barticl_M_Code_VT
+
+Object Barticl_Barticl_M_Code_VT  is a CodeValidationTable
+    Set Type_Value        To "MODULE"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Barticl_Barticl_M_Code_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList Barticl  Barticl.SL
+//DDB/ ExternalSelectionList sl041  sl041.SL
+Register_Object Barticl
+Register_Object sl041
+//DDB-SelectionEnd
+
+Class Barticl_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Shmera integer iField  Date dDate
+        Local Integer Changed
+        Get Field_Changed_State iField to Changed
+        If (Changed=0 AND dDate =0) Begin
+            SysDate4 dDate
+            Set Field_Default_Value iField to dDate
+        End
+    End_Procedure   // Shmera
+
+    Procedure Save_Main_File
+        If (Barticl.Cn_Code<>'') Begin  
+            Clear Cn   
+            Move Barticl.Cn_Code to Cn.Cn_Code
+            Find Eq Cn By Index.5 // Cn:Index.5:Cn_Code  
+            Move Cn.Cn_Sls_ID     to Barticl.Sls_ID
+            Move Cn.Cn_Presp_ID   to Barticl.Presp_ID
+            Move Cn.CN_Cnt_ID     to Barticl.Cnt_ID
+        End
+        Forward Send Save_Main_File
+    End_Procedure   // Save_Main_File
+
+      Procedure private.Initialize_Properties
+                 //£›œ¤ ©£æª §˜¢˜ é¤
+                 Set psB_Btypkin_Recr    to ''
+                 Set pdB_Barticl_Hmnia   to 0
+                 Set piB_Barticl_No      to 0
+                 Set psB_Barticl_Code1   to ""
+
+                 Set pdB_Garticl_Hmnia   to 0  //š ˜ «¤ œ¤£â¨à© «ª š¢
+                 Set piB_Garticl_No      to 0
+                 Set psB_Garticl_Aitiol  to ""
+
+                 //£›œ¤ ©£æª ¤âà¤
+                 Set psA_Btypkin_Recr    to ''
+                 Set pdA_Barticl_Hmnia   to 0
+                 Set piA_Barticl_No      to 0
+                 Set psA_Barticl_Code1   to ""
+
+                 Set pdA_Garticl_Hmnia   to 0  //š ˜ «¤ œ¤£â¨à© «ª š¢
+                 Set piA_Garticl_No      to 0
+                 Set psA_Garticl_Aitiol  to ""
+
+                 Set psB_Gplan_Code to ""
+                 Set psA_Gplan_Code to ""
+
+      End_Procedure //private.Initialize_Properties
+
+
+      Procedure Construct_Object
+                Forward Send Construct_Object
+
+                Property String  psA_Btypkin_Recr     ''
+                Property Date    pdA_Barticl_Hmnia    0
+                Property Integer piA_Barticl_No       0
+                Property String  psB_Barticl_Code1    ""
+
+                Property String  psB_Btypkin_Recr     ''
+                Property Date    pdB_Barticl_Hmnia    0
+                Property Integer piB_Barticl_No       0
+                Property String  psA_Barticl_Code1    ""
+
+                Property Date    pdA_Garticl_Hmnia    0 //š ˜ «¤ œ¤£â¨à© «ª š¢
+                Property Integer piA_Garticl_No       0
+                Property String  psA_Garticl_Aitiol   ''
+
+                Property Date    pdB_Garticl_Hmnia    0 //š ˜ «¤ œ¤£â¨à© «ª š¢
+                Property Integer piB_Garticl_No       0
+                Property String  psB_Garticl_Aitiol   ''
+
+
+                Property Integer piBaxio_dd           0 //object id «¦¬ ddo server š ˜ «¦ baxio
+                                                        //©œ«á¨œ«˜  ˜§¦ «¤ end_construct «¦¬ bmove
+                                                        //®¨© £œçœ  ©«¤ ???
+                Property Integer piBaxiokat_dd        0 //object id «¦¬ ddo server š ˜ «¦ baxio
+                                                        //©œ«á¨œ«˜  ˜§¦ «¤ end_construct «¦¬ bmove
+                                                        //®¨© £œçœ  ©«¤ ???
+                Property Integer piBmove_dd           0 //object id «¦¬ ddo server š ˜ «¦ bmove
+                                                        //©œ«á¨œ«˜  ˜§¦ «¤ end_construct «¦¬ bmove
+                                                        //®¨© £œçœ  ©«¤ cascade update
+                Property Integer piBtypkin_dd         0 //object id «¦¬ ddo server š ˜ «¦ btypkin
+                                                        //©œ«á¨œ«˜  ˜§¦ «¤ end_construct «¦¬ bmove
+                                                        //®¨© £œçœ  ©«¤ cascade update
+
+                Property String  psB_Gplan_Code
+                Property String  psA_Gplan_Code
+
+
+                Property Integer piCreated_Barticl 0 //©œ«á¨œ«˜  ©«¤ creating,
+                                                     //®¨© £¦§¦ œå«˜  ©«¤ update+validate_save ¡˜ 
+                                                     //£›œ¤åœ«˜  ©«¤ request_save «¦¬ bmove
+
+                Property  Integer piDo_GL_Maintainance       0 //object id «ª business process
+                                                               //§¦¬ œ¤£œ¨é¤œ  «ã¤ šœ¤ ¡ã ¢¦š ©« ¡ã
+                Property  Integer piDo_CUSTOMER_Maintainance 0 //object id «ª business process
+                                                               //§¦¬ œ¤£œ¨é¤œ  «¦¬ª §œ¢á«œª
+                Property  Integer piDo_VENDOR_Maintainance   0 //object id «ª business process
+                                                               //§¦¬ œ¤£œ¨é¤œ  «¦¬ª §¨¦£Ÿœ¬«âª
+      End_Procedure   //construct_object
+
+      Procedure Update
+                Integer liBAxio_dd liBaxiokat_dd
+                Forward Send Update
+
+                //˜) œ¤£â¨à© £ã related §œ›åà¤
+                Move Syscurxr.Company_Code  to Barticl.Company_Code
+                Move Syscurxr.Branch_Code   to Barticl.Branch_Code
+                Move Syscurxr.Year_Year     to Barticl.Year_Year
+                Move Btypkin.Btypkin_Code   to Barticl.Btypkin_Code
+
+
+                //™) ˜¤áš¤à© properties
+                Get piBaxio_dd    to liBaxio_dd    //«¦ ddo §¦¬ "©œ¨™å¨œ " «¦ baxio
+                Get piBaxiokat_dd to liBaxiokat_dd //«¦ ddo §¦¬ "©œ¨™å¨œ " «¦ baxiokat
+
+                //š) › ˜®œå¨ © calculated §œ›åà¤
+                //š.1:btypkin.btypkin_L_Hmnia //«œ¢œ¬«˜å˜ £œ¨¦£¤å˜
+                 Move (Barticl.Barticl_Hmnia Max Btypkin.Btypkin_L_Hmnia) to Btypkin.Btypkin_L_Hmnia
+
+                Case Begin
+                    Case (Btypkin.Btypkin_Anti2 = 5) //§˜¨˜¢ã§«ª œå¤˜  ¦ å› ¦ª ¦ ©¬¤˜¢¢˜©æ£œ¤¦ª
+                        Move Barticl.Barticl_Code1 to Barticl.Barticl_Code2
+                        Move Barticl.Barticl_Epon1 to Barticl.Barticl_Epon2
+                      Case Break
+                    Case (Btypkin.Btypkin_Anti2 = (-1)) //›â¤ ¬§á¨®œ  §˜¨˜¢ã§«ª
+                        Move ""                    to Barticl.Barticl_Code2
+                        Move ""                    to Barticl.Barticl_Epon2
+                      Case Break
+                Case End
+
+
+                Case Begin
+                    Case ((Btypkin.Btypkin_Anti1=2) Or (Btypkin.Btypkin_Anti1=3))
+                        Clear Clients
+                        Move Barticl.Barticl_Code1 to Clients.Client_ID
+                        Find Eq Clients by Index.6 //Client_ID
+                        If (Found = 1) Move Clients.Client_Recr to Barticl.Client_Mrecr
+                        Else Send Operation_Not_Allowed 3002 //›â¤ ™¨âŸ¡œ «¦ Master Customer_rec0, please reindex
+                      Case Break
+                Case End
+
+                If (Btypkin.Gtypkin_Code <> 0);
+                Begin //œá¤  ¡å¤© œ¤£œ¨é¤œ  «¤ šœ¤ ¡ã ¢¦š ©« ¡ã, ®¨œ á¦£˜  ¦§à›ã§¦«œ
+                      //master gplan rec0
+                      Case Begin
+                           Case (Btypkin.Btypkin_Anti1 = 1) //©¬¤˜¢¢˜©æ£œ¤¦ª ˜§æ š¢
+//jsjsjs 24/01/2001
+//                                Clear Gplan
+//                                Move Barticl.Company_Code  to Gplan.Company_Code
+//                                Move Barticl.Branch_Code   to Gplan.Branch_Code
+//                                Move Barticl.Year_Year     to Gplan.Year_Year
+//                                Move Barticl.Barticl_Code1 to Gplan.Gplan_Code
+//                                Find Eq Gplan by Index.1 //company_code+branch_code+year_year+Gplan_code
+//                                If (Found = 1) Move Gplan.Gplan_Rec0 to Barticl.Gplan_Mrec0
+//                                Else           Send Operation_Not_Allowed 3001 //›â¤ ™¨âŸ¡œ «¦ Master Gplan_rec0
+//jsjsjs 24/01/2001
+                           Case Break
+                           Case Else                        //=4 ¢¦ §¦å:©¬¤˜¢¢˜©æ£œ¤¦ª £œ user manual data entry
+                                Move 0 to Barticl.Gplan_Mrec0
+                      Case End
+                End   //please check the logic
+
+
+                //›) œ¤£â¨à© ˜Ÿ¨¦ ©«é¤ (adjust_balances)
+
+                //œ) œ¤£â¨à© properties after (˜§æ parent buffers!)
+                Set psA_Btypkin_Recr    to Btypkin.Btypkin_Recr
+                Set pdA_Barticl_Hmnia   to Barticl.Barticl_Hmnia
+                Set piA_Barticl_No      to Barticl.Barticl_No
+                Set psA_Barticl_Code1   to Barticl.Barticl_Code1
+
+                Set pdA_Garticl_Hmnia   to Barticl.Barticl_Hmnia  //š ˜ «¤ œ¤£â¨à© «ª š¢
+                Set piA_Garticl_No      to Barticl.Barticl_No
+                Set psA_Garticl_Aitiol  to Barticl.Barticl_Aitiol
+
+      End_Procedure   //update
+
+
+      Procedure Backout
+                Forward Send Backout
+
+                //œ) œ¤£â¨à© properties before (˜§æ current buffer)
+                Set psB_Btypkin_Recr    to Barticl.Btypkin_Recr
+                Set pdB_Barticl_Hmnia   to Barticl.Barticl_Hmnia
+                Set piB_Barticl_No      to Barticl.Barticl_No
+                Set psB_Barticl_Code1   to Barticl.Barticl_Code1
+
+                Set pdB_Garticl_Hmnia   to Barticl.Barticl_Hmnia  //š ˜ «¤ œ¤£â¨à© «ª š¢
+                Set piB_Garticl_No      to Barticl.Barticl_No
+                Set psB_Garticl_Aitiol  to Barticl.Barticl_Aitiol
+      End_Procedure   // backout
+
+
+      Procedure Creating 
+                string sstr
+                Forward Send Creating
+
+                //jsjsjs 24/01/2001 Add 1 to Year.Year_NumBarticl //˜¨ Ÿ£æª á¨Ÿ¨à¤ ˜¥ ¦š¨á­à¤ «ª ®¨ã©ª
+
+            Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                            (Trim(String(Barticl.Barticl_Rec0)))))) to Barticl.Barticl_Recr
+
+                If (Barticl.Barticl_M_Code='') Move gs_Module_Code to Barticl.Barticl_M_Code
+
+                //************************************************************************
+                //flag 5:˜¬«æ£˜« ˜¨åŸ£©                                               *
+                //************************************************************************
+                If (Btypkin.Btypkin_Flag05 = TRUE);
+                     Begin //«¦ á¨Ÿ¨¦ â®œ  ˜¬«æ£˜« ˜¨åŸ£©
+                      Add 1 to Btypkin.Btypkin_L_No
+                      Move Btypkin.Btypkin_L_No  to Barticl.Barticl_No
+                     End
+                Else Begin //«¦ á¨Ÿ¨¦ â®œ  ®œ ¨¦¡å¤« ˜¨åŸ£©
+                     End
+                if ((btypkin.locked=1) and (barticl.barticl_hmnia ge btypkin.locked_date)) error 1966 '† ¡å¤© œå¤˜  ¡¢œ ›à£â¤' 
+                move '€¨.€„' To sstr 
+                Move (Append(sstr,(' '+(string(barticl.pae_arithm))+' †£/¤å˜ '+(string(Barticl.pae_hmnia))))) to sstr
+                move sstr to barticl.barticl_aitiol 
+                move 1 to barticl.ekkremes
+                
+                
+                Set piCreated_Barticl to TRUE
+      End_Procedure //creating
+
+
+      Procedure Deleting
+                Forward Send Deleting
+
+                //jsjsjs 24/01/2001 Sub 1 from Year.Year_NumBarticl //˜¨ Ÿ£æª á¨Ÿ¨à¤ ˜¥ ¦š¨á­à¤ «ª ®¨ã©ª
+                If (Btypkin.Btypkin_L_No = Barticl.Barticl_No);
+                Begin //œá¤ › ˜š¨á­à «¦¤ «œ¢œ¬«˜å¦ ˜¨ Ÿ£æª !!! sos pleas check the logic!
+                  Sub 1 from Btypkin.Btypkin_L_No
+                  // js 05/09/2002
+                  Saverecord Btypkin
+                End
+      End_Procedure //deleting
+
+
+      Procedure Operation_Not_Allowed Integer iError_Num
+                String lsError_Message
+                Case Begin
+                     //˜§æ validate save
+                     Case (iError_Num = 1001)
+                          Move ("DDC 036:€¡˜«á¢¢¢ †£œ¨¦£¤å˜ !\n\n‹ ¡¨æ«œ¨ «ª œ¤á¨¥œàª ®¨ã©œàª ("+;
+                          (String(SysCurXr.Year_XrhshFrom))+")") to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1002)
+                          Move ("DDC 036:€¡˜«á¢¢¢ †£œ¨¦£¤å˜ !\n\n‹œš˜¢ç«œ¨ «ª ¢ã¥œàª ®¨ã©œàª ("+;
+                          (String(SysCurXr.Year_XrhshTo))+")") to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1003)
+                          Move ("DDC 036:€¡˜«á¢¢¢ œšš¨˜­ã.\n\n"+;
+                          "ƒâ¤ œ§ «¨â§œ«˜  ˜¢˜šã «ç§¦¬ ¡å¤©ª!");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1004)
+                          Move ("DDC 036:€¡˜«á¢¢¢ „šš¨˜­ã !\n\n† £œ¨¦£¤å˜ «¨¦§¦§¦ œå«˜  £æ¤¦¤ ˜§¦ «¦ á¨Ÿ¨¦!");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1005)
+                          Move ("DDC 036:€¡˜«á¢¢¢ „šš¨˜­ã !\n\n ˜¨ Ÿ£æª «¨¦§¦§¦ œå«˜  £æ¤¦¤ ˜§¦ «¦ á¨Ÿ¨¦!");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1006)
+                          Move ("DDC 036:€¡˜«á¢¢¢ „šš¨˜­ã !\n\n† ˜ « ¦¢¦šå˜ «¨¦§¦§¦ œå«˜  £æ¤¦¤ ˜§¦ «¦ á¨Ÿ¨¦!");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1007)
+                          Move ("DDC 036:€¡˜«á¢¢¢ „šš¨˜­ã !\n\n‹›œ¤ ¡æª ˜¨ Ÿ£æª §˜¨˜©«˜« ¡¦ç !");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1008)
+                          Move ("DDC 036:€¡˜«á¢¢¢ œšš¨˜­ã.\n\n"+;
+                          "ƒâ¤ œ§ «¨â§œ«˜  ˜¢˜šã ©¬¤˜¢¢˜©¦£â¤¦¬!");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1009)
+                          Clear Codemast
+                          Move "MODULE" to Codemast.Type
+                          Move Barticl.Barticl_M_Code to Codemast.Code
+                          Find Eq Codemast by Index.1 //type+code
+                          Move ("DDC 036:€›ç¤˜«  „šš¨˜­ã\n\n(’¦ á¨Ÿ¨¦ «¨¦§¦§¦ œå«˜  £æ¤¦¤ ˜§æ "+;
+                          (Trim(Codemast.Description))+" )") to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1011)
+                          Move ("DDC 036:€›ç¤˜«  „šš¨˜­ã\n\n(ƒœ¤ â®œ  ¦¨ ©Ÿœå «¦ ¡ç¡¢à£˜!)");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1100)
+                          Move "DDC 036:‹ ˜§¦›œ¡«ã „«˜ ¨å˜-•¨ã©" to lsError_Message
+                          Case Break
+                     
+                     Case (iError_Num = 2100)
+                          Move "DDC 036:‹ ˜§¦›œ¡«ã „«˜ ¨å˜-•¨ã©" to lsError_Message
+                          Case Break
+
+                   //˜§æ update
+                   Case (iError_Num = 3001)
+                        Move ("DDC 036:ƒâ¤ ™¨âŸ¡œ ¦ ¡à› ¡æª "+ (Trim(Barticl.Barticl_Code1)) + " ©«ã ‚œ¤ ¡ã Š¦š ©« ¡ã !\n\n˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 3002)
+                        Move ("DDC 036:ƒâ¤ ™¨âŸ¡œ ¦ ¡à› ¡æª "+ (Trim(Barticl.Barticl_Code1)) + " ©«ã ‚œ¤ ¡ã Š¦š ©« ¡ã š ˜ «¦¤ œ¢á« !\n\n˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 3003)
+                        Move ("DDC 036:ƒâ¤ ™¨âŸ¡œ ¦ ¡à› ¡æª "+ (Trim(Barticl.Barticl_Code1)) + " ©«ã ‚œ¤ ¡ã Š¦š ©« ¡ã š ˜ «¦¤ ¨¦£Ÿœ¬«ã !\n\n˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª !");
+                        to lsError_Message
+                   Case Break
+
+                   Case (iError_Num = 1330)
+                          Move "DDC 036: €¨ Ÿ£æª .€.„. £›œ¤ ¡æª ã †£œ¨/¤å˜ .€.„. ¡œ¤ã" to lsError_Message
+                   Case Break
+
+                   Case (iError_Num = 1331)
+                          Move "DDC 036: †£œ¨/¤å˜ .€.„. ›œ¤ £§¦¨œå ¤˜ œå¤˜  > ©ã£œ¨˜" to lsError_Message
+                   Case Break
+
+                   Case (iError_Num = 1332)
+                          Move "DDC 036: †£œ¨/¤å˜ §˜¨˜©«˜« ¡¦ç ›œ¤ £§¦¨œå ¤˜ œå¤˜  > ©ã£œ¨˜" to lsError_Message
+                   Case Break
+
+                     Case Else
+                          Forward Send Operation_Not_Allowed iError_Num
+                Case End
+
+                Error iError_Num lsError_Message
+      End_Procedure // operation_not_allowed
+
+      Function Validate_Save Returns Integer
+               Integer iReturnVal  
+               Date dShmera
+               Sysdate dShmera
+
+               Forward Get Validate_Save to iReturnVal
+               //Set piCreated_Barticl to 0
+
+               If (Not(iReturnVal));
+               Begin
+                //1001+1002:â¢œš®¦  £œ¨¦£¤å˜ª
+                If (Not(Barticl.Barticl_Hmnia >= SysCurXr.Year_XrhshFrom )) Send Operation_Not_Allowed 1001
+                If (Not(Barticl.Barticl_Hmnia <= SysCurXr.Year_XrhshTo   )) Send Operation_Not_Allowed 1002
+
+                //1007:â¢œš®¦ª ˜¨ Ÿ£¦ç §˜¨˜©«˜« ¡¦ç
+                If (Not(Barticl.Barticl_No     >  0                  )) Send Operation_Not_Allowed 1007
+                
+                
+                //1011:â¢œš®¦ª £ã ¡œ¤¦ç module œšš¨˜­ãª
+                If (Trim(Barticl.Barticl_M_Code)="")       Send Operation_Not_Allowed 1011
+                //---------«â¢¦ª œ¢âš®à¤ create & edit barticl record----------------------
+
+                //---------â¢œš®¦  create barticl record----------------------
+                //sososo £§àª §¨œ§œ  ¤˜ §˜ ¥à £œ «¤ current record ????
+                If (Barticl.Recnum =  0);
+                Begin //œá¤ ›£ ¦¬¨šé ¤â¦ record
+                End   //«â¢¦ª œ¢âš®à¤ ›£ ¦¬¨šå˜ª ¤â¦¬ barticl record
+
+                //---------â¢œš®¦  editing existing barticl records-------------------
+                Else;
+                Begin //edit an existing record
+                      //1003:˜§˜š¦¨œçœ«˜   ˜¢¢˜šã parent btypkin record
+                      If (Not;
+                          ((psB_Btypkin_Recr(Self)) = Btypkin.Btypkin_Recr);
+                         )                                              Send Operation_Not_Allowed 1003
+                      //1004:«¨¦§¦§¦å© (edit) barticl_hmnia £æ¤¦¤ ˜§æ barticl_dd
+                      If (;
+                           ((pdB_Barticl_Hmnia(Self))     <> Barticl.Barticl_Hmnia) and;
+                           ((Main_File(OPERATION_ORIGIN)) <> Barticl.File_Number);
+                         )                                              Send Operation_Not_Allowed 1004
+                      //1005:«¨¦§¦§¦å© (edit) barticl_no £æ¤¦¤ ˜§æ barticl_dd
+                      If (;
+                           ((piB_Barticl_No   (Self))     <> Barticl.Barticl_No) and;
+                           ((Main_File(OPERATION_ORIGIN)) <> Barticl.File_Number);
+                         )                                              Send Operation_Not_Allowed 1005
+
+
+                      //1006:«¨¦§¦§¦å© (edit) barticl_aitiol £æ¤¦¤ ˜§æ barticl_dd
+                      If (;
+                           ((psB_Garticl_Aitiol(Self))    <> Barticl.Barticl_Aitiol) and;
+                           ((Main_File(OPERATION_ORIGIN)) <> Barticl.File_Number) ;
+                         )                                              Send Operation_Not_Allowed 1006
+
+
+
+                      //1008:˜§˜š¦¨œçœ«˜   ˜¢¢˜šã barticl_code1 (©¬¤˜¢¢˜©¦£â¤¦¬)
+                      If (Not;
+                          ((psB_Barticl_Code1(Self)) = Barticl.Barticl_Code1);
+                         )                                              Send Operation_Not_Allowed 1008
+                End   //«â¢¦ª œ¢âš®à¤ editing existing barticl record
+                If ( ;
+                    (Not(Barticl.Company_Code = Syscurxr.Company_Code)) or;
+                    (Not(Barticl.Branch_Code  = Syscurxr.Branch_Code )) or;
+                    (Not(Barticl.Year_Year    = Syscurxr.Year_Year   ));
+                    )                                                   Send Operation_Not_Allowed 1100
+
+               End //«â¢¦ª ¡é› ¡˜ validation         
+               
+                If (sysfile.serial_number='1') Begin
+                    If ((Barticl.PAE_Arithm=0) Or (Barticl.PAE_Hmnia=""))   Send Operation_Not_Allowed 1330
+                    If (Barticl.PAE_Hmnia>dShmera)                          Send Operation_Not_Allowed 1331
+                End
+
+                If (Barticl.Barticl_Hmnia>dShmera)                          Send Operation_Not_Allowed 1332
+               
+               Function_Return iReturnVal
+      End_Function   // validate_save
+
+
+      Function Validate_Delete  Returns Integer
+               Integer iReturnVal
+               Forward Get Validate_Delete  To iReturnVal
+               If (Not(iReturnVal));
+               Begin
+                    If ( ;
+                        (Not(Barticl.Company_Code = Syscurxr.Company_Code)) or;
+                        (Not(Barticl.Branch_Code  = Syscurxr.Branch_Code )) or;
+                        (Not(Barticl.Year_Year    = Syscurxr.Year_Year   ));
+                        )                                                   Send Operation_Not_Allowed 2100
+               End //«â¢¦ª ¡é› ¡˜ validation
+               Function_Return iReturnVal
+      End_Function   // Validate_Delete
+
+
+
+      Procedure Request_Save
+               Integer liGarticl_Rec0 liCmove_Rec0 liVmove_Rec0 iErrorObj
+
+               Send private.Initialize_Properties //£›œ¤ ©£æª æ¢à¤ «à¤ ©®œ« ¡é¤ properties
+
+               // cascade update «¨â®œ  £æ¤¦¤ ©œ existing barticl records
+               //æ«˜¤ ›£ ¦¬¨šé ¤â¦ record, «æ«œ ›â¤ ®¨œ á¦£˜  «å§¦«˜
+               If ((Current_Record(Self)) = 0) Begin
+                    Forward Send Request_Save
+                    Send private.Initialize_Properties //£›œ¤ ©£æª æ¢à¤ «à¤ ©®œ« ¡é¤ properties
+                    Procedure_Return
+               End
+
+               //æ«˜¤ ¡á¤à edit existing record, §¨â§œ  ¤˜ «¨â®à «¤ cascade update
+               //š ˜ ¤˜ â¤£œ¨é©à (œá¤ ­¬© ¡á ®¨œ áœ«˜ ) «˜ child bmoves
+               //£œ « ª ˜¢¢˜šâª «à¤ 3 foreign §œ›åà¤ «¦¬ barticl
+               //(btypkin_code+barticl_hmnia+barticl_no)
+               //§¨æª «¦ §˜¨æ¤ ›â¤ œ§ «¨â§œ«˜  ˜¢¢˜šã «¦¬ btypkin.
+
+               BEGIN_TRANSACTION
+               Move Error_Object_ID to iErrorObj
+               Forward Send Request_Save
+
+               //˜¤áš¤à© rec0's «à¤ ˜¤«å©«¦ ®à¤ articl's «à¤ ¢¦ §é¤ modules
+               Get Field_Current_Value Field Barticl.Garticl_Rec0 to liGarticl_Rec0
+               Get Field_Current_Value Field Barticl.Carticl_Rec0 to liCmove_Rec0
+               Get Field_Current_Value Field Barticl.Varticl_Rec0 to liVmove_Rec0
+
+               Send private.Transaction_Cascade_Update_Bmove //cascade œ¤£â¨à© bmove
+
+               END_TRANSACTION
+               Move iErrorObj to Error_Object_ID
+               Send private.Initialize_Properties //£›œ¤ ©£æª properties š ˜ œ§æ£œ¤ ¡å¤©
+
+               //œ§˜¤˜­¦¨á «¦¬ system indicator err
+               Indicate Err False
+     End_Procedure   // request_save
+
+
+     // ¨¦¬«å¤˜ ˜¬«ã ˜¤˜¢˜£™á¤œ  ¤˜ ¡á¤œ  cascade update ©«¦ bmove
+     //¡˜¢œå«˜  ˜§æ «ã¤ request save, £â©˜ ˜§æ transaction, £æ¤¦¤ š ˜ existing barticl records.
+     //œ§ ©«¨â­œ  ¢áŸ :
+     Procedure private.Transaction_Cascade_Update_Bmove
+               Integer liBmove_dd
+
+               //§˜¢˜ âª ¡˜  ¤âœª « £âª «¦¬ barticl
+               String   lsB_Btypkin_Recr     lsA_Btypkin_Recr
+               Date     ldB_Barticl_Hmnia    ldA_Barticl_Hmnia
+               Integer  liB_Barticl_No       liA_Barticl_No
+
+               //˜¤áš¤à© §˜¢˜ é¤ « £é¤ barticl
+               Get psB_Btypkin_Recr    to lsB_Btypkin_Recr
+               Get pdB_Barticl_Hmnia   to ldB_Barticl_Hmnia
+               Get piB_Barticl_No      to liB_Barticl_No
+
+               //˜¤áš¤à© ¤âà¤ « £é¤ barticl
+               Get psA_Btypkin_Recr    to lsA_Btypkin_Recr
+               Get pdA_Barticl_Hmnia   to ldA_Barticl_Hmnia
+               Get piA_Barticl_No      to liA_Barticl_No
+
+               //œá¤ æ¢œª ¦  « £âª before+after œå¤˜  å©œª,
+               //«æ«œ ›â¤ £§˜å¤à ¡˜Ÿæ¢¦¬ ©«¦¤ ¡æ§¦ ¤˜ «¨â¥à,
+               //˜¢¢á ­œçšà ...«¨â®¦¤«˜ª!
+               If (;
+                    (lsB_Btypkin_Recr   = lsA_Btypkin_Recr   ) and;
+                    (ldB_Barticl_Hmnia  = ldA_Barticl_Hmnia  ) and;
+                    (liB_Barticl_No     = liA_Barticl_No     )    ;
+                   ) Begin
+                      Procedure_Return
+                     End
+
+
+               //**************************************************************************
+               //02.rebuild constraints, ¢æšà «à¤ ¡¢á©œà¤
+               //**************************************************************************
+               Get piBmove_dd           to liBmove_dd
+               Send Rebuild_Constraints to (piBtypkin_dd(Self))
+               Send Rebuild_Constraints to Self
+               Send Rebuild_Constraints to (piBaxio_dd  (Self))
+               Send Rebuild_Constraints to liBmove_dd
+
+               //**************************************************************************
+               //03.©á¨à© Bmove
+               //**************************************************************************
+               Send Clear to liBmove_dd
+               Send Find to liBmove_dd FIRST_RECORD 3 //barticl_recr+bmove_rec0
+               While (Found=1)
+                      Send Request_Save to liBmove_dd
+                      Send Find to liBmove_dd NEXT_RECORD 3 //Barticl_recr+Bmove_rec0
+               Loop
+               Send Find to liBmove_dd FIRST_RECORD 3 //barticl_rec0+bmove_rec0
+               //send check_arthro_for_ypol (› æ«  £§¦¨œå ¤˜ ˜¢¢á¥œ   ©¦« £å˜ !)
+     End_Procedure //private.transaction_cascade_update_bmove
+
+
+
+     // ¨¦¬«å¤˜ ˜¬«ã ˜¤˜¢˜£™á¤œ  ¤˜ œ¤£œ¨é©œ  æ©˜ ˜§¦ «˜ ¬§æ¢¦ §˜ 3 modules «¦¬ ©¬©«ã£˜«¦ª
+     //§¨â§œ  ¤˜ œ¤£œ¨àŸ¦ç¤.
+     //¡˜¢œå«˜  ˜§æ «åª request save & delete, £â©˜ ˜§æ transaction.
+     //œ§ ©«¨â­œ  ¢áŸ :
+     Procedure private.Transaction_Update_Other_Modules Integer liGarticl_Rec0;
+                                                        Integer liCmove_Rec0;
+                                                        Integer liVmove_Rec0;
+                                                        Integer liMode
+
+               Integer liDo_GL_Maintainance liDo_CUSTOMER_Maintainance liDo_VENDOR_Maintainance
+               Integer liMust_Update_GL     liMust_Update_CUSTOMER     liMust_Update_VENDOR
+
+               //4 flags §¦¬ §œ¨¤á¤œ £œ ¦¨å©£˜«˜ ©« ª bpo «ª š¢
+               Integer liFlag02 liFlag03 liFlag04 liFlag05
+
+               //œç¨œ© «à¤ ¢¦ §é¤ modules §¦¬ §¨â§œ  ¤˜ œ¤£œ¨àŸ¦ç¤
+               Get File_Field_Current_Value File_Field Btypkin.Gtypkin_Rec0   to liMust_Update_GL
+               Get File_Field_Current_Value File_Field Btypkin.Ctypkin_Rec0   to liMust_Update_CUSTOMER
+               Get File_Field_Current_Value File_Field Btypkin.Vtypkin_Rec0   to liMust_Update_VENDOR
+
+               //˜¤áš¤à© «à¤ 4 flags §¦¬ §œ¨¤á¤œ £œ ¦¨å©£˜«˜ ©« ª bpo «ª š¢
+               Get File_Field_Current_Value File_Field Btypkin.Btypkin_Flag02 to liFlag02
+               Get File_Field_Current_Value File_Field Btypkin.Btypkin_Flag03 to liFlag03
+               Get File_Field_Current_Value File_Field Btypkin.Btypkin_Flag04 to liFlag04
+               Get File_Field_Current_Value File_Field Btypkin.Btypkin_Flag05 to liFlag05
+
+     End_Procedure //private.transaction_update_other_modules
+
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Barticl.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Bmove.File_Number
+        Send Add_Client_File  Bsum.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Btypkin.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecb.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Cn.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecb.Barticl_Rec0  To Barticl.Barticl_Rec0
+
+        // Field-based properties.......................
+
+        // Barticl.Company_Code
+
+        // Barticl.Branch_Code
+
+        // Barticl.Year_Year
+
+        // Barticl.Btypkin_Code
+
+        // Barticl.Barticl_Hmnia
+        Set Field_Entry_msg        Field Barticl.Barticl_Hmnia To Shmera
+        Set Field_Mask_Type        Field Barticl.Barticl_Hmnia To MASK_DATE_WINDOW
+        Set Field_Prompt_Object    Field Barticl.Barticl_Hmnia To (Barticl(Self))
+
+        // Barticl.Barticl_No
+
+        // Barticl.Barticl_Rec0
+
+        // Barticl.Barticl_Recr
+
+        // Barticl.Btypkin_Recr
+
+        // Barticl.Barticl_Code1
+
+        // Barticl.Barticl_Epon1
+
+        // Barticl.Barticl_Code2
+
+        // Barticl.Barticl_Epon2
+
+        // Barticl.Barticl_Aitiol
+
+        // Barticl.Barticl_Sv2
+        //DDB/ Comment_Short       Field Barticl.Barticl_Sv2 To "Computed field (œ¤£œ¨é¤œ«˜  ©«¤ update/backout «¦¬ bmove"
+
+        // Barticl.Barticl_Sv0
+        //DDB/ Comment_Short       Field Barticl.Barticl_Sv0 To "Computed field (œ¤£œ¨é¤œ«˜  ©«¤ update/backout «¦¬ bmove"
+
+        // Barticl.Barticl_Sv00
+        //DDB/ Comment_Short       Field Barticl.Barticl_Sv00 To "Computed field (œ¤£œ¨é¤œ«˜  ©«¤ update/backout «¦¬ bmove"
+
+        // Barticl.Barticl_Svr
+        //DDB/ Comment_Short       Field Barticl.Barticl_Svr To "Computed field (œ¤£œ¨é¤œ«˜  ©«¤ update/backout «¦¬ bmove"
+
+        // Barticl.Barticl_Lines
+
+        // Barticl.Barticl_Bmovela
+
+        // Barticl.Barticl_M_Code
+        Set Field_Value_Table      Field Barticl.Barticl_M_Code To (Barticl_Barticl_M_Code_VT(Self))
+
+        // Barticl.Garticl_Rec0
+
+        // Barticl.Carticl_Rec0
+
+        // Barticl.Varticl_Rec0
+
+        // Barticl.Gmove_Mrec0
+
+        // Barticl.Gplan_Mrec0
+
+        // Barticl.Client_Mrecr
+
+        // Barticl.Barticl_Ekleise
+
+        // Barticl.Cmoves_Recr
+
+        // Barticl.Isotimia
+
+        // Barticl.Cn_Code
+        Set Field_Prompt_Object    Field Barticl.Cn_Code To (sl041(Self))
+
+        // Barticl.Cn_Descr
+
+        // Barticl.Cn_Recr
+
+        // Barticl.Sls_Id
+
+        // Barticl.Cnt_Id
+
+        // Barticl.Presp_Id
+
+        // Barticl.Se_Logik
+
+        // Barticl.Sxolia1
+
+        // Barticl.Sxolia2
+
+        // Barticl.Partl_Akyr_Recr
+
+        // Barticl.Ekkremes
+
+        // Barticl.Arith_Orist
+
+        // Barticl.Hmnia_Orist
+
+        // Barticl.Pae_Arithm
+
+        // Barticl.Pae_Hmnia
+
+        //DDB-DefineFieldEnd
+
+//        Set Main_File            To Barticl.File_Number
+
+//        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+//        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+//        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+//        // Child (Client) file structure................
+//        Send Add_Client_File  Bsum.File_Number
+//        Send Add_Client_File  Bmove.File_Number
+
+//        // Parent (Server) file structure...............
+//        Send Add_Server_File  Btypkin.File_Number
+
+//        // External (System) file structure.............
+//        Send Add_System_File  Sysrecb.File_Number  DD_LOCK_ON_NEW_SAVE
+//        //Send Add_System_File  Gplan.File_Number  DD_LOCK_ON_SAVE
+
+//        Define_Auto_Increment  Sysrecb.Barticl_Rec0  To Barticl.Barticl_Rec0
+
+        // Field-based properties.......................
+
+        // Barticl.Company_Code
+
+        // Barticl.Branch_Code
+
+        // Barticl.Year_Year
+
+        // Barticl.Btypkin_Code
+
+        // Barticl.Barticl_Hmnia
+        Set Field_Label_Long       Field Barticl.Barticl_Hmnia    To "†£/¤å˜"
+        Set Field_Label_Short      Field Barticl.Barticl_Hmnia    To "†£/¤å˜"
+        Set Field_Prompt_Object    Field Barticl.Barticl_Hmnia    To (Barticl(Self))
+
+        // Barticl.Barticl_No
+        Set Field_Label_Long       Field Barticl.Barticl_No       To "€¨ Ÿ£æª"
+        Set Field_Label_Short      Field Barticl.Barticl_No       To "€¨ Ÿ£æª"
+        Set Field_Prompt_Object    Field Barticl.Barticl_No       To (Barticl(Self))
+
+        // Barticl.Barticl_Rec0
+        Set Field_Prompt_Object    Field Barticl.Barticl_Rec0     To (Barticl(Self))
+        Set Key_Field_State        Field Barticl.Barticl_Rec0     To TRUE
+
+        // Barticl.Btypkin_Rec0
+
+        // Barticl.Barticl_Code1
+        Set Field_Label_Long       Field Barticl.Barticl_Code1    To "‘¬¤˜¢¢˜©æ£œ¤¦ª"
+        Set Field_Label_Short      Field Barticl.Barticl_Code1    To "‘¬¤˜¢¢˜©æ£œ¤¦ª"
+
+        // Barticl.Barticl_Epon1
+        Set Field_Label_Long       Field Barticl.Barticl_Epon1    To "„§à¤¬£å˜"
+        Set Field_Label_Short      Field Barticl.Barticl_Epon1    To "„§à¤¬£å˜"
+
+        // Barticl.Barticl_Code2
+        Set Field_Label_Long       Field Barticl.Barticl_Code2    To "˜¨˜¢ã§«ª"
+        Set Field_Label_Short      Field Barticl.Barticl_Code2    To "˜¨˜¢ã§«ª"
+
+        // Barticl.Barticl_Epon2
+        Set Field_Label_Long       Field Barticl.Barticl_Epon2    To "„§à¤¬£å˜"
+        Set Field_Label_Short      Field Barticl.Barticl_Epon2    To "„§à¤¬£å˜"
+
+        // Barticl.Barticl_Aitiol
+        Set Field_Label_Long       Field Barticl.Barticl_Aitiol   To "€ « ¦¢¦šå˜"
+        Set Field_Label_Short      Field Barticl.Barticl_Aitiol   To "€ « ¦¢¦šå˜"
+
+        // Barticl.Barticl_Sv2
+        Set Field_Options          Field Barticl.Barticl_Sv2      To DD_DISPLAYONLY
+
+        // Barticl.Barticl_Sv0
+        Set Field_Label_Long       Field Barticl.Barticl_Sv0      To "‘ç¤¦¢˜ €¥ é¤ ‘œ ‰ç¨ ¦ Œæ£ ©£˜ •¨ã©ª"
+        Set Field_Label_Short      Field Barticl.Barticl_Sv0      To "‘ç¤¦¢˜"
+        Set Field_Options          Field Barticl.Barticl_Sv0      To DD_DISPLAYONLY
+
+        // Barticl.Barticl_Sv00
+        Set Field_Options          Field Barticl.Barticl_Sv00     To DD_DISPLAYONLY
+
+        // Barticl.Barticl_Svr
+        Set Field_Options          Field Barticl.Barticl_Svr      To DD_DISPLAYONLY
+
+        // Barticl.Barticl_Lines
+        Set Field_Label_Long       Field Barticl.Barticl_Lines    To "’œ£á® ˜"
+        Set Field_Label_Short      Field Barticl.Barticl_Lines    To "’œ£á® ˜"
+        Set Field_Options          Field Barticl.Barticl_Lines    To DD_DISPLAYONLY
+
+        // Barticl.Barticl_Bmovela
+        Set Field_Label_Long       Field Barticl.Barticl_Bmovela  To "’œ¢œ¬«˜å¦ª €¨ Ÿ£æª ‚¨˜££ãª"
+        Set Field_Label_Short      Field Barticl.Barticl_Bmovela  To "’œ¢. €¨.‚¨˜££ãª"
+        Set Field_Options          Field Barticl.Barticl_Bmovela  To DD_DISPLAYONLY
+
+        // Barticl.Barticl_M_Code
+        Set Field_Label_Long       Field Barticl.Barticl_M_Code   To "Module „šš¨˜­ãª"
+        Set Field_Label_Short      Field Barticl.Barticl_M_Code   To "Module „šš¨˜­ãª"
+        Set Field_Options          Field Barticl.Barticl_M_Code   To DD_DISPLAYONLY
+        Set Field_Value_Table      Field Barticl.Barticl_M_Code   To (Barticl_Barticl_M_Code_VT(Self))
+
+        // Barticl.Garticl_Rec0
+        Set Field_Options          Field Barticl.Garticl_Rec0     To DD_DISPLAYONLY
+
+        // Barticl.Carticl_Rec0
+        Set Field_Options          Field Barticl.Carticl_Rec0     To DD_DISPLAYONLY
+
+        // Barticl.Varticl_Rec0
+        Set Field_Options          Field Barticl.Varticl_Rec0     To DD_DISPLAYONLY
+
+        // Barticl.Gmove_Mrec0
+        Set Field_Options          Field Barticl.Gmove_Mrec0      To DD_DISPLAYONLY
+
+        // Barticl.Gplan_Mrec0
+        Set Field_Options          Field Barticl.Gplan_Mrec0      To DD_DISPLAYONLY
+
+    End_Procedure    // Define_Fields
+
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Barticl.Ekkremes To 1
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Barticl_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use Barticl.SL       // Barticl
+Use sl041.SL         // sl041
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

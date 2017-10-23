@@ -1,0 +1,39 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: GTHHMGIO (# 155)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : GTHHMGIO
+  USER DISPLAY NAME         : Gthhmgio
+  DATAFLEX FILE NAME        : GTHHMGIO
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 85        ( USED: 83 )
+  MAX NUMBER OF RECORDS     : 1000      ( USED: 10 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  GTHHMGIO_CODE    NUM    4.0     1  1   
+  2  GTHHMGIO_REC0    NUM   14.0     3      
+  3  GTHHMGIO_DESCR   ASC     60    10  3   
+  4  GTHHMGIO_PERIOD  NUM    4.0    70      
+  5  GTHHMGIO_RECR    ASC     12    72  2   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    GTHHMGIO_CODE   NO  NO       2      2       1     ON-LINE
+
+  2    GTHHMGIO_RECR   NO  NO       12     2       1     ON-LINE
+
+  3    GTHHMGIO_DESCR  NO  NO       72     4       2     ON-LINE
+       GTHHMGIO_RECR   NO  NO 
+

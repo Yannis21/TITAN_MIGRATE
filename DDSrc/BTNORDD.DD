@@ -1,0 +1,408 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : BTNORDD.DD
+// Class Name: Btnordd_DataDictionary
+// Revision  : 53
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Btnordd
+Open Btnordh
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Btnordd_Vkatish_VT
+Register_Object Btnordd_Velxr_VT
+
+Object Btnordd_Vkatish_VT  is a CodeValidationTable
+    Set Type_Value        To "KATISH"
+    Set Allow_Blank_State To TRUE
+    Set Table_Title       To "âÄáàëÜ"
+End_Object   // Btnordd_Vkatish_VT
+
+Object Btnordd_Velxr_VT  is a CodeValidationTable
+    Set Type_Value        To "ELXREOSH"
+    Set Validate_State    To FALSE
+    Set Table_Title       To "ï®‚‡©û Ñ¢¢ú†ßÈ§ î¶®´Â‡§"
+End_Object   // Btnordd_Velxr_VT
+//DDB-ValidationEnd
+Open Item
+
+Class Btnordd_DataDictionary  is a DataDictionary_Sec
+ 
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Property Number pnOldPctDisc    Public 0
+        Property Number pnOldPosoDisc   Public 0
+        //------------------------------------------------
+        // Properties gia na kraththoun oi palies times 
+        // ton pedion Ef' oson to Sysfile.Use_Audit pedio 
+        // einai 1     js 03/12/2007
+        //------------------------------------------------  
+        Property Integer piCreateNew            Public  0
+        Property String  psAud_Old_AADeop       Public ""
+        Property Number  pnAud_Old_Vprice       Public  0
+        Property Number  pnAud_Old_PagiaXRM3    Public  0
+        Property Number  pnAud_Old_PagiaXRPrice Public  0
+        Property Number  pnAud_Old_Vanopagia    Public  0
+        Property Integer piAud_Old_Eleiph       Public  0    
+        Property String  psAud_Old_Vitem        Public ""
+        Property String  psAud_Old_CN_Code      Public ""
+        Property String  psAud_Old_CN_Descr     Public ""
+        Property String  psAud_Old_Client_ID    Public ""
+        Property String  psAud_Old_Client_Name  Public ""
+        //------------------------------------------------
+    End_Procedure
+    
+    Procedure New_Current_Record  Integer iOldRec  Integer iNewRec
+        Forward Send New_Current_Record  iOldRec iNewRec
+        Set pnOldPctDisc            to Btnordd.Vdisc
+        Set pnOldPosoDisc           to Btnordd.VdiscPoso
+        Set psAud_Old_AADeop        to BtnordH.AA_Deop
+        Set piAud_Old_Eleiph        to BtnordH.VelXr
+        Set pnAud_Old_Vprice        to Btnordd.Vprice
+        Set pnAud_Old_PagiaXRM3     to Btnordd.VpagiaXrM3
+        Set pnAud_Old_PagiaXRPrice  to Btnordd.VpagiaXrPrice
+        Set pnAud_Old_Vanopagia     to Btnordd.Vanopagia
+        Set psAud_Old_Vitem         to Btnordd.Vitem         
+        Set psAud_Old_CN_Code       to CN.CN_Code            
+        Set psAud_Old_CN_Descr      to CN.CN_Descr           
+        Set psAud_Old_Client_ID     to Clients.Client_ID     
+        Set psAud_Old_Client_Name   to Clients.Client_Name   
+    End_Procedure   // New_Current_Record
+
+    Procedure Delete_Main_File
+        //---------------------------------------------
+        // Auditing / Katagrafh allagon
+        String  sUser sText sTime sMin sHour sSec
+        Date    dDate  Shmer 
+        Integer iMin iHour iSec iLen
+        Sysdate dDate iHour iMin iSec 
+        Move iHour  to sHour
+        Move iMin   to sMin
+        Move iSec   to sSec
+        If (Length(sHour)=1) Insert "0" in sHour at 1
+        If (Length(sMin )=1) Insert "0" in sMin  at 1
+        If (Length(sSec )=1) Insert "0" in sSec  at 1
+        Move (Trim(sHour)+":"+Trim(sMin)+"."+Trim(sSec)) to sTime
+        
+        // Auditing / Diagrafh 
+        If ((Sysfile.Use_Audit=1) And (Operation_Mode=MODE_DELETING) And (OPERATION_ORIGIN=Self)) Begin
+            Get fsLoginUserID to sUser
+            clear gmove
+            move syscurxr.company_code  to gmove.company_code
+            move syscurxr.branch_code   to gmove.branch_code
+            move syscurxr.year_year     to gmove.year_year
+            move  7                     to gmove.gtypkin_code// Apo Clients
+            move ddate                  to gmove.garticl_hmnia
+            move suser                  to gmove.gplan_code
+            Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Btnordd.Recnum)))))) ;
+                                        to gmove.garticl_recr
+            reread sysrecg
+            move (sysrecg.gmove_rec0+1) to sysrecg.gmove_rec0
+            move (sysrecg.gmove_rec0+1) to gmove.gmove_rec0
+            saverecord sysrecg
+            unlock
+            Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
+                                                to Gmove.Gmove_Recr                            
+            //--------------------                                    
+            // Yannis 21/06/2013
+            Move gmove.gmove_rec0  to Gmove.Garticl_No
+            //--------------------                                    
+            Move (Trim(sUser))                  to Gmove.Login_ID
+            Move dDate                          to Gmove.Hmnia_Metabolhs    
+            Move sTime                          to Gmove.Ora_Metabolhs
+            
+            Move BtnordH.Recr                   to Gmove.Partl_Recr          
+            Move (String(BtnOrdD.Recnum))       to Gmove.Pms_Recr          
+
+            Move (psAud_Old_AADeop      (Self)) to Gmove.Prev_AA_Deop
+            Move (piAud_Old_Eleiph      (Self)) to Gmove.Prev_Eleiph
+            Move (pnAud_Old_Vprice      (Self)) to Gmove.Prev_Vprice
+            Move (pnAud_Old_PagiaXRM3   (Self)) to Gmove.Prev_pagiaXrM3
+            Move (pnAud_Old_PagiaXRPrice(Self)) to Gmove.Prev_Stoxos1
+            Move (pnAud_Old_Vanopagia   (Self)) to Gmove.Prev_Stoxos2   
+            Move (psAud_Old_Vitem       (Self)) to Gmove.Prev_Item    
+            Move (psAud_Old_CN_Code     (Self)) to Gmove.Prev_CN      
+            Move (psAud_Old_CN_Descr    (Self)) to Gmove.Prev_CN_Addr 
+            Move (psAud_Old_Client_ID   (Self)) to Gmove.Prev_ID      
+            Move (psAud_Old_Client_Name (Self)) to Gmove.Prev_Name    
+            Move "É†òö®ò≠„ úöö®ò≠„™ ÉÑéè"    to gmove.gmove_aitiol
+            Move "D"                         to Gmove.Eidos_Metabolhs   
+          
+            saverecord gmove
+        End
+        Forward Send Delete_Main_File
+
+    End_Procedure
+
+    Procedure Creating
+        Forward Send Creating   
+        move btnordh.deop_active to btnordd.vactive
+        Set piCreateNew to 1
+    End_Procedure   // Creating
+ 
+   Procedure Update
+        Number iOldPct iOldPoso Total
+        Forward Send Update   
+        Get pnOldPosoDisc           to iOldPoso
+        Get pnOldPctDisc            to iOldPct
+        move btnordh.aa_deop        to btnordd.vorderbt
+        move btnordh.client_id      to btnordd.vclient_id
+        move btnordh.cn_code        to btnordd.vcn_code
+        move btnordh.deop_lhxh      to btnordd.deop_date   
+        move btnordh.deop_date      to btnordd.arxh_date
+      
+        If  (Btnordd.Vqty <> 0) Begin
+            Move  btnordd.VunitPrice to btnordd.Vprice
+            If (btnordd.vdisc >0) move (round_number(((btnordd.vprice * btnordd.vdisc) / 100),2)) to total
+            Move (btnordd.vprice - total) to btnordd.vprice
+        End
+        Else Begin
+            move 0 to btnordd.vprice
+            Move 0 to btnordd.Vdisc
+            Move 0 to btnordd.VdiscPoso
+        End
+
+        If (Btnordd.Vitem<>'') Begin 
+            Clear Item
+            Move Btnordd.Vitem to Item.Item_Code
+            Find Eq Item by Index.5
+            Move Item.Item_Descr to btnordd.Vitem_Descr
+            Move Item.Item_Qual  to btnordd.VQual    
+            Clear Item
+        End
+
+        //---------------------------------------------
+        // Auditing / Katagrafh allagon
+        String  sUser sText sTime sMin sHour sSec
+        Date    dDate  Shmer 
+        Integer iMin iHour iSec iLen
+        Sysdate dDate iHour iMin iSec 
+        Move iHour  to sHour
+        Move iMin   to sMin
+        Move iSec   to sSec
+        If (Length(sHour)=1) Insert "0" in sHour at 1
+        If (Length(sMin )=1) Insert "0" in sMin  at 1
+        If (Length(sSec )=1) Insert "0" in sSec  at 1
+        Move (Trim(sHour)+":"+Trim(sMin)+"."+Trim(sSec)) to sTime
+        
+        // Auditing / Dhmiourgia - Diorthosh
+        If ((Sysfile.Use_Audit=1)  And (Operation_ORIGIN=Self)) Begin
+            Get fsLoginUserID to sUser
+            If (piCreateNew(Self)=1) Begin
+                clear gmove
+                move syscurxr.company_code  to gmove.company_code
+                move syscurxr.branch_code   to gmove.branch_code
+                move syscurxr.year_year     to gmove.year_year
+                move  7                     to gmove.gtypkin_code
+                move ddate                  to gmove.garticl_hmnia
+                move suser                  to gmove.gplan_code
+                Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Btnordd.Recnum)))))) ;
+                                            to gmove.garticl_recr
+                reread sysrecg
+                move (sysrecg.gmove_rec0+1) to sysrecg.gmove_rec0
+                move (sysrecg.gmove_rec0+1) to gmove.gmove_rec0
+                saverecord sysrecg
+                unlock
+                Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
+                                                    to Gmove.Gmove_Recr
+                //--------------------                                    
+                // Yannis 21/06/2013
+                Move gmove.gmove_rec0  to Gmove.Garticl_No
+                //--------------------                                    
+
+                Move (Trim(sUser))                  to Gmove.Login_ID
+                Move dDate                          to Gmove.Hmnia_Metabolhs    
+                Move sTime                          to Gmove.Ora_Metabolhs
+
+                Move BtnordH.Recr                   to Gmove.Partl_Recr          
+                Move (String(BtnOrdD.Recnum))       to Gmove.Pms_Recr          
+
+                Move BtnordH.AA_Deop            to Gmove.Cur_AA_Deop
+                Move BtnordH.VelXr              to Gmove.Cur_Eleiph
+                Move Btnordd.Vprice             to Gmove.Cur_Vprice
+                Move Btnordd.VpagiaXrM3         to Gmove.Cur_pagiaXrM3
+                Move Btnordd.VpagiaXrPrice      to Gmove.Cur_Stoxos1
+                Move Btnordd.Vanopagia          to Gmove.Cur_Stoxos2
+                Move Btnordd.Vitem              to Gmove.Cur_Item
+                Move CN.CN_Code                 to Gmove.Cur_CN
+                Move CN.CN_Descr                to Gmove.Cur_CN_Addr
+                Move Clients.Client_ID          to Gmove.Cur_ID
+                Move Clients.Client_Name        to Gmove.Cur_Name   
+                
+                Move "Éû£†¶¨®öÂò §‚¶¨ ÉÑéè" to Gmove.Gmove_Aitiol
+                Move "N" to Gmove.Eidos_Metabolhs  
+                saverecord gmove
+                Set piCreateNew to 0
+            End
+            Else If ((Operation_Mode=MODE_SAVING) And (piCreateNew(Self)<>1) And (OPERATION_ORIGIN=Self)) Begin                                
+                Integer isChanged
+                Move 0 to isChanged
+                
+                     If (psAud_Old_AADeop       (Self)<>BtnordH.AA_Deop      ) Move 1 to isChanged
+                Else If (piAud_Old_Eleiph       (Self)<>BtnordH.VelXr       ) Move 1 to isChanged
+                Else If (pnAud_Old_Vprice       (Self)<>Btnordd.Vprice       ) Move 1 to isChanged
+                Else If (pnAud_Old_PagiaXRM3    (Self)<>Btnordd.VpagiaXrM3   ) Move 1 to isChanged
+                Else If (pnAud_Old_PagiaXRPrice (Self)<>Btnordd.VpagiaXrPrice) Move 1 to isChanged
+                Else If (pnAud_Old_Vanopagia    (Self)<>Btnordd.Vanopagia    ) Move 1 to isChanged
+                Else If (psAud_Old_Vitem        (Self)<>Btnordd.Vitem        ) Move 1 to isChanged
+                Else If (psAud_Old_CN_Code      (Self)<>CN.CN_Code           ) Move 1 to isChanged
+                Else If (psAud_Old_CN_Descr     (Self)<>CN.CN_Descr          ) Move 1 to isChanged
+                Else If (psAud_Old_Client_ID    (Self)<>Clients.Client_ID    ) Move 1 to isChanged
+                Else If (psAud_Old_Client_Name  (Self)<>Clients.Client_Name  ) Move 1 to isChanged
+                
+                If (isChanged>0) Begin  
+                    clear gmove
+                    move syscurxr.company_code  to gmove.company_code
+                    move syscurxr.branch_code   to gmove.branch_code
+                    move syscurxr.year_year     to gmove.year_year
+                    move  7                     to gmove.gtypkin_code// Apo Clients
+                    move ddate                  to gmove.garticl_hmnia
+                    move suser                  to gmove.gplan_code
+                    Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Btnordd.Recnum)))))) ;
+                                                to gmove.garticl_recr
+                    reread sysrecg
+                    move (sysrecg.gmove_rec0+1) to sysrecg.gmove_rec0
+                    move (sysrecg.gmove_rec0+1) to gmove.gmove_rec0
+                    saverecord sysrecg
+                    unlock
+                    Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
+                                                        to Gmove.Gmove_Recr
+                    //--------------------                                    
+                    // Yannis 21/06/2013
+                    Move gmove.gmove_rec0  to Gmove.Garticl_No
+                    //--------------------                                    
+
+                    Move (Trim(sUser))                  to Gmove.Login_ID
+                    Move dDate                          to Gmove.Hmnia_Metabolhs    
+                    Move sTime                          to Gmove.Ora_Metabolhs
+                    //--
+                    Move BtnordH.Recr                   to Gmove.Partl_Recr          
+                    Move (String(BtnOrdD.Recnum))       to Gmove.Pms_Recr          
+                    //--                                
+                    Move BtnordH.AA_Deop                to Gmove.Cur_AA_Deop
+                    Move BtnordH.VelXr                 to Gmove.Cur_Eleiph
+                    Move Btnordd.Vprice                 to Gmove.Cur_Vprice
+                    Move Btnordd.VpagiaXrM3             to Gmove.Cur_pagiaXrM3
+                    Move Btnordd.VpagiaXrPrice          to Gmove.Cur_Stoxos1
+                    Move Btnordd.Vanopagia              to Gmove.Cur_Stoxos2
+                    Move Btnordd.Vitem                  to Gmove.Cur_Item
+                    Move CN.CN_Code                     to Gmove.Cur_CN
+                    Move CN.CN_Descr                    to Gmove.Cur_CN_Addr
+                    Move Clients.Client_ID              to Gmove.Cur_ID
+                    Move Clients.Client_Name            to Gmove.Cur_Name
+                    //--
+                    Move (psAud_Old_AADeop      (Self)) to Gmove.Prev_AA_Deop        
+                    Move (piAud_Old_Eleiph      (Self)) to Gmove.Prev_Eleiph         
+                    Move (pnAud_Old_Vprice      (Self)) to Gmove.Prev_Vprice       
+                    Move (pnAud_Old_PagiaXRM3   (Self)) to Gmove.Prev_pagiaXrM3   
+                    Move (pnAud_Old_PagiaXRPrice(Self)) to Gmove.Prev_Stoxos1      
+                    Move (pnAud_Old_Vanopagia   (Self)) to Gmove.Prev_Stoxos2      
+                    Move (psAud_Old_Vitem       (Self)) to Gmove.Prev_Item            
+                    Move (psAud_Old_CN_Code     (Self)) to Gmove.Prev_CN              
+                    Move (psAud_Old_CN_Descr    (Self)) to Gmove.Prev_CN_Addr         
+                    Move (psAud_Old_Client_ID   (Self)) to Gmove.Prev_ID              
+                    Move (psAud_Old_Client_Name (Self)) to Gmove.Prev_Name            
+
+                    Move "É†Ê®ü‡©û úöö®ò≠„™ ÉÑéè"       to gmove.gmove_aitiol
+                    Move "E"                            to Gmove.Eidos_Metabolhs
+                    saverecord gmove
+                    Set piCreateNew to 0
+                End
+            End
+        End
+
+   End_Procedure
+   
+ 
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Btnordd.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Btnordh.File_Number
+
+        // Field-based properties.......................
+
+        // Btnordd.Btnordh_Recr    
+
+        // Btnordd.Vitem           
+
+        // Btnordd.Vitem_Descr     
+
+        // Btnordd.Vqual           
+
+        // Btnordd.Vqty            
+
+        // Btnordd.Vunitprice      
+
+        // Btnordd.Vdisc           
+
+        // Btnordd.Vprice          
+
+        // Btnordd.Vkatish         
+        Set Field_Value_Table      Field Btnordd.Vkatish          To (Btnordd_Vkatish_VT(Self))
+
+        // Btnordd.Vxrm3           
+
+        // Btnordd.Vpagiaxrm3      
+
+        // Btnordd.Vpagiaxrprice   
+
+        // Btnordd.Vanopagia       
+
+        // Btnordd.Vsthsimo        
+
+        // Btnordd.Veleipes        
+
+        // Btnordd.Vorderbt        
+
+        // Btnordd.Vclient_Id      
+
+        // Btnordd.Vcn_Code        
+
+        // Btnordd.Vactive         
+
+        // Btnordd.Deop_Date       
+
+        // Btnordd.Velxr           
+        Set Field_Value_Table      Field Btnordd.Velxr            To (Btnordd_Velxr_VT(Self))
+
+        // Btnordd.Arxh_Date       
+        Set Field_Mask_Type        Field Btnordd.Arxh_Date        To MASK_DATE_WINDOW
+
+        // Btnordd.Vdiscposo       
+
+        // Btnordd.Vqtyused        
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Btnordd_DataDictionary
+//DDB-FileEnd

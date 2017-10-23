@@ -1,0 +1,124 @@
+-----------------------------------------------------------------------------
+  DATE: 11/07/117      TIME: 11:55                                  PAGE:  1
+  FILE DEFINITION FOR FILE: PAYRESP (# 111)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:PAYRESP
+  USER DISPLAY NAME         : PayResp
+  DATAFLEX FILE NAME        : PAYRESP
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 1150      ( USED: 1150 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 3972 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC     10     1  1   
+  2  BRANCH_CODE      ASC     10    11  1   
+  3  YEAR_YEAR        NUM    4.0    21  1   
+  4  CUSTPROM_CODE    ASC     30    23  1   
+  5  PRESP_ID         ASC     20    53  7   
+  6  PRESP_NAME       ASC     80    73  3   
+  7  PRESP_AFM        ASC     20   153      
+  8  PRESP_REC0       NUM   14.0   173      
+  9  CUSTPROM_RECR    ASC     12   180      
+ 10  PRESP_RECR       ASC     12   192  2   
+ 11  LAST_XREOSH      DAT      3   204      
+ 12  LAST_PISTOSH     DAT      3   207      
+ 13  LAST_ORDER       DAT      3   210      
+ 14  PRESP_DOY        ASC      5   213      
+ 15  PRESP_ADDRESS    ASC     40   218      
+ 16  PRESP_CITY_ID    NUM    8.0   258      
+ 17  PRESP_AREA       NUM    8.0   262      
+ 18  PRESP_JOB        ASC     50   266      
+ 19  PRESP_RESPONS    ASC     80   316      
+ 20  PRESP_ZIPCODE    ASC     20   396      
+ 21  PRESP_PHONE      ASC     50   416      
+ 22  PRESP_FAX        ASC     30   466      
+ 23  PRESP_MOBILE     ASC     30   496      
+ 24  PRESP_AOH        ASC     50   526      
+ 25  PRESP_EMAIL      ASC     80   576      
+ 26  PRESP_CLASS      ASC      5   656      
+ 27  PRESP_DETAILS    ASC    255   661      
+ 28  PRESP_SITEW      ASC     10   916      
+ 29  PRESP_CODEM      ASC     20   926  8   
+ 30  PRESP_CATEGFPA   NUM    4.0   946      
+ 31  PRESP_FPA        NUM    4.0   948      
+ 32  PRESP_PUBLIC     NUM    4.0   950      
+ 33  PRESP_SN         NUM   14.0   952      
+ 34  PRESP_REPM       ASC     20   959      
+ 35  PRESP_ACTIVE     ASC      1   979      
+ 36  PRESP_REPORTED   ASC      1   980      
+ 37  PRESP_PELPROM    ASC      1   981      
+ 38  PRESP_LASTUPD    DAT      3   982      
+ 39  PRESP_MARKEXP    ASC      1   985      
+ 40  PRESP_CATJOB     NUM   14.0   986      
+ 41  IS_PROMHTHEYTHS  ASC      1   993  4   
+ 42  XREOSH           NUM   14.8   994      
+ 43  PISTOSH          NUM   14.8  1005      
+ 44  YPOLOIPO         NUM   14.8  1016      
+ 45  PLAFON           NUM   14.8  1027      
+ 46  OVERHEAD         NUM   14.8  1038      
+ 47  PRESP_ADD_NO     ASC      5  1049      
+ 48  PRESP_NOMOS      ASC      5  1054      
+ 49  PRESP_XORA       ASC      5  1059      
+ 50  POLH_RECR        ASC     12  1064      
+ 51  SYNOLIKH_OFEILH  NUM   14.8  1076      
+ 52  STOXOS_IPAL      NUM   14.8  1087      
+ 53  STOXOS_IPSO      NUM   14.8  1098      
+ 54  POSO_SE_APAIT    NUM   14.4  1109      
+ 55  ORIO_SYN_OFEILH  NUM   14.8  1118      
+ 56  POSA_APO_DAP     NUM   14.8  1129      
+ 57  FEREGIOS         ASC      2  1140      
+ 58  EXPORTFLAG       NUM    2.0  1142  9   
+ 59  EXPORTSTATUS     ASC      5  1143  9   
+ 60  EXPORTDATE       DAT      3  1148  9   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY_CODE    NO  NO       72     3       5     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       CUSTPROM_CODE   NO  NO 
+       PRESP_ID        NO  NO 
+
+  2    PRESP_RECR      NO  NO       12     3       1     ON-LINE
+
+  3    PRESP_NAME      NO  NO       92     3       2     ON-LINE
+       PRESP_RECR      NO  NO 
+
+  4    IS_PROMHTHEYTHS NO  NO       13     3       2     ON-LINE
+       PRESP_RECR      NO  NO 
+
+  5    COMPANY_CODE    NO  NO       42     3       4     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       PRESP_ID        NO  NO 
+
+  6    PRESP_ID        NO  NO       32     3       2     ON-LINE
+       PRESP_RECR      NO  NO 
+
+  7    PRESP_ID        NO  NO       20     3       1     ON-LINE
+
+  8    PRESP_CODEM     NO  NO       40     3       2     ON-LINE
+       PRESP_ID        NO  NO 
+
+  9    EXPORTFLAG      NO  NO       12     3       4     ON-LINE
+       EXPORTSTATUS    NO  NO 
+       EXPORTDATE      NO  NO 
+       RECNUM          NO  NO 
+
+  10   EXPORTSTATUS    NO  NO       12     3       4     ON-LINE
+       EXPORTFLAG      NO  NO 
+       EXPORTDATE      NO  NO 
+       RECNUM          NO  NO 
+

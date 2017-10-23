@@ -1,0 +1,54 @@
+-----------------------------------------------------------------------------
+  DATE: 25/05/105      TIME: 13:43                                  PAGE:  1
+  FILE DEFINITION FOR FILE: PUMPS (# 53)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:PUMPS
+  USER DISPLAY NAME         : Pumps
+  DATAFLEX FILE NAME        : PUMPS
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 232       ( USED: 232 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 39 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  PUMP_RECNUM      NUM    8.0     1      
+  2  PUMP_COMPANY     ASC     10     5  1   
+  3  PUMP_ID          ASC     20    15  3   
+  4  PUMP_DESCR       ASC     50    35  2   
+  5  PUMP_LICENSE     ASC     10    85      
+  6  PUMP_MHKOS       NUM    4.0    95      
+  7  PUMP_MHKOSCH     NUM    4.0    97      
+  8  PUMP_CODEMATCH   ASC     20    99      
+  9  PUMP_SITEW       ASC     10   119      
+ 10  PUMP_DRIVER      ASC     50   129      
+ 11  PUMP_BSITE       ASC     10   179      
+ 12  CTYPE_ID         ASC     10   189      
+ 13  PAGIOMIN         NUM   14.0   199      
+ 14  PRICEM3          NUM   13.3   206      
+ 15  PARAKRAT         NUM   14.0   214      
+ 16  PUMP_WHAT        ASC      5   221      
+ 17  PUMP_LC          ASC      2   226      
+ 18  PUMP_LN          ASC      5   228      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    PUMP_COMPANY    NO  NO       30     3       2     ON-LINE
+       PUMP_ID         NO  NO 
+
+  2    PUMP_DESCR      NO  NO       80     3       3     ON-LINE
+       PUMP_COMPANY    NO  NO 
+       PUMP_ID         NO  NO 
+
+  3    PUMP_ID         NO  NO       20     3       1     ON-LINE
+

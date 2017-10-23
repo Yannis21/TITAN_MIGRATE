@@ -1,0 +1,202 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : ORDER1.DD
+// Class Name: Order1_DataDictionary
+// Revision  : 13
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Order1
+Open Ordersd
+Open Sysrecc
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl94  sl94.SL
+//DDB/ ExternalSelectionList slNomism  slnomism.sl
+Register_Object sl94
+Register_Object slNomism
+//DDB-SelectionEnd
+
+Class Order1_DataDictionary  is a DataDictionary_Sec
+
+    // Validate_Save:
+
+    Function Validate_Save  Returns Integer
+        Local Integer iReturnVal
+        string snomisma
+        Forward Get Validate_Save  To iReturnVal
+        If (Not(iReturnVal)) Begin
+            // Insert Code Here
+            open nomisma
+            move order1.nomisma to nomisma.nomisma_code
+            find eq nomisma by index.1
+            if (not(found)) error 7001 'ƒœ¤ “§á¨®œ  ’¦ Œæ£ ©£˜ ‰˜«˜®à¨ž£â¤¦ !!'
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+
+
+
+     Procedure Update
+        Forward Send Update
+        move syscurxr.company_code to order1.company_code
+        move syscurxr.branch_code  to order1.branch_code
+        move syscurxr.year_year    to order1.year_year
+
+     End_Procedure   // Update
+
+
+
+     Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move gs_Module_Code to order1.module
+        if (order1.module = '01') begin
+           move (sysrecc.ordersc_rec0 + 1) to order1.rec0
+           move order1.rec0 to sysrecc.ordersc_rec0
+           saverecord sysrecc
+        end
+        else begin
+           move (sysrecc.orders_rec0 + 1) to order1.rec0
+           move order1.rec0 to sysrecc.orders_rec0
+           saverecord sysrecc
+        end
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                         (Trim(String(order1.rec0)))))) to order1.recr
+
+    End_Procedure   //
+
+    Procedure Entry_orders_date Integer iField Date dDate
+         Local Integer Changed
+         Get Field_Changed_State iField to Changed
+         If ( Changed=0 AND dDate = 0) Begin
+           SysDate4 dDate
+           Set Field_Default_Value iField to dDate
+         End
+    End_Procedure
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Order1.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Ordersd.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+
+        // Field-based properties.......................
+
+        // Order1.Company_Code
+
+        // Order1.Branch_Code
+
+        // Order1.Year_Year
+
+        // Order1.Rec0
+
+        // Order1.Recr
+
+        // Order1.Descr
+
+        // Order1.Date
+        Set Field_Entry_msg        Field Order1.Date To Entry_orders_date
+        Set Field_Mask_Type        Field Order1.Date To MASK_DATE_WINDOW
+        Set Field_Prompt_Object    Field Order1.Date To (sl94(Self))
+
+        // Order1.Ourdate
+        Set Field_Mask_Type        Field Order1.Ourdate To MASK_DATE_WINDOW
+
+        // Order1.Resp
+
+        // Order1.Eggrish
+        Set Field_Mask             Field Order1.Eggrish To "#"
+        Set Field_Mask_Type        Field Order1.Eggrish To MASK_NUMERIC_WINDOW
+
+        // Order1.Eggrishdate
+        Set Field_Entry_msg        Field Order1.Eggrishdate To Entry_orders_date
+        Set Field_Mask_Type        Field Order1.Eggrishdate To MASK_DATE_WINDOW
+
+        // Order1.Eggrishname
+
+        // Order1.Akyrh
+        Set Field_Mask             Field Order1.Akyrh To "#"
+        Set Field_Mask_Type        Field Order1.Akyrh To MASK_NUMERIC_WINDOW
+
+        // Order1.Okey
+        Set Field_Mask             Field Order1.Okey To "#"
+        Set Field_Mask_Type        Field Order1.Okey To MASK_NUMERIC_WINDOW
+
+        // Order1.Finish
+        Set Field_Mask             Field Order1.Finish To "#"
+        Set Field_Mask_Type        Field Order1.Finish To MASK_NUMERIC_WINDOW
+
+        // Order1.Metasx
+        Set Field_Mask             Field Order1.Metasx To "#"
+        Set Field_Mask_Type        Field Order1.Metasx To MASK_NUMERIC_WINDOW
+
+        // Order1.Metasxdate
+        Set Field_Entry_msg        Field Order1.Metasxdate To Entry_orders_date
+        Set Field_Mask_Type        Field Order1.Metasxdate To MASK_DATE_WINDOW
+
+        // Order1.Metasxname
+
+        // Order1.Qty
+
+        // Order1.Fpa
+
+        // Order1.Disc
+
+        // Order1.Extra
+
+        // Order1.Net
+
+        // Order1.Total
+
+        // Order1.Nomisma
+        Set Field_Prompt_Object    Field Order1.Nomisma To (slNomism(Self))
+
+        // Order1.Sxolia
+
+        // Order1.Module
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Order1_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl94.SL          // sl94
+Use slnomism.sl      // slNomism
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

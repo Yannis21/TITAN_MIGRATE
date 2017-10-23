@@ -1,0 +1,72 @@
+-----------------------------------------------------------------------------
+  DATE: 01/11/116      TIME: 13:48                                  PAGE:  1
+  FILE DEFINITION FOR FILE: DORDERD (# 61)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:DORDERD
+  USER DISPLAY NAME         : DorderD
+  DATAFLEX FILE NAME        : DORDERD
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 373       ( USED: 373 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 35383 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  DORDERH_RECR     ASC     12     1  1   DORDERH.FIELD_13 (51,13)
+  2  QUALITY          ASC     10    13      
+  3  HMNIA_PARAD      DAT      3    23  2   
+  4  ORA_PARAD        ASC      4    26  2   
+  5  POSOTHTA         NUM   14.4    30      
+  6  YPOL_POSOTHTA    NUM   14.4    39      
+  7  TIMH_MONADOS     NUM   14.4    48      
+  8  SXOLIA           ASC     50    57      
+  9  SITEW            ASC     10   107      
+ 10  COMPANY_CODE     ASC      3   117  2   
+ 11  DORDERH_ID       ASC     10   120      
+ 12  ITEM_CODE        ASC     20   130      
+ 13  PUMP_ID          ASC     20   150      
+ 14  DEOP_ID          ASC     25   170      
+ 15  BTMCODE1         ASC     50   195      
+ 16  BTMCODE2         ASC     10   245      
+ 17  BTMCODE3         ASC     10   255      
+ 18  PUMPM            ASC      4   265      
+ 19  DORDERD_REC0     NUM   14.0   269      
+ 20  DATEW            NUM    2.0   276      
+ 21  CARONSTIME       NUM    4.0   277      
+ 22  NOT_EX_DEOP      NUM    2.0   279      
+ 23  TOTAM            NUM   14.4   280      
+ 24  QTY_SE_PROGR     NUM   14.4   289      
+ 25  KATHISH          ASC      2   298      
+ 26  LOIPES_XREOSEIS  NUM    2.0   300      
+ 27  SELECTED         NUM    2.0   301      
+ 28  XHMIKA_PROSTH    ASC     20   302      
+ 29  MHTRES           ASC     20   322      
+ 30  CN_CODE          ASC     20   342  2   
+ 31  CN_RECR          ASC     12   362  3   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    DORDERH_RECR    NO  NO       15     3       2     ON-LINE
+       RECNUM          NO  NO 
+
+  2    COMPANY_CODE    NO  NO       33     3       5     ON-LINE
+       CN_CODE         NO  NO 
+       HMNIA_PARAD     YES NO 
+       ORA_PARAD       YES NO 
+       RECNUM          NO  NO 
+
+  3    CN_RECR         NO  NO       22     3       4     ON-LINE
+       HMNIA_PARAD     YES NO 
+       ORA_PARAD       YES NO 
+       RECNUM          NO  NO 
+

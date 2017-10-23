@@ -1,0 +1,234 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GFLAGKIN.DD
+// Class Name: Gflagkin_DataDictionary
+// Revision  : 9
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Gflagkin
+Open Gtypkin
+Open Sysrecg
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Gflagkin_Gflagkin_Flag_VT
+
+Object Gflagkin_Gflagkin_Flag_VT  is a DescriptionValidationTable
+    Set Table_Title       To "Flags"
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "1"  "Ñ§û£ú®È§ú† ï®ú‡ß†©´È©ú†™"
+        Send Add_Table_Value  "2"  "Ä•Âú™ ©ú ç‚§¶ åÊ£†©£ò"
+        Send Add_Table_Value  "3"  "ãú´ò´®¶ß„ Ä•†È§ ©ú Éú¨´ú®úÁ¶§ åÊ£†©£ò ï®„©û™"
+        Send Add_Table_Value  "4"  "ãú´ò´®¶ß„ Ä•†È§ ©ú åÊ£†©£ò ï®„©û™ Reporting"
+        Send Add_Table_Value  "5"  "Ä¨´Ê£ò´û Ä®Âü£û©û"
+        Send Add_Table_Value  "6"  "Ä¨•·§ú† ãìî è‡¢„©ú‡§ (+ß¢„ü¶™)"
+        Send Add_Table_Value  "7"  "Ä¨•·§ú† ãìî è‡¢„©ú‡§ (+ò•Âò)"
+        Send Add_Table_Value  "8"  "ãú†È§ú† ãìî è‡¢„©ú‡§ (-ß¢„ü¶™)"
+        Send Add_Table_Value  "9"  "ãú†È§ú† ãìî è‡¢„©ú‡§ (-ò•Âò)"
+        Send Add_Table_Value  "10"  "Ä¨•·§ú† ãìî Äö¶®È§  (+ß¢„ü¶™)"
+        Send Add_Table_Value  "11"  "Ä¨•·§ú† ãìî Äö¶®È§  (+ò•Âò)"
+        Send Add_Table_Value  "12"  "ãú†È§ú† ãìî Äö¶®È§  (-ß¢„ü¶™)"
+        Send Add_Table_Value  "13"  "ãú†È§ú† ãìî Äö¶®È§  (-ò•Âò)"
+        Send Add_Table_Value  "14"  "Ä°¨®‡´†°„ âÂ§û©û"
+        Send Add_Table_Value  "15"  "Ñ§û£ú®È§ú† Äü®¶†©´„ 1"
+        Send Add_Table_Value  "16"  "Ñ§û£ú®È§ú† ´û§ °ò§¶§†°„ ßú®Â¶õ¶"
+        Send Add_Table_Value  "17"  "Ñ§û£ú®È§ú† ú†õ†°‚™ ßú®†Êõ¶¨™"
+        Send Add_Table_Value  "18"  "Ñß†´®úßÊ£ú§ú™ û£/§Âú™ òßÊ :"
+        Send Add_Table_Value  "19"  "âÂ§û©û Äß¶ö®ò≠„™"
+        Send Add_Table_Value  "20"  "âÂ§û©û è®¶Ëß¶¢¶ö†©£¶Á"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Gflagkin_Gflagkin_Flag_VT
+//DDB-ValidationEnd
+
+Class Gflagkin_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurGL.Branch_Site))+;
+                         (Trim(String(Gflagkin.Gflagkin_Rec0)))))) to Gflagkin.Gflagkin_Recr
+    End_Procedure   // Creating
+
+
+    Procedure Backout
+              String lsTemp
+              Forward Send Backout
+
+              //ú§û£‚®‡©û gtypkin_flags
+              //Move Gflagkin.Gflagkin_Flag to lsTemp //£ú´ò´®¶ß„ numeric 4.0 ©ú ascii
+              //Move (Trim(lsTemp))         to lsTemp
+              //Move ("-"+lsTemp+"-")       to lsTemp
+              //Move (Replace(lsTemp,Gtypkin.Gtypkin_Flags,"")) to Gtypkin.Gtypkin_Flags
+                   If (Gflagkin.Gflagkin_Flag =  1) Move 0 to Gtypkin.Gtypkin_Flag01
+              Else If (Gflagkin.Gflagkin_Flag =  2) Move 0 to Gtypkin.Gtypkin_Flag02
+              Else If (Gflagkin.Gflagkin_Flag =  3) Move 0 to Gtypkin.Gtypkin_Flag03
+              Else If (Gflagkin.Gflagkin_Flag =  4) Move 0 to Gtypkin.Gtypkin_Flag04
+              Else If (Gflagkin.Gflagkin_Flag =  5) Move 0 to Gtypkin.Gtypkin_Flag05
+              Else If (Gflagkin.Gflagkin_Flag =  6) Move 0 to Gtypkin.Gtypkin_Flag06
+              Else If (Gflagkin.Gflagkin_Flag =  7) Move 0 to Gtypkin.Gtypkin_Flag07
+              Else If (Gflagkin.Gflagkin_Flag =  8) Move 0 to Gtypkin.Gtypkin_Flag08
+              Else If (Gflagkin.Gflagkin_Flag =  9) Move 0 to Gtypkin.Gtypkin_Flag09
+              Else If (Gflagkin.Gflagkin_Flag = 10) Move 0 to Gtypkin.Gtypkin_Flag10
+              Else If (Gflagkin.Gflagkin_Flag = 11) Move 0 to Gtypkin.Gtypkin_Flag11
+              Else If (Gflagkin.Gflagkin_Flag = 12) Move 0 to Gtypkin.Gtypkin_Flag12
+              Else If (Gflagkin.Gflagkin_Flag = 13) Move 0 to Gtypkin.Gtypkin_Flag13
+              Else If (Gflagkin.Gflagkin_Flag = 14) Move 0 to Gtypkin.Gtypkin_Flag14
+              Else If (Gflagkin.Gflagkin_Flag = 15) Move 0 to Gtypkin.Gtypkin_Flag15
+              Else If (Gflagkin.Gflagkin_Flag = 16) Move 0 to Gtypkin.Gtypkin_Flag16
+              Else If (Gflagkin.Gflagkin_Flag = 17) Move 0 to Gtypkin.Gtypkin_Flag17
+              Else If (Gflagkin.Gflagkin_Flag = 18) Move 0 to Gtypkin.Gtypkin_Flag18
+              Else If (Gflagkin.Gflagkin_Flag = 19) Move 0 to Gtypkin.Gtypkin_Flag19
+              Else If (Gflagkin.Gflagkin_Flag = 20) Move 0 to Gtypkin.Gtypkin_Flag20
+    End_Procedure   // Backout
+
+
+    Procedure Update
+              String lsTemp
+              Forward Send Update
+
+              //ú§û£‚®‡©û £„ related ßúõÂ‡§
+              Move SysCurGL.Company_Code    to Gflagkin.Company_Code
+              Move SysCurGL.Branch_Code     to Gflagkin.Branch_Code
+              Move SysCurGL.Year_Year       to Gflagkin.Year_Year
+              Move SysCurGL.Year_Recr       to Gflagkin.Year_Recr
+              Move Gtypkin.Gtypkin_Code     to Gflagkin.Gtypkin_Code
+
+              //ú§û£‚®‡©û gtypkin_flags
+              //Move Gflagkin.Gflagkin_Flag to lsTemp //£ú´ò´®¶ß„ numeric 4.0 ©ú ascii
+              //Move (Trim(lsTemp))         to lsTemp
+              //Move ("-"+lsTemp+"-")       to lsTemp
+              //Move ((Trim(Gtypkin.Gtypkin_Flags))+lsTemp) to Gtypkin.Gtypkin_Flags
+                   If (Gflagkin.Gflagkin_Flag =  1) Move 1 to Gtypkin.Gtypkin_Flag01
+              Else If (Gflagkin.Gflagkin_Flag =  2) Move 1 to Gtypkin.Gtypkin_Flag02
+              Else If (Gflagkin.Gflagkin_Flag =  3) Move 1 to Gtypkin.Gtypkin_Flag03
+              Else If (Gflagkin.Gflagkin_Flag =  4) Move 1 to Gtypkin.Gtypkin_Flag04
+              Else If (Gflagkin.Gflagkin_Flag =  5) Move 1 to Gtypkin.Gtypkin_Flag05
+              Else If (Gflagkin.Gflagkin_Flag =  6) Move 1 to Gtypkin.Gtypkin_Flag06
+              Else If (Gflagkin.Gflagkin_Flag =  7) Move 1 to Gtypkin.Gtypkin_Flag07
+              Else If (Gflagkin.Gflagkin_Flag =  8) Move 1 to Gtypkin.Gtypkin_Flag08
+              Else If (Gflagkin.Gflagkin_Flag =  9) Move 1 to Gtypkin.Gtypkin_Flag09
+              Else If (Gflagkin.Gflagkin_Flag = 10) Move 1 to Gtypkin.Gtypkin_Flag10
+              Else If (Gflagkin.Gflagkin_Flag = 11) Move 1 to Gtypkin.Gtypkin_Flag11
+              Else If (Gflagkin.Gflagkin_Flag = 12) Move 1 to Gtypkin.Gtypkin_Flag12
+              Else If (Gflagkin.Gflagkin_Flag = 13) Move 1 to Gtypkin.Gtypkin_Flag13
+              Else If (Gflagkin.Gflagkin_Flag = 14) Move 1 to Gtypkin.Gtypkin_Flag14
+              Else If (Gflagkin.Gflagkin_Flag = 15) Move 1 to Gtypkin.Gtypkin_Flag15
+              Else If (Gflagkin.Gflagkin_Flag = 16) Move 1 to Gtypkin.Gtypkin_Flag16
+              Else If (Gflagkin.Gflagkin_Flag = 17) Move 1 to Gtypkin.Gtypkin_Flag17
+              Else If (Gflagkin.Gflagkin_Flag = 18) Move 1 to Gtypkin.Gtypkin_Flag18
+              Else If (Gflagkin.Gflagkin_Flag = 19) Move 1 to Gtypkin.Gtypkin_Flag19
+              Else If (Gflagkin.Gflagkin_Flag = 20) Move 1 to Gtypkin.Gtypkin_Flag20
+    End_Procedure   // Update
+
+    //1100:cby = globals
+    // Validate_Save:
+
+    Function Validate_Save  Returns Integer
+        Integer iReturnVal
+        Forward Get Validate_Save To iReturnVal
+        If (Not(iReturnVal)) Begin
+            //1100:cby = globals
+            If ( ;
+                (Not(Gflagkin.Company_Code = SyscurGL.Company_Code)) or;
+                (Not(Gflagkin.Branch_Code  = SyscurGL.Branch_Code )) ;
+                ) Send Operation_Not_Allowed 1100
+        End
+
+        Function_Return iReturnVal
+    End_Function   //validate_save
+
+    //2100:cby = globals
+    // Validate_Delete:
+
+    Function Validate_Delete  Returns Integer
+        Integer iReturnVal
+        Forward Get Validate_Delete  To iReturnVal
+        If (Not(iReturnVal)) Begin
+            //2100:cby = globals
+            If ( ;
+                (Not(Gflagkin.Company_Code = SyscurGL.Company_Code)) or;
+                (Not(Gflagkin.Branch_Code  = SyscurGL.Branch_Code )) ;
+                ) Send Operation_Not_Allowed 2100
+        End
+        Function_Return iReturnVal
+    End_Function   // validate_delete
+
+    Procedure Operation_Not_Allowed  Integer iError_Num
+        Case Begin
+            Case (iError_Num = 1100)
+                Error 1100 "DDC 160:ãû òß¶õú°´„ Ñ´ò†®Âò-ï®„©û"
+                Case Break
+
+            Case (iError_Num = 2100)
+                Error 2100 "DDC 160:ãû òß¶õú°´„ Ñ´ò†®Âò-ï®„©û"
+                Case Break
+
+            Case Else
+                Forward Send Operation_Not_Allowed  iError_Num
+        Case End
+    End_Procedure   //operation_not_allowed
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Gflagkin.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Gtypkin.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_NEW_SAVE
+
+        Define_Auto_Increment  Sysrecg.Gflagkin_Rec0  To Gflagkin.Gflagkin_Rec0
+
+        // Field-based properties.......................
+
+        // Gflagkin.Company_Code
+
+        // Gflagkin.Branch_Code
+
+        // Gflagkin.Year_Year
+
+        // Gflagkin.Gtypkin_Code
+
+        // Gflagkin.Gflagkin_Flag
+        Set Field_Class_Name       Field Gflagkin.Gflagkin_Flag To "dbComboFormSub"
+        Set Field_Value_Table      Field Gflagkin.Gflagkin_Flag To (Gflagkin_Gflagkin_Flag_VT(Self))
+
+        // Gflagkin.Gflagkin_Rec0
+
+        // Gflagkin.Gtypkin_Recr
+
+        // Gflagkin.Year_Recr
+
+        // Gflagkin.Gflagkin_Recr
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+End_Class    // Gflagkin_DataDictionary
+//DDB-FileEnd

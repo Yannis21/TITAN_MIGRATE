@@ -1,0 +1,73 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : COUNTRY.DD
+// Class Name: Country_DataDictionary
+// Revision  : 3
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Country
+Open Towns
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl058  sl058.SL
+Register_Object sl058
+//DDB-SelectionEnd
+
+Class Country_DataDictionary  is a DataDictionary_Sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Country.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Towns.File_Number
+
+        // Field-based properties.......................
+
+        // Country.Country_Id
+        Set Field_Options          Field Country.Country_Id To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Country.Country_Id To (sl058(Self))
+
+        // Country.Country_Descr
+        Set Field_Prompt_Object    Field Country.Country_Descr To (sl058(Self))
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Country_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl058.SL         // sl058
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

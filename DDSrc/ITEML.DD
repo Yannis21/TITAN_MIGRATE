@@ -1,0 +1,102 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : ITEML.DD
+// Class Name: Iteml_DataDictionary
+// Revision  : 2
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Iteml
+Open Units
+Open Witemkat
+Open Fpa
+
+//DDB-HeaderEnd
+
+open item
+
+Set_attribute  DF_FILE_ALIAS of iteml.File_number to DF_FILE_IS_ALIAS
+Set_attribute  DF_FILE_ALIAS of item.File_number  to DF_FILE_IS_MASTER
+
+// clear the relationship in the alias file
+Set_relate iteml.units_recr to |FN0,0
+Set_relate iteml.witemkat_recr to |FN0,0
+Set_relate iteml.fpa_pososto to |FN0,0
+
+Class Iteml_DataDictionary  is a DataDictionary_Sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Iteml.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Units.File_Number
+        Send Add_Server_File  Witemkat.File_Number
+        Send Add_Server_File  Fpa.File_Number
+
+        // Field-based properties.......................
+
+        // Iteml.Units_Code
+
+        // Iteml.Units_Recr
+
+        // Iteml.Witemkat_Code
+
+        // Iteml.Witemkat_Recr
+
+        // Iteml.Item_Code
+
+        // Iteml.Item_Rec0
+
+        // Iteml.Item_Descr
+
+        // Iteml.Item_Recr
+
+        // Iteml.Fpa_Pososto
+
+        // Iteml.Item_Qual
+
+        // Iteml.Wapokat_Code
+
+        // Iteml.Item_Analysh
+
+        // Iteml.Item_Orio
+
+        // Iteml.Codeglpol
+
+        // Iteml.Codeglago
+
+        // Iteml.Link1
+
+        // Iteml.Link2
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Iteml_DataDictionary
+//DDB-FileEnd

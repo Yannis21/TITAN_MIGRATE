@@ -1,0 +1,47 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: GVATD (# 171)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : GVATD
+  USER DISPLAY NAME         : GvatD
+  DATAFLEX FILE NAME        : GVATD
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 85        ( USED: 68 )
+  MAX NUMBER OF RECORDS     : 10000     ( USED: 1 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC      3     1      
+  2  BRANCH_CODE      ASC      3     4      
+  3  YEAR_YEAR        NUM    4.0     7      
+  4  YEAR_RECR        ASC      7     9  4   
+  5  GVATH_CODE       ASC     20    16  1   GVATH.FIELD_1 (170,1)
+  6  GPLAN_CODE       ASC     20    36  3   
+  7  GPLAN_RECR       ASC     12    56  1   GPLAN.FIELD_55 (150,55)
+  8  GVATD_XP         ASC      1    68      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    GVATH_CODE      NO  NO       32     4       2     ON-LINE
+       GPLAN_RECR      NO  NO 
+
+  2    GPLAN_RECR      NO  NO       32     4       2     ON-LINE
+       GVATH_CODE      NO  NO 
+
+  3    GVATH_CODE      NO  NO       40     4       2     ON-LINE
+       GPLAN_CODE      NO  NO 
+
+  4    YEAR_RECR       NO  NO       19     3       2     ON-LINE
+       GPLAN_RECR      NO  NO 
+

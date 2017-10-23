@@ -1,0 +1,208 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : TPARTICL.DD
+// Class Name: Tparticl_DataDictionary
+// Revision  : 27
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Tparticl
+Open Particle
+Open Baxiokat
+Open Sysrecc
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Mera_Tou_Mhna_VT
+
+Object Mera_Tou_Mhna_VT  is a CodeValidationTable
+    Set Type_Value        To "HMERES"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Mera_Tou_Mhna_VT
+//DDB-ValidationEnd
+
+Class Tparticl_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Property Integer piParticleID Public 0
+        Property Integer piBaxiokatID Public 0
+    End_Procedure
+
+    Procedure End_Construct_Object
+        Integer iID
+        Forward Send End_Construct_Object
+        Move (Find_Server_DDO(Self,Particle.File_Number )) to iID
+        Set piParticleID to iID
+        Move (Find_Server_DDO(Self,Baxiokat.File_Number )) to iID
+        Set piBaxiokatID to iID
+    End_Procedure
+
+    Procedure Calc_All_The_Fields
+        Number  nSynolo nPoso nPososto naxia
+        Date    dHmniaPlhromhs dHmniaParalabhs dHmniaTimologiou
+        Date    dProkeiptei dProsDate dAddDate dStartDate dEndDate
+        Integer iMeresXaritos iMeratouMhna iMeresParalabhs iID iInt iAdd
+        Integer iMeresPlhroteo iCode iXhmero iMhnasTimologiou  iMet
+
+        Get piBaxiokatID                                                to iID
+        Get Field_Current_Value Of iID Field Baxiokat.Baxiokat_Code     to iCode
+
+
+        Get piParticleID                                                to iID
+        Get Field_Current_Value Of iID Field Particle.Partl_Payam       to nSynolo
+        Get Field_Current_Value Of iID Field Particle.Partl_Hmnia       to dHmniaTimologiou
+        Get Field_Current_Value        Field TParticl.Pct_Epi_Synolou   to nPososto
+        Get Field_Current_Value        Field TParticl.Paralabh_Meres    to iMeresParalabhs
+        Get Field_Current_Value        Field TParticl.Xarhtos_Meres     to iMeresXaritos
+        Get Field_Current_Value        Field TParticl.Plhroteo_Meres    to iMeresPlhroteo
+
+        //////////////////////////////////////////////////////////////////////////
+        /////        10 (x)     -      10 (y)         /          30 (z)      /////
+        /////  iMeresParalabhs    iMeresXaritos              iMeresPlhroteo  /////
+        //////////////////////////////////////////////////////////////////////////
+
+        //  1. Kathorise thn 1h tou mhna, hmeromhniaka
+        Move ('01'+'/'+(String(TheMonthSegment(dHmniaTimologiou)))+'/'+;
+                       (String(TheYearSegment(dHmniaTimologiou)))) to dStartDate
+
+//        //  2. Vres thn Hmeromhnia paralabhs (Teleytaia hmera tou epomenou y hmerou
+//        //     sthn opoia meta tha prosthesoume tis hmeres paralabhs (x) )
+//        Move dStartDate to dHmniaParalabhs
+//        While (dHmniaParalabhs<(dHmniaTimologiou+iMeresXaritos))
+//            Add iMeresXaritos to dHmniaParalabhs
+//        Loop
+//        Add iMeresParalabhs to dHmniaParalabhs
+
+//        //  3. Vres thn Hmeromhnia Lhxhs ths epitaghs  (Teleytaia hmera tou trxontos y hmerou
+//        //     sthn opoia meta tha prosthesoume tis hmeres plhroteo (z) )
+//        Move dStartDate to dHmniaPlhromhs
+//        While (dHmniaPlhromhs<dHmniaTimologiou)
+//            Add iMeresXaritos to dHmniaPlhromhs
+//        Loop
+//        Add iMeresPlhroteo  to dHmniaPlhromhs
+
+        //  2. Vres thn Hmeromhnia  ths teleytaias hmera tou trexontos y hmerou
+        Move dStartDate to dHmniaParalabhs
+        If (iMeresXaritos<>0) Begin
+            While (dHmniaParalabhs<dHmniaTimologiou)
+                Add iMeresXaritos   to dHmniaParalabhs
+            Loop
+        End
+        Move dHmniaParalabhs    to dHmniaPlhromhs
+
+        Add (iMeresParalabhs-1) to dHmniaParalabhs
+        Add (iMeresPlhroteo-1)  to dHmniaPlhromhs
+
+        // Ypologise prota to poso bash posostou se sxesh me synolo parastatikou
+        Move (Round_number((nSynolo*nPososto/100),2))   to naxia
+
+        Set Field_Changed_Value Field TParticl.Poso     to naxia
+        Set Field_Changed_Value Field TParticl.Paralabh to dHmniaParalabhs
+        Set Field_Changed_Value Field TParticl.Exoflhsh to dHmniaPlhromhs
+
+    End_Procedure
+
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Tparticl.Tparticl_Rec0))))));
+                                    to Tparticl.Tparticl_Recr
+    End_Procedure   // Creating
+
+
+    Procedure Save_Main_File
+        If (tparticl.isok <> '1') move ' ' to tparticl.isok
+        If (Operation_Origin<>Self) Begin
+            If tparticl.Recnum Eq 0 Procedure_Return
+        End
+      Forward Send Save_Main_File
+    End_Procedure   // Save_Main_File
+
+
+
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Tparticl.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Particle.File_Number
+        Send Add_Server_File  Baxiokat.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Tparticl_Rec0  To Tparticl.Tparticl_Rec0
+
+        // Field-based properties.......................
+
+        // Tparticl.Partl_Recr
+
+        // Tparticl.Baxiokat_Code
+        Set Field_Exit_msg         Field Tparticl.Baxiokat_Code To Calc_All_The_Fields
+
+        // Tparticl.Pct_Epi_Synolou
+        Set Field_Exit_msg         Field Tparticl.Pct_Epi_Synolou To Calc_All_The_Fields
+
+        // Tparticl.Paralabh_Meres
+        Set Field_Exit_msg         Field Tparticl.Paralabh_Meres To Calc_All_The_Fields
+
+        // Tparticl.Xarhtos_Meres
+        Set Field_Exit_msg         Field Tparticl.Xarhtos_Meres To Calc_All_The_Fields
+
+        // Tparticl.Plhroteo_Meres
+        Set Field_Exit_msg         Field Tparticl.Plhroteo_Meres To Calc_All_The_Fields
+
+        // Tparticl.Tparticl_Rec0
+
+        // Tparticl.Tparticl_Recr
+
+        // Tparticl.Mera_Tou_Mhna
+        Set Field_Exit_msg         Field Tparticl.Mera_Tou_Mhna To Calc_All_The_Fields
+        Set Field_Value_Table      Field Tparticl.Mera_Tou_Mhna To (Mera_Tou_Mhna_VT(Self))
+
+        // Tparticl.Poso
+
+        // Tparticl.Paralabh
+
+        // Tparticl.Exoflhsh
+
+        // Tparticl.Isok
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Tparticl_DataDictionary
+//DDB-FileEnd

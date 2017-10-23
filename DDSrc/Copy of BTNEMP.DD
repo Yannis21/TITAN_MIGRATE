@@ -1,0 +1,153 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : BTNEMP.DD
+// Class Name: Btnemp_DataDictionary
+// Revision  : 40
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Btnemp
+Open Sysrecc
+
+//DDB-HeaderEnd
+                    
+Class Btnemp_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(btnemp.btnemp_Rec0)))))) to btnemp.btnemp_Recr
+    End_Procedure   // Creating
+   
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Btnemp.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Btnemp_Rec0  To Btnemp.Btnemp_Rec0
+
+        // Field-based properties.......................
+
+        // Btnemp.Vcompany
+
+        // Btnemp.Vsite
+
+        // Btnemp.Vdate
+
+        // Btnemp.Vvoucher
+
+        // Btnemp.Vseries
+
+        // Btnemp.Vsn
+
+        // Btnemp.Vrow
+
+        // Btnemp.Vtime
+
+        // Btnemp.Vcancel
+
+        // Btnemp.Vqty
+
+        // Btnemp.Vprodcode
+
+        // Btnemp.Vorderprice
+
+        // Btnemp.Vpumb
+
+        // Btnemp.Vpumbid
+
+        // Btnemp.Vcarcode
+
+        // Btnemp.Vconscode
+
+        // Btnemp.Vclientcode
+
+        // Btnemp.Vsalecode
+
+        // Btnemp.Vconstructorc
+
+        // Btnemp.Vflag
+
+        // Btnemp.Vlatcode
+
+        // Btnemp.Vsiteemf
+
+        // Btnemp.Vqty2
+
+        // Btnemp.Vpumbmhkos
+
+        // Btnemp.Vpricepag
+
+        // Btnemp.Vpriceext
+
+        // Btnemp.Btnl2_Recr
+
+        // Btnemp.Ap
+
+        // Btnemp.Tim
+
+        // Btnemp.Btnl1_Recr
+
+        // Btnemp.Offer_Id
+
+        // Btnemp.Is_Daily
+
+        // Btnemp.Wapokat
+
+        // Btnemp.Wapomast
+
+        // Btnemp.Units
+
+        // Btnemp.Witemkat
+
+        // Btnemp.Pms_Recr
+
+        // Btnemp.Btnemp_Rec0
+
+        // Btnemp.Btnemp_Recr
+
+        // Btnemp.Particle_Recr
+
+        // Btnemp.Item_Ypot
+
+        // Btnemp.Qty_Return
+
+        // Btnemp.Vzone
+
+        // Btnemp.Nopagio
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Btnemp_DataDictionary
+//DDB-FileEnd

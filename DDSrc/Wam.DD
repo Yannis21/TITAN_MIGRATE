@@ -1,0 +1,149 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : WAM.DD
+// Class Name: Wam_DataDictionary
+// Revision  : 20
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Wam
+Open Witemx
+Open Wax
+Open Sysrecw
+Open Syscurxr
+
+//DDB-HeaderEnd
+
+Class Wam_DataDictionary  is a DataDictionary
+
+    // Update:
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move SysCurXR.Company_Code  to Wam.Company_Code
+        Move SysCurXR.Branch_Code   to Wam.Branch_Code
+        Move SysCurXR.Year_Year     to Wam.Year_Year
+        Move Witemkat.Witemkat_Code to Wam.Witemkat_Code
+        Move Units.Units_Code       to Wam.Units_Code
+        Move Item.Item_Code         to Wam.Item_Code
+        Move Witemx.Witemx_Code     to Wam.Witemx_Code
+        Move Wapokat.Wapokat_Code   to Wam.Wapokat_Code
+        Move Wapomast.Wapomast_Code to Wam.Wapomast_Code
+        Move Wax.Wax_Code           to Wam.Wax_Code
+        Move (Wam.Wam_Qty_Eisa-Wam.Wam_Qty_Exa)     to Wam.Wam_Qty_Apoth
+        Move (Wam.Wam_Amt_Eisa-Wam.Wam_Amt_Exa)     to Wam.Wam_Amt_Apoth
+        Move (Round_Number((Wam.Wam_Amt_Eisa/Wam.Wam_Qty_Eisa),4))  to Wam.Mesosta_Eisa
+        Move (Round_Number((Wam.Wam_Amt_Exa /Wam.Wam_Qty_Exa) ,4))  to Wam.Mesosta_Exa
+    End_Procedure   // Update
+
+    Procedure Backout
+        Forward Send Backout
+        Move (Wam.Wam_Qty_Eisa-Wam.Wam_Qty_Exa)     to Wam.Wam_Qty_Apoth
+        Move (Wam.Wam_Amt_Eisa-Wam.Wam_Amt_Exa)     to Wam.Wam_Amt_Apoth
+        Move (Round_Number((Wam.Wam_Amt_Eisa/Wam.Wam_Qty_Eisa),4))  to Wam.Mesosta_Eisa
+        Move (Round_Number((Wam.Wam_Amt_Exa /Wam.Wam_Qty_Exa) ,4))  to Wam.Mesosta_Exa
+    End_Procedure   // Backout
+
+     Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Wam.Wam_Rec0)))))) to Wam.Wam_Recr
+    End_Procedure   // Creating
+
+
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Wam.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Witemx.File_Number
+        Send Add_Server_File  Wax.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecw.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Syscurxr.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecw.Wam_Rec0  To Wam.Wam_Rec0
+
+        // Field-based properties.......................
+
+        // Wam.Company_Code        
+
+        // Wam.Branch_Code         
+
+        // Wam.Year_Year           
+
+        // Wam.Wapokat_Code        
+
+        // Wam.Wapomast_Code       
+
+        // Wam.Wax_Code            
+
+        // Wam.Witemkat_Code       
+
+        // Wam.Units_Code          
+
+        // Wam.Item_Code           
+
+        // Wam.Witemx_Code         
+        Set Field_Options          Field Wam.Witemx_Code          To DD_AUTOFIND   
+
+        // Wam.Witemx_Recr         
+
+        // Wam.Wax_Recr            
+
+        // Wam.Wam_Rec0            
+        Set Field_Options          Field Wam.Wam_Rec0             To DD_AUTOFIND   
+
+        // Wam.Wam_Hmnia           
+
+        // Wam.Wam_Qty_Eisa        
+
+        // Wam.Wam_Recr            
+
+        // Wam.Wam_Qty_Exa         
+
+        // Wam.Wam_Amt_Eisa        
+
+        // Wam.Wam_Amt_Exa         
+
+        // Wam.Wam_Qty_Apoth       
+
+        // Wam.Wam_Amt_Apoth       
+
+        // Wam.Mesosta_Eisa        
+
+        // Wam.Mesosta_Exa         
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Wam_DataDictionary
+//DDB-FileEnd

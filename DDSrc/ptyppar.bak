@@ -1,0 +1,288 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : PTYPPAR.DD
+// Class Name: Ptyppar_DataDictionary
+// Revision  : 87
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Ptyppar
+Open Particle
+Open Pseira
+Open Ptypmet
+Open Ptypparh
+Open Ctypkin
+Open Wtypkin
+Open Sysrecp
+Open Syscurxr
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Ptyppar_Year_Recr_VT
+Register_Object Ptyppar_Ptyppar_Is_What_VT
+Register_Object Ptyppar_Ptyppar_Module_VT
+Register_Object Ptyppar_Ti_Typonei_Pms_VT1
+
+Object Ptyppar_Year_Recr_VT  is a DescriptionValidationTable
+    Set Allow_Blank_State To TRUE
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  ""  "Éú§ ë¨££ú´‚Æú†"
+        Send Add_Table_Value  "1"  "è®¶©üú´†°·"
+        Send Add_Table_Value  "2"  "Ä≠ò†®ú´†°·"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Ptyppar_Year_Recr_VT
+
+Object Ptyppar_Ptyppar_Is_What_VT  is a DescriptionValidationTable
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "1"  "Äö¶®·"
+        Send Add_Table_Value  "2"  "èÈ¢û©û"
+        Send Add_Table_Value  "3"  "Äääé"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Ptyppar_Ptyppar_Is_What_VT
+
+Object Ptyppar_Ptyppar_Module_VT  is a CodeValidationTable
+    Set Type_Value        To "MODULE"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Ptyppar_Ptyppar_Module_VT
+
+Object Ptyppar_Ti_Typonei_Pms_VT1  is a DescriptionValidationTable
+    Set Allow_Blank_State To TRUE
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  ""  "è¶©Ê´û´ú™ °ò† Ä•Âú™"
+        Send Add_Table_Value  "1"  "è¶©Ê´û´ú™"
+        Send Add_Table_Value  "2"  "Ä•Âú™"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Ptyppar_Ti_Typonei_Pms_VT1
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl012  sl012.SL
+Register_Object sl012
+//DDB-SelectionEnd
+
+Class Ptyppar_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Property Integer piMustNOTConstrain Public 0
+        Property Integer piOldCtypkin       Public 0
+        Property Integer piOldWtypkin       Public 0
+    End_Procedure
+
+    Procedure New_Current_Record  Integer iOldRec  Integer iNewRec
+        Forward Send New_Current_Record  iOldRec iNewRec
+        Set piOldCtypkin to Ctypkin.Ctypkin_Code
+        Set piOldWtypkin to Wtypkin.Wtypkin_Code
+    End_Procedure   // New_Current_Record
+
+    Procedure OnConstrain
+        If (piMustNotConstrain(Self)=0) Begin
+            Constrain Ptyppar.Company_Code  eq SysCurXR.Company_Code
+            Constrain Ptyppar.Branch_Code   eq SysCurXR.Branch_Code
+        End
+    End_Procedure
+
+    Procedure Clear_Main_File
+        Forward Send Clear_Main_File
+        Set piOldCtypkin to 0
+        Set piOldWtypkin to 0
+    End_Procedure
+
+    Procedure Save_Main_File
+        Integer isAdmin iYes
+        String  sStr
+        Get fig_Is_Admin to isAdmin
+
+        If (Operation_Origin<>Self) Begin
+            If Ptyppar.Recnum Eq 0 Procedure_Return
+        End
+        If (Operation_Origin=Self) Begin
+            If ((piOldCtypkin(Self)<>0) And (piOldCtypkin(Self)<>Ctypkin.Ctypkin_Code)) Begin
+                If (Not(isAdmin)) Error 1001 'Éú§ úß†´®‚ßú´ò† ò¢¢òö„ °Â§û©û™ ßú¢·´û'
+                Else Begin
+                    Move '' to sStr
+                    Append sStr 'Ä§ ò¢¢·•ú´ú °Â§û©û, £ß¶®úÂ §ò úßû®ú·©ú† „õû °ò´òÆ‡®û£‚§ò ßò®ò©´ò´†°·\n ´ò ¶ß¶Âò ‚Æ¶¨§ ≠´†òÆ´úÂ £ú ´†™ ßò¢†‚™ °†§„©ú†™ ß¶¨ ´È®ò ò¢¢·ùú´ú\nÑÂ©´ú ô‚ôò†¶† ß‡™ ü‚¢ú´ú §ò ©¨§úÆÂ©‡ ?'
+                    Get YesNo_Box sStr to iYes
+                    If (iYes=MBR_NO) Error 1000 'Ä°¨®Èüû°ú û õ†òõ†°ò©Âò ò¢¢òö„™ òß¶ ´¶§ Æ®„©´û'
+                End
+            End // If ((piOldCtypkin(Self)<>0) And (piOldCtypkin(Self)<>Ctypkin.Ctypkin_Code))
+            If ((piOldWtypkin(Self)<>0) And (piOldWtypkin(Self)<>Wtypkin.Wtypkin_Code)) Begin
+                If (Not(isAdmin)) Error 1002 'Éú§ úß†´®‚ßú´ò† ò¢¢òö„ °Â§û©û™ òß¶ü„°û™'
+                Else Begin
+                    Move '' to sStr
+                    Append sStr 'Ä§ ò¢¢·•ú´ú °Â§û©û, £ß¶®úÂ §ò úßû®ú·©ú† „õû °ò´òÆ‡®û£‚§ò ßò®ò©´ò´†°·\n ´ò ¶ß¶Âò ‚Æ¶¨§ ≠´†òÆ´úÂ £ú ´†™ ßò¢†‚™ °†§„©ú†™ ß¶¨ ´È®ò ò¢¢·ùú´ú\nÑÂ©´ú ô‚ôò†¶† ß‡™ ü‚¢ú´ú §ò ©¨§úÆÂ©‡ ?'
+                    Get YesNo_Box sStr to iYes
+                    If (iYes=MBR_NO) Error 1000 'Ä°¨®Èüû°ú û õ†òõ†°ò©Âò ò¢¢òö„™ òß¶ ´¶§ Æ®„©´û'
+                End
+            End // ((piOldWtypkin(Self)<>0) And (piOldWtypkin(Self)<>Wtypkin.Wtypkin_Code))
+        End // If (Operation_Origin=Self)
+        Forward Send Save_Main_File
+    End_Procedure // Save_Main_File
+
+
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        If (piMustNotConstrain(Self)=0) Begin
+            Move SysCurXR.Company_Code  to Ptyppar.Company_Code
+            Move SysCurXR.Branch_Code   to Ptyppar.Branch_Code
+        end
+//        Move SysCurXR.Year_Year     to Ptyppar.Year_Year
+//        Move SysCurXR.Year_Recr     to Ptyppar.Year_Recr
+        Move Ctypkin.Ctypkin_Code   to Ptyppar.Ctypkin_Code
+        Move Wtypkin.Wtypkin_Code   to Ptyppar.Wtypkin_Code
+    End_Procedure   // Update
+
+    Procedure Creating
+        Forward Send Creating
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Ptyppar.Ptyppar_Rec0)))))) to Ptyppar.Ptyppar_Recr
+    End_Procedure   // Creating
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Ptyppar.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Particle.File_Number
+        Send Add_Client_File  Pseira.File_Number
+        Send Add_Client_File  Ptypmet.File_Number
+        Send Add_Client_File  Ptypparh.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Ctypkin.File_Number
+        Send Add_Server_File  Wtypkin.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecp.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Syscurxr.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecp.Ptyppar_Rec0  To Ptyppar.Ptyppar_Rec0
+
+        // Field-based properties.......................
+
+        // Ptyppar.Company_Code
+
+        // Ptyppar.Branch_Code
+
+        // Ptyppar.Year_Year
+
+        // Ptyppar.Ctypkin_Code
+
+        // Ptyppar.Wtypkin_Code
+
+        // Ptyppar.Year_Recr
+        Set Field_Value_Table      Field Ptyppar.Year_Recr To (Ptyppar_Year_Recr_VT(Self))
+
+        // Ptyppar.Ctypkin_Recr
+
+        // Ptyppar.Wtypkin_Recr
+
+        // Ptyppar.Ptyppar_Code
+        Set Field_Options          Field Ptyppar.Ptyppar_Code To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Ptyppar.Ptyppar_Code To (sl012(Self))
+        Set Key_Field_State        Field Ptyppar.Ptyppar_Code To TRUE
+
+        // Ptyppar.Ptyppar_Rec0
+        Set Field_Options          Field Ptyppar.Ptyppar_Rec0 To DD_AUTOFIND   
+
+        // Ptyppar.Ptyppar_Descr
+        Set Field_Prompt_Object    Field Ptyppar.Ptyppar_Descr To (sl012(Self))
+
+        // Ptyppar.Ptyppar_Recr
+        Set Field_Options          Field Ptyppar.Ptyppar_Recr To DD_AUTOFIND   
+
+        // Ptyppar.Ptyppar_Is_What
+        Set Field_Value_Table      Field Ptyppar.Ptyppar_Is_What To (Ptyppar_Ptyppar_Is_What_VT(Self))
+
+        // Ptyppar.Ptyppar_Module
+        Set Field_Value_Table      Field Ptyppar.Ptyppar_Module To (Ptyppar_Ptyppar_Module_VT(Self))
+
+        // Ptyppar.Ptyppar_Abrev
+
+        // Ptyppar.Ftiaxnei_Tpay
+        Set Field_Class_Name       Field Ptyppar.Ftiaxnei_Tpay To "dbCheckBoxsub"
+
+        // Ptyppar.Ti_Typonei_Pms
+        Set Field_Value_Table      Field Ptyppar.Ti_Typonei_Pms To (Ptyppar_Ti_Typonei_Pms_VT1(Self))
+
+        // Ptyppar.Einai_Paroxh_Yp
+        Set Field_Checkbox_Values  Field Ptyppar.Einai_Paroxh_Yp To "1"  "0"
+        Set Field_Class_Name       Field Ptyppar.Einai_Paroxh_Yp To "dbCheckBoxsub"
+
+        // Ptyppar.Gtypkin_Code
+
+        // Ptyppar.Sysxet_Ptyppar
+
+        // Ptyppar.Sysx_Ptyp_Recr
+
+        // Ptyppar.Check_Posa_Plaf
+
+        // Ptyppar.Singular
+
+        // Ptyppar.Sub
+
+        // Ptyppar.Constrain
+
+        // Ptyppar.Label
+
+        // Ptyppar.Label1
+
+        // Ptyppar.Sap
+
+        // Ptyppar.Is_Xondr
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Ptyppar.Ftiaxnei_Tpay To "1"
+        Set Field_Changed_Value   Field Ptyppar.Einai_Paroxh_Yp To 0
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Ptyppar_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl012.SL         // sl012
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

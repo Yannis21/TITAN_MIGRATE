@@ -1,0 +1,101 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : PAGKAT.DD
+// Class Name: Pagkat_DataDictionary
+// Revision  : 36
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Pagkat
+Open Pagia
+Open Sysrecg
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl80  sl80.SL
+Register_Object sl80
+//DDB-SelectionEnd
+
+Class Pagkat_DataDictionary  is a DataDictionary_sec
+    
+    
+   Procedure Creating
+        Forward Send Creating
+        // Insert Code Here  
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(pagkat.pagkat_Rec0)))))) to pagkat.pagkat_Recr
+    End_Procedure   // Creating
+    
+    
+    
+    
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Pagkat.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Pagia.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecg.Pagkat_Rec0  To Pagkat.Pagkat_Rec0
+
+        // Field-based properties.......................
+
+        // Pagkat.Pagkat_Code
+        Set Field_Options          Field Pagkat.Pagkat_Code To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Pagkat.Pagkat_Code To (sl80(Self))
+        Set Key_Field_State        Field Pagkat.Pagkat_Code To TRUE
+
+        // Pagkat.Pagkat_Rec0
+
+        // Pagkat.Pagkat_Descr
+        Set Field_Prompt_Object    Field Pagkat.Pagkat_Descr To (sl80(Self))
+
+        // Pagkat.Pagkat_Recr
+
+        // Pagkat.Pagia_Code
+
+        // Pagkat.Pagkat_Pososto
+
+        // Pagkat.Codegl
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Pagkat_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl80.SL          // sl80
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

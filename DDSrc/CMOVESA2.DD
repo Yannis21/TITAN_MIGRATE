@@ -1,0 +1,248 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : CMOVESA2.DD
+// Class Name: Cmovesa2_DataDictionary
+// Revision  : 0
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Cmovesa2
+Open Ctypkin
+Open Clients
+
+//DDB-HeaderEnd
+//open master file
+Open Cmoves
+
+//define alias-master condition
+Set_Attribute DF_FILE_ALIAS of Cmoves.File_Number   to DF_FILE_IS_MASTER
+Set_Attribute DF_FILE_ALIAS of Cmovesa2.File_Number to DF_FILE_IS_ALIAS
+
+Set_Relate Cmovesa2.Ctypkin_Recr     to |FN0,0
+Set_Relate Cmovesa2.Client_Recr      to |FN0,0
+
+Class Cmovesa2_DataDictionary  is a DataDictionary_Sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Cmovesa2.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Ctypkin.File_Number
+        Send Add_Server_File  Clients.File_Number
+
+        // Field-based properties.......................
+
+        // Cmovesa2.Company_Code
+
+        // Cmovesa2.Branch_Code
+
+        // Cmovesa2.Year_Year
+
+        // Cmovesa2.Custprom_Code
+
+        // Cmovesa2.Client_Id
+
+        // Cmovesa2.Ctypkin_Code
+
+        // Cmovesa2.Cmoves_Recr
+
+        // Cmovesa2.Cmoves_Rec0
+
+        // Cmovesa2.Cmoves_Hmnia
+
+        // Cmovesa2.Ctypkin_Recr
+
+        // Cmovesa2.Cmoves_Par
+
+        // Cmovesa2.Partl_Recr
+
+        // Cmovesa2.Cmoves_Axia
+
+        // Cmovesa2.Cmoves_X0
+
+        // Cmovesa2.Cmoves_P0
+
+        // Cmovesa2.Cmoves_X00
+
+        // Cmovesa2.Cmoves_P00
+
+        // Cmovesa2.Cmoves_X1
+
+        // Cmovesa2.Cmoves_P1
+
+        // Cmovesa2.Cmoves_X2
+
+        // Cmovesa2.Cmoves_P2
+
+        // Cmovesa2.Cmoves_Dlixis
+
+        // Cmovesa2.Cmoves_A_Code
+
+        // Cmovesa2.Cmoves_Status_E
+
+        // Cmovesa2.Cmoves_Status_A
+
+        // Cmovesa2.Cmoves_S0
+
+        // Cmovesa2.Cmoves_Ys0
+
+        // Cmovesa2.Cmoves_S1
+
+        // Cmovesa2.Cmoves_Ys1
+
+        // Cmovesa2.Cmoves_S2
+
+        // Cmovesa2.Cmoves_Ys2
+
+        // Cmovesa2.Cmoves_Sc_Code2
+
+        // Cmovesa2.Cmoves_Open
+
+        // Cmovesa2.Cmoves_Aopen
+
+        // Cmovesa2.Cmoves_M_Code
+
+        // Cmovesa2.Cmoves_Yn_Myf
+
+        // Cmovesa2.Cmoves_Myf_Axia
+
+        // Cmovesa2.Cmoves_Kk
+
+        // Cmovesa2.Cmoves_C_Code2
+
+        // Cmovesa2.Cn_Code
+
+        // Cmovesa2.Client_Recr
+
+        // Cmovesa2.Barticl_Recr
+
+        // Cmovesa2.Cmoves_Qty
+
+        // Cmovesa2.Cmove_Totambd0
+
+        // Cmovesa2.Cmove_Discam0
+
+        // Cmovesa2.Cmove_Totamad0
+
+        // Cmovesa2.Cmove_Vatam0
+
+        // Cmovesa2.Cmove_Extra0
+
+        // Cmovesa2.Cmove_Totambd00
+
+        // Cmovesa2.Cmove_Discam00
+
+        // Cmovesa2.Cmove_Totamad00
+
+        // Cmovesa2.Cmove_Vatam00
+
+        // Cmovesa2.Cmove_Extra00
+
+        // Cmovesa2.Cmove_Totambd1
+
+        // Cmovesa2.Cmove_Discam1
+
+        // Cmovesa2.Cmove_Totamad1
+
+        // Cmovesa2.Cmove_Vatam1
+
+        // Cmovesa2.Cmove_Extra1
+
+        // Cmovesa2.Module_From
+
+        // Cmovesa2.Parast_Abrev
+
+        // Cmovesa2.Enhm_Ypol_Pel
+
+        // Cmovesa2.Enhm_Hmnies_Pel
+
+        // Cmovesa2.Sls_Id
+
+        // Cmovesa2.Presp_Id
+
+        // Cmovesa2.Cnt_Id
+
+        // Cmovesa2.Cmoves_Open_Sx0
+
+        // Cmovesa2.Cmoves_Open_Sp0
+
+        // Cmovesa2.Cmoves_Open_Yx0
+
+        // Cmovesa2.Cmoves_Open_Yp0
+
+        // Cmovesa2.Cmoves_Open_Sx1
+
+        // Cmovesa2.Cmoves_Open_Sp1
+
+        // Cmovesa2.Cmoves_Open_Sx2
+
+        // Cmovesa2.Cmoves_Open_Sp2
+
+        // Cmovesa2.Cmoves_Topen
+
+        // Cmovesa2.Cn_Recr
+
+        // Cmovesa2.Axia_Pros_Sysx
+
+        // Cmovesa2.Axia_Sysxet
+
+        // Cmovesa2.Axia_Ypol_Sysx
+
+        // Cmovesa2.Axia_Pros_Sys00
+
+        // Cmovesa2.Axia_Sysxet00
+
+        // Cmovesa2.Axia_Ypol_Sys00
+
+        // Cmovesa2.Axia_Pros_Sysr
+
+        // Cmovesa2.Axia_Sysxetr
+
+        // Cmovesa2.Axia_Ypol_Sysr
+
+        // Cmovesa2.Mhxanik_Id
+
+        // Cmovesa2.Prn_Theor
+
+        // Cmovesa2.Is_Closed
+
+        // Cmovesa2.Flag_Copen
+
+        // Cmovesa2.Flag_Ypol
+
+        // Cmovesa2.Ctypkin_Descr
+
+        // Cmovesa2.Client_Name
+
+        // Cmovesa2.Enhm_Ofeilh
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Cmovesa2_DataDictionary
+//DDB-FileEnd

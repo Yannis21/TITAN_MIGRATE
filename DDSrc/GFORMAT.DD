@@ -1,0 +1,132 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GFORMAT.DD
+// Class Name: Gformat_DataDictionary
+// Revision  : 19
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Gformat
+Open Sysrecg
+
+//DDB-HeaderEnd
+
+Class Gformat_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Property Integer piMustNOTConstrain Public 0
+    End_Procedure   // Construct_Object
+
+    Procedure OnConstrain
+        Forward Send OnConstrain
+        If (piMustNOTConstrain(Self)) Begin
+        End
+        Else Begin
+            Constrain Gformat.Company_Code  eq SysCurGL.Company_Code
+            Constrain Gformat.Branch_Code   eq SysCurGL.Branch_Code
+        End
+    End_Procedure
+
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move SysCurGL.Company_Code  to Gformat.Company_Code
+        Move SysCurGL.Branch_Code   to Gformat.Branch_Code
+        Move SysCurGL.Year_Year     to Gformat.Year_Year
+        Move SysCurGL.Year_Recr     to Gformat.Year_Recr
+    End_Procedure   // Update
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurGL.Branch_Site))+;
+                         (Trim(String(Gformat.Gformat_Rec0)))))) to Gformat.Gformat_Recr
+    End_Procedure   // Creating
+
+    Procedure Operation_Not_Allowed  Integer iError_Num
+         Case Begin
+             Case (iError_Num = 1001)
+                  Error 1001 "DDC 161:€¡˜«á¢¢ž¢¦ª ‰à› ¡æª “§¦¡˜«˜©«ã£˜«¦ª!\n\n‰œ¤æª ‰à› ¡æª"
+             Case Break
+
+             Case Else
+                  Forward Send Operation_Not_Allowed  iError_Num
+        Case End
+    End_Procedure   // Operation_Not_Allowed
+
+    Function Validate_Save  Returns Integer
+        Local Integer iReturnVal
+        Forward Get Validate_Save  To iReturnVal
+        If (Not(iReturnVal)) Begin
+            If (Gformat.Gformat_Code="") Send Operation_Not_Allowed 1001
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+
+
+
+
+//    Procedure Creating
+//              Forward Send Creating
+//              Add 1 to Year.Year_NumGformat //˜¨ Ÿ£æª œšš¨˜­é¤ gformat «žª ®¨ã©žª
+//    End_Procedure //creating
+//    Procedure Deleting
+//              Forward Send Deleting
+//              Sub 1 from Year.Year_NumGformat //˜¨ Ÿ£æª œšš¨˜­é¤ gformat «žª ®¨ã©žª
+//    End_Procedure //deleting
+
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Gformat.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecg.Gformat_Rec0  To Gformat.Gformat_Rec0
+
+        // Field-based properties.......................
+
+        // Gformat.Company_Code
+
+        // Gformat.Branch_Code
+
+        // Gformat.Year_Year
+
+        // Gformat.Gformat_Code
+        Set Field_Options          Field Gformat.Gformat_Code To DD_AUTOFIND   
+        Set Key_Field_State        Field Gformat.Gformat_Code To TRUE
+
+        // Gformat.Gformat_Rec0
+
+        // Gformat.Year_Recr
+
+        // Gformat.Gformat_Mask
+
+        // Gformat.Gformat_Recr
+        Set Field_Options          Field Gformat.Gformat_Recr To DD_AUTOFIND   
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+End_Class    // Gformat_DataDictionary
+//DDB-FileEnd

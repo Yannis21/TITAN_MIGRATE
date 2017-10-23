@@ -1,0 +1,88 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : TOWNS.DD
+// Class Name: Towns_DataDictionary
+// Revision  : 8
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Towns
+Open Cities
+Open Country
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl057  sl057.SL
+Register_Object sl057
+//DDB-SelectionEnd
+
+Class Towns_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Save_Main_File
+        If (Operation_Origin<>Self) Begin
+            If Towns.Recnum Eq 0 Procedure_Return
+        End
+        Forward Send Save_Main_File
+    End_Procedure
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Towns.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   to DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD to DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    to DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Cities.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Country.File_Number
+
+        // Field-based properties.......................
+
+        // Towns.Country_Id
+        Set Key_Field_State        Field Towns.Country_Id To TRUE
+
+        // Towns.Town_Id
+        Set Field_Options          Field Towns.Town_Id To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Towns.Town_Id To (sl057(Self))
+
+        // Towns.Town_Descr
+        Set Field_Prompt_Object    Field Towns.Town_Descr To (sl057(Self))
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Towns_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl057.SL         // sl057
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

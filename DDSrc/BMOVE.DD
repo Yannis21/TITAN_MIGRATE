@@ -1,0 +1,1821 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : BMOVE.DD
+// Class Name: Bmove_DataDictionary
+// Revision  : 51
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Bmove
+Open Barticl
+Open Baxio
+Open Sysrecb
+Open Bkinkat
+Open Bsum
+
+//DDB-HeaderEnd
+
+      //§ Ÿ˜¤¦å ©¬¤›¬˜©£¦å « £é¤ «à¤ bkinkat.baxio_stat_from + bkinkat.baxio_stat_to
+      //  ˜§¦          ©œ
+      //    0           0    ˜ › ç ¤ ˜ « ¦ ¤  (validate save «¦¬ bkinkat)
+      //    0           1    â ©˜šàšã ©«¦ ®˜¨«¦­¬¢á¡ ¦ (create a new baxio (33.90))
+      //    0           2    â¥˜šàšã ˜§¦ ®˜¨«¦­¬¢á¡ ¦  (create a new baxio (53.90))
+
+      //    1           0    ˜ › ç ¤ ˜ « ¦ ¤  (validate save «¦¬ bkinkat)
+      //    1           1    ˜ › ç ¤ ˜ « ¦ ¤  (validate save «¦¬ bkinkat)
+      //    1           2    â¥˜šàšã ˜§¦ ®˜¨«¦­¬¢á¡ ¦
+
+      //    2           0    ˜ › ç ¤ ˜ « ¦ ¤  (validate save «¦¬ bkinkat)
+      //    2           1    ˜ › ç ¤ ˜ « ¦ ¤  (validate save «¦¬ bkinkat)
+      //    2           2    £œ«˜™å™˜© §® ˜§¦ «¨á§œ˜ ©œ «¨á§œ˜
+
+
+Open SysCurXr
+Open Baxiokat
+Open Btypkin
+Open Bkinkat
+Open Baxio
+
+Class Bmove_DataDictionary  is a DataDictionary_Sec
+
+      Procedure Construct_Object
+                Forward Send Construct_Object
+
+                Property Integer piCan_Create_Baxio (FALSE)
+
+                //object id «é¤ ddo servers š ˜ «á barticl+bmove+baxio+baxiokat
+                //©œ«á¨¦¤«˜  ˜§¦ «¤ end_construct
+                //®¨© £œç¦¬¤ ©«¤ private.exit_btypkin_code
+                //š ˜ ¤˜ ©œ«á¨¦¬¤ «¦ visual interface
+                Property Integer piBarticl_dd        0
+                Property Integer piBaxio_dd          0
+                Property Integer piBtypkin_dd        0
+                Property Integer piBaxiokat_dd       0
+                Property Integer piBaxio_Status_From 0
+                Property Integer piBaxio_Status_To   0
+
+                Property Integer piCreated_Bmove  0 //©œ«á¨œ«˜  ©«¤ creating,
+                                                    //®¨© £¦§¦ œå«˜  ©«¤ update+validate_save ¡˜ 
+                                                    //£›œ¤åœ«˜  ©«¤ request_save & delete «¦¬ bmove
+
+                Property Integer piB_Baxio_Status  0
+                Property Integer piA_Baxio_Status  0
+
+                //19 §˜¢˜ âª « £âª
+                Property  Integer piB_Garticl_Rec0           0
+                Property  Integer piB_Gtypkin_Rec0           0
+                Property  Date    pdB_Garticl_Hmnia          0
+                Property  Integer piB_Garticl_No             0
+                Property  String  psB_Garticl_C_Code2        0
+                Property  Number  pnB_Garticl_Rate0          0
+                Property  Number  pnB_Garticl_Rate00         0
+                Property  Number  pnB_Garticl_RateR          0
+                Property  String  psB_Garticl_Aitiol         0
+
+                Property  Integer piB_Gmove_Master_Rec0      0
+                Property  Integer piB_Gplan_Master_Rec0      0
+                Property  Number  pnB_Gmove_Master_X2        0
+                Property  Number  pnB_Gmove_Master_P2        0
+                Property  String  psB_Gmove_Master_Aitiol    0
+
+                Property  Integer piB_Gmove_Slave_Rec0       0
+                Property  Integer piB_Gplan_Slave_Rec0       0
+                Property  Number  pnB_Gmove_Slave_X2         0
+                Property  Number  pnB_Gmove_Slave_P2         0
+                Property  String  psB_Gmove_Slave_Aitiol     0
+
+                //19 ¤âœª « £âª
+                Property  Integer piA_Garticl_Rec0           0
+                Property  Integer piA_Gtypkin_Rec0           0
+                Property  Date    pdA_Garticl_Hmnia          0
+                Property  Integer piA_Garticl_No             0
+                Property  String  psA_Garticl_C_Code2        0
+                Property  Number  pnA_Garticl_Rate0          0
+                Property  Number  pnA_Garticl_Rate00         0
+                Property  Number  pnA_Garticl_RateR          0
+                Property  String  psA_Garticl_Aitiol         0
+
+                Property  Integer piA_Gmove_Master_Rec0      0
+                Property  Integer piA_Gplan_Master_Rec0      0
+                Property  Number  pnA_Gmove_Master_X2        0
+                Property  Number  pnA_Gmove_Master_P2        0
+                Property  String  psA_Gmove_Master_Aitiol    0
+
+                Property  Integer piA_Gmove_Slave_Rec0       0
+                Property  Integer piA_Gplan_Slave_Rec0       0
+                Property  Number  pnA_Gmove_Slave_X2         0
+                Property  Number  pnA_Gmove_Slave_P2         0
+                Property  String  psA_Gmove_Slave_Aitiol     0
+
+                Property  Integer piDo_GL_Maintainance       0 //object id «ª business process
+                                                               //§¦¬ œ¤£œ¨é¤œ  «ã¤ šœ¤ ¡ã ¢¦š ©« ¡ã
+                Property  Integer piDo_CUSTOMER_Maintainance 0 //object id «ª business process
+                                                               //§¦¬ œ¤£œ¨é¤œ  «¦¬ª §œ¢á«œª
+                Property  Integer piDo_VENDOR_Maintainance   0 //object id «ª business process
+                                                               //§¦¬ œ¤£œ¨é¤œ  «¦¬ª §¨¦£Ÿœ¬«âª
+
+                //3 properties š ˜ «¤ feedback œ¤£â¨à© ˜§¦ «¤ š¢
+                Property Integer  piF_Garticl_Rec0           0
+                Property Integer  piF_Gmove_Master_Rec0      0
+                Property Integer  piF_Gmove_Slave_Rec0       0
+
+                Property Integer  piUpdate                   0
+                Property Integer  piBackout                  0
+
+                //properties š ˜ «¤ procedural œ¤£â¨à© «¦¬ bsum
+                Property String   psB_Barticl_Recr           ''
+                Property String   psB_Baxiokat_Recr          ''
+                Property Number   pnB_Baxio_V2               0
+                Property Number   pnB_Baxio_V0               0
+                Property Number   pnB_Baxio_V00              0
+                Property Number   pnB_Baxio_VR               0
+
+                Property String   psA_Barticl_Recr           ''
+                Property String   psA_Baxiokat_Recr          ''
+                Property Number   pnA_Baxio_V2               0
+                Property Number   pnA_Baxio_V0               0
+                Property Number   pnA_Baxio_V00              0
+                Property Number   pnA_Baxio_VR               0
+
+                //booleans §¦¬ ›¢é¤¦¬¤ «˜ operations §¦¬ Ÿ˜ šå¤¦¬¤ ©«¤ š¢
+                Property Integer  piGarticl_Delete          0 //©œ«á¨œ«˜  ©«¤ backout
+                Property Integer  piGarticl_Edit            0 //˜¤«åŸœ«¦ «¦¬ create (update)
+                Property Integer  piGarticl_Create          0 //©œ«á¨œ«˜  ©«¤ update
+
+                Property Integer  piMaster_Gmove_Delete     0 //©œ«á¨œ«˜  ©«¤ backout
+                Property Integer  piMaster_Gmove_Edit       0 //˜¤«åŸœ«¦ «¦¬ create (update)
+                Property Integer  piMaster_Gmove_Create     0 //©œ«á¨œ«˜  ©«¤ private.creating_barticl
+
+                Property Integer  piSlave_Gmove_Delete      0 //©œ«á¨¦¤«˜  ©«¤ update_bsum
+                Property Integer  piSlave_Gmove_Edit        0 //©œ«á¨¦¤«˜  ©«¤ update_bsum
+                Property Integer  piSlave_Gmove_Create      0 //©œ«á¨¦¤«˜  ©«¤ update_bsum
+
+                Property Integer    piMustNotConstrain      0
+
+
+      End_Procedure   //construct_object
+
+
+
+      //****************************************************************************************
+      //**************P R O C E D U R A L    „ Œ † ‹„  — ‘ †    B S U M************************
+      //****************************************************************************************
+
+
+      //¡˜¢œå«˜  ˜§æ save+delete_main_file, «˜ œ£§¢œ¡æ£œ¤˜ ˜¨®œå˜ œå¤˜  locked
+      //¡˜  transaction is enabled !
+      //œ§å©ª â®à current record ©œ æ¢˜ «˜ parents.
+      //¡˜¢œå «¤ private.update_bsum
+      //œ§ ©«¨â­œ  «˜ œ¥ãª ¢áŸ:6001:˜¡˜«á¢¢¢¦ §¨æ©£¦ (¢áŸ¦ª ¡é› ¡˜ª)
+      //                        6002:ƒâ¤ â«¨œ¥œ ¦ç«œ update ¦ç«œ backout !
+      //œ§å©ª ˜§¦ ¢áŸ¦ª «¦¬ ¡é› ¡˜, £§¦¨œå ¤˜ ›é©œ  ¡˜  Error 10001 "Wrong Num Arguments!\n\nPlease Call Solution!"
+
+      //¡˜¢œå «¤ private.update_bsum 1 ­¦¨á š ˜ backout (˜­˜å¨œ© §˜¢˜ é¤ « £é¤) ¡˜ 
+      //                              1 ­¦¨á š ˜ update  (§¨æ©Ÿœ© ¤âà¤ « £é¤)
+      //œ¢âš®¦¤«˜  æ¢œª ¦  §˜¨á£œ«¨¦  before+after œá¤ œå¤˜  å©œª,
+      //¦§æ«œ ›â¤ œ¤£œ¨é¤à    ‰ € ‡  Š  “    «¦ bsum (§® ¡á¤à £æ¤¦¤ ˜¢¢˜šã ˜ « ¦¢¦šå˜ª)
+      Procedure private.Trexe Returns Integer
+                Integer liBackout liUpdate
+
+                String  lsB_Barticl_Recr lsB_Baxiokat_Recr
+                Number  lnB_Baxio_V2
+                Number  lnB_Baxio_V0
+                Number  lnB_Baxio_V00
+                Number  lnB_Baxio_VR
+
+                String  lsA_Barticl_Recr lsA_Baxiokat_Recr
+                Number  lnA_Baxio_V2
+                Number  lnA_Baxio_V0
+                Number  lnA_Baxio_V00
+                Number  lnA_Baxio_VR
+
+                //˜¤áš¤à© ¡˜«á©«˜©ª «¦¬ ddo
+                Get piBackout to liBackout
+                Get piUpdate  to liUpdate
+
+                //š ˜ ¢æš¦¬ª ˜©­˜¢œå˜ª, â¢œš®¦ª backout & update
+                If (;
+                     (liBAckout = 0) and;
+                     (liUpdate  = 0);
+                   ) Begin
+                      Send Operation_Not_Allowed 6002 //"ƒâ¤ â«¨œ¥œ ¦ç«œ update ¦ç«œ backout !"
+                      //Procedure_Return    //› ˜¡¦§ã «¦¬ transaction! (£á¢¢¦¤ «œ¢œåàª ˜§åŸ˜¤¦, but who knows!
+                     End
+
+                //˜¤áš¤à© §˜¢˜ é¤ « £é¤
+                Get psB_Barticl_Recr  to lsB_Barticl_Recr
+                Get psB_Baxiokat_Recr to lsB_Baxiokat_Recr
+                Get pnB_Baxio_V2      to lnB_Baxio_V2
+                Get pnB_Baxio_V0      to lnB_Baxio_V0
+                Get pnB_Baxio_V00     to lnB_Baxio_V00
+                Get pnB_Baxio_VR      to lnB_Baxio_VR
+
+                //˜¤áš¤à© ¤âà¤ « £é¤
+                Get psA_Barticl_Recr  to lsA_Barticl_Recr
+                Get psA_Baxiokat_Recr to lsA_Baxiokat_Recr
+                Get pnA_Baxio_V2      to lnA_Baxio_V2
+                Get pnA_Baxio_V0      to lnA_Baxio_V0
+                Get pnA_Baxio_V00     to lnA_Baxio_V00
+                Get pnA_Baxio_VR      to lnA_Baxio_VR
+
+                //œá¤ æ¢œª ¦  §˜¨á£œ«¨¦  before+after œå¤˜  å©œª,
+                //«æ«œ ›â¤ £§˜å¤à ¡˜Ÿæ¢¦¬ ©«¤ œ¤£â¨à©  ©¦¬šåà¤,
+                //˜¢¢á ­œçšà ...«¨â®¦¤«˜ª!
+                //sosos £ã§àª §¨â§œ  ¤˜ œ¢œš¥à gtypkin + gplan slave master ?
+                If (;
+                     (lsB_Barticl_Recr  =lsA_Barticl_Recr ) and;
+                     (lsB_Baxiokat_Recr =lsA_Baxiokat_Recr) and;
+                     (lnB_Baxio_V2      =lnA_Baxio_V2)      and;
+                     (lnB_Baxio_V0      =lnA_Baxio_V0)      and;
+                     (lnB_Baxio_V00     =lnA_Baxio_V00)     and;
+                     (lnB_Baxio_VR      =lnA_Baxio_VR)         ;
+                    ) Begin
+                       Procedure_Return
+                      End
+
+                //˜­˜å¨œ© §˜¢˜ é¤ « £é¤
+                If (liBackout = 1);
+                Begin
+                     Send private.Update_Bsum lsB_Barticl_Recr;
+                                              lsB_Baxiokat_Recr;
+                                              lnB_Baxio_V2;
+                                              lnB_Baxio_V0;
+                                              lnB_Baxio_V00;
+                                              lnB_Baxio_VR;
+                                              (-1)
+                End //if (libackout = 1)
+
+                //§¨æ©Ÿœ© ¤âà¤ « £é¤
+                If (liUpdate = 1);
+                Begin
+                     Send private.Update_Bsum lsA_Barticl_Recr;
+                                              lsA_Baxiokat_Recr;
+                                              lnA_Baxio_V2;
+                                              lnA_Baxio_V0;
+                                              lnA_Baxio_V00;
+                                              lnA_Baxio_VR;
+                                              1
+                End //if (liupdate = 1)
+      End_Procedure //private.trexe
+
+
+      //¡˜¢œå«˜  ˜§æ «¤ prepare_to_update_bsum
+      //¡˜Ÿ¦¨åœ  «¦ slave operation
+      Procedure private.Update_Bsum String lsBarticl_Recr;
+                                    String lsBaxiokat_Recr;
+                                    Number  lnV2;
+                                    Number  lnV0;
+                                    Number  lnV00;
+                                    Number  lnVR;
+                                    Integer liSign
+
+                Integer liSlave_Gmove_Create //¡˜Ÿ˜¨á š ˜ ¢æš¦¬ª compilation
+
+                //š ˜ ¢æš¦¬ª ˜©­˜¢œå˜ª, £ã¤ «¬®æ¤ ¥œ§œ¨á©à «¦¬ª 255 ®˜¨˜¡«ã¨œª
+                If (Num_Arguments <> 7 ) Error 10001 "Wrong Num Arguments!\n\nPlease Call Solution!"
+
+                //**************************************************************************
+                //01.¬§¦¢¦š ©£æª & â¢œš®¦ª §¨¦©ã£¦¬ (+ ã -)
+                //**************************************************************************
+                If (;
+                     ((Abs(liSign)) <> 1 );
+                   ) Begin
+                      Send Operation_Not_Allowed 6001 //˜¡˜«á¢¢¢¦ §¨æ©£¦ (¢áŸ¦ª ¡é› ¡˜ª)
+                                                      //› ˜¡¦§ã «¦¬ transaction!
+                     End
+                Move (lnV2  * liSign) to lnV2
+                Move (lnV0  * liSign) to lnV0
+                Move (lnV00 * liSign) to lnV00
+                Move (lnVR  * liSign) to lnVR
+
+                //**************************************************************************
+                //02.œ¤£â¨à© bsum
+                //**************************************************************************
+
+                //02.1:œç¨œ©/›£ ¦¬¨šå˜ & œ¤£â¨à© bsum
+                Clear Bsum
+                Move lsBarticl_Recr  to Bsum.Barticl_Recr
+                Move lsBaxiokat_Recr to Bsum.Baxiokat_Recr
+                Find Eq Bsum by Index.1 //barticl_recr+baxiokat_recr !!!!!!
+                If (Found=0);
+                Begin //˜¨®ã ›£ ¦¬¨šå˜s ¤â¦¬ record bsum
+
+                      // jsjsjs 27/01/2001
+                      Add 1 to SysrecB.Bsum_Rec0
+                      Saverecord SysrecB
+                      Move SysrecB.Bsum_Rec0  to Bsum.Bsum_Rec0
+                      Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                                        (Trim(String(Bsum.Bsum_Rec0)))))) to Bsum.Bsum_Recr
+
+                      //Add 1 to SysrecB.Bsum_Rec0
+                      //Saverecord SysrecB
+                      //§¨¦©¦®ã ! ›â¤ â®à rec mhdenia  ! ! !
+                      //Move SysrecB.Bsum_Rec0       to Bsum.Bsum_Rec0
+                      //œ¤£â¨à© £ã related §œ›åà¤
+                      //§¨¦©¦®ã ! ›â¤ â®à £ã related §œ›å˜ ! ! !
+                      Set piSlave_Gmove_Create to 1  //›£ ¦¬¨šå˜ ¤â¦¬ gmove slave record
+                      Move 1 to liSlave_Gmove_Create //¡˜Ÿ˜¨á š ˜ ¢æš¦¬ª compilation
+                End //«â¢¦ª ›£ ¦¬¨šå˜s ¤â¦¬ record bsum
+
+                //02.2:œ¤£â¨à© bsum (update+backout)
+
+                //02.3:©é© £¦ ã › ˜š¨˜­ã «¦¬ bsum
+
+                If (;
+                     (Bsum.Bsum_SV2 + lnV2  = 0) and;
+                     ((piUpdate(Self))      = 0);
+                   );
+                Begin
+                     Delete Bsum
+                     Set piSlave_Gmove_Delete  to 1 //› ˜š¨˜­ã gmove slave record
+                End
+                Else;
+                Begin
+                     Add lnV2  to Bsum.Bsum_SV2
+                     Add lnV0  to Bsum.Bsum_SV0
+                     Add lnV00 to Bsum.Bsum_SV00
+                     Add lnVR  to Bsum.Bsum_SVR
+                     Saverecord Bsum
+                     Set piSlave_Gmove_Edit    to (Not(liSlave_Gmove_Create)) //edit gmove slave record
+                End
+
+      End_Procedure //private.update_bsum
+      //****************************************************************************************
+      //**************P R O C E D U R A L    „ Œ † ‹„  — ‘ †    B S U M************************
+      //****************************************************************************************
+
+
+      //private
+      //¡˜¢œå«˜  ˜§æ request save & delete, ˜¡¨ ™éª §¨å¤ ¡˜  £œ«á «¦ forward send
+      Procedure private.Initialize_Properties
+                Integer liBarticl_dd liBaxio_dd
+
+                //barticl related properties
+                Get piBarticl_dd to liBarticl_dd
+                If (liBarticl_dd <> 0);
+                Begin //œá¤ æ¤«àª ™¨å©¡à ¡á§¦ ¦ barticl_server_ddo
+                     Set piCreated_Barticl of liBarticl_dd to 0
+                End
+                Else Error 10000 "Bmove does not have a Barticl Server ! ! !"
+
+                //baxio   related properties
+                Get piBaxio_dd to liBaxio_dd
+                If (liBaxio_dd <> 0);
+                Begin //œá¤ æ¤«àª ™¨å©¡à ¡á§¦ ¦ baxio_server_ddo
+                     Set piCreated_Baxio   of liBaxio_dd to 0
+                     Set pnB_Baxio_V2      of liBaxio_dd to 0
+                     Set pnB_Baxio_V0      of liBaxio_dd to 0
+                     Set pnB_Baxio_V00     of liBaxio_dd to 0
+                     Set pnB_Baxio_Vr      of liBaxio_dd to 0
+                     Set psB_Baxio_C_Code2 of liBaxio_dd to ""
+                     Set piB_Baxio_Status  of liBaxio_dd to 0
+                     Set piB_Baxiokat_Code of liBaxio_dd to 0
+                     Set piB_Year_Year     of liBaxio_dd to 0
+                     Set piBtypkin_Flag03  of liBaxio_dd to 0
+                     Set piBtypkin_Flag04  of liBaxio_dd to 0
+                End
+                Else Error 10000 "Bmove does not have a Baxio Server ! ! !"
+
+                Set piCreated_Bmove  to 0 //©œ«á¨œ«˜  ©«¤ creating,
+
+                //£›œ¤ ©£æª 19 §˜¢˜ é¤ « £é¤
+                Set piB_Garticl_Rec0         to 0
+                Set piB_Gtypkin_Rec0         to 0
+                Set pdB_Garticl_Hmnia        to 0
+                Set piB_Garticl_No           to 0
+                Set psB_Garticl_C_Code2      to 0
+                Set pnB_Garticl_Rate0        to 0
+                Set pnB_Garticl_Rate00       to 0
+                Set pnB_Garticl_RateR        to 0
+                Set psB_Garticl_Aitiol       to 0
+
+                Set piB_Gmove_Master_Rec0    to 0
+                Set piB_Gplan_Master_Rec0    to 0
+                Set pnB_Gmove_Master_X2      to 0
+                Set pnB_Gmove_Master_P2      to 0
+                Set psB_Gmove_Master_Aitiol  to 0
+
+                Set piB_Gmove_Slave_Rec0     to 0
+                Set piB_Gplan_Slave_Rec0     to 0
+                Set pnB_Gmove_Slave_X2       to 0
+                Set pnB_Gmove_Slave_P2       to 0
+                Set psB_Gmove_Slave_Aitiol   to 0
+
+                //£›œ¤ ©£æª 19 ¤âà¤ « £é¤
+                Set piA_Garticl_Rec0         to 0
+                Set piA_Gtypkin_Rec0         to 0
+                Set pdA_Garticl_Hmnia        to 0
+                Set piA_Garticl_No           to 0
+                Set psA_Garticl_C_Code2      to 0
+                Set pnA_Garticl_Rate0        to 0
+                Set pnA_Garticl_Rate00       to 0
+                Set pnA_Garticl_RateR        to 0
+                Set psA_Garticl_Aitiol       to 0
+
+                Set piA_Gmove_Master_Rec0    to 0
+                Set piA_Gplan_Master_Rec0    to 0
+                Set pnA_Gmove_Master_X2      to 0
+                Set pnA_Gmove_Master_P2      to 0
+                Set psA_Gmove_Master_Aitiol  to 0
+
+                Set piA_Gmove_Slave_Rec0     to 0
+                Set piA_Gplan_Slave_Rec0     to 0
+                Set pnA_Gmove_Slave_X2       to 0
+                Set pnA_Gmove_Slave_P2       to 0
+                Set psA_Gmove_Slave_Aitiol   to 0
+
+                Set piBaxio_Status_From      to 0
+                Set piBaxio_Status_To        to 0
+
+                //3 properties š ˜ «¤ feedback œ¤£â¨à© ˜§¦ «¤ š¢
+                Set piF_Garticl_Rec0         to 0
+                Set piF_Gmove_Master_Rec0    to 0
+                Set piF_Gmove_Slave_Rec0     to 0
+
+                Set piUpdate                 to 0
+                Set piBackout                to 0
+
+                //properties š ˜ «¤ procedural œ¤£â¨à© «¦¬ bsum
+                Set psB_Barticl_Recr         to ''
+                Set psB_Baxiokat_Recr        to ''
+                Set pnB_Baxio_V2             to 0
+                Set pnB_Baxio_V0             to 0
+                Set pnB_Baxio_V00            to 0
+                Set pnB_Baxio_VR             to 0
+
+                Set psA_Barticl_Recr         to ''
+                Set psA_Baxiokat_Recr        to ''
+                Set pnA_Baxio_V2             to 0
+                Set pnA_Baxio_V0             to 0
+                Set pnA_Baxio_V00            to 0
+                Set pnA_Baxio_VR             to 0
+
+                //booleans §¦¬ ›¢é¤¦¬¤ «˜ operations §¦¬ Ÿ˜ šå¤œ  ©«¦¤ š¢
+                Set  piGarticl_Delete         to  0
+                Set  piGarticl_Edit           to  0
+                Set  piGarticl_Create         to  0
+
+                Set  piMaster_Gmove_Delete    to  0
+                Set  piMaster_Gmove_Edit      to  0
+                Set  piMaster_Gmove_Create    to  0
+
+                Set  piSlave_Gmove_Delete     to  0
+                Set  piSlave_Gmove_Edit       to  0
+                Set  piSlave_Gmove_Create     to  0
+      End_Procedure //private.Initialize_Properties
+
+
+      //private
+      //¡˜¢œå«˜  ˜§¦ «¤ update
+      Procedure private.Creating_Barticl
+      End_Procedure //private.creating_barticl
+
+
+      //private
+      //¡˜¢œå«˜  ˜§¦ «¤ update, ˜­¦ç â®œ  ™¨œå kinkat record
+      Procedure private.Creating_Baxio
+                Integer liCan_Create_Baxio //¡˜Ÿ˜¨á š ˜ ¢æš¦¬ª compilation only
+
+                //¡˜«'˜¨®áª ¤â˜ axio records ›£ ¦¬¨š¦ç¤«˜  £æ¤¦¤ æ«˜¤ :
+                //˜) œå¤˜  œ ©§¨˜¡«â˜ + «¦ bkinkat œ§ «¨â§œ  ›£ ¦¬¨šå˜, ã
+                //™) œå¤˜  §¢¨à«â˜   + «¦ bkinkat œ§ «¨â§œ  ›£ ¦¬¨šå˜.
+                //æ«˜¤ ›£ ¦¬¨š¦ç£œ ¤â˜ axio records, «æ«œ:
+                //˜)œ¤£â¨à© §œ›åà¤ first in, £æ¤¦ š ˜ œ ©§¨˜¡«â˜
+                //™)œ¤£â¨à© §œ›åà¤ first out, £æ¤¦ š ˜ §¢¨à«â˜
+                //š) §œ›å˜ status + place (˜¬«á «œ¢ ¡á «˜ œ¤£œ¨é¤à ©«¤ update)
+                Case Begin
+                     //›£ ¦¬¨šå˜ ˜¥ ¦š¨á­¦¬ œ ©§¨˜¡«â¦¬, œ¡¡¨œ£âª ©«¦ ®˜¨«¦­¬¢á¡ ¦
+                     Case ((Baxiokat.Baxiokat_Type = 1) and (Bkinkat.Bkinkat_Yn_New = 1))
+                          Move Btypkin.Btypkin_Anti1   to Baxio.Baxio_File_In
+                          Move Barticl.Barticl_Code1   to Baxio.Baxio_Code_In
+                          Move Barticl.Barticl_Epon1   to Baxio.Baxio_Epon_In
+                          Move Barticl.Barticl_Recr    to Baxio.Baxio_Fpar_In
+
+                          Move (-1)                    to Baxio.Baxio_File_Out //›â¤ ¬§á¨®œ 
+                          Move ""                      to Baxio.Baxio_Code_Out
+                          Move ""                      to Baxio.Baxio_Epon_Out
+                          Move 0                       to Baxio.Baxio_Fpar_Out
+                     Case Break
+
+                     //›£ ¦¬¨šå˜ ˜¥ ¦š¨á­¦¬ §¢¨à«â¦¬, œ¡¡¨œ£âª ©«¦ bkinkat_plac_to
+                     Case ((Baxiokat.Baxiokat_Type = 2) and (Bkinkat.Bkinkat_Yn_New = 1))
+                          Move (-1)                    to Baxio.Baxio_File_In  //›â¤ ¬§á¨®œ 
+                          Move ""                      to Baxio.Baxio_Code_In
+                          Move ""                      to Baxio.Baxio_Epon_In
+                          Move 0                       to Baxio.Baxio_Fpar_In
+
+                          Move Btypkin.Btypkin_Anti1   to Baxio.Baxio_File_Out
+                          Move Barticl.Barticl_Code1   to Baxio.Baxio_Code_Out
+                          Move Barticl.Barticl_Epon1   to Baxio.Baxio_Epon_Out
+                          Move Barticl.Barticl_Recr    to Baxio.Baxio_Fpar_Out
+                     Case Break
+
+                     Case Else //§¨¦­˜¤éª ¡á«  ›â¤ §áœ  ¡˜¢á
+                          Send Operation_Not_Allowed 3001 //›â¤ œ§ «¨â§œ«˜   ›£ ¦¬¨šå˜ ¤â¦¬ ˜¥ ¦š¨á­¦¬
+                Case End
+
+                If (Trim(Baxio.Baxio_C_Code2)='') Move (Trim(SysCurXr.C_Code0)) to Baxio.Baxio_C_Code2
+                Move barticl.barticl_hmnia  to baxio.baxio_hmniae
+                //›œç«œ¨¦ª â¢œš®¦ª ›£ ¦¬¨šå˜ª ¤â¦¬ ˜¥ ¦š¨á­¦¬ ˜§æ «¦ bkinkay_yn_create !
+                Get piCan_Create_Baxio to liCan_Create_Baxio //¡˜Ÿ˜¨á š ˜ ¢æš¦¬ª compilation only
+                If (liCan_Create_Baxio = FALSE) Send Operation_Not_Allowed 3001 //›â¤ œ§ «¨â§œ«˜   ›£ ¦¬¨šå˜ ¤â¦¬ ˜¥ ¦š¨á­¦¬
+      End_Procedure //private.creating_baxio
+
+
+//      //private
+//      //™¨å©¡œ  ˜§æ «¦ bsum «¦ gmove slave rec0
+//      //¡˜¢œå«˜  ˜§æ update+backout ?
+//      Function private.fiBsum_Gmove_Srec0 String lsBarticl_Recr ;
+//                                          String lsBaxiokat_Recr;
+//                                          Returns Integer
+//               Clear Bsum
+//               Move lsBarticl_Recr  to Bsum.Barticl_Recr
+//               Move lsBaxiokat_Recr to Bsum.Baxiokat_Recr
+//               Find Eq Bsum by Index.1 //barticl_recr+baxiokat_recr
+//               Function_Return Bsum.Gmove_Srec0
+//      End_Function //private.fibsum_gmove_srec0
+
+
+      //private
+      //™¨å©¡œ  œá¤  ©¬š¡œ¡¨ £â¤ btypkin ¡ ¤œå «¦ libaxiokat_code
+      //¡˜¢œå«˜  ˜§æ update+validate_save
+      Function private.fiBkinkat_Baxiokat_Code String lsBtypkin_Recr;
+                                               Integer liBaxiokat_Code;
+                                               Returns Integer
+               Clear Bkinkat
+               Move SysCurXr.Company_Code   to Bkinkat.Company_Code
+               Move SysCurXr.Branch_Code    to Bkinkat.Branch_Code
+               Move SysCurXr.Year_Year      to Bkinkat.Year_year
+               Move lsBtypkin_Recr          to Bkinkat.Btypkin_Recr
+               Move liBaxiokat_Code         to Bkinkat.Baxiokat_Code
+               Find Eq Bkinkat by Index.3 //Company+Branch+Year+btypkin_recr+baxiokat_code
+               If (Found = 0) Begin
+                               Set piBaxio_Status_From to (-1)
+                               Set piBaxio_Status_To   to (-1)
+                               Function_Return 0
+                              End
+               Set piBaxio_Status_From to Bkinkat.Baxio_Stat_From
+               Set piBaxio_Status_To   to Bkinkat.Baxio_Stat_To
+
+
+               Function_Return Bkinkat.Baxiokat_Code
+      End_Function //private.fibkinkat_baxiokat_code
+
+
+      //¡˜¢œå«˜  ˜§æ update & backout
+      //¡˜  œ¤£œ¨é¤œ  « ª ©¬¤¦¢ ¡âª ˜¥åœª «¦¬ barticl
+      Procedure private.Adjust_Balances Integer liSign;
+                                        Number  lnBaxio_V2;
+                                        Number  lnBaxio_V0;
+                                        Number  lnBaxio_V00;
+                                        Number  lnBaxio_VR
+                If (;
+                     ((Abs(liSign)) <> 1 );
+                   ) Begin
+                      Error 10000 "€¡˜«á¢¢¢¦ §¨æ©£¦, ¢áŸ¦ª ¡é› ¡˜" //› ˜¡¦§ã «¦¬ transaction!
+                      Procedure_Return
+                     End
+
+                 //¤æ£ ©£˜ œšš¨˜­ãª
+                Add (lnBaxio_V2  * liSign) to Barticl.Barticl_SV2
+
+                //¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©ª
+                Add (lnBaxio_V0  * liSign) to Barticl.Barticl_SV0
+
+                //›œ¬«œ¨œç¦¤ ¤æ£ ©£˜ ®¨ã©ª
+                Add (lnBaxio_V00 * liSign) to Barticl.Barticl_SV00
+
+                //¤æ£ ©£˜ reporting
+                Add (lnBaxio_VR  * liSign) to Barticl.Barticl_SVR
+      End_Procedure //private.adjust_balances
+
+
+
+
+      //æ¢˜ «˜ ddo ˜¬«ãª «ãª ¡¢á©ª, œ¤£œ¨é¤¦¬¤ «˜ 4 parents ¡˜  «¦¤ œ¬˜«æ «¦¬ª
+      //£œ æ¢˜ «˜ ddo id's
+      //œ§å©ª §¨â§œ  ¤˜ ¬§á¨®¦¬¤ ¡˜  ¦  3 bpo's š ˜ «¤ œ¤£â¨à© «à¤ ¢¦ §é¤ modules
+      Procedure End_Construct_Object
+                Integer liBtypkin_dd liBarticl_dd liBaxio_dd liBaxiokat_dd
+
+                Forward Send End_Construct_Object
+
+                Move (Find_Server_DDO(Self        ,Barticl.File_Number )) to liBarticl_dd
+                Move (Find_Server_DDO(Self        ,Baxio.File_Number   )) to liBaxio_dd
+                Move (Find_Server_DDO(liBarticl_dd,Btypkin.File_Number )) to liBtypkin_dd
+                Move (Find_Server_DDO(liBaxio_dd  ,Baxiokat.File_Number)) to liBaxiokat_dd
+
+                //object id «ª business process §¦¬ œ¤£œ¨é¤œ  «¤ šœ¤ ¡ã ¢¦š ©« ¡ã
+                //jsjsjs 24/01/2001 Set piDo_GL_Maintainance       to (oDo_GL_Maintainance      (Self))
+
+                //object id «ª business process §¦¬ œ¤£œ¨é¤œ  «¦¬ª §œ¢á«œª
+//------------->Set piDo_CUSTOMER_Maintainance to (oDo_CUSTOMER_Maintainance(Self))
+
+                //object id «ª business process §¦¬ œ¤£œ¨é¤œ  «¦¬ª §¨¦£Ÿœ¬«âª
+//------------->Set piDo_VENDOR_Maintainance   to (oDo_VENDOR_Maintainance  (Self))
+
+                //â¢œš®¦  ¬§¦®¨œà« ¡ãª ç§˜¨¥ª ¡˜  «à¤ 4 ddo'w
+                If (liBarticl_dd  = 0) Error 10000 "Bmove does not have a Barticl  Server ! ! !"
+                If (liBaxio_dd    = 0) Error 10000 "Bmove does not have a Baxio    Server ! ! !"
+                If (liBtypkin_dd  = 0) Error 10000 "Bmove does not have a Btypkin  Server ! ! !"
+                If (liBaxiokat_dd = 0) Error 10000 "Bmove does not have a Baxiokat Server ! ! !"
+
+                //properties › ¡á «¦¬
+                //æ§¦¬ «˜ ®¨© £¦§¦ é, Ÿ˜ £§¦¨¦ç©˜ ¤˜ â¡˜¤˜ «¤ å› ˜ ›¦¬¢œ á £œ «¤ file_field_value ?
+                //æ®  ©« ª §œ¨ §«é©œ ª §¦¬ › ˜®œ ¨å¦£˜¦ properties !
+                Set piBarticl_dd                  to liBarticl_dd
+                Set piBaxio_dd                    to liBaxio_dd
+                Set piBtypkin_dd                  to liBtypkin_dd
+                Set piBaxiokat_dd                 to liBaxiokat_dd
+
+                //properties «¦¬ btypkin
+                Set piBarticl_dd  of liBtypkin_dd to liBarticl_dd
+                Set piBmove_dd    of liBtypkin_dd to Self
+                Set piBaxio_dd    of liBtypkin_dd to liBaxio_dd
+                Set piBaxiokat_dd of liBtypkin_dd to liBaxiokat_dd
+
+                //properties «¦¬ baxiokat
+                Set piBarticl_dd  of liBaxiokat_dd to liBarticl_dd
+                Set piBmove_dd    of liBaxiokat_dd to Self
+                Set piBaxio_dd    of liBaxiokat_dd to liBaxio_dd
+                Set piBtypkin_dd  of liBaxiokat_dd to liBtypkin_dd
+
+                //properties «¦¬ barticl
+                Set piBmove_dd    of liBarticl_dd  to Self
+                Set piBaxio_dd    of liBarticl_dd  to liBaxio_dd
+                Set piBtypkin_dd  of liBarticl_dd  to liBtypkin_dd
+                Set piBaxiokat_dd of liBarticl_dd  to liBaxiokat_dd
+
+      End_Procedure   //end_construct_object
+
+      //£á¢¢¦¤ œå¤˜  á®¨©«, › æ«  §á¤«˜ «¦ bmove_dd «¦ › ˜®œ ¨å¦£˜ 
+      //œå«˜  ©˜¤ detail «¦¬ barticl, œå«˜  ©˜¤ detail «¦¬ baxio !
+      //ã constrain Ÿ˜ £¦¬ ®¨œ ˜©Ÿœå £æ¤¦¤ œá¤ â®à main server «¦ bmove_dd ! ! !
+      Procedure Constrain
+            Forward Send Constrain
+            If (piMustNotConstrain(Self)=2) Begin
+                Constrain Bmove.Company_Code  eq SysCurXR.Company_Code
+                Constrain Bmove.Branch_Code   eq SysCurXR.Branch_Code
+            End
+            Else Begin
+                Constrain Bmove.Company_Code  eq SysCurXR.Company_Code
+                Constrain Bmove.Branch_Code   eq SysCurXR.Branch_Code
+                Constrain Bmove.Year_Year     eq SysCurXR.Year_Year
+            End
+      End_Procedure   //constrain
+
+
+      //˜) œ¤£â¨à© £ã related §œ›åà¤
+      //™) ˜¤áš¤à© properties
+      //š) › ˜®œå¨ © calculated §œ›åà¤
+      //›) œ¤£â¨à© ˜Ÿ¨¦ ©«é¤ (adjust_balances)
+      //œ) œ¤£â¨à© properties after
+      Procedure Update
+                Integer liTemp
+                Integer liBarticl_dd      liBaxio_dd
+                Integer liCreated_Barticl liCreated_Baxio
+                String  lsGplan_Slave_Code
+
+                Forward Send Update
+
+                //0)š ˜ ¢æš¦¬ª  › ˜ «œ¨æ««˜ª, æ¢¦ª ¦ ¡é› ¡˜ª
+                //«é¤ creating baxio + barticl  (?) «¨â®œ  «é¨˜, ˜§¦ «¤ update «¦¬ bmove ! ! !
+                //§¨é«˜ œ¤«¦§åà bkikat
+                Move (private.fiBkinkat_Baxiokat_Code(Self,;
+                                    Btypkin.Btypkin_Recr,;
+                                    Baxiokat.Baxiokat_Code);
+                     ) to liTemp
+                If (liTemp = 0) Send Operation_Not_Allowed 3002 //›â¤ œ§ «¨â§œ«˜   ¡å¤© baxiokat_code £œ «¦ btypkin
+
+
+                //***********************************************************
+                //*    ˜§æ œ›é ¡˜  ¡á«à, â®à §¢â¦¤ active bkinkat record    *
+                //***********************************************************
+
+
+                //œç¨œ© «à¤ 2 server ddo's
+                Get piBarticl_dd to liBarticl_dd
+                Get piBaxio_dd   to liBaxio_dd
+
+                //œ¤£â¨à© «¦¬ parent barticl dd
+                If (liBarticl_dd <> 0);
+                Begin
+                    Get piCreated_Barticl of liBarticl_dd to liCreated_Barticl
+                    If (liCreated_Barticl = TRUE)  Send private.Creating_Barticl
+                End
+                Else Error 10000 "Bmove does not have a Barticl Server ! ! !"
+
+                //œ¤£â¨à© «¦¬ parent baxio dd
+                If (liBaxio_dd   <> 0);
+                Begin
+                    Get piCreated_Baxio   of liBaxio_dd   to liCreated_Baxio
+                    If (liCreated_Baxio   = TRUE)  Send private.Creating_Baxio
+                    Set piBtypkin_Flag03 of liBaxio_dd to Btypkin.Btypkin_Flag03
+                    Set piBtypkin_Flag04 of liBaxio_dd to Btypkin.Btypkin_Flag04
+                End
+                Else Error 10000 "Bmove does not have a Baxio Server ! ! !"
+
+// jsjsjs sos energopoihsh xenou nomismatos 29/11/2001
+//                //***************************************************************************
+//                //============================================================================
+//                //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//                //£œ«˜«¨¦§ã «ª ˜¥å˜ª ˜§æ ¤æ£ ©£˜ œšš¨˜­ãª (2) ©«˜ ¢¦ §á 3 ¤¦£å©£˜«˜  (0+00+r)
+//                Move 1                  to Baxio.Baxio_Rate0 //sosososo §¨¦©à¨ ¤á, £æ¤¦¤ ˜¥ æš¨˜­˜ ©œ ›¨®
+//                Move SysCurXr.C_Code0   to Baxio.Baxio_C_Code2 //sosososo §¨¦©à¨ ¤á, £æ¤¦¤ ˜¥ æš¨˜­˜ ©œ ›¨®
+//                //***************************************************************************
+//                //============================================================================
+//                //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+// jsjsjs sos energopoihsh xenou nomismatos 29/11/2001
+
+                Send Convert_Axio_Values to liBaxio_dd
+
+
+                //˜) œ¤£â¨à© £ã related §œ›åà¤
+                Move SysCurXr.Company_Code  to Bmove.Company_Code
+                Move SysCurXr.Branch_Code   to Bmove.Branch_Code
+                Move SysCurXr.Year_Year     to Bmove.Year_Year
+                Move Baxio.Baxio_Code       to Bmove.Baxio_Code
+                Move Btypkin.Btypkin_Code   to Bmove.Btypkin_Code
+                Move Btypkin.Btypkin_Recr   to Bmove.Btypkin_Recr
+                Move Barticl.Barticl_Hmnia  to Bmove.Barticl_Hmnia
+                Move Barticl.Barticl_No     to Bmove.Barticl_No
+
+                Move Barticl.Sls_ID         to Bmove.Sls_ID
+                Move Barticl.Presp_ID       to Bmove.Presp_ID
+                Move Barticl.Cnt_ID         to Bmove.Cnt_ID
+
+
+                //™) ˜¤áš¤à© properties
+
+                //š) › ˜®œå¨ © calculated §œ›åà¤
+
+                //š.01:œ¤£â¨à© §œ›åà¤ previous §˜¨˜¢ã§«ª «¦¬ bmove š ˜ æ¢˜ «˜ ˜¥ æš¨˜­˜
+                //     §¨¦«¦ç ˜¢¢á¥à «˜ last §œ›å˜ «¦¬ baxio, «˜ ¡¨˜«áà ©«˜
+                //     previous §œ›å˜ «¦¬ bmove,
+                //     é©«œ ©«¤ deleting ¤˜ «˜ œ§˜¤˜­â¨à
+                Move Baxio.Baxio_Lfile      to  Bmove.Baxio_Pfile
+                Move Baxio.Baxio_Lcode      to  Bmove.Baxio_Pcode
+                Move Baxio.Baxio_Lepon      to  Bmove.Baxio_Pepon
+                Move Baxio.Baxio_Lpar       to  Bmove.Baxio_Ppar
+
+                //š.02:œ¤£â¨à© §œ›åà¤ last («œ¢œ¬«˜å¦ª §˜¨˜¢ã§«ª) «¦¬ baxio š ˜ æ¢˜ «˜ ˜¥ æš¨˜­˜
+
+// ----------------------------------------------------------------------------
+// js 24/02/2002    Ayth h periptosh den isxyei xoris elegxo giati otan afora
+//                  plhromh dikh mas o promhtheyths mpainei sto 1o koutaki dhladh
+//                  ston ekdoth kai paramenei kenos o apodekths (Code2).
+//                  Otan loipon menei kenos o apodekths den enhmeronei Lcode
+//                  kai an den enhmerosei Lcode tote apo to Baxio_DD katharizontai
+//                  ola ta _Out pedia
+
+//                Move Btypkin.Btypkin_Anti2  to Baxio.Baxio_Lfile
+//                Move Barticl.Barticl_Code2  to Baxio.Baxio_Lcode
+//                Move Barticl.Barticl_Epon2  to Baxio.Baxio_Lepon
+//                Move Barticl.Barticl_Recr   to Baxio.Baxio_Lpar
+                if (btypkin.btypkin_code=104) move 1 to baxio.baxio_rater
+                If (Baxiokat.Baxiokat_Type = 2) Begin
+                    If (Trim(Barticl.Barticl_Code2)<>'') Begin
+                        Move Btypkin.Btypkin_Anti2  to Baxio.Baxio_Lfile
+                        Move Barticl.Barticl_Code2  to Baxio.Baxio_Lcode
+                        Move Barticl.Barticl_Epon2  to Baxio.Baxio_Lepon
+                        Move Barticl.Barticl_Recr   to Baxio.Baxio_Lpar
+                    End
+                    Else Begin
+                        Move Btypkin.Btypkin_Anti1  to Baxio.Baxio_Lfile
+                        Move Barticl.Barticl_Code1  to Baxio.Baxio_Lcode
+                        Move Barticl.Barticl_Epon1  to Baxio.Baxio_Lepon
+                        Move Barticl.Barticl_Recr   to Baxio.Baxio_Lpar
+                    End
+                End
+                Else If (Baxiokat.Baxiokat_Type = 1) Begin
+                    // js 24/02/2002 PARATHRHSEIS
+                    // Edo den kanoume elegxo giati an einai eisprakteo (xoris metavivash)
+                    // tote epeidh den anoigei to Code2 ex orismou tha einai kena
+                    // An tora einai eispraktea pros metavivash tote ex orismou
+                    // to Code2 exei timh apo thn othonh opote kai tha enhmerosei
+                    // me Lcode h update tou Baxio_DD
+                    // to kolpo edo einai oti apitoume apo ton xrhsth sthn periptosh
+                    // metavivashs na plhktrologhsei ston ekdoth KAI ston apodekth
+                    // ton idio kodiko tou promhtheyth ston opoio metavivazei thn epitagh
+
+                    // Ayto prepei sto epomeno version na allaxei opos epishs kai to gegonos
+                    // oti menei panta keno to pedio tou paralhpth stis eispraktees apo pelath
+                    // eno theoro oti tha prepe na mpainei h 'etairia' opos epishs kai
+                    // stis epitages plhrotees dikes mas menei keno o ekdoths pou pali
+                    // tha'prepe na'maste 'emeis' (Mia kartella dhladh opou h 'etairia mas'
+                    // tha emfanizetai kai pelaths kai promhtheyths.
+                    // js 24/02/2002 Parathrhseis
+                    Move Btypkin.Btypkin_Anti2  to Baxio.Baxio_Lfile
+                    Move Barticl.Barticl_Code2  to Baxio.Baxio_Lcode
+                    Move Barticl.Barticl_Epon2  to Baxio.Baxio_Lepon
+                    Move Barticl.Barticl_Recr   to Baxio.Baxio_Lpar
+                End
+
+// ----------------------------------------------------------------------------
+
+                //š.03:œ¤£â¨à© §œ›åà¤ first out (§¨é«¦ª §˜¨˜¢ã§«ª) «¦¬ baxio š ˜ æ¢˜ «˜ ˜¥ æš¨˜­˜
+                //     ¡˜  œ­'æ©¦¤ ›â¤ â®¦¬¤ ã› œ¤£œ¨àŸœå,
+                //     ›¢˜›ã §¨æ¡œ «˜  š ˜ «¤ §¨é« £œ«˜™å™˜©-œ¥˜šàšã
+                If (;
+                     (Baxio.Baxio_Code_Out = "" );
+                   );
+                Begin
+                      Move Btypkin.Btypkin_Anti2   to Baxio.Baxio_File_Out
+                      Move Barticl.Barticl_Code2   to Baxio.Baxio_Code_Out
+                      Move Barticl.Barticl_Epon2   to Baxio.Baxio_Epon_Out
+                      Move Barticl.Barticl_Recr    to Baxio.Baxio_Fpar_Out
+                End
+
+                //š.04:œ¤£â¨à© §œ›åà¤ status + place «¦¬ baxio, ˜¤á¢¦š˜ £œ «¤ ¡å¤© (bkinkat)
+                Move Bkinkat.Baxio_Stat_To  to Baxio.Baxio_Status //¡˜«á©«˜© :˜¤á¢¦š˜ £œ «¤ ¡å¤©
+                Move Bkinkat.Baxio_Plac_To  to Baxio.Baxio_Place  //œ¬¨å¡œ«˜ :˜¤á¢¦š˜ £œ «¤ ¡å¤©
+
+//                //š.05:©«¦ ®œå˜ slave gplan rec0
+//                Case Begin
+//                     Case (Btypkin.Gtypkin_Code <> 0) //œá¤  ¡å¤© œ¤£œ¨é¤œ  ‚Š
+////jsjsjs 24/01/2001
+////                          Clear Gplan
+////                          Move Company.Company_Code    to Gplan.Company_Code
+////                          Move Branch.Branch_Code      to Gplan.Branch_Code
+////                          Move Year.Year_Year          to Gplan.Year_Year
+////                          Move Bkinkat.Bkinkat_GplnCod to Gplan.Gplan_Code
+////                          Find Eq Gplan by Index.1 //company_code+branch_code+year_year+Gplan_code
+////                          If (Found = 1) Move Gplan.Gplan_Rec0 to Bmove.Gplan_SRec0
+////                          Else           Send Operation_Not_Allowed 3001 //›â¤ ™¨âŸ¡œ «¦ slave gplan_rec0
+////jsjsjs 24/01/2001
+//                     Case Break //æ® , › æ«  £§¦¨œå ¤˜ œ¤£œ¨é¤œ ¡˜  á¢¢˜ modules
+
+//                     Case (Btypkin.Ctypkin_Code <> 0) //œá¤  ¡å¤© œ¤£œ¨é¤œ  §œ¢á«œª
+//                     Case Break
+
+//                     Case (Btypkin.Vtypkin_Code <> 0) //œá¤  ¡å¤© œ¤£œ¨é¤œ  §¨¦£Ÿœ¬«âª
+//                     Case Break
+
+//                     Case Else                        //›â¤ œ¤£œ¨é¤œ«˜  ¡˜¤â¤˜ ˜§¦ «˜ 3 modules
+//                          Move 0 to Bmove.Gplan_SRec0
+//                Case End
+
+                //›) œ¤£â¨à© ˜Ÿ¨¦ ©«é¤ (adjust_balances)
+                Send private.Adjust_Balances (1);
+                                             Baxio.Baxio_V2;
+                                             Baxio.Baxio_V0;
+                                             Baxio.Baxio_V00;
+                                             Baxio.Baxio_VR
+
+//                //œ) œ¤£â¨à© properties after (˜§æ parent buffers!)
+//                Set piA_Garticl_Rec0         to Barticl.Garticl_Rec0
+//                Set piA_Gtypkin_Rec0         to Btypkin.Gtypkin_Rec0
+//                Set pdA_Garticl_Hmnia        to Barticl.Barticl_Hmnia
+//                Set piA_Garticl_No           to Barticl.Barticl_No
+//                Set psA_Garticl_C_Code2      to Baxio.Baxio_C_Code2
+//                Set pnA_Garticl_Rate0        to Baxio.Baxio_Rate0
+//                Set pnA_Garticl_Rate00       to Baxio.Baxio_Rate00
+//                Set pnA_Garticl_RateR        to Baxio.Baxio_RateR
+//                Set psA_Garticl_Aitiol       to Barticl.Barticl_Aitiol
+
+//                Set piA_Gmove_Master_Rec0    to Barticl.Gmove_Mrec0
+//                Set piA_Gplan_Master_Rec0    to Barticl.Gplan_Mrec0
+
+                //â¢œš®¦ª §¨¦©ã£¦¬
+                //If ((Abs(Btypkin.Btypkin_Sign)) <> 1) Error 10000 "To Btypkin Sign œå¤˜  ¢áŸ¦ª !"
+
+                Case Begin
+                     Case (Btypkin.Btypkin_Anti_Xp = 1) //®¨âà© master, §å©«à© slave
+//                          Set pnA_Gmove_Master_X2 to (Baxio.Baxio_V2 * Btypkin.Btypkin_Sign)
+//                          Set pnA_Gmove_Master_P2 to 0
+//                          Set pnA_Gmove_Slave_X2  to 0
+//                          Set pnA_Gmove_Slave_P2  to (Baxio.Baxio_V2 * Btypkin.Btypkin_Sign)
+                     Case Break
+                     Case (Btypkin.Btypkin_Anti_Xp = 2) // §å©«à© master, ®¨âà© slave
+//                          Set pnA_Gmove_Master_X2 to 0
+//                          Set pnA_Gmove_Master_P2 to (Baxio.Baxio_V2 * Btypkin.Btypkin_Sign)
+//                          Set pnA_Gmove_Slave_X2  to (Baxio.Baxio_V2 * Btypkin.Btypkin_Sign)
+//                          Set pnA_Gmove_Slave_P2  to 0
+                     Case Break
+                     Case Else
+                          Error 10000 "To Btypkin XP œå¤˜  ¢áŸ¦ª!"
+                Case End
+//                Set psA_Gmove_Master_Aitiol  to Barticl.Barticl_Aitiol
+
+//                Set piA_Gmove_Slave_Rec0     to (private.fiBsum_Gmove_Srec0(Self,;
+//                                                                            Barticl.Barticl_Rec0,;
+//                                                                            Baxiokat.Baxiokat_Rec0))
+//                Set piA_Gplan_Slave_Rec0     to Bmove.Gplan_Srec0
+//                Set psA_Gmove_Slave_Aitiol   to Barticl.Barticl_Aitiol
+
+                Set piUpdate to 1
+
+                //properties š ˜ «¤ procedural œ¤£â¨à© «¦¬ bsum
+                Set psA_Barticl_Recr         to Barticl.Barticl_Recr
+                Set psA_Baxiokat_Recr        to Baxiokat.Baxiokat_Recr
+                Set pnA_Baxio_V2             to Baxio.Baxio_V2
+                Set pnA_Baxio_V0             to Baxio.Baxio_V0
+                Set pnA_Baxio_V00            to Baxio.Baxio_V00
+                Set pnA_Baxio_VR             to Baxio.Baxio_VR
+
+//                //booleans §¦¬ ›¢é¤¦¬¤ «˜ operations §¦¬ Ÿ˜ šå¤¦¬¤ ©«ã¤ š¢
+//                If (Barticl.Garticl_Rec0 = 0);
+//                Begin //«¦ barticl ›â¤ â®œ  ©¬¤›œŸœå £œ master gmove
+//                     If (Barticl.Gmove_Mrec0 <> 0) Error 10000 "Master Gmove <> 0 !"
+//                     Set  piGarticl_Create         to  1
+//                     Set  piMaster_Gmove_Create    to  1
+//                End
+//                Set piGarticl_Edit      to  (Not(piGarticl_Create     (Self)))
+//                Set piMaster_Gmove_Edit to  (Not(piMaster_Gmove_Create(Self)))
+      End_Procedure   //update
+
+
+      Procedure Backout
+                Forward Send Backout
+
+                //›) œ¤£â¨à© ˜Ÿ¨¦ ©«é¤ (adjust_balances)
+                Send private.Adjust_Balances (-1);
+                                             Baxio.Baxio_V2;
+                                             Baxio.Baxio_V0;
+                                             Baxio.Baxio_V00;
+                                             Baxio.Baxio_VR
+
+
+
+                //******************************
+                //prosoxi ! allagi sto bmove def gia na exo kai ayta ta pedia !!!
+                //******************************
+
+//                //œ) œ¤£â¨à© properties before (˜§æ current buffer)
+//                Set piB_Garticl_Rec0         to Barticl.Garticl_Rec0
+//                Set piB_Gtypkin_Rec0         to Btypkin.Gtypkin_Rec0
+//                Set pdB_Garticl_Hmnia        to Bmove.Barticl_Hmnia     //sosososo
+//                Set piB_Garticl_No           to Bmove.Barticl_No        //sosososo
+//                Set psB_Garticl_C_Code2      to Baxio.Baxio_C_Code2
+//                Set pnB_Garticl_Rate0        to Baxio.Baxio_Rate0
+//                Set pnB_Garticl_Rate00       to Baxio.Baxio_Rate00
+//                Set pnB_Garticl_RateR        to Baxio.Baxio_RateR
+//                Set psB_Garticl_Aitiol       to Barticl.Barticl_Aitiol
+
+//                Set piB_Gmove_Master_Rec0    to Barticl.Gmove_Mrec0
+//                Set piB_Gplan_Master_Rec0    to Barticl.Gplan_Mrec0
+
+                //â¢œš®¦ª §¨¦©ã£¦¬
+                //If ((Abs(Btypkin.Btypkin_Sign)) <> 1) Error 10000 "To Btypkin Sign œå¤˜  ¢áŸ¦ª !"
+
+                Case Begin
+                     Case (Btypkin.Btypkin_Anti_Xp = 1) //®¨âà© master, §å©«à© slave
+//                          Set pnB_Gmove_Master_X2 to (Baxio.Baxio_V2 * Btypkin.Btypkin_Sign)
+//                          Set pnB_Gmove_Master_P2 to 0
+//                          Set pnB_Gmove_Slave_X2  to 0
+//                          Set pnB_Gmove_Slave_P2  to (Baxio.Baxio_V2 * Btypkin.Btypkin_Sign)
+                     Case Break
+                     Case (Btypkin.Btypkin_Anti_Xp = 2) // §å©«à© master, ®¨âà© slave
+//                          Set pnB_Gmove_Master_X2 to 0
+//                          Set pnB_Gmove_Master_P2 to (Baxio.Baxio_V2 * Btypkin.Btypkin_Sign)
+//                          Set pnB_Gmove_Slave_X2  to (Baxio.Baxio_V2 * Btypkin.Btypkin_Sign)
+//                          Set pnB_Gmove_Slave_P2  to 0
+                     Case Break
+                     Case Else
+                          Error 10000 "To Btypkin XP œå¤˜  ¢áŸ¦ª!"
+                Case End
+//                Set psB_Gmove_Master_Aitiol  to Barticl.Barticl_Aitiol
+
+//                Set piB_Gmove_Slave_Rec0     to (private.fiBsum_Gmove_Srec0(Self,;
+//                                                                            Barticl.Barticl_Rec0,;
+//                                                                            Baxiokat.Baxiokat_Rec0))
+
+//                Set piB_Gplan_Slave_Rec0     to Bmove.Gplan_Srec0
+//                Set psB_Gmove_Slave_Aitiol   to Barticl.Barticl_Aitiol
+
+                Set piBackout to 1
+
+                //properties š ˜ «¤ procedural œ¤£â¨à© «¦¬ bsum
+                Set psB_Barticl_Recr         to Barticl.Barticl_Recr
+                Set psB_Baxiokat_Recr        to Baxiokat.Baxiokat_Recr
+                Set pnB_Baxio_V2             to Baxio.Baxio_V2
+                Set pnB_Baxio_V0             to Baxio.Baxio_V0
+                Set pnB_Baxio_V00            to Baxio.Baxio_V00
+                Set pnB_Baxio_VR             to Baxio.Baxio_VR
+                if (btypkin.btypkin_code=104) move 0 to baxio.baxio_rater
+
+//                //booleans §¦¬ ›¢é¤¦¬¤ «¦ operation §¦¬ Ÿ˜ šå¤œ  ©«ã¤ š¢
+//                Case Begin
+//                     Case  (Barticl.Barticl_Lines = 0) //œá¤ › ˜š¨á­à «¤ «œ¢œ¬«˜å˜ š¨˜££ã «¦¬ barticl, «æ«œ Ÿ˜ › ˜š¨á¯à ¡˜  «¦ garticl
+//                           Set  piGarticl_Delete         to  1
+//                           Set  piMaster_Gmove_Delete    to  1
+//                     Case Break
+//                     Case  (Barticl.Barticl_Lines > 0) //˜¢¢¦ éª Ÿ˜ ¡á¤à edit ©«¦ garticl
+//                           Set  piGarticl_Edit           to  1
+//                           Set  piMaster_Gmove_Edit      to  1
+//                     Case Break
+//                     Case  (Barticl.Barticl_Lines < 0) //§¨æ™¢£˜, ¡á«  «¨â®œ 
+//                           Send Operation_Not_Allowed 9999 //«¨â¥«œ ¦¢ ¡á â¢œš®¦ ™á©ª
+//                     Case Break
+//                Case End
+
+/////////////////////Case (Barticl.Garticl_Rec0 = 0) //«¦ barticl ›â¤ â®œ  ©¬¤›œŸœå £œ master gmove
+/////////////////////     //If (Barticl.Gmove_Mrec0 <> 0) Error 1000 " djfdfsdds"
+/////////////////////Case Break
+      End_Procedure   // backout
+
+
+      Procedure Creating
+                Integer liBaxio_Status_From liBaxio_Status_To
+
+                Forward Send Creating
+
+            Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                             (Trim(String(Bmove.Bmove_Rec0)))))) to Bmove.Bmove_Recr
+
+
+                //˜¨ Ÿ£æª ¡ ¤ã©œà¤ ˜¥ ¦š¨á­à¤ «ª ®¨ã©ª
+                //jsjsjs 24/01/2001 Add 1 to Year.Year_NumBmove
+
+                //˜¨ Ÿ£æª š¨˜££é¤ barticl
+                Add 1 to Barticl.Barticl_Lines
+
+                //˜/˜ š¨˜££ãª á¨Ÿ¨¦¬
+                Add 1 to Barticl.Barticl_BmoveLa
+                Move Barticl.Barticl_BmoveLa to Bmove.Bmove_AA
+
+                //˜/˜ ¡å¤©ª ˜¥ ¦š¨á­¦¬
+                Add 1 to Baxio.Baxio_Bmove_Laa
+                Move Baxio.Baxio_Bmove_Laa to Bmove.Baxio_AA
+
+                //pourqua ??????
+                Get piBaxio_Status_From to liBaxio_Status_From
+                Get piBaxio_Status_To   to liBaxio_Status_To
+                //Set biBaxio_Status of liBaxio_dd to liBaxio_Status_From
+      End_Procedure //creating
+
+
+      Procedure Deleting
+                Integer liTemp
+
+                //œá¤ › ˜š¨á­à «¤ «œ¢œ¬«˜å˜ ¡å¤© «¦¬ ˜¥ ¦š¨á­¦¬,
+                //æ¢˜ œå¤˜  ok, œå«œ «¦ ¡á¤à ˜§¦ «¦ bmove, œå«œ ˜§¦ «¦ barticl,
+                //œå«œ «œ¢ ¡á ˜§æ ¦§¦¬›ã§¦«œ !
+                //œá¤ æ£àª ›â¤ › ˜š¨á­à «¤ «œ¢œ¬«˜å˜ ¡å¤© «¦¬ ˜¥ ¦š¨á­¦¬, ˜¢¢á ¡á§¦ ˜ á¢¢,
+                //§¨â§œ  ¤˜ › ˜¡æ¯à «¦ transaction, ˜¤˜¥á¨««˜ ˜§¦ §¦ç «¦ â®à ¡˜¢â©œ .
+                //˜¬«æ ™â™˜ ˜ œ¢âš®œ«˜  ¡˜  ©«¤ validate delete, ˜¢¢á ¦¬© ˜©« ¡á §¨â§œ 
+                //¤˜ œ¢œšŸœå œ›é, › æ«   › ˜š¨˜­ã £§¦¨œå ¤˜ ¥œ¡ ¤ã©œ  ˜§æ cascade delete
+                //«¦¬ barticl.
+                //£œ á¢¢˜ ¢æš ˜ œ¤œ¨š¦§¦ é «¤ validate delete æ«˜¤  › ˜š¨˜­ã
+                //›â¤ ¥œ¡ ¤áœ  ˜§¦ «¦ bmove !
+                If (OPERATION_ORIGIN <> (Self));
+                Begin
+                     Get Validate_Delete to liTemp
+                     If (liTemp <> 0) Send Operation_Not_Allowed liTemp //á®¨©«¦
+                End
+
+                Forward Send Deleting
+
+                //§¨é«˜ œ¤«¦§åà bkinkat
+                Move (private.fiBkinkat_Baxiokat_Code(Self,;
+                                    Btypkin.Btypkin_Recr,;
+                                    Baxiokat.Baxiokat_Code);
+                     ) to liTemp
+                If (liTemp = 0) Send Operation_Not_Allowed 4002 //›â¤ œ§ «¨â§œ«˜   ¡å¤© baxiokat_code £œ «¦ btypkin
+
+
+                //***********************************************************
+                //*    ˜§æ œ›é ¡˜  ¡á«à, â®à §¢â¦¤ active bkinkat record    *
+                //***********************************************************
+
+                //˜¨ Ÿ£æª ¡ ¤ã©œà¤ ˜¥ ¦š¨á­à¤ «ª ®¨ã©ª
+                //jsjsjs 24/01/2001 Sub 1 from Year.Year_NumBmove
+
+                //˜¨ Ÿ£æª š¨˜££é¤ barticl
+                Sub 1 from Barticl.Barticl_Lines
+
+                //˜/˜ š¨˜££ãª á¨Ÿ¨¦¬
+                If (Bmove.Bmove_AA = Barticl.Barticl_BmoveLa);
+                Sub 1 from Barticl.Barticl_BmoveLa
+
+                //˜/˜ ¡å¤©ª ˜¥ ¦š¨á­¦¬
+                If (Bmove.Baxio_AA = Baxio.Baxio_Bmove_Laa);
+                Sub 1 from Baxio.Baxio_Bmove_Laa
+
+                //š.03:œ¤£â¨à© §œ›åà¤ status + place, ˜¤á¢¦š˜ £œ «¤ ¡å¤© (bkinkat)
+                //     ›¢˜›ã œ§˜¤˜­â¨à «¦ status ¡˜  «¦ place ˜§¦ œ¡â  §¦¬ «˜ §ã¨˜.
+                //     ™œ™˜åàª, › ˜š¨˜­ã œ§ «¨â§œ«˜  £æ¤¦¤ ©«¤ «œ¢œ¬«˜å˜ ¡å¤© «¦¬ ˜¥ ¦š¨á­¦¬
+                Move Bkinkat.Baxio_Stat_From to Baxio.Baxio_Status //¡˜«á©«˜ :˜¤á¢¦š˜ £œ «¤ ¡å¤©
+                Move Bkinkat.Baxio_Plac_From to Baxio.Baxio_Place  //œ¬¨å¡œ«˜ :˜¤á¢¦š˜ £œ «¤ ¡å¤©
+
+                //œ›é Ÿ˜ §¨â§œ  ¤˜ ™á¢à ¡˜  «¦¤ §¨¦š¦ç£œ¤¦ ˜§¦›â¡« ! ! ! !
+                //      œ¤£â¨à© §œ›åà¤ previous «¦¬ bmove š ˜ æ¢˜ «˜ ˜¥ æš¨˜­˜
+                //     âš ¤œ ©«¤ update §¨¦«¦ç ˜¢¢á¥à «˜ last §œ›å˜ «¦¬ baxio,
+                //     «˜ ¡¨˜«áà ©«˜
+                //     previous §œ›å˜ «¦¬ bmove,
+                //     â«©  é©«œ ©«¤ deleteig ¤˜ «˜ œ§˜¤˜­â¨à ©«¦ baxio
+                Move Bmove.Baxio_Pfile to Baxio.Baxio_Lfile
+                Move Bmove.Baxio_Pcode to Baxio.Baxio_Lcode
+                Move Bmove.Baxio_Pepon to Baxio.Baxio_Lepon
+                Move Bmove.Baxio_Ppar  to Baxio.Baxio_Lpar
+
+                // js 05/09/2002
+                Saverecord Barticl
+                Saverecord Baxio
+
+      End_Procedure //deleting
+
+
+      Procedure Save_Main_File
+                Forward Send Save_Main_File
+                Send private.Trexe //procedural › ˜®œå¨ © bsums
+      End_Procedure//save_main_file
+
+
+      Procedure Delete_Main_File
+                Integer liTemp
+
+                Forward Send Delete_Main_File
+                Send private.Trexe //procedural › ˜®œå¨ © bsums
+
+                //œá¤ › ˜š¨á­à «¤ «œ¢œ¬«˜å˜ ¡å¤© «¦¬ ˜¥ ¦š¨á­¦¬, «æ«œ Ÿ˜ › ˜š¨á¯à ¡˜  ˜¬«æ
+                //¦¬© ˜©« ¡á ˜§æ œ›é ¡˜  £æ¤¦¤ ˜§¦ œ›é šå¤œ«˜   › ˜š¨˜­ã ˜¥ ¦š¨á­¦¬,
+                //œå¤˜  ¢¦ §æ¤  deleteing «¦¬ baxio !
+                If (Baxio.Baxio_Bmove_Laa = 0);
+                Begin
+
+                     //˜¨ Ÿ£æª ˜¥ ¦š¨á­à¤ «ª ®¨ã©ª
+                     //jsjsjs 26/01/2001
+                     //Sub 1 from Year.Year_NumBaxio
+
+                     //«œ¢œ¬«˜å˜ª ¡à› ¡æª ˜¨ Ÿ£æª ˜¥ ¦š¨á­¦¬
+                     If (Baxiokat.Baxio_Lcode = Baxio.Baxio_Code);
+                     Sub 1 from Baxiokat.Baxio_Lcode
+
+                     Delete Baxio
+                End
+      End_Procedure //delete_main_file
+
+
+      Procedure Operation_Not_Allowed Integer iError_Num
+                String lsError_Message
+                Case Begin
+                     //˜§æ validate save
+                     Case (iError_Num = 5555)
+                          Move ("† ˜§¦Ÿã¡œ¬© ˜¡¬¨éŸ¡œ ˜§¦ «¦¤ ®¨ã©«");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1001)
+                          Move ("DDC 44:€¡˜«á¢¢¢ ‰å¤© !\n\n† «¨¦§¦§¦å© œ§ «¨â§œ«˜  £æ¤¦¤ ©«¤ «œ¢œ¬«˜å˜ ¡å¤© «¦¬ ˜¥ ¦š¨á­¦¬ !");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1004)
+                          Move ("DDC 44:€¡˜«á¢¢¢ ‰å¤© !\n\n† ¡å¤© œ§ «¨â§œ«˜  £æ¤¦¤ £œ ¤â˜ ˜¥ æš¨˜­¦ !");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1005)
+                          Move ("DDC 44:€¡˜«á¢¢¢ ‰å¤© !\n\n† ¡å¤© œ§ «¨â§œ«˜  £æ¤¦¤ ©œ ¬§á¨®¦¤ ˜¥ æš¨˜­¦ !");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1006)
+                          Move ("DDC 44:€¡˜«á¢¢¢ ‰å¤© !\n\n’¦ barticl â®œ  «¨¦§¦§¦ Ÿœå!");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1100)
+                          Move "DDC 44:‹ ˜§¦›œ¡«ã „«˜ ¨å˜-•¨ã©" to lsError_Message
+                     Case Break
+
+                     //˜§æ validate delete
+                     Case (iError_Num = 2001)
+                          Move ("DDC 44:€›ç¤˜«  › ˜š¨˜­ã !\n\n† › ˜š¨˜­ã œ§ «¨â§œ«˜  £æ¤¦¤ ©«¤ «œ¢œ¬«˜å˜ ¡å¤© «¦¬ ˜¥ ¦š¨á­¦¬ !");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 2100)
+                          Move "DDC 44:‹ ˜§¦›œ¡«ã „«˜ ¨å˜-•¨ã©" to lsError_Message
+                     Case Break
+
+                     //˜§æ update
+                     Case (iError_Num = 3001)
+                          Move ("DDC 44:€¡˜«á¢¢¢ ‰å¤© !\n\nƒâ¤ œ§ «¨â§œ«˜   ›£ ¦¬¨šå˜ ¤â¦¬ ˜¥ ¦š¨á­¦¬ !");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 3002)
+                          Move ("DDC 44:‹ã €§¦›œ¡«æª «ç§¦ª €¥ ¦š¨á­¦¬ š ˜ «¤ ‰å¤© !\n\n‹œ "+(Trim(Btypkin.Btypkin_Descr))+;
+                          " ›â¤ ¡ ¤¦ç¤«˜  " + (Trim(Baxiokat.Baxiokat_Descr)));
+                          to lsError_Message
+                     Case Break
+
+                     //˜§æ deleting
+                     Case (iError_Num = 4002)
+                          Move ("DDC 44:‹ã €§¦›œ¡«æª «ç§¦ª €¥ ¦š¨á­¦¬ š ˜ «¤ ƒ ˜š¨˜­ã !\n\n‹œ "+(Trim(Btypkin.Btypkin_Descr))+;
+                          " ›â¤ ¡ ¤¦ç¤«˜  " + (Trim(Baxiokat.Baxiokat_Descr)));
+                          to lsError_Message
+                     Case Break
+
+                     //˜§æ private.Transaction_Update_Other_Modules
+                     Case (iError_Num = 5001) //›â¤ £§æ¨œ©˜ ¤˜ ¥˜¤˜™¨é barticl by recnum!
+                          Move ("DDC 44:Transaction Aborted! (Barticl Recnum Not Found)\n\n"+;
+                                "˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª!") to lsError_Message
+                     Case Break
+                     Case (iError_Num = 5002) //›â¤ £§æ¨œ©˜ ¤˜ ¥˜¤˜™¨é bsum by recnum!
+                          Move ("DDC 44:Transaction Aborted! (Bsum Recnum Not Found)\n\n"+;
+                                "˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª!") to lsError_Message
+                     Case Break
+                     Case (iError_Num = 5003) //«¦ create master âš ¤œ ©œ ã› ©¬¤›œ›œ£â¤¦ barticl
+                          Move ("DDC 44:Transaction Aborted! (Create Master on Connected B Records)\n\n"+;
+                                "˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª!") to lsError_Message
+                     Case Break
+                     Case (iError_Num = 5004) //«¦ create master âš ¤œ ©œ £ã Ÿœ« ¡á gl records
+                          Move ("DDC 44:Transaction Aborted! (Create Master on Non Positive GL Records)\n\n"+;
+                                "˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª!") to lsError_Message
+                     Case Break
+                     Case (iError_Num = 5005) //«¦ edit master âš ¤œ ©œ £ã ©¬¤›œ›œ£â¤˜ barticl records
+                          Move ("DDC 44:Transaction Aborted! (Edit Master on Non Connected B Records)\n\n"+;
+                                "˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª!") to lsError_Message
+                     Case Break
+                     Case (iError_Num = 5006) //«¦ edit master ›â¤ âš ¤œ ©«˜ å› ˜ master records
+                          Move ("DDC 44:Transaction Aborted! (Edit Master not on Same Records)\n\n"+;
+                                "˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª!") to lsError_Message
+                     Case Break
+                     Case (iError_Num = 5007) //«¦ create slave âš ¤œ ©œ œå¤˜  ã› ©¬¤›œ›œ£â¤¦ bsum
+                          Move ("DDC 44:Transaction Aborted! (Create Slave on Connected B Records)\n\n"+;
+                                "˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª!") to lsError_Message
+                     Case Break
+                     Case (iError_Num = 5008) //«¦ create slave âš ¤œ ©œ £ã Ÿœ« ¡æ gl record
+                          Move ("DDC 44:Transaction Aborted! (Create Slave on Non Positive GL Record)\n\n"+;
+                                "˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª!") to lsError_Message
+                     Case Break
+                     Case (iError_Num = 5009) //«¦ edit slave âš ¤œ ©œ £ã ©¬¤›œ›œ£â¤¦ record
+                          Move ("DDC 44:Transaction Aborted! (Edit Slave on Non Connected B Record)\n\n"+;
+                                "˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª!") to lsError_Message
+                     Case Break
+                     Case (iError_Num = 5010) //«¦ edit slave ›â¤ âš ¤œ ©«¦ å› ¦ slave record
+                          Move ("DDC 44:Transaction Aborted! (Edit Slave not on Same Record)\n\n"+;
+                                "˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª!") to lsError_Message
+                     Case Break
+                     Case (iError_Num = 5011) //«¦ delete master âš ¤œ ©œ £ã ©¬¤›œ›œ£â¤˜ records
+                          Move ("DDC 44:Transaction Aborted! (Delete Master on Non Connected B Records)\n\n"+;
+                                "˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª!") to lsError_Message
+                     Case Break
+                     Case (iError_Num = 5012) //«¦ delete master ›â¤ â›à©œ £›œ¤ ¡á master records «ª š¢
+                          Move ("DDC 44:Transaction Aborted! (Delete Master not with 0 GL Records)\n\n"+;
+                                "˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª!") to lsError_Message
+                     Case Break
+
+                     //˜§æ private.trexe (save+delete main file)
+                     Case (iError_Num = 6001) //¢áŸ¦ª «¦¬ ¡é› ¡˜
+                          Move ("DDC 44:Transaction Aborted! (€¡˜«á¢¢¢¦ §¨æ©£¦)\n\n"+;
+                                "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                     Case Break
+                     Case (iError_Num = 6002) //¢áŸ¦ª «¦¬ ¡é› ¡˜
+                          Move ("DDC 44:Transaction Aborted! (update=0 + backout=0)\n\n"+;
+                                "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                     Case Break
+
+                     Case Else
+                          Forward Send Operation_Not_Allowed iError_Num
+                Case End
+
+                Error iError_Num lsError_Message
+      End_Procedure // operation_not_allowed
+
+
+
+
+     //1001:Baxio_AA = baxio_bmove_laa (editing £æ¤¦¤ ©«¦¤ «œ¢œ¬«˜å¦ ˜˜ ¡å¤©ª «¦¬ ˜¥ ¦š¨á­¦¬)
+     //1002:create a new bmove £æ¤¦¤ œá¤ «¦ baxio_status <> œ¥¦­¢£â¤¦
+     //1003:˜§˜š¦¨œçœ«˜  «¦ bmove ¤˜ ˜¢¢áœ  parent barticl
+     //1004:˜§˜š¦¨œçœ«˜  «¦ bmove ¤˜ ˜¢¢áœ  parent baxiokat
+     //1005:œá¤  ¡å¤© «áœ  ›£ ¦¬¨šå˜ ¤â¦¬ ˜¥ ¦š¨á­¦¬
+     //     ¡˜  ¡á¤à create bmove, §¨â§œ  ¤˜ â®à ¡á¤œ  ¡˜  create baxio
+     //1006:›â¤ œ§ «¨â§œ«˜  save ©«¦ bmove, œá¤ «¦ barticl â®œ  šå¤œ  edit
+     //     ¡˜  ›â¤ â®œ  «¨â¥œ   request_save
+     //1007
+     //1008
+     //?1009:m_code: œšš¨˜­ã œ§ «¨â§œ«˜  £æ¤¦¤ ˜§¦ ¦ module §¦¬ «¤ ›£ ¦ç¨š©œ
+      Function Validate_Save Returns Integer
+               Integer iReturnVal liBarticl_dd_Changed isNO
+
+               Forward Get Validate_Save to iReturnVal
+
+               If (Not(iReturnVal));
+               Begin
+
+//                If (Baxio.Baxio_HmniaL<Barticl.Barticl_Hmnia) Begin
+//                    Get YesNo_Box '† £œ¨¦£¤å˜ «ª œ§ «˜šãª œå¤˜ \n§¨¦šœ¤â©«œ¨ «ª £œ¨¦£¤å˜ª «¦¬ §˜¨˜©«˜« ¡¦ç.\nŒ˜ ©¬¤œ®å©à ?' to isNO
+//                    If (isNO=MBR_NO) Send Operation_Not_Allowed 5555
+//                End
+
+                //---------â¢œš®¦  ›£ ¦¬¨šå˜ª ¤â¦¬ bmove record----------------------
+                If (Bmove.Recnum =  0);
+                Begin //œá¤ ›£ ¦¬¨šé ¤â¦ bmove record
+                      //1005:š ˜ ¤˜ ›œ®Ÿé «¤ ›£ ¦¬¨šå˜ ¤â¦¬ baxio record, §¨â§œ :
+                      //     1.œá¤  ¡å¤© «áœ  «¤ ›£ ¦¬¨šå˜ ¤â¦¬ ˜¥ ¦š¨á­¦¬,
+                      //       «æ«œ §¨â§œ  ¤˜ â®à æ¤«àª ¡á¤œ  ¡˜  create baxio.
+                      //     2.œá¤  ¡å¤© ›â¤ «áœ  «¤ ›£ ¦¬¨šå˜ ¤â¦¬ ˜¥ ¦š¨á­¦¬,
+                      //       «æ«œ ›â¤ §¨â§œ  ¤˜ â®à ¡á¤œ  ¡˜  create baxio.
+                      If ((piCan_Create_Baxio(Self)) = TRUE);
+                      Begin
+                      If (Not(;
+                              ((piCreated_Baxio(piBaxio_dd(Self))) = TRUE);
+                         )) Send Operation_Not_Allowed 1004 // ¡å¤© œ§ «¨â§œ«˜  £æ¤¦¤ £œ ¤â˜ ˜¥ æ§š¨˜­¦
+                      End
+                      Else;
+                      Begin
+                      If (Not(;
+                              ((piCreated_Baxio(piBaxio_dd(Self))) = FALSE);
+                         )) Send Operation_Not_Allowed 1005 // ¡å¤© œ§ «¨â§œ«˜  £æ¤¦¤ ©œ ¬§á¨®¦¤ ˜¥ æ§š¨˜­¦
+                      End
+
+                      //1002:create a new bmove £æ¤¦¤ œá¤ «¦ baxio_status <> œ¥¦­¢£â¤¦
+                      //If (Not(;
+                      //        (Baxio.Baxio_Old_Status <> 2);
+                      //   )) Send Operation_Not_Allowed 1002
+                End   //«â¢¦ª œ¢âš®à¤ ›£ ¦¬¨šå˜ª ¤â¦¬ bmove record
+
+
+                //---------â¢œš®¦  editing existing bmove records---------------------
+                Else;
+                Begin //edit an existing record
+                      //1001:Baxio_AA = baxio_bmove_laa (editing £æ¤¦¤ ©«¦¤ «œ¢œ¬«˜å¦ ˜˜ ¡å¤©ª «¦¬ ˜¥ ¦š¨á­¦¬)
+                      If (Not(;
+                              (Baxio.Baxio_Bmove_Laa = Bmove.Baxio_AA);
+                         )) Send Operation_Not_Allowed 1001
+                End   //«â¢¦ª œ¢âš®à¤ editing existing bmove records
+
+/////////////// js 07/08/2001  07-08-2001
+             //  ¡à› ¡˜ª ˜¬«¦ª £§¡œ remarks š ˜«   ¢¦š ¡ £˜ª £œ©à «¦¬ ˜¤¦ ¥œ / ¡¢œ ©œ
+             // ¡˜  «¦ ©«© £¦ «ª œ­˜¨£¦šª œ ¤˜  «œ«¦ ˜ §¦¬ ›œ¤ š ¤œ«˜  ˜¢¢ à©
+             // ˜§¦ ˜¢¢¦ ©£œ ¦ ©«¦ Barticl, ¡˜  œ§ §¢œ¦¤ ™˜¨˜œ  ¦«˜¤ ˜¤¦ š¦¡¢œ ¤œ 
+             // «¦ §˜¨˜©«˜« ¡¦ (§¨¦­˜¤àª š ˜«  £›œ¤ ¦¬¤ «˜ properties §¨¦ ¡˜  £œ«˜
+             // ˜§¦ «¤ private.Initialize_Properties
+//                //1006:›â¤ œ§ «¨â§œ«˜  save ©«¦ bmove, œá¤ «¦ barticl â®œ  šå¤œ  edit
+//                //     ¡˜  ›â¤ â®œ  «¨â¥œ   request_save
+//                Get Changed_State of (piBarticl_dd(Self)) to liBarticl_dd_Changed
+//                If (liBarticl_dd_Changed = TRUE) Send Operation_Not_Allowed 1006
+/////////////// js 07/08/2001  07-08-2001
+
+
+
+
+                //1100:cby = globals
+                If ( ;
+                    (Not(Bmove.Company_Code = SysCurXr.Company_Code)) or;
+                    (Not(Bmove.Branch_Code  = SysCurXr.Branch_Code )) or;
+                    (Not(Bmove.Year_Year    = SysCurXr.Year_Year   ));
+                    )                                                   Send Operation_Not_Allowed 1100
+
+               End //«â¢¦ª ¡é› ¡˜ validation
+               Function_Return iReturnVal
+      End_Function //validate_save
+
+
+      //2001:Baxio_AA = baxio_bmove_laa (delete £æ¤¦¤ «¦¤ «œ¢œ¬«˜å¦ ˜˜ ¡å¤©ª «¦¬ ˜¥ ¦š¨á­¦¬)
+      Function Validate_Delete  Returns Integer
+               Integer iReturnVal
+               Forward Get Validate_Delete  To iReturnVal
+               If (Not(iReturnVal));
+               Begin
+
+                //2001:â¢œš®¦ª «œ¢œ¬«˜å¦¬ ˜˜ ¡å¤©ª ˜¥ ¦š¨á­¦¬
+                If (Not(Bmove.Baxio_AA = Baxio.Baxio_Bmove_Laa))       Send Operation_Not_Allowed 2001
+                If ( ;
+                    (Not(Bmove.Company_Code = SysCurXr.Company_Code)) or;
+                    (Not(Bmove.Branch_Code  = SysCurXr.Branch_Code )) or;
+                    (Not(Bmove.Year_Year    = SysCurXr.Year_Year   ));
+                    )                                                   Send Operation_Not_Allowed 2100
+
+               End //«â¢¦ª ¡é› ¡˜ validation
+               Function_Return iReturnVal
+      End_Function //validate_delete
+
+
+      Procedure Request_Save
+                Integer liBaxiokat_Code liBaxio_Allow_Foreign_New_Save_State iErrorObj
+                String  lsBtypkin_Recr
+                //£›œ¤ ©£æª æ¢à¤ «à¤ ©®œ« ¡é¤ properties §¦¬ ˜­¦¨¦ç¤ «¦ transaction
+                Send private.Initialize_Properties
+                //˜¤áš¤à© «¨â®¦¬©˜ª ¡˜«á©«˜©ª «¦¬ baxio_dd
+                Get Allow_Foreign_New_Save_State of (piBaxio_dd(Self)) to liBaxio_Allow_Foreign_New_Save_State
+
+                //«¦ bkinkat_yn_new ¨¬Ÿ£åœ  œá¤ Ÿ˜ ¡á¤à œ ©˜šàšã ¤â¦¬ ˜¥ ¦š¨á­¦¬
+                Get File_Field_Current_Value File_Field Btypkin.Btypkin_Recr   to lsBtypkin_Recr
+                Get File_Field_Current_Value File_Field Baxiokat.Baxiokat_Code to liBaxiokat_Code
+
+                Clear Bkinkat
+                Move SysCurXr.Company_Code   to Bkinkat.Company_Code
+                Move SysCurXr.Branch_Code    to Bkinkat.Branch_Code
+                Move SysCurXr.Year_Year      to Bkinkat.Year_Year
+                Move lsBtypkin_Recr  to Bkinkat.Btypkin_Recr
+                Move liBaxiokat_Code to Bkinkat.Baxiokat_Code
+                Find Eq Bkinkat by Index.3 //company+branch+Year+btypkin_recr+baxiokat_code
+                If (Found = 0) Begin //›â¤ œ§ «¨â§œ«˜   ¡å¤© baxiokat_code £œ «¦ btypkin
+                                Send Operation_Not_Allowed 3002
+                               End
+
+                If (Bkinkat.Bkinkat_YN_New  = TRUE);
+                     Begin //œ ©˜šàšã ¤â¦¬ ˜¥ ¦š¨á­¦¬, á¨˜ œ§ «¨â§à «¦ create ©«¦ baxio
+                      Set Allow_Foreign_New_Save_State of (piBaxio_dd(Self)) to TRUE
+                      Set piCan_Create_Baxio                                 to TRUE
+                     End
+                Else Begin //› ˜¡å¤© ¬§á¨®¦¤«¦ª ˜¥ ¦š¨á­¦¬, á¨˜ ›â¤ œ§ «¨â§à «¦ create ©«¦ baxio
+                      Set Allow_Foreign_New_Save_State of (piBaxio_dd(Self)) to FALSE
+                      Set piCan_Create_Baxio                                 to FALSE
+                     End
+
+                Forward Send Request_Save
+
+                //œ§˜¤˜¤˜­¦¨á ˜¨® ¡ãª ¡˜«á©«˜©ª «¦¬ baxio_dd
+                Set Allow_Foreign_New_Save_State of (piBaxio_dd(Self)) to liBaxio_Allow_Foreign_New_Save_State
+                Set Smart_Filemode_State to True
+                //£›œ¤ ©£æª properties š ˜ œ§æ£œ¤ ¡å¤©
+                Send private.Initialize_Properties
+                //œ§˜¤˜­¦¨á «¦¬ system indicator err
+                Indicate Err False
+      End_Procedure //request_save
+
+
+      Procedure Request_Delete
+                Integer iErrorObj
+                Send private.Initialize_Properties //£›œ¤ ©£æª æ¢à¤ «à¤ ©®œ« ¡é¤ properties
+                Forward Send Request_Delete
+                Send private.Initialize_Properties //£›œ¤ ©£æª properties š ˜ œ§æ£œ¤ ¡å¤©
+                //œ§˜¤˜­¦¨á «¦¬ system indicator err
+                Indicate Err False
+      End_Procedure   //request_delete
+
+
+//      // ¨¦¬«å¤˜ ˜¬«ã ˜¤˜¢˜£™á¤œ  ¤˜ œ¤£œ¨é©œ  æ©˜ ˜§¦ «˜ ¬§æ¢¦ §˜ 3 modules «¦¬ ©¬©«ã£˜«¦ª
+//      //§¨â§œ  ¤˜ œ¤£œ¨àŸ¦ç¤.
+//      //¡˜¢œå«˜  ˜§æ « ª request save & delete, £â©˜ ˜§æ transaction.
+//      //œ§ ©«¨â­œ  ¢áŸ : 5001 - 5012 š ˜ «¤ šœ¤ ¡ã ¢¦š ©« ¡ã
+//      Procedure private.Transaction_Update_Other_Modules
+//                Integer liDo_GL_Maintainance liDo_CUSTOMER_Maintainance liDo_VENDOR_Maintainance
+//                Integer liMust_Update_GL     liMust_Update_CUSTOMER     liMust_Update_VENDOR
+
+//                //š ˜ «¤ œç¨œ© «¦¬ bsum
+//                String lsBaxiokat_Recr
+
+//                //final values, š ˜ «ã¤ feedback œ¤£â¨à© «¦¬ barticl & bsum ˜§¦ «¤ šœ¤ ¡ã ¢¦š ©« ¡ã
+//                Integer liF_Garticl_Rec0 liF_Gmove_Master_Rec0 liF_Gmove_Slave_Rec0
+
+//                //final values, š ˜ «ã¤ feedback œ¤£â¨à© «¦¬ barticl ˜§¦ «¦çª §œ¢á«œª
+//                Integer liF_Carticl_Rec0 liF_Cmove_Rec0
+
+//                //final values, š ˜ «ã¤ feedback œ¤£â¨à© «¦¬ barticl ˜§¦ «¦çª §¨¦£Ÿœ¬«âª
+//                Integer liF_Varticl_Rec0 liF_Vmove_Rec0
+
+//               //4 flags §¦¬ §œ¨¤á¤œ £œ ¦¨å©£˜«˜ ©« ª bpo «ª š¢
+//               Integer liFlag02 liFlag03 liFlag04 liFlag05
+
+
+//                //œç¨œ© «à¤ ¢¦ §é¤ modules §¦¬ §¨â§œ  ¤˜ œ¤£œ¨àŸ¦ç¤
+//                Get Field_Current_Value of (piBtypkin_dd(Self)) Field Btypkin.Gtypkin_Rec0 to liMust_Update_GL
+//                Get Field_Current_Value of (piBtypkin_dd(Self)) Field Btypkin.Ctypkin_Rec0 to liMust_Update_CUSTOMER
+//                Get Field_Current_Value of (piBtypkin_dd(Self)) Field Btypkin.Vtypkin_Rec0 to liMust_Update_VENDOR
+
+//               //˜¤áš¤à© «à¤ 4 flags §¦¬ §œ¨¤á¤œ £œ ¦¨å©£˜«˜ ©« ª bpo «ª š¢
+//               Get File_Field_Current_Value File_Field Btypkin.Btypkin_Flag02 to liFlag02
+//               Get File_Field_Current_Value File_Field Btypkin.Btypkin_Flag03 to liFlag03
+//               Get File_Field_Current_Value File_Field Btypkin.Btypkin_Flag04 to liFlag04
+//               Get File_Field_Current_Value File_Field Btypkin.Btypkin_Flag05 to liFlag05
+
+
+//                //                                                  s  l  a  v  e  = bsum
+//                //                                        edit        create        delete
+//                //                                       -----        ------        ------
+//                // master garticl + gmove     edit         x            x              x
+//                //                            create                    x
+//                //                            delete                                   x
+//                // slave  gmove               edit         x            x              x
+//                //                            create                    x
+//                //                            delete                                   x
+
+
+//                If (;
+//                    ( liMust_Update_Gl     > 0                   ) and;
+//                    ((pnB_Baxio_V2(Self)) <> (pnA_Baxio_V2(Self)));
+//                   );
+//                Begin //edit œ§ «¨â§œ«˜  £æ¤¦¤ ©«¤ ˜¥å˜ v2 !
+//                //***************************************************************************
+//                //*  €  • †    „ Œ † ‹ „  — ‘ † ‘    ‚ „ Œ ˆ ‰ † ‘    Š  ‚ ˆ ‘ ’ ˆ ‰ † ‘ *
+//                //***************************************************************************
+//                //œ­'æ©¦¤ «¦ bmove record ©éŸ¡œ/› ˜š¨á­¡œ ¡˜¤¦¤ ¡á, §¨¦®à¨áà ©«¤ bpo
+//                //š ˜ «¤ œ¤£â¨à© «ª šœ¤ ¡ãª ¢¦š ©« ¡ãª, œá¤ æ£àª ®¨œ áœ«˜ ]
+
+//// jsjsjs 24/01/2001
+////                Send Transaction_BCVWmove_Update_GL to (piDo_GL_Maintainance(Self)) (Self);
+////                                                                                    liFlag02;
+////                                                                                    liFlag03;
+////                                                                                    liFlag04;
+////                                                                                    liFlag05
+//// jsjsjs 24/01/2001
+
+//                //œ­'æ©¦¤ ¡˜  «¦ bmove record ©éŸ¡œ/› ˜š¨á­¡œ ¡˜¤¦¤ ¡á,
+//                //¡˜   bpo â«¨œ¥œ ®à¨åª error,  ¡˜«˜®à¨é «¦ transaction
+//                //¡˜  œ¤£œ¨é¤à «© ©®œ« ¡á ˜¨®œå˜, › ˜™á¦¤«˜ª «˜
+//                //3 properties §¦¬ â®œ  œ§ ©«¨â¯œ   bpo œ¤£â¨à©ª «ª š¢
+//                Get piF_Garticl_Rec0      to liF_Garticl_Rec0       //barticl
+//                Get piF_Gmove_Master_Rec0 to liF_Gmove_Master_Rec0  //barticl
+//                Get piF_Gmove_Slave_Rec0  to liF_Gmove_Slave_Rec0   //bmove
+
+//                //œ¤£â¨à© bmove & barticl & bsum š ˜ « ª œšš¨˜­âª ©«á á¢¢˜ modules
+//                //œç¨œ© barticl, › æ«  œå¤˜  ˜§˜¨˜å««¦ ©œ æ¢˜ «˜ operations
+//                Clear Barticl
+//                Get Current_Record of (piBarticl_dd(Self)) to Barticl.Recnum
+//                Find Eq Barticl.Recnum
+//                If (Found = 0);
+//                Begin //›â¤ £§æ¨œ©˜ ¤˜ ™¨é barticl by recnum
+//                      Send Operation_Not_Allowed 5001
+//                End
+
+//                //=======================================================================
+//                //œ­'æ©¦¤ ¡á¤à create or edit ©«¦ bmove,
+//                //™á©œ  «¦¬ §å¤˜¡˜ ©«¦ master ¡á¤à create or edit
+//                If ((piUpdate(Self)) = TRUE);
+//                Begin
+//                     //œç¨œ© bsum, «¦ ¦§¦å¦ ®¨œ áœ«˜  £æ¤¦¤ œ›é ¡˜  æ®  ©«¤ ¦¢ ¡ã › ˜š¨˜­ã «¦¬ garticl
+//                     Get Field_Current_Value of (piBaxiokat_dd(Self)) Field Baxiokat.Baxiokat_Recr to lsBaxiokat_Recr
+//                     Clear Bsum
+//                     Move Barticl.Barticl_Recr to Bsum.Barticl_Recr
+//                     Move lsBaxiokat_Recr      to Bsum.Baxiokat_Recr
+//                     Find Eq Bsum by Index.1 //barticl_recr+baxiokat_recr !!!!!!
+//                     If (Found=0);
+//                     Begin //›â¤ £§æ¨œ©˜ ¤˜ ™¨é bsum by recnum
+//                           Send Operation_Not_Allowed 5002
+//                     End
+
+//                     //œ¤£â¨à© master (create or edit)
+//                     Case Begin
+//                          //©«¦ create master, §¨â§œ   ©ç¤›œ© ¤© šå¤œ  «é¨˜,
+//                          //›¢˜›ã §¨â§œ  ¡˜  «˜ 2 §œ›å˜ ¤˜ œå¤˜  0,
+//                          //œ¤é «˜ master records «ª š¢ §¨â§œ  ¤˜ â®¦¬¤ Ÿœ« ¡ã « £ã.
+//                          Case ((piGarticl_Create(Self)) = TRUE)
+//                               If (;
+//                                    (Barticl.Garticl_Rec0 <> 0) or;
+//                                    (Barticl.Gmove_Mrec0  <> 0);
+//                                  ) Send Operation_Not_Allowed 5003 //«¦ create master âš ¤œ ©œ ã› ©¬¤›œ›œ£â¤¦ barticl
+//                               If (;
+//                                    (liF_Garticl_Rec0       <= 0) or;
+//                                    (liF_Gmove_Master_Rec0  <= 0);
+//                                  ) Send Operation_Not_Allowed 5004 //«¦ create master âš ¤œ ©œ £ã Ÿœ« ¡á gl records
+//                               Move liF_Garticl_Rec0      to Barticl.Garticl_Rec0 //©ç¤›œ© £œ garticl
+//                               Move liF_Gmove_Master_Rec0 to Barticl.Gmove_Mrec0  //©ç¤›œ© £œ master gmove
+//                               Saverecord Barticl
+//                          Case Break
+
+//                          //©«¦ edit master, §¨â§œ   ©ç¤›œ© ã› ¤˜ ¬§á¨®œ ,
+//                          //›¢˜›ã §¨â§œ  ¡˜  «˜ 2 §œ›å˜ ¤˜ œå¤˜  > 0
+//                          //¡˜  £á¢ ©«˜ ¤˜ © š¦¬¨œ¬«¦ç£œ æ«  ¡á¤˜£œ œ¤£â¨à© «ª š¢ ©«˜ å› ˜ master records
+//                          Case Else
+//                               If (;
+//                                    (Barticl.Garticl_Rec0 <= 0) or;
+//                                    (Barticl.Gmove_Mrec0  <= 0);
+//                                  ) Send Operation_Not_Allowed 5005 //«¦ edit master âš ¤œ ©œ £ã ©¬¤›œ›œ£â¤˜ records
+//                               If (;
+//                                    (liF_Garticl_Rec0      <> Barticl.Garticl_Rec0) or;
+//                                    (liF_Gmove_Master_Rec0 <> Barticl.Gmove_Mrec0 );
+//                                  ) Send Operation_Not_Allowed 5006 //«¦ edit master ›â¤ âš ¤œ ©«˜ å› ˜ master records
+//                          Case Break
+//                     Case End //«â¢¦ª œ¤£â¨à©ª master
+
+//                     //œ¤£â¨à© slave (create or edit)
+//                     Case Begin
+//                          //©«¦ create slave, §¨â§œ   ©ç¤›œ© ¤˜ šå¤œ  «é¨˜,
+//                          //›¢˜›ã §¨â§œ  «o 1 §œ›åo ¤˜ œå¤˜  0,
+//                          //œ¤é «o slave record «ª š¢ §¨â§œ  ¤˜ â®œ  Ÿœ« ¡ã « £ã.
+//                          Case ((piSlave_Gmove_Create(Self)) = TRUE)
+//                               If (Bsum.Gmove_Srec0 <> 0);
+//                                    Send Operation_Not_Allowed 5007 //«¦ create slave âš ¤œ ©œ œå¤˜  ã› ©¬¤›œ›œ£â¤¦ bsum
+//                               If (liF_Gmove_Slave_Rec0  <= 0);
+//                                    Send Operation_Not_Allowed 5008 //«¦ create slave âš ¤œ ©œ £ã Ÿœ« ¡æ gl record
+//                               Move liF_Gmove_Slave_Rec0  to Bsum.Gmove_Srec0     //©ç¤›œ© £œ slave gmove
+//                               Saverecord Bsum
+//                          Case Break
+
+//                          //©«¦ edit slave, §¨â§œ   ©ç¤›œ© ã› ¤˜ ¬§á¨®œ ,
+//                          //›¢˜›ã §¨â§œ  «¦ 1 §œ›å¦ ¤˜ œå¤˜  > 0
+//                          //¡˜  £á¢ ©«˜ ¤˜ © š¦¬¨œ¬«¦ç£œ æ«  ¡á¤˜£œ œ¤£â¨à© «ª š¢ ©«¦ å› ¦ slave record
+//                          Case Else
+//                               If (Bsum.Gmove_Srec0 =  0);
+//                                    Send Operation_Not_Allowed 5009 //«¦ edit slave âš ¤œ ©œ £ã ©¬¤›œ›œ£â¤¦ record
+//                               If (liF_Gmove_Slave_Rec0  <> Bsum.Gmove_Srec0);
+//                                    Send Operation_Not_Allowed 5010 //«¦ edit slave ›â¤ âš ¤œ ©«¦ å› ¦ slave record
+//                          Case Break
+//                     Case End //«â¢¦ª œ¤£â¨à©ª slave
+//                End //«â¢¦ª œ¤£â¨à©ª edit or create bmove & barticl & bsum š ˜ « ª œšš¨˜­âª ©«á á¢¢˜ modules
+//                //=======================================================================
+
+//                //œ­'æ©¦¤ ©™ã¤à «¤ «œ¢œ¬«˜å˜ ¡å¤© «¦¬ barticl,
+//                //®à¨åª æ£àª ¤˜ ©™ã©à ˜¬«æ,
+//                //£›œ¤åà ©«¦ barticl «¦ Garticl_Rec0 & Gmove_Mrec0,
+//                //š ˜ ¤˜ ˜§¦©¬¤›â©à «¦ barticl ˜§¦ «¦ garticl & «¦ gmove
+//                If ((piGarticl_Delete(Self)) = TRUE);
+//                Begin
+//                     //©«¦ delete master, §¨â§œ   ©ç¤›œ© ã› ¤˜ ¬§á¨®œ ,
+//                     //›¢˜›ã §¨â§œ  ¡˜  «˜ 2 §œ›å˜ ¤˜ œå¤˜  > 0
+//                     //¡˜  £á¢ ©«˜ ¤˜ © š¦¬¨œ¬«¦ç£œ æ«  «˜ master records «ª š¢ œå¤˜  £›œ¤ ¡á
+//                     If (;
+//                          (Barticl.Garticl_Rec0 <= 0) or;
+//                          (Barticl.Gmove_Mrec0  <= 0);
+//                        ) Send Operation_Not_Allowed 5011 //«¦ delete master âš ¤œ ©œ £ã ©¬¤›œ›œ£â¤˜ records
+//                     If (;
+//                          (liF_Garticl_Rec0      <> 0) or;
+//                          (liF_Gmove_Master_Rec0 <> 0);
+//                        ) Send Operation_Not_Allowed 5012 //«¦ delete master ›â¤ â›à©œ £›œ¤ ¡á master records «ª š¢
+//                     Move liF_Garticl_Rec0      to Barticl.Garticl_Rec0 //˜§¦©ç¤›œ© £œ garticl
+//                     Move liF_Gmove_Master_Rec0 to Barticl.Gmove_Mrec0  //˜§¦˜ç¤›œ© £œ master gmove
+//                     Saverecord Barticl
+//                End //«â¢¦ª ˜§¦©ç¤›œ©ª barticl ˜§¦ garticl & gmove
+//                //****************************************************************************
+//                //* ’ „ Š  ‘    „ Œ † ‹ „  — ‘ † ‘    ‚ „ Œ ˆ ‰ † ‘    Š  ‚ ˆ ‘ ’ ˆ ‰ † ‘ *
+//                //****************************************************************************
+//                End //if (liMust_Update_Gl > 0) and ...
+
+
+
+//                If (liMust_Update_CUSTOMER > 0);
+//                Begin
+//                //****************************************************************************
+//                //*  €  • †    „ Œ † ‹ „  — ‘ † ‘     „ Š € ’ — Œ                         *
+//                //****************************************************************************
+//                //****************************************************************************
+//                //* ’ „ Š  ‘    „ Œ † ‹ „  — ‘ † ‘     „ Š € ’ — Œ                        *
+//                //****************************************************************************
+//                End //if (liMust_Update_CUSTOMER > 0)
+
+
+
+//                If (liMust_Update_VENDOR  > 0);
+//                Begin
+//                //****************************************************************************
+//                //*  €  • †    „ Œ † ‹ „  — ‘ † ‘       ‹ † ‡ „ “ ’ — Œ                 *
+//                //****************************************************************************
+//                //****************************************************************************
+//                //* ’ „ Š  ‘    „ Œ † ‹ „  — ‘ † ‘       ‹ † ‡ „ “ ’ — Œ                *
+//                //****************************************************************************
+//                End //if (liMust_Update_VENDOR > 0)
+
+//      End_Procedure //private.transaction_update_other_modules
+
+
+              //§˜¨'æ¢¦ §¦¬ œå¤˜  ..›ç¤˜£, ›â¤ §˜å¦¬¤ › æ«  «˜ §œ›å˜ œå¤˜  display only ! ¡˜  foreign fields
+              //Set File_Field_Entry File_Field Barticl.Garticl_Rec0 FALSE to liF_Garticl_Rec0
+              //Set File_Field_Entry File_Field Barticl.Gmove_Mrec0  FALSE to liF_Gmove_Master_Rec0
+              //Set File_Field_Entry File_Field Barticl.Gplan_Mrec0  FALSE to liF_Gplan_Master_Rec0
+
+              //Set File_Field_Entry File_Field Bmove.Gmove_Srec0    FALSE to liF_Gmove_Slave_Rec0
+              //Set File_Field_Entry File_Field Bmove.Gplan_Srec0    FALSE to liF_Gplan_Slave_Rec0
+
+              //Set File_Field_Changed_Value File_Field Barticl.Garticl_Rec0 to liF_Garticl_Rec0
+               //Set File_Field_Changed_Value File_Field Barticl.Gmove_Mrec0  to liF_Gmove_Master_Rec0
+              //Set File_Field_Changed_Value File_Field Barticl.Gplan_Mrec0  to liF_Gplan_Master_Rec0
+
+               //Set Field_Changed_Value      Field      Bmove.Gmove_Srec0    to liF_Gmove_Slave_Rec0
+               //Set Field_Changed_Value      Field      Bmove.Gplan_Srec0    to liF_Gplan_Slave_Rec0
+
+
+               //Forward Send Request_Save
+
+
+
+
+
+//--------------------------------------------------------------------------------
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Bmove.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Barticl.File_Number
+        Send Add_Server_File  Baxio.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecb.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Bkinkat.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Bsum.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecb.Bmove_Rec0  To Bmove.Bmove_Rec0
+
+        // Field-based properties.......................
+
+        // Bmove.Company_Code
+
+        // Bmove.Branch_Code
+
+        // Bmove.Year_Year
+
+        // Bmove.Btypkin_Code
+
+        // Bmove.Barticl_Hmnia
+
+        // Bmove.Barticl_No
+
+        // Bmove.Baxio_Code
+
+        // Bmove.Barticl_Recr
+
+        // Bmove.Baxio_Recr
+
+        // Bmove.Bmove_Rec0
+
+        // Bmove.Bmove_Recr
+
+        // Bmove.Bmove_Aa
+
+        // Bmove.Baxio_Aa
+
+        // Bmove.Gplan_Srec0
+
+        // Bmove.Baxio_Pfile
+
+        // Bmove.Baxio_Pcode
+
+        // Bmove.Baxio_Pepon
+
+        // Bmove.Baxio_Ppar
+
+        // Bmove.Btypkin_Recr
+
+        // Bmove.Sls_Id
+
+        // Bmove.Cnt_Id
+
+        // Bmove.Presp_Id
+
+        // Bmove.Bmove_M_Code
+
+        // Bmove.Cmoves_Recr
+
+        // Bmove.Exei_Enhmerosei
+
+        // Bmove.Hmnia_Enhmeros
+
+        //DDB-DefineFieldEnd
+
+        Set Main_File            To Bmove.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Baxio.File_Number
+        Send Add_Server_File  Barticl.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecb.File_Number  DD_LOCK_ON_NEW_SAVE
+        Send Add_System_File  Bkinkat.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Bsum.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecb.Bmove_Rec0  To Bmove.Bmove_Rec0
+
+        // Field-based properties.......................
+
+        // Bmove.Company_Code
+
+        // Bmove.Branch_Code
+
+        // Bmove.Year_Year
+
+        // Bmove.Btypkin_Code
+
+        // Bmove.Barticl_Hmnia
+
+        // Bmove.Barticl_No
+
+        // Bmove.Barticl_Rec0
+
+        // Bmove.Baxio_Rec0
+
+        // Bmove.Bmove_Rec0
+
+        // Bmove.Bmove_Aa
+        Set Field_Options          Field Bmove.Bmove_Aa           To DD_DISPLAYONLY
+
+        // Bmove.Baxio_Aa
+        Set Field_Options          Field Bmove.Baxio_Aa           To DD_DISPLAYONLY
+
+        // Bmove.Gplan_Srec0
+        Set Field_Options          Field Bmove.Gplan_Srec0        To DD_DISPLAYONLY
+
+        // Bmove.Baxio_Pfile
+
+        // Bmove.Baxio_Pcode
+
+        // Bmove.Baxio_Pepon
+
+        // Bmove.Baxio_Ppar
+
+    End_Procedure    // Define_Fields
+
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Bmove_DataDictionary
+//DDB-FileEnd

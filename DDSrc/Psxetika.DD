@@ -1,0 +1,170 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : PSXETIKA.DD
+// Class Name: Psxetika_DataDictionary
+// Revision  : 14
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Psxetika
+Open Particle
+Open Sysrecp
+
+//DDB-HeaderEnd
+
+Class Psxetika_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Creating
+        Integer iNextNo
+        Forward Send Creating
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Psxetika.Psxetika_Rec0)))))) to Psxetika.Psxetika_Recr
+    End_Procedure   // Creating
+
+    Procedure Update
+        Forward Send Update
+        Move SysCurXR.Company_Code  to Psxetika.Company_Code
+        Move SysCurXR.Branch_Code   to Psxetika.Branch_Code
+        Move SysCurXR.Year_Year     to Psxetika.Year_Year
+        Move Clients.Client_ID      to Psxetika.Client_ID
+        Move Ctypkin.Ctypkin_Code   to Psxetika.Ctypkin_Code
+        Move Wtypkin.Wtypkin_Code   to Psxetika.Wtypkin_Code
+        Move Ptyppar.Ptyppar_Code   to Psxetika.Ptyppar_Code
+        Move Particle.Partl_Hmnia   to Psxetika.Partl_Hmnia
+        Move Particle.Pseira_Seira  to Psxetika.Pseira_Seira
+        Move Particle.Partl_No      to Psxetika.Partl_No
+    End_Procedure   // Update
+
+//    gts 08-06-06 mallon den xriazete
+//    Procedure Request_Save
+//        Number  nQty
+//        String  sParticleRecr sPsxetikaRecr
+//
+//        Forward Send Request_Save
+//
+//        Get File_Field_Current_Value File_Field Particle.Partl_Recr     to sParticleRecr
+//        Get File_Field_Current_Value File_Field Psxetika.Psx_Partl_Recr to sPsxetikaRecr
+//        If ((Trim(sParticleRecr)<>'') And (Trim(sPsxetikaRecr)<>'')) Begin
+//            Get File_Field_Current_Value File_Field Psxetika.Pms_Sx_Qty to nQty
+//            If (nQty=0) Begin
+//                // An h posothta pou menei apo to athroisma posothtas ton Pmoves Sxetika
+//                // Mhdenisei, ayto shmainei pos den yparxoun alla Pmoves Sxetika, ara
+//                // prepei na diagrafei ayto to Psxetika record kai to antistrofo tou.
+//                Delete Psxetika
+//                Clear Psxetika
+//                Move sPsxetikaRecr  to Psxetika.Partl_Recr
+//                Move sParticleRecr  to Psxetika.Psx_Partl_Recr
+//                Find Eq Psxetika by Index.4
+//                If (Found) Delete Psxetika
+//            End
+//        End
+//    End_Procedure
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Psxetika.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Particle.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecp.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecp.Psxetika_Rec0  To Psxetika.Psxetika_Rec0
+
+        // Field-based properties.......................
+
+        // Psxetika.Company_Code
+
+        // Psxetika.Branch_Code
+
+        // Psxetika.Year_Year
+
+        // Psxetika.Ctypkin_Code
+
+        // Psxetika.Wtypkin_Code
+
+        // Psxetika.Ptyppar_Code
+
+        // Psxetika.Pseira_Seira
+
+        // Psxetika.Custprom_Code
+
+        // Psxetika.Client_Id
+
+        // Psxetika.Partl_No
+
+        // Psxetika.Partl_Hmnia
+
+        // Psxetika.Partl_Recr
+
+        // Psxetika.Psx_Partl_Recr
+
+        // Psxetika.Psxetika_Recr
+
+        // Psxetika.Psxetika_Rec0
+
+        // Psxetika.Sx_Company_Code
+
+        // Psxetika.Sx_Branch_Code
+
+        // Psxetika.Sx_Year_Year
+
+        // Psxetika.Sx_Ctypkin_Code
+
+        // Psxetika.Sx_Wtypkin_Code
+
+        // Psxetika.Sx_Ptyppar_Code
+
+        // Psxetika.Sx_Pseira_Seira
+
+        // Psxetika.Sx_Custpromcode
+
+        // Psxetika.Sx_Client_Id
+
+        // Psxetika.Sx_Partl_No
+
+        // Psxetika.Sx_Partl_Hmnia
+
+        // Psxetika.Sx_Ctypkin_Desc
+
+        // Psxetika.Sx_Wtypkin_Desc
+
+        // Psxetika.Sx_Ptyppar_Desc
+
+        // Psxetika.Sx_Custpromdesc
+
+        // Psxetika.Sx_Client_Desc
+
+        // Psxetika.Pms_Sx_Qty
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Psxetika_DataDictionary
+//DDB-FileEnd

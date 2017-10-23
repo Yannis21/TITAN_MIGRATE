@@ -1,0 +1,137 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : CFLAGKIN.DD
+// Class Name: Cflagkin_DataDictionary
+// Revision  : 28
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Cflagkin
+Open Ctypkin
+Open Sysrecc
+Open Syscurxr
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Cflagkin_Flag
+
+Object Cflagkin_Flag  is a CodeValidationTable
+    Set Type_Value        To "CFLAGS"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Cflagkin_Flag
+//DDB-ValidationEnd
+
+Class Cflagkin_DataDictionary  is a DataDictionary
+
+    Procedure Operation_Not_Allowed Integer iError_Num
+        String lsError_Message
+        Case Begin
+            Case (iError_Num = 7001)
+                Move "DDC 008:ƒœ¤ œ§ «¨â§¦¤«˜  Flags ˜¤à «à¤ 2 ¯ž­åà¤" to lsError_Message
+            Case Break
+            Case (iError_Num = 7002)
+                Move "DDC 008:ƒœ¤ œ§ «¨â§¦¤«˜  Flags £ž›œ¤ ¡á" to lsError_Message
+            Case Break
+            Case Else
+                Forward Send Operation_Not_Allowed iError_Num
+        Case End
+        Error iError_Num lsError_Message
+    End_Procedure // operation_not_allowed
+
+    Function Validate_Save  Returns Integer
+        Integer iReturnVal
+        Forward Get Validate_Save  To iReturnVal
+        If (Not(iReturnVal)) Begin
+                 If (Length(Trim(Cflagkin.Cflagkin_Flag))>2)    Move 7001 to iReturnVal
+            Else If (Cflagkin.Flag_Numeric=0)                   Move 7002 to iReturnVal
+            If (iReturnVal) Send Operation_Not_Allowed iReturnVal
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+//        Move SysCurXR.Company_Code  to Cflagkin.Company_Code
+//        Move SysCurXR.Branch_Code   to Cflagkin.Branch_Code
+//        Move SysCurXR.Year_Year     to Cflagkin.Year_Year
+        Move Ctypkin.Ctypkin_Code   to Cflagkin.Ctypkin_Code
+        Move Cflagkin.Cflagkin_Flag to Cflagkin.Flag_Numeric
+    End_Procedure   // Update
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Cflagkin.Cflagkin_Rec0)))))) to Cflagkin.Cflagkin_Recr
+    End_Procedure   // Creating
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Cflagkin.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Ctypkin.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Syscurxr.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Cflagkin_Rec0  To Cflagkin.Cflagkin_Rec0
+
+        // Field-based properties.......................
+
+        // Cflagkin.Company_Code
+
+        // Cflagkin.Branch_Code
+
+        // Cflagkin.Year_Year
+
+        // Cflagkin.Ctypkin_Code
+
+        // Cflagkin.Cflagkin_Flag
+        Set Field_Value_Table      Field Cflagkin.Cflagkin_Flag To (Cflagkin_Flag(Self))
+
+        // Cflagkin.Ctypkin_Recr
+
+        // Cflagkin.Cflagkin_Descr
+
+        // Cflagkin.Cflagkin_Rec0
+        Set Field_Options          Field Cflagkin.Cflagkin_Rec0 To DD_AUTOFIND   
+
+        // Cflagkin.Cflagkin_Recr
+
+        // Cflagkin.Flag_Numeric
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Cflagkin_DataDictionary
+//DDB-FileEnd

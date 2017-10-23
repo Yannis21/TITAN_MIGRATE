@@ -1,0 +1,52 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: TPARTICL (# 70)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:TPARTICL
+  USER DISPLAY NAME         : TPArticl
+  DATAFLEX FILE NAME        : TPARTICL
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 63        ( USED: 63 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  PARTL_RECR       ASC     12     1  1   PARTICLE.FIELD_43 (14,43)
+  2  BAXIOKAT_CODE    NUM    6.0    13  1   BAXIOKAT.FIELD_1 (34,1)
+  3  PCT_EPI_SYNOLOU  NUM    4.2    16  1   
+  4  PARALABH_MERES   NUM    4.0    19      
+  5  XARHTOS_MERES    NUM    4.0    21      
+  6  PLHROTEO_MERES   NUM    4.0    23      
+  7  TPARTICL_REC0    NUM   14.0    25  1   
+  8  TPARTICL_RECR    ASC     12    32  3   
+  9  MERA_TOU_MHNA    ASC      2    44      
+ 10  POSO             NUM   14.8    46      
+ 11  PARALABH         DAT      3    57      
+ 12  EXOFLHSH         DAT      3    60      
+ 13  ISOK             ASC      1    63      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    PARTL_RECR      NO  NO       25     3       4     ON-LINE
+       BAXIOKAT_CODE   NO  NO 
+       PCT_EPI_SYNOLOU NO  NO 
+       TPARTICL_REC0   NO  NO 
+
+  2    BAXIOKAT_CODE   NO  NO       25     3       4     ON-LINE
+       PARTL_RECR      NO  NO 
+       PCT_EPI_SYNOLOU NO  NO 
+       TPARTICL_REC0   NO  NO 
+
+  3    TPARTICL_RECR   NO  NO       12     3       1     ON-LINE
+

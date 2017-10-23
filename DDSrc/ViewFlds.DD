@@ -1,0 +1,105 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : VIEWFLDS.DD
+// Class Name: Viewflds_DataDictionary
+// Revision  : 37
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Viewflds
+Open Grpoth
+Open Grpoth0
+Open Oth
+Open Sysrec
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList viewFlds  viewFlds.SL
+Register_Object viewFlds
+//DDB-SelectionEnd
+
+Class Viewflds_DataDictionary  is a DataDictionary_Sec
+
+    // Update:
+
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move Oth.View_Label to ViewFlds.View_Label
+    End_Procedure   // Update
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Viewflds.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Grpoth.File_Number
+        Send Add_Client_File  Grpoth0.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Oth.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrec.File_Number  DD_LOCK_ON_NEW_SAVE
+
+        Define_Auto_Increment  Sysrec.Viewflds_Rec0  To Viewflds.Viewflds_Rec0
+
+        // Field-based properties.......................
+
+        // Viewflds.View_Name
+        Set Field_Prompt_Object    Field Viewflds.View_Name To (viewFlds(Self))
+
+        // Viewflds.Scr_Field_Name
+        Set Field_Options          Field Viewflds.Scr_Field_Name To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Viewflds.Scr_Field_Name To (viewFlds(Self))
+
+        // Viewflds.Usr_Field_Name
+        Set Field_Prompt_Object    Field Viewflds.Usr_Field_Name To (viewFlds(Self))
+
+        // Viewflds.Viewflds_Rec0
+        Set Field_Options          Field Viewflds.Viewflds_Rec0 To DD_AUTOFIND    DD_NOENTER    
+        Set Field_Prompt_Object    Field Viewflds.Viewflds_Rec0 To (viewFlds(Self))
+
+        // Viewflds.View_Label
+
+        // Viewflds.Usr_Scr_Fld
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Viewflds_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use viewFlds.SL      // viewFlds
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

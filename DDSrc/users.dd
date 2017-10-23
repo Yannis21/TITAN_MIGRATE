@@ -1,0 +1,140 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : USERS.DD
+// Class Name: Users_DataDictionary
+// Revision  : 49
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Users
+Open Grpoth
+Open Grparx
+Open Grpviews
+Open Grptabv
+Open Grpact
+Open Usersh
+Open Usergrps
+Open Departm
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList slUserGr  slusergr.sl
+//DDB/ ExternalSelectionList slUsers  slusers.sl
+Register_Object slUserGr
+Register_Object slUsers
+//DDB-SelectionEnd
+
+Class Users_DataDictionary  is a DataDictionary_sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Users.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Grpoth.File_Number
+        Send Add_Client_File  Grparx.File_Number
+        Send Add_Client_File  Grpviews.File_Number
+        Send Add_Client_File  Grptabv.File_Number
+        Send Add_Client_File  Grpact.File_Number
+        Send Add_Client_File  Usersh.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Usergrps.File_Number
+        Send Add_Server_File  Departm.File_Number
+
+        // Field-based properties.......................
+
+        // Users.Grp_Id            
+        Set Field_Prompt_Object    Field Users.Grp_Id             To (slUserGr(Self))
+
+        // Users.User_Id           
+        Set Field_Options          Field Users.User_Id            To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Users.User_Id            To (slUsers(Self))
+        Set Key_Field_State        Field Users.User_Id            To TRUE
+
+        // Users.Login_Id          
+        Set Field_Options          Field Users.Login_Id           To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Users.Login_Id           To (slUsers(Self))
+        Set Key_Field_State        Field Users.Login_Id           To TRUE
+
+        // Users.Name              
+        Set Field_Prompt_Object    Field Users.Name               To (slUsers(Self))
+
+        // Users.Password          
+
+        // Users.Allow_Read        
+
+        // Users.Allow_Change      
+
+        // Users.Allow_Create      
+
+        // Users.Allow_Delete      
+
+        // Users.Admin_Rights      
+
+        // Users.Allow_Copy        
+
+        // Users.Departm_Code      
+
+        // Users.No_Allagh_Timhs   
+
+        // Users.Last_Login_Date   
+
+        // Users.Last_Login_Time   
+
+        // Users.Last_Password     
+
+        // Users.Last_Change       
+
+        // Users.Next_Change       
+
+        // Users.Anenergos         
+
+        // Users.Block_Until_D     
+
+        // Users.Block_Until_T     
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Users.Allow_Read         To "1"
+        Set Field_Changed_Value   Field Users.Allow_Change       To "1"
+        Set Field_Changed_Value   Field Users.Allow_Create       To "1"
+        Set Field_Changed_Value   Field Users.Allow_Delete       To "1"
+        Set Field_Changed_Value   Field Users.Allow_Copy         To "1"
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Users_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use slusergr.sl      // slUserGr
+Use slusers.sl       // slUsers
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

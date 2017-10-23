@@ -1,0 +1,75 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GRPACT.DD
+// Class Name: Grpact_DataDictionary
+// Revision  : 3
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Grpact
+Open Users
+Open Oth
+
+//DDB-HeaderEnd
+
+Class Grpact_DataDictionary  is a DataDictionary_sec
+
+    Procedure Update
+        Forward Send Update
+        Move Oth.View_ID    to GrpAct.View_ID
+        Move Oth.View_Label to GrpAct.View_Label
+    End_Procedure   // Update
+ 
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Grpact.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Users.File_Number
+        Send Add_Server_File  Oth.File_Number
+
+        // Field-based properties.......................
+
+        // Grpact.User_Id
+
+        // Grpact.View_Name
+
+        // Grpact.View_Id
+
+        // Grpact.View_Label
+
+        // Grpact.Allow
+        Set Field_Checkbox_Values  Field Grpact.Allow To "1"  "0"
+        Set Field_Class_Name       Field Grpact.Allow To "dbCheckBoxsub"
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Grpact.Allow To 0
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Grpact_DataDictionary
+//DDB-FileEnd

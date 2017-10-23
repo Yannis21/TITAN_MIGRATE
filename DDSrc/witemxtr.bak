@@ -1,0 +1,204 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : WITEMXTR.DD
+// Class Name: Witemxtr_DataDictionary
+// Revision  : 41
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Witemxtr
+Open Witemxtd
+Open Sysrecw
+Open Branch
+Open Year
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl182  sl182.SL
+//DDB/ ExternalSelectionList sl029a  sl029a.sl
+Register_Object sl182
+Register_Object sl029a
+//DDB-SelectionEnd
+
+Class Witemxtr_DataDictionary  is a DataDictionary_Sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Property Integer piMustNOTConstrain Public 0
+    End_Procedure //construct_object
+
+    Procedure OnConstrain
+        Forward Send OnConstrain
+        Constrain Witemxtr.Company_Code  eq SysCurXR.Company_Code
+        Constrain Witemxtr.Branch_Code   eq SysCurXR.Branch_Code
+        Constrain Witemxtr.Year_Year     eq SysCurXR.Year_Year
+    End_Procedure
+
+    // Update:
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move SysCurXR.Company_Code  to Witemxtr.Company_Code
+        Move SysCurXR.Branch_Code   to Witemxtr.Branch_Code
+        Move SysCurXR.Year_Year     to Witemxtr.Year_Year
+    End_Procedure   // Update
+
+    Procedure Creating
+        Forward Send Creating
+        integer idecs iYearRecnum iBranchRecnum
+        string srecr sentolh sAxia
+        if ((witemxtr.hmnia < syscurxr.year_xrhshfrom) or (witemxtr.hmnia > syscurxr.year_xrhshto));
+            error 3009 '†£œ¨¦£ž¤å˜ œ¡«æª ¦¨åà¤ ®¨ã©žª'
+
+        Move Year.Recnum    to iYearRecnum
+        Move Branch.Recnum  to iBranchRecnum
+
+        Clear Year
+        move syscurxr.company_code  to Year.company_code
+        move syscurxr.branch_code   to Year.branch_code
+        move syscurxr.Year_Year     to Year.Year_Year
+        Find Eq Year By Index.1
+        If (Not(Found)) Error 3001 'Witemxtr Creating - Year not found'
+        Move (Year.Year_NumBtypkin + 1) to Witemxtr.Axia
+        move (Year.Year_NumBtypkin + 1) to Year.Year_NumBtypkin
+        saverecord Year
+
+        clear branch
+        move syscurxr.company_code to branch.company_code
+        move syscurxr.branch_code  to branch.branch_code
+        find eq branch by index.1
+        If (Not(Found)) Error 3002 'Witemxtr Creating - Branch not found'
+        move (branch.entolh + 1) to branch.entolh
+        saverecord branch
+        move branch.entolh to sentolh
+        move 5 to idecs
+        get fsgCode_n_Zeroes sentolh idecs to srecr
+        Get fsgCode_n_Zeroes (Integer(Witemxtr.Axia)) idecs to sAxia
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(srecr)))))) to Witemxtr.Recr
+        Move (append('','„¤›¦› ˜¡.œ ›é¤ €¨.§˜¨˜©«. ' +(Trim(SysCurXR.Branch_Site)+Trim(sAxia)))) to witemxtr.descr
+        move saxia to witemxtr.code
+
+        If (iYearRecnum) Begin
+            Clear Year
+            Move iYearRecnum to Year.Recnum
+            Find Eq Year.Recnum
+        End
+
+        If (iBranchRecnum) Begin
+            Clear Branch
+            Move iBranchRecnum to Branch.Recnum
+            Find Eq Branch.Recnum
+        End
+
+    End_Procedure   // Creating
+
+    Procedure Shmera integer iField  Date dDate
+        Local Integer Changed
+        Get Field_Changed_State iField to Changed
+        If (Changed=0 AND dDate =0) Begin
+            SysDate4 dDate
+            Set Field_Default_Value iField to dDate
+        End
+    End_Procedure   // Shmera
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Witemxtr.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Witemxtd.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecw.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Branch.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Year.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecw.Witemxtr_Rec0  To Witemxtr.Rec0
+
+        // Field-based properties.......................
+
+        // Witemxtr.Company_Code   
+
+        // Witemxtr.Branch_Code    
+
+        // Witemxtr.Year_Year      
+
+        // Witemxtr.Code           
+
+        // Witemxtr.Recr           
+
+        // Witemxtr.Rec0           
+
+        // Witemxtr.Hmnia          
+        Set Field_Entry_msg        Field Witemxtr.Hmnia           To Shmera
+        Set Field_Mask_Type        Field Witemxtr.Hmnia           To MASK_DATE_WINDOW
+        Set Field_Prompt_Object    Field Witemxtr.Hmnia           To (sl182(Self))
+
+        // Witemxtr.Descr          
+
+        // Witemxtr.Wax_From       
+
+        // Witemxtr.Wax_To         
+
+        // Witemxtr.Ekleise        
+
+        // Witemxtr.Qty            
+
+        // Witemxtr.Fpa            
+
+        // Witemxtr.Axia           
+
+        // Witemxtr.Total          
+
+        // Witemxtr.Wtypkin_From   
+        Set Field_Prompt_Object    Field Witemxtr.Wtypkin_From    To (sl029a(Self))
+
+        // Witemxtr.Wtypkin_To     
+        Set Field_Prompt_Object    Field Witemxtr.Wtypkin_To      To (sl029a(Self))
+
+        // Witemxtr.From_No        
+
+        // Witemxtr.To_No          
+
+        // Witemxtr.Particle_Recr  
+
+        // Witemxtr.Sap_Hmnia      
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Witemxtr.From_No         To "1"
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Witemxtr_DataDictionary
+//DDB-Selection-pkg-Start
+Use sl182.SL         // sl182
+Use sl029a.sl        // sl029a
+//DDB-Selection-pkg-End
+//DDB-FileEnd

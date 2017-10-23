@@ -1,0 +1,153 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : CTYPKIN.DD
+// Class Name: Ctypkin_DataDictionary
+// Revision  : 70
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Ctypkin
+Open Cmoves
+Open Cflagkin
+Open Ptypparl
+Open Ptyppar
+Open Hmctyp
+Open Cmovesa
+Open Sysrecc
+Open Syscurxr
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Ctypkin_Ctypkin_Module_VT
+
+Object Ctypkin_Ctypkin_Module_VT  is a CodeValidationTable
+    Set Type_Value        To "MODULE"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Ctypkin_Ctypkin_Module_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl007  sl007.SL
+Register_Object sl007
+//DDB-SelectionEnd
+
+Class Ctypkin_DataDictionary  is a DataDictionary
+         
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Property Integer piMustNOTConstrain Public 0
+    End_Procedure
+
+    Procedure Save_Main_File
+        If (Operation_Origin<>Self) Begin
+            If Ctypkin.Recnum Eq 0 Procedure_Return
+        End
+        Forward Send Save_Main_File
+    End_Procedure
+
+     Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Ctypkin.Ctypkin_Rec0)))))) to Ctypkin.Ctypkin_Recr
+    End_Procedure   // Creating
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Ctypkin.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Cmoves.File_Number
+        Send Add_Client_File  Cflagkin.File_Number
+        Send Add_Client_File  Ptypparl.File_Number
+        Send Add_Client_File  Ptyppar.File_Number
+        Send Add_Client_File  Hmctyp.File_Number
+        Send Add_Client_File  Cmovesa.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Syscurxr.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Ctypkin_Rec0  To Ctypkin.Ctypkin_Rec0
+
+        // Field-based properties.......................
+
+        // Ctypkin.Company_Code
+
+        // Ctypkin.Branch_Code
+
+        // Ctypkin.Year_Year
+
+        // Ctypkin.Ctypkin_Code
+        Set Field_Options          Field Ctypkin.Ctypkin_Code To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Ctypkin.Ctypkin_Code To (sl007(Self))
+        Set Key_Field_State        Field Ctypkin.Ctypkin_Code To TRUE
+
+        // Ctypkin.Ctypkin_Rec0
+
+        // Ctypkin.Ctypkin_Recr
+
+        // Ctypkin.Year_Recr
+
+        // Ctypkin.Ctypkin_Descr
+        Set Field_Prompt_Object    Field Ctypkin.Ctypkin_Descr To (sl007(Self))
+
+        // Ctypkin.Ctypkin_Anti
+
+        // Ctypkin.Ctypkin_Flags
+
+        // Ctypkin.Ctypkin_Module
+        Set Field_Value_Table      Field Ctypkin.Ctypkin_Module To (Ctypkin_Ctypkin_Module_VT(Self))
+
+        // Ctypkin.Open_Item
+
+        // Ctypkin.Check_Overhead
+
+        // Ctypkin.Max_Days_Sx_Par
+
+        // Ctypkin.Singular
+
+        // Ctypkin.Sub
+
+        // Ctypkin.Subreport
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Ctypkin_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl007.SL         // sl007
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

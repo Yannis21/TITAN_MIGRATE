@@ -1,0 +1,39 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: PAGKIN (# 81)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : PAGKIN
+  USER DISPLAY NAME         : Pagkin
+  DATAFLEX FILE NAME        : PAGKIN
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 73        ( USED: 72 )
+  MAX NUMBER OF RECORDS     : 1000000   ( USED: 4 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  PAGKIN_CODE      ASC     10     1  1   
+  2  PAGKIN_REC0      NUM   14.0    11  3   
+  3  PAGKIN_DESCR     ASC     40    18  3   
+  4  PAGKIN_RECR      ASC     12    58  2   
+  5  GTYPKIN_CODE     NUM    6.0    70      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    PAGKIN_CODE     NO  NO       10     4       1     ON-LINE
+
+  2    PAGKIN_RECR     NO  NO       12     4       1     ON-LINE
+
+  3    PAGKIN_DESCR    NO  NO       47     7       2     ON-LINE
+       PAGKIN_REC0     NO  NO 
+

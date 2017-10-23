@@ -1,0 +1,80 @@
+-----------------------------------------------------------------------------
+  DATE: 27/12/105      TIME: 14:47                                  PAGE:  1
+  FILE DEFINITION FOR FILE: PTYPPAR (# 12)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:PTYPPAR
+  USER DISPLAY NAME         : Ptyppar
+  DATAFLEX FILE NAME        : PTYPPAR
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 344       ( USED: 344 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 165 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC      3     1  1   
+  2  BRANCH_CODE      ASC      3     4  1   
+  3  YEAR_YEAR        NUM    4.0     7      
+  4  CTYPKIN_CODE     ASC      3     9  5   
+  5  WTYPKIN_CODE     ASC      3    12  6   
+  6  YEAR_RECR        ASC      7    15      
+  7  CTYPKIN_RECR     ASC     12    22      CTYPKIN.FIELD_6 (7,6)
+  8  WTYPKIN_RECR     ASC     12    34      WTYPKIN.FIELD_6 (29,6)
+  9  PTYPPAR_CODE     ASC      3    46  4   
+ 10  PTYPPAR_REC0     NUM   14.0    49  3   
+ 11  PTYPPAR_DESCR    ASC     60    56  3   
+ 12  PTYPPAR_RECR     ASC     12   116  2   
+ 13  PTYPPAR_IS_WHAT  ASC      1   128      
+ 14  PTYPPAR_MODULE   ASC      2   129      
+ 15  PTYPPAR_ABREV    ASC     10   131      
+ 16  FTIAXNEI_TPAY    ASC      1   141      
+ 17  TI_TYPONEI_PMS   ASC      1   142      
+ 18  EINAI_PAROXH_YP  NUM    2.0   143      
+ 19  GTYPKIN_CODE     NUM    6.0   144      
+ 20  SYSXET_PTYPPAR   ASC      3   147      
+ 21  SYSX_PTYP_RECR   ASC     12   150      
+ 22  CHECK_POSA_PLAF  ASC      1   162      
+ 23  SINGULAR         ASC     20   163      
+ 24  SUB              ASC     20   183      
+ 25  CONSTRAIN        ASC      1   203      
+ 26  LABEL            ASC     60   204      
+ 27  LABEL1           ASC     60   264      
+ 28  SAP              ASC     20   324      
+ 29  IS_XONDR         ASC      1   344      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY_CODE    NO  NO       9      3       3     ON-LINE
+       BRANCH_CODE     NO  NO 
+       PTYPPAR_CODE    NO  NO 
+
+  2    PTYPPAR_RECR    NO  NO       12     3       1     ON-LINE
+
+  3    PTYPPAR_DESCR   NO  NO       67     3       2     ON-LINE
+       PTYPPAR_REC0    NO  NO 
+
+  4    PTYPPAR_CODE    NO  NO       15     3       2     ON-LINE
+       PTYPPAR_RECR    NO  NO 
+
+  5    CTYPKIN_CODE    NO  NO       15     3       2     ON-LINE
+       PTYPPAR_RECR    NO  NO 
+
+  6    WTYPKIN_CODE    NO  NO       15     3       2     ON-LINE
+       PTYPPAR_RECR    NO  NO 
+
+  7    COMPANY_CODE    NO  NO       15     3       5     ON-LINE
+       BRANCH_CODE     NO  NO 
+       CTYPKIN_CODE    NO  NO 
+       WTYPKIN_CODE    NO  NO 
+       PTYPPAR_CODE    NO  NO 
+

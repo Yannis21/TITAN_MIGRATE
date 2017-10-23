@@ -1,0 +1,452 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : CMOVESA.DD
+// Class Name: Cmovesa_DataDictionary
+// Revision  : 58
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Cmovesa
+Open Copen
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl006a1  sl006a1.SL
+Register_Object sl006a1
+//DDB-SelectionEnd
+//open master file
+Open Cmoves
+
+//define alias-master condition
+Set_Attribute DF_FILE_ALIAS of Cmoves.File_Number  to DF_FILE_IS_MASTER
+Set_Attribute DF_FILE_ALIAS of Cmovesa.File_Number to DF_FILE_IS_ALIAS
+
+Set_Relate Cmovesa.Ctypkin_Recr     to |FN0,0
+Set_Relate Cmovesa.Client_Recr      to |FN0,0
+
+Class Cmovesa_DataDictionary  is a DataDictionary_Sec
+
+//    Procedure Do_Compute_Open_Itemsa
+//        Case Begin
+//                Case (Cmovesa.Cmoves_X0 > 0) //˜«æ­ ¦ ®¨œà©« ¡æ record
+//                    Move "+"                                              to Cmovesa.Cmoves_Topen
+//                    Move (Cmovesa.Cmoves_X0 - Cmovesa.Cmoves_Open_Sx0)    to Cmovesa.Cmoves_Open_Yx0
+//                    Move 0                                                to Cmovesa.Cmoves_Open_Yp0
+//                Case Break
+
+//                Case (Cmovesa.Cmoves_X0 < 0) //¯œ¬«¦- ®¨œà©« ¡æ record
+//                    Move "-"                                                 to Cmovesa.Cmoves_Topen
+//                    Move ((Abs(Cmovesa.Cmoves_X0))- Cmovesa.Cmoves_Open_Sp0) to Cmovesa.Cmoves_Open_Yp0
+//                    Move 0                                                   to Cmovesa.Cmoves_Open_Yx0
+//                Case Break
+
+//                Case (Cmovesa.Cmoves_P0 > 0) //˜«æ­ ¦ § ©«à« ¡æ record
+//                    Move "-"                                              to Cmovesa.Cmoves_Topen
+//                    Move (Cmovesa.Cmoves_P0 - Cmovesa.Cmoves_Open_Sp0)    to Cmovesa.Cmoves_Open_Yp0
+//                    Move 0                                                to Cmovesa.Cmoves_Open_Yx0
+//                Case Break
+
+//                Case (Cmovesa.Cmoves_P0 < 0) //¯œç«¦- § ©«à« ¡æ record
+//                    Move "+"                                                 to Cmovesa.Cmoves_Topen
+//                    Move ((Abs(Cmovesa.Cmoves_P0))-Cmovesa.Cmoves_Open_Sx0)  to Cmovesa.Cmoves_Open_Yx0
+//                    Move 0                                                   to Cmovesa.Cmoves_Open_Yp0
+//                Case Break
+//        Case End
+//    End_Procedure //do_compute_open_itemsa
+
+
+      //œ¢âš®œ  «˜ 13 §œ›å˜ open item
+      //¡˜¢œå«˜  ˜§æ validate save
+      Function  fi_Validate_Open_Itemsa Returns Integer
+
+                 //1101+1102+1103+1104:â¢œš®¦  £ã ˜¨¤ž« ¡é¤ ¬§¦¢¦å§à¤ §¨¦ª ©¬©®â« ©ž ¡˜  ©¬©®œ« ©Ÿâ¤«à¤ §¦©é¤
+                           If (Not(Cmovesa.Cmoves_Open_Yx0 >= 0                       )) Function_Return 1101
+                           If (Not(Cmovesa.Cmoves_Open_Yp0 >= 0                       )) Function_Return 1102
+                           If (Not(Cmovesa.Cmoves_Open_Sx0 >= 0                       )) Function_Return 1103
+                           If (Not(Cmovesa.Cmoves_Open_Sp0 >= 0                       )) Function_Return 1104
+
+                 Case Begin
+                      //1105+1106+1107+1108:â¢œš®¦  š ˜ ˜«æ­ ¦ ®¨œà©« ¡æ record
+                      Case (Cmovesa.Cmoves_X0 > 0)
+                           If (Not(Cmovesa.Cmoves_Open_Yx0 <=      Cmovesa.Cmoves_X0  )) Function_Return 1105
+                           If (Not(Cmovesa.Cmoves_Open_Sx0 <=      Cmovesa.Cmoves_X0  )) Function_Return 1106
+                           If (Not(Cmovesa.Cmoves_Open_Yp0  = 0                       )) Function_Return 1107
+                           If (Not(Cmovesa.Cmoves_Open_Sp0  = 0                       )) Function_Return 1108
+                      Case Break
+                      //1109+1110+1111+1112:â¢œš®¦  š ˜ ¯œ¬«¦- ®¨œà©« ¡æ record
+                      Case (Cmovesa.Cmoves_X0 < 0)
+                           If (Not(Cmovesa.Cmoves_Open_Yx0  = 0                       )) Function_Return 1109
+                           If (Not(Cmovesa.Cmoves_Open_Sx0  = 0                       )) Function_Return 1110
+                           If (Not(Cmovesa.Cmoves_Open_Yp0 <= (Abs(Cmovesa.Cmoves_X0)))) Function_Return 1111
+                           If (Not(Cmovesa.Cmoves_Open_Sp0 <= (Abs(Cmovesa.Cmoves_X0)))) Function_Return 1112
+                      Case Break
+                      //1113+1114+1115+1116:â¢œš®¦  š ˜ ˜«æ­ ¦ § ©«à« ¡æ record
+                      Case (Cmovesa.Cmoves_P0 > 0)
+                           If (Not(Cmovesa.Cmoves_Open_Yx0  = 0                       )) Function_Return 1113
+                           If (Not(Cmovesa.Cmoves_Open_Sx0  = 0                       )) Function_Return 1114
+                           If (Not(Cmovesa.Cmoves_Open_Yp0 <=      Cmovesa.Cmoves_P0  )) Function_Return 1115
+                           If (Not(Cmovesa.Cmoves_Open_Sp0 <=      Cmovesa.Cmoves_P0  )) Function_Return 1116
+                      Case Break
+                      //1117+1118+1119+1120:â¢œš®¦  š ˜ ¯œç«¦- ®¨œà©« ¡æ record
+                      Case (Cmovesa.Cmoves_P0 < 0)
+                           If (Not(Cmovesa.Cmoves_Open_Yx0 <= (Abs(Cmovesa.Cmoves_P0)))) Function_Return 1117
+                           If (Not(Cmovesa.Cmoves_Open_Sx0 <= (Abs(Cmovesa.Cmoves_P0)))) Function_Return 1118
+                           If (Not(Cmovesa.Cmoves_Open_Yp0  = 0                       )) Function_Return 1119
+                           If (Not(Cmovesa.Cmoves_Open_Sp0  = 0                       )) Function_Return 1120
+                      Case Break
+                 Case End
+
+                 Function_Return 0 //æ¢˜ ok
+      End_Function //fi_validate_open_itemsa
+
+
+    Procedure Update 
+        
+        Forward Send Update
+                        
+        If (Cmovesa.Cmoves_M_Code='') Move Cmovesa.Module_From to Cmovesa.Cmoves_M_Code
+//        Send Do_Compute_Open_Itemsa
+
+        If (Ctypkin.Open_Item='1') Move (CmovesA.Axia_Pros_Sysx-CmovesA.Axia_Sysxet) to CmovesA.Axia_Ypol_Sysx
+        Else Begin
+            Move 0 to CmovesA.Axia_Pros_Sysx
+            Move 0 to CmovesA.Axia_Sysxet 
+            Move 0 to CmovesA.Axia_Ypol_Sysx
+        End
+
+        // js 23/01/2002
+        // Enhmerosh Pediou Flag_Ypol to opoio antiprosopeyei
+        // to an h eggrafh exei diathesimo ypoloipo pros sysxetish
+        Move (CmovesA.Axia_Ypol_Sysx<>0) to CmovesA.Flag_Ypol
+
+        // js 23/01/2002
+        // Enhmerosh Pediou Flag_Open to opoio antiprosopeyei
+        // an einai xreosh=1, pistosh=2, arnhtikh xreosh=2 arnhtikh Pistosh=1
+        // gia na emfanizei ta antistrofa sto copen
+        If (Ctypkin.Open_Item='1') Begin
+            If ((CmovesA.Cmoves_X0<>0) And ((CmovesA.Cmoves_P0=0))) Begin
+                Move 1                          to CmovesA.Flag_Copen
+                If (CmovesA.Cmoves_X0<0) Move 2 to CmovesA.Flag_Copen
+            End
+            Else If ((CmovesA.Cmoves_P0<>0) And ((CmovesA.Cmoves_X0=0))) Begin
+                Move 2                          to CmovesA.Flag_Copen
+                If (CmovesA.Cmoves_P0<0) Move 1 to CmovesA.Flag_Copen
+            End
+            Else Move 0 to CmovesA.Flag_Copen
+        End 
+        Else Move 0 to CmovesA.Flag_Copen
+    End_Procedure //update
+
+
+    Procedure Operation_Not_Allowed Integer iError_Num
+        String lsError_Message
+        Case Begin
+            //˜§æ validate save
+            Case (iError_Num = 88888)
+                Clear Codemast
+                Move "MODULE" to Codemast.Type
+                Move Cmovesa.Module_From to Codemast.Code
+                Find Eq Codemast by Index.1 //type+code
+                Move ("DDC 006:A›ç¤˜«ž ž œšš¨˜­ž!\n\n(† ¡å¤ž©ž ˜¢¢áœ  £æ¤¦¤ ˜§æ "+;
+                (Trim(Codemast.Description))+" )") to lsError_Message
+            Case Break
+
+            Case (iError_Num = 88850)
+                Move "DDC 006:A›ç¤˜«ž ž œšš¨˜­ž!\n\n’¦ ¡ç¡¢à£˜ (Module) «žª œšš¨˜­ãª œå˜¤  ¡œ¤æ" to lsError_Message
+            Case Break
+
+            Case (iError_Num = 88884)
+                Move "DDC 006:A›ç¤˜«ž ž œšš¨˜­ž!\n\n† ¡å¤ž©ž ˜¢¢áœ  £æ¤¦¤ ˜§æ «˜ A¥ æš¨˜­˜" to lsError_Message
+            Case Break
+            Case (iError_Num = 88883)
+                Move "DDC 006:A›ç¤˜«ž ž œšš¨˜­ž!\n\n† ¡å¤ž©ž ˜¢¢áœ  £æ¤¦¤ ˜§æ « ª à¢ã©œ ª" to lsError_Message
+            Case Break
+            Case (iError_Num = 88882)
+                Move "DDC 006:A›ç¤˜«ž ž œšš¨˜­ž!\n\n† ¡å¤ž©ž ˜¢¢áœ  £æ¤¦¤ ˜§æ « ª Aš¦¨âª" to lsError_Message
+            Case Break
+
+            //˜§æ validate delete
+            Case (iError_Num = 88889)
+                Clear Codemast
+                Move "MODULE" to Codemast.Type
+                Move Cmovesa.Module_From to Codemast.Code
+                Find Eq Codemast by Index.1 //type+code
+                Move ("DDC 006:A›ç¤˜«ž ž › ˜š¨˜­ã!\n\n(† ¡å¤ž©ž › ˜š¨á­œ«˜  £æ¤¦¤ ˜§æ "+;
+                (Trim(Codemast.Description))+" )") to lsError_Message
+            Case Break
+
+            Case (iError_Num = 88887)
+                Move "DDC 006:A›ç¤˜«ž ž › ˜š¨˜­ã!\n\n† ¡å¤ž©ž › ˜š¨á­œ«˜  £æ¤¦¤ ˜§æ «˜ A¥ æš¨˜­˜" to lsError_Message
+            Case Break
+            Case (iError_Num = 88886)
+                Move "DDC 006:A›ç¤˜«ž ž › ˜š¨˜­ã!\n\n† ¡å¤ž©ž › ˜š¨á­œ«˜  £æ¤¦¤ ˜§æ « ª à¢ã©œ ª" to lsError_Message
+            Case Break
+            Case (iError_Num = 88885)
+                Move "DDC 006:A›ç¤˜«ž ž › ˜š¨˜­ã!\n\n† ¡å¤ž©ž › ˜š¨á­œ«˜  £æ¤¦¤ ˜§æ « ª Aš¦¨âª" to lsError_Message
+            Case Break
+
+            //â¢œš®¦  open items
+            Case (iError_Num = 10101)
+                Move ("DDC 006:A¡˜«á¢¢ž¢ž „šš¨˜­ã.\n\n"+;
+                "’¦ ©¬©®œ« ©£â¤¦ §¦©æ œå¤˜  £œš˜¢ç«œ¨¦\n˜§¦ «¦ ˜¨® ¡á › ˜Ÿâ© £¦ §¨¦ª ©¬©®â« ©ž");
+                to lsError_Message
+            Case Break
+
+            Case Else
+                Forward Send Operation_Not_Allowed iError_Num
+        Case End
+
+        Error iError_Num lsError_Message
+    End_Procedure // operation_not_allowed
+
+
+    Function Validate_Save Returns Integer
+         Integer iReturnVal liOpen_Itemsa
+         Forward Get Validate_Save to iReturnVal
+         If (Not(iReturnVal)) Begin
+            If (CmovesA.Axia_Ypol_Sysx<0) Move 10101 to ireturnVal
+            If (iReturnVal) Send Operation_Not_Allowed iReturnVal
+         End //«â¢¦ª ¡é› ¡˜ validation
+         Function_Return iReturnVal
+    End_Function //validate_save
+
+
+    Function Validate_Delete  Returns Integer
+             Send Operation_Not_Allowed 2001 //¢áŸ¦ª «¦¬ ¡é› ¡˜ !!!
+    End_Function //validate_delete
+
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Cmovesa.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Copen.File_Number
+
+        // Field-based properties.......................
+
+        // Cmovesa.Company_Code
+
+        // Cmovesa.Branch_Code
+
+        // Cmovesa.Year_Year
+
+        // Cmovesa.Custprom_Code
+
+        // Cmovesa.Client_Id
+
+        // Cmovesa.Ctypkin_Code
+
+        // Cmovesa.Cmoves_Recr
+        Set Field_Prompt_Object    Field Cmovesa.Cmoves_Recr To (sl006a1(Self))
+
+        // Cmovesa.Cmoves_Rec0
+
+        // Cmovesa.Cmoves_Hmnia
+        Set Field_Prompt_Object    Field Cmovesa.Cmoves_Hmnia To (sl006a1(Self))
+
+        // Cmovesa.Ctypkin_Recr
+
+        // Cmovesa.Cmoves_Par
+
+        // Cmovesa.Partl_Recr
+
+        // Cmovesa.Cmoves_Axia
+
+        // Cmovesa.Cmoves_X0
+
+        // Cmovesa.Cmoves_P0
+
+        // Cmovesa.Cmoves_X00
+
+        // Cmovesa.Cmoves_P00
+
+        // Cmovesa.Cmoves_X1
+
+        // Cmovesa.Cmoves_P1
+
+        // Cmovesa.Cmoves_X2
+
+        // Cmovesa.Cmoves_P2
+
+        // Cmovesa.Cmoves_Dlixis
+
+        // Cmovesa.Cmoves_A_Code
+
+        // Cmovesa.Cmoves_Status_E
+
+        // Cmovesa.Cmoves_Status_A
+
+        // Cmovesa.Cmoves_S0
+
+        // Cmovesa.Cmoves_Ys0
+
+        // Cmovesa.Cmoves_S1
+
+        // Cmovesa.Cmoves_Ys1
+
+        // Cmovesa.Cmoves_S2
+
+        // Cmovesa.Cmoves_Ys2
+
+        // Cmovesa.Cmoves_Sc_Code2
+
+        // Cmovesa.Cmoves_Open
+
+        // Cmovesa.Cmoves_Aopen
+
+        // Cmovesa.Cmoves_M_Code
+
+        // Cmovesa.Cmoves_Yn_Myf
+
+        // Cmovesa.Cmoves_Myf_Axia
+
+        // Cmovesa.Cmoves_Kk
+
+        // Cmovesa.Cmoves_C_Code2
+
+        // Cmovesa.Cn_Code
+
+        // Cmovesa.Client_Recr
+
+        // Cmovesa.Barticl_Recr
+
+        // Cmovesa.Cmoves_Qty
+
+        // Cmovesa.Cmove_Totambd0
+
+        // Cmovesa.Cmove_Discam0
+
+        // Cmovesa.Cmove_Totamad0
+
+        // Cmovesa.Cmove_Vatam0
+
+        // Cmovesa.Cmove_Extra0
+
+        // Cmovesa.Cmove_Totambd00
+
+        // Cmovesa.Cmove_Discam00
+
+        // Cmovesa.Cmove_Totamad00
+
+        // Cmovesa.Cmove_Vatam00
+
+        // Cmovesa.Cmove_Extra00
+
+        // Cmovesa.Cmove_Totambd1
+
+        // Cmovesa.Cmove_Discam1
+
+        // Cmovesa.Cmove_Totamad1
+
+        // Cmovesa.Cmove_Vatam1
+
+        // Cmovesa.Cmove_Extra1
+
+        // Cmovesa.Module_From
+
+        // Cmovesa.Parast_Abrev
+
+        // Cmovesa.Enhm_Ypol_Pel
+
+        // Cmovesa.Enhm_Hmnies_Pel
+
+        // Cmovesa.Sls_Id
+
+        // Cmovesa.Presp_Id
+
+        // Cmovesa.Cnt_Id
+
+        // Cmovesa.Cmoves_Open_Sx0
+
+        // Cmovesa.Cmoves_Open_Sp0
+
+        // Cmovesa.Cmoves_Open_Yx0
+
+        // Cmovesa.Cmoves_Open_Yp0
+
+        // Cmovesa.Cmoves_Open_Sx1
+
+        // Cmovesa.Cmoves_Open_Sp1
+
+        // Cmovesa.Cmoves_Open_Sx2
+
+        // Cmovesa.Cmoves_Open_Sp2
+
+        // Cmovesa.Cmoves_Topen
+
+        // Cmovesa.Cn_Recr
+
+        // Cmovesa.Axia_Pros_Sysx
+
+        // Cmovesa.Axia_Sysxet
+
+        // Cmovesa.Axia_Ypol_Sysx
+
+        // Cmovesa.Axia_Pros_Sys00
+
+        // Cmovesa.Axia_Sysxet00
+
+        // Cmovesa.Axia_Ypol_Sys00
+
+        // Cmovesa.Axia_Pros_Sysr
+
+        // Cmovesa.Axia_Sysxetr
+
+        // Cmovesa.Axia_Ypol_Sysr
+
+        // Cmovesa.Mhxanik_Id
+
+        // Cmovesa.Prn_Theor
+
+        // Cmovesa.Is_Closed
+
+        // Cmovesa.Flag_Copen
+
+        // Cmovesa.Flag_Ypol
+
+        // Cmovesa.Ctypkin_Descr
+
+        // Cmovesa.Client_Name
+
+        // Cmovesa.Enhm_Ofeilh
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Cmovesa_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl006a1.SL       // sl006a1
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

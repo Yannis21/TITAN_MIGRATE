@@ -1,0 +1,160 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : DRIVERS.DD
+// Class Name: Drivers_DataDictionary
+// Revision  : 18
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Drivers
+Open Sysrecc
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Drivers_Driver_Doy_VT
+
+Object Drivers_Driver_Doy_VT  is a CodeValidationTable
+    Set Type_Value        To "DOY"
+    Set Validate_State    To FALSE
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Drivers_Driver_Doy_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl052  sl052.SL
+Register_Object sl052
+//DDB-SelectionEnd
+
+Class Drivers_DataDictionary  is a DataDictionary_Sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move SysCurXR.Company_Code  to drivers.driver_company
+
+        //betolink
+        Move SysCurXR.Beto_Site     to drivers.driver_SiteW
+        Move drivers.drivers_Rec0   to drivers.driver_SN
+        Move drivers.driver_id      to drivers.driver_repmatch
+
+    End_Procedure   // Update
+
+     Procedure Creating
+        Forward Send Creating
+        date ddate
+        sysdate4 ddate
+        // Insert Code Here
+        Get fsgCode_With_Zeroes drivers.drivers_Rec0 Sysfile.Client_Digits SysCurXr.Company_Code SysCurXr.Branch_Code  to drivers.driver_ID
+        move ddate to drivers.driver_hmnia
+    End_Procedure   // Creating
+
+
+
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Drivers.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Drivers_Rec0  To Drivers.Drivers_Rec0
+
+        // Field-based properties.......................
+
+        // Drivers.Driver_Recnum
+
+        // Drivers.Driver_Company
+
+        // Drivers.Driver_Id
+        Set Field_Options          Field Drivers.Driver_Id To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Drivers.Driver_Id To (sl052(Self))
+        Set Key_Field_State        Field Drivers.Driver_Id To TRUE
+
+        // Drivers.Driver_Name
+        Set Field_Prompt_Object    Field Drivers.Driver_Name To (sl052(Self))
+
+        // Drivers.Driver_Doy
+        Set Field_Value_Table      Field Drivers.Driver_Doy To (Drivers_Driver_Doy_VT(Self))
+
+        // Drivers.Driver_Afm
+
+        // Drivers.Driver_Address
+
+        // Drivers.Driver_Zipcode
+
+        // Drivers.Driver_City
+
+        // Drivers.Driver_Area
+
+        // Drivers.Driver_Phone
+
+        // Drivers.Driver_Fax
+
+        // Drivers.Driver_Mobile
+
+        // Drivers.Driver_Aoh
+
+        // Drivers.Driver_Details
+
+        // Drivers.Driver_Sitew
+
+        // Drivers.Driver_Sn
+
+        // Drivers.Driver_Codem
+
+        // Drivers.Driver_Repmatch
+
+        // Drivers.Driver_Hmnia
+        Set Field_Mask_Type        Field Drivers.Driver_Hmnia To MASK_DATE_WINDOW
+
+        // Drivers.Drivers_Rec0
+
+        // Drivers.Driver_Add_No
+
+        // Drivers.Driver_Nomos
+
+        // Drivers.Driver_Xora
+
+        // Drivers.Polh_Recr
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Drivers_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl052.SL         // sl052
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

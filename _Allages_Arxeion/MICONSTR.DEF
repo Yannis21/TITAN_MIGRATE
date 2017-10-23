@@ -1,0 +1,102 @@
+-----------------------------------------------------------------------------
+  DATE: 25/07/2017      TIME: 14:10                                  PAGE:  1
+  FILE DEFINITION FOR FILE: MICONSTR (# 135)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : MICONSTR
+  USER DISPLAY NAME         : MICONSTR
+  DATAFLEX FILE NAME        : MICONSTR
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 1152      ( USED: 1029 )
+  MAX NUMBER OF RECORDS     : 1000000   ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC     10     1  1   
+  2  BRANCH_CODE      ASC     10    11  1   
+  3  YEAR_YEAR        NUM    4.0    21  1   
+  4  CNT_ID           ASC     20    23  5   
+  5  CNT_NAME         ASC     80    43  3   
+  6  CNT_AFM          ASC     20   123      
+  7  CNT_REC0         NUM   14.0   143      
+  8  CNT_RECR         ASC     12   150  2   
+  9  LAST_XREOSH      DAT      6   162      
+ 10  LAST_PISTOSH     DAT      6   165      
+ 11  LAST_ORDER       DAT      6   168      
+ 12  CNT_DOY          ASC      5   171      
+ 13  CNT_ADDRESS      ASC     40   176      
+ 14  CNT_CITY         NUM    8.0   216      
+ 15  CNT_AREA         NUM    8.0   220      
+ 16  CNT_JOB          ASC     50   224      
+ 17  CNT_RESPONS      ASC     80   274      
+ 18  CNT_ZIPCODE      ASC     20   354      
+ 19  CNT_PHONE        ASC     50   374      
+ 20  CNT_FAX          ASC     30   424      
+ 21  CNT_MOBILE       ASC     30   454      
+ 22  CNT_AOH          ASC     50   484      
+ 23  CNT_EMAIL        ASC     80   534      
+ 24  CNT_CLASS        ASC      5   614      
+ 25  CNT_DETAILS      ASC    255   619      
+ 26  CNT_SITEW        ASC     10   874      
+ 27  CNT_CODEM        ASC     20   884      
+ 28  CNT_CATEGFPA     NUM    4.0   904      
+ 29  CNT_FPA          NUM    4.0   906      
+ 30  CNT_PUBLIC       NUM    4.0   908      
+ 31  CNT_SN           NUM   14.0   910      
+ 32  CNT_REPM         ASC     20   917      
+ 33  CNT_ACTIVE       ASC      1   937      
+ 34  CNT_REPORTED     ASC      1   938      
+ 35  CNT_PELPROM      ASC      1   939      
+ 36  CNT_LASTUPDATED  DAT      6   940      
+ 37  CNT_MARKEXP      ASC      1   943      
+ 38  CNT_CATJOB       NUM    4.0   944      
+ 39  XREOSH           NUM   14.8   946      
+ 40  PISTOSH          NUM   14.8   957      
+ 41  YPOLOIPO         NUM   14.8   968      
+ 42  PLAFON           NUM   14.8   979      
+ 43  OVERHEAD         NUM   14.8   990      
+ 44  CNT_ADD_NO       ASC      5  1001      
+ 45  CNT_NOMOS        ASC      5  1006      
+ 46  CNT_XORA         ASC      5  1011      
+ 47  POLH_RECR        ASC      5  1016      
+ 48  EXPORTFLAG       NUM    2.0  1021  6   
+ 49  EXPORTSTATUS     ASC      5  1022  6   
+ 50  EXPORTDATE       DAT      6  1027  6   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY_CODE    NO  NO       42     6       4     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       CNT_ID          NO  NO 
+
+  2    CNT_RECR        NO  NO       12     4       1     ON-LINE
+
+  3    CNT_NAME        NO  NO       92     9       2     ON-LINE
+       CNT_RECR        NO  NO 
+
+  4    CNT_ID          NO  NO       32     6       2     ON-LINE
+       CNT_RECR        NO  NO 
+
+  5    CNT_ID          NO  NO       20     5       1     ON-LINE
+
+  6    EXPORTFLAG      NO  NO       12     4       4     ON-LINE
+       EXPORTSTATUS    NO  NO 
+       EXPORTDATE      NO  NO 
+       Recnum          NO  NO 
+
+  7    EXPORTSTATUS    NO  NO       12     4       4     ON-LINE
+       EXPORTFLAG      NO  NO 
+       EXPORTDATE      NO  NO 
+       Recnum          NO  NO 
+

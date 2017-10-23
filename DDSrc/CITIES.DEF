@@ -1,0 +1,38 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: CITIES (# 198)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:CITIES
+  USER DISPLAY NAME         : CITIES
+  DATAFLEX FILE NAME        : CITIES
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 34        ( USED: 34 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 56 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  CITY_ID          NUM    4.0     1  1   
+  2  CITY_DESCR       ASC     30     3  2   
+  3  TOWN_ID          NUM    4.0    33  3   TOWNS.FIELD_2 (57,2)
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    CITY_ID         NO  NO       2      3       1     ON-LINE
+
+  2    CITY_DESCR      NO  NO       32     3       2     ON-LINE
+       CITY_ID         NO  NO 
+
+  3    TOWN_ID         NO  NO       4      3       2     ON-LINE
+       CITY_ID         NO  NO 
+

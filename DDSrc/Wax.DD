@@ -1,0 +1,148 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : WAX.DD
+// Class Name: Wax_DataDictionary
+// Revision  : 40
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Wax
+Open Wam
+Open Pmoves
+Open Wcmoves
+Open Pmovesl
+Open Wapomast
+Open Sysrecw
+Open Syscurxr
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList Wax  wax.sl
+Register_Object Wax
+//DDB-SelectionEnd
+
+Open Units
+Open Wapokat
+Open WitemKat
+
+Class Wax_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Property Integer piMustNOTConstrain Public 0
+    End_Procedure //construct_object
+
+    Procedure OnConstrain
+        Forward Send OnConstrain
+        If (piMustNOTConstrain(Self)) Begin
+        End
+        Else Begin
+            Constrain Wax.Company_Code  eq SysCurXR.Company_Code
+            Constrain Wax.Branch_Code   eq SysCurXR.Branch_Code
+            Constrain Wax.Year_Year     eq SysCurXR.Year_Year
+        End
+    End_Procedure
+
+
+    // Update:
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move SysCurXR.Company_Code  to Wax.Company_Code
+        Move SysCurXR.Branch_Code   to Wax.Branch_Code
+        Move SysCurXR.Year_Year     to Wax.Year_Year
+        Move SysCurXR.Year_Recr     to Wax.Year_Recr
+        Move Wapokat.Wapokat_Code   to Wax.Wapokat_Code
+        Move Wapomast.Wapomast_Code to Wax.Wapomast_Code
+    End_Procedure   // Update
+
+     Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Wax.Wax_Rec0)))))) to Wax.Wax_Recr
+    End_Procedure   // Creating
+
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Wax.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Wam.File_Number
+        Send Add_Client_File  Pmoves.File_Number
+        Send Add_Client_File  Wcmoves.File_Number
+        Send Add_Client_File  Pmovesl.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Wapomast.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecw.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Syscurxr.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecw.Wax_Rec0  To Wax.Wax_Rec0
+
+        // Field-based properties.......................
+
+        // Wax.Company_Code        
+
+        // Wax.Branch_Code         
+
+        // Wax.Year_Year           
+
+        // Wax.Wapokat_Code        
+
+        // Wax.Wapomast_Code       
+
+        // Wax.Wax_Code            
+        Set Field_Options          Field Wax.Wax_Code             To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Wax.Wax_Code             To (Wax(Self))
+
+        // Wax.Year_Recr           
+
+        // Wax.Wapomast_Recr       
+
+        // Wax.Wax_Rec0            
+        Set Field_Options          Field Wax.Wax_Rec0             To DD_AUTOFIND   
+
+        // Wax.Wax_Recr            
+        Set Field_Options          Field Wax.Wax_Recr             To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Wax.Wax_Recr             To (Wax(Self))
+
+        // Wax.Wax_Descr           
+        Set Field_Prompt_Object    Field Wax.Wax_Descr            To (Wax(Self))
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Wax_DataDictionary
+//DDB-Selection-pkg-Start
+Use wax.sl           // Wax
+//DDB-Selection-pkg-End
+//DDB-FileEnd

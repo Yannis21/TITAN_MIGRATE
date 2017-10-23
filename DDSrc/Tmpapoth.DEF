@@ -1,0 +1,56 @@
+-----------------------------------------------------------------------------
+  DATE: 23/11/104      TIME: 19:08                                  PAGE:  1
+  FILE DEFINITION FOR FILE: TMPAPOTH (# 98)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : Tmpapoth
+  USER DISPLAY NAME         : Tmpapoth
+  DATAFLEX FILE NAME        : TMPAPOTH
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 384       ( USED: 168 )
+  MAX NUMBER OF RECORDS     : 10000     ( USED: 111 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  ONOMA            ASC      3     1      
+  2  TYPOS            ASC      2     4  2   
+  3  EGKATASTASH      ASC      4     6  2   
+  4  ARITHMOS         ASC     10    10  1   
+  5  HMNIA            DAT      6    20  3   
+  6  TYPE             ASC      3    23      
+  7  CODE             ASC     10    26      
+  8  ITEM             ASC     18    36  3   
+  9  QTY              NUM   12.4    54      
+ 10  MONADA           ASC      3    62      
+ 11  PARALABH         ASC      4    65      
+ 12  NAME             ASC     50    69      
+ 13  ITEM_DESCR       ASC     40   119      
+ 14  PINAKIDA         ASC     10   159      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    EGKATASTASH     NO  NO       19     3       4     ON-LINE
+       ARITHMOS        NO  NO 
+       TYPOS           NO  NO 
+       RECNUM          NO  NO 
+
+  2    EGKATASTASH     NO  NO       9      3       3     ON-LINE
+       TYPOS           NO  NO 
+       RECNUM          NO  NO 
+
+  3    TYPOS           NO  NO       30     4       5     ON-LINE
+       EGKATASTASH     NO  NO 
+       HMNIA           NO  NO 
+       ITEM            NO  NO 
+       RECNUM          NO  NO 
+

@@ -1,0 +1,72 @@
+-----------------------------------------------------------------------------
+  DATE: 27/02/114      TIME: 09:57                                  PAGE:  1
+  FILE DEFINITION FOR FILE: TMPAXIO (# 89)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : Tmpaxio
+  USER DISPLAY NAME         : Tmpaxio
+  DATAFLEX FILE NAME        : TMPAXIO
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 384       ( USED: 354 )
+  MAX NUMBER OF RECORDS     : 10000     ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  ONOMA            ASC      3     1      
+  2  TYPOS            ASC      2     4      
+  3  ETAIRIA          ASC      4     6      
+  4  PERIOXH          ASC      4    10      
+  5  EGKATASTASH      ASC      4    14  2   
+  6  TYPE             ASC      4    18      
+  7  ARITHMOS         ASC     10    22      
+  8  HMNIA            DAT      6    32      
+  9  PERIGRAFH        ASC      1    35  1   
+ 10  AXIA             NUM   14.2    36      
+ 11  CODE             ASC     10    44  1   
+ 12  AITIOL           ASC     50    54      
+ 13  LHXH             DAT      6   104      
+ 14  BANK             ASC      2   107      
+ 15  APODEKTHS        ASC     25   109      
+ 16  EKDOTHS          ASC     25   134      
+ 17  NOEPIT           ASC     18   159      
+ 18  XORA             ASC      2   177      
+ 19  IDIOY            ASC      1   179      
+ 20  EPARXIA          ASC      1   180      
+ 21  NOMISMA          ASC      3   181      
+ 22  TOMEAS           ASC     10   184      
+ 23  ANAL             ASC      2   194      
+ 24  PAE_ARITHM       ASC     10   196      
+ 25  PAE_HMNIA        DAT      6   206      
+ 26  ARXIKOS          ASC     20   209      
+ 27  AFMARX           ASC     10   229      
+ 28  NEA_TRAPEZA      ASC     20   239      
+ 29  STRING1          ASC     20   259      
+ 30  STRING2          ASC     20   279      
+ 31  STRING3          ASC     20   299      
+ 32  NUM1             NUM   14.4   319      
+ 33  NUM2             NUM   14.4   328      
+ 34  NUM3             NUM   14.4   337      
+ 35  DAT1             DAT      6   346      
+ 36  DAT2             DAT      6   349      
+ 37  DAT3             DAT      6   352      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    PERIGRAFH       NO  NO       14     3       3     ON-LINE
+       CODE            NO  NO 
+       RECNUM          NO  NO 
+
+  2    EGKATASTASH     NO  NO       8      3       3     ON-LINE
+       PERIGRAFH       NO  NO 
+       RECNUM          NO  NO 
+

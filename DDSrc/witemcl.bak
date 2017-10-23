@@ -1,0 +1,103 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : WITEMCL.DD
+// Class Name: Witemcl_DataDictionary
+// Revision  : 16
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Witemcl
+Open Witemcld
+Open Item
+Open Sysrecw
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList SL100  sl100.sl
+Register_Object SL100
+//DDB-SelectionEnd
+
+Class Witemcl_DataDictionary  is a DataDictionary_Sec
+ 
+    // Update:
+ 
+    Procedure Update
+        Forward Send Update  
+        move item.item_descr to witemcl.item_descr
+    End_Procedure   // Update
+ 
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Witemcl.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Witemcld.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Item.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecw.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecw.Witemcl_Rec0  To Witemcl.Rec0
+
+        // Field-based properties.......................
+
+        // Witemcl.Item_Code
+
+        // Witemcl.Client_Code
+        Set Field_Prompt_Object    Field Witemcl.Client_Code To (SL100(Self))
+
+        // Witemcl.Client_Itemcode
+
+        // Witemcl.Client_Date
+        Set Field_Mask_Type        Field Witemcl.Client_Date To MASK_DATE_WINDOW
+
+        // Witemcl.Client_Price
+        Set Field_Mask_Type        Field Witemcl.Client_Price To MASK_NUMERIC_WINDOW
+
+        // Witemcl.Item_Descr
+
+        // Witemcl.Rec0
+
+        // Witemcl.Is_Client
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Witemcl_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl100.sl         // SL100
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

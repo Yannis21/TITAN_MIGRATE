@@ -1,0 +1,88 @@
+-----------------------------------------------------------------------------
+  DATE: 12/10/112      TIME: 10:03                                  PAGE:  1
+  FILE DEFINITION FOR FILE: TMPPOL (# 90)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : Tmppol
+  USER DISPLAY NAME         : Tmppol
+  DATAFLEX FILE NAME        : TMPPOL
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 512       ( USED: 496 )
+  MAX NUMBER OF RECORDS     : 10000     ( USED: 763 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  ONOMA            ASC      3     1      
+  2  TYPOS            ASC      2     4  2   
+  3  ETAIRIA          ASC      4     6      
+  4  PERIOXH          ASC      4    10      
+  5  EGKATASTASH      ASC      4    14  2   
+  6  TYPE             ASC      4    18      
+  7  ARITHMOS         ASC     10    22  1   
+  8  HMNIA            DAT      6    32      
+  9  KODIKOS          ASC      5    35      
+ 10  AXIA             NUM   14.2    40      
+ 11  CODE             ASC     10    48      
+ 12  KODIKOS2         ASC      2    58      
+ 13  APOTH            ASC     18    60      
+ 14  QTY              NUM   12.2    78      
+ 15  MM               ASC      3    85      
+ 16  KATHGORIA        ASC      1    88      
+ 17  ANTLHSH          ASC      1    89      
+ 18  PINAKIDA         ASC     10    90      
+ 19  OROI             ASC      4   100      
+ 20  FPA              ASC      2   104      
+ 21  NOMISMA          ASC      3   106      
+ 22  DELTIA           ASC      9   109      
+ 23  TOMEAS           ASC     10   118      
+ 24  NAME             ASC     50   128      
+ 25  DESCR            ASC     50   178      
+ 26  POSOFPA          NUM   14.2   228      
+ 27  KINHSH           ASC      1   236      
+ 28  SIGN             ASC      1   237      
+ 29  POSONET          NUM   14.2   238      
+ 30  ITEM             ASC     20   246      
+ 31  ITEM_DESCR       ASC     40   266      
+ 32  SXETIKO          ASC     10   306      
+ 33  UNITPR           NUM   14.2   316      
+ 34  SXRECR           ASC     12   324      
+ 35  WAPOKAT_CODE     ASC     10   336      
+ 36  NEO              ASC      1   346      
+ 37  SXOLIA           ASC     50   347      
+ 38  TROPOI_PLHROMHS  ASC      4   397      
+ 39  STRING1          ASC     20   401      
+ 40  STRING2          ASC     20   421      
+ 41  STRING3          ASC     20   441      
+ 42  NUM1             NUM   14.4   461      
+ 43  NUM2             NUM   14.4   470      
+ 44  NUM3             NUM   14.4   479      
+ 45  DAT1             DAT      6   488      
+ 46  DAT2             DAT      6   491      
+ 47  DAT3             DAT      6   494      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    EGKATASTASH     NO  NO       19     3       4     ON-LINE
+       ARITHMOS        NO  NO 
+       TYPOS           NO  NO 
+       RECNUM          NO  NO 
+
+  2    EGKATASTASH     NO  NO       9      3       3     ON-LINE
+       TYPOS           NO  NO 
+       RECNUM          NO  NO 
+
+  3    RECNUM          NO  NO       35     4       4     ON-LINE
+       TYPOS           NO  NO 
+       ITEM            NO  NO 
+       PINAKIDA        NO  NO 
+

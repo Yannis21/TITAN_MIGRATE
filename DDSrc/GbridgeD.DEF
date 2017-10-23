@@ -1,0 +1,37 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: GBRIDGED (# 169)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : GBRIDGED
+  USER DISPLAY NAME         : GbridgeD
+  DATAFLEX FILE NAME        : GBRIDGED
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 170       ( USED: 138 )
+  MAX NUMBER OF RECORDS     : 10000     ( USED: 57 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  GBRIDGEH_RECR    ASC     12     1  1   GBRIDGEH.FIELD_17 (168,17)
+  2  GPLAN_RECR       ASC     12    13      
+  3  GMOVE_X2         NUM   14.8    25      
+  4  GMOVE_P2         NUM   14.8    36      
+  5  GMOVE_AITIOL     ASC     60    47      
+  6  EXT_GPLAN_CODE   ASC     20   107  1   
+  7  GMOVE_RECR       ASC     12   127      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    GBRIDGEH_RECR   NO  NO       32     4       2     ON-LINE
+       EXT_GPLAN_CODE  NO  NO 
+

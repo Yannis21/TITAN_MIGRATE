@@ -1,0 +1,66 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: GHMNIES (# 159)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : GHMNIES
+  USER DISPLAY NAME         : Ghmnies
+  DATAFLEX FILE NAME        : GHMNIES
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 256       ( USED: 204 )
+  MAX NUMBER OF RECORDS     : 10000     ( USED: 46 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC     10     1  1   
+  2  BRANCH_CODE      ASC     10    11  1   
+  3  YEAR_YEAR        NUM    4.0    21  1   
+  4  GPLAN_CODE       ASC     20    23  1   
+  5  GMHNES_YYYY      NUM    4.0    43  1   
+  6  GMHNES_PERIOD    NUM    4.0    45  1   
+  7  GHMNIES_HMNIA    DAT      6    47  1   
+  8  GHMNIES_REC0     NUM   14.0    50  2   
+  9  GMHNES_RECR      ASC     12    57  3   GMHNES.FIELD_21 (158,21)
+ 10  GHMNIES_SX0      NUM   14.8    69      
+ 11  GHMNIES_SP0      NUM   14.8    80      
+ 12  GHMNIES_SX00     NUM   14.8    91      
+ 13  GHMNIES_SP00     NUM   14.8   102      
+ 14  GHMNIES_SX1      NUM   14.8   113      
+ 15  GHMNIES_SP1      NUM   14.8   124      
+ 16  GHMNIES_SX2      NUM   14.8   135      
+ 17  GHMNIES_SP2      NUM   14.8   146      
+ 18  GHMNIES_SXR      NUM   14.8   157      
+ 19  GHMNIES_SPR      NUM   14.8   168      
+ 20  GHMNIES_GMNOREC  NUM   14.0   179      
+ 21  YEAR_RECR        ASC      7   186      
+ 22  GHMNIES_RECR     ASC     12   193      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY_CODE    NO  NO       49     5       7     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       GPLAN_CODE      NO  NO 
+       GMHNES_YYYY     NO  NO 
+       GMHNES_PERIOD   NO  NO 
+       GHMNIES_HMNIA   NO  NO 
+
+  2    GHMNIES_REC0    NO  NO       7      3       1     ON-LINE
+
+  3    GMHNES_RECR     NO  NO       15     3       2     ON-LINE
+       GHMNIES_HMNIA   NO  NO 
+
+  4    GHMNIES_HMNIA   NO  NO       8      3       3     ON-LINE
+       GMHNES_YYYY     NO  NO 
+       RECNUM          NO  NO 
+

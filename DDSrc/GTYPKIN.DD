@@ -1,0 +1,256 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GTYPKIN.DD
+// Class Name: Gtypkin_DataDictionary
+// Revision  : 45
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Gtypkin
+Open Garticl
+Open Gflagkin
+Open Gparticl
+Open Gthhmgio
+Open Sysrecg
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList gtypkin  gtypkin.SL
+Register_Object gtypkin
+//DDB-SelectionEnd
+Open SysCurGL
+
+Class Gtypkin_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Entry_Order_Date  Integer iField  Date dDate
+         // Add a default date if the field is blank
+         Integer Changed
+         Get Field_Changed_State iField to Changed
+         If (Changed=0 AND dDate =0) Begin
+             SysDate4 dDate
+             Set Field_Default_Value iField to dDate
+         End
+    End_Procedure
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Property Integer piMustNOTConstrain Public 0
+        Property Date    pdDefault_Hmnia    Public 0
+        Property Integer piRate             Public 0
+        Property Integer piGthhmgio_dd      Public 0
+    End_Procedure   // Construct_Object
+
+//    Procedure OnConstrain
+//        Forward Send OnConstrain
+//        If (piMustNOTConstrain(Self)) Begin
+//        End
+//        Else Begin
+//            Constrain Gtypkin.Company_Code  eq SysCurGL.Company_Code
+//            Constrain Gtypkin.Branch_Code   eq SysCurGL.Branch_Code
+//            Constrain Gtypkin.Year_Year     eq SysCurGL.Year_Year
+//        End
+//    End_Procedure
+
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move SysCurGL.Company_Code  to Gtypkin.Company_Code
+        Move SysCurGL.Branch_Code   to Gtypkin.Branch_Code
+        Move SysCurGL.Year_Year     to Gtypkin.Year_Year
+        Move SysCurGL.Year_Recr     to Gtypkin.Year_Recr
+        Move Gthhmgio.Gthhmgio_Code to Gtypkin.Gthhmgio_Code
+    End_Procedure   // Update
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurGL.Branch_Site))+;
+                         (Trim(String(Gtypkin.Gtypkin_Rec0)))))) to Gtypkin.Gtypkin_Recr
+    End_Procedure   // Creating
+
+
+
+//----------------------------------------------------------------------------
+
+//    Procedure Creating
+//              Forward Send Creating
+//              Add 1 to Year.Year_NumGtypkin //˜¨ Ÿ£æª «ç§à¤ ¡ ¤ã©œà¤ «žª ®¨ã©žª
+//    End_Procedure //creating
+//    Procedure Deleting
+//              Forward Send Deleting
+//              Sub 1 from Year.Year_NumGtypkin //˜¨ Ÿ£æª «ç§à¤ ¡ ¤ã©œà¤ «žª ®¨ã©žª
+//    End_Procedure //deleting
+
+    Function Validate_Save  Returns Integer
+        Integer iReturnVal
+        Forward Get Validate_Save To iReturnVal
+//        If (Not(iReturnVal)) Begin
+//            //1100:cby = globals
+//            If ( ;
+//                (Not(Gtypkin.Company_Code = SysCurGL.Company_Code)) or;
+//                (Not(Gtypkin.Branch_Code  = SysCurGL.Branch_Code )) or;
+//                (Not(Gtypkin.Year_Year    = SysCurGL.Year_Year   ));
+//                ) Send Operation_Not_Allowed 1100
+//        End
+        Function_Return iReturnVal
+    End_Function   //validate_save
+
+
+    Function Validate_Delete  Returns Integer
+        Integer iReturnVal
+        Forward Get Validate_Delete  To iReturnVal
+//        If (Not(iReturnVal)) Begin
+//            //2100:cby = globals
+//            If ( ;
+//                (Not(Gtypkin.Company_Code = SysCurGL.Company_Code)) or;
+//                (Not(Gtypkin.Branch_Code  = SysCurGL.Branch_Code )) or;
+//                (Not(Gtypkin.Year_Year    = SysCurGL.Year_Year   ));
+//                ) Send Operation_Not_Allowed 2100
+//        End
+        Function_Return iReturnVal
+    End_Function   // validate_delete
+
+
+
+    Procedure Operation_Not_Allowed  Integer iError_Num
+              Case Begin
+                   Case (iError_Num = 1100)
+                        Error 1100 "DDC 151:‹ž ˜§¦›œ¡«ã „«˜ ¨å˜-•¨ã©ž"
+                        Case Break
+                   Case (iError_Num = 2100)
+                        Error 2100 "DDC 151:‹ž ˜§¦›œ¡«ã „«˜ ¨å˜-•¨ã©ž"
+                        Case Break
+                   Case Else
+                        Forward Send Operation_Not_Allowed  iError_Num
+              Case End
+    End_Procedure   //operation_not_allowed
+
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Gtypkin.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Garticl.File_Number
+        Send Add_Client_File  Gflagkin.File_Number
+        Send Add_Client_File  Gparticl.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Gthhmgio.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecg.Gtypkin_Rec0  To Gtypkin.Gtypkin_Rec0
+
+        // Field-based properties.......................
+
+        // Gtypkin.Company_Code
+
+        // Gtypkin.Branch_Code
+
+        // Gtypkin.Year_Year
+
+        // Gtypkin.Gtypkin_Code
+        Set Field_Prompt_Object    Field Gtypkin.Gtypkin_Code To (gtypkin(Self))
+
+        // Gtypkin.Gtypkin_Rec0
+
+        // Gtypkin.Year_Recr
+
+        // Gtypkin.Gthhmgio_Code
+
+        // Gtypkin.Gthhmgio_Recr
+
+        // Gtypkin.Gtypkin_Descr
+        Set Field_Prompt_Object    Field Gtypkin.Gtypkin_Descr To (gtypkin(Self))
+
+        // Gtypkin.Gtypkin_Anti
+
+        // Gtypkin.Gtypkin_Printer
+
+        // Gtypkin.Gtypkin_Form
+
+        // Gtypkin.Gtypkin_L_No
+
+        // Gtypkin.Gtypkin_L_Hmnia
+
+        // Gtypkin.Gtypkin_Seira
+
+        // Gtypkin.Gtypkin_Abr
+
+        // Gtypkin.Gtypkin_Flag01
+
+        // Gtypkin.Gtypkin_Flag02
+
+        // Gtypkin.Gtypkin_Flag03
+
+        // Gtypkin.Gtypkin_Flag04
+
+        // Gtypkin.Gtypkin_Flag05
+
+        // Gtypkin.Gtypkin_Flag06
+
+        // Gtypkin.Gtypkin_Flag07
+
+        // Gtypkin.Gtypkin_Flag08
+
+        // Gtypkin.Gtypkin_Flag09
+
+        // Gtypkin.Gtypkin_Flag10
+
+        // Gtypkin.Gtypkin_Flag11
+
+        // Gtypkin.Gtypkin_Flag12
+
+        // Gtypkin.Gtypkin_Flag13
+
+        // Gtypkin.Gtypkin_Flag14
+
+        // Gtypkin.Gtypkin_Flag15
+
+        // Gtypkin.Gtypkin_Flag16
+
+        // Gtypkin.Gtypkin_Flag17
+
+        // Gtypkin.Gtypkin_Flag18
+
+        // Gtypkin.Gtypkin_Flag19
+
+        // Gtypkin.Gtypkin_Flag20
+
+        // Gtypkin.Gtypkin_Recr
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+End_Class    // Gtypkin_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use gtypkin.SL       // gtypkin
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

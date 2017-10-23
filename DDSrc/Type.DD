@@ -1,0 +1,72 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : TYPE.DD
+// Class Name: Type_DataDictionary
+// Revision  : 6
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Type
+Open Details
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList TYPE  Type.sl
+Register_Object TYPE
+//DDB-SelectionEnd
+
+Class Type_DataDictionary  is a DataDictionary_Sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Type.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Details.File_Number
+
+        // Field-based properties.......................
+
+        // Type.Type_Id
+        Set Field_Prompt_Object    Field Type.Type_Id             To (TYPE(Self))
+
+        // Type.Cd_Descr
+        Set Field_Prompt_Object    Field Type.Cd_Descr            To (TYPE(Self))
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Type_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use Type.sl          // TYPE
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

@@ -1,0 +1,46 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: GPLANMOD (# 165)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : GPLANMOD
+  USER DISPLAY NAME         : GplanMod
+  DATAFLEX FILE NAME        : GPLANMOD
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 102       ( USED: 90 )
+  MAX NUMBER OF RECORDS     : 10000     ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC     10     1  1   
+  2  BRANCH_CODE      ASC     10    11  1   
+  3  YEAR_YEAR        NUM    4.0    21      
+  4  GPLAN_CODE       ASC     20    23  1   
+  5  GPLANMOD_MODULE  ASC     10    43  1   
+  6  GPLANMOD_REC0    NUM   14.0    53  2   
+  7  GPLAN_RECR       ASC     12    60  3   GPLAN.FIELD_55 (150,55)
+  8  YEAR_RECR        ASC      7    72      
+  9  GPLANMOD_RECR    ASC     12    79      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY_CODE    NO  NO       50     5       4     ON-LINE
+       BRANCH_CODE     NO  NO 
+       GPLAN_CODE      NO  NO 
+       GPLANMOD_MODULE NO  NO 
+
+  2    GPLANMOD_REC0   NO  NO       7      3       1     ON-LINE
+
+  3    GPLAN_RECR      NO  NO       22     3       2     ON-LINE
+       GPLANMOD_MODULE NO  NO 
+

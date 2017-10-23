@@ -1,0 +1,336 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : CARS.DD
+// Class Name: Cars_DataDictionary
+// Revision  : 15
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Cars
+Open Gmove
+Open Sysrecg
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Cars_Ctype_Id_VT
+
+Object Cars_Ctype_Id_VT  is a CodeValidationTable
+    Set Type_Value        To "PUMPSTYPE"
+    Set Validate_State    To FALSE
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Cars_Ctype_Id_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl054  sl054.SL
+Register_Object sl054
+//DDB-SelectionEnd
+
+Class Cars_DataDictionary  is a DataDictionary_Sec
+
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        //------------------------------------------------
+        // Properties gia na kraththoun oi palies times 
+        // ton pedion Ef' oson to Sysfile.Use_Audit pedio 
+        // einai 1     js 03/12/2007
+        //------------------------------------------------  
+        Property Integer piCreateNew            Public  0
+        Property Integer piAud_Old_Tare         Public  0
+        Property Number  pnAud_Old_Pagio        Public  0
+        Property String  psAud_Old_CarRecr      Public ""
+        Property String  psAud_Old_CarLicense   Public ""
+        //------------------------------------------------
+
+    End_procedure
+
+    Procedure New_Current_Record  Integer iOldRec  Integer iNewRec
+        Forward Send New_Current_Record  iOldRec iNewRec
+        //------------------------------------------------
+        // Properties gia na kraththoun oi palies times 
+        // ton pedion js 03/12/2007
+        //------------------------------------------------
+        Set piAud_Old_Tare          to Cars.Car_Tare
+        Set pnAud_Old_Pagio         to Cars.Pagio
+        Set psAud_Old_CarRecr       to Cars.Car_ID
+        Set psAud_Old_CarLicense    to Cars.Car_License
+        //------------------------------------------------
+     End_Procedure   // New_Current_Record
+
+    Procedure Delete_Main_File
+        //---------------------------------------------
+        // Auditing / Katagrafh allagon
+        String  sUser sText sTime sMin sHour sSec
+        Date    dDate  Shmer 
+        Integer iMin iHour iSec iLen
+        Sysdate dDate iHour iMin iSec 
+        Move iHour  to sHour
+        Move iMin   to sMin
+        Move iSec   to sSec
+        If (Length(sHour)=1) Insert "0" in sHour at 1
+        If (Length(sMin )=1) Insert "0" in sMin  at 1
+        If (Length(sSec )=1) Insert "0" in sSec  at 1
+        Move (Trim(sHour)+":"+Trim(sMin)+"."+Trim(sSec)) to sTime
+        
+        // Auditing / Diagrafh 
+        If ((Sysfile.Use_Audit=1) And (Operation_Mode=MODE_DELETING) And (OPERATION_ORIGIN=Self)) Begin
+            Get fsLoginUserID to sUser
+            clear gmove
+            move syscurxr.company_code  to gmove.company_code
+            move syscurxr.branch_code   to gmove.branch_code
+            move syscurxr.year_year     to gmove.year_year
+            move  5                     to gmove.gtypkin_code// Apo Clients
+            move ddate                  to gmove.garticl_hmnia
+            move suser                  to gmove.gplan_code
+            move Cars.Car_ID            to gmove.garticl_recr
+            reread sysrecg
+            move (sysrecg.gmove_rec0+1) to sysrecg.gmove_rec0
+            move (sysrecg.gmove_rec0+1) to gmove.gmove_rec0
+            saverecord sysrecg
+            unlock
+            Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
+                                                to Gmove.Gmove_Recr
+            Move (Trim(sUser))                  to Gmove.Login_ID
+            Move dDate                          to Gmove.Hmnia_Metabolhs    
+            Move sTime                          to Gmove.Ora_Metabolhs
+            
+            Move Cars.Car_ID                    to Gmove.Partl_Recr          
+            Move Cars.Car_ID                    to Gmove.Pms_Recr          
+
+            Move (piAud_Old_Tare      (Self))   to Gmove.Prev_Ox_Apobaro
+            Move (pnAud_Old_Pagio     (Self))   to Gmove.Prev_Stoxos1
+            Move (psAud_Old_CarRecr   (Self))   to Gmove.Prev_Oxhma
+            Move (psAud_Old_CarLicense(Self))   to Gmove.Prev_CN_Prosth
+
+
+            Move "ƒ ˜š¨˜­ã œšš¨˜­ãª Ž®ã£˜«¦ª"    to gmove.gmove_aitiol
+            Move "D"                            to Gmove.Eidos_Metabolhs
+            saverecord gmove
+        End
+        Forward Send Delete_Main_File
+
+    End_Procedure
+
+     Procedure Creating
+        Forward Send Creating
+        Set piCreateNew to 1
+    End_Procedure   // Creating
+
+
+
+
+    // Update:
+    Procedure Update
+        Forward Send Update
+        move syscurxr.company_code  to cars.car_company
+        move syscurxr.beto_site     to cars.car_bsite
+        // Insert Code Here
+        
+        //---------------------------------------------
+        // Auditing / Katagrafh allagon
+        String  sUser sText sTime sMin sHour sSec
+        Date    dDate  Shmer 
+        Integer iMin iHour iSec iLen
+        Sysdate dDate iHour iMin iSec 
+        Move iHour  to sHour
+        Move iMin   to sMin
+        Move iSec   to sSec
+        If (Length(sHour)=1) Insert "0" in sHour at 1
+        If (Length(sMin )=1) Insert "0" in sMin  at 1
+        If (Length(sSec )=1) Insert "0" in sSec  at 1
+        Move (Trim(sHour)+":"+Trim(sMin)+"."+Trim(sSec)) to sTime
+        
+        // Auditing / Dhmiourgia - Diorthosh
+        If ((Sysfile.Use_Audit=1)  And (Operation_ORIGIN=Self)) Begin
+            Get fsLoginUserID to sUser
+            If (piCreateNew(Self)=1) Begin
+                clear gmove
+                move syscurxr.company_code  to gmove.company_code
+                move syscurxr.branch_code   to gmove.branch_code
+                move syscurxr.year_year     to gmove.year_year
+                move  5                     to gmove.gtypkin_code// Apo Clients
+                move ddate                  to gmove.garticl_hmnia
+                move suser                  to gmove.gplan_code
+                move Cars.Car_ID            to gmove.garticl_recr
+                reread sysrecg
+                move (sysrecg.gmove_rec0+1) to sysrecg.gmove_rec0
+                move (sysrecg.gmove_rec0+1) to gmove.gmove_rec0
+                saverecord sysrecg
+                unlock
+                Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
+                                                    to Gmove.Gmove_Recr
+                Move (Trim(sUser))                  to Gmove.Login_ID
+                Move dDate                          to Gmove.Hmnia_Metabolhs    
+                Move sTime                          to Gmove.Ora_Metabolhs
+
+                Move Cars.Car_ID            to Gmove.Partl_Recr          
+                Move Cars.Car_ID            to Gmove.Pms_Recr          
+
+                Move Cars.Car_Tare          to Gmove.Cur_Ox_Apobaro
+                Move Cars.Pagio             to Gmove.Cur_Stoxos1
+                Move Cars.Car_ID            to Gmove.Cur_Oxhma
+                Move Cars.Car_License       to Gmove.Cur_CN_Prosth
+                
+                Move "ƒž£ ¦¬¨šå˜ ¤â˜ª Ž®ã£˜«¦ª" to Gmove.Gmove_Aitiol
+                Move "N" to Gmove.Eidos_Metabolhs  
+                saverecord gmove
+                Set piCreateNew to 0
+            End
+            Else If ((Operation_Mode=MODE_SAVING) And (piCreateNew(Self)<>1) And (OPERATION_ORIGIN=Self)) Begin                                
+                Integer isChanged
+                Move 0 to isChanged
+                
+                     If (pnAud_Old_Pagio     (Self)<>Cars.Pagio        ) Move 1 to isChanged
+                Else If (piAud_Old_Tare      (Self)<>Cars.Car_Tare     ) Move 1 to isChanged
+                Else If (psAud_Old_CarRecr   (Self)<>Cars.Car_ID       ) Move 1 to isChanged
+                Else If (psAud_Old_CarLicense(Self)<>Cars.Car_License  ) Move 1 to isChanged
+                
+                If (isChanged>0) Begin  
+                    clear gmove
+                    move syscurxr.company_code  to gmove.company_code
+                    move syscurxr.branch_code   to gmove.branch_code
+                    move syscurxr.year_year     to gmove.year_year
+                    move  5                     to gmove.gtypkin_code// Apo Clients
+                    move ddate                  to gmove.garticl_hmnia
+                    move suser                  to gmove.gplan_code
+                    move Cars.Car_ID          to gmove.garticl_recr
+                    reread sysrecg
+                    move (sysrecg.gmove_rec0+1) to sysrecg.gmove_rec0
+                    move (sysrecg.gmove_rec0+1) to gmove.gmove_rec0
+                    saverecord sysrecg
+                    unlock
+                    Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
+                                                        to Gmove.Gmove_Recr
+                    Move (Trim(sUser))                  to Gmove.Login_ID
+                    Move dDate                          to Gmove.Hmnia_Metabolhs    
+                    Move sTime                          to Gmove.Ora_Metabolhs
+                    Move Cars.Car_ID                    to Gmove.Partl_Recr          
+                    Move Cars.Car_ID                    to Gmove.Pms_Recr          
+                    //--                                
+                    Move Cars.Car_Tare                  to Gmove.Cur_Ox_Apobaro
+                    Move Cars.Pagio                     to Gmove.Cur_Stoxos1
+                    Move Cars.Car_ID                    to Gmove.Cur_Oxhma
+                    Move Cars.Car_License               to Gmove.Cur_CN_Prosth
+                    //--
+                    Move (piAud_Old_Tare      (Self))   to Gmove.Prev_Ox_Apobaro    
+                    Move (pnAud_Old_Pagio     (Self))   to Gmove.Prev_Stoxos1       
+                    Move (psAud_Old_CarRecr   (Self))   to Gmove.Prev_Oxhma         
+                    Move (psAud_Old_CarLicense(Self))   to Gmove.Prev_CN_Prosth
+                                                         
+                    Move "ƒ æ¨Ÿà©ž œšš¨˜­ãª Ž®ã£˜«¦ª"  to gmove.gmove_aitiol
+                    Move "E"                            to Gmove.Eidos_Metabolhs
+                    saverecord gmove
+                    Set piCreateNew to 0
+                End
+            End
+        End
+        
+    End_Procedure   // Update
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Cars.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // External (System) file structure.............
+        Send Add_System_File  Gmove.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_ALL
+
+        // Field-based properties.......................
+
+        // Cars.Car_Recnum
+
+        // Cars.Car_Company
+
+        // Cars.Car_Id
+        Set Field_Options          Field Cars.Car_Id To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Cars.Car_Id To (sl054(Self))
+        Set Key_Field_State        Field Cars.Car_Id To TRUE
+
+        // Cars.Car_Descr
+        Set Field_Prompt_Object    Field Cars.Car_Descr To (sl054(Self))
+
+        // Cars.Car_License
+
+        // Cars.Car_Driverrecn
+
+        // Cars.Car_Details
+
+        // Cars.Car_Maxm3
+
+        // Cars.Car_Sitew
+
+        // Cars.Car_Tare
+
+        // Cars.Car_Codematch
+
+        // Cars.Car_Driverid
+
+        // Cars.Car_Sn
+
+        // Cars.Car_Lastupdated
+
+        // Cars.Car_Markexp
+
+        // Cars.Car_748tare1
+
+        // Cars.Car_748tare2
+
+        // Cars.Car_748sign
+
+        // Cars.Car_Bsite
+
+        // Cars.Ctype_Id
+        Set Field_Class_Name       Field Cars.Ctype_Id To "dbComboFormsub"
+        Set Field_Value_Table      Field Cars.Ctype_Id To (Cars_Ctype_Id_VT(Self))
+
+        // Cars.Pagio
+
+        // Cars.Parakrat
+
+        // Cars.Car_What
+
+        // Cars.Car_Lc
+
+        // Cars.Car_Ln
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Cars_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl054.SL         // sl054
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

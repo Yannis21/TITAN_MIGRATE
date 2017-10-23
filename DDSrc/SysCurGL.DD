@@ -1,0 +1,88 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : SYSCURGL.DD
+// Class Name: Syscurgl_DataDictionary
+// Revision  : 2
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Syscurgl
+
+//DDB-HeaderEnd
+
+Class Syscurgl_DataDictionary  is a DataDictionary_Sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Syscurgl.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Field-based properties.......................
+
+        // Syscurgl.Company_Code
+
+        // Syscurgl.Branch_Code
+
+        // Syscurgl.Year_Year
+
+        // Syscurgl.Branch_Site
+
+        // Syscurgl.Year_Recr
+
+        // Syscurgl.Company_Name
+
+        // Syscurgl.Branch_Name
+
+        // Syscurgl.Year_Descr
+
+        // Syscurgl.C_Code0
+
+        // Syscurgl.C_Code00
+
+        // Syscurgl.C_Coder
+
+        // Syscurgl.Year_Xrhshfrom
+
+        // Syscurgl.Year_Xrhshto
+
+        // Syscurgl.Beto_Site
+
+        // Syscurgl.Euro_Code
+
+        // Syscurgl.Year_Openfrom
+
+        // Syscurgl.Year_Opento
+
+        // Syscurgl.Year_Valid_Char
+
+        // Syscurgl.Year_Delimiter
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Syscurgl_DataDictionary
+//DDB-FileEnd

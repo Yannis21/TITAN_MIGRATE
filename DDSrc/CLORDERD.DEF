@@ -1,0 +1,76 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: CLORDERD (# 97)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:CLORDERD
+  USER DISPLAY NAME         : Clorderd
+  DATAFLEX FILE NAME        : CLORDERD
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 302       ( USED: 302 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC     10     1  1   
+  2  BRANCH_CODE      ASC     10    11  1   
+  3  YEAR_YEAR        NUM    4.0    21  1   
+  4  CLIENTS_CODE     ASC     20    23  1   
+  5  AA_PAR           ASC     10    43  1   
+  6  REC0             NUM   12.0    53  1   
+  7  ITEM_CODE        ASC     20    59  1   
+  8  CLIENT_ITEM      ASC     20    79      
+  9  QTY              NUM   14.6    99      
+ 10  NET              NUM   14.6   109      
+ 11  PCDISC           NUM    2.0   119      
+ 12  PCFPA            NUM    2.0   120      
+ 13  POSODISC         NUM   14.6   121      
+ 14  POSOFPA          NUM   14.6   131      
+ 15  POSOEXTRA        NUM   14.6   141      
+ 16  POSOTOTAL        NUM   14.6   151      
+ 17  UNITPRICE        NUM   14.6   161      
+ 18  OURDATE          DAT      3   171      
+ 19  RIAL_DATE        DAT      3   174      
+ 20  FINISH           NUM    2.0   177      
+ 21  CLORDER_RECR     ASC     12   178  3   CLORDER.FIELD_9 (96,9)
+ 22  KINISH_POSOTHTA  NUM   10.2   190      
+ 23  KINHSH_POSO      NUM   14.6   196      
+ 24  KINHSH_FPA       NUM   14.6   206      
+ 25  KINHSH_NET       NUM   14.6   216      
+ 26  RIAL_QTY         NUM   14.2   226      
+ 27  AKYRH            NUM    2.0   234      
+ 28  YPOL_QTY         NUM   14.6   235      
+ 29  AKYRH_QTY        NUM   10.6   245      
+ 30  EPISTROFH_QTY    NUM   10.6   253      
+ 31  STATUS           NUM    2.0   261      
+ 32  DATE             DAT      3   262      
+ 33  RECR             ASC     12   265  2   
+ 34  WAX_RECR         ASC     12   277      
+ 35  pmoves_recr      ASC     12   289      
+ 36  MODULE           ASC      2   301      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY_CODE    NO  NO       78     3       7     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       CLIENTS_CODE    NO  NO 
+       AA_PAR          NO  NO 
+       ITEM_CODE       NO  NO 
+       REC0            NO  NO 
+
+  2    RECR            NO  NO       12     3       1     ON-LINE
+
+  3    CLORDER_RECR    NO  NO       18     3       2     ON-LINE
+       REC0            NO  NO 
+

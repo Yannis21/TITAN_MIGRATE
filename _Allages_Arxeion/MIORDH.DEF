@@ -1,0 +1,88 @@
+-----------------------------------------------------------------------------
+  DATE: 26/07/2017      TIME: 10:01                                  PAGE:  1
+  FILE DEFINITION FOR FILE: MIORDH (# 128)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : MIORDH
+  USER DISPLAY NAME         : MIORDH
+  DATAFLEX FILE NAME        : MIORDH
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 1280      ( USED: 1217 )
+  MAX NUMBER OF RECORDS     : 1000000   ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  VCOMPANY         ASC     10     1      
+  2  VBRANCH          ASC     10    11      
+  3  VYEAR            NUM    4.0    21      
+  4  REC0             NUM   14.0    23      
+  5  RECR             ASC     12    30  2   
+  6  AA_DEOP          ASC     25    42  1   
+  7  CN_RECR          ASC     12    67  8   CN.FIELD_9 (41,9)
+  8  SXOLIA           TEX   1024    79      
+  9  CN_CODE          ASC     20  1103  3   
+ 10  CLIENT_ID        ASC     20  1123  4   
+ 11  PRESP_ID         ASC     20  1143      
+ 12  DEOP_DATE        DAT      6  1163  7   
+ 13  DEOP_ACTIVE      NUM    2.0  1166  5   
+ 14  ELEIPH           NUM   14.2  1167      
+ 15  LOCKED           NUM    2.0  1175      
+ 16  USER_ID          ASC     20  1176      
+ 17  DATE_CREATE      DAT      6  1196      
+ 18  DATE_MODIFY      DAT      6  1199      
+ 19  DATE_LOCKED      DAT      6  1202      
+ 20  DEOP_LHXH        DAT      6  1205  5   
+ 21  STATERO          NUM    2.0  1208  5   
+ 22  VELXR            ASC      1  1209      
+ 23  TIMEOUT          ASC      4  1210      
+ 24  TIMEOUT1         ASC      4  1214      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    AA_DEOP         NO  NO       25     5       1     ON-LINE
+
+  2    RECR            NO  NO       12     4       1     ON-LINE
+
+  3    CN_CODE         NO  NO       32     6       2     ON-LINE
+       RECR            NO  NO 
+
+  4    CLIENT_ID       NO  NO       32     6       2     ON-LINE
+       RECR            NO  NO 
+
+  5    DEOP_ACTIVE     NO  NO       37     6       5     ON-LINE
+       STATERO         NO  NO 
+       DEOP_LHXH       NO  NO 
+       CLIENT_ID       NO  NO 
+       RECR            NO  NO 
+
+  6    CLIENT_ID       NO  NO       80     8       5     ON-LINE
+       CN_CODE         NO  NO 
+       DEOP_LHXH       NO  NO 
+       AA_DEOP         NO  NO 
+       RECR            NO  NO 
+
+  7    DEOP_ACTIVE     NO  NO       40     6       6     ON-LINE
+       STATERO         NO  NO 
+       DEOP_LHXH       NO  NO 
+       DEOP_DATE       NO  NO 
+       CLIENT_ID       NO  NO 
+       RECR            NO  NO 
+
+  8    CN_RECR         NO  NO       24     5       2     ON-LINE
+       RECR            NO  NO 
+
+  9    DEOP_DATE       NO  NO       60     7       4     ON-LINE
+       CN_CODE         NO  NO 
+       AA_DEOP         NO  NO 
+       RECR            NO  NO 
+

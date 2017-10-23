@@ -1,0 +1,344 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GHMNIES.DD
+// Class Name: Ghmnies_DataDictionary
+// Revision  : 64
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Ghmnies
+Open Gmhnes
+Open Sysrecg
+
+//DDB-HeaderEnd
+
+/ImageCalcHmnies
+______________.  ______________.  ______________.
+/*
+
+Class Ghmnies_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurGL.Branch_Site))+;
+                         (Trim(String(Ghmnies.Ghmnies_Rec0)))))) to Ghmnies.Ghmnies_Recr
+    End_Procedure   // Creating
+
+
+    //1100:cby = globals
+    // Validate_Save:
+
+    Function Validate_Save  Returns Integer
+        Local Integer iReturnVal
+        Forward Get Validate_Save To iReturnVal
+        If (Not(iReturnVal)) Begin
+            If (Ghmnies.Ghmnies_Hmnia=0) Send Operation_Not_Allowed 1001
+            //1100:cby = globals
+            If ( ;
+                (Not(Ghmnies.Company_Code = Syscurgl.Company_Code)) or;
+                (Not(Ghmnies.Branch_Code  = Syscurgl.Branch_Code )) or;
+                (Not(Ghmnies.Year_Year    = Syscurgl.Year_Year   ));
+                ) Send Operation_Not_Allowed 1100
+        End
+
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+
+
+
+    //2100:cby = globals
+    // Validate_Delete:
+
+    Function Validate_Delete  Returns Integer
+        Local Integer iReturnVal
+        Forward Get Validate_Delete  To iReturnVal
+        If (Not(iReturnVal)) Begin
+            // Insert Code Here
+            If (Ghmnies.Ghmnies_GmNoRec <> 0) Send Operation_Not_Allowed 2001
+            //2100:cby = globals
+            If ( ;
+                (Not(Ghmnies.Company_Code = Syscurgl.Company_Code)) or;
+                (Not(Ghmnies.Branch_Code  = Syscurgl.Branch_Code )) or;
+                (Not(Ghmnies.Year_Year    = Syscurgl.Year_Year   ));
+                )                                                   Send Operation_Not_Allowed 2100
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Delete
+
+
+
+    Procedure Operation_Not_Allowed  Integer iError_Num
+              // Insert Code Here
+              Case Begin
+                   Case (iError_Num = 1001)
+                        Error 1001 "DDC 060:ãûõú§†°„ Ü£ú®¶£û§Âò!"
+                        Case Break
+                   Case (iError_Num = 1100)
+                        Error 1100 "DDC 060:ãû òß¶õú°´„ Ñ´ò†®Âò-ï®„©û"
+                        Case Break
+
+                   Case (iError_Num = 2001)
+                        Error 1001 "DDC 060:ÄõÁ§ò´û û õ†òö®ò≠„!\n\nìß·®Æ¶¨§ °†§„©ú†™"
+                        Case Break
+                   Case (iError_Num = 2100)
+                        Error 2100 "DDC 060:ãû òß¶õú°´„ Ñ´ò†®Âò-ï®„©û"
+                        Case Break
+
+                   Case Else
+                        Forward Send Operation_Not_Allowed  iError_Num
+              Case End
+    End_Procedure   // Operation_Not_Allowed
+
+
+    // Request_Save: (°ò¢úÂ´ò† òß¶:a) doUpHm.pkg
+    //´¶ ßúõÂ¶ ghmnies_gmnorec ßú®†‚Æú† ´¶ ß¢„ü¶™ ´‡§ Gmove records ß¶¨ ò§´†©´¶†Æ¶Á§
+    //©´¶ ©¨ö°ú°®†£‚§¶ ghmnies record
+    //û ô·©û õ‚§ ‚ß†´®‚ßú† Áßò®•û ghmnies records ß¶¨ õ‚§ ò§´†©´¶†Æ¶Á§ ©ú ´¶¨¢·Æ†©´¶§
+    //1 Gmove record.
+    Procedure Request_Save0
+        // Insert Code Here
+        Local Integer liGhnies_Number_of_Gmove_Recs
+        Forward Send Request_Save //do normal saving
+        Get Field_Current_Value Field Ghmnies.Ghmnies_GmNoRec to liGhnies_Number_of_Gmove_Recs
+        If (liGhnies_Number_of_Gmove_Recs = 0 );
+           Begin
+            Send Request_Delete
+           End
+    End_Procedure   //request_save
+
+
+    // Request_SaveBpo: (°ò¢úÂ´ò† òß¶:a) doUpHm.pkg (ÊÆ† ß¢‚¶§ (ja)
+    Procedure Request_SaveBpo
+        Send Request_Save
+    End_Procedure   // Request_SaveBpo
+
+
+    Procedure Update
+        Forward Send Update
+
+        //ú§û£‚®‡©û £û related ßúõÂ‡§
+        Move SysCurGL.Company_Code  to Ghmnies.Company_Code
+        Move SysCurGL.Branch_Code   to Ghmnies.Branch_Code
+        Move SysCurGL.Year_Year     to Ghmnies.Year_Year
+        Move SysCurGL.Year_Recr     to Ghmnies.Year_Recr
+        Move Gplan.Gplan_Code       to Ghmnies.Gplan_Code
+        Move Gmhnes.Gmhnes_YYYY     to Ghmnies.Gmhnes_YYYY
+        Move Gmhnes.Gmhnes_Period   to Ghmnies.Gmhnes_Period
+
+        //ú§û£‚®‡©û òü®¶†©´È§
+        Add 1                        to Gmhnes.Gmhnes_GhmNoRec
+
+        Add Ghmnies.Ghmnies_Sx2      to Gmhnes.Gmhnes_Sx2
+        Add Ghmnies.Ghmnies_Sp2      to Gmhnes.Gmhnes_Sp2
+
+        Add Ghmnies.Ghmnies_Sx0      to Gmhnes.Gmhnes_Sx0
+        Add Ghmnies.Ghmnies_Sp0      to Gmhnes.Gmhnes_Sp0
+
+        Add Ghmnies.Ghmnies_Sx00     to Gmhnes.Gmhnes_Sx00
+        Add Ghmnies.Ghmnies_Sp00     to Gmhnes.Gmhnes_Sp00
+
+        Add Ghmnies.Ghmnies_SxR      to Gmhnes.Gmhnes_SxR
+        Add Ghmnies.Ghmnies_SpR      to Gmhnes.Gmhnes_SpR
+
+        Add Ghmnies.Ghmnies_Sx1      to Gmhnes.Gmhnes_Sx1
+        Add Ghmnies.Ghmnies_Sp1      to Gmhnes.Gmhnes_Sp1
+    End_Procedure   //update
+
+
+    Procedure Backout
+        Forward Send Backout
+
+        //ú§û£‚®‡©û òü®¶†©´È§
+        Sub 1                    from Gmhnes.Gmhnes_GhmNoRec
+
+        Sub Ghmnies.Ghmnies_Sx2  from Gmhnes.Gmhnes_Sx2
+        Sub Ghmnies.Ghmnies_Sp2  from Gmhnes.Gmhnes_Sp2
+
+        Sub Ghmnies.Ghmnies_Sx0  from Gmhnes.Gmhnes_Sx0
+        Sub Ghmnies.Ghmnies_Sp0  from Gmhnes.Gmhnes_Sp0
+
+        Sub Ghmnies.Ghmnies_Sx00 from Gmhnes.Gmhnes_Sx00
+        Sub Ghmnies.Ghmnies_Sp00 from Gmhnes.Gmhnes_Sp00
+
+        Sub Ghmnies.Ghmnies_SxR  from Gmhnes.Gmhnes_SxR
+        Sub Ghmnies.Ghmnies_SpR  from Gmhnes.Gmhnes_SpR
+
+        Sub Ghmnies.Ghmnies_Sx1  from Gmhnes.Gmhnes_Sx1
+        Sub Ghmnies.Ghmnies_Sp1  from Gmhnes.Gmhnes_Sp1
+    End_Procedure   // Backout
+
+
+    // fnCalcMhnes_Ypol:
+    // Used from anal_kath to calculate ypol's up to day adDate##
+
+    Function fnCalcHmnies_Ypol integer liMode##;
+                               Date adDate##;
+                               string lsGplan_Code##;
+                               Integer liCurrMode##;
+                               Returns Number
+
+        Number nReturnVal lnCurrRecnum## lnSynxre## lnSynPist## lnSynYpol##
+        Date ldDate##
+        Integer liMhnas## liPeriod
+        Integer liYearYYYY##
+
+        //keep record.number
+        Move Ghmnies.recnum to lnCurrRecnum##
+
+        Move 0 to ImageCalcHmnies.1
+        Move 0 to ImageCalcHmnies.2
+
+        Move (TheMonthSegment(adDate##)) to liMhnas##
+        Move (TheYearSegment(adDate##))  to liYearYYYY##
+        Move (BeginOfMonth(liMhnas##,liYearYYYY##)) to ldDate##
+
+        If (adDate## <> 0)  begin
+
+            clear Ghmnies
+            // move olo to pkid sto index
+            Move gs_Selected_Company_Code to Ghmnies.Company_Code
+            Move gs_Selected_Branch_Code  to Ghmnies.Branch_code
+            Move gi_Selected_Year         to Ghmnies.Year_Year
+            Move lsGplan_Code##           to Ghmnies.Gplan_Code
+            Move liYearYYYY##             to Ghmnies.Gmhnes_YYYY
+            Move liMhnas##                to Ghmnies.Gmhnes_Period  //Pkid
+            Move ldDate##                 to Ghmnies.GHmnies_Hmnia  //Pkid
+
+            find ge GHmnies By Index.1
+            CalcAgain11:
+            If (Found ne 0) begin
+                 If ((Ghmnies.Company_Code eq gs_Selected_Company_Code) and;
+                    (Ghmnies.Branch_code  eq gs_Selected_Branch_Code) and;
+                    (Ghmnies.Year_Year eq gi_Selected_Year)) begin
+                    if ((GHmnies.Gplan_code eq lsGplan_Code##) and;
+                       (Ghmnies.Gmhnes_YYYY eq liYearYYYY##) and;
+                       (Ghmnies.Gmhnes_Period eq liMhnas## ) and;
+                       (GHmnies.GHmnies_Hmnia ge ldDate##) and ;
+                       (GHmnies.GHmnies_Hmnia lt adDate##)) begin
+                        If (liMode## eq 1) Begin //On_Line  
+                           
+                            if liCurrMode## eq 1 begin //Book
+                                 move (lnSynxre##  + GHmnies.GHmnies_Sx2) to LnSynxre##
+                                 move (lnSynPist## + GHmnies.GHmnies_Sp2) to LnSynPist##
+                            end
+                            if liCurrMode## eq 2 begin //Book
+                                 move (lnSynxre##  + GHmnies.GHmnies_Sx00) to LnSynxre##
+                                 move (lnSynPist## + GHmnies.GHmnies_Sp00) to LnSynPist##
+                            end
+                            if liCurrMode## eq 3 begin //Book
+                                 move (lnSynxre##  + GHmnies.GHmnies_SxR) to LnSynxre##
+                                 move (lnSynPist## + GHmnies.GHmnies_SpR) to LnSynPist##
+                            end
+                            if liCurrMode## eq 0 begin
+                                 move (lnSynxre##  + GHmnies.GHmnies_Sx2) to LnSynxre##
+                                 move (lnSynPist## + GHmnies.GHmnies_Sp2) to LnSynPist##
+                            end
+                        end
+                        else If (liMode## eq 0) Begin //Theorhmeno
+                                 move (lnSynxre##  + GHmnies.GHmnies_Sx1) to LnSynxre##
+                                 move (lnSynPist## + GHmnies.GHmnies_Sp1) to LnSynPist##
+                        end
+                         find gt GHmnies By Index.1
+                         Goto CalcAgain11
+                    end
+                 end
+                //>>exit
+            end
+            move lnSynxre## to ImageCalcHmnies.1
+            move lnSynPist## to ImageCalcHmnies.2
+            move (lnSynxre##-LnSynPist##) to LnSynYpol##  
+        end
+
+        //restore record
+        Clear GHmnies
+        Move lnCurrRecnum## to GHmnies.recnum
+        Find Eq GHmnies.Recnum
+
+        Function_Return LnSynYpol##
+    End_Function   // fnCalcMhnes_Ypol
+
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Ghmnies.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Gmhnes.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_NEW_SAVE
+
+        Define_Auto_Increment  Sysrecg.Ghmnies_Rec0  To Ghmnies.Ghmnies_Rec0
+
+        // Field-based properties.......................
+
+        // Ghmnies.Company_Code
+
+        // Ghmnies.Branch_Code
+
+        // Ghmnies.Year_Year
+
+        // Ghmnies.Gplan_Code
+
+        // Ghmnies.Gmhnes_Yyyy
+
+        // Ghmnies.Gmhnes_Period
+
+        // Ghmnies.Ghmnies_Hmnia
+
+        // Ghmnies.Ghmnies_Rec0
+
+        // Ghmnies.Gmhnes_Recr
+
+        // Ghmnies.Ghmnies_Sx0
+
+        // Ghmnies.Ghmnies_Sp0
+
+        // Ghmnies.Ghmnies_Sx00
+
+        // Ghmnies.Ghmnies_Sp00
+
+        // Ghmnies.Ghmnies_Sx1
+
+        // Ghmnies.Ghmnies_Sp1
+
+        // Ghmnies.Ghmnies_Sx2
+
+        // Ghmnies.Ghmnies_Sp2
+
+        // Ghmnies.Ghmnies_Sxr
+
+        // Ghmnies.Ghmnies_Spr
+
+        // Ghmnies.Ghmnies_Gmnorec
+        //DDB/ Comment_Short       Field Ghmnies.Ghmnies_Gmnorec To "è¢„ü¶™ úöö®ò≠È§ Gmove"
+
+        // Ghmnies.Year_Recr
+
+        // Ghmnies.Ghmnies_Recr
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+End_Class    // Ghmnies_DataDictionary
+//DDB-FileEnd

@@ -1,0 +1,281 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : BAXIOKAT.DD
+// Class Name: Baxiokat_DataDictionary
+// Revision  : 45
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Baxiokat
+Open Baxio
+Open Bkinkat
+Open Tpclient
+Open Tperga
+Open Tparticl
+Open Sysrecb
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+//DDB/ ExternalValidationTable Baxiokat_Type_VT  BAXIO.PKG
+
+Register_Object Baxiokat_Type_VT
+Register_Object Baxiokat_Baxiokat_Yn5390_VT
+Register_Object Baxiokat_Baxiokat_Bank_VT
+Register_Object Baxiokat_Baxiokat_Formul_VT
+Use BAXIO.PKG        // Baxiokat_Type_VT
+
+Object Baxiokat_Baxiokat_Yn5390_VT  is a DescriptionValidationTable
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "0"  "éÆ†"
+        Send Add_Table_Value  "1"  "åò†"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Baxiokat_Baxiokat_Yn5390_VT
+
+Object Baxiokat_Baxiokat_Bank_VT  is a CodeValidationTable
+    Set Type_Value        To "BANK"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Baxiokat_Baxiokat_Bank_VT
+
+Object Baxiokat_Baxiokat_Formul_VT  is a DescriptionValidationTable
+    Set Allow_Blank_State To TRUE
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "0"  ""
+        Send Add_Table_Value  "1"  "íÁß¶™ 1"
+        Send Add_Table_Value  "2"  "íÁß¶™ 2"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Baxiokat_Baxiokat_Formul_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList SL034  SL034.SL
+Register_Object SL034
+//DDB-SelectionEnd
+
+Open Syscurxr
+Open Btypkin
+Open Bkinkat
+
+
+// Apo Baxio_DD
+Register_Function private.Default_Axio_C_Code2 Returns String
+//
+
+Class Baxiokat_DataDictionary  is a DataDictionary_Sec
+
+     Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Baxiokat.Baxiokat_Rec0)))))) to Baxiokat.Baxiokat_Recr
+    End_Procedure   // Creating
+
+     Procedure Construct_Object
+               Forward Send Construct_Object
+
+               //object id ´È§ ddo servers ö†ò ´· barticl+bmove+baxio+baxiokat
+               //©ú´·®¶§´ò† òß¶ ´û§ end_construct ´¶¨ bmove
+               //Æ®û©†£úÁ¶¨§ ©´û§ private.exit_btypkin_code
+               //ö†ò §ò ©ú´·®¶¨§ ´¶ visual interface
+               Property Integer piBarticl_dd  0
+               Property Integer piBmove_dd    0
+               Property Integer piBaxio_dd    0
+               Property Integer piBtypkin_dd 0
+     End_Procedure   //construct_object
+
+
+     //private
+     //°ò¢úÂ´ò† òßÊ: iexit ´¶¨ baxiokat_code
+     //©ú´·®ú†     : ´û§ default ´†£„ ´¶¨ baxio_c_code2, ò§·¢¶öò £ú ´¶ °Á®†¶ §Ê£†©£ò Æ®„©ú‡™
+     Procedure private.Exit_Baxiokat_Code Integer liField Integer liBaxiokat_Code
+               String lsBaxio_C_Code_2
+        PROCEDURE_RETURN
+//jsjsjs 24/01/2001
+//               Get File_Field_Current_Value File_Field Year.Year_C_Code0 to lsBaxio_C_Code_2
+
+//               Set Field_Changed_Value of (piBaxio_dd(Self)) Field Baxio.Baxio_C_Code2 to  lsBaxio_C_Code_2 //(private.Default_Axio_C_Code2((piBAxio_dd(Self))))
+//jsjsjs 24/01/2001
+     End_Procedure //private.exit_baxiokat_code
+
+
+    //private
+    //°ò¢úÂ´ò† òßÊ:
+    //©ú´·®ú†: ´û§ default value to baxiokat_code, ò§·¢¶öò £ú ´¶ btypkin.baxiokat_num
+    Procedure private.Entry_Baxiokat_Code Integer liField Integer liBaxiokat_Code
+              Integer liBtypkin_dd liBkinkat_Num liBtypkin_Rec0
+
+        PROCEDURE_RETURN
+
+
+    End_Procedure //private.entry_gtypkin_code
+
+
+
+
+    Procedure Update
+          Forward Send Update
+          If (Baxiokat.Baxiokat_Yn5390 = 0);
+          Begin //ú·§ õ‚§ úÂ§ò† £ûÆò§¶ö®ò≠û£‚§ú™ úß†´òö‚™, £ûõ‚§†©ú Ê¢ò ´ò ©Æú´†°· ßúõÂò
+               Move "" to Baxiokat.Baxiokat_Bank
+               Move "" to Baxiokat.Baxiokat_Lno
+               Move 0  to Baxiokat.Baxiokat_Formul
+          End
+    End_Procedure
+
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Baxiokat.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Baxio.File_Number
+        Send Add_Client_File  Bkinkat.File_Number
+        Send Add_Client_File  Tpclient.File_Number
+        Send Add_Client_File  Tperga.File_Number
+        Send Add_Client_File  Tparticl.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecb.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecb.Baxiokat_Rec0  To Baxiokat.Baxiokat_Rec0
+
+        // Field-based properties.......................
+
+        // Baxiokat.Baxiokat_Code
+        Set Field_Prompt_Object    Field Baxiokat.Baxiokat_Code To (SL034(Self))
+
+        // Baxiokat.Baxiokat_Descr
+        Set Field_Prompt_Object    Field Baxiokat.Baxiokat_Descr To (SL034(Self))
+
+        // Baxiokat.Baxiokat_Rec0
+
+        // Baxiokat.Baxiokat_Recr
+
+        // Baxiokat.Baxiokat_Type
+        Set Field_Value_Table      Field Baxiokat.Baxiokat_Type To (Baxiokat_Type_VT(Self))
+
+        // Baxiokat.Baxio_Lcode
+        //DDB/ Comment_Short       Field Baxiokat.Baxio_Lcode To "Computed field (ú§û£ú®È§ú´ò† ©´û§ creating/deleting ´¶¨ baxio)"
+
+        // Baxiokat.Baxiokat_Yn5390
+        Set Field_Value_Table      Field Baxiokat.Baxiokat_Yn5390 To (Baxiokat_Baxiokat_Yn5390_VT(Self))
+
+        // Baxiokat.Baxiokat_Bank
+        Set Field_Value_Table      Field Baxiokat.Baxiokat_Bank To (Baxiokat_Baxiokat_Bank_VT(Self))
+
+        // Baxiokat.Baxiokat_Lno
+
+        // Baxiokat.Baxiokat_Formul
+        Set Field_Value_Table      Field Baxiokat.Baxiokat_Formul To (Baxiokat_Baxiokat_Formul_VT(Self))
+
+        //DDB-DefineFieldEnd
+
+        Set Main_File            To Baxiokat.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Baxio.File_Number
+        Send Add_Client_File  Bkinkat.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecb.File_Number  DD_LOCK_ON_NEW_SAVE
+
+        Define_Auto_Increment  Sysrecb.Baxiokat_Rec0  To Baxiokat.Baxiokat_Rec0
+
+        // Field-based properties.......................
+
+        // Baxiokat.Baxiokat_Code
+        Set Field_Entry_msg        Field Baxiokat.Baxiokat_Code   To private.Entry_Baxiokat_Code
+        Set Field_Exit_msg         Field Baxiokat.Baxiokat_Code   To private.Exit_Baxiokat_Code
+        Set Field_Label_Long       Field Baxiokat.Baxiokat_Code   To "â‡õ†°Ê™ ÑÂõ¶¨™ Ä•†¶ö®·≠¶¨"
+        Set Field_Label_Short      Field Baxiokat.Baxiokat_Code   To "ÑÂõ¶™"
+        Set Field_Options          Field Baxiokat.Baxiokat_Code   To DD_AUTOFIND    DD_REQUIRED
+        Set Field_Prompt_Object    Field Baxiokat.Baxiokat_Code   To (SL034(Self))
+        Set Key_Field_State        Field Baxiokat.Baxiokat_Code   To TRUE
+
+        // Baxiokat.Baxiokat_Descr
+        Set Field_Label_Long       Field Baxiokat.Baxiokat_Descr  To "èú®†ö®ò≠„ ÑÂõ¶¨™ Ä•†¶ö®·≠¶¨"
+        Set Field_Label_Short      Field Baxiokat.Baxiokat_Descr  To "èú®†ö®ò≠„"
+        Set Field_Prompt_Object    Field Baxiokat.Baxiokat_Descr  To (SL034(Self))
+
+        // Baxiokat.Baxiokat_Rec0
+        Set Field_Options          Field Baxiokat.Baxiokat_Rec0   To DD_AUTOFIND    DD_REQUIRED
+        Set Field_Prompt_Object    Field Baxiokat.Baxiokat_Rec0   To (SL034(Self))
+        Set Key_Field_State        Field Baxiokat.Baxiokat_Rec0   To TRUE
+
+        // Baxiokat.Baxiokat_Type
+        Set Field_Class_Name       Field Baxiokat.Baxiokat_Type   To "dbComboForm_EZ"
+        Set Field_Label_Long       Field Baxiokat.Baxiokat_Type   To "Ñ†©ß®ò°´‚¶/è¢û®‡´‚¶"
+        Set Field_Label_Short      Field Baxiokat.Baxiokat_Type   To "Ñ†©./è¢„®."
+        Set Field_Value_Table      Field Baxiokat.Baxiokat_Type   To (Baxiokat_Type_VT(Self))
+
+        // Baxiokat.Baxio_Lcode
+        Set Field_Label_Long       Field Baxiokat.Baxio_Lcode     To "íú¢ú¨´òÂ¶™ Ä®†ü£Ê™ Ä•†¶ö·≠¶¨"
+        Set Field_Label_Short      Field Baxiokat.Baxio_Lcode     To "íú¢.Ä®†ü£Ê™"
+        //Set Field_Options          Field Baxiokat.Baxio_Lcode     To DD_DISPLAYONLY
+
+        // Baxiokat.Baxiokat_Yn5390
+        Set Field_Class_Name       Field Baxiokat.Baxiokat_Yn5390 To "dbComboForm_EZ"
+        Set Field_Label_Long       Field Baxiokat.Baxiokat_Yn5390 To "ãûÆò§¶ö®ò≠û£‚§ú™ Ñß†´òö‚™ ?"
+        Set Field_Label_Short      Field Baxiokat.Baxiokat_Yn5390 To "ãûÆ/°‚™ Ñß†´òö‚™"
+        Set Field_Value_Table      Field Baxiokat.Baxiokat_Yn5390 To (Baxiokat_Baxiokat_Yn5390_VT(Self))
+
+        // Baxiokat.Baxiokat_Bank
+        Set Field_Class_Name       Field Baxiokat.Baxiokat_Bank   To "dbComboForm_EZ"
+        Set Field_Label_Long       Field Baxiokat.Baxiokat_Bank   To "í®·ßúùò"
+        Set Field_Label_Short      Field Baxiokat.Baxiokat_Bank   To "í®·ßúùò"
+        Set Field_Value_Table      Field Baxiokat.Baxiokat_Bank   To (Baxiokat_Baxiokat_Bank_VT(Self))
+
+        // Baxiokat.Baxiokat_Lno
+        Set Field_Label_Long       Field Baxiokat.Baxiokat_Lno    To "íú¢ú¨´òÂ¶™ Ä®†ü£Ê™"
+        Set Field_Label_Short      Field Baxiokat.Baxiokat_Lno    To "íú¢.Ä®†ü£Ê™"
+
+        // Baxiokat.Baxiokat_Formul
+        Set Field_Class_Name       Field Baxiokat.Baxiokat_Formul To "dbComboForm_EZ"
+        Set Field_Label_Long       Field Baxiokat.Baxiokat_Formul To "Ä¢öÊ®†ü£¶™ Check Digit"
+        Set Field_Label_Short      Field Baxiokat.Baxiokat_Formul To "Check Digit"
+        Set Field_Value_Table      Field Baxiokat.Baxiokat_Formul To (Baxiokat_Baxiokat_Formul_VT(Self))
+
+    End_Procedure    // Define_Fields
+
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+        Set Field_Changed_Value   Field Baxiokat.Baxiokat_Yn5390 To 0
+    End_Procedure    // Field_Defaults
+
+End_Class    // Baxiokat_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use SL034.SL         // SL034
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

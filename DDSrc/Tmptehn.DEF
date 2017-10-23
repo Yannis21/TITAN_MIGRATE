@@ -1,0 +1,59 @@
+-----------------------------------------------------------------------------
+  DATE: 26/03/112      TIME: 09:29                                  PAGE:  1
+  FILE DEFINITION FOR FILE: TMPTEHN (# 115)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : Tmptehn
+  USER DISPLAY NAME         : Tmptehn
+  DATAFLEX FILE NAME        : TMPTEHN
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 384       ( USED: 82 )
+  MAX NUMBER OF RECORDS     : 10000     ( USED: 1 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  ONOMA            ASC      3     1      
+  2  TYPOS            ASC      2     4  1   
+  3  EGKATASTASH      ASC      4     6  1   
+  4  HMNIA            DAT      6    10  3   
+  5  TYPE             NUM    6.0    13      
+  6  ITEM             ASC     18    16  3   
+  7  QTY              NUM   12.4    34      
+  8  PRODIAGRAFH      ASC     12    42  3   
+  9  POSOTHS          NUM    4.0    54      
+ 10  MM               ASC      3    56      
+ 11  AA               NUM    4.0    59      
+ 12  ITEMD            ASC     18    61      
+ 13  MMITEMD          ASC      3    79      
+ 14  INDEX            NUM    2.0    82      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    EGKATASTASH     NO  NO       9      3       3     ON-LINE
+       TYPOS           NO  NO 
+       RECNUM          NO  NO 
+
+  2    HMNIA           NO  NO       42     4       6     ON-LINE
+       TYPOS           NO  NO 
+       EGKATASTASH     NO  NO 
+       ITEM            NO  NO 
+       PRODIAGRAFH     NO  NO 
+       RECNUM          NO  NO 
+
+  3    HMNIA           NO  NO       42     4       6     ON-LINE
+       TYPOS           NO  NO 
+       EGKATASTASH     NO  NO 
+       ITEM            NO  NO 
+       PRODIAGRAFH     NO  NO 
+       RECNUM          NO  NO 
+

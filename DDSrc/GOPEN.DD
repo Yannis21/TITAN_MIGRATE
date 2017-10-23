@@ -1,0 +1,373 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GOPEN.DD
+// Class Name: Gopen_DataDictionary
+// Revision  : 22
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Gopen
+Open Gmovea
+Open Sysrecg
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Gopen_Gopen_C_Code2_VT
+Register_Object Gopen_Gopen_M_Code_VT
+
+Object Gopen_Gopen_C_Code2_VT  is a CodeValidationTable
+    Set Type_Value        To "CURRENCY"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Gopen_Gopen_C_Code2_VT
+
+Object Gopen_Gopen_M_Code_VT  is a CodeValidationTable
+    Set Type_Value        To "MODULE"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Gopen_Gopen_M_Code_VT
+//DDB-ValidationEnd
+
+Class Gopen_DataDictionary  is a DataDictionary_Sec
+
+
+    Procedure Creating
+              Forward Send Creating
+              //Add 2               to Year.Year_NumGopen       //˜¨ Ÿ£æª ©¬©®œ«å©œà¤ «ª ®¨ã©ª
+              Move gs_Module_Code to Gopen.Gopen_M_Code       //module œšš¨˜­ãª
+            Move (Append('',((Trim(SysCurGL.Branch_Site))+;
+                             (Trim(String(Gopen.Gopen_Rec0)))))) to Gopen.Gopen_Recr
+    End_Procedure //creating
+
+
+    Procedure Deleting
+              Forward Send Deleting
+              //Sub 2             from Year.Year_NumGopen       //˜¨ Ÿ£æª á¨Ÿ¨à¤ «ª ®¨ã©ª
+    End_Procedure //deleting
+
+
+    Procedure Update
+              Forward Send Update
+              Add Gopen.Gopen_X0 to   Gmove.Gmove_Open_Sp0  //master § ©«à©
+              Add Gopen.Gopen_X0 to   Gmovea.Gmove_Open_Sx0 //alias  ®¨âà©
+              Add Gopen.Gopen_P0 to   Gmove.Gmove_Open_Sx0
+              Add Gopen.Gopen_P0 to   Gmovea.Gmove_Open_Sp0
+    End_Procedure //update
+
+
+    Procedure Backout
+              Forward Send Backout
+              Sub Gopen.Gopen_X0 from Gmove.Gmove_Open_Sp0
+              Sub Gopen.Gopen_X0 from Gmovea.Gmove_Open_Sx0
+              Sub Gopen.Gopen_P0 from Gmove.Gmove_Open_Sx0
+              Sub Gopen.Gopen_P0 from Gmovea.Gmove_Open_Sp0
+    End_Procedure //backout
+
+
+    Procedure Save_Main_File
+              Number  liX0 liP0
+              String  lsMaster lsAlias lsGopenRecr
+
+              Forward Send Save_Main_File
+
+              Move Gopen.Gmove_Recr    to lsMaster
+              Move Gopen.Gmovea_Recr   to lsAlias
+              Move Gopen.Gopen_X0      to liX0
+              Move Gopen.Gopen_P0      to liP0
+              Move Gopen.Gopen_Recr    to lsGopenRecr
+
+              Clear Gopen
+              Move lsAlias  to Gopen.Gmove_Recr
+              Move lsMaster to Gopen.Gmovea_Recr
+              Find Eq Gopen by Index.1 //Gmove_recr+Gmovea_recr
+              Move liP0           to Gopen.Gopen_X0
+              Move liX0           to Gopen.Gopen_P0
+              Move gs_Module_Code to Gopen.Gopen_M_Code       //module œšš¨˜­ãª
+
+              Saverecord Gopen
+
+              Clear Gopen
+              Move lsGopenRecr to Gopen.Gopen_Recr
+              Find Eq Gopen By Index.2
+              If (Found = 0) Send Operation_Not_Allowed 10001 //®˜¢˜©£â¤ ™á©, reindex «¦¬ gopen
+    End_Procedure   // save_main_file
+
+
+    Procedure Delete_Main_File
+              String  lsMaster lsAlias lsGopenRecr
+              Move Gopen.Gmove_Recr    to lsMaster
+              Move Gopen.Gmovea_Recr   to lsAlias
+
+              Forward Send Delete_Main_File
+
+              Clear Gopen
+              Move lsAlias  to Gopen.Gmove_Recr
+              Move lsMaster to Gopen.Gmovea_Recr
+              Find Eq Gopen by Index.1 //Gmove_recr+Gmovea_recr
+              If (Found = 0) Send Operation_Not_Allowed 10002 //®˜¢˜©£â¤ ™á©, reindex «¦¬ gopen
+              Delete Gopen
+    End_Procedure   // delete_main_file
+
+
+    Procedure Operation_Not_Allowed Integer iError_Num
+              String lsError_Message
+              Case Begin
+
+                   //˜§æ validate save
+                   Case (iError_Num = 1001)
+                        Move ("DDC 068:€¡˜«á¢¢¢ „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "‘¬©®â« © £æ¤¦¤ ©œ ®¨âà© ã £æ¤¦¤ ©œ §å©«à©!");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1002)
+                        Move ("DDC 068:€¡˜«á¢¢¢ œšš¨˜­ã (ƒœ¬«œ¨â¦¤ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "‘¬©®â« © £æ¤¦¤ ©œ ®¨âà© ã £æ¤¦¤ ©œ §å©«à©!");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1003)
+                        Move ("DDC 068:€¡˜«á¢¢¢ œšš¨˜­ã (Œæ£ ©£˜ Reporting).\n\n"+;
+                        "‘¬©®â« © £æ¤¦¤ ©œ ®¨âà© ã £æ¤¦¤ ©œ §å©«à©!");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1004)
+                        Move ("DDC 068:€¡˜«á¢¢¢ œšš¨˜­ã (Œæ£ ©£˜ ‰ ¤ã©œàª).\n\n"+;
+                        "‘¬©®â« © £æ¤¦¤ ©œ ®¨âà© ã £æ¤¦¤ ©œ §å©«à©!");
+                        to lsError_Message
+                   Case Break
+
+                   Case (iError_Num = 1009)
+                        Clear Codemast
+                        Move "MODULE" to Codemast.Type
+                        Move Gopen.Gopen_M_Code to Codemast.Code
+                        Find Eq Codemast by Index.1 //type+code
+                        Move ("DDC 068:€›ç¤˜«  „šš¨˜­ã\n\n(† ‘¬©®â« © «¨¦§¦§¦ œå«˜  £æ¤¦¤ ˜§æ "+;
+                        (Trim(Codemast.Description))+" )") to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1100)
+                        Move "DDC 068:‹ ˜§¦›œ¡«ã „«˜ ¨å˜-•¨ã©" to lsError_Message
+                        Case Break
+
+                   //˜§æ validate delete
+                   Case (iError_Num = 2001)
+                        Clear Codemast
+                        Move "MODULE" to Codemast.Type
+                        Move Garticl.Garticl_M_Code to Codemast.Code
+                        Find Eq Codemast by Index.1 //type+code
+                        Move ("DDC 068:€›ç¤˜«  › ˜š¨˜­ã!\n\n(† ©¬©®â« © › ˜š¨á­œ«˜  £æ¤¦¤ ˜§æ "+;
+                        (Trim(Codemast.Description))+" )") to lsError_Message
+                   Case Break
+                   Case (iError_Num = 2100)
+                        Move "DDC 068:‹ ˜§¦›œ¡«ã „«˜ ¨å˜-•¨ã©" to lsError_Message
+                        Case Break
+
+                   //â¢œš®¦  open items
+                   Case (iError_Num = 1101)
+                        Move ("DDC 068:€¡˜«á¢¢¢ „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "’¦ ©¬©®œ« æ£œ¤¦ ®¨œà©« ¡æ §¦©æ œå¤˜  ˜¨¤« ¡æ !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1102)
+                        Move ("DDC 068:€¡˜«á¢¢¢ „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "’¦ ©¬©®œ« æ£œ¤¦ § ©«à« ¡æ §¦©æ œå¤˜  ˜¨¤« ¡æ !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1103)
+                        Move ("DDC 068:€¡˜«á¢¢¢ „šš¨˜­ã (ƒœ¬«œ¨œç¦¤ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "’¦ ©¬©®œ« æ£œ¤¦ ®¨œà©« ¡æ §¦©æ œå¤˜  ˜¨¤« ¡æ !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1104)
+                        Move ("DDC 068:€¡˜«á¢¢¢ „šš¨˜­ã (ƒœ¬«œ¨œç¦¤ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "’¦ ©¬©®œ« æ£œ¤¦ § ©«à« ¡æ §¦©æ œå¤˜  ˜¨¤« ¡æ !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1105)
+                        Move ("DDC 068:€¡˜«á¢¢¢ „šš¨˜­ã (Œæ£ ©£˜ Reporting).\n\n"+;
+                        "’¦ ©¬©®œ« æ£œ¤¦ ®¨œà©« ¡æ §¦©æ œå¤˜  ˜¨¤« ¡æ !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1106)
+                        Move ("DDC 068:€¡˜«á¢¢¢ „šš¨˜­ã (Œæ£ ©£˜ Reporting).\n\n"+;
+                        "’¦ ©¬©®œ« æ£œ¤¦ § ©«à« ¡æ §¦©æ œå¤˜  ˜¨¤« ¡æ !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1107)
+                        Move ("DDC 068:€¡˜«á¢¢¢ „šš¨˜­ã (Œæ£ ©£˜ „šš¨˜­ãª).\n\n"+;
+                        "’¦ ©¬©®œ« æ£œ¤¦ ®¨œà©« ¡æ §¦©æ œå¤˜  ˜¨¤« ¡æ !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1108)
+                        Move ("DDC 068:€¡˜«á¢¢¢ „šš¨˜­ã (Œæ£ ©£˜ „šš¨˜­ãª).\n\n"+;
+                        "’¦ ©¬©®œ« æ£œ¤¦ § ©«à« ¡æ §¦©æ œå¤˜  ˜¨¤« ¡æ !");
+                        to lsError_Message
+
+                   //˜§æ save_main_file
+                   Case (iError_Num = 10001) //›â¤ £§æ¨œ©˜ ¤˜ ¥˜¤˜™¨é gopen by recnum !
+                        Move ("DDC 068:Transaction Aborted! (€¤ç§˜¨¡«¦ª €¨® ¡æª)\n\n"+;
+                              "˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª!") to lsError_Message
+                   Case Break
+                   //˜§æ delete_main_file
+                   Case (iError_Num = 10002) //›â¤ £§æ¨œ©˜ ¤˜ ¥˜¤˜™¨é gopen by index.1 !
+                        Move ("DDC 068:Transaction Aborted! (€¤ç§˜¨¡«¦ª €¨® ¡æª)\n\n"+;
+                              "˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª!") to lsError_Message
+                   Case Break
+
+                   Case Else
+                        Forward Send Operation_Not_Allowed iError_Num
+              Case End
+
+              Error iError_Num lsError_Message
+    End_Procedure   //operation_not_allowed
+
+
+
+    //1001:gopen_x0  * gopen_p0  = 0 (›â¤ œ§ «¨â§œ«˜  ©œ â¤˜ record ¤˜ â®à ¡˜  ®¨âà© ¡˜å §å©«à©)
+    //1002:gopen_x00 * gopen_p00 = 0 (›â¤ œ§ «¨â§œ«˜  ©œ â¤˜ record ¤˜ â®à ¡˜  ®¨âà© ¡˜å §å©«à©)
+    //1003:gopen_xr  * gopen_pr  = 0 (›â¤ œ§ «¨â§œ«˜  ©œ â¤˜ record ¤˜ â®à ¡˜  ®¨âà© ¡˜å §å©«à©)
+    //1004:gopen_x2  * gopen_p2  = 0 (›â¤ œ§ «¨â§œ«˜  ©œ â¤˜ record ¤˜ â®à ¡˜  ®¨âà© ¡˜å §å©«à©)
+
+    //1009:m_code: œšš¨˜­ã œ§ «¨â§œ«˜  £æ¤¦¤ ˜§¦ ¦ module §¦¬ «¤ ›£ ¦ç¨š©œ
+
+    //1100:cby = globals
+    //1101:gopen_x0  >=0
+    //1102:gopen_p0  >=0
+    //1103:gopen_p00 >=0
+    //1104:gopen_p00 >=0
+    //1105:gopen_pr  >=0
+    //1106:gopen_pr  >=0
+    //1107:gopen_p2  >=0
+    //1108:gopen_p2  >=0
+    Function Validate_Save Returns Integer
+             Integer iReturnVal
+             Forward Get Validate_Save to iReturnVal
+
+             If (Not(iReturnVal));
+             Begin
+              //â¢œš®¦  ®¨œà§ ©«é©œà¤
+              If (Not(Gopen.Gopen_X0 * Gopen.Gopen_P0 = 0)) Send Operation_Not_Allowed 1001
+              If (Not(Gopen.Gopen_X00* Gopen.Gopen_P00= 0)) Send Operation_Not_Allowed 1002
+              If (Not(Gopen.Gopen_Xr * Gopen.Gopen_Pr = 0)) Send Operation_Not_Allowed 1003
+              If (Not(Gopen.Gopen_X2 * Gopen.Gopen_P2 = 0)) Send Operation_Not_Allowed 1004
+
+              //1009:â¢œš®¦ª module œšš¨˜­ãª
+              If (Not(Gopen.Gopen_M_Code = gs_Module_Code)) Send Operation_Not_Allowed 1009
+
+              //1101-1108:â¢œš®¦  open items (æ¢œª ¦  ©¬©®œ«å©œ ª §¨â§œ  ¤˜ œå¤˜  £ã ˜¨¤« ¡âª)
+              //          (gopen_x0  >= 0 ¡«¢
+              If (Not(Gopen.Gopen_X0  >= 0               )) Send Operation_Not_Allowed 1101
+              If (Not(Gopen.Gopen_P0  >= 0               )) Send Operation_Not_Allowed 1102
+              If (Not(Gopen.Gopen_X00 >= 0               )) Send Operation_Not_Allowed 1103
+              If (Not(Gopen.Gopen_P00 >= 0               )) Send Operation_Not_Allowed 1104
+              If (Not(Gopen.Gopen_XR  >= 0               )) Send Operation_Not_Allowed 1105
+              If (Not(Gopen.Gopen_PR  >= 0               )) Send Operation_Not_Allowed 1106
+              If (Not(Gopen.Gopen_X2  >= 0               )) Send Operation_Not_Allowed 1107
+              If (Not(Gopen.Gopen_P2  >= 0               )) Send Operation_Not_Allowed 1108
+
+             End //«â¢¦ª ¡é› ¡˜ validation
+
+             Function_Return iReturnVal
+    End_Function //validate_save
+
+
+    //2001: ©¬©®â« © › ˜š¨á­œ«˜  £æ¤¦¤ ˜§¦ «¦ module §¦¬ «¦ ›£ ¦ç¨š©œ
+    //2100:cby = globals
+    Function Validate_Delete  Returns Integer
+             Integer iReturnVal
+             Forward Get Validate_Delete  To iReturnVal
+             If (Not(iReturnVal));
+             Begin
+
+              //2001:â¢œš®¦ª module œšš¨˜­ãª
+              If (Not(Gopen.Gopen_M_Code = gs_Module_Code)) Send Operation_Not_Allowed 2001
+
+             End //«â¢¦ª ¡é› ¡˜ validation
+             Function_Return iReturnVal
+    End_Function   // validate_delete
+
+    //-----------------------------dubugging code
+    Procedure Request_Save
+              Integer liTemp
+              move 1 to liTemp    //š ˜ debugger break point
+              Forward Send Request_Save
+              move 2 to liTemp
+    End_Procedure //request_save
+    //-----------------------------dubugging code
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Gopen.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Gmovea.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecg.Gopen_Rec0  To Gopen.Gopen_Rec0
+
+        // Field-based properties.......................
+
+        // Gopen.Gmove_Recr
+
+        // Gopen.Gmovea_Recr
+
+        // Gopen.Gopen_X0
+        //DDB/ Comment_Short       Field Gopen.Gopen_X0 To "á¤«˜ ‡œ« ¡ã"
+
+        // Gopen.Gopen_P0
+        //DDB/ Comment_Short       Field Gopen.Gopen_P0 To "á¤«˜ ‡œ« ¡ã"
+
+        // Gopen.Gopen_X00
+
+        // Gopen.Gopen_P00
+
+        // Gopen.Gopen_Xr
+
+        // Gopen.Gopen_Pr
+
+        // Gopen.Gopen_X2
+
+        // Gopen.Gopen_P2
+
+        // Gopen.Gopen_C_Code2
+        Set Field_Value_Table      Field Gopen.Gopen_C_Code2 To (Gopen_Gopen_C_Code2_VT(Self))
+
+        // Gopen.Gopen_M_Code
+        //DDB/ Comment_Short       Field Gopen.Gopen_M_Code To "Module „šš¨˜­ãª"
+        Set Field_Class_Name       Field Gopen.Gopen_M_Code To "dbComboFormSub"
+        Set Field_Value_Table      Field Gopen.Gopen_M_Code To (Gopen_Gopen_M_Code_VT(Self))
+
+        // Gopen.Gopen_Rec0
+
+        // Gopen.Gopen_Recr
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+End_Class    // Gopen_DataDictionary
+//DDB-FileEnd

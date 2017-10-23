@@ -1,0 +1,70 @@
+-----------------------------------------------------------------------------
+  DATE: 26/07/2017      TIME: 10:56                                  PAGE:  1
+  FILE DEFINITION FOR FILE: MIORDD (# 129)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : MIORDD
+  USER DISPLAY NAME         : MIORDD
+  DATAFLEX FILE NAME        : MIORDD
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 256       ( USED: 219 )
+  MAX NUMBER OF RECORDS     : 1000000   ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  BTNORDH_RECR     ASC     12     1  1   BTNORDH.FIELD_5 (118,5)
+  2  VITEM            ASC     20    13  3   
+  3  VITEM_DESCR      ASC     30    33      
+  4  VQUAL            ASC     10    63      
+  5  VQTY             NUM   14.2    73      
+  6  VUNITPRICE       NUM   14.4    81      
+  7  VDISC            NUM    4.2    90      
+  8  VPRICE           NUM   14.4    93      
+  9  VKATISH          ASC      2   102      
+ 10  VXRM3            NUM    2.0   104      
+ 11  VPAGIAXRM3       NUM   14.2   105      
+ 12  VPAGIAXRPRICE    NUM   14.2   113      
+ 13  VANOPAGIA        NUM   14.2   121      
+ 14  VSTHSIMO         NUM    2.0   129      
+ 15  VELEIPES         NUM    2.0   130      
+ 16  VORDERBT         ASC     25   131  2   
+ 17  VCLIENT_ID       ASC     20   156  3   
+ 18  VCN_CODE         ASC     20   176  3   
+ 19  VACTIVE          NUM    2.0   196  3   
+ 20  DEOP_DATE        DAT      6   197  2   
+ 21  VELXR            ASC      1   200      
+ 22  ARXH_DATE        DAT      6   201  4   
+ 23  VDISCPOSO        NUM   14.2   204      
+ 24  VQTYUSED         NUM   14.2   212      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    BTNORDH_RECR    NO  NO       15     4       2     ON-LINE
+       Recnum          NO  NO 
+
+  2    VORDERBT        NO  NO       48     7       3     ON-LINE
+       VITEM           NO  NO 
+       DEOP_DATE       NO  NO 
+
+  3    VCLIENT_ID      NO  NO       64     8       5     ON-LINE
+       VCN_CODE        NO  NO 
+       VACTIVE         NO  NO 
+       VITEM           NO  NO 
+       Recnum          NO  NO 
+
+  4    VCLIENT_ID      NO  NO       64     8       5     ON-LINE
+       VCN_CODE        NO  NO 
+       VACTIVE         NO  NO 
+       VITEM           NO  NO 
+       ARXH_DATE       NO  NO 
+

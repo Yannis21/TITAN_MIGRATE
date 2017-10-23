@@ -1,0 +1,844 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GPLAN.DD
+// Class Name: Gplan_DataDictionary
+// Revision  : 132
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Gplan
+Open Gmovea
+Open Gplanmod
+Open Gmhnes
+Open Gvatd
+Open Gpmoves
+Open Sysrecg
+Open Syscurgl
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Gplan_Gplan_O_Code_VT
+Register_Object Gplan_Gplan_Yn_VT
+Register_Object Gplan_Gplan_Xpm_VT
+Register_Object Gplan_Gplan_Doy_VT
+Register_Object Gplan_Gplan_J_Code_VT
+Register_Object Gplan_Gplan_C_Code2_VT
+Register_Object Gplan_Gplan_I_A_Code_VT2
+Register_Object Gplan_Gplan_Myf_Sum_VT
+
+Object Gplan_Gplan_O_Code_VT  is a CodeValidationTable
+    Set Type_Value        To "OMADA"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Gplan_Gplan_O_Code_VT
+
+Object Gplan_Gplan_Yn_VT  is a CodeValidationTable
+    Set Type_Value        To "YESNO"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Gplan_Gplan_Yn_VT
+
+Object Gplan_Gplan_Xpm_VT  is a DescriptionValidationTable
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "1"  "ï®ú¶Á£ú§¶™"
+        Send Add_Table_Value  "2"  "è†©´¶Á£ú§¶™"
+        Send Add_Table_Value  "3"  "ã†°´Ê™"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Gplan_Gplan_Xpm_VT
+
+Object Gplan_Gplan_Doy_VT  is a CodeValidationTable
+    Set Type_Value        To "DOY"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Gplan_Gplan_Doy_VT
+
+Object Gplan_Gplan_J_Code_VT  is a CodeValidationTable
+    Set Type_Value        To "JOB"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Gplan_Gplan_J_Code_VT
+
+Object Gplan_Gplan_C_Code2_VT  is a CodeValidationTable
+    Set Type_Value        To "CURRENCY"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Gplan_Gplan_C_Code2_VT
+
+Object Gplan_Gplan_I_A_Code_VT2  is a CodeValidationTable
+    Set Type_Value        To "AITIOL"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Gplan_Gplan_I_A_Code_VT2
+
+Object Gplan_Gplan_Myf_Sum_VT  is a CodeValidationTable
+    Set Type_Value        To "MYF"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Gplan_Gplan_Myf_Sum_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl150  sl150.sl
+//DDB/ ExternalSelectionList Gtypkin  Gtypkin.sl
+Register_Object sl150
+Register_Object Gtypkin
+//DDB-SelectionEnd
+Use arrays.Sub
+
+Use Gmovea.dd //Æ®ú†·ùú´ò† ¶ß‡õ„ß¶´ú, õ†Ê´† úÂ§ò† alias file °ò†
+              //©´û§ begin_transaction ß®¶°ò¢úÂ deadlock
+
+Class Gplan_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Object oarrayGplan_Aux is a cPinakas
+        End_Object
+        Property Integer    pioarray_Gplan_Aux (oarrayGplan_Aux(self))
+        Property String     psValidChars ""
+        Property Integer    piMustNOTConstrain Public 0 
+        Property String     psBranch 
+    End_Procedure   // Construct_Object
+
+    Procedure OnConstrain
+        Forward Send OnConstrain
+        If (piMustNOTConstrain(Self)) Begin
+        End
+        Else Begin
+            Constrain Gplan.Company_Code  eq SysCurGL.Company_Code
+            Constrain Gplan.Branch_Code   eq SysCurGL.Branch_Code
+        End
+    End_Procedure
+
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move SysCurGL.Company_Code  to Gplan.Company_Code
+        Move SysCurGL.Branch_Code   to Gplan.Branch_Code
+        Move SysCurGL.Year_Year     to Gplan.Year_Year
+        Move SysCurGL.Year_Recr     to Gplan.Year_Recr
+    End_Procedure   // Update
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurGL.Branch_Site))+;
+                         (Trim(String(Gplan.Gplan_Rec0)))))) to Gplan.Gplan_Recr
+    End_Procedure   // Creating
+
+
+//////////////////////////////////////
+//////////////////////////////////////
+
+    Function fiCheckValidChars String asGplanCode String asValChars Returns Integer
+        String lsChar
+        Integer liLen liCharPos rVal
+        If (asGplanCode <> "") Begin
+            Move (Trim(asGplanCode)) to asGplanCode
+            Move (Length(asGplanCode)) to liLen
+            For liCharPos From 1 to liLen
+               Move (Mid(asGplanCode,1,liCharPos)) to lsChar
+               If (Not(asValChars contains lsChar)) Begin
+                    Set psValidChars to asValChars
+                    Function_Return 1001
+               End
+            Loop
+        End
+        Function_Return rVal
+    End_Function // fiCheckValidChars
+
+    // private_Do_Restore_Fields:
+    Procedure private_Do_Restore_Fields for Gplan_DataDictionary
+        // Insert Code Here
+        Local Integer lioarray_Gplan_Aux##
+        Local Integer liFile##
+        Local Integer liField_Count##
+        Local Integer liField_Type##
+        Local Integer liField##
+
+        Get pioarray_Gplan_Aux to lioarray_Gplan_Aux##
+        Get Main_File to liFile##
+        Get_Attribute DF_FILE_NUMBER_FIELDS of liFile## to liField_Count##
+
+
+        For liField## from 0 to (liField_Count##-1)
+            //Get_Attribute DF_FIELD_TYPE of iFile iField to iField_Type
+            move liField## to Fieldindex
+            Get Array_Value of lioarray_Gplan_Aux## Item (liField##+1) to Gplan.Company_Code&
+        Loop
+        Send Delete_Data to lioarray_Gplan_Aux##
+    End_Procedure   // private_Do_Restore_Fields
+
+    // private_Do_Keep_Fields:
+
+    Procedure private_Do_Keep_Fields for Gplan_DataDictionary
+        // Insert Code Here
+        Local Integer lioarray_Gplan_Aux##
+        Local Integer liFile##
+        Local Integer liField_Count##
+        Local Integer liField_Type##
+        Local Integer liField##
+
+        Get pioarray_Gplan_Aux to lioarray_Gplan_Aux##
+        Get Main_File to liFile##
+        Get_Attribute DF_FILE_NUMBER_FIELDS of liFile## to liField_Count##
+
+        Send Delete_Data to lioarray_Gplan_Aux##
+        Send Add_Item to lioarray_Gplan_Aux## 0 //sos.sos
+
+        For liField## from 0 to (liField_Count##-1)
+            //Get_Attribute DF_FIELD_TYPE of iFile iField to iField_Type
+            move liField## to Fieldindex
+            Send Add_Item to lioarray_Gplan_Aux## Gplan.Company_Code&
+        Loop
+    End_Procedure   // private_Do_Keep_Fields
+
+    // Request_Save:
+
+
+
+//-----------------------------------------------------------------------------
+    FUNCTION Compute_Bathmos for Gplan_DataDictionary STRING KODIKOS## RETURNS INTEGER
+             LOCAL INTEGER BATHMOS##
+             REPEAT
+                   REPLACE "." IN KODIKOS## WITH ""
+                   [FOUND] INCREMENT BATHMOS##
+             UNTIL (FINDERR=1)
+             FUNCTION_RETURN (BATHMOS##+1)
+    END_FUNCTION //compute_bathmos
+
+    FUNCTION Find_Previous for Gplan_DataDictionary STRING LS_CODE1## RETURNS STRING
+        LOCAL STRING LS_TEMP_CODE1## LS_TEMP_CODE2##
+        LOCAL INTEGER LI_COUNTER##
+
+        FOR LI_COUNTER## FROM 1 TO (LENGTH(LS_CODE1##))
+             INSERT (MID(LS_CODE1##,1,LI_COUNTER##)) IN LS_TEMP_CODE1## AT 1
+        LOOP
+        MOVE (RIGHT(LS_TEMP_CODE1##,(LENGTH(LS_TEMP_CODE1##)-(POS(".",LS_TEMP_CODE1##))))) ;
+             TO LS_TEMP_CODE1##
+        FOR LI_COUNTER## FROM 1 TO (LENGTH(LS_TEMP_CODE1##))
+            INSERT (MID(LS_TEMP_CODE1##,1,LI_COUNTER##)) IN LS_TEMP_CODE2## AT 1
+        LOOP
+        FUNCTION_RETURN LS_TEMP_CODE2##
+    END_FUNCTION
+
+    FUNCTION fiCheck_Format STRING  LS_CODE1##;
+                            STRING  LS_MASK##;
+                            INTEGER LI_BATHMOS##;
+                            RETURNS INTEGER
+             String  LS_TEMP_CODE1## LS_TEMP_CODE2## LS_MASK2##
+             Integer LI_COUNTER## LI_BATHMOS1##
+             Move (Trim(ls_Code1##)) to ls_Code1##
+             Move (Trim(ls_Mask##))  to ls_Mask##
+             FOR LI_COUNTER## FROM 1 TO (LENGTH(LS_MASK##))
+                  IF ((MID(LS_MASK##,1,LI_COUNTER##)) = ".") INCREMENT LI_BATHMOS1##
+                  IF (LI_BATHMOS1## < LI_BATHMOS##) ;
+                  INSERT (MID(LS_MASK##,1,LI_COUNTER##)) IN LS_MASK2## AT LI_COUNTER##
+             LOOP
+             IF (;
+                  (LENGTH(LS_CODE1##)) <> (LENGTH(LS_MASK2##));
+                ) FUNCTION_RETURN 1000
+             FOR LI_COUNTER## FROM 1 TO (LENGTH(LS_MASK2##))
+                  IF (;
+                      ((MID(LS_MASK2##,1,LI_COUNTER##)) = ".") AND;
+                      ((MID(LS_CODE1##,1,LI_COUNTER##)) <> ".");
+                     ) FUNCTION_RETURN 1000
+             LOOP
+             FUNCTION_RETURN 0
+    END_FUNCTION //fiCHECK_FORMAT
+
+    Function fiBackward_Check for Gplan_DataDictionary String LsGplanCode_Back integer liBathmos Returns Integer
+        Integer liGplan_Yn_Last
+        Number liGplanRecnum
+        String LsSearch_CodePrevious
+
+        if (liBathmos > 1) begin
+
+            move (Current_Record(Self)) to liGplanRecnum
+            move gplan.Gplan_Yn_Last to liGplan_Yn_Last
+            Send private_Do_Keep_Fields
+
+            Move (Find_Previous(self,lsGplanCode_Back)) to lsSearch_CodePrevious
+
+            clear Gplan
+            move gs_Selected_Company_Code  to Gplan.Company_Code
+            move gs_Selected_Branch_Code   to Gplan.Branch_Code
+            move gi_Selected_Year          to Gplan.Year_Year
+            move lsSearch_CodePrevious     to Gplan.Gplan_Code
+            Find eq Gplan by index.1 // pkid
+            If (Found = 0) begin
+                clear gplan
+                move liGplanRecnum to gplan.recnum
+                find eq gplan.recnum
+                Send private_Do_Restore_Fields
+                Function_return  7001 //return to fiValidate
+            end
+            else begin
+               // The  previous logar marked last  and current greater bathmos
+               if   (Gplan.Gplan_yn_Last = 1) begin
+                   Send private_Do_Restore_Fields
+                   Function_return 7003
+               end
+               clear gplan
+               move liGplanRecnum to gplan.recnum
+               find eq gplan.recnum
+               Send private_Do_Restore_Fields
+               function_Return 0 //ok
+            end
+        end
+        Function_Return 0
+    End_Function  // fiBackward_Check
+    //-----------------------------------------------------------------------------
+
+
+    //-----------------------------------------------------------------------------
+    FUNCTION fiForward_Check for Gplan_DataDictionary STRING LS_GplanCode integer liMode Returns Integer
+        String lsNext_Anoep
+        Integer liGplan_Yn_Last
+        Number liGplanRecnum
+
+
+        //move gplan.recnum to liGplanRecnum
+        move (Current_Record(Self)) to liGplanRecnum
+        move gplan.Gplan_Code to lsNext_Anoep
+        move gplan.Gplan_Yn_Last to liGplan_Yn_Last
+        Send private_Do_Keep_Fields
+
+        if (liGplan_Yn_Last = 1)  begin
+            find gt gplan by index.1
+            if (found = 0) begin
+                clear gplan
+                move liGplanRecnum to gplan.recnum
+                find eq gplan.recnum
+                Send private_Do_Restore_Fields
+            end
+            else begin
+                // The Current and the previous logar marked last
+                if (Gplan.Gplan_Anoep = lsNext_Anoep) begin
+                    clear gplan
+                    move liGplanRecnum to gplan.recnum
+                    find eq gplan.recnum
+                    Send private_Do_Restore_Fields
+                    Function_return 7004
+                end
+                else begin
+                    clear gplan
+                    move liGplanRecnum to gplan.recnum
+                    find eq gplan.recnum
+                    Send private_Do_Restore_Fields
+                end
+            end
+        end
+
+        if (liMode = 1) begin
+            find gt gplan by index.1
+            if (Found = 0) begin
+                clear gplan
+                move liGplanRecnum to gplan.recnum
+                find eq gplan.recnum
+                Send private_Do_Restore_Fields
+            end
+            else begin
+                if (Gplan.Gplan_Anoep = lsNext_Anoep) begin
+                    move liGplanRecnum to gplan.recnum
+                    find eq gplan.recnum
+                    Send private_Do_Restore_Fields
+                    Function_return 7010 //called from validate delete
+                end
+                move liGplanRecnum to gplan.recnum
+                find eq gplan.recnum
+                //Send private_Do_Restore_Fields
+            end
+        end
+        Function_return 0
+    End_Function // fiForward_Check
+
+
+    Function private_Man_Gplan_Code for Gplan_DataDictionary integer liField## String lsGplan_Code integer liModeGplan Returns Integer
+
+        // Insert Code Here
+        Integer liCounter liPosition liLength liBathmos liRetVal
+        string lsMask lsCkeckChar lsSearchCode
+
+        Trim lsGplan_code to lsGplan_code
+        Move lsGplan_Code to lsSearchCode
+    Search_Again:
+        clear Gformat
+        move SysCurGL.Company_Code  to Gformat.Company_Code
+        move SysCurGL.Branch_Code   to Gformat.Branch_Code
+        move SysCurGL.Year_Year     to Gformat.Year_Year
+        move lsSearchCode           to Gformat.Gformat_Code
+        Find eq Gformat by index.1
+
+        if (Found = 1) begin
+            Move (Compute_Bathmos(self,lsGplan_Code)) to liBathmos
+            Move (fiCheck_Format(self,lsGplan_Code,gformat.gformat_mask,liBathmos)) to liRetVal
+            if (liRetVal = 0) begin
+                Move (Compute_Bathmos(self,lsGplan_Code)) to liBathmos
+                if (liModeGplan = 0) Begin
+                    if (Not(Current_Record(self))) begin
+                        set field_default_value field Gplan.gplan_Bathmos to libathmos //from deo
+                    end
+                end
+                if (libathmos > 1) begin
+                    Move (Find_Previous(self,lsGplan_Code)) to lsSearchCode
+                    if (liModeGplan = 0) Begin
+                        if (Not(Current_Record(self))) begin
+                            set field_default_value field Gplan.gplan_Anoep to lsSearchCode //from Deo
+                        End
+                    End
+                end
+            function_return 0
+            end
+            else begin
+                function_return 127
+            end
+        end
+        else begin
+            Move (Compute_Bathmos(self,lsSearchCode)) to liBathmos
+            if ((liBathmos-1) <> 0) begin
+                Move (Find_Previous(self,lsSearchCode)) to lsSearchCode
+                Goto Search_Again
+            end
+            else begin
+                clear Gformat
+                move SysCurGL.Company_Code  to Gformat.Company_Code
+                move SysCurGL.Branch_Code   to Gformat.Branch_Code
+                move SysCurGL.Year_Year     to Gformat.Year_Year
+                move "@@"                   to Gformat.Gformat_Code
+                Find eq Gformat by index.1 // pkid
+//* to be a function
+                Move (Compute_Bathmos(self,lsGplan_Code)) to liBathmos
+                Move (fiCheck_Format(self,lsGplan_Code,gformat.gformat_mask,liBathmos)) to liRetVal
+                if (liRetVal = 0) begin
+                    Move (Compute_Bathmos(self,lsGplan_Code)) to liBathmos
+                    if (liModeGplan = 0) Begin
+                        if (Not(Current_Record(self))) begin
+                            set field_default_value field Gplan.gplan_Bathmos to libathmos //from Deo
+                        end
+                    end
+                    if (libathmos > 1) begin
+                        Move (Find_Previous(self,lsGplan_Code)) to lsSearchCode
+                        if (liModeGplan = 0) Begin
+                            if (Not(Current_Record(self))) begin
+                                set field_default_value field Gplan.gplan_Anoep to lsSearchCode //from Deo
+                            end
+                        end
+                    end
+                function_return 0
+                end
+                else begin
+                    function_return 127
+                end
+
+                //* emd to be a function
+                function_return 0
+            end
+        end
+        Function_return 0    //ok
+    End_Function   // private_Man_Gplan_Code
+
+
+
+    // fiValidateGplanFields:
+
+    Function fiValidateGplanFields for Gplan_DataDictionary integer liField string lsFieldvalue Returns Integer
+        String  sName lsAnoep lsGplan_Code
+        Integer iMainFile liGplanRecnum liReturnVal liReturnValb liBathmos1
+        String lsValidChar lsDelimiter
+
+        Get Main_File to iMainFile
+        Get_Attribute DF_FIELD_NAME of iMainFile liField to sName
+
+        If (sName = 'GPLAN_CODE') Begin
+            move (trim(lsFieldvalue)) to lsFieldvalue //from deo
+            if (lsFieldvalue <>  "") begin //new
+                Move SyscurGL.Year_Valid_Char to lsValidChar
+                Move SyscurGL.Year_Delimiter  to lsDelimiter
+                Move (fiCheckValidChars(Self,lsFieldvalue,((Trim(lsValidChar))+(Trim(lsDelimiter))))) to liReturnVal
+                if (liReturnVal = '1001') begin
+                               error liReturnVal ("ãû òß¶õú°´Ê™ Æò®ò°´„®ò™ ö†ò °‡õ†°Ê ä.ë !\n\nÄß¶õú°´¶Â Æò®ò°´„®ú™ : '" + (psValidChars(Self)) + "'")
+                               Function_Return liReturnVal
+                            end
+
+                Move (private_Man_Gplan_Code(self,liField,lsFieldvalue,0)) to liReturnVal
+                if (lireturnval <> 0) begin
+                                        error 127 ("ä·ü¶™ £¶®≠„ °‡õ†°¶Á !\n\n"+Gplan.Gplan_Code)
+                                        function_return 127
+                                      end
+
+                get field_current_value field Gplan.gplan_Code to lsGplan_Code
+                get field_current_value field Gplan.gplan_Bathmos to liBathmos1
+                get field_current_value field Gplan.gplan_anoep to lsAnoep
+                Move (fiBackward_Check(self,lsGplan_Code,liBathmos1)) to liReturnValb
+                if (liReturnValb = '7001') begin
+                                               error 7001 "Éú§ ¨ß·®Æú† ¶ ßú®†¢ûß´†°Ê™ ôòü£Ê™ !"
+                                               Function_Return 8001
+                                            end
+                if (liReturnValb = '7002') begin
+                                               error 7002 "ìß·®Æú† °‡õ†°Ê™ ´ú¢ú¨´òÂ¶¨ ôòü£¶Á !"
+                                               Function_Return 8002
+                                          end
+                if (liReturnValb = '7003') begin
+                                               error 7003 "é ß®¶ûö¶Á£ú§¶™ úÂ§ò† ´ú¢ú¨´òÂ¶¨ ôòü£¶Á !"
+                                               Function_Return 8003
+                                          end
+
+                Move (fiForward_Check(self,lsGplan_Code,0)) to liReturnValb
+                if (liReturnValb = '7004') begin
+                                               error 7004 "ìß·®Æú† ¶ ò§È´ú®¶™ ôòü£Ê™ !"
+                                               Function_Return 8004
+                                            end
+
+            end
+            else Function_Return 0  //exit function ok!!!
+         end
+         function_return 0
+    End_Function   // fiValidateGplanFields
+
+
+//-----------------------------------------------Save Operation ----------------------------------------------------
+
+
+    Procedure Operation_Not_Allowed  Integer iError_Num
+        //Forward Send Operation_Not_Allowed  iError_Num
+        // Insert Code Here
+                 if iError_num eq 127  error 127 ((Trim(Gplan.Gplan_Code))+" Wrong Format !!!! \n\n")
+            Else if iError_num eq 128  error 128 ("Not a valid Data Entry.  Account is Missing !!!!\n\n"+Gplan.Gplan_Code)
+            Else if iError_num eq 129  error 129 ("Not a valid Data Entry.  Bathmos is Missing !!!!\n\n"+Gplan.Gplan_Code)
+            Else if iError_num eq 130  error 130 ("Not a valid Data Entry.  Previews Account is Missing !!!!\n\n"+Gplan.Gplan_Code)
+            Else if iError_num eq 1100  error 1100 "DDC:150 - ãû òß¶õú°´„ Ñ´ò†®Âò-ï®„©û"
+            Else if iError_num eq 2100  error 2100 "DDC:150 - ãû òß¶õú°´„ Ñ´ò†®Âò-ï®„©û"
+            Else if iError_num eq 7001 error 8001 ("Anoep Does not Exist !!!!\n\n"+Gplan.Gplan_Code)
+            Else if iError_num eq 7002 error 8002 ("Last Exists\n\n!!!! "+Gplan.Gplan_Code)
+            Else if iError_num eq 7003 error 8003 ("Previous batmos is last  !!!!\n\n"+Gplan.Gplan_Code)
+            Else if iError_num eq 7004 error 8004 ("Greater bathmos exists  !!!!\n\n"+Gplan.Gplan_Code)
+            Else if iError_num eq 7010 error 7010 ("Greater bathmos exists  !!!!\n\n"+Gplan.Gplan_Code)
+            Else if (iError_num = 1001) error 1001 ("ãû òß¶õú°´Ê™ Æò®ò°´„®ò™ ö†ò °‡õ†°Ê ä.ë !\n\nÄß¶õú°´¶Â Æò®ò°´„®ú™ : '" + (psValidChars(Self)) + "'")
+            Else Forward Send Operation_Not_Allowed  iError_Num
+    End_Procedure
+
+
+    Procedure Clear_From_Bpo
+        Clear Gplan
+    End_Procedure
+
+    Function Validate_Save  Returns Integer
+        Local Integer iReturnVal iField##
+        locaL string lsVal##
+
+        Forward Get Validate_Save  To iReturnVal
+
+
+        If (Not(iReturnVal))Begin
+        //    If (Not(Current_Record(Self))) Move (fiCheckValidChars(Self,Gplan.Gplan_Code,((Trim(Year.Year_Valid_Char))+(Trim(Year.Year_Delimiter))))) to iReturnVal
+        //    If (iReturnVal) Send Operation_Not_Allowed iReturnVal
+            If (Gplan.Gplan_Code    = "") Send Operation_Not_Allowed 128
+            If (Gplan.Gplan_Bathmos = 0 ) Send Operation_Not_Allowed 129
+            If (;
+                 (Gplan.Gplan_Bathmos <> 1) and;
+                 (Gplan.Gplan_Anoep = "");
+               ) Send Operation_Not_Allowed 130
+            For iField## from 4 to 4   // Field number for Starting and Ending pp's ???????
+
+                Move (private_Man_Gplan_Code(self,iField##,Gplan.Gplan_Code,1))     to iReturnVal
+                If iReturnVal Send Operation_Not_Allowed iReturnVal
+
+                Move (fiBACKWARD_CHECK(self,Gplan.Gplan_Code,Gplan.Gplan_Bathmos)) to iReturnVal
+                If iReturnVal Send Operation_Not_Allowed iReturnVal
+
+                Move (fiFORWARD_CHECK(self,Gplan.Gplan_Code,0))                     to iReturnVal
+                If iReturnVal Send Operation_Not_Allowed iReturnVal
+
+            Loop
+              //1100:cby = globals
+              If ( ;
+                   (Not(Gplan.Company_Code = SysCurGL.Company_Code)) or;
+                   (Not(Gplan.Branch_Code  = SysCurGL.Branch_Code )) ;
+                  ) Send Operation_Not_Allowed 1100
+        End
+        Function_Return iReturnVal
+    End_Function
+
+    Function Validate_Delete  Returns Integer
+        Local Integer iReturnVal liReturnValb##
+        Forward Get Validate_Delete  To iReturnVal
+
+        If (Not(iReturnVal)) Begin
+            // Insert Code Here
+               Move (fiFORWARD_CHECK(Self,Gplan.Gplan_Code,1)) to liReturnValb##
+               If (liReturnValb##>1) Send Operation_Not_Allowed liReturnValb##
+              //2100:cby = globals
+              If ( ;
+                   (Not(Gplan.Company_Code = SysCurGL.Company_Code)) or;
+                   (Not(Gplan.Branch_Code  = SysCurGL.Branch_Code )) ;
+                  ) Send Operation_Not_Allowed 2100
+        End
+
+        Function_Return iReturnVal
+    End_Function
+
+
+//    Procedure Update
+//        Forward Send Update
+//        // Insert Code Here
+//        Move Company.Company_Code  to Gplan.Company_Code
+//        Move Branch.Branch_Code    to Gplan.Branch_Code
+//        Move Year.Year_Year        to Gplan.Year_Year
+//        Add 1 to Year.Year_NumGplan //ò®†ü£Ê™ ¢¶öò®†ò©£È§ ´û™ Æ®„©û™
+//    End_Procedure   // Update
+
+//    Procedure Backout
+//        Forward Send Backout
+//        Sub 1 from Year.Year_NumGplan //ò®†ü£Ê™ ¢¶öò®†ò©£È§ ´û™ Æ®„©û™
+//    End_Procedure //deleting
+
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Gplan.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Gmovea.File_Number
+        Send Add_Client_File  Gplanmod.File_Number
+        Send Add_Client_File  Gmhnes.File_Number
+        Send Add_Client_File  Gvatd.File_Number
+        Send Add_Client_File  Gpmoves.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Syscurgl.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecg.Gplan_Rec0  To Gplan.Gplan_Rec0
+
+        // Field-based properties.......................
+
+        // Gplan.Company_Code
+
+        // Gplan.Branch_Code
+
+        // Gplan.Year_Year
+
+        // Gplan.Gplan_Code
+        Set Field_Exit_msg         Field Gplan.Gplan_Code To get_fiValidateGplanFields
+        Set Field_Options          Field Gplan.Gplan_Code To DD_AUTOFIND    DD_REQUIRED   
+        Set Field_Prompt_Object    Field Gplan.Gplan_Code To (sl150(Self))
+
+        // Gplan.Gplan_Rec0
+
+        // Gplan.Year_Recr
+
+        // Gplan.Gplan_Descr1
+        Set Field_Prompt_Object    Field Gplan.Gplan_Descr1 To (sl150(Self))
+
+        // Gplan.Gplan_Descr2
+        Set Field_Prompt_Object    Field Gplan.Gplan_Descr2 To (sl150(Self))
+
+        // Gplan.Gplan_Bathmos
+        //DDB/ Comment_Short       Field Gplan.Gplan_Bathmos To "Calulated"
+
+        // Gplan.Gplan_Anoep
+        //DDB/ Comment_Short       Field Gplan.Gplan_Anoep To "Calulated"
+
+        // Gplan.Gplan_O_Code
+        Set Field_Class_Name       Field Gplan.Gplan_O_Code To "dbComboFormSub"
+        Set Field_Value_Table      Field Gplan.Gplan_O_Code To (Gplan_Gplan_O_Code_VT(Self))
+
+        // Gplan.Gplan_Yn_Xfer
+        Set Field_Class_Name       Field Gplan.Gplan_Yn_Xfer To "dbComboFormSub"
+        Set Field_Value_Table      Field Gplan.Gplan_Yn_Xfer To (Gplan_Gplan_Yn_VT(Self))
+
+        // Gplan.Gplan_Yn_Last
+        //DDB/ Comment_Short       Field Gplan.Gplan_Yn_Last To "ï®û©†£¶ß¶†úÂ´ò† ©´û§ validate save ´¶¨ Gmove (1013)"
+        Set Field_Class_Name       Field Gplan.Gplan_Yn_Last To "dbComboFormSub"
+        Set Field_Value_Table      Field Gplan.Gplan_Yn_Last To (Gplan_Gplan_Yn_VT(Self))
+
+        // Gplan.Gplan_Yn_Kin
+        //DDB/ Comment_Short       Field Gplan.Gplan_Yn_Kin To "ï®û©†£¶ß¶†úÂ´ò† ©´û§ validate save ´¶¨ Gmove (1014)"
+        Set Field_Class_Name       Field Gplan.Gplan_Yn_Kin To "dbComboFormSub"
+        Set Field_Value_Table      Field Gplan.Gplan_Yn_Kin To (Gplan_Gplan_Yn_VT(Self))
+
+        // Gplan.Gplan_Yn_Kk
+        Set Field_Class_Name       Field Gplan.Gplan_Yn_Kk To "dbComboFormSub"
+        Set Field_Value_Table      Field Gplan.Gplan_Yn_Kk To (Gplan_Gplan_Yn_VT(Self))
+
+        // Gplan.Gplan_Xpm
+        //DDB/ Comment_Short       Field Gplan.Gplan_Xpm To "ï®û©†£¶ß¶†úÂ´ò† ©´û§ validate save ´¶¨ Gmove (1015+1016)"
+        Set Field_Class_Name       Field Gplan.Gplan_Xpm To "dbComboFormSub"
+        Set Field_Value_Table      Field Gplan.Gplan_Xpm To (Gplan_Gplan_Xpm_VT(Self))
+
+        // Gplan.Gplan_Yn_Xy
+        //DDB/ Comment_Short       Field Gplan.Gplan_Yn_Xy To "ï®û©†£¶ß¶†úÂ´ò† ©´û§ private.trexe ´¶¨ Gmove (1017)"
+        Set Field_Class_Name       Field Gplan.Gplan_Yn_Xy To "dbComboFormSub"
+        Set Field_Value_Table      Field Gplan.Gplan_Yn_Xy To (Gplan_Gplan_Yn_VT(Self))
+
+        // Gplan.Gplan_Yn_Py
+        //DDB/ Comment_Short       Field Gplan.Gplan_Yn_Py To "ï®û©†£¶ß¶†úÂ´ò† ©´û§ private.trexe ´¶¨ Gmove (1018)"
+        Set Field_Class_Name       Field Gplan.Gplan_Yn_Py To "dbComboFormSub"
+        Set Field_Value_Table      Field Gplan.Gplan_Yn_Py To (Gplan_Gplan_Yn_VT(Self))
+
+        // Gplan.Gplan_Fpaent
+
+        // Gplan.Gplan_Fpaent_Yn
+        Set Field_Value_Table      Field Gplan.Gplan_Fpaent_Yn To (Gplan_Gplan_Yn_VT(Self))
+
+        // Gplan.Gplan_Afm
+
+        // Gplan.Gplan_Addr
+
+        // Gplan.Gplan_Tk
+
+        // Gplan.Gplan_Poli
+
+        // Gplan.Gplan_Doy
+        Set Field_Class_Name       Field Gplan.Gplan_Doy To "dbComboFormSub"
+        Set Field_Value_Table      Field Gplan.Gplan_Doy To (Gplan_Gplan_Doy_VT(Self))
+
+        // Gplan.Gplan_J_Code
+        Set Field_Class_Name       Field Gplan.Gplan_J_Code To "dbComboFormSub"
+        Set Field_Value_Table      Field Gplan.Gplan_J_Code To (Gplan_Gplan_J_Code_VT(Self))
+
+        // Gplan.Gplan_C_Code2
+        //DDB/ Comment_Short       Field Gplan.Gplan_C_Code2 To "ï®û©†£¶ß¶†úÂ´ò† ©´û§ validate save ´¶¨ Gmove (1019)"
+        Set Field_Class_Name       Field Gplan.Gplan_C_Code2 To "dbComboFormSub"
+        Set Field_Value_Table      Field Gplan.Gplan_C_Code2 To (Gplan_Gplan_C_Code2_VT(Self))
+
+        // Gplan.Gplan_Tel
+
+        // Gplan.Gplan_Email
+
+        // Gplan.Gplan_Resp
+
+        // Gplan.Gplan_Bitmap
+
+        // Gplan.Gplan_Rep_Code
+
+        // Gplan.Gplan_Rep_Pct
+
+        // Gplan.Gplan_I_Xy_Code
+
+        // Gplan.Gplan_I_Py_Code
+
+        // Gplan.Gplan_I_Ctypkin
+        Set Field_Prompt_Object    Field Gplan.Gplan_I_Ctypkin To (Gtypkin(Self))
+
+        // Gplan.Gplan_I_A_Code
+        Set Field_Class_Name       Field Gplan.Gplan_I_A_Code To "dbComboFormSub"
+        Set Field_Value_Table      Field Gplan.Gplan_I_A_Code To (Gplan_Gplan_I_A_Code_VT2(Self))
+
+        // Gplan.Gplan_Yn_Myfp
+        Set Field_Class_Name       Field Gplan.Gplan_Yn_Myfp To "dbComboFormSub"
+        Set Field_Value_Table      Field Gplan.Gplan_Yn_Myfp To (Gplan_Gplan_Yn_VT(Self))
+
+        // Gplan.Gplan_Yn_Myfa
+        Set Field_Class_Name       Field Gplan.Gplan_Yn_Myfa To "dbComboFormSub"
+        Set Field_Value_Table      Field Gplan.Gplan_Yn_Myfa To (Gplan_Gplan_Yn_VT(Self))
+
+        // Gplan.Gplan_Myfnump
+
+        // Gplan.Gplan_Myfvalp
+
+        // Gplan.Gplan_Myfnuma
+
+        // Gplan.Gplan_Myfvala
+
+        // Gplan.Gplan_Myf_Sump
+        //DDB/ Comment_Short       Field Gplan.Gplan_Myf_Sump To "âòü¶®Âùú† ú·§ ¶† Æ®úÈ©ú†™/ß†©´È©ú†™ üò òü®¶†©´¶Á§ ©´û§ ãìî"
+        Set Field_Class_Name       Field Gplan.Gplan_Myf_Sump To "dbComboFormSub"
+        Set Field_Value_Table      Field Gplan.Gplan_Myf_Sump To (Gplan_Gplan_Myf_Sum_VT(Self))
+
+        // Gplan.Gplan_Myf_Suma
+        Set Field_Class_Name       Field Gplan.Gplan_Myf_Suma To "dbComboFormSub"
+        Set Field_Value_Table      Field Gplan.Gplan_Myf_Suma To (Gplan_Gplan_Myf_Sum_VT(Self))
+
+        // Gplan.Gplan_Sx0
+
+        // Gplan.Gplan_Sp0
+
+        // Gplan.Gplan_Sx00
+
+        // Gplan.Gplan_Sp00
+
+        // Gplan.Gplan_Sxr
+
+        // Gplan.Gplan_Spr
+
+        // Gplan.Gplan_Sx2
+
+        // Gplan.Gplan_Sp2
+
+        // Gplan.Gplan_Gmhnnorec
+
+        // Gplan.Gplan_Recr
+        Set Field_Prompt_Object    Field Gplan.Gplan_Recr To (sl150(Self))
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Gplan.Gplan_Yn_Xfer To 0
+        Set Field_Changed_Value   Field Gplan.Gplan_Yn_Last To 0
+        Set Field_Changed_Value   Field Gplan.Gplan_Yn_Kin To 1
+        Set Field_Changed_Value   Field Gplan.Gplan_Yn_Kk To 0
+        Set Field_Changed_Value   Field Gplan.Gplan_Xpm To 3
+        Set Field_Changed_Value   Field Gplan.Gplan_Yn_Xy To 1
+        Set Field_Changed_Value   Field Gplan.Gplan_Yn_Py To 1
+        Set Field_Changed_Value   Field Gplan.Gplan_Fpaent_Yn To 0
+        Set Field_Changed_Value   Field Gplan.Gplan_Rep_Pct To 100
+        Set Field_Changed_Value   Field Gplan.Gplan_Yn_Myfp To 0
+        Set Field_Changed_Value   Field Gplan.Gplan_Yn_Myfa To 0
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+End_Class    // Gplan_DataDictionary
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl150.sl         // sl150
+Use Gtypkin.sl       // Gtypkin
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

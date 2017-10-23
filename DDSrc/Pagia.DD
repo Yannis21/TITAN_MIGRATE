@@ -1,0 +1,234 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : PAGIA.DD
+// Class Name: Pagia_DataDictionary
+// Revision  : 76
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Pagia
+Open Pagmoves
+Open Pagkat
+Open Sysrecg
+Open Pagmoves
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Pagia_Pagia_Fpa_VT
+Register_Object Pagia_Pagia_Ist_VT
+
+Object Pagia_Pagia_Fpa_VT  is a CodeValidationTable
+    Set Type_Value        To "VAT_PCT"
+    Set Table_Title       To "âò´ûö¶®Âò îèÄ"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Pagia_Pagia_Fpa_VT
+
+Object Pagia_Pagia_Ist_VT  is a CodeValidationTable
+    Set Type_Value        To "PAGIAIST"
+    Set Table_Title       To "ïò®ò°´û®†©£Ê™ èòöÂ¶¨"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Pagia_Pagia_Ist_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl83  sl83.SL
+//DDB/ ExternalSelectionList sl80  sl80.SL
+Register_Object sl83
+Register_Object sl80
+//DDB-SelectionEnd
+
+Class Pagia_DataDictionary  is a DataDictionary_sec
+ 
+    // Validate_Save:
+ 
+    Function Validate_Save  Returns Integer
+        Local Integer iReturnVal
+        local number  npososto 
+        Forward Get Validate_Save  To iReturnVal
+        If (Not(iReturnVal)) Begin
+            // Insert Code Here 
+           get pnpososto to npososto  
+           if ((pagia.pagia_closed='1') and (pagia.pagia_pososto <> npososto)) begin
+               send info_box 'è¶©¶©´Ê õú§ Ñß†õ‚Æú´ò† í®¶ß¶ß¶Âû©û !!' ' ë≠·¢£ò' 
+               move 1 to ireturnval
+           end
+           else begin
+               if ((npososto <> 0) and (pagia.pagia_pososto <> npososto)) begin 
+                  move npososto to pagia.pagia_lpososto
+                  move '1' to pagia.pagia_closed
+               end    
+           end   
+        End
+        Function_Return ireturnval
+    End_Function   // Validate_Save
+ 
+ 
+   
+ 
+   
+ 
+ 
+    // New_Current_Record:
+ 
+    Procedure New_Current_Record  Integer iOldRec  Integer iNewRec
+        Forward Send New_Current_Record  iOldRec iNewRec  
+        set pnpososto to pagia.pagia_pososto
+        // Insert Code Here
+    End_Procedure   // New_Current_Record
+ 
+     Procedure Construct_Object
+        Forward Send Construct_Object
+        Property number     pnpososto  Public 0
+     End_procedure
+    // Update:
+ 
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here 
+        Move SysCurXR.Company_Code      to pagia.Company_Code
+        Move SysCurXR.Branch_Code       to pagia.Branch_Code
+        Move SysCurXR.Year_Year         to pagia.Year_Year
+        move pagkat.pagkat_recr         to pagia.pagkat_recr 
+       
+    End_Procedure   // Update
+ 
+ //   Procedure OnConstrain
+ //       Forward Send OnConstrain
+ //       Constrain pagia.Company_Code  eq SysCurXR.Company_Code
+ //       Constrain pagia.Branch_Code   eq SysCurXR.Branch_Code
+ //       Constrain pagia.Year_Year     eq SysCurXR.Year_Year
+ //   End_Procedure
+    
+                                                
+    Procedure Entry_pagia_date Integer iField Date dDate
+         Local Integer Changed
+         Get Field_Changed_State iField to Changed
+         If ( Changed=0 AND dDate = 0) Begin
+           SysDate4 dDate
+           Set Field_Default_Value iField to dDate
+         End
+    End_Procedure
+     
+     
+     
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Pagia.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Pagmoves.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Pagkat.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Pagmoves.File_Number  DD_LOCK_ON_ALL
+
+        // Field-based properties.......................
+
+        // Pagia.Company_Code
+
+        // Pagia.Branch_Code
+
+        // Pagia.Year_Year
+
+        // Pagia.Pagia_Code
+        Set Field_Prompt_Object    Field Pagia.Pagia_Code To (sl83(Self))
+
+        // Pagia.Pagia_Codea
+
+        // Pagia.Pagia_Rec0
+
+        // Pagia.Pagia_Descr
+        Set Field_Prompt_Object    Field Pagia.Pagia_Descr To (sl83(Self))
+
+        // Pagia.Pagia_Recr
+
+        // Pagia.Pagkat_Recr
+
+        // Pagia.Pagkat_Code
+        Set Field_Prompt_Object    Field Pagia.Pagkat_Code To (sl80(Self))
+
+        // Pagia.Client_Id
+
+        // Pagia.Pagia_Bydate
+        Set Field_Entry_msg        Field Pagia.Pagia_Bydate To Entry_pagia_date
+        Set Field_Mask_Type        Field Pagia.Pagia_Bydate To MASK_DATE_WINDOW
+
+        // Pagia.Pagia_Modifdate
+        Set Field_Mask_Type        Field Pagia.Pagia_Modifdate To MASK_DATE_WINDOW
+
+        // Pagia.Pagia_Parast
+
+        // Pagia.Pagia_Axia
+
+        // Pagia.Pagia_Pososto
+
+        // Pagia.Pagia_Qty
+
+        // Pagia.Pagia_Topos
+
+        // Pagia.Pagia_Fpa
+        Set Field_Value_Table      Field Pagia.Pagia_Fpa To (Pagia_Pagia_Fpa_VT(Self))
+
+        // Pagia.Pagia_Deaddate
+        Set Field_Mask_Type        Field Pagia.Pagia_Deaddate To MASK_DATE_WINDOW
+
+        // Pagia.Pagia_Lastdate
+        Set Field_Mask_Type        Field Pagia.Pagia_Lastdate To MASK_DATE_WINDOW
+
+        // Pagia.Pagia_Synol
+
+        // Pagia.Pagia_Ist
+        Set Field_Value_Table      Field Pagia.Pagia_Ist To (Pagia_Pagia_Ist_VT(Self))
+
+        // Pagia.Pagia_Lpososto
+
+        // Pagia.Pagia_Closed
+
+        // Pagia.Pagia_Polposo
+
+        // Pagia.Codegl
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Pagia_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl83.SL          // sl83
+Use sl80.SL          // sl80
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

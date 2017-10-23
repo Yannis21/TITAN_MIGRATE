@@ -1,0 +1,208 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : BFLAGKIN.DD
+// Class Name: Bflagkin_DataDictionary
+// Revision  : 17
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Bflagkin
+Open Btypkin
+Open Sysrecb
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Bflagkin_Bflagkin_Flag_VT
+
+Object Bflagkin_Bflagkin_Flag_VT  is a DescriptionValidationTable
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "1"  "Ñ§û£ú®È§ú† ï®ú‡ß†©´È©ú†™"
+        Send Add_Table_Value  "2"  "Ä•Âú™ ©ú ç‚§¶ åÊ£†©£ò"
+        Send Add_Table_Value  "3"  "ãú´ò®¶ß„ Ä•†È§ ©ú Éú¨´ú®úÁ¶§ åÊ£†©£ò ï®„©û™"
+        Send Add_Table_Value  "4"  "ãú´ò®¶ß„ Ä•†È§ ©ú Reporting åÊ£†©£ò ï®„©û™"
+        Send Add_Table_Value  "5"  "Ä¨´Ê£ò´û ò®Âü£û©û"
+        Send Add_Table_Value  "6"  "Ä¨•·§ú† ã.ì.î. è‡¢„©ú‡§ °ò´· è¶©Ê´û´ò"
+        Send Add_Table_Value  "7"  "Ä¨•·§ú† ã.ì.î. è‡¢„©ú‡§ °ò´· Ä•Âò"
+        Send Add_Table_Value  "8"  "ãú†È§ú† ã.ì.î. è‡¢„©ú‡§ °ò´· è¶©Ê´û´ò"
+        Send Add_Table_Value  "9"  "ãú†È§ú† ã.ì.î. è‡¢„©ú‡§ °ò´· Ä•Âò"
+        Send Add_Table_Value  "10"  "Ä¨•·§ú† ã.ì.î. Äö¶®È§ °ò´· è¶©Ê´û´ò"
+        Send Add_Table_Value  "11"  "Ä¨•·§ú† ã.ì.î. Äö¶®È§ °ò´· Ä•Âò"
+        Send Add_Table_Value  "12"  "ãú†È§ú† ã.ì.î. Äö¶®È§ °ò´· è¶©Ê´û´ò"
+        Send Add_Table_Value  "13"  "ãú†È§ú† ã.ì.î. Äö¶®È§ °ò´· Ä•Âò"
+        Send Add_Table_Value  "14"  "Ä°¨®‡´†°„ âÂ§û©û"
+        Send Add_Table_Value  "15"  "Ñ§û£ú®È§ú† Äü®¶†©´„ 1"
+        Send Add_Table_Value  "16"  "Ñ§û£ú®È§ú† Äü®¶†©´„ 2"
+        Send Add_Table_Value  "17"  "Ñ§û£ú®È§ú† Ñ†õ†°‚™ èú®†Êõ¶¨™"
+        Send Add_Table_Value  "18"  "Ñß†´®úßÊ£ú§ú™ Ü£ú®/§Âú™ òß¶:"
+        Send Add_Table_Value  "19"  "âÂ§û©û Äß¶ö®ò≠„™"
+        Send Add_Table_Value  "20"  "âÂ§û©û è®¶¨ß¶¢¶ö†©£¶Á"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Bflagkin_Bflagkin_Flag_VT
+//DDB-ValidationEnd
+
+Open Syscurxr
+
+Class Bflagkin_DataDictionary  is a DataDictionary_Sec
+
+    // Creating:
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Bflagkin.Bflagkin_Rec0)))))) to Bflagkin.Bflagkin_Recr
+    End_Procedure   // Creating
+
+    Procedure Update
+              Forward Send Update
+
+              //ú§û£‚®‡©û £„ related ßúõÂ‡§
+              Move Syscurxr.Company_Code to Bflagkin.Company_Code
+              Move Syscurxr.Branch_Code  to Bflagkin.Branch_Code
+              Move Syscurxr.Year_Year    to Bflagkin.Year_Year
+              Move Btypkin.Btypkin_Code  to Bflagkin.Btypkin_Code
+
+              //ú§û£‚®‡©û Btypkin_flags
+                   If (Bflagkin.Bflagkin_Flag =  1) Move 1 to Btypkin.Btypkin_Flag01
+              Else If (Bflagkin.Bflagkin_Flag =  2) Move 1 to Btypkin.Btypkin_Flag02
+              Else If (Bflagkin.Bflagkin_Flag =  3) Move 1 to Btypkin.Btypkin_Flag03
+              Else If (Bflagkin.Bflagkin_Flag =  4) Move 1 to Btypkin.Btypkin_Flag04
+              Else If (Bflagkin.Bflagkin_Flag =  5) Move 1 to Btypkin.Btypkin_Flag05
+              Else If (Bflagkin.Bflagkin_Flag =  6) Move 1 to Btypkin.Btypkin_Flag06
+              Else If (Bflagkin.Bflagkin_Flag =  7) Move 1 to Btypkin.Btypkin_Flag07
+              Else If (Bflagkin.Bflagkin_Flag =  8) Move 1 to Btypkin.Btypkin_Flag08
+              Else If (Bflagkin.Bflagkin_Flag =  9) Move 1 to Btypkin.Btypkin_Flag09
+              Else If (Bflagkin.Bflagkin_Flag = 10) Move 1 to Btypkin.Btypkin_Flag10
+              Else If (Bflagkin.Bflagkin_Flag = 11) Move 1 to Btypkin.Btypkin_Flag11
+              Else If (Bflagkin.Bflagkin_Flag = 12) Move 1 to Btypkin.Btypkin_Flag12
+              Else If (Bflagkin.Bflagkin_Flag = 13) Move 1 to Btypkin.Btypkin_Flag13
+              Else If (Bflagkin.Bflagkin_Flag = 14) Move 1 to Btypkin.Btypkin_Flag14
+              Else If (Bflagkin.Bflagkin_Flag = 15) Move 1 to Btypkin.Btypkin_Flag15
+              Else If (Bflagkin.Bflagkin_Flag = 16) Move 1 to Btypkin.Btypkin_Flag16
+              Else If (Bflagkin.Bflagkin_Flag = 17) Move 1 to Btypkin.Btypkin_Flag17
+              Else If (Bflagkin.Bflagkin_Flag = 18) Move 1 to Btypkin.Btypkin_Flag18
+              Else If (Bflagkin.Bflagkin_Flag = 19) Move 1 to Btypkin.Btypkin_Flag19
+              Else If (Bflagkin.Bflagkin_Flag = 20) Move 1 to Btypkin.Btypkin_Flag20
+              Add 1 to Btypkin.Bflagkin_num
+    End_Procedure   //update
+
+
+    Procedure Backout
+              Forward Send Backout
+
+              //ú§û£‚®‡©û Btypkin_flags
+                   If (Bflagkin.Bflagkin_Flag =  1) Move 0 to Btypkin.Btypkin_Flag01
+              Else If (Bflagkin.Bflagkin_Flag =  2) Move 0 to Btypkin.Btypkin_Flag02
+              Else If (Bflagkin.Bflagkin_Flag =  3) Move 0 to Btypkin.Btypkin_Flag03
+              Else If (Bflagkin.Bflagkin_Flag =  4) Move 0 to Btypkin.Btypkin_Flag04
+              Else If (Bflagkin.Bflagkin_Flag =  5) Move 0 to Btypkin.Btypkin_Flag05
+              Else If (Bflagkin.Bflagkin_Flag =  6) Move 0 to Btypkin.Btypkin_Flag06
+              Else If (Bflagkin.Bflagkin_Flag =  7) Move 0 to Btypkin.Btypkin_Flag07
+              Else If (Bflagkin.Bflagkin_Flag =  8) Move 0 to Btypkin.Btypkin_Flag08
+              Else If (Bflagkin.Bflagkin_Flag =  9) Move 0 to Btypkin.Btypkin_Flag09
+              Else If (Bflagkin.Bflagkin_Flag = 10) Move 0 to Btypkin.Btypkin_Flag10
+              Else If (Bflagkin.Bflagkin_Flag = 11) Move 0 to Btypkin.Btypkin_Flag11
+              Else If (Bflagkin.Bflagkin_Flag = 12) Move 0 to Btypkin.Btypkin_Flag12
+              Else If (Bflagkin.Bflagkin_Flag = 13) Move 0 to Btypkin.Btypkin_Flag13
+              Else If (Bflagkin.Bflagkin_Flag = 14) Move 0 to Btypkin.Btypkin_Flag14
+              Else If (Bflagkin.Bflagkin_Flag = 15) Move 0 to Btypkin.Btypkin_Flag15
+              Else If (Bflagkin.Bflagkin_Flag = 16) Move 0 to Btypkin.Btypkin_Flag16
+              Else If (Bflagkin.Bflagkin_Flag = 17) Move 0 to Btypkin.Btypkin_Flag17
+              Else If (Bflagkin.Bflagkin_Flag = 18) Move 0 to Btypkin.Btypkin_Flag18
+              Else If (Bflagkin.Bflagkin_Flag = 19) Move 0 to Btypkin.Btypkin_Flag19
+              Else If (Bflagkin.Bflagkin_Flag = 20) Move 0 to Btypkin.Btypkin_Flag20
+              Sub 1 From Btypkin.Bflagkin_num
+    End_Procedure   //backout
+
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Bflagkin.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Btypkin.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecb.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecb.Bflagkin_Rec0  To Bflagkin.Bflagkin_Rec0
+
+        // Field-based properties.......................
+
+        // Bflagkin.Company_Code
+
+        // Bflagkin.Branch_Code
+
+        // Bflagkin.Year_Year
+
+        // Bflagkin.Btypkin_Code
+
+        // Bflagkin.Bflagkin_Flag
+        Set Field_Value_Table      Field Bflagkin.Bflagkin_Flag To (Bflagkin_Bflagkin_Flag_VT(Self))
+
+        // Bflagkin.Bflagkin_Rec0
+
+        // Bflagkin.Btypkin_Recr
+
+        // Bflagkin.Bflagkin_Recr
+
+        //DDB-DefineFieldEnd
+
+        Set Main_File            To Bflagkin.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Btypkin.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecb.File_Number  DD_LOCK_ON_NEW_SAVE
+
+        Define_Auto_Increment  Sysrecb.Bflagkin_Rec0  To Bflagkin.Bflagkin_Rec0
+
+        // Field-based properties.......................
+
+        // Bflagkin.Company_Code
+
+        // Bflagkin.Branch_Code
+
+        // Bflagkin.Year_Year
+
+        // Bflagkin.Btypkin_Code
+
+        // Bflagkin.Bflagkin_Flag
+        Set Field_Value_Table      Field Bflagkin.Bflagkin_Flag   To (Bflagkin_Bflagkin_Flag_VT(Self))
+
+        // Bflagkin.Bflagkin_Rec0
+
+        // Bflagkin.Btypkin_Rec0
+
+    End_Procedure    // Define_Fields
+
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Bflagkin_DataDictionary
+//DDB-FileEnd

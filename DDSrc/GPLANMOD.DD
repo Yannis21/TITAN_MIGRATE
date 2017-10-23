@@ -1,0 +1,144 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GPLANMOD.DD
+// Class Name: Gplanmod_DataDictionary
+// Revision  : 8
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Gplanmod
+Open Gplan
+Open Sysrecg
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Gplanmod_Gplanmod_Module_VT
+
+Object Gplanmod_Gplanmod_Module_VT  is a CodeValidationTable
+    Set Type_Value        To "MODULE"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Gplanmod_Gplanmod_Module_VT
+//DDB-ValidationEnd
+Open SyscurGL
+
+Class Gplanmod_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurGL.Branch_Site))+;
+                         (Trim(String(Gplanmod.Gplanmod_Rec0)))))) to Gplanmod.Gplanmod_Recr
+    End_Procedure   // Creating
+
+    Procedure Update
+        Forward Send Update
+         Move SysCurGL.Company_Code to Gplanmod.Company_Code
+         Move SysCurGL.Branch_Code  to Gplanmod.Branch_Code
+         Move SysCurGL.Year_Year    to Gplanmod.Year_Year
+         Move SysCurGL.Year_Recr    to Gplanmod.Year_Recr
+         Move Gplan.Gplan_Code      to Gplanmod.Gplan_Code
+    End_Procedure   // Update
+
+
+    //1100:cby = globals
+    // Validate_Save:
+
+    Function Validate_Save  Returns Integer
+        Integer iReturnVal
+        Forward Get Validate_Save  To iReturnVal
+        If (Not(iReturnVal))Begin
+            //1100:cby = globals
+            If ( ;
+                (Not(Gplanmod.Company_Code = SysCurGL.Company_Code)) or;
+                (Not(Gplanmod.Branch_Code  = SysCurGL.Branch_Code )) ;
+                ) Send Operation_Not_Allowed 1100
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+
+    //2100:cby = globals
+    // Validate_Delete:
+
+    Function Validate_Delete  Returns Integer
+        Local Integer iReturnVal liReturnValb##
+        Forward Get Validate_Delete  To iReturnVal
+
+        If (Not(iReturnVal)) Begin
+            // Insert Code Here
+            //2100:cby = globals
+            If ( ;
+                (Not(Gplanmod.Company_Code = SysCurGL.Company_Code)) or;
+                (Not(Gplanmod.Branch_Code  = SysCurGL.Branch_Code )) ;
+                ) Send Operation_Not_Allowed 2100
+        End
+
+        Function_Return iReturnVal
+    End_Function   // Validate_Delete
+
+    // Operation_Not_Allowed:
+    Procedure Operation_Not_Allowed  Integer iError_Num
+        // Insert Code Here
+             If (iError_num = 1100)  error 1100 "DDC 165 - ‹ž ˜§¦›œ¡«ã „«˜ ¨å˜-•¨ã©ž"
+        Else if (iError_num = 2100)  error 2100 "DDC 165 - ‹ž ˜§¦›œ¡«ã „«˜ ¨å˜-•¨ã©ž"
+        Else Forward Send Operation_Not_Allowed  iError_Num
+    End_Procedure   // Operation_Not_Allowed
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Gplanmod.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Gplan.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_NEW_SAVE
+
+        Define_Auto_Increment  Sysrecg.Gplanmod_Rec0  To Gplanmod.Gplanmod_Rec0
+
+        // Field-based properties.......................
+
+        // Gplanmod.Company_Code
+
+        // Gplanmod.Branch_Code
+
+        // Gplanmod.Year_Year
+
+        // Gplanmod.Gplan_Code
+
+        // Gplanmod.Gplanmod_Module
+        Set Field_Value_Table      Field Gplanmod.Gplanmod_Module To (Gplanmod_Gplanmod_Module_VT(Self))
+
+        // Gplanmod.Gplanmod_Rec0
+
+        // Gplanmod.Gplan_Recr
+
+        // Gplanmod.Year_Recr
+
+        // Gplanmod.Gplanmod_Recr
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+End_Class    // Gplanmod_DataDictionary
+//DDB-FileEnd

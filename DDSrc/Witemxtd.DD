@@ -1,0 +1,122 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : WITEMXTD.DD
+// Class Name: Witemxtd_DataDictionary
+// Revision  : 18
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Witemxtd
+Open Witemxtr
+Open Sysrecw
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList SL17  sl17.SL
+//DDB/ ExternalSelectionList Wax  wax.sl
+Register_Object SL17
+Register_Object Wax
+//DDB-SelectionEnd
+
+Class Witemxtd_DataDictionary  is a DataDictionary_Sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+   procedure creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Witemxtd.Rec0)))))) to Witemxtd.Recr
+    End_Procedure   // Creating
+
+     Procedure Backout
+        Forward Send Backout
+
+        // Insert Code Here
+        sub witemxtd.qty_from       from witemxtr.qty
+
+    End_Procedure   // Backout
+
+
+
+    Procedure Update
+        Forward Send Update
+        Add witemxtd.qty_from     to witemxtr.qty
+    End_Procedure   // Update
+
+
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Witemxtd.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Witemxtr.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecw.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecw.Witemxtd_Rec0  To Witemxtd.Rec0
+
+        // Field-based properties.......................
+
+        // Witemxtd.Witemxtr_Recr  
+
+        // Witemxtd.Recr           
+
+        // Witemxtd.Rec0           
+
+        // Witemxtd.Witemx_Code    
+        Set Field_Prompt_Object    Field Witemxtd.Witemx_Code     To (SL17(Self))
+
+        // Witemxtd.Qty_From       
+
+        // Witemxtd.Unitprice_From 
+
+        // Witemxtd.Fpa_From       
+
+        // Witemxtd.Pcfpa_From     
+
+        // Witemxtd.Axia_From      
+
+        // Witemxtd.Total_From     
+
+        // Witemxtd.Wcmoves_Recr   
+
+        // Witemxtd.Wax_From       
+        Set Field_Prompt_Object    Field Witemxtd.Wax_From        To (Wax(Self))
+
+        // Witemxtd.Wax_To         
+        Set Field_Prompt_Object    Field Witemxtd.Wax_To          To (Wax(Self))
+
+        // Witemxtd.Texnikh        
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Witemxtd_DataDictionary
+//DDB-Selection-pkg-Start
+Use sl17.SL          // SL17
+Use wax.sl           // Wax
+//DDB-Selection-pkg-End
+//DDB-FileEnd

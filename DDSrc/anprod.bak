@@ -1,0 +1,302 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : ANPROD.DD
+// Class Name: Anprod_DataDictionary
+// Revision  : 27
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Anprod
+Open Sysrecc
+Open Sysrecg
+Open Gmove
+
+//DDB-HeaderEnd
+
+Class Anprod_DataDictionary  is a DataDictionary_sec
+ 
+    // Validate_Save:
+ 
+ 
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        //------------------------------------------------
+        // Properties gia na kraththoun oi palies times
+        // ton pedion Ef' oson to Sysfile.Use_Audit pedio
+        // einai 1     
+        //------------------------------------------------
+        Property Integer piCreateNew            Public  0
+        Property String  psAud_Old_Item         Public ""
+        Property Number  pnAud_Old_Qty          Public  0
+        Property String  psAud_Old_CarTP        Public ""
+        Property String  psAud_Old_ItemTN       Public ""
+        Property String  psAud_Old_EntolhRecr   Public ""
+        Property Integer piAud_Old_Recnum       Public  0
+        //------------------------------------------------
+
+    End_Procedure
+
+    Procedure New_Current_Record  Integer iOldRec  Integer iNewRec
+        Forward Send New_Current_Record  iOldRec iNewRec
+        //------------------------------------------------
+        // Properties gia na kraththoun oi palies times
+        // ton pedion 
+        //------------------------------------------------
+        Set psAud_Old_Item              to Anprod.Anprod_Item        
+        Set pnAud_Old_Qty               to Anprod.Anprod_Qty        
+        Set psAud_Old_CarTP             to Anprod.Anprod_CarTP        
+        Set psAud_Old_ItemTN            to Anprod.Anprod_ItemTN        
+        Set psAud_Old_EntolhRecr        to Anprod.Entolh_Recr
+        Set piAud_Old_Recnum            to Anprod.Recnum
+        //------------------------------------------------
+     End_Procedure   // New_Current_Record
+
+    Procedure Delete_Main_File
+        //---------------------------------------------
+        // Auditing / Katagrafh allagon
+        String  sUser sText sTime sMin sHour sSec
+        Date    dDate  Shmer
+        Integer iMin iHour iSec iLen
+        Sysdate dDate iHour iMin iSec
+        Move iHour  to sHour
+        Move iMin   to sMin
+        Move iSec   to sSec
+        If (Length(sHour)=1) Insert "0" in sHour at 1
+        If (Length(sMin )=1) Insert "0" in sMin  at 1
+        If (Length(sSec )=1) Insert "0" in sSec  at 1
+        Move (Trim(sHour)+":"+Trim(sMin)+"."+Trim(sSec)) to sTime
+
+        // Auditing / Diagrafh
+        If ((Sysfile.Use_Audit=1) And (Operation_Mode=MODE_DELETING) And (OPERATION_ORIGIN=Self)) Begin
+            Get fsLoginUserID to sUser
+            clear gmove
+            move syscurxr.company_code  to gmove.company_code
+            move syscurxr.branch_code   to gmove.branch_code
+            move syscurxr.year_year     to gmove.year_year
+            move  8                     to gmove.gtypkin_code// Apo Clients
+            move ddate                  to gmove.garticl_hmnia
+            move suser                  to gmove.gplan_code
+            move Clients.Client_Recr    to gmove.garticl_recr
+            reread sysrecg
+            move (sysrecg.gmove_rec0+1) to sysrecg.gmove_rec0
+            move (sysrecg.gmove_rec0+1) to gmove.gmove_rec0
+            saverecord sysrecg
+            unlock
+            Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
+                                                to Gmove.Gmove_Recr
+            Move (Trim(sUser))                  to Gmove.Login_ID
+            Move dDate                          to Gmove.Hmnia_Metabolhs
+            Move sTime                          to Gmove.Ora_Metabolhs
+
+                Move (psAud_Old_Item        (Self))      to Gmove.Prev_ID              //Anprod.Anprod_Item        
+                Move (pnAud_Old_Qty         (Self))      to Gmove.Prev_Stoxos1         //Anprod.Anprod_Qty        
+                Move (psAud_Old_CarTP       (Self))      to Gmove.Prev_AFM             //Anprod.Anprod_CarTP        
+                Move (psAud_Old_ItemTN      (Self))      to Gmove.Prev_Name            //Anprod.Anprod_ItemTN        
+                Move (psAud_Old_EntolhRecr  (Self))      to Gmove.Prev_AFM             //Anprod.Entolh_Recr
+                Move (piAud_Old_Recnum      (Self))      to Gmove.Prev_Antlia          //Anprod.Recnum
+                Move (piAud_Old_Recnum      (Self))      to Gmove.cur_no          //Anprod.Recnum
+
+
+            Move "ƒ ˜š¨˜­ã œšš¨˜­ãª €¤á¢à©žª"     to gmove.gmove_aitiol
+            Move "D"                              to Gmove.Eidos_Metabolhs
+            saverecord gmove
+        End
+
+        Forward Send Delete_Main_File
+
+    End_Procedure
+
+
+    Procedure Update
+        Forward Send Update
+        //---------------------------------------------
+        // Auditing / Katagrafh allagon
+        String  sUser sText sTime sMin sHour sSec
+        Date    dDate  Shmer 
+        Integer iMin iHour iSec iLen
+        Sysdate dDate iHour iMin iSec 
+        Move iHour  to sHour
+        Move iMin   to sMin
+        Move iSec   to sSec
+        If (Length(sHour)=1) Insert "0" in sHour at 1
+        If (Length(sMin )=1) Insert "0" in sMin  at 1
+        If (Length(sSec )=1) Insert "0" in sSec  at 1
+        Move (Trim(sHour)+":"+Trim(sMin)+"."+Trim(sSec)) to sTime
+        
+        // Auditing / Dhmiourgia - Diorthosh
+        If ((Sysfile.Use_Audit=1)  And (Operation_ORIGIN=Self)) Begin
+            Get fsLoginUserID to sUser
+            
+            If (piCreateNew(Self)=1) Begin
+                clear gmove
+                move syscurxr.company_code  to gmove.company_code
+                move syscurxr.branch_code   to gmove.branch_code
+                move syscurxr.year_year     to gmove.year_year
+                move  8                     to gmove.gtypkin_code// Apo Clients
+                move ddate                  to gmove.garticl_hmnia
+                move suser                  to gmove.gplan_code
+                move Clients.Client_Recr    to gmove.garticl_recr
+                reread sysrecg
+                move (sysrecg.gmove_rec0+1) to sysrecg.gmove_rec0
+                move (sysrecg.gmove_rec0+1) to gmove.gmove_rec0
+                saverecord sysrecg
+                unlock
+                Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
+                                                    to Gmove.Gmove_Recr
+                Move (Trim(sUser))                  to Gmove.Login_ID
+                Move dDate                          to Gmove.Hmnia_Metabolhs    
+                Move sTime                          to Gmove.Ora_Metabolhs
+                Move Anprod.anprod_form             to gmove.cur_item 
+                move anprod.anprod_date             to gmove.cur_hmnia
+                Move Anprod.Anprod_Item                  to Gmove.Cur_ID              //
+                Move Anprod.Anprod_Qty                   to Gmove.Cur_Stoxos1         //
+                Move Anprod.Anprod_CarTP                 to Gmove.Cur_AFM             //
+                Move Anprod.Anprod_ItemTN                to Gmove.Cur_Name            //
+                Move Anprod.Entolh_Recr                  to Gmove.Cur_AFM             //
+                Move Anprod.Recnum                       to Gmove.Cur_Antlia          //   
+                move anprod.sxolia                       to gmove.label1   
+                Move (String(Anprod.Recnum))             to Gmove.Partl_Recr 
+                Move (String(Anprod.Recnum))             to Gmove.Pms_Recr  
+                Move Anprod.Recnum                       to Gmove.cur_no
+                Move "ƒž£ ¦¬¨šå˜ ¤â˜ª €¤á¢à©žª"     to Gmove.Gmove_Aitiol
+                Move "N" to Gmove.Eidos_Metabolhs
+                saverecord gmove
+                Set piCreateNew to 0
+            End
+            Else If ((Operation_Mode=MODE_SAVING) And (piCreateNew(Self)<>1) And (OPERATION_ORIGIN=Self)) Begin                                
+                Integer isChanged
+                Move 0 to isChanged
+                
+                     If (psAud_Old_Item         (Self)<>Anprod.Anprod_Item  ) Move 1 to isChanged
+                Else If (pnAud_Old_Qty          (Self)<>Anprod.Anprod_Qty   ) Move 1 to isChanged
+                Else If (psAud_Old_CarTP        (Self)<>Anprod.Anprod_CarTP ) Move 1 to isChanged
+                Else If (psAud_Old_ItemTN       (Self)<>Anprod.Anprod_ItemTN) Move 1 to isChanged
+                
+                If (isChanged>0) Begin  
+                    clear gmove
+                    move syscurxr.company_code  to gmove.company_code
+                    move syscurxr.branch_code   to gmove.branch_code
+                    move syscurxr.year_year     to gmove.year_year
+                    move  8                     to gmove.gtypkin_code// Apo Clients
+                    move ddate                  to gmove.garticl_hmnia
+                    move suser                  to gmove.gplan_code
+                    move Clients.Client_Recr    to gmove.garticl_recr
+                    reread sysrecg
+                    move (sysrecg.gmove_rec0+1) to sysrecg.gmove_rec0
+                    move (sysrecg.gmove_rec0+1) to gmove.gmove_rec0
+                    saverecord sysrecg
+                    unlock
+                    Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
+                                                        to Gmove.Gmove_Recr
+                    Move (Trim(sUser))                  to Gmove.Login_ID
+                    Move dDate                          to Gmove.Hmnia_Metabolhs    
+                    Move sTime                          to Gmove.Ora_Metabolhs
+                Move Anprod.anprod_form             to gmove.cur_item    
+                move anprod.sxolia                  to gmove.label1
+                move anprod.anprod_date             to gmove.cur_hmnia
+                Move Anprod.Anprod_Item                  to Gmove.Cur_ID              //
+                Move Anprod.Anprod_Qty                   to Gmove.Cur_Stoxos1         //
+                Move Anprod.Anprod_CarTP                 to Gmove.Cur_AFM             //
+                Move Anprod.Anprod_ItemTN                to Gmove.Cur_Name            //
+                Move Anprod.Entolh_Recr                  to Gmove.Cur_AFM             //
+                Move Anprod.Recnum                       to Gmove.Cur_Antlia          //
+                Move (String(Anprod.Recnum))             to Gmove.Partl_Recr 
+                Move (String(Anprod.Recnum))             to Gmove.Pms_Recr  
+                Move Anprod.Recnum                       to Gmove.cur_no
+                    //--
+
+                Move (psAud_Old_Item        (Self))      to Gmove.Prev_ID              //
+                Move (pnAud_Old_Qty         (Self))      to Gmove.Prev_Stoxos1         //
+                Move (psAud_Old_CarTP       (Self))      to Gmove.Prev_AFM             //
+                Move (psAud_Old_ItemTN      (Self))      to Gmove.Prev_Name            //
+                Move (psAud_Old_EntolhRecr  (Self))      to Gmove.Prev_AFM             //
+                Move (piAud_Old_Recnum      (Self))      to Gmove.Prev_Antlia          //
+
+                    Move "ƒ æ¨Ÿà©ž œšš¨˜­ãª €¤á¢à©žª"   to gmove.gmove_aitiol
+                    Move "E"                            to Gmove.Eidos_Metabolhs
+                    saverecord gmove
+                    Set piCreateNew to 0
+                End
+            End
+        End
+    End_Procedure   // Update
+
+
+    Procedure Creating
+        Forward Send Creating
+        Set piCreateNew to 1
+    End_Procedure   // Creating
+
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Anprod.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Gmove.File_Number  DD_LOCK_ON_ALL
+
+        // Field-based properties.......................
+
+        // Anprod.Anprod_Date
+        Set Field_Mask_Type        Field Anprod.Anprod_Date To MASK_DATE_WINDOW
+
+        // Anprod.Anprod_Form
+
+        // Anprod.Anprod_Item
+
+        // Anprod.Anprod_Site
+
+        // Anprod.Anprod_Qty
+
+        // Anprod.Entolh_Recr
+
+        // Anprod.Wapomast
+
+        // Anprod.Anprod_Cartp
+
+        // Anprod.Anprod_Itemtn
+
+        // Anprod.Anprod_Mix
+
+        // Anprod.Anprod_Nqty
+
+        // Anprod.Sxolia
+
+        // Anprod.Sap_Code
+
+        // Anprod.Sap_Descr
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Anprod.Anprod_Qty To 0
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Anprod_DataDictionary
+//DDB-FileEnd

@@ -1,0 +1,116 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : SYSFILE.DD
+// Class Name: Sysfile_DataDictionary
+// Revision  : 62
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Sysfile
+
+//DDB-HeaderEnd
+
+Class Sysfile_DataDictionary  is a DataDictionary_Sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Sysfile.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Field-based properties.......................
+
+        // Sysfile.Company_Name
+
+        // Sysfile.Serial_Number
+
+        // Sysfile.Version_Number
+
+        // Sysfile.Can_Force_Open
+
+        // Sysfile.Use_Sql_Reports
+
+        // Sysfile.Client_Digits
+
+        // Sysfile.Use_English
+
+        // Sysfile.Over_Overhead
+
+        // Sysfile.Chk_Apothema
+
+        // Sysfile.Hm_Kleisimatos
+
+        // Sysfile.Check_Article
+
+        // Sysfile.Last_Hmnia_Ekt
+        Set Field_Mask_Type        Field Sysfile.Last_Hmnia_Ekt To MASK_DATE_WINDOW
+
+        // Sysfile.Enhm_Arxeia
+
+        // Sysfile.Dferr_Path
+
+        // Sysfile.Analytika_Dap
+
+        // Sysfile.Mhdeniko_Partl
+
+        // Sysfile.Check_Afm
+
+        // Sysfile.Enhm_Witemxt
+
+        // Sysfile.Files_Send_Path
+
+        // Sysfile.Titan
+
+        // Sysfile.Wapokat_Etoima
+
+        // Sysfile.Elleipes
+
+        // Sysfile.Mast_Elleipes
+
+        // Sysfile.Orio_Myf
+
+        // Sysfile.Enhm_Pmssxet
+
+        // Sysfile.Wapokat_Ayles
+
+        // Sysfile.Online_Logist
+        Set Field_Checkbox_Values  Field Sysfile.Online_Logist To "1"  "0"
+        Set Field_Class_Name       Field Sysfile.Online_Logist To "dbCheckBoxsub"
+
+        // Sysfile.Fpa_On_Total
+
+        // Sysfile.Ascclientid
+
+        // Sysfile.Aajob
+
+        // Sysfile.Aadoy
+
+        // Sysfile.Use_Audit
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Sysfile_DataDictionary
+//DDB-FileEnd

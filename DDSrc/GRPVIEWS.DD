@@ -1,0 +1,92 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GRPVIEWS.DD
+// Class Name: Grpviews_DataDictionary
+// Revision  : 22
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Grpviews
+Open Views
+Open Users
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList slUsers  slusers.sl
+//DDB/ ExternalSelectionList slViews  slviews.sl
+Register_Object slUsers
+Register_Object slViews
+//DDB-SelectionEnd
+
+Class Grpviews_DataDictionary  is a DataDictionary_sec
+ 
+    // Update:
+ 
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move Views.Menu_Name    to GrpViews.Menu_Name
+    End_Procedure   // Update
+     
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Grpviews.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Views.File_Number
+        Send Add_Server_File  Users.File_Number
+
+        // Field-based properties.......................
+
+        // Grpviews.User_Id
+        Set Field_Prompt_Object    Field Grpviews.User_Id To (slUsers(Self))
+
+        // Grpviews.View_Id
+        Set Field_Options          Field Grpviews.View_Id To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Grpviews.View_Id To (slViews(Self))
+
+        // Grpviews.Menu_Name
+        Set Field_Prompt_Object    Field Grpviews.Menu_Name To (slViews(Self))
+
+        // Grpviews.Allow_Read
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Grpviews_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use slusers.sl       // slUsers
+Use slviews.sl       // slViews
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

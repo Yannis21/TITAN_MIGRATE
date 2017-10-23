@@ -1,0 +1,73 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : ZONES.DD
+// Class Name: Zones_DataDictionary
+// Revision  : 3
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Zones
+Open Brzones
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl064  sl064.SL
+Register_Object sl064
+//DDB-SelectionEnd
+
+Class Zones_DataDictionary  is a DataDictionary_Sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Zones.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Brzones.File_Number
+
+        // Field-based properties.......................
+
+        // Zones.Zone_Id
+        Set Field_Options          Field Zones.Zone_Id To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Zones.Zone_Id To (sl064(Self))
+
+        // Zones.Zone_Descr
+        Set Field_Prompt_Object    Field Zones.Zone_Descr To (sl064(Self))
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Zones_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl064.SL         // sl064
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

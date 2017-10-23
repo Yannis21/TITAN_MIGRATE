@@ -1,0 +1,536 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : CN.DD
+// Class Name: Cn_DataDictionary
+// Revision  : 102
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Cn
+Open Cnzones
+Open Tperga
+Open Btnordh
+Open Dorderh
+Open Clients
+Open Salesmen
+Open Mhxanik
+Open Constrct
+Open Sysrecc
+Open Syscurxr
+Open Gmove
+Open Sysrecg
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Cn_Cn_Categfpa_VT1
+Register_Object Cn_Tropos_Metaf_VT
+Register_Object Cn_Eidos_Cn_VT
+Register_Object Cn_Yesno_VT
+
+Object Cn_Cn_Categfpa_VT1  is a CodeValidationTable
+    Set Type_Value        To "VAT_STATUS"
+    Set Validate_State    To FALSE
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Cn_Cn_Categfpa_VT1
+
+Object Cn_Tropos_Metaf_VT  is a CodeValidationTable
+    Set Type_Value        To "FORTOSH"
+    Set Allow_Blank_State To TRUE
+    Set Table_Title       To "’¨æ§¦  ‹œ«˜­¦¨áª"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Cn_Tropos_Metaf_VT
+
+Object Cn_Eidos_Cn_VT  is a CodeValidationTable
+    Set Type_Value        To "EIDOSCN"
+    Set Allow_Blank_State To TRUE
+    Set Table_Title       To "„å›¦ª „¨š¦¬"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Cn_Eidos_Cn_VT
+
+Object Cn_Yesno_VT  is a CodeValidationTable
+    Set Type_Value        To "YESNO"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Cn_Yesno_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl041  sl041.sl
+//DDB/ ExternalSelectionList sl198  sl198.sl
+//DDB/ ExternalSelectionList sl197  sl197.SL
+Register_Object sl041
+Register_Object sl198
+Register_Object sl197
+//DDB-SelectionEnd
+
+Class Cn_DataDictionary  is a DataDictionary_Sec
+
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        //------------------------------------------------
+        // Properties gia na kraththoun oi palies times
+        // ton pedion Ef' oson to Sysfile.Use_Audit pedio
+        // einai 1     js 03/12/2007
+        //------------------------------------------------
+        Property Integer piCreateNew            Public  0
+        Property String  psAud_Old_CN           Public ""
+        Property String  psAud_Old_CNAdd        Public ""
+        Property String  psAud_Old_Chem         Public ""
+        Property String  psAud_Old_CNRecr       Public ""
+        //------------------------------------------------
+
+    End_procedure
+
+    Procedure New_Current_Record  Integer iOldRec  Integer iNewRec
+        Forward Send New_Current_Record  iOldRec iNewRec
+        //------------------------------------------------
+        // Properties gia na kraththoun oi palies times
+        // ton pedion js 03/12/2007
+        //------------------------------------------------
+        Set psAud_Old_CN           to CN.CN_Code
+        Set psAud_Old_CNAdd        to CN.CN_Descr
+        Set psAud_Old_Chem         to CN.CN_VTicket
+        Set psAud_Old_CNRecr       to CN.CN_Recr
+        //------------------------------------------------
+     End_Procedure   // New_Current_Record
+
+    Procedure Delete_Main_File
+        //---------------------------------------------
+        // Auditing / Katagrafh allagon
+        String  sUser sText sTime sMin sHour sSec
+        Date    dDate  Shmer
+        Integer iMin iHour iSec iLen
+        Sysdate dDate iHour iMin iSec
+        Move iHour  to sHour
+        Move iMin   to sMin
+        Move iSec   to sSec
+        If (Length(sHour)=1) Insert "0" in sHour at 1
+        If (Length(sMin )=1) Insert "0" in sMin  at 1
+        If (Length(sSec )=1) Insert "0" in sSec  at 1
+        Move (Trim(sHour)+":"+Trim(sMin)+"."+Trim(sSec)) to sTime
+
+        // Auditing / Diagrafh
+        If ((Sysfile.Use_Audit=1) And (Operation_Mode=MODE_DELETING) And (OPERATION_ORIGIN=Self)) Begin
+            Get fsLoginUserID to sUser
+            clear gmove
+            move syscurxr.company_code  to gmove.company_code
+            move syscurxr.branch_code   to gmove.branch_code
+            move syscurxr.year_year     to gmove.year_year
+            move  4                     to gmove.gtypkin_code// Apo Clients
+            move ddate                  to gmove.garticl_hmnia
+            move suser                  to gmove.gplan_code
+            move CN.CN_Recr             to gmove.garticl_recr
+            reread sysrecg
+            move (sysrecg.gmove_rec0+1) to sysrecg.gmove_rec0
+            move (sysrecg.gmove_rec0+1) to gmove.gmove_rec0
+            saverecord sysrecg
+            unlock
+            Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
+                                                to Gmove.Gmove_Recr
+            Move (Trim(sUser))                  to Gmove.Login_ID
+            Move dDate                          to Gmove.Hmnia_Metabolhs
+            Move sTime                          to Gmove.Ora_Metabolhs
+
+            Move CN.CN_Recr                     to Gmove.Partl_Recr
+            Move CN.CN_Recr                     to Gmove.Pms_Recr
+
+            Move (psAud_Old_CN    (Self))       to Gmove.Prev_CN
+            Move (psAud_Old_CNAdd (Self))       to Gmove.Prev_CN_Addr
+            Move (psAud_Old_Chem  (Self))       to Gmove.Prev_CN_Prosth
+
+            Move "ƒ ˜š¨˜­ã œšš¨˜­ãª ë¨š¦¬"      to gmove.gmove_aitiol
+            Move "D"                            to Gmove.Eidos_Metabolhs
+            saverecord gmove
+        End
+        Forward Send Delete_Main_File
+
+    End_Procedure
+
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move SysCurXR.Company_Code  to CN.Company_Code
+        Move SysCurXR.Branch_Code   to CN.Branch_Code
+        Move SysCurXR.Year_Year     to CN.Year_Year
+        //Move Custprom.Custprom_Code to CN.Custprom_Code
+        Move Clients.Client_ID      to CN.Client_ID
+
+        Move SysCurXR.Beto_Site      to CN.Cn_SiteW
+        Move Cn.Cn_Rec0              to CN.Cn_SN
+        Move Cn.Client_id            to Cn.Cn_clientid
+        Move Cn.cn_code              to Cn.Cn_Repmatch
+        Move Cn.Cn_Code              to Cn.Constraction_ID
+        Move PayResp.Presp_ID        to Cn.Cn_Presp_ID
+        Move Salesmen.Sls_ID         to Cn.Cn_Sls_ID
+        Move Constrct.Cnt_ID         to Cn.Cn_Cnt_ID
+        Move mhxanik.mhx_id          to Cn.mhxanik_ID
+
+        //If (Operation_ORIGIN=Self) Begin
+        //    Move 1      to CN.ExportFlag
+        //    Move "SEND" to CN.ExportStatus
+        //End
+
+
+        //---------------------------------------------
+        // Auditing / Katagrafh allagon
+        String  sUser sText sTime sMin sHour sSec
+        Date    dDate  Shmer
+        Integer iMin iHour iSec iLen
+        Sysdate dDate iHour iMin iSec
+        Move iHour  to sHour
+        Move iMin   to sMin
+        Move iSec   to sSec
+        If (Length(sHour)=1) Insert "0" in sHour at 1
+        If (Length(sMin )=1) Insert "0" in sMin  at 1
+        If (Length(sSec )=1) Insert "0" in sSec  at 1
+        Move (Trim(sHour)+":"+Trim(sMin)+"."+Trim(sSec)) to sTime
+
+        // Auditing / Dhmiourgia - Diorthosh
+        If ((Sysfile.Use_Audit=1)  And (Operation_ORIGIN=Self)) Begin
+            Get fsLoginUserID to sUser
+            If (piCreateNew(Self)=1) Begin
+                clear gmove
+                move syscurxr.company_code  to gmove.company_code
+                move syscurxr.branch_code   to gmove.branch_code
+                move syscurxr.year_year     to gmove.year_year
+                move  4                     to gmove.gtypkin_code// Apo Clients
+                move ddate                  to gmove.garticl_hmnia
+                move suser                  to gmove.gplan_code
+                move CN.CN_Recr             to gmove.garticl_recr
+                reread sysrecg
+                move (sysrecg.gmove_rec0+1) to sysrecg.gmove_rec0
+                move (sysrecg.gmove_rec0+1) to gmove.gmove_rec0
+                saverecord sysrecg
+                unlock
+                Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
+                                                    to Gmove.Gmove_Recr
+                Move (Trim(sUser))                  to Gmove.Login_ID
+                Move dDate                          to Gmove.Hmnia_Metabolhs
+                Move sTime                          to Gmove.Ora_Metabolhs
+
+                Move CN.CN_Recr                 to Gmove.Partl_Recr
+                Move CN.CN_Recr                 to Gmove.Pms_Recr
+
+                Move CN.CN_Code                 to Gmove.Cur_CN
+                Move CN.CN_Descr                to Gmove.Cur_CN_Addr
+                Move CN.CN_VTicket              to Gmove.Cur_CN_Prosth
+                Move "ƒž£ ¦¬¨šå˜ ¤â¦¬ ë¨š¦¬"    to Gmove.Gmove_Aitiol
+                Move "N" to Gmove.Eidos_Metabolhs
+                saverecord gmove
+                Set piCreateNew to 0
+            End
+            Else If ((Operation_Mode=MODE_SAVING) And (piCreateNew(Self)<>1) And (OPERATION_ORIGIN=Self)) Begin
+                Integer isChanged
+                Move 0 to isChanged
+
+                     If (psAud_Old_CN   (Self)<>CN.CN_Code   ) Move 1 to isChanged
+                Else If (psAud_Old_CNAdd(Self)<>CN.CN_Descr  ) Move 1 to isChanged
+                Else If (psAud_Old_Chem (Self)<>CN.CN_VTicket) Move 1 to isChanged
+
+                If (isChanged>0) Begin
+                    clear gmove
+                    move syscurxr.company_code  to gmove.company_code
+                    move syscurxr.branch_code   to gmove.branch_code
+                    move syscurxr.year_year     to gmove.year_year
+                    move  4                     to gmove.gtypkin_code// Apo Clients
+                    move ddate                  to gmove.garticl_hmnia
+                    move suser                  to gmove.gplan_code
+                    move Payresp.Presp_Recr    to gmove.garticl_recr
+                    reread sysrecg
+                    move (sysrecg.gmove_rec0+1) to sysrecg.gmove_rec0
+                    move (sysrecg.gmove_rec0+1) to gmove.gmove_rec0
+                    saverecord sysrecg
+                    unlock
+                    Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
+                                                        to Gmove.Gmove_Recr
+                    Move (Trim(sUser))                  to Gmove.Login_ID
+                    Move dDate                          to Gmove.Hmnia_Metabolhs
+                    Move sTime                          to Gmove.Ora_Metabolhs
+                    Move CN.CN_Recr                     to Gmove.Partl_Recr
+                    Move CN.CN_Recr                     to Gmove.Pms_Recr
+                    //--
+                    Move CN.CN_Code                     to Gmove.Cur_CN
+                    Move CN.CN_Descr                    to Gmove.Cur_CN_Addr
+                    Move CN.CN_VTicket                  to Gmove.Cur_CN_Prosth
+                    //--
+                    Move (psAud_Old_CN    (Self))       to Gmove.Prev_CN
+                    Move (psAud_Old_CNAdd (Self))       to Gmove.Prev_CN_Addr
+                    Move (psAud_Old_Chem  (Self))       to Gmove.Prev_CN_Prosth
+
+                    Move "ƒ æ¨Ÿà©ž œšš¨˜­ãª ë¨š¦¬"      to gmove.gmove_aitiol
+                    Move "E"                            to Gmove.Eidos_Metabolhs
+                    saverecord gmove
+                    Set piCreateNew to 0
+                End
+            End
+        End
+
+
+    End_Procedure   // Update
+
+     Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(CN.CN_Rec0)))))) to CN.CN_Recr
+        Get fsgCode_With_Zeroes CN.CN_Rec0 Sysfile.Client_Digits SysCurXr.Company_Code SysCurXr.Branch_Code  to CN.CN_Code
+        Set piCreateNew to 1
+    End_Procedure   // Creating
+
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Cn.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Cnzones.File_Number
+        Send Add_Client_File  Tperga.File_Number
+        Send Add_Client_File  Btnordh.File_Number
+        Send Add_Client_File  Dorderh.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Clients.File_Number
+        Send Add_Server_File  Salesmen.File_Number
+        Send Add_Server_File  Mhxanik.File_Number
+        Send Add_Server_File  Constrct.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Syscurxr.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Gmove.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Cn_Rec0  To Cn.Cn_Rec0
+
+        // Field-based properties.......................
+
+        // Cn.Company_Code
+
+        // Cn.Branch_Code
+
+        // Cn.Year_Year
+
+        // Cn.Custprom_Code
+
+        // Cn.Client_Id
+
+        // Cn.Cn_Code
+        Set Field_Options          Field Cn.Cn_Code To DD_AUTOFIND    DD_NOPUT
+        Set Field_Prompt_Object    Field Cn.Cn_Code To (sl041(Self))
+        Set Key_Field_State        Field Cn.Cn_Code To TRUE
+
+        // Cn.Client_Recr
+
+        // Cn.Cn_Rec0
+
+        // Cn.Cn_Recr
+
+        // Cn.Cn_Descr
+        Set Field_Prompt_Object    Field Cn.Cn_Descr To (sl041(Self))
+
+        // Cn.Cn_Address
+
+        // Cn.Cn_Zipcode
+
+        // Cn.Cn_City
+        Set Field_Prompt_Object    Field Cn.Cn_City To (sl198(Self))
+
+        // Cn.Cn_Area
+        Set Field_Prompt_Object    Field Cn.Cn_Area To (sl197(Self))
+
+        // Cn.Cn_License
+
+        // Cn.Cn_Responsible
+
+        // Cn.Cn_Cnt_Recr
+
+        // Cn.Cn_Cnt_Id
+
+        // Cn.Cn_Phone
+
+        // Cn.Cn_Zone
+
+        // Cn.Cn_Sls_Recr
+
+        // Cn.Cn_Sls_Id
+
+        // Cn.Cn_Details
+
+        // Cn.Cn_Distance
+
+        // Cn.Cn_Pump
+
+        // Cn.Cn_Pumplicense
+
+        // Cn.Cn_Totalstats
+
+        // Cn.Cn_Analstats
+
+        // Cn.Cn_Coated
+
+        // Cn.Cn_Sitew
+
+        // Cn.Cn_Clientmatch
+
+        // Cn.Cn_Codematch
+
+        // Cn.Cn_Pumpid
+
+        // Cn.Cn_Clientid
+
+        // Cn.Cn_Sn
+
+        // Cn.Cn_Repmatch
+
+        // Cn.Cn_Active
+        Set Field_Checkbox_Values  Field Cn.Cn_Active To "A"  "F"
+
+        // Cn.Cn_Reported
+
+        // Cn.Cn_Lastupdated
+
+        // Cn.Cn_Markexp
+
+        // Cn.Cn_Vdetails
+
+        // Cn.Cn_Vticket
+
+        // Cn.Constraction_Id
+
+        // Cn.Cn_Presp_Id
+
+        // Cn.Cn_Presp_Recr
+
+        // Cn.Cn_Add_No
+
+        // Cn.Cn_Nomos
+
+        // Cn.Cn_Xora
+
+        // Cn.Polh_Recr
+
+        // Cn.Lic_Number
+
+        // Cn.Lic_Date
+        Set Field_Mask_Type        Field Cn.Lic_Date To MASK_DATE_WINDOW
+
+        // Cn.Lic_Lixi
+        Set Field_Mask_Type        Field Cn.Lic_Lixi To MASK_DATE_WINDOW
+
+        // Cn.Lic_Auth
+
+        // Cn.Cn_Start_Date
+        Set Field_Mask_Type        Field Cn.Cn_Start_Date To MASK_DATE_WINDOW
+
+        // Cn.Cn_End_Date
+        Set Field_Mask_Type        Field Cn.Cn_End_Date To MASK_DATE_WINDOW
+
+        // Cn.Cn_Categfpa
+        Set Field_Value_Table      Field Cn.Cn_Categfpa To (Cn_Cn_Categfpa_VT1(Self))
+
+        // Cn.Cn_Tpay
+
+        // Cn.Mhxanik_Id
+
+        // Cn.Sum_Pct_Tper
+
+        // Cn.Cn_M3
+
+        // Cn.Aa_Deop
+
+        // Cn.Hm_Tel_Fortio
+        Set Field_Mask_Type        Field Cn.Hm_Tel_Fortio To MASK_DATE_WINDOW
+
+        // Cn.Tel_Fortio_No
+
+        // Cn.Tropos_Metaf
+        Set Field_Value_Table      Field Cn.Tropos_Metaf To (Cn_Tropos_Metaf_VT(Self))
+
+        // Cn.Eidos_Cn
+        Set Field_Value_Table      Field Cn.Eidos_Cn To (Cn_Eidos_Cn_VT(Self))
+
+        // Cn.Polhths_Constr
+
+        // Cn.Polhths_Mhx
+
+        // Cn.Hm_Prot_Fortio
+        Set Field_Mask_Type        Field Cn.Hm_Prot_Fortio To MASK_DATE_WINDOW
+
+        // Cn.Mesoskyklos
+
+        // Cn.Diodia
+
+        // Cn.Yesno
+        Set Field_Value_Table      Field Cn.Yesno To (Cn_Yesno_VT(Self))
+
+        // Cn.Dateeggy
+        Set Field_Mask_Type        Field Cn.Dateeggy To MASK_DATE_WINDOW
+
+        // Cn.Cn_Branch
+
+        // Cn.Cn_Exfd1
+
+        // Cn.Cn_Exfd2
+
+        // Cn.Cn_Exfd3
+
+        // Cn.Cn_Exfd4
+
+        // Cn.Cn_Exfd5
+
+        // Cn.Cn_Exfd6
+
+        // Cn.Exportflag
+
+        // Cn.Exportstatus
+
+        // Cn.Exportdate
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Cn.Cn_Active To "A"
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Cn_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl041.sl         // sl041
+Use sl198.sl         // sl198
+Use sl197.SL         // sl197
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

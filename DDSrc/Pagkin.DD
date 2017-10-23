@@ -1,0 +1,96 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : PAGKIN.DD
+// Class Name: Pagkin_DataDictionary
+// Revision  : 16
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Pagkin
+Open Pagkinmv
+Open Pagmoves
+Open Sysrecg
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl81  sl81.SL
+Register_Object sl81
+//DDB-SelectionEnd
+
+Class Pagkin_DataDictionary  is a DataDictionary_sec
+    
+    
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(pagkin.pagkin_Rec0)))))) to pagkin.pagkin_Recr
+    End_Procedure   // Creating 
+    
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Pagkin.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Pagkinmv.File_Number
+        Send Add_Client_File  Pagmoves.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecg.Pagkin_Rec0  To Pagkin.Pagkin_Rec0
+
+        // Field-based properties.......................
+
+        // Pagkin.Pagkin_Code
+        Set Field_Options          Field Pagkin.Pagkin_Code To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Pagkin.Pagkin_Code To (sl81(Self))
+        Set Key_Field_State        Field Pagkin.Pagkin_Code To TRUE
+
+        // Pagkin.Pagkin_Rec0
+
+        // Pagkin.Pagkin_Descr
+        Set Field_Prompt_Object    Field Pagkin.Pagkin_Descr To (sl81(Self))
+
+        // Pagkin.Pagkin_Recr
+
+        // Pagkin.Gtypkin_Code
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Pagkin_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl81.SL          // sl81
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

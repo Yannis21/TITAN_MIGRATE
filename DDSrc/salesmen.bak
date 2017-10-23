@@ -1,0 +1,231 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : SALESMEN.DD
+// Class Name: Salesmen_DataDictionary
+// Revision  : 59
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Salesmen
+Open Cn
+Open Sysrecc
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Salesmen_Sls_Doy_VT
+
+Object Salesmen_Sls_Doy_VT  is a CodeValidationTable
+    Set Type_Value        To "DOY"
+    Set Allow_Blank_State To TRUE
+    Set Table_Title       To "€¨®œå¦ ƒ.Ž.“"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Salesmen_Sls_Doy_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl108  sl108.sl
+//DDB/ ExternalSelectionList sl198  sl198.sl
+//DDB/ ExternalSelectionList sl197  sl197.SL
+Register_Object sl108
+Register_Object sl198
+Register_Object sl197
+//DDB-SelectionEnd
+
+Class Salesmen_DataDictionary  is a DataDictionary_Sec
+ 
+    // Save_Main_File:
+ 
+    Procedure Save_Main_File
+        If ((Operation_Origin<>Self) And (Salesmen.Sls_ID='')) Procedure_Return
+        Forward Send Save_Main_File
+    End_Procedure   // Save_Main_File
+ 
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+     Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move SysCurXR.Company_Code  to salesmen.Company_Code
+        Move SysCurXR.Branch_Code   to salesmen.Branch_Code
+        Move SysCurXR.Year_Year     to salesmen.Year_Year
+        //Move Custprom.Custprom_Code to Clients.Custprom_Code
+        Move (salesmen.Xreosh-salesmen.Pistosh)   to salesmen.Ypoloipo
+        Move (salesmen.Plafon-salesmen.ypoloipo)  to salesmen.Overhead
+
+        //Move Clients.Client_Address     to Clients.Client_LastUpd
+
+        //betolink
+        Move SysCurXR.Beto_Site      to salesmen.sls_SiteW
+        Move salesmen.sls_Rec0       to salesmen.sls_SN
+        Move salesmen.sls_id         to salesmen.sls_Repm
+
+    End_Procedure   // Update
+
+     Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(salesmen.sls_Rec0))))));
+                                    to salesmen.sls_Recr
+        Move '1'                    to salesmen.sls_Active
+        get fsgCode_With_Zeroes salesmen.sls_Rec0 Sysfile.Client_Digits SysCurXr.Company_Code SysCurXr.Branch_Code  to salesmen.sls_ID
+    End_Procedure   // Creating
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Salesmen.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Cn.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Salesmen_Rec0  To Salesmen.Sls_Rec0
+
+        // Field-based properties.......................
+
+        // Salesmen.Company_Code
+
+        // Salesmen.Branch_Code
+
+        // Salesmen.Year_Year
+
+        // Salesmen.Sls_Id
+        Set Field_Options          Field Salesmen.Sls_Id To DD_AUTOFIND    DD_FINDREQ    
+        Set Field_Prompt_Object    Field Salesmen.Sls_Id To (sl108(Self))
+        Set Key_Field_State        Field Salesmen.Sls_Id To TRUE
+
+        // Salesmen.Sls_Name
+        Set Field_Prompt_Object    Field Salesmen.Sls_Name To (sl108(Self))
+
+        // Salesmen.Sls_Afm
+
+        // Salesmen.Sls_Rec0
+
+        // Salesmen.Sls_Recr
+
+        // Salesmen.Last_Xreosh
+
+        // Salesmen.Last_Pistosh
+
+        // Salesmen.Last_Order
+
+        // Salesmen.Sls_Doy
+        Set Field_Value_Table      Field Salesmen.Sls_Doy To (Salesmen_Sls_Doy_VT(Self))
+
+        // Salesmen.Sls_Address
+
+        // Salesmen.Sls_City
+        Set Field_Prompt_Object    Field Salesmen.Sls_City To (sl198(Self))
+
+        // Salesmen.Sls_Area
+        Set Field_Prompt_Object    Field Salesmen.Sls_Area To (sl197(Self))
+
+        // Salesmen.Sls_Job
+
+        // Salesmen.Sls_Respons
+
+        // Salesmen.Sls_Zipcode
+
+        // Salesmen.Sls_Phone
+
+        // Salesmen.Sls_Fax
+
+        // Salesmen.Sls_Mobile
+
+        // Salesmen.Sls_Aoh
+
+        // Salesmen.Sls_Email
+
+        // Salesmen.Sls_Class
+
+        // Salesmen.Sls_Details
+
+        // Salesmen.Sls_Sitew
+
+        // Salesmen.Sls_Codem
+
+        // Salesmen.Sls_Categfpa
+
+        // Salesmen.Sls_Fpa
+
+        // Salesmen.Sls_Public
+
+        // Salesmen.Sls_Sn
+
+        // Salesmen.Sls_Repm
+
+        // Salesmen.Sls_Active
+
+        // Salesmen.Sls_Reported
+
+        // Salesmen.Sls_Lastupd
+
+        // Salesmen.Sls_Markexp
+
+        // Salesmen.Sls_Catjob
+
+        // Salesmen.Xreosh
+
+        // Salesmen.Pistosh
+
+        // Salesmen.Ypoloipo
+
+        // Salesmen.Plafon
+
+        // Salesmen.Overhead
+
+        // Salesmen.Sls_Add_No
+
+        // Salesmen.Sls_Nomos
+
+        // Salesmen.Sls_Xora
+
+        // Salesmen.Polh_Recr
+
+        // Salesmen.Exportflag
+
+        // Salesmen.Exportstatus
+
+        // Salesmen.Exportdate
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Salesmen.Sls_Doy To "0"
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Salesmen_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl108.sl         // sl108
+Use sl198.sl         // sl198
+Use sl197.SL         // sl197
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

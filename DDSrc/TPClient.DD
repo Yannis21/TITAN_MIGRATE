@@ -1,0 +1,95 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : TPCLIENT.DD
+// Class Name: Tpclient_DataDictionary
+// Revision  : 9
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Tpclient
+Open Clients
+Open Baxiokat
+Open Sysrecc
+
+//DDB-HeaderEnd
+
+Class Tpclient_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Save_Main_File
+        If (Operation_Origin<>Self) Begin
+            If TPClient.Recnum Eq 0 Procedure_Return
+        End
+        Forward Send Save_Main_File
+    End_Procedure
+
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(TPClient.TPClient_Rec0))))));
+                                    to TPClient.TPClient_Recr
+    End_Procedure   // Creating
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Tpclient.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Clients.File_Number
+        Send Add_Server_File  Baxiokat.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Tpclient_Rec0  To Tpclient.Tpclient_Rec0
+
+        // Field-based properties.......................
+
+        // Tpclient.Client_Id
+
+        // Tpclient.Baxiokat_Code
+
+        // Tpclient.Pct_Epi_Synolou
+
+        // Tpclient.Paralabh_Meres
+
+        // Tpclient.Xarhtos_Meres
+
+        // Tpclient.Plhroteo_Meres
+
+        // Tpclient.Tpclient_Rec0
+
+        // Tpclient.Tpclient_Recr
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Tpclient_DataDictionary
+//DDB-FileEnd

@@ -1,0 +1,92 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : USERGRPS.DD
+// Class Name: Usergrps_DataDictionary
+// Revision  : 40
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Usergrps
+Open Grparx0
+Open Grpview0
+Open Grpoth0
+Open Users
+Open Grptabv0
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList slUserGr  slusergr.sl
+Register_Object slUserGr
+//DDB-SelectionEnd
+
+Class Usergrps_DataDictionary  is a DataDictionary_sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Usergrps.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Grparx0.File_Number
+        Send Add_Client_File  Grpview0.File_Number
+        Send Add_Client_File  Grpoth0.File_Number
+        Send Add_Client_File  Users.File_Number
+        Send Add_Client_File  Grptabv0.File_Number
+
+        // Field-based properties.......................
+
+        // Usergrps.Grp_Id
+        Set Field_Options          Field Usergrps.Grp_Id To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Usergrps.Grp_Id To (slUserGr(Self))
+        Set Key_Field_State        Field Usergrps.Grp_Id To TRUE
+
+        // Usergrps.Grp_Name
+        Set Field_Prompt_Object    Field Usergrps.Grp_Name To (slUserGr(Self))
+
+        // Usergrps.Allow_Read
+
+        // Usergrps.Allow_Change
+
+        // Usergrps.Allow_Create
+
+        // Usergrps.Allow_Delete
+
+        // Usergrps.Allow_Copy
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Usergrps_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use slusergr.sl      // slUserGr
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

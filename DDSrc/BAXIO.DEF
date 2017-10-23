@@ -1,0 +1,138 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: BAXIO (# 37)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:BAXIO
+  USER DISPLAY NAME         : BAXIO
+  DATAFLEX FILE NAME        : BAXIO
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 698       ( USED: 698 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC     10     1  1   
+  2  BRANCH_CODE      ASC     10    11  1   
+  3  YEAR_YEAR        NUM    4.0    21  1   
+  4  BAXIOKAT_CODE    NUM    6.0    23  1   
+  5  BAXIO_CODE       NUM   14.0    26  1   
+  6  BAXIO_REC0       NUM   14.0    33      
+  7  YEAR_RECR        ASC     12    40  3   
+  8  BAXIOKAT_RECR    ASC     12    52  4   BAXIOKAT.FIELD_4 (34,4)
+  9  BAXIO_RECR       ASC     12    64  2   
+ 10  BAXIO_STATUS     NUM    2.0    76  5   
+ 11  BAXIO_PLACE      NUM    2.0    77  5   
+ 12  BAXIO_FILE_IN    NUM    2.0    78      
+ 13  BAXIO_CODE_IN    ASC     20    79      
+ 14  BAXIO_EPON_IN    ASC     40    99 10   
+ 15  BAXIO_FPAR_IN    ASC     12   139      
+ 16  BAXIO_FILE_OUT   NUM    2.0   151      
+ 17  BAXIO_CODE_OUT   ASC     20   152      
+ 18  BAXIO_EPON_OUT   ASC     40   172 11   
+ 19  BAXIO_FPAR_OUT   ASC     12   212      
+ 20  BAXIO_LFILE      NUM    2.0   224      
+ 21  BAXIO_LCODE      ASC     20   225      
+ 22  BAXIO_LEPON      ASC     40   245      
+ 23  BAXIO_LPAR       ASC     12   285      
+ 24  BAXIO_BANK00000  ASC     10   297      
+ 25  BAXIO_HMNIAE     DAT      3   307      
+ 26  BAXIO_HMNIAP000  DAT      3   310      
+ 27  BAXIO_HMNIAL     DAT      3   313  7   
+ 28  BAXIO_EKDOTHS    ASC     20   316      
+ 29  BAXIO_EKDOTHSE   ASC     40   336      
+ 30  BAXIO_SEDIATAGH  ASC     20   376      
+ 31  BAXIO_SDIATAGHE  ASC     40   396      
+ 32  BAXIO_BANKA      ASC     10   436      
+ 33  BAXIO_OPISTHO    TEX    112   446      
+ 34  BAXIO_NO         ASC     20   558  9   
+ 35  BAXIO_V2         NUM   14.8   578      
+ 36  BAXIO_V0         NUM   14.8   589      
+ 37  BAXIO_V00        NUM   14.8   600      
+ 38  BAXIO_VR         NUM   14.8   611      
+ 39  BAXIO_RATE0      NUM   14.8   622      
+ 40  BAXIO_RATE00     NUM   14.8   633      
+ 41  BAXIO_RATER      NUM   14.8   644      
+ 42  BAXIO_C_CODE2    ASC     10   655      
+ 43  BAXIO_LIXI_YYYY  NUM    4.0   665      
+ 44  BAXIO_LIXI_MM    NUM    6.0   667      
+ 45  BAXIO_LIXI_DD    NUM    8.0   670      
+ 46  BAXIO_BMOVE_LAA  NUM    6.0   674      
+ 47  BAXIO_DESM       ASC     20   677      
+ 48  BAXIO_FROM       ASC      1   697      
+ 49  BAXIO_TOPOS      ASC      1   698      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY_CODE    NO  NO       32     3       5     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       BAXIOKAT_CODE   NO  NO 
+       BAXIO_CODE      NO  NO 
+
+  2    BAXIO_RECR      NO  NO       12     3       1     ON-LINE
+
+  3    YEAR_RECR       NO  NO       31     3       3     ON-LINE
+       BAXIOKAT_RECR   NO  NO 
+       BAXIO_CODE      NO  NO 
+
+  4    BAXIOKAT_RECR   NO  NO       19     3       2     ON-LINE
+       BAXIO_CODE      NO  NO 
+
+  5    YEAR_RECR       NO  NO       23     3       6     ON-LINE
+       BAXIOKAT_CODE   NO  NO 
+       BAXIO_STATUS    NO  NO 
+       BAXIO_PLACE     NO  NO 
+       BAXIO_HMNIAL    NO  NO 
+       RECNUM          NO  NO 
+
+  6    COMPANY_CODE    NO  NO       33     3       8     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       BAXIOKAT_CODE   NO  NO 
+       BAXIO_PLACE     NO  NO 
+       BAXIO_STATUS    NO  NO 
+       BAXIO_HMNIAL    NO  NO 
+       RECNUM          NO  NO 
+
+  7    BAXIO_HMNIAL    NO  NO       36     3       4     ON-LINE
+       BAXIO_STATUS    NO  NO 
+       BAXIO_NO        NO  NO 
+       BAXIO_RECR      NO  NO 
+
+  8    COMPANY_CODE    NO  NO       31     3       7     ON-LINE
+       BRANCH_CODE     NO  NO 
+       BAXIOKAT_CODE   NO  NO 
+       BAXIO_STATUS    NO  NO 
+       BAXIO_PLACE     NO  NO 
+       BAXIO_HMNIAL    NO  NO 
+       RECNUM          NO  NO 
+
+  9    COMPANY_CODE    NO  NO       45     3       5     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       BAXIO_NO        NO  NO 
+       RECNUM          NO  NO 
+
+  10   COMPANY_CODE    NO  NO       65     3       5     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       BAXIO_EPON_IN   NO  NO 
+       RECNUM          NO  NO 
+
+  11   COMPANY_CODE    NO  NO       65     3       5     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       BAXIO_EPON_OUT  NO  NO 
+       RECNUM          NO  NO 
+

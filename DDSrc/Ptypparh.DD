@@ -1,0 +1,163 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : PTYPPARH.DD
+// Class Name: Ptypparh_DataDictionary
+// Revision  : 21
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Ptypparh
+Open Ptyppar
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Ptypparh_Sign_VT
+Register_Object Ptypparh_Xp_VT
+Register_Object Ptypparh_Axia_VT
+Register_Object Ptypparh_Flaggl_VT
+
+Object Ptypparh_Sign_VT  is a DescriptionValidationTable
+    Set Table_Title       To "Ñß†¢¶ö„ ß®¶©Â£¶¨"
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "+"  "áú´†°Ê"
+        Send Add_Table_Value  "_"  "Ä®§û´†°Ê"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Ptypparh_Sign_VT
+
+Object Ptypparh_Xp_VT  is a DescriptionValidationTable
+    Set Table_Title       To "Ñß†¢¶ö„ °Â§û©û™"
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "ï"  "ï®‚‡©û"
+        Send Add_Table_Value  "è"  "èÂ©´‡©û"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Ptypparh_Xp_VT
+
+Object Ptypparh_Axia_VT  is a DescriptionValidationTable
+    Set Table_Title       To "íÁß¶™ ò•Âò™"
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "1"  "âòüò®„ ò•Âò"
+        Send Add_Table_Value  "2"  "âòüò®„ ò•Âò £ú´· ´û§ ú°ß´‡©û"
+        Send Add_Table_Value  "3"  "Ä•Âò î.è.Ä"
+        Send Add_Table_Value  "4"  "íú¢†°„ Ä•Âò"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Ptypparh_Axia_VT
+
+Object Ptypparh_Flaggl_VT  is a CodeValidationTable
+    Set Type_Value        To "FLAGGL"
+    Set Table_Title       To "ìßÊõú†•û ¢¶ö/©£¶Á ö†ò ö‚≠¨®ò £ú Ç.ä"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Ptypparh_Flaggl_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl150  sl150.SL
+Register_Object sl150
+//DDB-SelectionEnd
+
+Class Ptypparh_DataDictionary  is a DataDictionary_sec
+ 
+    // Update:
+ 
+    Procedure Update
+        Forward Send Update 
+        move syscurxr.company_code to Ptypparh.company_code
+        move syscurxr.branch_code  to Ptypparh.branch_code
+        move syscurxr.year_year    to Ptypparh.year_year
+        move ptyppar.ptyppar_code  to ptypparh.ptyppar_code 
+       // Insert Code Here
+    End_Procedure   // Update
+ 
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Ptypparh.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Ptyppar.File_Number
+
+        // Field-based properties.......................
+
+        // Ptypparh.Company_Code
+
+        // Ptypparh.Branch_Code
+
+        // Ptypparh.Year_Year
+
+        // Ptypparh.Ptyppar_Recr
+
+        // Ptypparh.Ptyppar_Code
+
+        // Ptypparh.Gtypkin_Code
+
+        // Ptypparh.Codegl
+        Set Field_Prompt_Object    Field Ptypparh.Codegl To (sl150(Self))
+
+        // Ptypparh.Order
+
+        // Ptypparh.Sign
+        Set Field_Value_Table      Field Ptypparh.Sign To (Ptypparh_Sign_VT(Self))
+
+        // Ptypparh.Xp
+        Set Field_Value_Table      Field Ptypparh.Xp To (Ptypparh_Xp_VT(Self))
+
+        // Ptypparh.Fromwhere
+
+        // Ptypparh.Axia
+        Set Field_Value_Table      Field Ptypparh.Axia To (Ptypparh_Axia_VT(Self))
+
+        // Ptypparh.Type
+
+        // Ptypparh.Flaggl
+        Set Field_Value_Table      Field Ptypparh.Flaggl To (Ptypparh_Flaggl_VT(Self))
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Ptypparh_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl150.SL         // sl150
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

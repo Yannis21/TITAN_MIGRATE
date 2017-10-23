@@ -1,0 +1,186 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : DORDERH.DD
+// Class Name: Dorderh_DataDictionary
+// Revision  : 24
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Dorderh
+Open Dorderd
+Open Cn
+Open Sysrecc
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Dorderh_Status_VT
+
+Object Dorderh_Status_VT  is a CodeValidationTable
+    Set Type_Value        To "PR_STATUS"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Dorderh_Status_VT
+//DDB-ValidationEnd
+
+Class Dorderh_DataDictionary  is a DataDictionary_Sec
+ 
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Property String psOldID Public ''
+    End_Procedure
+ 
+    Procedure New_Current_Record  Integer iOldRec  Integer iNewRec
+        Forward Send New_Current_Record  iOldRec iNewRec
+        Set psOldID to DorderH.DorderH_ID 
+    End_Procedure   // New_Current_Record
+ 
+    Procedure Operation_Not_Allowed  Integer iError_Num
+        If (iError_Num=15000) Error 15000 'DDC 051: ƒœ¤ œ§ «¨â§œ«˜  ˜¢¢˜šã ¡à› ¡¦ç ©«¦ ž£œ¨ã© ¦ ›œ¢«å¦ §˜¨˜ššœ¢å˜ª'
+        Forward Send Operation_Not_Allowed  iError_Num
+    End_Procedure   // Operation_Not_Allowed
+ 
+    Function Validate_Save  Returns Integer
+        Local Integer iReturnVal
+        Forward Get Validate_Save  To iReturnVal
+        If (Not(iReturnVal)) Begin
+            If ((psOldID(Self)<>'') And (psOldID(Self)<>DorderH.DorderH_ID)) Send Operation_Not_Allowed 15000
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+ 
+    Procedure Creating
+        Number nOra nLepta
+        String  sOra sLepta
+        Forward Send Creating
+        Get fsLoginUserID           to DorderH.DorderH_User
+        Move SysCurXr.Company_Code  to DorderH.Company_Code
+
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(DorderH.DORDERH_Rec0)))))) ;
+                                    to DorderH.DORDERH_Recr
+        
+        //prosoxh ton kodiko ton kanoyme exapsifio mono gia thessaloniki
+        //gts 20-07-06
+        /////////////////////Get fsgCode_With_Zeroes DORDERH.DORDERH_Rec0 5 SysCurXr.Company_Code SysCurXr.Branch_Code ;
+        /////////////////////                            to DORDERH.DORDERH_ID
+        
+        // Allagh 12/06/2007 js
+        // Xrhsimopoioume to pedio "SYSRECW.WTYPPAR_REC0" gia na paroume
+        // parametrika ton arithmo ton psifion pou tha apoteloun ton kodiko
+        // ths paraggelias. Prostethike epishs to pedio sthn othonh ton
+        // statheron systhmatos "V00.vw" gia na prosarmosoume ta ypokatasthmata
+        If (SYSRECW.WTYPPAR_REC0<>0) ;
+            Get fsgCode_With_Zeroes DORDERH.DORDERH_Rec0 SYSRECW.WTYPPAR_REC0 SysCurXr.Company_Code SysCurXr.Branch_Code to DORDERH.DORDERH_ID
+        Else ;
+            Get fsgCode_With_Zeroes DORDERH.DORDERH_Rec0 5 SysCurXr.Company_Code SysCurXr.Branch_Code to DORDERH.DORDERH_ID
+
+    End_Procedure   // Creating
+ 
+    Procedure Update
+        Number  nOra nLepta
+        String  sOra sLepta
+        Date    dHmnia
+        Forward Send Update
+        Move Clients.Client_ID  to DorderH.Client_ID
+        Move Cn.CN_SiteW        to DorderH.DorderH_SiteW
+        Move Cn.CN_Code         to DorderH.CN_Code
+        
+        If (DorderH.DorderH_Date='') Begin
+            SysDate dHmnia
+            Move dHmnia to DorderH.DorderH_Date
+        End
+        If (DorderH.DorderH_Time='') Begin
+            SysDate dHmnia nOra nLepta
+            Move nOra           to sOra
+            Move nLepta         to sLepta
+            Move (Trim(sOra))   to sOra
+            Move (Trim(sLepta)) to sLepta
+            If (Length(sOra  )=1) Insert '0' in sOra    at 1
+            If (Length(sLepta)=1) Insert '0' in sLepta  at 1
+            Move (sOra-sLepta)  to DorderH.DorderH_Time
+        End
+    End_Procedure   // Update
+ 
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Dorderh.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Dorderd.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Cn.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Dorderh_Rec0  To Dorderh.Dorderh_Rec0
+
+        // Field-based properties.......................
+
+        // Dorderh.Company_Code
+
+        // Dorderh.Dorderh_Id
+
+        // Dorderh.Dorderh_Rec0
+
+        // Dorderh.Dorderh_Date
+
+        // Dorderh.Dorderh_User
+
+        // Dorderh.Dorderh_Sitew
+
+        // Dorderh.Cn_Recr
+
+        // Dorderh.Dorderh_Sxolia
+
+        // Dorderh.Dorderh_Totam
+
+        // Dorderh.Dorderh_Who
+
+        // Dorderh.Dorderh_Amover
+
+        // Dorderh.Dorderh_Time
+        Set Field_Mask             Field Dorderh.Dorderh_Time To "##:##"
+
+        // Dorderh.Dorderh_Recr
+
+        // Dorderh.Cn_Code
+
+        // Dorderh.Client_Id
+
+        // Dorderh.Status
+        Set Field_Value_Table      Field Dorderh.Status To (Dorderh_Status_VT(Self))
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Dorderh.Status To "1"
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Dorderh_DataDictionary
+//DDB-FileEnd

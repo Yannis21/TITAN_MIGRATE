@@ -1,0 +1,316 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : PUMPS.DD
+// Class Name: Pumps_DataDictionary
+// Revision  : 18
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Pumps
+Open Gmove
+Open Sysrecg
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Pumps_Ctype_Id_VT
+
+Object Pumps_Ctype_Id_VT  is a CodeValidationTable
+    Set Type_Value        To "PUMPSTYPE"
+    Set Validate_State    To FALSE
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Pumps_Ctype_Id_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl053  sl053.SL
+Register_Object sl053
+//DDB-SelectionEnd
+
+Class Pumps_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        //------------------------------------------------
+        // Properties gia na kraththoun oi palies times 
+        // ton pedion Ef' oson to Sysfile.Use_Audit pedio 
+        // einai 1     js 03/12/2007
+        //------------------------------------------------  
+        Property Integer piCreateNew            Public  0
+        Property Number  pnAud_Old_M3           Public  0
+        Property Integer piAud_Old_Pagio        Public  0
+        Property String  psAud_Old_PumpRecr     Public ""
+        Property String  psAud_Old_License      Public ""
+        //------------------------------------------------
+
+    End_procedure
+
+    Procedure New_Current_Record  Integer iOldRec  Integer iNewRec
+        Forward Send New_Current_Record  iOldRec iNewRec
+        //------------------------------------------------
+        // Properties gia na kraththoun oi palies times 
+        // ton pedion js 03/12/2007
+        //------------------------------------------------
+        Set pnAud_Old_M3        to Pumps.PriceM3
+        Set piAud_Old_Pagio     to Pumps.PagioMin
+        Set psAud_Old_PumpRecr  to Pumps.Pump_ID
+        Set psAud_Old_License   to Pumps.Pump_License
+        //------------------------------------------------
+     End_Procedure   // New_Current_Record
+
+    Procedure Delete_Main_File
+        //---------------------------------------------
+        // Auditing / Katagrafh allagon
+        String  sUser sText sTime sMin sHour sSec
+        Date    dDate  Shmer 
+        Integer iMin iHour iSec iLen
+        Sysdate dDate iHour iMin iSec 
+        Move iHour  to sHour
+        Move iMin   to sMin
+        Move iSec   to sSec
+        If (Length(sHour)=1) Insert "0" in sHour at 1
+        If (Length(sMin )=1) Insert "0" in sMin  at 1
+        If (Length(sSec )=1) Insert "0" in sSec  at 1
+        Move (Trim(sHour)+":"+Trim(sMin)+"."+Trim(sSec)) to sTime
+        
+        // Auditing / Diagrafh 
+        If ((Sysfile.Use_Audit=1) And (Operation_Mode=MODE_DELETING) And (OPERATION_ORIGIN=Self)) Begin
+            Get fsLoginUserID to sUser
+            clear gmove
+            move syscurxr.company_code  to gmove.company_code
+            move syscurxr.branch_code   to gmove.branch_code
+            move syscurxr.year_year     to gmove.year_year
+            move  6                     to gmove.gtypkin_code// Apo Clients
+            move ddate                  to gmove.garticl_hmnia
+            move suser                  to gmove.gplan_code
+            move Pumps.Pump_ID          to gmove.garticl_recr
+            reread sysrecg
+            move (sysrecg.gmove_rec0+1) to sysrecg.gmove_rec0
+            move (sysrecg.gmove_rec0+1) to gmove.gmove_rec0
+            saverecord sysrecg
+            unlock
+            Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
+                                                to Gmove.Gmove_Recr
+            Move (Trim(sUser))                  to Gmove.Login_ID
+            Move dDate                          to Gmove.Hmnia_Metabolhs    
+            Move sTime                          to Gmove.Ora_Metabolhs
+            
+            Move Pumps.Pump_ID                  to Gmove.Partl_Recr          
+            Move Pumps.Pump_ID                  to Gmove.Pms_Recr          
+
+            Move (pnAud_Old_M3     (Self))      to Gmove.Prev_Ant_Min_M3
+            Move (piAud_Old_Pagio  (Self))      to Gmove.Prev_Stoxos1
+            Move (psAud_Old_License(Self))      to Gmove.Prev_CN_Prosth
+
+            Move "ƒ ˜š¨˜­ã œšš¨˜­ãª €¤«¢å˜ª"    to gmove.gmove_aitiol
+            Move "D"                            to Gmove.Eidos_Metabolhs
+            saverecord gmove
+        End
+        Forward Send Delete_Main_File
+
+    End_Procedure
+
+     Procedure Creating
+        Forward Send Creating
+        Set piCreateNew to 1
+    End_Procedure   // Creating
+
+
+    // Update:
+    Procedure Update
+        Forward Send Update
+        Move SysCurXR.Company_Code  to Pumps.Pump_Company
+        Move SysCurXR.Beto_Site     to Pumps.Pump_SiteW
+
+
+        //---------------------------------------------
+        // Auditing / Katagrafh allagon
+        String  sUser sText sTime sMin sHour sSec
+        Date    dDate  Shmer 
+        Integer iMin iHour iSec iLen
+        Sysdate dDate iHour iMin iSec 
+        Move iHour  to sHour
+        Move iMin   to sMin
+        Move iSec   to sSec
+        If (Length(sHour)=1) Insert "0" in sHour at 1
+        If (Length(sMin )=1) Insert "0" in sMin  at 1
+        If (Length(sSec )=1) Insert "0" in sSec  at 1
+        Move (Trim(sHour)+":"+Trim(sMin)+"."+Trim(sSec)) to sTime
+        
+        // Auditing / Dhmiourgia - Diorthosh
+        If ((Sysfile.Use_Audit=1)  And (Operation_ORIGIN=Self)) Begin
+            Get fsLoginUserID to sUser
+            If (piCreateNew(Self)=1) Begin
+                clear gmove
+                move syscurxr.company_code  to gmove.company_code
+                move syscurxr.branch_code   to gmove.branch_code
+                move syscurxr.year_year     to gmove.year_year
+                move  6                     to gmove.gtypkin_code// Apo Clients
+                move ddate                  to gmove.garticl_hmnia
+                move suser                  to gmove.gplan_code
+                move Pumps.Pump_ID          to gmove.garticl_recr
+                reread sysrecg
+                move (sysrecg.gmove_rec0+1) to sysrecg.gmove_rec0
+                move (sysrecg.gmove_rec0+1) to gmove.gmove_rec0
+                saverecord sysrecg
+                unlock
+                Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
+                                                    to Gmove.Gmove_Recr
+                Move (Trim(sUser))                  to Gmove.Login_ID
+                Move dDate                          to Gmove.Hmnia_Metabolhs    
+                Move sTime                          to Gmove.Ora_Metabolhs
+
+                Move Pumps.Pump_ID         to Gmove.Partl_Recr          
+                Move Pumps.Pump_ID         to Gmove.Pms_Recr          
+
+                Move Pumps.PriceM3          to Gmove.Cur_Stoxos1
+                Move Pumps.PagioMin         to Gmove.Cur_Ant_Min_M3
+                Move Pumps.Pump_License     to Gmove.Cur_CN_Prosth
+
+                Move "ƒž£ ¦¬¨šå˜ ¤â˜ª €¤«¢å˜ª" to Gmove.Gmove_Aitiol
+                Move "N" to Gmove.Eidos_Metabolhs  
+                saverecord gmove
+                Set piCreateNew to 0
+            End
+            Else If ((Operation_Mode=MODE_SAVING) And (piCreateNew(Self)<>1) And (OPERATION_ORIGIN=Self)) Begin                                
+                Integer isChanged
+                Move 0 to isChanged
+                
+                     If (pnAud_Old_M3      (Self)<>Pumps.PriceM3     ) Move 1 to isChanged
+                Else If (piAud_Old_Pagio   (Self)<>Pumps.PagioMin    ) Move 1 to isChanged
+                Else If (psAud_Old_PumpRecr(Self)<>Pumps.Pump_ID     ) Move 1 to isChanged
+                Else If (psAud_Old_License (Self)<>Pumps.Pump_License) Move 1 to isChanged
+
+                If (isChanged>0) Begin  
+                    clear gmove
+                    move syscurxr.company_code  to gmove.company_code
+                    move syscurxr.branch_code   to gmove.branch_code
+                    move syscurxr.year_year     to gmove.year_year
+                    move  6                     to gmove.gtypkin_code// Apo Clients
+                    move ddate                  to gmove.garticl_hmnia
+                    move suser                  to gmove.gplan_code
+                    move Pumps.Pump_ID          to gmove.garticl_recr
+                    reread sysrecg
+                    move (sysrecg.gmove_rec0+1) to sysrecg.gmove_rec0
+                    move (sysrecg.gmove_rec0+1) to gmove.gmove_rec0
+                    saverecord sysrecg
+                    unlock
+                    Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
+                                                        to Gmove.Gmove_Recr
+                    Move (Trim(sUser))                  to Gmove.Login_ID
+                    Move dDate                          to Gmove.Hmnia_Metabolhs    
+                    Move sTime                          to Gmove.Ora_Metabolhs
+                    Move Pumps.Pump_ID                  to Gmove.Partl_Recr          
+                    Move Pumps.Pump_ID                  to Gmove.Pms_Recr          
+                    //--                                
+                    Move Pumps.PriceM3                  to Gmove.Cur_Stoxos1
+                    Move Pumps.PagioMin                 to Gmove.Cur_Ant_Min_M3
+                    Move Pumps.Pump_License             to Gmove.Cur_CN_Prosth
+                    //--
+                    Move (pnAud_Old_M3     (Self))      to Gmove.Prev_Stoxos1      
+                    Move (piAud_Old_Pagio  (Self))      to Gmove.Prev_Ant_Min_M3   
+                    Move (psAud_Old_License(Self))      to Gmove.Prev_CN_Prosth
+                    
+                    Move "ƒ æ¨Ÿà©ž œšš¨˜­ãª €¤«¢å˜ª"    to gmove.gmove_aitiol
+                    Move "E"                            to Gmove.Eidos_Metabolhs
+                    saverecord gmove
+                    Set piCreateNew to 0
+                End
+            End
+        End
+
+
+
+    End_Procedure   // Update
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Pumps.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // External (System) file structure.............
+        Send Add_System_File  Gmove.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_ALL
+
+        // Field-based properties.......................
+
+        // Pumps.Pump_Recnum
+
+        // Pumps.Pump_Company
+
+        // Pumps.Pump_Id
+        Set Field_Options          Field Pumps.Pump_Id To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Pumps.Pump_Id To (sl053(Self))
+        Set Key_Field_State        Field Pumps.Pump_Id To TRUE
+
+        // Pumps.Pump_Descr
+        Set Field_Prompt_Object    Field Pumps.Pump_Descr To (sl053(Self))
+
+        // Pumps.Pump_License
+
+        // Pumps.Pump_Mhkos
+
+        // Pumps.Pump_Mhkosch
+
+        // Pumps.Pump_Codematch
+
+        // Pumps.Pump_Sitew
+
+        // Pumps.Pump_Driver
+
+        // Pumps.Pump_Bsite
+
+        // Pumps.Ctype_Id
+        Set Field_Class_Name       Field Pumps.Ctype_Id To "dbComboFormsub"
+        Set Field_Value_Table      Field Pumps.Ctype_Id To (Pumps_Ctype_Id_VT(Self))
+
+        // Pumps.Pagiomin
+
+        // Pumps.Pricem3
+
+        // Pumps.Parakrat
+
+        // Pumps.Pump_What
+
+        // Pumps.Pump_Lc
+
+        // Pumps.Pump_Ln
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Pumps_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl053.SL         // sl053
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

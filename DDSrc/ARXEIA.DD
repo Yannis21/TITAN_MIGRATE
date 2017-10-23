@@ -1,0 +1,102 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : ARXEIA.DD
+// Class Name: Arxeia_DataDictionary
+// Revision  : 18
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Arxeia
+Open Grparx
+Open Grparx0
+Open Pedia
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl245  sl245.sl
+Register_Object sl245
+//DDB-SelectionEnd
+
+Class Arxeia_DataDictionary  is a DataDictionary_sec
+
+    
+    Function Validate_Delete  Returns Integer
+        Local Integer iReturnVal
+        Forward Get Validate_Delete  To iReturnVal
+        If (Not(iReturnVal)) Begin
+            // ‰“‹„ ’€ DELETION ‚ˆ€ Œ€ ‹†Œ ’‘€‰ˆ‘“Œ ’€ ƒˆ‰€ˆ—‹€’€ “ ’“•Œ
+            // „•“Œ †ƒ† ˆ‘’„ˆ
+            Move 1001 to iReturnVal
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Delete
+
+    Procedure Operation_Not_Allowed  Integer iError_Num
+             If iError_Num eq 1001 Error 1001 "DD 245 Arxeia - ƒœ¤ ›å¤œ«˜  ˜§¦ «¦ ©ç©«£˜\n›¬¤˜«æ««˜ › ˜š¨˜­ãª ©«¦ ©¬š¡œ¡¨ £â¤¦ ˜¨®œå¦"
+        Else Forward Send Operation_Not_Allowed  iError_Num
+    End_Procedure   // Operation_Not_Allowed
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Arxeia.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Grparx.File_Number
+        Send Add_Client_File  Grparx0.File_Number
+        Send Add_Client_File  Pedia.File_Number
+
+        // Field-based properties.......................
+
+        // Arxeia.Arxeio_Id
+        Set Field_Options          Field Arxeia.Arxeio_Id To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Arxeia.Arxeio_Id To (sl245(Self))
+        Set Key_Field_State        Field Arxeia.Arxeio_Id To TRUE
+
+        // Arxeia.Arxeio_Name
+        Set Field_Options          Field Arxeia.Arxeio_Name To DD_CAPSLOCK   
+        Set Field_Prompt_Object    Field Arxeia.Arxeio_Name To (sl245(Self))
+        Set Key_Field_State        Field Arxeia.Arxeio_Name To TRUE
+
+        // Arxeia.Access_Name
+        Set Field_Options          Field Arxeia.Access_Name To DD_CAPSLOCK   
+        Set Field_Prompt_Object    Field Arxeia.Access_Name To (sl245(Self))
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Arxeia_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl245.sl         // sl245
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

@@ -1,0 +1,165 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : ISOTIMIA.DD
+// Class Name: Isotimia_DataDictionary
+// Revision  : 18
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Isotimia
+Open Nomisma
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Isotimia_Poia_Metatrepei_VT
+
+Object Isotimia_Poia_Metatrepei_VT  is a DescriptionValidationTable
+    Set Allow_Blank_State To TRUE
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "€"  "€‚Ž€"
+        Send Add_Table_Value  ""  "—Š†‘†"
+        Send Add_Table_Value  "F"  "FIXING"
+        Send Add_Table_Value  "P"  "PRIVATE"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Isotimia_Poia_Metatrepei_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl060  sl060.sl
+Register_Object sl060
+//DDB-SelectionEnd
+
+Class Isotimia_DataDictionary  is a DataDictionary_Sec
+
+
+    Function Validate_Save  Returns Integer
+        Local Integer iReturnVal
+        Forward Get Validate_Save  To iReturnVal
+        If (Not(iReturnVal)) ;
+            Begin
+                If Isotimia.isotimia_Hmnia eq ''  move 635 to iReturnVal
+                if iReturnVal Send Operation_Not_Allowed iReturnVal
+            End
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+
+    Procedure Operation_Not_Allowed  Integer iError_Num
+        if iError_num eq 635 error 635 "ˆ©¦« £åœª => †£œ¨¦£ž¤å˜ ¡œ¤ã "
+        else Forward Send Operation_Not_Allowed  iError_Num
+    End_Procedure   // Operation_Not_Allowed
+
+
+
+    // Creating:
+    // This message is sent each time a new record is created in the
+    // main file. You should use this to assign field values that
+    // apply to the creation of a new record (i.e. assigning a unique ID
+    // from a system_file field). Creating is invoked while the database
+    // is locked.
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        SYSDATE ISOTIMIA.FUP
+        Move Nomisma.Kl_Isot_Euro to Isotimia.Isotimia_Euro
+    End_Procedure   // Creating
+
+
+    // Update:
+    // Use this message to effect changes in related-to files. The
+    // Backout message should be designed to reverse the effects of this
+    // message. It is invoked while the database is locked.
+
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        MOVE NOMISMA.NOMISMA_DESCR  TO ISOTIMIA.NOMISMA_DESCR
+        MOVE NOMISMA.NOMISMA_SHORT  TO ISOTIMIA.NOMISMA_SHORT
+        MOVE NOMISMA.DEKADIKA       TO ISOTIMIA.DEKADIKA
+        SYSDATE ISOTIMIA.LUP
+    End_Procedure   // Update
+
+
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Isotimia.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Nomisma.File_Number
+
+        // Field-based properties.......................
+
+        // Isotimia.Nomisma_Code
+
+        // Isotimia.Isotimia_Hmnia
+        Set Field_Prompt_Object    Field Isotimia.Isotimia_Hmnia To (sl060(Self))
+
+        // Isotimia.Isotimia_Agora
+
+        // Isotimia.Isotimia_Polhsh
+
+        // Isotimia.Isotimia_Fixing
+
+        // Isotimia.Isotimia_Privat
+
+        // Isotimia.Nomisma_Descr
+
+        // Isotimia.Nomisma_Short
+
+        // Isotimia.Fup
+
+        // Isotimia.Lup
+
+        // Isotimia.Sxolia
+
+        // Isotimia.Dekadika
+
+        // Isotimia.Isotimia_Euro
+
+        // Isotimia.Poia_Metatrepei
+        Set Field_Value_Table      Field Isotimia.Poia_Metatrepei To (Isotimia_Poia_Metatrepei_VT(Self))
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Isotimia_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl060.sl         // sl060
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

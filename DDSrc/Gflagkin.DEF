@@ -1,0 +1,47 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: GFLAGKIN (# 160)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : GFLAGKIN
+  USER DISPLAY NAME         : Gflagkin
+  DATAFLEX FILE NAME        : GFLAGKIN
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 73        ( USED: 65 )
+  MAX NUMBER OF RECORDS     : 10000     ( USED: 4 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC     10     1  1   
+  2  BRANCH_CODE      ASC     10    11  1   
+  3  YEAR_YEAR        NUM    4.0    21  1   
+  4  GTYPKIN_CODE     NUM    6.0    23  1   
+  5  GFLAGKIN_FLAG    NUM    4.0    26  1   
+  6  GFLAGKIN_REC0    NUM   14.0    28  2   
+  7  GTYPKIN_RECR     ASC     12    35  3   GTYPKIN.FIELD_37 (151,37)
+  8  YEAR_RECR        ASC      7    47      
+  9  GFLAGKIN_RECR    ASC     12    54      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY_CODE    NO  NO       27     4       5     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       GTYPKIN_CODE    NO  NO 
+       GFLAGKIN_FLAG   NO  NO 
+
+  2    GFLAGKIN_REC0   NO  NO       7      3       1     ON-LINE
+
+  3    GTYPKIN_RECR    NO  NO       15     3       2     ON-LINE
+       RECNUM          NO  NO 
+

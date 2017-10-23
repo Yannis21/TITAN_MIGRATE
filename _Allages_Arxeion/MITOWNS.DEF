@@ -1,0 +1,38 @@
+-----------------------------------------------------------------------------
+  DATE: 26/07/2017      TIME: 09:19                                  PAGE:  1
+  FILE DEFINITION FOR FILE: MITOWNS (# 141)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : MITOWNS
+  USER DISPLAY NAME         : MITOWNS
+  DATAFLEX FILE NAME        : MITOWNS
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 34        ( USED: 34 )
+  MAX NUMBER OF RECORDS     : 1000000   ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COUNTRY_ID       NUM    4.0     1  3   COUNTRY.FIELD_1 (58,1)
+  2  TOWN_ID          NUM    4.0     3  1   
+  3  TOWN_DESCR       ASC     30     5  2   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    TOWN_ID         NO  NO       2      3       1     ON-LINE
+
+  2    TOWN_DESCR      NO  NO       32     6       2     ON-LINE
+       TOWN_ID         NO  NO 
+
+  3    COUNTRY_ID      NO  NO       4      3       2     ON-LINE
+       TOWN_ID         NO  NO 
+

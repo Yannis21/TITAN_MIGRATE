@@ -1,0 +1,370 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : YEAR.DD
+// Class Name: Year_DataDictionary
+// Revision  : 119
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Year
+Open Branch
+Open Syscurxr
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Year_Year_C_Code0_VT1
+Register_Object Year_Year_C_Code00_VT1
+Register_Object Year_Year_C_Coder_VT1
+
+Object Year_Year_C_Code0_VT1  is a CodeValidationTable
+    Set Type_Value        To "CURRENCY"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Year_Year_C_Code0_VT1
+
+Object Year_Year_C_Code00_VT1  is a CodeValidationTable
+    Set Type_Value        To "CURRENCY"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Year_Year_C_Code00_VT1
+
+Object Year_Year_C_Coder_VT1  is a CodeValidationTable
+    Set Type_Value        To "CURRENCY"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Year_Year_C_Coder_VT1
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList SL003  Sl003.sl
+Register_Object SL003
+//DDB-SelectionEnd
+            
+Class Year_DataDictionary  is a DataDictionary
+    
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(Branch.Branch_Site))+;
+                          (Trim(String(Year.Year_Year)))))) to Year.Year_Recr
+    End_Procedure   // Creating
+
+
+    // Operation_Not_Allowed:
+    Procedure Operation_Not_Allowed  Integer iError_Num
+        // Insert Code Here
+        Case Begin    
+             Case (iError_Num = 1001)
+                  Error 1001 "DDC 053:€¡˜«á¢¢ž¢¦ª ‰à› ¡æª “§¦¡˜«˜©«ã£˜«¦ª!\n\n‰œ¤æª ‰à› ¡æª"
+             Case Break
+             Case (iError_Num=1002)
+                Error 1002 "DDC 053:Branch Site ¡˜«œ™˜å¤œ  ©«¦ Year ¡œ¤æ"
+             Case Break
+             Case (iError_Num=1003)
+                Error 1003 "DDC 053:Company Code=0"
+             Case Break
+             Case (iError_Num=1004)
+                Error 1004 "DDC 053:Branch Code=0"
+             Case Break
+             Case Else
+                  Forward Send Operation_Not_Allowed  iError_Num
+        Case End
+    End_Procedure   // Operation_Not_Allowed
+
+
+    // Update:
+    // Use this message to effect changes in related-to files. The
+    // Backout message should be designed to reverse the effects of this
+    // message. It is invoked while the database is locked.
+
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move Company.Company_Code   to Year.Company_Code
+        Move Branch.Branch_Code     to Year.Branch_Code
+        move branch.beto_site       to year.beto_site
+
+        //sos:parametrika apo sysfile?
+       
+       // If ((Year.Year_EntryDate-14) < Year.Year_XrhshFrom) Begin
+       //     Move Year.Year_XrhshFrom to Year.Year_OpenFrom
+       // End
+       // Else Begin
+       //     Move (Year.Year_EntryDate-14) to Year.Year_OpenFrom
+       // End
+      //  Move Year.Year_EntryDate      to Year.Year_OpenTo
+    End_Procedure   // Update
+
+    // Validate_Save:
+
+    Function Validate_Save  Returns Integer
+        Local Integer iReturnVal
+        Forward Get Validate_Save  To iReturnVal
+        If (Not(iReturnVal)) Begin
+                 If (Year.Year_Year   = 0) Send Operation_Not_Allowed 1001
+            Else If (Year.Company_Code='') Send Operation_Not_Allowed 1003
+            Else If (Year.Branch_Code ='') Send Operation_Not_Allowed 1004
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Year.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Branch.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Syscurxr.File_Number  DD_LOCK_ON_ALL
+
+        // Field-based properties.......................
+
+        // Year.Company_Code
+
+        // Year.Branch_Code
+
+        // Year.Year_Year
+        Set Field_Options          Field Year.Year_Year To DD_AUTOFIND    DD_REQUIRED   
+        Set Field_Prompt_Object    Field Year.Year_Year To (SL003(Self))
+        Set Key_Field_State        Field Year.Year_Year To TRUE
+
+        // Year.Year_Recr
+        Set Field_Prompt_Object    Field Year.Year_Recr To (SL003(Self))
+
+        // Year.Branch_Recr
+
+        // Year.Year_Descr
+
+        // Year.Year_Isolfrom
+
+        // Year.Year_Isolto
+
+        // Year.Year_Openfrom
+
+        // Year.Year_Opento
+
+        // Year.Year_Entrydate
+
+        // Year.Year_Dateaa
+
+        // Year.Year_Xrhshfrom
+
+        // Year.Year_Xrhshto
+
+        // Year.Year_Myflimit
+
+        // Year.Year_Numgtypkin
+
+        // Year.Year_Numgarticl
+
+        // Year.Year_Numgmove
+
+        // Year.Year_Numgplan
+
+        // Year.Year_Numgformat
+
+        // Year.Year_Numgthaa
+
+        // Year.Year_Numgopen
+
+        // Year.Year_Numbtypkin
+
+        // Year.Year_Numbaxio
+
+        // Year.Year_Numbarticl
+
+        // Year.Year_Numbmove
+
+        // Year.Year_Delimiter
+
+        // Year.Year_Printer
+
+        // Year.Year_Valid_Char
+
+        // Year.Year_C_Code0
+        Set Field_Class_Name       Field Year.Year_C_Code0 To "dbComboFormSub"
+        Set Field_Value_Table      Field Year.Year_C_Code0 To (Year_Year_C_Code0_VT1(Self))
+
+        // Year.Year_C_Code00
+        Set Field_Class_Name       Field Year.Year_C_Code00 To "dbComboFormSub"
+        Set Field_Value_Table      Field Year.Year_C_Code00 To (Year_Year_C_Code00_VT1(Self))
+
+        // Year.Year_C_Coder
+        Set Field_Class_Name       Field Year.Year_C_Coder To "dbComboFormSub"
+        Set Field_Value_Table      Field Year.Year_C_Coder To (Year_Year_C_Coder_VT1(Self))
+
+        // Year.Beto_Site
+
+        // Year.Clients_Plafon
+
+        // Year.Payresp_Plafon
+
+        // Year.Clients_Ofeilh
+
+        // Year.Payresp_Ofeilh
+
+        // Year.Working
+
+        //DDB-DefineFieldEnd
+
+        Set Main_File            To Year.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Branch.File_Number
+
+        // Field-based properties.......................
+
+        // Year.Company_Code
+
+        // Year.Branch_Code
+
+        // Year.Year_Year
+        Set Field_Label_Long       Field Year.Year_Year           To "•¨ã©ž"
+        Set Field_Label_Short      Field Year.Year_Year           To "•¨ã©ž"
+        Set Field_Options          Field Year.Year_Year           To DD_REQUIRED
+        //Set Field_Prompt_Object    Field Year.Year_Year           To (SL053(Self))
+
+        // Year.Year_Descr
+        Set Field_Label_Long       Field Year.Year_Descr          To "œ¨ š¨˜­ã •¨ã©žª"
+        Set Field_Label_Short      Field Year.Year_Descr          To "œ¨.•¨ã©žª"
+
+        // Year.Year_C_Code0
+        Set Field_Class_Name       Field Year.Year_C_Code0        To "dbComboForm"
+        Set Field_Label_Long       Field Year.Year_C_Code0        To "‰ç¨ ¦ Œæ£ ©£˜"
+        Set Field_Label_Short      Field Year.Year_C_Code0        To "‰¬¨.Œ¦£ ©£˜"
+        //Set Field_Value_Table      Field Year.Year_C_Code0        To (Year_Year_C_Code0_VT(Self))
+
+        // Year.Year_C_Code00
+        Set Field_Class_Name       Field Year.Year_C_Code00       To "dbComboForm"
+        Set Field_Label_Long       Field Year.Year_C_Code00       To "ƒœ¬«œ¨œç¦¤ Œæ£ ©£˜"
+        Set Field_Label_Short      Field Year.Year_C_Code00       To "ƒœ¬«œ¨œç¦¤ Œæ£ ©£˜"
+        //Set Field_Options          Field Year.Year_C_Code00       To DD_REQUIRED
+        //Set Field_Value_Table      Field Year.Year_C_Code00       To (Year_Year_C_Code1_VT(Self))
+
+        // Year.Year_C_Coder
+        Set Field_Class_Name       Field Year.Year_C_Coder        To "dbComboForm"
+        Set Field_Label_Long       Field Year.Year_C_Coder        To "Œæ£ ©£˜ REPORTING"
+        Set Field_Label_Short      Field Year.Year_C_Coder        To "Œæ£ ©£˜ REP"
+        //Set Field_Options          Field Year.Year_C_Coder        To DD_REQUIRED
+        //Set Field_Value_Table      Field Year.Year_C_Coder        To (Year_Year_C_Coder_VT(Self))
+
+        // Year.Year_Isolfrom
+        Set Field_Label_Long       Field Year.Year_Isolfrom       To "ˆ©¦¢¦š ©£æª €§æ"
+        Set Field_Label_Short      Field Year.Year_Isolfrom       To "ˆ©¦¢¦š ©£æª €§æ"
+
+        // Year.Year_Isolto
+        Set Field_Label_Long       Field Year.Year_Isolto         To "ˆ©¦¢¦š ©£æª „àª"
+        Set Field_Label_Short      Field Year.Year_Isolto         To "ˆ©¦¢¦š ©£æª „àª"
+
+        // Year.Year_Openfrom
+        Set Field_Label_Long       Field Year.Year_Openfrom       To "„šš¨˜­âª €§æ"
+        Set Field_Label_Short      Field Year.Year_Openfrom       To "„šš¨˜­âª €§æ"
+
+        // Year.Year_Opento
+        Set Field_Label_Long       Field Year.Year_Opento         To "„šš¨˜­âª „àª"
+        Set Field_Label_Short      Field Year.Year_Opento         To "„šš¨˜­âª „àª"
+
+        // Year.Year_Entrydate
+        Set Field_Label_Long       Field Year.Year_Entrydate      To "†£œ¨¦£ž¤å˜ „¨š˜©å˜ª"
+        Set Field_Label_Short      Field Year.Year_Entrydate      To "†£/¤å˜ „¨š˜©å˜ª"
+
+        // Year.Year_Dateaa
+
+        // Year.Year_Xrhshfrom
+        Set Field_Label_Long       Field Year.Year_Xrhshfrom      To "•¨ã©ž €§æ"
+        Set Field_Label_Short      Field Year.Year_Xrhshfrom      To "•¨ã©ž €§æ"
+
+        // Year.Year_Xrhshto
+        Set Field_Label_Long       Field Year.Year_Xrhshto        To "•¨ã©ž „àª"
+        Set Field_Label_Short      Field Year.Year_Xrhshto        To "•¨ã©ž „àª"
+
+        // Year.Year_Myflimit
+        Set Field_Label_Long       Field Year.Year_Myflimit       To "Ž¨ ¦ ‹“”"
+        Set Field_Label_Short      Field Year.Year_Myflimit       To "Ž¨ ¦ ‹“”"
+
+        // Year.Year_Numgtypkin
+        Set Field_Options          Field Year.Year_Numgtypkin     To DD_DISPLAYONLY
+
+        // Year.Year_Numgarticl
+        Set Field_Options          Field Year.Year_Numgarticl     To DD_DISPLAYONLY
+
+        // Year.Year_Numgmove
+        Set Field_Options          Field Year.Year_Numgmove       To DD_DISPLAYONLY
+
+        // Year.Year_Numgplan
+        Set Field_Options          Field Year.Year_Numgplan       To DD_DISPLAYONLY
+
+        // Year.Year_Numgformat
+        Set Field_Options          Field Year.Year_Numgformat     To DD_DISPLAYONLY
+
+        // Year.Year_Numgthaa
+        Set Field_Options          Field Year.Year_Numgthaa       To DD_DISPLAYONLY
+
+        // Year.Year_Numgopen
+        Set Field_Options          Field Year.Year_Numgopen       To DD_DISPLAYONLY
+
+        // Year.Year_Numbaxio
+        Set Field_Options          Field Year.Year_Numbaxio       To DD_DISPLAYONLY
+
+        // Year.Year_Numbarticl
+        Set Field_Options          Field Year.Year_Numbarticl     To DD_DISPLAYONLY
+
+        // Year.Year_Numbmove
+        Set Field_Options          Field Year.Year_Numbmove       To DD_DISPLAYONLY
+
+        // Year.Year_Delimiter
+        Set Status_Help            Field Year.Year_Delimiter      To "ƒ ˜®à¨ ©« ¡æ š ˜ «¦ Š‘ «žª •¨ã©œàª"
+
+        // Year.Year_Printer
+
+        // Year.Year_Valid_Char
+
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+        Set Field_Changed_Value   Field Year.Year_Delimiter      To "."
+        Set Field_Changed_Value   Field Year.Year_Printer        To "LPT1:"
+        Set Field_Changed_Value   Field Year.Year_Valid_Char     To "1234567890"
+    End_Procedure    // Field_Defaults
+
+End_Class    // Year_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use Sl003.sl         // SL003
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

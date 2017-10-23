@@ -1,0 +1,69 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : CMN_SALM.DD
+// Class Name: Cmn_Salm_DataDictionary
+// Revision  : 2
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Cmn_Salm
+Open Etb_Jobs
+
+//DDB-HeaderEnd
+
+Class Cmn_Salm_DataDictionary  is a DataDictionary_sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Cmn_Salm.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Etb_Jobs.File_Number
+
+        // Field-based properties.......................
+
+        // Cmn_Salm.Salman_Code
+
+        // Cmn_Salm.Salman_Descr
+
+        // Cmn_Salm.Inactive
+
+        // Cmn_Salm.Originator
+
+        // Cmn_Salm.Exp2kp01
+
+        // Cmn_Salm.Exp2kp20
+
+        // Cmn_Salm.Exp2kp21
+
+        // Cmn_Salm.Exp2kp22
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Cmn_Salm_DataDictionary
+//DDB-FileEnd

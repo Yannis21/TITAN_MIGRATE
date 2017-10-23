@@ -1,0 +1,1070 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : PMOVES.DD
+// Class Name: Pmoves_DataDictionary
+// Revision  : 167
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Pmoves
+Open Pmsdtl
+Open Wax
+Open Witemx
+Open Particle
+Open Sysrecp
+Open Syscurxr
+Open Partlfpa
+Open Clorder
+Open Clorderd
+Open Btnemp
+Open Gmove
+Open Sysrecg
+
+//DDB-HeaderEnd
+Open Fpa
+Open PartlFpa
+Open Item
+Open Wtypkin
+Open Witemkat
+Open Wapomast
+Open Wapokat
+Open Payresp
+
+Class Pmoves_DataDictionary  is a DataDictionary_Sec
+
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Property Number  pnoQty         Public  0
+        Property integer pifromclorder  Public  0
+        Property Integer piCheckZeroFpa Public  0
+        Property Integer piPmsSxetID    Public  0
+        Property integer piFromMetasx   Public  0
+        Property String  psOldItem      Public ''
+        //------------------------------------------------
+        // Properties gia na kraththoun oi palies times
+        // ton pedion Ef' oson to Sysfile.Use_Audit pedio
+        // einai 1     js 03/12/2007
+        //------------------------------------------------
+        Property Integer piCreateNew            Public  0
+        Property String  psAud_Old_Pelaths      Public ""
+        Property String  psAud_Old_PelathsN     Public ""
+        Property String  psAud_Old_Ergo         Public ""
+        Property String  psAud_Old_Poiothta     Public ""
+        Property String  psAud_Old_Eidos        Public ""
+
+        Property String  psAud_Old_Zonh         Public ""
+        Property String  psAud_Old_Antlia       Public ""
+        Property String  psAud_Old_Oxhma        Public ""
+
+        Property Number  pnAud_Old_Qty          Public  0
+        Property Number  pnAud_Old_Timh         Public  0
+        Property String  psAud_Old_PartlRecr    Public ""
+        Property String  psAud_Old_PmsRecr      Public ""
+        Property String  psAud_Old_Module       Public ""
+        Property String  psAud_Old_Parast       Public ""
+        Property String  psAud_Old_Seira        Public ""
+        Property Date    pdAud_Old_Hmnia        Public ""
+        Property Integer piAud_Old_No           Public  0
+        //------------------------------------------------
+    End_Procedure
+
+    Procedure New_Current_Record  Integer iOldRec  Integer iNewRec
+        Forward Send New_Current_Record  iOldRec iNewRec
+        Set pnoQty      to Pmoves.Pms_Qty
+        Set psOldItem   to Item.Item_Code
+        //------------------------------------------------
+        // Properties gia na kraththoun oi palies times
+        // ton pedion js 03/12/2007
+        //------------------------------------------------
+        Set psAud_Old_Pelaths       to Pmoves.Client_ID
+        Set psAud_Old_PelathsN      to Clients.Client_Name
+        Set psAud_Old_Ergo          to Pmoves.CN_Code
+        Set psAud_Old_Eidos         to Pmoves.Witemx_Code
+        Set psAud_Old_Poiothta      to Item.Item_Qual
+        Set pnAud_Old_Qty           to Pmoves.Pms_Qty
+        Set pnAud_Old_Timh          to Pmoves.Pms_UnitPrice
+        Set psAud_Old_PartlRecr     to Pmoves.Partl_Recr
+        Set psAud_Old_PmsRecr       to Pmoves.Pms_Recr
+        Set psAud_Old_Module        to Particle.Partl_Module
+        Set psAud_Old_Zonh          to Pmoves.Zone
+        Set psAud_Old_Antlia        to Pmoves.Pump_ID
+        Set psAud_Old_Oxhma         to Pmoves.Car_ID
+        Set psAud_Old_Parast        to Ptyppar.Ptyppar_Code
+        Set psAud_Old_Seira         to Particle.Pseira_Seira
+        Set pdAud_Old_Hmnia         to Particle.Partl_Hmnia
+        Set piAud_Old_No            to Particle.Partl_No
+        //------------------------------------------------
+    End_Procedure   // New_Current_Record
+
+
+    // Delete_Main_File:
+    Procedure Delete_Main_File
+        clear btnemp
+        move pmoves.pms_recr to btnemp.pms_recr
+        find ge btnemp by index.11
+        if ((found=1) and (pmoves.pms_recr=btnemp.pms_recr)) begin
+           move 0 to btnemp.pms_recr
+           saverecord btnemp
+        end
+
+        //---------------------------------------------
+        // Auditing / Katagrafh allagon
+        //OPERATION_MODE       OPERATION_ORIGIN
+            //MODE_WAITING
+            //MODE_FINDING
+            //MODE_CLEARING
+            //MODE_CREATING
+            //MODE_SAVING
+            //MODE_DELETING
+            //MODE_ABORTING
+        String  sUser sText sTime sMin sHour sSec
+        Date    dDate  Shmer
+        Integer iMin iHour iSec iLen
+        Sysdate dDate iHour iMin iSec
+        Move iHour  to sHour
+        Move iMin   to sMin
+        Move iSec   to sSec
+        If (Length(sHour)=1) Insert "0" in sHour at 1
+        If (Length(sMin )=1) Insert "0" in sMin  at 1
+        If (Length(sSec )=1) Insert "0" in sSec  at 1
+        Move (Trim(sHour)+":"+Trim(sMin)+"."+Trim(sSec)) to sTime
+
+        // Auditing / Diagrafh - Diorthosh
+        If ((Sysfile.Use_Audit=1) And (Operation_Mode=MODE_DELETING)) Begin
+            Get fsLoginUserID to sUser
+
+            clear gmove
+            move syscurxr.company_code  to gmove.company_code
+            move syscurxr.branch_code   to gmove.branch_code
+            move syscurxr.year_year     to gmove.year_year
+            move  1                     to gmove.gtypkin_code// Apo Parastatika
+            move ddate                  to gmove.garticl_hmnia
+            move pmoves.partl_no        to gmove.garticl_no
+            move Particle.CN_Code       to gmove.gplan_recr
+            move suser                  to gmove.gplan_code
+            move pmoves.pms_recr        to gmove.garticl_recr
+            reread sysrecg
+            move (sysrecg.gmove_rec0+1) to sysrecg.gmove_rec0
+            move (sysrecg.gmove_rec0+1) to gmove.gmove_rec0
+            saverecord sysrecg
+            unlock
+            Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
+                                        to Gmove.Gmove_Recr
+
+            Move (psAud_Old_Module(Self))       to Gmove.Module
+            Move (Trim(sUser))                  to Gmove.Login_ID
+            Move dDate                          to Gmove.Hmnia_Metabolhs
+            Move sTime                          to Gmove.Ora_Metabolhs
+            Move (psAud_Old_Pelaths (Self))     to Gmove.Prev_ID
+            Move (psAud_Old_PelathsN(Self))     to Gmove.Prev_Name
+            Move (psAud_Old_Ergo     (Self))    to Gmove.Prev_CN
+            Move (psAud_Old_Eidos    (Self))    to Gmove.Prev_Item
+            Move (psAud_Old_Poiothta (Self))    to Gmove.Prev_Qual
+            Move (pnAud_Old_Qty      (Self))    to Gmove.Prev_M3
+            Move (pnAud_Old_Timh     (Self))    to Gmove.Prev_UnitPrice
+            Move (psAud_Old_PartlRecr(Self))    to Gmove.Partl_Recr
+            Move (psAud_Old_PmsRecr  (Self))    to Gmove.Pms_Recr
+            Move (psAud_Old_Zonh     (Self))    to Gmove.Prev_Zonh
+            Move (psAud_Old_Antlia   (Self))    to Gmove.Prev_Antlia
+            Move (psAud_Old_Oxhma    (Self))    to Gmove.Prev_Oxhma
+            Move (psAud_Old_Parast   (Self))    to Gmove.Prev_Parast
+            Move (psAud_Old_Seira    (Self))    to Gmove.Prev_Seira
+            Move (pdAud_Old_Hmnia    (Self))    to Gmove.Prev_Hmnia
+            Move (piAud_Old_No       (Self))    to Gmove.Prev_No
+            Move "É†òö®ò≠„ ö®ò££„™  èò®ò©´ò´†°¶Á)" to sText
+            Move "D" to Gmove.Eidos_Metabolhs
+            move (trim(stext))          to gmove.gmove_aitiol
+            Move ("Ä®:"+String(Particle.Partl_No)+"  ëú†®ò:"+Trim(Particle.Pseira_Seira)+"   Ü£ú®:"+String(Particle.Partl_Hmnia)) ;
+                                                to Gmove.Txt1
+            saverecord gmove
+        End
+
+        Forward Send Delete_Main_File
+        // Insert Code Here
+    End_Procedure   // Delete_Main_File
+
+
+    Procedure Save_Main_File
+        Integer iYes
+        If (Operation_Origin<>Self) Begin
+            If Pmoves.Recnum Eq 0 Procedure_Return
+        End
+
+//------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------
+// SOS SOS Yannis 21/03/2014  í¶ ßúõ†¶ îèÄ úÆú† °¢úÂ©ú† ©´¶ ßò®ò©´ò´†°Ê ¶ß¶´ú ôòù¶¨£ú ´‡®ò
+//                            öú§†°¶ ú¢úöÆ¶ ö†ò Ê¢ú™ ´†™ õ†òõ†°ò©†ú™, úò§ °†§ú† ò•Âú™ ´¶ ßò®ò©´ò´†°¶
+//                            °ò† õú§ úÆú† îèÄ ´¶´ú Æ´¨ß·£ú °ò£ßò§ò°†
+//------------------------------------------------------------------------------------------------------
+//        If ((Operation_Origin=Self) And (piCheckZeroFpa(Self))) Begin
+//            // Elegxos FPA
+//            // An typonei otidhpote ektos apo 1 (mono Posothtes)
+//            If ((Ptyppar.Ti_Typonei_Pms<>'1')   And ;
+//                (Pmoves.Pms_Vatam=0)            And ;
+//                (Operation_Mode<>MODE_DELETING)) Begin
+//                Move (YesNo_Box("è¶©Ê îèÄ £ûõú§†°Ê. åò ©¨§úÆÂ©‡ ;", ;
+//                                     "è®¶©¶Æ„",  MB_DEFBUTTON2) ) to iYes
+//                If (iYes=MBR_NO)  Send Operation_Not_Allowed 8000
+//            End
+//        End
+//------------------------------------------------------------------------------------------------------
+        // ã¶§¶ ò§ ú†§ò† ßò®ò´ò´†°¶ ßÈ¢û©û™
+        // (¶ ´†´ò§ò™ õú§ úÆú† ·¢¢ò ¶¨´‡™ „ ·¢¢‡™ ò¢¢· ö†ò §ò úÂ£ò©´ú ©‡©´¶Â °ò† °ò¢¨£ú§¶†)
+        If (Ptyppar.Ptyppar_Is_What='2') Begin
+                If ((Ptyppar.Ti_Typonei_Pms<>'1') And (Pmoves.Pms_Vatam=0) And (Clients.CLient_Pelprom<>"1") And (Operation_Mode<>MODE_DELETING)) Begin
+                        Move (YesNo_Box("è¶©Ê îèÄ £ûõú§†°Ê. åò ©¨§úÆÂ©‡ ;", ;
+                                        "è®¶©¶Æ„",  MB_DEFBUTTON2) ) to iYes
+                        If (iYes=MBR_NO)  Send Operation_Not_Allowed 8000
+                End
+        End
+//------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------
+
+        Forward Send Save_Main_File
+    End_Procedure
+
+    Function fnTeleytaiaTimh Returns Number
+        Number  rVal nQty
+        String  sClientID sWitemxCode
+        Date    dHmnia
+        String  sWhat sRecr sClientCode sItemCode sCN
+
+        Get File_Field_Current_Value File_Field Ptyppar.Ptyppar_Is_What to sWhat
+        If (Trim(sWhat)='1') Begin
+            // 1=Äö¶®ú™
+            Get File_Field_Current_Value File_Field Witemx.Witemx_Recr      to sRecr
+            Get File_Field_Current_Value File_Field Pmoves.Pms_Qty          to nQty
+            Get File_Field_Current_Value File_Field Particle.Partl_Hmnia    to dHmnia
+            Get File_Field_Current_Value File_Field Item.Item_Code          to sItemCode
+            Get File_Field_Current_Value File_Field Clients.Client_ID       to sClientCode
+            // Sto arxeio Globals.inc
+            Get fnTeleytaiaTimhAgoras sClientCode sItemCode dHmnia nQty to rVal
+        End
+        Else If (Trim(sWhat)='2') Begin
+            // 2=è‡¢„©ú†™
+            Get File_Field_Current_Value File_Field Pmoves.Pms_Qty          to nQty
+            Get File_Field_Current_Value File_Field Item.Item_Code          to sItemCode
+            Get File_Field_Current_Value File_Field Particle.Partl_Hmnia    to dHmnia
+            Get File_Field_Current_Value File_Field Particle.Cn_Code        to sCN
+            Get File_Field_Current_Value File_Field Witemx.Witemx_Recr      to sRecr
+            Get File_Field_Current_Value File_Field Clients.Client_ID       to sClientID
+            Get File_Field_Current_Value File_Field Witemx.Witemx_Code      to sWitemxCode
+            // Sto arxeio Globals.inc
+
+//            Showln "---------------------------"
+//            Showln "Witemx Recr=" sRecr
+//            Showln "sClientID="   sClientID
+//            Showln "sWitemxCode=" sWitemxCode
+//            Showln "dHmnia="      dHmnia
+//            Showln "sItemCode="   sItemCode
+//            Showln "nQty="        nQty
+//            Showln "sCN="         sCN
+//            Showln "---------------------------"
+//            Showln ""
+
+            Get fnTeleytaiaTimhPolhshs sRecr sClientID sWitemxCode dHmnia sItemCode nQty sCN to rVal
+        End
+        Function_Return rVal
+    End_Function
+
+    Procedure Creating
+        Forward Send Creating
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Pmoves.Pms_Rec0)))))) to Pmoves.Pms_Recr
+        Set piCreateNew to 1
+    End_Procedure   // Creating
+
+    Procedure Update
+        Integer iDecimals
+        Number  nInt nFpaOnTotal
+        String  sCurrentUser
+
+        Forward Send Update
+
+        Move SysCurXR.Company_Code                          to Pmoves.Company_Code
+        Move SysCurXR.Branch_Code                           to Pmoves.Branch_Code
+        Move SysCurXR.Year_Year                             to Pmoves.Year_Year
+        Move Ctypkin.Ctypkin_Code                           to Pmoves.Ctypkin_Code
+        Move Wtypkin.Wtypkin_Code                           to Pmoves.Wtypkin_Code
+
+        Move Witemkat.Witemkat_Code                         to Pmoves.Witemkat_Code
+        Move Item.Item_Code                                 to Pmoves.Item_Code
+        Move Witemx.Witemx_Code                             to Pmoves.Witemx_Code
+        Move Wapokat.Wapokat_Code                           to Pmoves.Wapokat_Code
+        Move Wapomast.Wapomast_Code                         to Pmoves.Wapomast_Code
+        Move Wax.Wax_Code                                   to Pmoves.Wax_Code
+
+        //Move Custprom.Custprom_Code                         to Pmoves.Custprom_Code
+        Move Clients.Client_ID                              to Pmoves.Client_ID
+        Move Ptyppar.Ptyppar_Code                           to Pmoves.Ptyppar_Code
+        Move Ptyppar.TI_TYPONEI_PMS                         to Pmoves.TI_TYPONEI_PMS
+        Move Particle.PSeira_Seira                          to Pmoves.Pseira_Seira
+
+        Move Nomisma.Nomisma_Code                           to Pmoves.Pms_Sc_Code2
+        Move Nomisma.Dekadika                               To iDecimals
+
+
+        Move Particle.Partl_No                              to Pmoves.Partl_No
+        Move Particle.Partl_Hmnia                           to Pmoves.Partl_Hmnia
+        Move Particle.Partl_Module                          to Pmoves.Pms_Module
+        Move Particle.Partl_Rec0                            to Pmoves.Partl_Rec0
+        Move Particle.Presp_ID                              to Pmoves.Presp_ID
+        if (particle.partl_euro<>1) begin
+            Move Particle.CN_Code                           to Pmoves.CN_Code
+            Move Particle.Sls_ID                            to Pmoves.Sls_ID
+
+            Move Particle.Cnt_ID                            to Pmoves.Cnt_ID
+        end
+        Move Item.Units_Code                                to Pmoves.Pms_UnitCode
+        move witemx.witemx_descr                            to pmoves.witemx_descr
+        move ptyppar.ptyppar_descr                          to pmoves.ptyppar_descr
+        move clients.client_name                            to pmoves.client_name
+
+        if (Trim(pmoves.pump_id)='') ;
+            move particle.antlia_code                       to pmoves.pump_id
+        If (Trim(pmoves.car_id)='') ;
+            move particle.oxhma_code                        to pmoves.car_id
+        If (Trim(pmoves.zone)='') ;
+            move particle.zone_id                           to pmoves.zone
+
+      //  if (particle.zone_id='') move pmoves.zone           to particle.zone_id
+      //  else move particle.Zone_ID                          to pmoves.Zone
+
+//        Move (Pmoves.Pms_Qty-Pmoves.Timol_Qty)              to Pmoves.Timol_Ypol
+
+        Move (Pmoves.Qty_Kinhshs>0)                         to Pmoves.pms_Selected
+
+        Move (Round_Number((Pmoves.Pms_Qty*Pmoves.Pms_UnitPrice),iDecimals))    ;
+                                                            to Pmoves.Pms_Ambd
+
+        If (Pmoves.Pms_PctDisc<>0) ;
+            Move (Round_Number((Pmoves.Pms_Ambd*Pmoves.Pms_PctDisc/100),iDecimals)) ;
+                                                            to Pmoves.Pms_Discam
+        Else ;
+            Move (Round_Number( ((Pmoves.Pms_Discam/Pmoves.Pms_Ambd)*100),iDecimals)) ;
+                                                            to Pmoves.Pms_PctDisc
+
+        Move (Pmoves.Pms_Ambd-Pmoves.Pms_Discam)            to Pmoves.Pms_Amaftdisc
+
+        Move (Round_Number((Pmoves.Pms_Amaftdisc*Pmoves.Pms_Vatpct/100),iDecimals));
+                                                            to Pmoves.Pms_Vatam
+        Move (Pmoves.Pms_Amaftdisc+Pmoves.Pms_Vatam)        to Pmoves.Pms_Payable
+        Move Pmoves.Pms_Payable                             to Pmoves.Pms_Axia
+
+        Add Pmoves.Pms_Qty                                  to Particle.Partl_TotTem
+//        Add Pmoves.Timol_Qty                                to Particle.Timol_Qty
+
+        Add Pmoves.Pms_Ambd                                 to Particle.Partl_TotAmBD
+        Add Pmoves.Pms_DiscAm                               to Particle.Partl_AMDISCPMS
+        Add Pmoves.Pms_Amaftdisc                            to Particle.Partl_TotAmAd
+        Add 1                                               to Particle.Partl_NoOfLines
+
+        // An einai parastatiko polhshs kai to ptyppar einai flagarismeno oti
+        // prepei na enhmerosh to pedio Clients.Posa_apo_dap
+        // tote theoroume oti ypoxreotika prepei na vroume timh apo
+        // function timokatalogon kai na thn krathsoume sto pedio
+        // Pmoves.Posa_apo_dap
+        If ((Ptyppar.Ptyppar_Is_What='2') And (Ptyppar.Check_Posa_Plaf='1')) Begin
+            // An to pedio Particle.Partl_Vsn einai 0 tote shmainei
+            // oti den einai parastatiko metasxhmatismeno (px D.AP) ara
+            // h update prepei na prosthesei sto antistoixo pedio client
+            // An omos einai metasxhmatismeno (px apo D.AP tora einai
+            // Timologio) tote  prepei h update na afairesei apo to pedio
+            // tou client dioti to arxiko D.AP eixe prosthesei.
+
+            Move (Round_Number(Pmoves.Pms_Payable,2)) to Pmoves.Posa_Apo_Dap
+
+            If (Particle.Partl_Vsn=0) Begin
+                Add Pmoves.Posa_Apo_Dap to Clients.Posa_Apo_Dap
+                Add Pmoves.Posa_Apo_Dap to Payresp.Posa_Apo_Dap
+            End
+            Else Begin
+                Sub Pmoves.Posa_Apo_Dap From Clients.Posa_Apo_Dap
+                Sub Pmoves.Posa_Apo_Dap From Payresp.Posa_Apo_Dap
+            End
+        End
+
+        //Add Pmoves.Qty_Kinhshs  to Particle.Partl_Disctof
+
+
+        ////////////////////////////////////////////////////////////////////////
+        // SOS js 21/05/2003 DIAXEIRISH FPA
+        ////////////////////////////////////////////////////////////////////////
+        Add Pmoves.Pms_Vatam            to Particle.Partl_Vatam
+
+        Clear PartlFpa
+        Move Particle.Partl_Recr        to PartlFpa.Partl_Recr
+        Move Pmoves.Pms_VatPct          to PartlFpa.Fpa_Pososto
+        Find eq PartlFpa By Index.1 // PartlFpa:Index.1:Partl_Recr+Fpa_Pososto
+        Add Pmoves.Pms_Vatam            to PartlFpa.PartlFpa_Poso
+        Add Pmoves.Pms_Amaftdisc        to PartlFpa.Poso_Pro_Fpa
+        Saverecord PartlFpa
+
+        Move 0 to nFpaOnTotal
+        Clear PartlFpa
+        Move Particle.Partl_Recr        to PartlFpa.Partl_Recr
+        Find Gt PartlFpa By Index.1
+        While ((Found=1) And (PartlFpa.Partl_Recr=Particle.Partl_Recr))
+            Move (Round_Number(((PartlFpa.Fpa_Pososto*PartlFpa.Poso_Pro_Fpa)/100),2)) to PartlFpa.POSO_FPA
+            Move (PartlFpa.Poso_Pro_Fpa+PartlFpa.POSO_FPA) to PartlFpa.POSO_ME_FPA
+            Saverecord PartlFpa
+            Add PartlFpa.POSO_FPA to nFpaOnTotal
+            Find Gt PartlFpa By Index.1
+        Loop
+
+        Move nFpaOnTotal to Particle.Fpa_On_Total
+
+
+        //---------------------------------------------
+        // Auditing / Katagrafh allagon
+        //OPERATION_MODE       OPERATION_ORIGIN
+            //MODE_WAITING
+            //MODE_FINDING
+            //MODE_CLEARING
+            //MODE_CREATING
+            //MODE_SAVING
+            //MODE_DELETING
+            //MODE_ABORTING
+        String  sUser sText sTime sMin sHour sSec
+        Date    dDate  Shmer
+        Integer iMin iHour iSec iLen
+        Sysdate dDate iHour iMin iSec
+        Move iHour  to sHour
+        Move iMin   to sMin
+        Move iSec   to sSec
+        If (Length(sHour)=1) Insert "0" in sHour at 1
+        If (Length(sMin )=1) Insert "0" in sMin  at 1
+        If (Length(sSec )=1) Insert "0" in sSec  at 1
+        Move (Trim(sHour)+":"+Trim(sMin)+"."+Trim(sSec)) to sTime
+
+        // Auditing / Dhmiourgia - Diorthosh
+        If ((Sysfile.Use_Audit=1)  And (Operation_ORIGIN=Self)) Begin
+            Get fsLoginUserID to sUser
+            If (piCreateNew(Self)=1) Begin
+                clear gmove
+                move syscurxr.company_code  to gmove.company_code
+                move syscurxr.branch_code   to gmove.branch_code
+                move syscurxr.year_year     to gmove.year_year
+                move  1                     to gmove.gtypkin_code// Apo Parastatika
+                move ddate                  to gmove.garticl_hmnia
+                move pmoves.partl_no        to gmove.garticl_no
+                move Particle.CN_Code       to gmove.gplan_recr
+                move suser                  to gmove.gplan_code
+                move pmoves.pms_recr        to gmove.garticl_recr
+                reread sysrecg
+                move (sysrecg.gmove_rec0+1) to sysrecg.gmove_rec0
+                move (sysrecg.gmove_rec0+1) to gmove.gmove_rec0
+                saverecord sysrecg
+                unlock
+                Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
+                                            to Gmove.Gmove_Recr
+                Move Particle.Partl_Module          to Gmove.Module
+                Move (Trim(sUser))                  to Gmove.Login_ID
+                Move dDate                          to Gmove.Hmnia_Metabolhs
+                Move sTime                          to Gmove.Ora_Metabolhs
+                Move Clients.Client_ID              to Gmove.Cur_ID
+                Move Clients.CLient_Name            to Gmove.Cur_Name
+                Move Particle.CN_Code               to Gmove.Cur_CN
+                Move Item.Item_Code                 to Gmove.Cur_Item
+                Move Item.Item_Qual                 to Gmove.Cur_Qual
+                Move Pmoves.Pms_Qty                 to Gmove.Cur_M3
+                Move Pmoves.Pms_UnitPrice           to Gmove.Cur_UnitPrice
+                Move Particle.Partl_Recr            to Gmove.Partl_Recr
+                Move Pmoves.Pms_Recr                to Gmove.Pms_Recr
+
+                Move Pmoves.Zone                    to Gmove.Cur_Zonh
+                Move Pmoves.Pump_ID                 to Gmove.Cur_Antlia
+                Move Pmoves.Car_ID                  to Gmove.Cur_Oxhma
+
+                Move Ptyppar.Ptyppar_Code           to Gmove.Cur_Parast
+                Move Particle.Pseira_Seira          to Gmove.Cur_Seira
+                Move Particle.Partl_Hmnia           to Gmove.Cur_Hmnia
+                Move "Éû£†¶¨®öÂò ö®ò££„™ ßò®ò©´ò´†°¶Á)" to sText
+                Move "N" to Gmove.Eidos_Metabolhs
+                move (trim(stext))          to gmove.gmove_aitiol
+                Move ("Ä®:"+String(Particle.Partl_No)+"  ëú†®ò:"+Trim(Particle.Pseira_Seira)+"   Ü£ú®:"+String(Particle.Partl_Hmnia)) ;
+                                                    to Gmove.Txt1
+                saverecord gmove
+                Set piCreateNew to 0
+            End
+            Else If ((Operation_Mode=MODE_SAVING) And (piCreateNew(Self)<>1)) Begin
+                Integer isChanged
+                Move 0 to isChanged
+
+                     If ((Trim(psAud_Old_Pelaths(Self))<>Trim(Clients.Client_ID    ))   Or  (Trim(psAud_Old_Ergo    (Self))<>Trim(Pmoves.CN_Code      ))) Move 1 to isChanged
+                Else If ((Trim(psAud_Old_Eidos  (Self))<>Trim(Item.Item_Code       ))   Or  (Trim(psAud_Old_Poiothta(Self))<>Trim(Item.Item_Qual      ))) Move 1 to isChanged
+                Else If ((pnAud_Old_Qty         (Self) <>Pmoves.Pms_Qty             )   Or  (pnAud_Old_Timh         (Self) <>Pmoves.Pms_UnitPrice      )) Move 1 to isChanged
+                Else If ((Trim(psAud_Old_Zonh   (Self))<>Trim(Pmoves.Zone          ))   Or  (Trim(psAud_Old_Antlia  (Self))<>Trim(Pmoves.Pump_ID      ))) Move 1 to isChanged
+                Else If ((Trim(psAud_Old_Oxhma  (Self))<>Trim(Pmoves.Car_ID        ))   Or  (Trim(psAud_Old_Parast  (Self))<>Trim(Ptyppar.Ptyppar_Code))) Move 1 to isChanged
+                Else If ((Trim(psAud_Old_Seira  (Self))<>Trim(Particle.Pseira_Seira))   Or  (Trim(pdAud_Old_Hmnia   (Self))<>Particle.Partl_Hmnia      )) Move 1 to isChanged
+                Else If  (piAud_Old_No          (Self) <>Particle.Partl_No)                                                                               Move 1 to isChanged
+
+                If (isChanged>0) Begin
+                    clear gmove
+                    move syscurxr.company_code  to gmove.company_code
+                    move syscurxr.branch_code   to gmove.branch_code
+                    move syscurxr.year_year     to gmove.year_year
+                    move  1                     to gmove.gtypkin_code// Apo Parastatika
+                    move ddate                  to gmove.garticl_hmnia
+                    move pmoves.partl_no        to gmove.garticl_no
+                    move Particle.CN_Code       to gmove.gplan_recr
+                    move suser                  to gmove.gplan_code
+                    move pmoves.pms_recr        to gmove.garticl_recr
+                    reread sysrecg
+                    move (sysrecg.gmove_rec0+1) to sysrecg.gmove_rec0
+                    move (sysrecg.gmove_rec0+1) to gmove.gmove_rec0
+                    saverecord sysrecg
+                    unlock
+                    Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
+                                                to Gmove.Gmove_Recr
+                    Move Particle.Partl_Module          to Gmove.Module
+                    Move (Trim(sUser))                  to Gmove.Login_ID
+                    Move dDate                          to Gmove.Hmnia_Metabolhs
+                    Move sTime                          to Gmove.Ora_Metabolhs
+                    //--
+                    Move Particle.Partl_Recr            to Gmove.Partl_Recr
+                    Move Pmoves.Pms_Recr                to Gmove.Pms_Recr
+                    //--
+                    Move (Trim(Clients.Client_ID    ))  to Gmove.Cur_ID
+                    Move (Trim(Clients.CLient_Name  ))  to Gmove.Cur_Name
+                    Move (Trim(Particle.CN_Code     ))  to Gmove.Cur_CN
+                    Move (Trim(Item.Item_Code       ))  to Gmove.Cur_Item
+                    Move (Trim(Item.Item_Qual       ))  to Gmove.Cur_Qual
+                    Move       Pmoves.Pms_Qty           to Gmove.Cur_M3
+                    Move       Pmoves.Pms_UnitPrice     to Gmove.Cur_UnitPrice
+
+                    Move (Trim(Pmoves.Zone          ))  to Gmove.Cur_Zonh
+                    Move (Trim(Pmoves.Pump_ID       ))  to Gmove.Cur_Antlia
+                    Move (Trim(Pmoves.Car_ID        ))  to Gmove.Cur_Oxhma
+
+                    Move (Trim(Ptyppar.Ptyppar_Code ))  to Gmove.Cur_Parast
+                    Move (Trim(Particle.Pseira_Seira))  to Gmove.Cur_Seira
+                    Move       Particle.Partl_Hmnia     to Gmove.Cur_Hmnia
+                    Move       Particle.Partl_No        to Gmove.Cur_No
+                    //--
+                    Move (Trim(psAud_Old_Pelaths (Self))) to Gmove.Prev_ID
+                    Move (Trim(psAud_Old_PelathsN(Self))) to Gmove.Prev_Name
+                    Move (Trim(psAud_Old_Ergo    (Self))) to Gmove.Prev_CN
+                    Move (Trim(psAud_Old_Eidos   (Self))) to Gmove.Prev_Item
+                    Move (Trim(psAud_Old_Poiothta(Self))) to Gmove.Prev_Qual
+                    Move      (pnAud_Old_Qty     (Self )) to Gmove.Prev_M3
+                    Move      (pnAud_Old_Timh    (Self )) to Gmove.Prev_UnitPrice
+                    Move (Trim(psAud_Old_Zonh    (Self))) to Gmove.Prev_Zonh
+                    Move (Trim(psAud_Old_Antlia  (Self))) to Gmove.Prev_Antlia
+                    Move (Trim(psAud_Old_Oxhma   (Self))) to Gmove.Prev_Oxhma
+                    Move (Trim(psAud_Old_Parast  (Self))) to Gmove.Prev_Parast
+                    Move (Trim(psAud_Old_Seira   (Self))) to Gmove.Prev_Seira
+                    Move      (pdAud_Old_Hmnia   (Self )) to Gmove.Prev_Hmnia
+                    Move      (piAud_Old_No      (Self )) to Gmove.Prev_No
+                    //--
+                    Move "É†Ê®ü‡©û ö®ò££„™ èò®ò©´ò´†°¶Á)" to sText
+                    Move "E" to Gmove.Eidos_Metabolhs
+                    move (trim(stext))          to gmove.gmove_aitiol
+                    Move ("Ä®:"+String(Particle.Partl_No)+"  ëú†®ò:"+Trim(Particle.Pseira_Seira)+"   Ü£ú®:"+String(Particle.Partl_Hmnia)) ;
+                                                        to Gmove.Txt1
+                    saverecord gmove
+                    Set piCreateNew to 0
+                End
+            End
+        End
+    End_Procedure   // Update
+
+    // Backout:
+    Procedure Backout
+        Number nFpaOnTotal
+        Forward Send Backout
+
+        Sub Pmoves.Pms_Qty        From Particle.Partl_TotTem
+//        Sub Pmoves.Timol_Qty      From Particle.Timol_Qty
+        Sub Pmoves.Pms_Ambd       From Particle.Partl_TotAmBD
+        Sub Pmoves.Pms_DiscAm     From Particle.Partl_AMDISCPMS
+        Sub Pmoves.Pms_Amaftdisc  From Particle.Partl_TotAmAd
+        Sub 1                     From Particle.Partl_NoOfLines
+
+        // An einai parastatiko polhshs kai to ptyppar einai flagarismeno oti
+        // prepei na enhmerosh to pedio Clients.Posa_apo_dap
+        // tote theoroume oti ypoxreotika prepei na vroume timh sto pedio
+        // Pmoves.Posa_apo_dap
+        If ((Ptyppar.Ptyppar_Is_What='2') And (Ptyppar.Check_Posa_Plaf='1')) Begin
+            // An to pedio Particle.Partl_Vsn einai 0 tote shmainei
+            // oti den einai parastatiko metasxhmatismeno (px D.AP) ara
+            // h backout prepei na afairesei apo antistoixo pedio client
+            // An omos einai metasxhmatismeno (px apo D.AP tora einai
+            // Timologio) tote  prepei h backout na prosthesi sto pedio
+            // tou client dioti to arxiko D.AP eixe afairethei.
+            If (Particle.Partl_Vsn=0) Begin
+                Sub Pmoves.Posa_Apo_Dap From Clients.Posa_Apo_Dap
+                Sub Pmoves.Posa_Apo_Dap From Payresp.Posa_Apo_Dap
+            End
+            Else Begin
+                Add Pmoves.Posa_Apo_Dap to Clients.Posa_Apo_Dap
+                Add Pmoves.Posa_Apo_Dap to Payresp.Posa_Apo_Dap
+            End
+        End
+
+        //Sub Pmoves.Qty_Kinhshs From Particle.Partl_Disctof
+
+        ////////////////////////////////////////////////////////////////////////
+        // SOS js 21/05/2003 DIAXEIRISH FPA
+        ////////////////////////////////////////////////////////////////////////
+        Sub Pmoves.Pms_Vatam      From Particle.Partl_Vatam
+
+        Clear PartlFpa
+        Move Particle.Partl_Recr    to PartlFpa.Partl_Recr
+        Move Pmoves.Pms_VatPct      to PartlFpa.Fpa_Pososto
+        Find eq PartlFpa By Index.1 // PartlFpa:Index.1:Partl_Recr+Fpa_Pososto
+        Sub Pmoves.Pms_Vatam      From PartlFpa.PartlFpa_Poso
+        Sub Pmoves.Pms_Amaftdisc  From PartlFpa.Poso_Pro_Fpa
+        Saverecord PartlFpa
+
+        Move 0 to nFpaOnTotal
+        Clear PartlFpa
+        Move Particle.Partl_Recr  to PartlFpa.Partl_Recr
+        Find Gt PartlFpa By Index.1
+        While ((Found=1) And (PartlFpa.Partl_Recr=Particle.Partl_Recr))
+            Move (Round_Number(((PartlFpa.Fpa_Pososto*PartlFpa.Poso_Pro_Fpa)/100),2)) to PartlFpa.POSO_FPA
+            Move (PartlFpa.Poso_Pro_Fpa+PartlFpa.POSO_FPA) to PartlFpa.POSO_ME_FPA
+            Saverecord PartlFpa
+            Add PartlFpa.POSO_FPA to nFpaOnTotal
+            Find Gt PartlFpa By Index.1
+        Loop
+
+        Move nFpaOnTotal to Particle.Fpa_On_Total
+
+    End_Procedure   // Backout
+
+
+
+
+    Procedure Operation_Not_Allowed  Integer iError_Num
+             If (iError_Num = 1001) Error 1001 "DDC 18 Pmoves: Éú§ ‚Æ‡ ú§ú®ö„ úöö®ò≠„ ©´¶ Wax"
+        Else If (iError_Num = 1002) Error 1002 "DDC 18 Pmoves: Éú§ ‚Æ‡ ú§ú®ö„ úöö®ò≠„ ©´¶ Witemx"
+        Else If (iError_Num = 1003) Error 1003 "DDC 18 Pmoves: Éú§ ‚Æ‡ ú§ú®ö„ úöö®ò≠„ ©´¶ Particle"
+        Else If (iError_Num = 1004) Error 1004 "DDC 18 Pmoves: è¶©Ê´û´ò ÑÂõ¶¨™ ãûõú§†°„\nÉ†òö®·Ø´ú ò§ ü‚¢ú´ú, ´û ö®ò££„ ´¶¨ úÂõ¶¨™"
+        Else If (iError_Num = 1005) Error 1005 "DDC 18 Pmoves: è¶©Ê ß®¶ Ñ°ß´‡©û™ ãûõú§†°Ê"
+        Else If (iError_Num = 1006) Error 1006 "DDC 18 Pmoves: è¶©Ê ß®¶ îèÄ ãûõú§†°Ê"
+        Else If (iError_Num = 1007) Error 1007 "DDC 18 Pmoves: è¶©Ê è¢û®‡´‚¶ ÑÂõ¶¨™ ãûõú§†°Ê"
+        Else If (iError_Num = 1009) Error 1009 "DDC 18 Pmoves: Éú§ úÂ§ò† ú≠†°´„ û õ†òö®ò≠„ \nÑÆú† õû£†¶¨®öûüúÂ £ú´ò©Æû£ò´†©£‚§¶ ßò®ò©´ò´†°Ê"
+        Else If (iError_Num = 1010) Error 1010 "DDC 18 Pmoves: í¶ ©Á§¶¢¶ (É†òü‚©†£¶ ìßÊ¢¶†ß¶+è¶©ò òß¶ É.Äè)\n¨ßú®ôòÂ§ú† ´¶ ß¢ò≠Ê§ ´¶¨ ßú¢·´û"
+        Else If (iError_Num = 1011) Error 1011 "DDC 18 Pmoves: í¶ ©Á§¶¢¶ (É†òü‚©†£¶ ìßÊ¢¶†ß¶+è¶©ò òß¶ É.Äè)\n¨ßú®ôòÂ§ú† ´¶ ß¢ò≠Ê§ ´¶¨ ¨ß. ß¢û®‡£„™"
+        Else If (iError_Num = 1012) Error 1012 "DDC 18 Pmoves: í¶ úÂõ¶™ ò¨´Ê ß®¶„¢üú òß¶ £ú´ò©Æû£ò´†©£Ê °ò† õú§ õ†òö®·≠ú´ò†.\nÉ†òö®·Ø´ú ´¶ ßò®ò©´ò´†°Ê °ò† •ò§ò£ú´ò©Æû£ò´Â©´ú ´¶ ò®Æ†°Ê."
+        Else If (iError_Num = 1013) Error 1013 "DDC 18 Pmoves: í¶ ¨ßÊ¢¶†ß¶ ß®¶™ ´†£¶¢Êöû©û ß®¶°Áß´ú† ò®§û´†°Ê.\nâ†§„üû°ú ß¶©Ê´û´ò > òß¶ ´û õ†òü‚©†£û"
+        Else If (iError_Num = 1111) Error 1111 "DDC 18 Pmoves: Éú§ ‚Æú† °ò´òÆ‡®ûüúÂ ©´¶ ©Á©´û£ò ´‚´¶†¶ ß¶©¶©´Ê îèÄ"
+        Else If (iError_Num = 1105) Error 1105 "DDC 18 Pmoves: èò®ò©´ò´†°Ê °¢ú†©£‚§¶. Éú§ É†òö®·≠ú´ò†"
+        Else If (iError_Num = 1106) Error 1106 "DDC 18 Pmoves: èò®ò©´ò´†°Ê ´¨ß‡£‚§¶. Éú§ É†òö®·≠ú´ò†"
+        Else If (iError_Num = 1107) Error 1107 "DDC 18 Pmoves: èò®ò©´ò´†°Ê °¢ú†©£‚§¶. Éú§ ´®¶ß¶ß¶†úÂ´ò†"
+        Else If (iError_Num = 1108) Error 1108 "DDC 18 Pmoves: èò®ò©´ò´†°Ê ´¨ß‡£‚§¶. Éú§ ´®¶ß¶ß¶†úÂ´ò†"
+        Else If (iError_Num = 1110) Error 1110 "DDC 18 Pmoves: Ü£/§Âò ßò®ò©´ò´†°¶Á <= Ü£/§Âò™ °¢ú†©Â£ò´¶™\nÉú§ úß†´®‚ßú´ò† °ò££Âò ´®¶ß¶ß¶Âû©û ©´¶ ßò®ò©´ò´†°Ê"
+        Else If (iError_Num = 6001) Error 6001 "DDC 18 Pmoves: Éú§ ß®¶°Áß´ú† ß¶©¶ òß¶ ´†£¶°ò´·¢¶ö¶"
+        Else If (iError_Num = 7000) Error 7000 "DDC 18 Pmoves: è®¶‚®Æú´ò† òß¶ èò®òööú¢Âò. Ü ö®ò££„ ò¨´„ £Ê§¶ õ†òö®·≠ú´ò†"
+        Else If (iError_Num = 7001) Error 7001 "DDC 18 Pmoves: í¶ ¨ßÊ¢¶†ß¶ ß®¶™ ´†£¶¢Êöû©û ß®¶°Áß´ú† ò®§û´†°Ê."
+        Else If (iError_Num = 7005) Error 7005 "DDC 18 Pmoves: Ü ß¶©Ê´û´ò õú§ ´®¶ß¶ß¶†úÂ´ò† ö†ò´† ß®¶„¢üú òß¶ £ú´ò©Æû£ò´†©£Ê.\nÉ†òö®·Ø´ú ´¶ ßò®ò©´ò´†°Ê °ò† •ò§ò£ú´ò©Æû£ò´Â©´ú ´¶ ò®Æ†°Ê."
+        Else If (iError_Num = 8000) Error 8000 "DDC 18 Pmoves: Ä°¨®Èüû°ú û °ò´òÆÈ®û©û ´¶¨ úÂõ¶¨™ òß¶ ´¶§ Æ®„©´û\nãú´ò ´¶ éâ, ßò´„©´ú F5"
+        Else If (iError_Num = 8001) Error 8001 "DDC 18 Pmoves: Éú§ úß†´®‚ßú´ò† ò¢¢òö„ úÂõ¶¨™\nãú´ò ´¶ éâ, ßò´„©´ú F5"
+        Else If (iError_Num = 6655) Error 6655 "DDC 18 Pmoves: è®¶°Áß´ú† ¨ßÊ¢¶†ß¶ ß®¶™ ´†£¶¢Êöû©û > ò®Æ†°„™ ß¶©Ê´û´ò™"
+        Else If (iError_Num = 6657) Error 6657 "DDC 18 Pmoves: í¶ ÑÂõ¶™ úÂ§ò† Ä§ú§ú®öÊ, õú§ úß†´®‚ßú´ò† û Æ®„©û ´¶¨.\nèò´„©´ú F5 §ò °òüò®Â©ú´ú ´û§ ö®ò££„ ´¶¨ ßò®ò©´ò´†°¶Á"
+        Else Forward Send Operation_Not_Allowed  iError_Num
+    End_Procedure   // Operation_Not_Allowed
+
+    Function Validate_Save  Returns Integer
+        Integer iReturnVal iFpaRecnum iYes
+        Number  nInt nqty nQtyKin
+        String  sUserID sOldUserID sOldItem
+
+        Forward Get Validate_Save  To iReturnVal
+
+        If (Not(iReturnVal)) Begin
+
+//////////////////////////////////////////////////////////////////////////////////////
+        // Egine rem o kodikas pou elegxei to pososto fpa giati sto shmeio ayto
+        // dhmiourgouse parenergeia an o xrhsths allaze to pososto fpa pou erxotan
+        // apo to eidos, tote allaze kai sto record tou eidous
+//            If (Pmoves.Pms_VatPct) Begin
+//                Move Fpa.Recnum to iFpaRecnum
+//                Clear Fpa
+//                Move Pmoves.Pms_VatPct      to Fpa.Fpa_Pososto
+//                Find eq Fpa By Index.1 // Fpa:Index.1:Fpa_Pososto
+//                If (Not(Found)) Move 1111 to iReturnVal
+//                If (iFpaRecnum) Begin
+//                    Clear Fpa
+//                    Move iFpaRecnum to Fpa.Recnum
+//                    Find Eq Fpa.Recnum
+//                End
+//            End
+//////////////////////////////////////////////////////////////////////////////////////
+
+                 If (Wax.Recnum          =0) Move 1001 to iReturnVal
+            Else If (Witemx.Recnum       =0) Move 1002 to iReturnVal
+            Else If (Particle.Recnum     =0) Move 1003 to iReturnVal
+            Else If (Pmoves.Pms_Qty      =0) Move 1004 to iReturnVal
+            Else If ( (Sysfile.Hm_Kleisimatos<>'') And ;
+                      (Particle.Partl_Hmnia<=Sysfile.Hm_Kleisimatos) ) ;
+                     Move 1110 to iReturnVal
+            Else Begin
+                //If (Pmoves.Timol_Ypol<0)                        Move 7001 to iReturnVal
+//////                GTS 09-06-06
+//                If (Pmoves.Qty_Kinhshs>Pmoves.Timol_Ypol)  Move 1013 to iReturnVal
+//                Else If (Pmoves.Timol_Ypol>Pmoves.Pms_Qty)      Move 6655 to iReturnVal
+                // SOS SOS SOS 24/10/2002 è®¶©¶®†§ò Off ö†ò´† Æ´¨ßòú† ©´†™ ò§´¢†ú™
+
+//                Else If ((Ptyppar.Ptyppar_Is_What='2') And (Ptyppar.Check_Posa_Plaf='1')) Begin
+//                    If (Pmoves.Posa_Apo_Dap=0) Begin
+//                        Get YesNo_Box 'é ßú¢·´û™ ‚Æú† ¨ß‚®ôò©û ß¢ò≠Ê§\nåò ©¨§úÆÂ©‡ ;' to iYes
+//                        If (iYes=MBR_NO) Move 6001 to iReturnVal
+//                    End
+//                End
+//                Else If ((Clients.Plafon>0) And ;
+//                    ((Clients.Ypoloipo+Pmoves.Posa_Apo_Dap)>Clients.Plafon) And ;
+//                    (Ptyppar.Check_Posa_Plaf='1')) Begin
+//                        Get YesNo_Box 'é ßú¢·´û™ ‚Æú† ¨ß‚®ôò©û ß¢ò≠Ê§\nåò ©¨§úÆÂ©‡ ;' to iYes
+//                        If (iYes=MBR_NO) Move 1010 to iReturnVal
+//                End
+//                Else If ((PayResp.Plafon>0) And ;
+//                        ((PayResp.Ypoloipo+Pmoves.Posa_Apo_Dap)>PayResp.Plafon) And ;
+//                         (Ptyppar.Check_Posa_Plaf='1')) Begin
+//                        Get YesNo_Box 'é ¨ß.ß¢û®‡£È§ ‚Æú† ¨ß‚®ôò©û ß¢ò≠Ê§\nåò ©¨§úÆÂ©‡ ;' to iYes
+//                        If (iYes=MBR_NO) Move 1011 to iReturnVal
+//                End
+                
+                If (Witemx.Not_To_Be_Used=1) Begin              
+                    Move 6657 to iReturnVal
+                End
+                Else If ((pmoves.clorderd_recr <> '') and (pifromclorder(self)<>1)) begin //?? Pmoves ???ˇ????ö???? ?ù ???????Íú??
+                    get pnoqty to nqty
+                    if (nqty <> pmoves.pms_qty)                 Move 7000 to iReturnVal
+                End
+                Else If ((Pmoves.Qty_Ypol=1) And (piFromMetasx(Self)=0)) begin
+                    // js 28/08/2002
+                    // To pedio Qty_Ypol xrhsimopoihtai gia na flagarei an ena Pmove
+                    // exei proelthei apo metasxhmatismo (Eite sygkentrotika, eite analytika)
+                    // To xrhsimopoihsame ayto gia na mhn anoixtei neo pedio.
+                    // An loipon exei proelthei apo metasxhmatismo DEN epitrepetai tropopoihsh
+                    // ths posothtas tou ap' eutheias alla mono meso ths posothtas mias
+                    // sygkekrimenhs eggrafhs tou arxeiou PmsSxet
+                    If (Operation_Origin=Self) Begin
+                        get pnoqty to nqty
+                        if (nqty <> pmoves.pms_qty)             Move 7005 to iReturnVal
+
+                        // js 22/12/2003
+                        // Epishs DEN epitrepetai allagh eidous
+                        // Pianoume to bug pou se metasxhmatismeno parastatiko
+                        // mporouse na allaxei to eidos me F7/F8
+                        Get psOldItem to sOldItem
+                        If (Item.Item_Code<>sOldItem) Move 8001 to iReturnVal
+                    End
+                End
+            End
+            If (iReturnVal) Send Operation_Not_Allowed iReturnVal
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+
+    Function Validate_Delete  Returns Integer
+        Integer iReturnVal
+        Forward Get Validate_Delete  To iReturnVal
+        If (Not(iReturnVal)) Begin
+            If (Particle.Partl_Timol=1) Move 1009 to iReturnVal
+            Else If ( (Sysfile.Hm_Kleisimatos<>'') And ;
+                      (Particle.Partl_Hmnia<=Sysfile.Hm_Kleisimatos) ) ;
+                Move 1110 to iReturnVal
+            Else If ((pmoves.qty_ypol=1) And (Operation_Origin=Self)) Move 1012 to iReturnVal
+            If (iReturnVal) Send Operation_Not_Allowed iReturnVal
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Delete
+
+    Procedure Set_UnitPrice integer iField  Number nNum
+        Local Integer   Changed
+        Local Number    nInt
+        Get Field_Changed_State iField to Changed
+
+        //Showln "Running Set_UnitPrice Function"
+
+        If (Changed=0 AND nNum=0) Begin
+            Get fnTeleytaiaTimh to nInt
+            //Showln "======>  FUNCTION EVALUATED CORRECTLY"
+            Set Field_Default_Value iField to nInt
+        End
+    End_Procedure   // Shmera
+
+    Procedure Set_Discount integer iField  Number nNum
+        Local Integer Changed
+        Local Number nInt
+        Get Field_Changed_State iField to Changed
+        If (Changed=0 AND nNum=0) Begin
+            Get fnTeleytaiaTimh to nInt
+            If (nInt<0) Begin
+                Move (nInt*(-1)) to nInt
+                Set Field_Default_Value iField to nInt
+            End
+        End
+    End_Procedure   // Shmera
+
+    Procedure Set_FPA integer iField  Number nNum
+        Local Integer Changed
+        Local Number nInt
+        Get Field_Changed_State iField to Changed
+        If (Changed=0 AND nNum=0) Begin
+            Move Item.Fpa_Pososto to nInt
+            Set Field_Default_Value iField to nInt
+        End
+    End_Procedure   // Shmera
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Pmoves.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Pmsdtl.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Wax.File_Number
+        Send Add_Server_File  Witemx.File_Number
+        Send Add_Server_File  Particle.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecp.File_Number  DD_LOCK_ON_NEW_SAVE
+        Send Add_System_File  Syscurxr.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Partlfpa.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Clorder.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Clorderd.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Btnemp.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Gmove.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecp.Pmoves_Rec0  To Pmoves.Pms_Rec0
+
+        // Field-based properties.......................
+
+        // Pmoves.Company_Code
+
+        // Pmoves.Branch_Code
+
+        // Pmoves.Year_Year
+
+        // Pmoves.Ctypkin_Code
+
+        // Pmoves.Wtypkin_Code
+
+        // Pmoves.Custprom_Code
+
+        // Pmoves.Client_Id
+
+        // Pmoves.Cn_Code
+
+        // Pmoves.Ptyppar_Code
+
+        // Pmoves.Partl_Hmnia
+
+        // Pmoves.Pseira_Seira
+
+        // Pmoves.Partl_No
+
+        // Pmoves.Partl_Rec0
+
+        // Pmoves.Witemkat_Code
+
+        // Pmoves.Units_Code
+
+        // Pmoves.Item_Code
+
+        // Pmoves.Witemx_Code
+
+        // Pmoves.Wapokat_Code
+
+        // Pmoves.Wapomast_Code
+
+        // Pmoves.Wax_Code
+
+        // Pmoves.Wax_Recr
+
+        // Pmoves.Witemx_Recr
+
+        // Pmoves.Partl_Recr
+
+        // Pmoves.Pms_Rec0
+        Set Field_Options          Field Pmoves.Pms_Rec0 To DD_AUTOFIND   
+
+        // Pmoves.Pms_No
+
+        // Pmoves.Pms_Recr
+
+        // Pmoves.Pms_Unitcode
+
+        // Pmoves.Pms_Qty
+
+        // Pmoves.Pms_Unitprice
+        Set Field_Entry_msg        Field Pmoves.Pms_Unitprice To Set_UnitPrice
+
+        // Pmoves.Pms_Ambd
+
+        // Pmoves.Pms_Pctdisc
+        Set Field_Entry_msg        Field Pmoves.Pms_Pctdisc To Set_Discount
+
+        // Pmoves.Pms_Discam
+
+        // Pmoves.Pms_Amaftdisc
+
+        // Pmoves.Pms_Vatpct
+        Set Field_Entry_msg        Field Pmoves.Pms_Vatpct To Set_FPA
+
+        // Pmoves.Pms_Vatam
+
+        // Pmoves.Pms_Exrampct
+
+        // Pmoves.Pms_Exdet
+
+        // Pmoves.Pms_Payable
+
+        // Pmoves.Pms_Axia
+
+        // Pmoves.Pms_X0
+
+        // Pmoves.Pms_P0
+
+        // Pmoves.Pms_X00
+
+        // Pmoves.Pms_P00
+
+        // Pmoves.Pms_X1
+
+        // Pmoves.Pms_P1
+
+        // Pmoves.Pms_X2
+
+        // Pmoves.Pms_P2
+
+        // Pmoves.Pms_Dlixis
+
+        // Pmoves.Pms_A_Code
+
+        // Pmoves.Pms_Status_E
+
+        // Pmoves.Pms_Status_A
+
+        // Pmoves.Pms_S0
+
+        // Pmoves.Pms_Ys0
+
+        // Pmoves.Pms_S1
+
+        // Pmoves.Pms_Ys1
+
+        // Pmoves.Pms_S2
+
+        // Pmoves.Pms_Ys2
+
+        // Pmoves.Pms_Sc_Code2
+
+        // Pmoves.Pms_Open
+
+        // Pmoves.Pms_Aopen
+
+        // Pmoves.Pms_M_Code
+
+        // Pmoves.Pms_Yn_Myf
+
+        // Pmoves.Pms_Myf_Axia
+
+        // Pmoves.Pms_Kk
+
+        // Pmoves.Pms_C_Code2
+
+        // Pmoves.Pms_Cn_Code
+
+        // Pmoves.Wcmoves_Recr
+
+        // Pmoves.Pms_Module
+
+        // Pmoves.Btnl2_Recr
+
+        // Pmoves.Btnemp_Recr
+
+        // Pmoves.Btarticle_Recr
+
+        // Pmoves.Sls_Id
+
+        // Pmoves.Presp_Id
+
+        // Pmoves.Cnt_Id
+
+        // Pmoves.Mhxanik_Id
+
+        // Pmoves.Extra_Epimer
+
+        // Pmoves.Ekpt_Epimer
+
+        // Pmoves.Clorderd_Recr
+
+        // Pmoves.Witemx_Descr
+
+        // Pmoves.Ptyppar_Descr
+
+        // Pmoves.Ti_Typonei_Pms
+
+        // Pmoves.Timol_Qty
+
+        // Pmoves.Timol_Ypol
+
+        // Pmoves.Posa_Apo_Dap
+
+        // Pmoves.Qty_Ypol
+
+        // Pmoves.Pms_Selected
+        Set Field_Class_Name       Field Pmoves.Pms_Selected To "dbCheckBoxsub"
+
+        // Pmoves.Qty_Kinhshs
+
+        // Pmoves.Sx_Parast
+
+        // Pmoves.Sx_Hmnia
+
+        // Pmoves.Sx_Seira
+
+        // Pmoves.Sx_Arithmos
+
+        // Pmoves.Pump_Id
+
+        // Pmoves.Car_Id
+
+        // Pmoves.Item_Ypot
+
+        // Pmoves.Qty_Return
+
+        // Pmoves.Client_Name
+
+        // Pmoves.Zone
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+        //Set Field_Changed_Value Field Pmoves.Pms_VatPct to Item.Fpa_Pososto
+    End_Procedure    // Field_Defaults
+
+End_Class    // Pmoves_DataDictionary
+//DDB-FileEnd

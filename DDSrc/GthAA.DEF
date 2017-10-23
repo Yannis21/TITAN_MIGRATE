@@ -1,0 +1,50 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: GTHAA (# 162)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : GTHAA
+  USER DISPLAY NAME         : GthAA
+  DATAFLEX FILE NAME        : GTHAA
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 85        ( USED: 77 )
+  MAX NUMBER OF RECORDS     : 6000000   ( USED: 1 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC     10     1  1   
+  2  BRANCH_CODE      ASC     10    11  1   
+  3  YEAR_YEAR        NUM    4.0    21  1   
+  4  GTHHMGIO_CODE    NUM    4.0    23  4   
+  5  GTHAA_REC0       NUM   14.0    25      
+  6  YEAR_RECR        ASC     12    32  3   
+  7  GTHHMGIO_RECR    ASC     12    44      GTHHMGIO.FIELD_5 (155,5)
+  8  GTHAA_LHMNIA     DAT      6    56      
+  9  GTHAA_LAA        NUM   14.0    59      
+ 10  GTHAA_RECR       ASC     12    66  2   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY_CODE    NO  NO       24     6       4     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       GTHHMGIO_CODE   NO  NO 
+
+  2    GTHAA_RECR      NO  NO       12     5       1     ON-LINE
+
+  3    YEAR_RECR       NO  NO       14     5       2     ON-LINE
+       GTHHMGIO_CODE   NO  NO 
+
+  4    GTHHMGIO_CODE   NO  NO       14     5       2     ON-LINE
+       GTHAA_RECR      NO  NO 
+

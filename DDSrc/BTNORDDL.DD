@@ -1,0 +1,107 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : BTNORDDL.DD
+// Class Name: Btnorddl_DataDictionary
+// Revision  : 0
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Btnorddl
+Open Btnordh
+
+//DDB-HeaderEnd
+open Btnordd
+
+Set_attribute  DF_FILE_ALIAS of BtnorddL.File_number to DF_FILE_IS_ALIAS
+Set_attribute  DF_FILE_ALIAS of Btnordd.File_number  to DF_FILE_IS_MASTER
+
+// clear the relationship in the alias file
+Set_relate BtnorddL.btnordh_recr to |FN0,0
+Class Btnorddl_DataDictionary  is a DataDictionary_sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Btnorddl.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Btnordh.File_Number
+
+        // Field-based properties.......................
+
+        // Btnorddl.Btnordh_Recr
+
+        // Btnorddl.Vitem
+
+        // Btnorddl.Vitem_Descr
+
+        // Btnorddl.Vqual
+
+        // Btnorddl.Vqty
+
+        // Btnorddl.Vunitprice
+
+        // Btnorddl.Vdisc
+
+        // Btnorddl.Vprice
+
+        // Btnorddl.Vkatish
+
+        // Btnorddl.Vxrm3
+
+        // Btnorddl.Vpagiaxrm3
+
+        // Btnorddl.Vpagiaxrprice
+
+        // Btnorddl.Vanopagia
+
+        // Btnorddl.Vsthsimo
+
+        // Btnorddl.Veleipes
+
+        // Btnorddl.Vorderbt
+
+        // Btnorddl.Vclient_Id
+
+        // Btnorddl.Vcn_Code
+
+        // Btnorddl.Vactive
+
+        // Btnorddl.Deop_Date
+
+        // Btnorddl.Velxr
+
+        // Btnorddl.Arxh_Date
+
+        // Btnorddl.Vdiscposo
+
+        // Btnorddl.Vqtyused
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Btnorddl_DataDictionary
+//DDB-FileEnd

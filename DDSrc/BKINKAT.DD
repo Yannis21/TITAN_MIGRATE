@@ -1,0 +1,276 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : BKINKAT.DD
+// Class Name: Bkinkat_DataDictionary
+// Revision  : 39
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Bkinkat
+Open Bkinkath
+Open Baxiokat
+Open Btypkin
+Open Sysrecb
+Open Bmove
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+//DDB/ ExternalValidationTable Baxio_Status_VT  Baxio.Pkg
+
+Register_Object Bkinkat_Bkinkat_Yn_New_VT
+Register_Object Baxio_Status_VT
+Register_Object Bkinkat_Baxio_Place_VT
+Use Baxio.Pkg        // Baxio_Status_VT
+
+Object Bkinkat_Bkinkat_Yn_New_VT  is a DescriptionValidationTable
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "0"  "éÆ†"
+        Send Add_Table_Value  "1"  "åò†"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Bkinkat_Bkinkat_Yn_New_VT
+
+Object Bkinkat_Baxio_Place_VT  is a CodeValidationTable
+    Set Type_Value        To "BAXIOPLACE"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Bkinkat_Baxio_Place_VT
+//DDB-ValidationEnd
+Open SysCurXr
+
+Class Bkinkat_DataDictionary  is a DataDictionary_Sec
+
+    // Creating:
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXr.Branch_Site))+;
+                         (Trim(String(Bkinkat.Bkinkat_Rec0)))))) to Bkinkat.Bkinkat_Recr
+    End_Procedure   // Creating
+
+      //ò) ú§û£‚®‡©û £„ related ßúõÂ‡§
+      //ô) ò§·ö§‡©û properties
+      //ö) õ†òÆúÂ®†©û calculated ßúõÂ‡§
+      //õ) ú§û£‚®‡©û òü®¶†©´È§ (adjust_balances)
+      //ú) ú§û£‚®‡©û properties after
+      Procedure Update
+                Forward Send Update
+
+                //ò) ú§û£‚®‡©û £„ related ßúõÂ‡§
+                Move Syscurxr.Company_Code  to Bkinkat.Company_Code
+                Move Syscurxr.Branch_Code   to Bkinkat.Branch_Code
+                Move Syscurxr.Year_Year     to Bkinkat.Year_Year
+                Move Btypkin.Btypkin_Code   to Bkinkat.Btypkin_Code
+                Move Baxiokat.Baxiokat_Code to Bkinkat.Baxiokat_Code
+
+                //ö) õ†òÆúÂ®†©û calculated ßúõÂ‡§
+                //ö.1:baxio_stat_from + baxio_plac_from:
+                //    Ê´ò§ õû£†¶¨®ö¶Á£ú §‚¶ ò•†Êö®ò≠¶,
+                //    ß®¶≠ò§È™ "‚®Æú´ò†" òß¶ ´¶ ß¶¨üú§· !
+                //    °ò† ‚Æú† °ò´·©´ò©û 1
+                If (Bkinkat.Bkinkat_Yn_New = 1);
+                Begin
+                     Move 1 to Bkinkat.Baxio_Stat_From //°ò´·©´òû òßÊ = ú°°®ú£‚™
+                     Move 0 to Bkinkat.Baxio_Plac_From //§‚¶ ò•†Êö®ò≠¶
+                End
+                Else;
+                Begin //©´„§ ò§´Âüú´û ßú®Âß´‡©û, ß®‚ßú† ´ò 2 ßúõÂò §ò úÂ§ò† > 0
+                     //If (Not(Bkinkat.Baxio_Stat_From > 0)) Send Operation_Not_Allowed 3001 //°ò´·©´òû òßÊ = ú°°®ú£‚™
+                     If (Not(Bkinkat.Baxio_Plac_From > 0)) Send Operation_Not_Allowed 3001 //´¶ ¨ß·®Æ¶§ ò•†Êö®ò≠¶ ß®‚ßú† °·ß¶¨ §ò ô®Â©°ú´ò†
+                End
+
+                //õ) ú§û£‚®‡©û òü®¶†©´È§ btypkin
+                Add 1 to   Btypkin.Bkinkat_Num
+
+                //Move BkinKat.BkinKat_Rec0   to BkinKat.BkinKat_code
+      End_Procedure   //update
+
+
+      Procedure Backout
+                Forward Send Backout
+
+                //ú§û£‚®‡©û òü®¶†©´È§ Btypkin
+                Sub 1 from Btypkin.Bkinkat_Num
+      End_Procedure   //backout
+
+
+      Procedure Operation_Not_Allowed Integer iError_Num
+                String lsError_Message
+                Case Begin
+                     //òßÊ validate save
+                     Case (iError_Num = 1001)
+                     Case Break
+                     //òßÊ update
+                     Case (iError_Num = 3001)
+                          Move ("DDC 146:Ä°ò´·¢¢û¢û Ñöö®ò≠„ !\n\ní¶ ¨ß·®Æ¶§ ò•†Êö®ò≠¶ ß®‚ßú† °·ß¶¨ §ò ô®Â©°ú´ò† !");
+                          to lsError_Message
+                     Case Break
+
+                     Case Else
+                          Forward Send Operation_Not_Allowed iError_Num
+                Case End
+
+                Error iError_Num lsError_Message
+      End_Procedure // operation_not_allowed
+
+
+//----------------------------------------------------------------------------
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Bkinkat.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Bkinkath.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Baxiokat.File_Number
+        Send Add_Server_File  Btypkin.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecb.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Bmove.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecb.Bkinkat_Rec0  To Bkinkat.Bkinkat_Rec0
+
+        // Field-based properties.......................
+
+        // Bkinkat.Company_Code
+
+        // Bkinkat.Branch_Code
+
+        // Bkinkat.Year_Year
+
+        // Bkinkat.Btypkin_Code
+
+        // Bkinkat.Baxiokat_Code
+
+        // Bkinkat.Bkinkat_Code
+
+        // Bkinkat.Bkinkat_Rec0
+
+        // Bkinkat.Bkinkat_Recr
+
+        // Bkinkat.Btypkin_Recr
+
+        // Bkinkat.Baxiokat_Recr
+
+        // Bkinkat.Bkinkat_Yn_New
+        Set Field_Value_Table      Field Bkinkat.Bkinkat_Yn_New To (Bkinkat_Bkinkat_Yn_New_VT(Self))
+
+        // Bkinkat.Baxio_Stat_From
+        Set Field_Value_Table      Field Bkinkat.Baxio_Stat_From To (Baxio_Status_VT(Self))
+
+        // Bkinkat.Baxio_Stat_To
+        Set Field_Value_Table      Field Bkinkat.Baxio_Stat_To To (Baxio_Status_VT(Self))
+
+        // Bkinkat.Baxio_Plac_From
+        Set Field_Value_Table      Field Bkinkat.Baxio_Plac_From To (Bkinkat_Baxio_Place_VT(Self))
+
+        // Bkinkat.Baxio_Plac_To
+        Set Field_Value_Table      Field Bkinkat.Baxio_Plac_To To (Bkinkat_Baxio_Place_VT(Self))
+
+        // Bkinkat.Bkinkat_Gplncod
+
+        //DDB-DefineFieldEnd
+
+        Set Main_File            To Bkinkat.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Btypkin.File_Number
+        Send Add_Server_File  Baxiokat.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecb.File_Number  DD_LOCK_ON_NEW_SAVE
+
+        Define_Auto_Increment  Sysrecb.Bkinkat_Rec0  To Bkinkat.Bkinkat_Rec0
+
+        // Field-based properties.......................
+
+        // Bkinkat.Btypkin_Code
+        Set Key_Field_State        Field Bkinkat.Btypkin_Code     To TRUE
+
+        // Bkinkat.Baxiokat_Code
+        Set Field_Options          Field Bkinkat.Baxiokat_Code    To DD_AUTOFIND
+        Set Key_Field_State        Field Bkinkat.Baxiokat_Code    To TRUE
+
+        // Bkinkat.Bkinkat_Rec0
+        Set Field_Options          Field Bkinkat.Bkinkat_Rec0     To DD_NOPUT
+
+        // Bkinkat.Btypkin_Rec0
+        //Set Field_Options          Field Bkinkat.Btypkin_Rec0     To DD_NOPUT
+
+        // Bkinkat.Baxiokat_Rec0
+        //Set Field_Options          Field Bkinkat.Baxiokat_Rec0    To DD_NOPUT
+
+        // Bkinkat.Bkinkat_Yn_New
+        Set Field_Class_Name       Field Bkinkat.Bkinkat_Yn_New   To "dbComboForm_EZ"
+        Set Field_Label_Long       Field Bkinkat.Bkinkat_Yn_New   To "å‚¶ Ä•†Êö®ò≠¶ ?"
+        Set Field_Label_Short      Field Bkinkat.Bkinkat_Yn_New   To "å‚¶ ?"
+        Set Field_Value_Table      Field Bkinkat.Bkinkat_Yn_New   To (Bkinkat_Bkinkat_Yn_New_VT(Self))
+
+        // Bkinkat.Baxio_Stat_From
+        Set Field_Class_Name       Field Bkinkat.Baxio_Stat_From  To "dbComboForm_EZ"
+        Set Field_Label_Long       Field Bkinkat.Baxio_Stat_From  To "âò´·©´ò©û ÄßÊ"
+        Set Field_Label_Short      Field Bkinkat.Baxio_Stat_From  To "âò´·©´ò©û ÄßÊ"
+        Set Field_Value_Table      Field Bkinkat.Baxio_Stat_From  To (Baxio_Status_VT(Self))
+
+        // Bkinkat.Baxio_Stat_To
+        Set Field_Class_Name       Field Bkinkat.Baxio_Stat_To    To "dbComboForm_EZ"
+        Set Field_Label_Long       Field Bkinkat.Baxio_Stat_To    To "âò´·©´ò©û ë‚"
+        Set Field_Label_Short      Field Bkinkat.Baxio_Stat_To    To "âò´·©´ò©û ë‚"
+        Set Field_Value_Table      Field Bkinkat.Baxio_Stat_To    To (Baxio_Status_VT(Self))
+
+        // Bkinkat.Baxio_Plac_From
+        Set Field_Class_Name       Field Bkinkat.Baxio_Plac_From  To "dbComboForm_EZ"
+        Set Field_Label_Long       Field Bkinkat.Baxio_Plac_From  To "Ñ¨®Â°ú´¶ ©‚"
+        Set Field_Label_Short      Field Bkinkat.Baxio_Plac_From  To "Ñ¨®Â°ú´¶ ©‚"
+        Set Field_Value_Table      Field Bkinkat.Baxio_Plac_From  To (Bkinkat_Baxio_Place_VT(Self))
+
+        // Bkinkat.Baxio_Plac_To
+        Set Field_Class_Name       Field Bkinkat.Baxio_Plac_To    To "dbComboForm_EZ"
+        Set Field_Label_Long       Field Bkinkat.Baxio_Plac_To    To "è·ú† ë‚"
+        Set Field_Label_Short      Field Bkinkat.Baxio_Plac_To    To "è·ú† ë‚"
+        Set Field_Value_Table      Field Bkinkat.Baxio_Plac_To    To (Bkinkat_Baxio_Place_VT(Self))
+
+        // Bkinkat.Bkinkat_Gplncod
+        Set Field_Label_Long       Field Bkinkat.Bkinkat_Gplncod  To "â‡õ†°Ê™ Çä"
+        Set Field_Label_Short      Field Bkinkat.Bkinkat_Gplncod  To "â‡õ†°Ê™ Çä"
+        //Set Field_Prompt_Object    Field Bkinkat.Bkinkat_Gplncod  To (SL056(Self))
+
+    End_Procedure    // Define_Fields
+
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+        Set Field_Changed_Value   Field Bkinkat.Bkinkat_Yn_New   To 0
+        Set Field_Changed_Value   Field Bkinkat.Baxio_Stat_From  To "1"
+        Set Field_Changed_Value   Field Bkinkat.Baxio_Stat_To    To "1"
+        Set Field_Changed_Value   Field Bkinkat.Baxio_Plac_From  To "1"
+        Set Field_Changed_Value   Field Bkinkat.Baxio_Plac_To    To "1"
+    End_Procedure    // Field_Defaults
+
+End_Class    // Bkinkat_DataDictionary
+//DDB-FileEnd

@@ -1,0 +1,233 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : MHXANIK.DD
+// Class Name: Mhxanik_DataDictionary
+// Revision  : 27
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Mhxanik
+Open Cn
+Open Sysrecc
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Mhxanik_Mhx_Doy_VT
+
+Object Mhxanik_Mhx_Doy_VT  is a CodeValidationTable
+    Set Type_Value        To "DOY"
+    Set Validate_State    To FALSE
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Mhxanik_Mhx_Doy_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl055  sl055.SL
+//DDB/ ExternalSelectionList sl198  sl198.sl
+//DDB/ ExternalSelectionList sl197  sl197.SL
+Register_Object sl055
+Register_Object sl198
+Register_Object sl197
+//DDB-SelectionEnd
+
+Class Mhxanik_DataDictionary  is a DataDictionary_Sec
+
+     Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move SysCurXR.Company_Code  to Mhxanik.Company_Code
+        Move SysCurXR.Branch_Code   to Mhxanik.Branch_Code
+        Move SysCurXR.Year_Year     to Mhxanik.Year_Year
+        //Move Custprom.Custprom_Code to Clients.Custprom_Code
+        Move (Mhxanik.Xreosh-Mhxanik.Pistosh)   to Mhxanik.Ypoloipo
+        Move (Mhxanik.Plafon-Mhxanik.ypoloipo)  to Mhxanik.Overhead
+
+        //Move Clients.Client_Address     to Clients.Client_LastUpd
+
+        //betolink
+        Move SysCurXR.Beto_Site         to Mhxanik.Mhx_SiteW
+        Move Mhxanik.Mhx_Rec0           to Mhxanik.Mhx_SN
+        Move Mhxanik.Mhx_id             to Mhxanik.Mhx_Repm
+
+        If (Operation_ORIGIN=Self) Begin
+            Move 1      to Mhxanik.ExportFlag
+            Move "SEND" to Mhxanik.ExportStatus
+        End
+       
+
+    End_Procedure   // Update
+
+     Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Mhxanik.Mhx_Rec0))))));
+                                    to Mhxanik.Mhx_Recr
+        Move '1'                    to Mhxanik.Mhx_Active
+        get fsgCode_With_Zeroes Mhxanik.Mhx_Rec0 Sysfile.Client_Digits SysCurXr.Company_Code SysCurXr.Branch_Code  to Mhxanik.Mhx_ID
+    End_Procedure   // Creating
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Mhxanik.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Cn.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Mhxanik_Rec0  To Mhxanik.Mhx_Rec0
+
+        // Field-based properties.......................
+
+        // Mhxanik.Company_Code
+
+        // Mhxanik.Branch_Code
+
+        // Mhxanik.Year_Year
+
+        // Mhxanik.Mhx_Id
+        Set Field_Options          Field Mhxanik.Mhx_Id To DD_AUTOFIND    DD_NOPUT      
+        Set Field_Prompt_Object    Field Mhxanik.Mhx_Id To (sl055(Self))
+        Set Key_Field_State        Field Mhxanik.Mhx_Id To TRUE
+
+        // Mhxanik.Mhx_Name
+        Set Field_Prompt_Object    Field Mhxanik.Mhx_Name To (sl055(Self))
+
+        // Mhxanik.Mhx_Afm
+
+        // Mhxanik.Mhx_Rec0
+
+        // Mhxanik.Mhx_Recr
+
+        // Mhxanik.Last_Xreosh
+
+        // Mhxanik.Last_Pistosh
+
+        // Mhxanik.Last_Order
+
+        // Mhxanik.Mhx_Doy
+        Set Field_Value_Table      Field Mhxanik.Mhx_Doy To (Mhxanik_Mhx_Doy_VT(Self))
+
+        // Mhxanik.Mhx_Address
+
+        // Mhxanik.Mhx_City
+        Set Field_Prompt_Object    Field Mhxanik.Mhx_City To (sl198(Self))
+
+        // Mhxanik.Mhx_Area
+        Set Field_Prompt_Object    Field Mhxanik.Mhx_Area To (sl197(Self))
+
+        // Mhxanik.Mhx_Job
+
+        // Mhxanik.Mhx_Respons
+
+        // Mhxanik.Mhx_Zipcode
+
+        // Mhxanik.Mhx_Phone
+
+        // Mhxanik.Mhx_Fax
+
+        // Mhxanik.Mhx_Mobile
+
+        // Mhxanik.Mhx_Aoh
+
+        // Mhxanik.Mhx_Email
+
+        // Mhxanik.Mhx_Class
+
+        // Mhxanik.Mhx_Details
+
+        // Mhxanik.Mhx_Sitew
+
+        // Mhxanik.Mhx_Codem
+
+        // Mhxanik.Mhx_Categfpa
+
+        // Mhxanik.Mhx_Fpa
+
+        // Mhxanik.Mhx_Public
+
+        // Mhxanik.Mhx_Sn
+
+        // Mhxanik.Mhx_Repm
+
+        // Mhxanik.Mhx_Active
+
+        // Mhxanik.Mhx_Reported
+
+        // Mhxanik.Mhx_Lastupd
+
+        // Mhxanik.Mhx_Markexp
+
+        // Mhxanik.Mhx_Catjob
+
+        // Mhxanik.Xreosh
+
+        // Mhxanik.Pistosh
+
+        // Mhxanik.Ypoloipo
+
+        // Mhxanik.Plafon
+
+        // Mhxanik.Overhead
+
+        // Mhxanik.Mhx_Add_No
+
+        // Mhxanik.Mhx_Nomos
+
+        // Mhxanik.Mhx_Xora
+
+        // Mhxanik.Polh_Recr
+
+        // Mhxanik.Exportflag
+
+        // Mhxanik.Exportstatus
+
+        // Mhxanik.Exportdate
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Mhxanik.Mhx_Doy To "0"
+        Set Field_Changed_Value   Field Mhxanik.Mhx_City To 0
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Mhxanik_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl055.SL         // sl055
+Use sl198.sl         // sl198
+Use sl197.SL         // sl197
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

@@ -1,0 +1,72 @@
+-----------------------------------------------------------------------------
+  DATE: 21/12/105      TIME: 11:48                                  PAGE:  1
+  FILE DEFINITION FOR FILE: PAGIA (# 83)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : PAGIA
+  USER DISPLAY NAME         : Pagia
+  DATAFLEX FILE NAME        : PAGIA
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 384       ( USED: 333 )
+  MAX NUMBER OF RECORDS     : 1000000   ( USED: 117 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC     10     1  1   
+  2  BRANCH_CODE      ASC     10    11  1   
+  3  YEAR_YEAR        NUM    4.0    21  1   
+  4  PAGIA_CODE       ASC     20    23  1   
+  5  PAGIA_CODEA      ASC      3    43      
+  6  PAGIA_REC0       NUM   14.0    46      
+  7  PAGIA_DESCR      ASC     50    53      
+  8  PAGIA_RECR       ASC     20   103  2   
+  9  PAGKAT_RECR      ASC     12   123      
+ 10  PAGKAT_CODE      ASC     20   135  3   PAGKAT.FIELD_1 (80,1)
+ 11  CLIENT_ID        ASC     20   155  1   
+ 12  PAGIA_BYDATE     DAT      6   175      
+ 13  PAGIA_MODIFDATE  DAT      6   178      
+ 14  PAGIA_PARAST     ASC     30   181      
+ 15  PAGIA_AXIA       NUM   14.6   211      
+ 16  PAGIA_POSOSTO    NUM    4.0   221      
+ 17  PAGIA_QTY        NUM   14.6   223      
+ 18  PAGIA_TOPOS      ASC     30   233      
+ 19  PAGIA_FPA        NUM    4.0   263      
+ 20  PAGIA_DEADDATE   DAT      6   265      
+ 21  PAGIA_LASTDATE   DAT      6   268      
+ 22  PAGIA_SYNOL      NUM   14.6   271      
+ 23  PAGIA_IST        ASC      2   281      
+ 24  PAGIA_LPOSOSTO   NUM    4.0   283      
+ 25  PAGIA_CLOSED     ASC      1   285      
+ 26  PAGIA_POLPOSO    NUM   14.2   286      
+ 27  CODEGL           ASC     40   294      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY_CODE    NO  NO       62     7       5     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       PAGIA_CODE      NO  NO 
+       CLIENT_ID       NO  NO 
+
+  2    PAGIA_RECR      NO  NO       20     5       1     ON-LINE
+
+  3    COMPANY_CODE    NO  NO       82     8       6     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       PAGKAT_CODE     NO  NO 
+       PAGIA_CODE      NO  NO 
+       CLIENT_ID       NO  NO 
+
+  4    PAGIA_CODE      NO  NO       40     6       2     ON-LINE
+       CLIENT_ID       NO  NO 
+

@@ -1,0 +1,35 @@
+-----------------------------------------------------------------------------
+  DATE: 03/03/109      TIME: 16:12                                  PAGE:  1
+  FILE DEFINITION FOR FILE: GRPACT (# 125)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : GrpAct
+  USER DISPLAY NAME         : GrpAct
+  DATAFLEX FILE NAME        : GRPACT
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 256       ( USED: 205 )
+  MAX NUMBER OF RECORDS     : 10000     ( USED: 1 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  USER_ID          NUM    4.0     1  1   USERS.FIELD_2 (250,2)
+  2  VIEW_NAME        ASC    100     3  1   OTH.FIELD_2 (236,2)
+  3  VIEW_ID          NUM    4.0   103      
+  4  VIEW_LABEL       ASC    100   105      
+  5  ALLOW            NUM    2.0   205      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    USER_ID         NO  NO       102    6       2     ON-LINE
+       VIEW_NAME       NO  NO 
+

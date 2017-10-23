@@ -1,0 +1,76 @@
+-----------------------------------------------------------------------------
+  DATE: 26/03/112      TIME: 09:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: TMPB001 (# 206)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : TMPB001
+  USER DISPLAY NAME         : Tmpb001
+  DATAFLEX FILE NAME        : TMPB001
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 512       ( USED: 400 )
+  MAX NUMBER OF RECORDS     : 10000     ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  HMNIA_LIXIS      DAT      6     1  1   
+  2  BAXIO_CODE       NUM   14.0     4  3   
+  3  BAXIOKAT_CODE    NUM    6.0    11      
+  4  BTYPKIN_CODE     NUM    6.0    14      
+  5  BTYPKIN_CODE2    NUM    6.0    17      
+  6  BTYPKIN_ABR      ASC     10    20      
+  7  BTYPKIN_ABR2     ASC     10    30      
+  8  SEIRA            ASC      3    40      
+  9  SEIRA2           ASC      3    43      
+ 10  HMNIAP           DAT      6    46  2   
+ 11  HMNIAP2          DAT      6    49      
+ 12  BANKA_CODE       ASC     10    52      
+ 13  BANKA_NAME       ASC     30    62      
+ 14  BARTICL_NO       NUM   14.0    92      
+ 15  BAXIO_FPAR_IN    ASC     12    99  4   
+ 16  BAXIO_CODE_IN    ASC     20   111      
+ 17  BAXIO_EPON_IN    ASC     40   131      
+ 18  BARTICL_NO2      NUM   14.0   171      
+ 19  BAXIO_FPAR_OUT   ASC     12   178      
+ 20  BAXIO_CODE_OUT   ASC     20   190      
+ 21  BAXIO_EPON_OUT   ASC     40   210      
+ 22  BAXIO_NO         ASC     20   250      
+ 23  AXIA             NUM   14.4   270      
+ 24  AXIA0            NUM   14.4   279      
+ 25  AXIA00           NUM   14.4   288      
+ 26  AXIAR            NUM   14.4   297      
+ 27  BAXIO_STATUS     NUM    2.0   306      
+ 28  STATUS_DESCR     ASC     20   307      
+ 29  BAXIO_PLACE      NUM    2.0   327      
+ 30  PLACE_DESCR      ASC     20   328      
+ 31  YYYY             NUM    4.0   348  1   
+ 32  MONTH            NUM    2.0   350  1   
+ 33  AITIOL           ASC     50   351      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    YYYY            NO  NO       9      3       4     ON-LINE
+       MONTH           NO  NO 
+       HMNIA_LIXIS     NO  NO 
+       RECNUM          NO  NO 
+
+  2    YYYY            NO  NO       9      3       4     ON-LINE
+       MONTH           NO  NO 
+       HMNIAP          NO  NO 
+       RECNUM          NO  NO 
+
+  3    BAXIO_CODE      NO  NO       10     3       2     ON-LINE
+       RECNUM          NO  NO 
+
+  4    BAXIO_FPAR_IN   NO  NO       15     3       2     ON-LINE
+       RECNUM          NO  NO 
+

@@ -1,0 +1,108 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : WAPOKAT.DD
+// Class Name: Wapokat_DataDictionary
+// Revision  : 22
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Wapokat
+Open Wapomast
+Open Sysrecw
+Open Syscurxr
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl022  sl022.sl
+Register_Object sl022
+//DDB-SelectionEnd
+
+Class Wapokat_DataDictionary  is a DataDictionary
+
+    // Update:
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+//        Move SysCurXR.Company_Code   to Wapokat.Company_Code
+//        Move SysCurXR.Branch_Code     to Wapokat.Branch_Code
+//        Move SysCurXR.Year_Year         to Wapokat.Year_Year
+    End_Procedure   // Update
+ 
+     Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Wapokat.Wapokat_Rec0)))))) to Wapokat.Wapokat_Recr
+    End_Procedure   // Creating
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Wapokat.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Wapomast.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecw.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Syscurxr.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecw.Wapokat_Rec0  To Wapokat.Wapokat_Rec0
+
+        // Field-based properties.......................
+
+        // Wapokat.Wapokat_Code    
+        Set Field_Options          Field Wapokat.Wapokat_Code     To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Wapokat.Wapokat_Code     To (sl022(Self))
+
+        // Wapokat.Wapokat_Rec0    
+        Set Field_Options          Field Wapokat.Wapokat_Rec0     To DD_AUTOFIND   
+
+        // Wapokat.Wapokat_Descr   
+        Set Field_Prompt_Object    Field Wapokat.Wapokat_Descr    To (sl022(Self))
+
+        // Wapokat.Wapokat_Recr    
+        Set Field_Options          Field Wapokat.Wapokat_Recr     To DD_AUTOFIND   
+
+        // Wapokat.Enhm_Sap        
+
+        // Wapokat.Sap_Descr       
+
+        // Wapokat.Gl              
+
+        // Wapokat.Glzz            
+
+        // Wapokat.Oximm1          
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Wapokat_DataDictionary
+//DDB-Selection-pkg-Start
+Use sl022.sl         // sl022
+//DDB-Selection-pkg-End
+//DDB-FileEnd

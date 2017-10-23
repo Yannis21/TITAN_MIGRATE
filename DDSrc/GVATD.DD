@@ -1,0 +1,95 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GVATD.DD
+// Class Name: Gvatd_DataDictionary
+// Revision  : 6
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Gvatd
+Open Gvath
+Open Gplan
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Gvatd_Gvatd_Xp_VT
+
+Object Gvatd_Gvatd_Xp_VT  is a DescriptionValidationTable
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "1"  "ï®‚‡©û"
+        Send Add_Table_Value  "2"  "èÂ©´‡©û"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Gvatd_Gvatd_Xp_VT
+//DDB-ValidationEnd
+  
+Class Gvatd_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move SysCurGL.Company_Code  to GVatd.Company_Code
+        Move SysCurGL.Branch_Code   to GVatd.Branch_Code
+        Move SysCurGL.Year_Year     to GVatd.Year_Year
+        Move SysCurGL.Year_Recr     to GVatd.Year_Recr
+        Move Gplan.Gplan_Code       to GVatd.Gplan_Code
+    End_Procedure   // Update
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Gvatd.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Gvath.File_Number
+        Send Add_Server_File  Gplan.File_Number
+
+        // Field-based properties.......................
+
+        // Gvatd.Company_Code
+
+        // Gvatd.Branch_Code
+
+        // Gvatd.Year_Year
+
+        // Gvatd.Year_Recr
+
+        // Gvatd.Gvath_Code
+
+        // Gvatd.Gplan_Code
+
+        // Gvatd.Gplan_Recr
+
+        // Gvatd.Gvatd_Xp
+        Set Field_Value_Table      Field Gvatd.Gvatd_Xp To (Gvatd_Gvatd_Xp_VT(Self))
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Gvatd.Gvatd_Xp To "1"
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+End_Class    // Gvatd_DataDictionary
+//DDB-FileEnd

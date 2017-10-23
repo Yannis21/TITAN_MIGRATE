@@ -1,0 +1,104 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : ITEMTEHN.DD
+// Class Name: Itemtehn_DataDictionary
+// Revision  : 11
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Itemtehn
+Open Itemd
+Open Item
+Open Sysrecw
+
+//DDB-HeaderEnd
+
+Class Itemtehn_DataDictionary  is a DataDictionary_sec
+    
+    Procedure Creating
+        Forward Send Creating   
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                         (Trim(String(Itemtehn.Rec0)))))) to Itemtehn.Recr
+        
+      
+    End_Procedure   // Creating
+ 
+    Procedure OnConstrain
+       Constrain ITEMtehn.company eq SysCurXR.Company_Code
+       Constrain itemtehn.branch  eq SysCurXR.Branch_Code
+    End_Procedure 
+    
+    
+    Procedure Update
+       Forward Send Update 
+       move syscurxr.company_code to itemtehn.company 
+       move syscurxr.branch_code  to itemtehn.branch 
+    End_Procedure
+
+    
+    
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Itemtehn.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Itemd.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Item.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecw.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecw.Itemtehn_Rec0  To Itemtehn.Rec0
+
+        // Field-based properties.......................
+
+        // Itemtehn.Item_Code
+
+        // Itemtehn.Hmnia
+        Set Field_Mask_Type        Field Itemtehn.Hmnia To MASK_DATE_WINDOW
+
+        // Itemtehn.Aa
+
+        // Itemtehn.Rec0
+
+        // Itemtehn.Recr
+
+        // Itemtehn.Company
+
+        // Itemtehn.Branch
+
+        // Itemtehn.Code
+
+        // Itemtehn.Sap_Hmnia
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Itemtehn_DataDictionary
+//DDB-FileEnd

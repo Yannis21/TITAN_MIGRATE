@@ -1,0 +1,213 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : CLORDER.DD
+// Class Name: Clorder_DataDictionary
+// Revision  : 34
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Clorder
+Open Clorderd
+Open Clients
+Open Sysrecc
+Open Codetype
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Clorder_Tropos_VT
+Register_Object Clorder_How_Pay_VT
+
+Object Clorder_Tropos_VT  is a CodeValidationTable
+    Set Type_Value        To "SEND_TERMS"
+    Set Validate_State    To FALSE
+    Set Allow_Blank_State To TRUE
+    Set Table_Title       To "í®Êß¶† èò®·õ¶©û™"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Clorder_Tropos_VT
+
+Object Clorder_How_Pay_VT  is a CodeValidationTable
+    Set Type_Value        To "PAY_TERMS"
+    Set Validate_State    To FALSE
+    Set Allow_Blank_State To TRUE
+    Set Table_Title       To "í®Êß¶† è¢û®‡£„™"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Clorder_How_Pay_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList slNomism  slnomism.sl
+Register_Object slNomism
+//DDB-SelectionEnd
+  
+Class Clorder_DataDictionary  is a DataDictionary_Sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Clorder.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Clorderd.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Clients.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Codetype.File_Number  DD_LOCK_ON_ALL
+
+        // Field-based properties.......................
+
+        // Clorder.Company_Code
+
+        // Clorder.Branch_Code
+
+        // Clorder.Year_Year
+
+        // Clorder.Aapar
+
+        // Clorder.Clients_Code
+
+        // Clorder.Armod
+
+        // Clorder.Order1_Recr
+
+        // Clorder.Rec0
+
+        // Clorder.Recr
+
+        // Clorder.Our_Date
+        Set Field_Mask_Type        Field Clorder.Our_Date To MASK_DATE_WINDOW
+
+        // Clorder.Rial_Date
+        Set Field_Mask_Type        Field Clorder.Rial_Date To MASK_DATE_WINDOW
+
+        // Clorder.Qty
+
+        // Clorder.Unitprice
+
+        // Clorder.Disc
+
+        // Clorder.Fpa
+
+        // Clorder.Net
+
+        // Clorder.Extra
+
+        // Clorder.Total
+
+        // Clorder.Aaparprom
+
+        // Clorder.Tropos
+        Set Field_Value_Table      Field Clorder.Tropos To (Clorder_Tropos_VT(Self))
+
+        // Clorder.Date
+        Set Field_Entry_msg        Field Clorder.Date To Entry_clorder_date
+        Set Field_Mask_Type        Field Clorder.Date To MASK_DATE_WINDOW
+
+        // Clorder.How_Pay
+        Set Field_Value_Table      Field Clorder.How_Pay To (Clorder_How_Pay_VT(Self))
+
+        // Clorder.Finish
+        Set Field_Mask             Field Clorder.Finish To "#"
+        Set Field_Mask_Type        Field Clorder.Finish To MASK_NUMERIC_WINDOW
+
+        // Clorder.Okey
+        Set Field_Mask             Field Clorder.Okey To "#"
+        Set Field_Mask_Type        Field Clorder.Okey To MASK_NUMERIC_WINDOW
+
+        // Clorder.Akyrh
+        Set Field_Mask             Field Clorder.Akyrh To "#"
+        Set Field_Mask_Type        Field Clorder.Akyrh To MASK_NUMERIC_WINDOW
+
+        // Clorder.Sxolia
+
+        // Clorder.Posodtl
+
+        // Clorder.Qtydtl
+
+        // Clorder.Nomisma
+        Set Field_Prompt_Object    Field Clorder.Nomisma To (slNomism(Self))
+
+        // Clorder.Module
+
+        // Clorder.Codetype
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+     Procedure Update
+        Forward Send Update
+        move syscurxr.company_code to clorder.company_code
+        move syscurxr.branch_code  to clorder.branch_code
+        move syscurxr.year_year    to clorder.year_year
+        MOVE CODETYPE.TYPE         to clorder.codetype
+        // Insert Code Here
+    End_Procedure   // Update
+
+
+
+
+    Procedure Creating
+        if (clorder.module <> '01') move '02' to clorder.module
+        if (clorder.module = '01') begin
+           move (sysrecc.clorderc_rec0 + 1) to clorder.rec0
+           move clorder.rec0 to sysrecc.clorderc_rec0
+           saverecord sysrecc
+        end
+        else begin
+           move (sysrecc.clorder_rec0 + 1) to clorder.rec0
+           move clorder.rec0 to sysrecc.clorder_rec0
+           saverecord sysrecc
+        end
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                         (Trim(String(clorder.rec0)))))) to clorder.recr
+        Move clorder.recr to clorder.aapar
+        move clorder.date to clients.last_order
+    End_Procedure   //
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+     Procedure Entry_clorder_date Integer iField Date dDate
+         Local Integer Changed
+         Get Field_Changed_State iField to Changed
+         If ( Changed=0 AND dDate = 0) Begin
+           SysDate4 dDate
+           Set Field_Default_Value iField to dDate
+         End
+    End_Procedure
+
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Clorder_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use slnomism.sl      // slNomism
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

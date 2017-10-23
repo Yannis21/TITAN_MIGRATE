@@ -1,0 +1,96 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : TPERGA.DD
+// Class Name: Tperga_DataDictionary
+// Revision  : 15
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Tperga
+Open Cn
+Open Baxiokat
+Open Sysrecc
+Open Btnordh
+
+//DDB-HeaderEnd
+
+Class Tperga_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Save_Main_File
+        If (Operation_Origin<>Self) Begin
+            If Tperga.Recnum Eq 0 Procedure_Return
+        End
+        Forward Send Save_Main_File
+    End_Procedure
+
+
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(TPErga.TPErga_Rec0))))));
+                                    to TPErga.TPErga_Recr
+    End_Procedure   // Creating
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Tperga.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Cn.File_Number
+        Send Add_Server_File  Baxiokat.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Btnordh.File_Number  DD_LOCK_ON_NEW_SAVE_DELETE
+
+        Define_Auto_Increment  Sysrecc.Tperga_Rec0  To Tperga.Tperga_Rec0
+
+        // Field-based properties.......................
+
+        // Tperga.Cn_Code          
+
+        // Tperga.Baxiokat_Code    
+
+        // Tperga.Pct_Epi_Synolou  
+
+        // Tperga.Paralabh_Meres   
+
+        // Tperga.Xarhtos_Meres    
+
+        // Tperga.Plhroteo_Meres   
+
+        // Tperga.Tperga_Rec0      
+
+        // Tperga.Tperga_Recr      
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Tperga_DataDictionary
+//DDB-FileEnd

@@ -1,0 +1,107 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : BTNORDHL.DD
+// Class Name: Btnordhl_DataDictionary
+// Revision  : 1
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Btnordhl
+Open Cn
+
+//DDB-HeaderEnd
+open Btnordh
+
+Set_attribute  DF_FILE_ALIAS of BtnordhL.File_number to DF_FILE_IS_ALIAS
+Set_attribute  DF_FILE_ALIAS of Btnordh.File_number  to DF_FILE_IS_MASTER
+
+// clear the relationship in the alias file
+Set_relate Btnordhl.cn_recr to |FN0,0
+
+Class Btnordhl_DataDictionary  is a DataDictionary_sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Btnordhl.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Cn.File_Number
+
+        // Field-based properties.......................
+
+        // Btnordhl.Vcompany       
+
+        // Btnordhl.Vbranch        
+
+        // Btnordhl.Vyear          
+
+        // Btnordhl.Rec0           
+
+        // Btnordhl.Recr           
+
+        // Btnordhl.Aa_Deop        
+
+        // Btnordhl.Cn_Recr        
+
+        // Btnordhl.Sxolia         
+
+        // Btnordhl.Cn_Code        
+
+        // Btnordhl.Client_Id      
+
+        // Btnordhl.Presp_Id       
+
+        // Btnordhl.Deop_Date      
+
+        // Btnordhl.Deop_Active    
+
+        // Btnordhl.Eleiph         
+
+        // Btnordhl.Locked         
+
+        // Btnordhl.User_Id        
+
+        // Btnordhl.Date_Create    
+
+        // Btnordhl.Date_Modify    
+
+        // Btnordhl.Date_Locked    
+
+        // Btnordhl.Deop_Lhxh      
+
+        // Btnordhl.Statero        
+
+        // Btnordhl.Velxr          
+
+        // Btnordhl.Timeout        
+
+        // Btnordhl.Timeout1       
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Btnordhl_DataDictionary
+//DDB-FileEnd

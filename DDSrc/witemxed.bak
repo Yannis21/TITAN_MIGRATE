@@ -1,0 +1,102 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : WITEMXED.DD
+// Class Name: Witemxed_DataDictionary
+// Revision  : 13
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Witemxed
+Open Witemxen
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList wax  Wax.SL
+Register_Object wax
+//DDB-SelectionEnd
+open wax 
+Class Witemxed_DataDictionary  is a DataDictionary_Sec
+ 
+    // Update:
+ 
+    Procedure Update
+        Forward Send Update  
+        clear wax
+        move witemxed.wax_recr to wax.wax_recr
+        find eq wax by index.2
+        if (found=1) move wax.wax_descr to witemxed.wax_descr
+        else         move ''            to witemxed.wax_descr  
+        move (fsitem(self,witemxed.witemxed_code)) to witemxed.witemxed_descr
+        // Insert Code Here
+    End_Procedure   // Update
+ 
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Witemxed.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Witemxen.File_Number
+
+        // Field-based properties.......................
+
+        // Witemxed.Witemxen_Recr
+
+        // Witemxed.Witemxed_Code
+
+        // Witemxed.Witemxed_Descr
+
+        // Witemxed.Qty
+
+        // Witemxed.Wax_Recr
+        Set Field_Prompt_Object    Field Witemxed.Wax_Recr To (wax(Self))
+
+        // Witemxed.Wax_Descr
+
+        // Witemxed.Axia
+
+        // Witemxed.Fpa
+
+        // Witemxed.Total
+
+        // Witemxed.Wcmoves_Recr
+
+        // Witemxed.Witemx_Recr
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Witemxed_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use Wax.SL           // wax
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

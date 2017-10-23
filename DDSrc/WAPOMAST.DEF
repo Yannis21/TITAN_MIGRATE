@@ -1,0 +1,41 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: WAPOMAST (# 23)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:WAPOMAST
+  USER DISPLAY NAME         : Wapomast
+  DATAFLEX FILE NAME        : WAPOMAST
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 81        ( USED: 81 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 42 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  WAPOKAT_CODE     ASC     10     1  1   
+  2  WAPOKAT_RECR     ASC     12    11      WAPOKAT.FIELD_4 (22,4)
+  3  WAPOMAST_CODE    ASC     10    23  1   
+  4  WAPOMAST_REC0    NUM   14.0    33      
+  5  WAPOMAST_DESCR   ASC     30    40  3   
+  6  WAPOMAST_RECR    ASC     12    70  2   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    WAPOKAT_CODE    NO  NO       20     3       2     ON-LINE
+       WAPOMAST_CODE   NO  NO 
+
+  2    WAPOMAST_RECR   NO  NO       12     3       1     ON-LINE
+
+  3    WAPOMAST_DESCR  NO  NO       42     3       2     ON-LINE
+       WAPOMAST_RECR   NO  NO 
+

@@ -1,0 +1,122 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : FPA.DD
+// Class Name: Fpa_DataDictionary
+// Revision  : 34
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Fpa
+Open Iteml
+Open Partlfpa
+Open Item
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList Fpa  Fpa.SL
+//DDB/ ExternalSelectionList sl150  sl150.SL
+Register_Object Fpa
+Register_Object sl150
+//DDB-SelectionEnd
+
+Class Fpa_DataDictionary  is a DataDictionary_Sec
+ 
+    // Validate_Save:
+ 
+    Function Validate_Save  Returns Integer
+        Local Integer iReturnVal icheck
+        Forward Get Validate_Save  To iReturnVal
+        If (Not(iReturnVal)) Begin
+            // Insert Code Here
+         //  if (fpa.agora_codegl <> '') begin
+         //     Move (Check_log(fpa.agora_codegl)) to iCheck  
+         //     if (icheck) Move 104001 to iReturnVal 
+         //  end
+         //  if (fpa.polhsh_codegl <> '') begin
+         //     Move (Check_log(fpa.polhsh_codegl)) to iCheck  
+         //     if (icheck) Move 104002 to iReturnVal
+         //  end   
+         //  If (iReturnVal) Send Operation_Not_Allowed iReturnVal
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+ 
+    Procedure Operation_Not_Allowed Integer iError_Num
+        String lsError_Message
+        Case Begin
+            Case (iError_Num = 104001)
+                Move "DDC 104: Ä§Áßò®°´¶™ ¢¶ö. Ç.ä î.è.Ä òö¶®È§" to lsError_Message
+              Case Break
+            Case (iError_Num = 104002)
+                Move "DDC 104: Ä§Áßò®°´¶™ ¢¶ö. Ç.ä î.è.Ä ß‡¢„©ú‡§" to lsError_Message
+              Case Break
+            Case Else
+                Forward Send Operation_Not_Allowed iError_Num
+        Case End
+        Error iError_Num lsError_Message
+    End_Procedure // operation_not_allowed
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Fpa.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Iteml.File_Number
+        Send Add_Client_File  Partlfpa.File_Number
+        Send Add_Client_File  Item.File_Number
+
+        // Field-based properties.......................
+
+        // Fpa.Fpa_Pososto
+        Set Field_Options          Field Fpa.Fpa_Pososto To DD_AUTOFIND    DD_REQUIRED   
+        Set Field_Prompt_Object    Field Fpa.Fpa_Pososto To (Fpa(Self))
+        Set Key_Field_State        Field Fpa.Fpa_Pososto To TRUE
+
+        // Fpa.Fpa_Descr
+        Set Field_Options          Field Fpa.Fpa_Descr To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Fpa.Fpa_Descr To (Fpa(Self))
+
+        // Fpa.Agora_Codegl
+        Set Field_Prompt_Object    Field Fpa.Agora_Codegl To (sl150(Self))
+
+        // Fpa.Polhsh_Codegl
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Fpa_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use Fpa.SL           // Fpa
+Use sl150.SL         // sl150
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

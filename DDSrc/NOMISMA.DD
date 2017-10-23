@@ -1,0 +1,215 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : NOMISMA.DD
+// Class Name: Nomisma_DataDictionary
+// Revision  : 52
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Nomisma
+Open Isotimia
+Open Particle
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Nomisma_Nomisma_Type_VT
+Register_Object Nomisma_Nomisma_Sign0_VT
+Register_Object Nomisma_Nomisma_Sign00_VT
+Register_Object Nomisma_Nomisma_Signr_VT
+
+Object Nomisma_Nomisma_Type_VT  is a DescriptionValidationTable
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "1"  "Book1"
+        Send Add_Table_Value  "2"  "Book2"
+        Send Add_Table_Value  "3"  "Reporting"
+        Send Add_Table_Value  "0"  "Other"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Nomisma_Nomisma_Type_VT
+
+Object Nomisma_Nomisma_Sign0_VT  is a DescriptionValidationTable
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "1"  "è¶¢¢òß¢ò©†òùÊ£ú§¶ úß† ´¶¨"
+        Send Add_Table_Value  "2"  "É†ò†®¶Á£ú§¶ õ†ò ´¶¨"
+        Send Add_Table_Value  "0"  "ãû ãú´ò´®úØ†£¶"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Nomisma_Nomisma_Sign0_VT
+
+Object Nomisma_Nomisma_Sign00_VT  is a DescriptionValidationTable
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "1"  "è¶¢¢òß¢ò©†òùÊ£ú§¶ úß† ´¶¨"
+        Send Add_Table_Value  "2"  "É†ò†®¶Á£ú§¶ õ†ò ´¶¨"
+        Send Add_Table_Value  "0"  "ãû ãú´ò´®‚Ø†£¶"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Nomisma_Nomisma_Sign00_VT
+
+Object Nomisma_Nomisma_Signr_VT  is a DescriptionValidationTable
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "1"  "è¶¢¢òß¢ò©†òùÊ£ú§¶ úß† ´¶¨"
+        Send Add_Table_Value  "2"  "É†ò†®¶Á£ú§¶ õ†ò ´¶¨"
+        Send Add_Table_Value  "0"  "ãû ãú´ò´®‚Ø†£¶"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Nomisma_Nomisma_Signr_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl059  sl059.sl
+Register_Object sl059
+//DDB-SelectionEnd
+
+Class Nomisma_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Property String psOldCode Public ''
+    End_procedure
+
+    Procedure New_Current_Record  Integer iOldRec  Integer iNewRec
+        Forward Send New_Current_Record  iOldRec iNewRec
+        Set psOldCode to Nomisma.Nomisma_Code
+    End_Procedure   // New_Current_Record
+
+    Procedure Save_Main_File
+        If ((Operation_Origin<>Self) And;
+             (Nomisma.Recnum=0)) Procedure_Return
+        Forward Send Save_Main_File
+    End_Procedure   // Save_Main_File
+
+    Function Validate_Save  Returns Integer
+        Local Integer iReturnVal 
+        Forward Get Validate_Save  To iReturnVal
+        If (Not(iReturnVal)) ;
+            Begin
+                     If  Nomisma.nomisma_Code eq ''                 Move 6220 to iReturnVal
+                Else If (Nomisma.Nomisma_Code <>(psOldCode(Self)) And ;
+                         (psOldCode(Self)<>''))  Move 6030 to iReturnVal
+                if iReturnVal Send Operation_Not_Allowed iReturnVal
+            End
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+
+    Procedure Operation_Not_Allowed  Integer iError_Num
+             if iError_num eq 6220 error 6220 "å¶£†©£ò´ò => â‡õ†°Ê™ °ú§Ê™ "
+        Else if iError_num eq 6030 error 6030 "Ñß†¢‚•´ú §Ê£†©£ò òß¶ ´û§ ¢Â©´ò £ú (F4)\nû ßò´„©´ú ß®È´ò F5 ©´¶ ûõû ¨ß·®Æ¶§\n‡©´ú §ò °òüò®Â©ú† û ò®Æ†°„ ´¶¨ ´†£„\nß®Â§ úß†¢‚•ú´ú ·¢¢¶"
+        //Else if iError_num eq 6030 error 6030 "Éú§ úß†´®‚ßú´ò† ò¢¢òö„ ©´¶ °‡õ†°Ê §¶£Â©£ò´¶™"
+        else Forward Send Operation_Not_Allowed  iError_Num
+    End_Procedure   // Operation_Not_Allowed
+
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        SYSDATE NOMISMA.LUP
+    End_Procedure   // Update
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        SYSDATE NOMISMA.FUP
+    End_Procedure   // Creating
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Nomisma.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Isotimia.File_Number
+        Send Add_Client_File  Particle.File_Number
+
+        // Field-based properties.......................
+
+        // Nomisma.Nomisma_Code
+        Set Field_Options          Field Nomisma.Nomisma_Code To DD_AUTOFIND    DD_CAPSLOCK   
+        Set Field_Prompt_Object    Field Nomisma.Nomisma_Code To (sl059(Self))
+        Set Key_Field_State        Field Nomisma.Nomisma_Code To TRUE
+
+        // Nomisma.Nomisma_Descr
+        Set Field_Options          Field Nomisma.Nomisma_Descr To DD_CAPSLOCK   
+        Set Field_Prompt_Object    Field Nomisma.Nomisma_Descr To (sl059(Self))
+        Set Key_Field_State        Field Nomisma.Nomisma_Descr To TRUE
+
+        // Nomisma.Nomisma_Short
+        Set Field_Options          Field Nomisma.Nomisma_Short To DD_CAPSLOCK   
+        Set Field_Prompt_Object    Field Nomisma.Nomisma_Short To (sl059(Self))
+        Set Key_Field_State        Field Nomisma.Nomisma_Short To TRUE
+
+        // Nomisma.Dekadika
+
+        // Nomisma.Fup
+
+        // Nomisma.Lup
+
+        // Nomisma.Euro_Zone
+
+        // Nomisma.Einai_Drx
+
+        // Nomisma.Einai_Euro
+
+        // Nomisma.Monades
+
+        // Nomisma.Kl_Isot_Euro
+
+        // Nomisma.Nomisma_Type
+        Set Field_Value_Table      Field Nomisma.Nomisma_Type To (Nomisma_Nomisma_Type_VT(Self))
+
+        // Nomisma.Nomisma_Sign0
+        Set Field_Value_Table      Field Nomisma.Nomisma_Sign0 To (Nomisma_Nomisma_Sign0_VT(Self))
+
+        // Nomisma.Nomisma_Sign00
+        Set Field_Value_Table      Field Nomisma.Nomisma_Sign00 To (Nomisma_Nomisma_Sign00_VT(Self))
+
+        // Nomisma.Nomisma_Signr
+        Set Field_Value_Table      Field Nomisma.Nomisma_Signr To (Nomisma_Nomisma_Signr_VT(Self))
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Nomisma_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl059.sl         // sl059
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

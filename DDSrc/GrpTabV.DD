@@ -1,0 +1,78 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GRPTABV.DD
+// Class Name: Grptabv_DataDictionary
+// Revision  : 4
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Grptabv
+Open Users
+Open Tabview
+
+//DDB-HeaderEnd
+
+Class Grptabv_DataDictionary  is a DataDictionary_sec
+ 
+    // Update:
+ 
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move TabView.View_Name to GrpTabV.View_Name
+        Move TabView.Tab_Label to GrpTabV.Tab_Label
+    End_Procedure   // Update
+ 
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Grptabv.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Users.File_Number
+        Send Add_Server_File  Tabview.File_Number
+
+        // Field-based properties.......................
+
+        // Grptabv.User_Id
+
+        // Grptabv.View_Name
+
+        // Grptabv.Tab_Label
+
+        // Grptabv.Tabview_Aa
+
+        // Grptabv.Allow
+        Set Field_Checkbox_Values  Field Grptabv.Allow To "1"  "0"
+        Set Field_Class_Name       Field Grptabv.Allow To "dbCheckBoxsub"
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Grptabv.Allow To 0
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Grptabv_DataDictionary
+//DDB-FileEnd

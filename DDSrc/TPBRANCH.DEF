@@ -1,0 +1,47 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: TPBRANCH (# 72)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:TPBRANCH
+  USER DISPLAY NAME         : TPBranch
+  DATAFLEX FILE NAME        : TPBRANCH
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 37        ( USED: 37 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 1 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  BRANCH_RECR      ASC      6     1  1   BRANCH.FIELD_4 (2,4)
+  2  BAXIOKAT_CODE    NUM    6.0     7  1   BAXIOKAT.FIELD_1 (34,1)
+  3  PCT_EPI_SYNOLOU  NUM    4.2    10  1   
+  4  PARALABH_MERES   NUM    4.0    13      
+  5  XARHTOS_MERES    NUM    4.0    15      
+  6  PLHROTEO_MERES   NUM    4.0    17      
+  7  TPBRANCH_REC0    NUM   14.0    19  1   
+  8  TPBRANCH_RECR    ASC     12    26  3   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    BRANCH_RECR     NO  NO       19     3       4     ON-LINE
+       BAXIOKAT_CODE   NO  NO 
+       PCT_EPI_SYNOLOU NO  NO 
+       TPBRANCH_REC0   NO  NO 
+
+  2    BAXIOKAT_CODE   NO  NO       19     3       4     ON-LINE
+       BRANCH_RECR     NO  NO 
+       PCT_EPI_SYNOLOU NO  NO 
+       TPBRANCH_REC0   NO  NO 
+
+  3    TPBRANCH_RECR   NO  NO       12     3       1     ON-LINE
+

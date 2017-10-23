@@ -1,0 +1,70 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : Rates.DD
+// Class Name: Rates_DataDictionary
+// Revision  : 0
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Rates
+Open Currency
+
+//DDB-HeaderEnd
+ 
+Class Rates_DataDictionary  is a DataDictionary_sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Rates.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Currency.File_Number
+
+        // Field-based properties.......................
+
+        // Rates.Currency_C_Code
+
+        // Rates.Rates_Hmnia
+
+        // Rates.Rates_Pkid
+
+        // Rates.Rates_Rec0
+
+        // Rates.Currency_Rec0
+
+        // Rates.Rates_Rate0
+
+        // Rates.Rates_Rate00
+
+        // Rates.Rates_Rater
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Rates_DataDictionary
+//DDB-FileEnd

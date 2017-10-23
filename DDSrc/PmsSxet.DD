@@ -1,0 +1,261 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : PMSSXET.DD
+// Class Name: PmsSxet_DataDictionary
+// Revision  : 27
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Pmssxet
+
+//DDB-HeaderEnd
+
+Use bpEnYpol.dg
+Use MyArray.dg
+//Use bpMakeSx.dg
+
+Class PmsSxet_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Property Integer piFromCreate   Public 0
+    End_Procedure
+
+    Procedure Creating
+        Forward Send Creating
+        Set piFromCreate to 1
+    End_Procedure
+
+    Procedure Update
+        String  sRecr1 sRecr2 sPmsSxet
+        Number  nQty
+        Integer iLathos iCurrentPmoves iAkyro iCurrentPmsSxet iCurrentPartl
+
+        Forward Send Update
+
+        Move (Trim(Particle.Partl_LastNo)='1')  to iAkyro
+        Move Particle.Partl_Recr                to sRecr1
+        Move Pmoves.Recnum                      to iCurrentPmoves
+        Move PmsSxet.Recnum                     to iCurrentPmsSxet
+        Move PmsSxet.Arx_Partl_Recr             to sRecr2
+        Move PmsSxet.Posothta                   to nQty
+        Move Particle.Recnum                    to iCurrentPartl
+
+
+        If (piFromCreate(Self)<>1) Begin
+            Add nQty to Pmoves.Pms_Qty
+            Saverecord Pmoves
+
+            Set pnQty               Of bpEnYpol to nQty
+            Set psRecr              Of bpEnYpol to PmsSxet.Sxetiko_Recr
+            Set piFromAkyrosh       Of bpEnYpol to (iAkyro=1)
+            Set piCurrentPartl      Of bpEnYpol to iCurrentPartl
+            Set piCurrentPmoves     Of bpEnYpol to iCurrentPmoves
+            Set piCurrentPmsSxet    Of bpEnYpol to iCurrentPmsSxet
+            Send DoProcess          to bpEnYpol
+
+            Get piLathos            Of bpEnYpol to iLathos
+
+                 If (iLathos=40000) Error 8000 'ƒœ¤ ™¨âŸž¡œ œšš¨˜­ã ˜¨® ¡¦ç Pmoves\nUpdate PmsSxet'
+            Else If (iLathos=40001) Error 8001 '’¦ ¬§æ¢¦ §¦ §¨¦ª « £¦¢æšž©ž §¨¦¡ç§«œ  ˜¨¤ž« ¡æ.\nUpdate PmsSxet'
+            Else If (iLathos=40002) Error 8002 'ƒœ¤ ™¨âŸž¡œ Particle\nUpdate PmsSxet'
+            Else If (iLathos=40003) Error 8003 'ƒœ¤ ™¨âŸž¡œ œšš¨˜­ã ˜¨® ¡¦ç Pmoves\nUpdate PmsSxet'
+            Else If (iLathos=40004) Error 8004 '’¦ §¨à«˜¨® ¡æ ¬§æ¢¦ §¦ §¨¦ª « £¦¢æšž©ž §¨¦¡ç§«œ  ˜¨¤ž« ¡æ.\nUpdate PmsSxet'
+            Else If (iLathos=40005) Error 8005 'ƒœ¤ ™¨âŸž¡œ Particle\nUpdate PmsSxet'
+            Else If (iLathos=40006) Error 8006 'ƒœ¤ ™¨âŸž¡œ œšš¨˜­ã ˜¨® ¡¦ç Pmoves\nUpdate PmsSxet'
+
+        End
+
+        // Epanafora posothtas giati afou trexei h backout me timh px 3 eno h update exei timh 4
+        // sthn epanatopothethsh ths bpenypol xanavriskei to current pmssxet record
+        // kai xanei thn posothta thn kainourgia opote epanerxetai me thn posothta ths
+        // backout pou einai 3.
+        Move nQty to PmsSxet.Posothta
+
+
+        Clear Psxetika
+        Move sRecr1 to Psxetika.Partl_Recr
+        Move sRecr2 to Psxetika.Psx_Partl_Recr
+        Find Eq Psxetika by index.4
+        If (Found) Begin
+            Add nQty to Psxetika.Pms_Sx_Qty
+            Saverecord Psxetika
+        End
+
+        Clear Psxetika
+        Move sRecr2 to Psxetika.Partl_Recr
+        Move sRecr1 to Psxetika.Psx_Partl_Recr
+        Find Eq Psxetika by index.4
+        If (Found) Begin
+            Add nQty to Psxetika.Pms_Sx_Qty
+            Saverecord Psxetika
+        End
+    End_Procedure
+
+    Procedure Backout
+        String  sRecr1 sRecr2 sPmsSxet
+        Number  nQty
+        Integer iLathos iCurrentPmoves iAkyro iCurrentPmsSxet iCurrentPartl
+
+        Move (Trim(Particle.Partl_LastNo)='1')  to iAkyro
+        Move Particle.Partl_Recr                to sRecr1
+        Move Pmoves.Recnum                      to iCurrentPmoves
+        Move PmsSxet.Recnum                     to iCurrentPmsSxet
+        Move PmsSxet.Arx_Partl_Recr             to sRecr2
+        Move PmsSxet.Posothta                   to nQty
+        Move Particle.Recnum                    to iCurrentPartl
+
+        Forward Send Backout
+
+        Set pnQty               Of bpEnYpol to (nQty*(-1))
+        Set psRecr              Of bpEnYpol to PmsSxet.Sxetiko_Recr
+        Set piFromAkyrosh       Of bpEnYpol to (iAkyro=1)
+        Set piCurrentPartl      Of bpEnYpol to iCurrentPartl
+        Set piCurrentPmoves     Of bpEnYpol to iCurrentPmoves
+        Set piCurrentPmsSxet    Of bpEnYpol to iCurrentPmsSxet
+        Send DoProcess          to bpEnYpol
+
+        Get piLathos            Of bpEnYpol to iLathos
+
+             If (iLathos=40000) Error 8000 'ƒœ¤ ™¨âŸž¡œ œšš¨˜­ã ˜¨® ¡¦ç Pmoves\nBackout PmsSxet'
+        Else If (iLathos=40001) Error 8001 '’¦ ¬§æ¢¦ §¦ §¨¦ª « £¦¢æšž©ž §¨¦¡ç§«œ  ˜¨¤ž« ¡æ.\nBackout PmsSxet'
+        Else If (iLathos=40002) Error 8002 'ƒœ¤ ™¨âŸž¡œ Particle\nBackout PmsSxet'
+        Else If (iLathos=40003) Error 8003 'ƒœ¤ ™¨âŸž¡œ œšš¨˜­ã ˜¨® ¡¦ç Pmoves\nBackout PmsSxet'
+        Else If (iLathos=40004) Error 8004 '’¦ §¨à«˜¨® ¡æ ¬§æ¢¦ §¦ §¨¦ª « £¦¢æšž©ž §¨¦¡ç§«œ  ˜¨¤ž« ¡æ.\nBackout PmsSxet'
+        Else If (iLathos=40005) Error 8005 'ƒœ¤ ™¨âŸž¡œ Particle\nBackout PmsSxet'
+        Else If (iLathos=40006) Error 8006 '’¦ ¬§æ¢¦ §¦ §¨¦ª « £¦¢æšž©ž §¨¦¡ç§«œ  > ˜¨® ¡ã §¦©æ«ž«˜.\nBackout PmsSxet'
+        Else If (iLathos=40007) Error 8007 'ƒœ¤ ™¨âŸž¡œ œšš¨˜­ã ˜¨® ¡¦ç Pmoves\nBackout PmsSxet'
+
+        Clear Psxetika
+        Move sRecr1 to Psxetika.Partl_Recr
+        Move sRecr2 to Psxetika.Psx_Partl_Recr
+        Find Eq Psxetika by index.4
+        If (Found) Begin
+            Sub nQty from Psxetika.Pms_Sx_Qty
+            Saverecord Psxetika
+        End
+
+        Clear Psxetika
+        Move sRecr2 to Psxetika.Partl_Recr
+        Move sRecr1 to Psxetika.Psx_Partl_Recr
+        Find Eq Psxetika by index.4
+        If (Found) Begin
+            Sub nQty from Psxetika.Pms_Sx_Qty
+            Saverecord Psxetika
+        End
+    End_Procedure
+
+    Procedure Request_Save
+        Integer iInt iLathos iMustDelete iCurrentPmoves iAkyro iCurrentPmsSxet iCurrentPartl
+        String  sParticleRecr sPmsSxetRecr sPmovesRecr sArxPartlRecr sRecr1 sRecr2 sPmsSxet
+        Number  nQty
+
+        Set piFromCreate to 0
+
+        Forward Send Request_Save
+
+        If (piFromCreate(Self)=1) Begin
+            Set piFromCreate                                                to 0
+
+            Get File_Field_Current_Value File_Field Particle.Recnum         to iCurrentPartl
+            Get File_Field_Current_Value File_Field Particle.Partl_Recr     to sParticleRecr
+            Get File_Field_Current_Value File_Field Pmoves.Pms_Recr         to sPmovesRecr
+            Get File_Field_Current_Value File_Field Pmoves.Recnum           to iCurrentPmoves
+            Get File_Field_Current_Value File_Field PmsSxet.Recnum          to iCurrentPmsSxet
+            Get File_Field_Current_Value File_Field PmsSxet.Sxetiko_Recr    to sPmsSxetRecr
+            Get File_Field_Current_Value File_Field PmsSxet.Arx_Partl_Recr  to sArxPartlRecr
+            Get File_Field_Current_Value File_Field PmsSxet.Posothta        to nQty
+            Get File_Field_Current_Value File_Field Particle.Partl_LastNo   to iAkyro
+            Move (iAkyro=1)                                                 to iAkyro
+
+            Set pnQty               Of bpEnYpol to nQty
+            Set psRecr              Of bpEnYpol to sPmsSxetRecr
+            Set piFromAkyrosh       Of bpEnYpol to (iAkyro=1)
+            Set piCurrentPartl      Of bpEnYpol to iCurrentPartl
+            Set piCurrentPmoves     Of bpEnYpol to iCurrentPmoves
+            Set piCurrentPmsSxet    Of bpEnYpol to iCurrentPmsSxet
+            Send DoProcess          to bpEnYpol
+            Get piLathos            Of bpEnYpol to iLathos
+
+                 If (iLathos=40000) Error 8000 'ƒœ¤ ™¨âŸž¡œ œšš¨˜­ã ˜¨® ¡¦ç Pmoves\nUpdate PmsSxet'
+            Else If (iLathos=40001) Error 8001 '’¦ ¬§æ¢¦ §¦ §¨¦ª « £¦¢æšž©ž §¨¦¡ç§«œ  ˜¨¤ž« ¡æ.\nUpdate PmsSxet'
+            Else If (iLathos=40002) Error 8002 'ƒœ¤ ™¨âŸž¡œ Particle\nUpdate PmsSxet'
+            Else If (iLathos=40003) Error 8003 'ƒœ¤ ™¨âŸž¡œ œšš¨˜­ã ˜¨® ¡¦ç Pmoves\nUpdate PmsSxet'
+            Else If (iLathos=40004) Error 8004 '’¦ §¨à«˜¨® ¡æ ¬§æ¢¦ §¦ §¨¦ª « £¦¢æšž©ž §¨¦¡ç§«œ  ˜¨¤ž« ¡æ.\nUpdate PmsSxet'
+            Else If (iLathos=40005) Error 8005 'ƒœ¤ ™¨âŸž¡œ Particle\nUpdate PmsSxet'
+            Else If (iLathos=40006) Error 8006 '’¦ ¬§æ¢¦ §¦ §¨¦ª « £¦¢æšž©ž §¨¦¡ç§«œ  > ˜¨® ¡ã §¦©æ«ž«˜.\nUpdate PmsSxet'
+            Else If (iLathos=40007) Error 8007 'ƒœ¤ ™¨âŸž¡œ œšš¨˜­ã ˜¨® ¡¦ç Pmoves\nUpdate PmsSxet'
+
+            Set psParticleRecr0     Of Psx_Array to sParticleRecr
+            Set psPsxetikaRecr0     Of Psx_Array to sArxPartlRecr
+            Set pnPosothta          Of Psx_Array to nQty
+            Send Make_The_Record    Of Psx_Array
+
+            // Xana vres tis eggrafes
+            Clear Particle
+            Move sParticleRecr  to Particle.Partl_Recr
+            Find Eq Particle by index.2
+
+            Clear Pmoves
+            Move sPmovesRecr    to Pmoves.Pms_Recr
+            Find Eq Pmoves by index.2
+
+            Clear PmsSxet
+            Move sPmovesRecr    to PmsSxet.Pms_Recr
+            Move sPmsSxetRecr   to PmsSxet.Sxetiko_Recr
+            Find Eq PmsSxet by Index.1
+
+        End
+    End_Procedure
+
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Pmssxet.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+
+        // Field-based properties.......................
+
+        // Pmssxet.Pms_Recr
+
+        // Pmssxet.Sxetiko_Recr
+
+        // Pmssxet.Posothta
+
+        // Pmssxet.Arx_Partl_Recr
+
+        // Pmssxet.Sx_Parast
+
+        // Pmssxet.Sx_Hmnia
+
+        // Pmssxet.Sx_Foreas
+
+        // Pmssxet.Sx_Arithmos
+
+        // Pmssxet.Sx_Seira
+
+        // Pmssxet.Sx_Posothta
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Pmssxet_DataDictionary
+//DDB-FileEnd

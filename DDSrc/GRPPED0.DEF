@@ -1,0 +1,51 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: GRPPED0 (# 240)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:GRPPED0
+  USER DISPLAY NAME         : GrpPed0
+  DATAFLEX FILE NAME        : GRPPED0
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 39        ( USED: 39 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  GRPARX0_RECR     ASC      8     1  1   GRPARX0.FIELD_8 (248,8)
+  2  GROUP_ID         NUM    4.0     9  2   
+  3  ARXEIO_ID        NUM    4.0    11  2   
+  4  PEDIO_ID         NUM    4.0    13  2   
+  5  ALLOW_READ       ASC      1    15      
+  6  ALLOW_CHANGE     ASC      1    16      
+  7  ALLOW_CREATE     ASC      1    17      
+  8  ALLOW_DELETE     ASC      1    18      
+  9  ALLOW_COPY       ASC      1    19      
+ 10  PEDIO_RECR       ASC     20    20  4   PEDIA.FIELD_8 (242,8)
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    GRPARX0_RECR    NO  NO       28     3       2     ON-LINE
+       PEDIO_RECR      NO  NO 
+
+  2    GROUP_ID        NO  NO       6      3       3     ON-LINE
+       ARXEIO_ID       NO  NO 
+       PEDIO_ID        NO  NO 
+
+  3    ARXEIO_ID       NO  NO       6      3       3     ON-LINE
+       PEDIO_ID        NO  NO 
+       GROUP_ID        NO  NO 
+
+  4    PEDIO_RECR      NO  NO       22     3       2     ON-LINE
+       GROUP_ID        NO  NO 
+

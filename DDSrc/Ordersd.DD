@@ -1,0 +1,160 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : ORDERSD.DD
+// Class Name: Ordersd_DataDictionary
+// Revision  : 19
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Ordersd
+Open Order1
+Open Sysrecc
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList SL17  sl17.SL
+Register_Object SL17
+//DDB-SelectionEnd
+
+Class Ordersd_DataDictionary  is a DataDictionary_Sec
+
+     Procedure Update
+        Forward Send Update
+        move syscurxr.company_code to ordersd.company_code
+        move syscurxr.branch_code  to ordersd.branch_code
+        move syscurxr.year_year    to ordersd.year_year
+        move order1.module         to ordersd.module
+        Move (round_number((ordersd.qty*ordersd.unitprice),2))   to ordersd.net
+        Move (Round_number(((ordersd.net*ordersd.pcdisc/100)),2)) ;
+                                                        to ordersd.posodisc
+        Move (ordersd.net-ordersd.posodisc)             to ordersd.net
+        Move (Round_number(((ordersd.net*ordersd.pcfpa/100)),2));
+                                                        to ordersd.posofpa
+        Move (ordersd.net+ordersd.posofpa+ordersd.extra)    to ordersd.total
+        Add   ordersd.Qty          to order1.qty
+        Add   ordersd.posofpa      to order1.fpa
+        Add   ordersd.posodisc     to order1.disc
+        Add   ordersd.extra        to order1.extra
+        Add   ordersd.total        to order1.total
+        add   ordersd.net          to order1.net
+        // Insert Code Here
+    End_Procedure   // Update
+
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        if (ordersd.module = '01') begin
+           move (sysrecc.ordersdc_rec0 + 1) to ordersd.rec0
+           move ordersd.rec0 to sysrecc.ordersdc_rec0
+           saverecord sysrecc
+        end
+        else begin
+           move (sysrecc.ordersd_rec0 + 1) to ordersd.rec0
+           move ordersd.rec0 to sysrecc.ordersd_rec0
+           saverecord sysrecc
+        end
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                         (Trim(String(ordersd.rec0)))))) to ordersd.recr
+    End_Procedure   // Creating
+
+
+    Procedure Backout
+        Forward Send Backout
+        sub ordersd.Qty          from order1.qty
+        sub ordersd.posofpa      from order1.fpa
+        sub ordersd.posodisc     from order1.disc
+        sub ordersd.extra        from order1.extra
+        sub ordersd.total        from order1.total
+        sub ordersd.net          from order1.net
+    End_procedure
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Ordersd.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Order1.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+
+        // Field-based properties.......................
+
+        // Ordersd.Company_Code
+
+        // Ordersd.Branch_Code
+
+        // Ordersd.Year_Year
+
+        // Ordersd.Orders_Recr
+
+        // Ordersd.Rec0
+
+        // Ordersd.Recr
+
+        // Ordersd.Clients_Code
+
+        // Ordersd.Item_Code
+        Set Field_Prompt_Object    Field Ordersd.Item_Code To (SL17(Self))
+
+        // Ordersd.Clients_Item
+
+        // Ordersd.Qty
+
+        // Ordersd.Unitprice
+
+        // Ordersd.Pcfpa
+
+        // Ordersd.Pcdisc
+
+        // Ordersd.Posofpa
+
+        // Ordersd.Posodisc
+
+        // Ordersd.Extra
+
+        // Ordersd.Net
+
+        // Ordersd.Total
+
+        // Ordersd.Module
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Ordersd_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl17.SL          // SL17
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

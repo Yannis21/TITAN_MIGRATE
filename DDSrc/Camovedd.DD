@@ -1,0 +1,103 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : CAMOVEDD.DD
+// Class Name: Camovedd_DataDictionary
+// Revision  : 31
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Camovedd
+Open Ypoprosf
+Open Witemx
+
+//DDB-HeaderEnd
+
+Class Camovedd_DataDictionary  is a DataDictionary_sec
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Camovedd.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Ypoprosf.File_Number
+        Send Add_Server_File  Witemx.File_Number
+
+        // Field-based properties.......................
+
+        // Camovedd.Aa_Ypoprosforas
+
+        // Camovedd.Caitems_Recr
+
+        // Camovedd.Camovedd_Text
+
+        // Camovedd.Camovedd_Qty
+
+        // Camovedd.Camovedd_Unitpr
+
+        // Camovedd.Camovedd_Net
+
+        // Camovedd.Camovedd_Fpa
+
+        // Camovedd.Camovedd_Total
+
+        // Camovedd.Pcdisc
+
+        // Camovedd.Posodisc
+
+        // Camovedd.Witemx_Code
+
+        // Camovedd.Pcfpa
+
+        // Camovedd.Date
+        Set Field_Entry_msg        Field Camovedd.Date To Entry_camovedd_date
+        Set Field_Mask_Type        Field Camovedd.Date To MASK_DATE_WINDOW
+
+        // Camovedd.Vpagiaxrm3
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+    
+    Procedure Update
+  
+        Forward Send Update  
+        move witemx.witemx_code to camovedd.witemx_code   
+   End_Procedure
+   
+   Procedure Entry_camovedd_date Integer iField Date dDate
+         Local Integer Changed
+         Get Field_Changed_State iField to Changed
+         If ( Changed=0 AND dDate = 0) Begin
+           SysDate4 dDate
+           Set Field_Default_Value iField to dDate
+         End
+    End_Procedure
+   Procedure Backout
+        Forward Send Backout
+   End_Procedure
+
+  
+    
+    
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Camovedd_DataDictionary
+//DDB-FileEnd

@@ -1,0 +1,64 @@
+-----------------------------------------------------------------------------
+  DATE: 01/11/116      TIME: 13:48                                  PAGE:  1
+  FILE DEFINITION FOR FILE: HMERPROG (# 62)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:HMERPROG
+  USER DISPLAY NAME         : HmerProg
+  DATAFLEX FILE NAME        : HMERPROG
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 191       ( USED: 191 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 34757 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  HMNIA            DAT      3     1  2   
+  2  SITE             ASC     10     4      
+  3  QTY              NUM   14.4    14      
+  4  STARTTIME        ASC      4    23  3   
+  5  SITEW            ASC     10    27      
+  6  COMPANY_CODE     ASC      3    37      
+  7  DORDERH_ID       ASC     15    40      
+  8  ITEM_CODE        ASC     20    55      
+  9  PUMP_ID          ASC     20    75      
+ 10  PUMPM            ASC      4    95      
+ 11  CN_CODE          ASC     20    99      
+ 12  EXPORT           NUM    2.0   119      
+ 13  SENT             NUM    2.0   120      
+ 14  CARSONSITE       NUM   14.4   121      
+ 15  M3ONSITE         NUM   14.4   130      
+ 16  TIMELOAD         NUM   14.4   139      
+ 17  BTMCODE1         ASC     10   148      
+ 18  BTMCODE2         ASC     10   158      
+ 19  BTMCODE3         ASC     10   168      
+ 20  DORDERD_RECNUM   NUM   14.0   178  1   
+ 21  BRANCH_RECR      ASC      6   185  1   
+ 22  SELECTED         NUM    2.0   191      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    BRANCH_RECR     NO  NO       13     3       2     ON-LINE
+       DORDERD_RECNUM  NO  NO 
+
+  2    HMNIA           NO  NO       16     3       3     ON-LINE
+       BRANCH_RECR     NO  NO 
+       DORDERD_RECNUM  NO  NO 
+
+  3    HMNIA           NO  NO       20     3       4     ON-LINE
+       STARTTIME       NO  NO 
+       BRANCH_RECR     NO  NO 
+       DORDERD_RECNUM  NO  NO 
+
+  4    DORDERD_RECNUM  NO  NO       13     3       2     ON-LINE
+       BRANCH_RECR     NO  NO 
+

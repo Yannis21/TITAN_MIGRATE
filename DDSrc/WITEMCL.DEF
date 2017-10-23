@@ -1,0 +1,48 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: WITEMCL (# 186)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:WITEMCL
+  USER DISPLAY NAME         : WITEMCL
+  DATAFLEX FILE NAME        : WITEMCL
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 231       ( USED: 231 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  ITEM_CODE        ASC     20     1  1   ITEM.FIELD_5 (26,5)
+  2  CLIENT_CODE      ASC     20    21  2   
+  3  CLIENT_ITEMCODE  ASC     20    41      
+  4  CLIENT_DATE      DAT      3    61  3   
+  5  CLIENT_PRICE     NUM   14.6    64      
+  6  ITEM_DESCR       ASC    150    74      
+  7  REC0             NUM   14.0   224  3   
+  8  IS_CLIENT        ASC      1   231      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    ITEM_CODE       NO  NO       40     3       2     ON-LINE
+       CLIENT_CODE     NO  NO 
+
+  2    CLIENT_CODE     NO  NO       40     3       2     ON-LINE
+       ITEM_CODE       NO  NO 
+
+  3    ITEM_CODE       NO  NO       30     3       3     ON-LINE
+       CLIENT_DATE     NO  NO 
+       REC0            NO  NO 
+
+  4    ITEM_CODE       NO  NO       27     3       2     ON-LINE
+       REC0            NO  NO 
+

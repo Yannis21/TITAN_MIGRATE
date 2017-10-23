@@ -1,0 +1,113 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : BRZONES.DD
+// Class Name: BrZones_DataDictionary
+// Revision  : 7
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Brzones
+Open Cnzones
+Open Branch
+Open Zones
+Open Sysrecc
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl065  sl065.SL
+Register_Object sl065
+//DDB-SelectionEnd
+
+Class BrZones_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move Branch.Beto_Site   to BrZones.Beto_Site
+    End_Procedure   // Update
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                        (Trim(String(BrZones.BrZones_Rec0)))))) to BrZones.BrZone_Recr
+    End_Procedure   // Creating
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Brzones.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Cnzones.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Branch.File_Number
+        Send Add_Server_File  Zones.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Brzone_Rec0  To Brzones.Brzones_Rec0
+
+        // Field-based properties.......................
+
+        // Brzones.Branch_Recr
+
+        // Brzones.Zone_Id
+        Set Field_Options          Field Brzones.Zone_Id To DD_AUTOFIND   
+
+        // Brzones.Brzones_Rec0
+        Set Field_Options          Field Brzones.Brzones_Rec0 To DD_AUTOFIND   
+
+        // Brzones.Brzone_Recr
+        Set Field_Prompt_Object    Field Brzones.Brzone_Recr To (sl065(Self))
+
+        // Brzones.Beto_Site
+
+        // Brzones.Zone_Km
+
+        // Brzones.Zone_Charge0
+
+        // Brzones.Zone_Charge1
+
+        // Brzones.Zone_Charge2
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Brzones_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl065.SL         // sl065
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

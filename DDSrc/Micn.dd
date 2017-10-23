@@ -1,0 +1,42 @@
+Use DataDict.pkg
+
+Open MICN
+Open MICLIENT
+Open MICONSTR
+Open MISALESM
+Open MIMHXAN
+
+Register_Object Micn_sl
+
+Class Micn is a DataDictionary
+    
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Set Main_file to MICN.File_Number
+
+        Set Add_Server_File to MICLIENT.File_Number
+        Set Add_Server_File to MICONSTR.File_Number
+        Set Add_Server_File to MISALESM.File_Number
+        Set Add_Server_File to MIMHXAN.File_Number
+
+        Set Foreign_Field_Option DD_KEYFIELD DD_NOPUT to True
+        Set Foreign_Field_Option DD_KEYFIELD DD_FINDREQ to True
+        Set Foreign_Field_Option DD_INDEXFIELD DD_NOPUT to True
+        Set Foreign_Field_Option DD_DEFAULT DD_DISPLAYONLY to True
+
+        Set Field_Prompt_Object Field MICN.CLIENT_ID to Micn_sl
+
+        Set Field_Prompt_Object Field MICN.CN_CODE to Micn_sl
+
+        Set Field_Prompt_Object Field MICN.CN_DESCR to Micn_sl
+
+        Set Field_Prompt_Object Field MICN.CN_ADDRESS to Micn_sl
+
+    End_Procedure
+
+End_Class
+
+#IFDEF Is$WebApp
+#ELSE
+Use Micn.sl
+#ENDIF

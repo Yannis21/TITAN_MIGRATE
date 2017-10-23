@@ -1,0 +1,66 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : WORKSPC.DD
+// Class Name: Workspc_DataDictionary
+// Revision  : 9
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Workspc
+
+//DDB-HeaderEnd
+
+Class Workspc_DataDictionary  is a DataDictionary
+                        
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Workspc.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Field-based properties.......................
+
+        // Workspc.Id
+        Set Field_Options          Field Workspc.Id To DD_AUTOFIND    DD_REQUIRED   
+
+        // Workspc.Titlos
+        Set Field_Options          Field Workspc.Titlos To DD_REQUIRED   
+
+        // Workspc.Appsrcextrapath
+        Set Field_Options          Field Workspc.Appsrcextrapath To DD_REQUIRED   
+
+        // Workspc.Dataextrapath
+        Set Field_Options          Field Workspc.Dataextrapath To DD_REQUIRED   
+
+        // Workspc.Working
+
+        // Workspc.Filelist_Name
+
+        // Workspc.Year
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+End_Class    // Workspc_DataDictionary
+//DDB-FileEnd

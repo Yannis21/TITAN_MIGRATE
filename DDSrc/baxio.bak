@@ -1,0 +1,963 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : BAXIO.DD
+// Class Name: Baxio_DataDictionary
+// Revision  : 112
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Baxio
+Open Bmove
+Open Baxiokat
+Open Sysrecb
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+//DDB/ ExternalValidationTable Baxio_Status_VT  Baxio.pkg
+//DDB/ ExternalValidationTable Bfile_VT  Baxio.pkg
+
+Register_Object Baxio_Status_VT
+Register_Object Baxio_Baxio_Place_VT
+Register_Object Bfile_VT
+Register_Object Baxio_Baxio_Bank_VT
+Register_Object Baxio_Baxio_Banka_VT
+Register_Object Baxio_Baxio_From_VT
+Register_Object Baxio_Baxio_Topos_VT1
+Use Baxio.pkg        // Baxio_Status_VT, Bfile_VT
+
+Object Baxio_Baxio_Place_VT  is a CodeValidationTable
+    Set Type_Value        To "BAXIOPLACE"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Baxio_Baxio_Place_VT
+
+Object Baxio_Baxio_Bank_VT  is a CodeValidationTable
+    Set Type_Value        To "BANK"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Baxio_Baxio_Bank_VT
+
+Object Baxio_Baxio_Banka_VT  is a CodeValidationTable
+    Set Type_Value        To "BANK"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Baxio_Baxio_Banka_VT
+
+Object Baxio_Baxio_From_VT  is a DescriptionValidationTable
+    Set Allow_Blank_State To TRUE
+    Set Table_Title       To "Ä•†Êö®ò≠¶ †õÂ¶¨ / ´®Â´¶¨"
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "0"  "àõÂ¶¨"
+        Send Add_Table_Value  "1"  "í®Â´¶¨"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Baxio_Baxio_From_VT
+
+Object Baxio_Baxio_Topos_VT1  is a DescriptionValidationTable
+    Set Allow_Blank_State To TRUE
+    Set Table_Title       To "Ä•†Êö®ò≠¶ Ä´´†°„™ / Ñßò®ÆÂò™"
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "0"  "Ä´´†°„™"
+        Send Add_Table_Value  "1"  "Ñßò®ÆÂò™"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Baxio_Baxio_Topos_VT1
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList SL037  SL037.SL
+//DDB/ ExternalSelectionList slNomism  slnomism.sl
+Register_Object SL037
+Register_Object slNomism
+//DDB-SelectionEnd
+
+Class Baxio_DataDictionary  is a DataDictionary_Sec
+
+      Procedure Construct_Object
+                Forward Send Construct_Object
+
+                //btypkin related properties:
+                //ú§û£ú®È§¶§´ò† ©´„§: update ´¶¨ bmove,
+                //£ûõú§Âù¶§´ò†  ©´û§: request save & delete ´¶¨ bmove.
+                Property Integer piBtypkin_Flag03 0
+                Property Integer piBtypkin_Flag04 0
+                Property Integer pifromxrhsh      0
+
+                //baxio related properties:
+                //ú§û£ú®È§ú´ò†    ©´û§: creating,
+                //Æ®û©†£¶ß¶†úÂ´ò† ©´û§: update ´¶¨ bmove ö†ò §ò ú§ú®ö¶ß¶†„©ú† ´û§ private.created_baxio ´¶¨ bmove,
+                //£ûõú§Âùú´ò†     ©´û§: request save & delete ´¶¨ bmove.
+                Property Integer piCreated_Baxio  0
+
+                //ú§û£ú®È§¶§´ò†    ©´û§: backout,
+                //Æ®û©†£¶ß¶†¶Á§´ò† ©´û§: validate_save ö†ò ´¶§ ‚¢úöÆ¶ editing ´¶¨ baxio,
+                //£ûõú§Âù¶§´ò†     ©´û§: request save & delete ´¶¨ bmove.
+                Property Number  pnB_Baxio_V2      0
+                Property Number  pnB_Baxio_V0      0
+                Property Number  pnB_Baxio_V00     0
+                Property Number  pnB_Baxio_Vr      0
+                Property String  psB_Baxio_C_Code2 ""
+                Property Integer piB_Baxio_Status  0
+                Property Integer piB_Baxio_Place   0
+
+                //properties ö†ò ú¢‚öÆ¶¨™ ò¢òöö„™ parent records:
+                //ú§û£ú®È§¶§´ò†    ©´û§:backout,
+                //Æ®û©†£¶ß¶†¶Á§´ò† ©´û§: validate_save ö†ò ´¶§ ‚¢úöÆ¶ editing ´‡§ ßúõÂ‡§,
+                //£ûõú§Âù¶§´ò†     ©´û§: request save & delete ´¶¨ bmove.
+                Property Integer piB_Baxiokat_Code 0
+                Property Integer piB_Year_Year     0
+                Property Integer piMustNOTConstrain Public 0
+      End_Procedure //construct_object
+
+
+
+//    Function fngConvertPoso_Baxio String asNomismaCodeApo ;
+//                            Number anPoso           ;
+//                            String asNomismaCodeSe  ;
+//                            Date   adHmnia          ;
+//                            Number nIsotimia  Returns Number
+
+//        Number rVal nApo_Euro_Isot nSe_Euro_Isot
+//        Integer iApo_Einai_Euro_Zone iApo_Einai_DRX iApo_Einai_Euro iDekadika_Apo
+//        Integer iSe_Einai_Euro_Zone  iSe_Einai_DRX  iSe_Einai_Euro  iDekadika_Se
+
+//        If (asNomismaCodeApo=asNomismaCodeSe) Function_Return anPoso
+
+//        Clear Nomisma
+//        Move (Trim(asNomismaCodeApo)) to Nomisma.Nomisma_Code
+//        Find eq Nomisma By Index.1 // Nomisma:Index.1:Nomisma_Code
+//        Move Nomisma.Euro_Zone      to iApo_Einai_Euro_Zone
+//        Move Nomisma.Einai_DRX      to iApo_Einai_DRX
+//        Move Nomisma.Einai_EURO     to iApo_Einai_Euro
+//        Move Nomisma.KL_ISOT_EURO   to nApo_Euro_Isot
+//        Move Nomisma.Dekadika       to iDekadika_Apo
+
+//        Clear Nomisma
+//        Move (Trim(asNomismaCodeSe)) to Nomisma.Nomisma_Code
+//        Find eq Nomisma By Index.1 // Nomisma:Index.1:Nomisma_Code
+//        Move Nomisma.Euro_Zone      to iSe_Einai_Euro_Zone
+//        Move Nomisma.Einai_DRX      to iSe_Einai_DRX
+//        Move Nomisma.Einai_EURO     to iSe_Einai_Euro
+//        Move Nomisma.KL_ISOT_EURO   to nSe_Euro_Isot
+//        Move Nomisma.Dekadika       to iDekadika_Se
+
+//        //05a. ?ù?ˇ??? ?ù --> ???†
+//        Calc (anPoso/nApo_Euro_Isot) to rVal
+//        Move (Round_Number(rVal,6)) to rVal
+//        //05b. ???†        --> ?ù?ˇ??? ?ô *
+//        Calc (rVal*nSe_Euro_Isot) to rVal
+//        Move (Round_Number(rVal,iDekadika_Se)) to rVal
+//        Function_Return rVal
+//    End_Function
+
+
+
+      //°òü¶®Âùú† ´û§ default ´†£„ ´¶¨ §¶£Â©£ò´¶™ ò§·¢¶öò £ú ´¶ °Á®†¶ §Ê£†©£ò Æ®„©ú‡™
+      Function Default_Axio_C_Code2 Returns String
+               String lsBaxio_C_Code_2
+               //Get File_Field_Current_Value File_Field SyscurXr.C_Code0 to lsBaxio_C_Code_2
+               Move SyscurXr.C_Code0 to lsBaxio_C_Code_2
+               Function_Return (Trim(lsBaxio_C_Code_2))
+      End_Function //default_axio_c_code2
+
+
+      // js 09/02/2002 den yparxei enhmerosh ton nomismatvn xrhshs
+      Procedure Convert_Axio_Values
+
+                Integer liBtypkin_Flag03 liBtypkin_Flag04
+
+                Get fngConvertPoso  Baxio.Baxio_C_Code2 ;
+                                    Baxio.Baxio_V2      ;
+                                    SysCurXr.C_Code0    ;
+                                    Baxio.Baxio_HmniaE  ;
+                                    Baxio.Baxio_Rate0       to Baxio.Baxio_V0
+
+                Get fngConvertPoso  Baxio.Baxio_C_Code2 ;
+                                    Baxio.Baxio_V2      ;
+                                    SysCurXr.C_Code00   ;
+                                    Baxio.Baxio_HmniaE  ;
+                                    Baxio.Baxio_Rate00      to Baxio.Baxio_V00
+
+                Get fngConvertPoso  Baxio.Baxio_C_Code2 ;
+                                    Baxio.Baxio_V2      ;
+                                    SysCurXr.C_CodeR    ;
+                                    Baxio.Baxio_HmniaE  ;
+                                    Baxio.Baxio_RateR       to Baxio.Baxio_VR
+
+
+//                Move (fngConvertPoso_Baxio(Self,Baxio.Baxio_C_Code2,   ;
+//                                     Baxio.Baxio_V2,        ;
+//                                     SyscurXr.C_Code0,      ;
+//                                     Baxio.Baxio_HmniaE,    ;
+//                                     Baxio.Baxio_Rate0)     ;
+//                                    ) to Baxio.Baxio_V0
+//                If (liBtypkin_Flag03 = TRUE);
+//                     Begin
+//                      //ò•Âò 2-->00
+//                      Move (fngConvertPoso_Baxio(Self, Baxio.Baxio_C_Code2, ;
+//                                            Baxio.Baxio_V2,      ;
+//                                            SyscurXr.C_Code00,   ;
+//                                            Baxio.Baxio_HmniaE,  ;
+//                                            Baxio.Baxio_Rate00)  ;
+//                                          ) to Baxio.Baxio_V00
+//                     End
+//                Else Begin
+//                      Move 0            to Baxio.Baxio_V00
+//                     End
+//                If (liBtypkin_Flag04 = TRUE);
+//                     Begin
+//                      //ò•Âò 2-->r
+//                      Move (fngConvertPoso_Baxio(Self,Baxio.Baxio_C_Code2, ;
+//                                       Baxio.Baxio_V2,      ;
+//                                       SyscurXr.C_CodeR,    ;
+//                                       Baxio.Baxio_HmniaE,  ;
+//                                       Baxio.Baxio_RateR)   ;
+//                                      ) to Baxio.Baxio_VR
+//                     End
+//                Else Begin
+//                      Move 0            to Baxio.Baxio_VR
+//                     End
+      End_Procedure
+
+
+
+      Procedure Constrain
+                Forward Send Constrain
+                If (piMustNOTConstrain(Self)=1) Begin
+                End 
+                else If (piMustNOTConstrain(Self)=2) Begin 
+                    Constrain Baxio.Company_Code Eq Syscurxr.Company_Code
+                    Constrain Baxio.Branch_Code  Eq Syscurxr.Branch_Code
+                end    
+                Else Begin
+                    Constrain Baxio.Company_Code Eq Syscurxr.Company_Code
+                    Constrain Baxio.Branch_Code  Eq Syscurxr.Branch_Code
+                    Constrain Baxio.Year_Year    Eq Syscurxr.Year_Year
+                End
+      End_Procedure   //constrain
+
+
+      //ò) ú§û£‚®‡©û £„ related ßúõÂ‡§
+      //ô) ò§·ö§‡©û properties
+      //ö) õ†òÆúÂ®†©û calculated ßúõÂ‡§
+      //õ) ú§û£‚®‡©û òü®¶†©´È§ (adjust_balances)
+      //ú) ú§û£‚®‡©û properties after
+      Procedure Update
+                Forward Send Update
+                
+                If (Baxio.Baxio_C_Code2='') Move SyscurXr.C_Code0 to Baxio.Baxio_C_Code2
+                
+                //ò) ú§û£‚®‡©û £„ related ßúõÂ‡§
+                Move Syscurxr.Company_Code  to Baxio.Company_Code
+                Move Syscurxr.Branch_Code   to Baxio.Branch_Code
+                Move Syscurxr.Year_Year     to Baxio.Year_Year
+                Move Syscurxr.Year_Recr     to Baxio.Year_Recr
+                Move Baxiokat.Baxiokat_Code to Baxio.Baxiokat_Code
+
+                //ö) õ†òÆúÂ®†©û calculated ßúõÂ‡§
+                //ö01:ú• ¶®†©£¶Á, ´ò ß¢û®‡´‚ò õ‚§ ‚Æ¶¨§ ©´¶†ÆúÂò ßò®ò¢¢òô„™
+                If (Baxiokat.Baxiokat_Type = 2);
+                Begin //ò•†Êö®ò≠ò ß¢û®‡´‚ò
+                     Move "" to Baxio.Baxio_Code_In
+                     Move "" to Baxio.Baxio_Epon_In
+                     Move 0  to Baxio.Baxio_Fpar_In
+                End
+                //ö02:yyyy + mm + dd ¢„•û™ ö†ò ´ò reports
+                Move (TheYearSegment (Baxio.Baxio_Hmnial)) to Baxio.Baxio_Lixi_YYYY
+                Move (TheMonthSegment(Baxio.Baxio_Hmnial)) to Baxio.Baxio_Lixi_MM
+                Move (TheDaySegment  (Baxio.Baxio_Hmnial)) to Baxio.Baxio_Lixi_DD
+
+                //ö03:ß®È´¶™ & ´ú¢ú¨´òÂ¶™ ßò®ò¢„ß´û™
+                If (Baxio.Baxio_Lcode = "");
+                Begin
+                     Move (-1) to Baxio.Baxio_File_Out
+                     Move ""   to Baxio.Baxio_Code_Out
+                     Move ""   to Baxio.Baxio_Epon_Out
+                     Move ""   to Baxio.Baxio_Fpar_Out
+
+                     Move (-1) to Baxio.Baxio_Lfile
+                     Move ""   to Baxio.Baxio_Lepon
+                     Move ""   to Baxio.Baxio_Lpar
+                End
+      End_Procedure //update
+
+
+      Procedure Backout
+                Forward Send Backout
+
+                //ú) ú§û£‚®‡©û properties before (òßÊ current buffer)
+                Set pnB_Baxio_V2      to Baxio.Baxio_V2
+                Set pnB_Baxio_V0      to Baxio.Baxio_V0
+                Set pnB_Baxio_V00     to Baxio.Baxio_V00
+                Set pnB_Baxio_Vr      to Baxio.Baxio_Vr
+                Set psB_Baxio_C_Code2 to Baxio.Baxio_C_Code2
+                Set piB_Baxio_Status  to Baxio.Baxio_Status
+                Set piB_Baxio_Place   to Baxio.Baxio_Place
+                Set piB_Baxiokat_Code to Baxio.Baxiokat_Code    //ö†ò ‚¢úöÆ¶ ò¢òöö„™ parent
+                Set piB_Year_Year     to Baxio.Year_Year        //ö†ò ‚¢úöÆ¶ ò¢òöö„™ parent
+      End_Procedure //backout
+
+
+      Procedure New_Current_Record Integer liOld_Record Integer liNew_Record
+                Forward Send New_Current_Record liOld_Record liNew_Record
+                //ú) ú§û£‚®‡©û properties before (òßÊ current buffer)
+                Set pnB_Baxio_V2      to Baxio.Baxio_V2
+                Set pnB_Baxio_V0      to Baxio.Baxio_V0
+                Set pnB_Baxio_V00     to Baxio.Baxio_V00
+                Set pnB_Baxio_Vr      to Baxio.Baxio_Vr
+                Set psB_Baxio_C_Code2 to Baxio.Baxio_C_Code2
+                Set piB_Baxio_Status  to Baxio.Baxio_Status
+                Set piB_Baxiokat_Code to Baxio.Baxiokat_Code    //ö†ò ‚¢úöÆ¶ ò¢òöö„™ parent
+                Set piB_Year_Year     to Baxio.Year_Year        //ö†ò ‚¢úöÆ¶ ò¢òöö„™ parent
+      End_Procedure //new_current_record
+
+
+      Procedure Creating
+                Forward Send Creating
+
+                //ò®†ü£Ê™ ò•†¶ö®·≠‡§ ´û™ Æ®„©û™
+                //jsjsjs 24/01/2001 Add 1 to Year.Year_NumBaxio
+
+                //´ú¢ú¨´òÂ¶™ °‡õ†°Ê™ ò®†ü£Ê™ ò•†¶ö®·≠¶¨
+                Add 1 to Baxiokat.Baxio_Lcode
+                Move Baxiokat.Baxio_Lcode to Baxio.Baxio_Code
+
+                //´¶ property ò¨´Ê ú§ú®ö¶ß¶†úÂ ´û§ private.created_baxio
+                //£‚©‡ ´û™ update ©´¶ bmove
+                Set piCreated_Baxio to TRUE
+
+//
+//                Move SysCurXr.C_Code0 to Baxio.Baxio_C_Code2
+
+                Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                                 (Trim(String(Baxio.Baxio_Rec0)))))) to Baxio.Baxio_Recr
+
+      End_Procedure //creating
+
+
+      Procedure Operation_Not_Allowed Integer iError_Num
+                String lsError_Message
+                Case Begin
+                     //òßÊ validate save
+                     Case (iError_Num = 1001)
+                          Move ("DDC 037:Ä°ò´·¢¢û¢û úöö®ò≠„.\n\n"+;
+                          "í¶ ò•†Êö®ò≠¶ ß®‚ßú† §ò ‚Æú† ¶ß‡©õ„ß¶´ú û£ú®¶£û§Âò ¢„•ú‡™!");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1002)
+                          Move ("DDC 037:Ä°ò´·¢¢û¢û úöö®ò≠„ (åÊ£†©£ò Ñöö®ò≠„™).\n\n"+;
+                          "í¶ ò•†Êö®ò≠¶ ß®‚ßú† §ò ‚Æú† üú´†°„ ò•Âò!");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1003)
+                          Move ("DDC 037:Ä°ò´·¢¢û¢û úöö®ò≠„ (åÊ£†©£ò Ñöö®ò≠„™).\n\n"+;
+                          "í¶ ò•†Êö®ò≠¶ ß®‚ßú† §ò ‚Æú† ¶ß‡©õ„ß¶´ú §Ê£†©£ò!");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1004)
+                          Move ("DDC 037:Ä°ò´·¢¢û¢û úöö®ò≠„ (âÁ®†¶ åÊ£†©£ò ï®„©ú‡™).\n\n"+;
+                          "í¶ ò•†Êö®ò≠¶ ß®‚ßú† §ò ‚Æú† üú´†°„ ò•Âò!");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1005)
+                          Move ("DDC 037:Ä°ò´·¢¢û¢û úöö®ò≠„ (Éú¨´ú®úÁ¶§ åÊ£†©£ò ï®„©ú‡™).\n\n"+;
+                          "í¶ ò•†Êö®ò≠¶ ß®‚ßú† §ò ‚Æú† üú´†°„ ò•Âò!");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1006)
+                          Move ("DDC 037:Ä°ò´·¢¢û¢û úöö®ò≠„ (åÊ£†©£ò Reporting).\n\n"+;
+                          "í¶ ò•†Êö®ò≠¶ ß®‚ßú† §ò ‚Æú† üú´†°„ ò•Âò!");
+                          to lsError_Message
+                     Case Break
+
+                     Case (iError_Num = 1007)
+                          Move ("DDC 037:Ä°ò´·¢¢û¢û Ñöö®ò≠„ !\n\nå‚ò Ä•†Êö®ò≠ò õû£†¶¨®ö¶Á§´ò† £Ê§¶§ òß¶ °†§„©ú†™ !");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1008)
+                          Move ("DDC 037:Ä°ò´·¢¢û¢û Ñöö®ò≠„ !\n\ní¶ §Ê£†©£ò ´®¶ß¶ß¶†úÂ´ò† £Ê§¶§ òß¶ °†§„©ú†™ !");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1009)
+                          Move ("DDC 037:Ä°ò´·¢¢û¢û Ñöö®ò≠„ (åÊ£†©£ò Ñöö®ò≠„™) !\n\ní¶ ß¶©Ê§ ´®¶ß¶ß¶†úÂ´ò† £Ê§¶§ òß¶ °†§„©ú†™ !");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1010)
+                          Move ("DDC 037:Ä°ò´·¢¢û¢û Ñöö®ò≠„ (âÁ®†¶ åÊ£†©£ò ï®„©û™) !\n\ní¶ ß¶©Ê§ ´®¶ß¶ß¶†úÂ´ò† £Ê§¶§ òß¶ °†§„©ú†™ !");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1011)
+                          Move ("DDC 037:Ä°ò´·¢¢û¢û Ñöö®ò≠„ (Éú¨´ú®úÁ¶§ åÊ£†©£ò ï®„©û™) !\n\ní¶ ß¶©Ê§ ´®¶ß¶ß¶†úÂ´ò† £Ê§¶§ òß¶ °†§„©ú†™ !");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1012)
+                          Move ("DDC 037:Ä°ò´·¢¢û¢û Ñöö®ò≠„ (åÊ£†©£ò Reporting) !\n\ní¶ ß¶©Ê§ ´®¶ß¶ß¶†úÂ´ò† £Ê§¶§ òß¶ °†§„©ú†™ !");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1013)
+                          Move ("DDC 037:Ä°ò´·¢¢û¢û Ñöö®ò≠„ !\n\ní¶ ò•†Êö®ò≠¶ ‚Æú† ú•¶≠¢ûüúÂ !");
+                          to lsError_Message
+                     Case Break
+
+                     Case (iError_Num = 1014)
+                          Move ("DDC 037:Ä°ò´·¢¢û¢û úöö®ò≠„.\n\n"+;
+                          "í¶ ò•†Êö®ò≠¶ õ‚§ úß†´®‚ßú´ò† §ò ò¢¢·•ú† °ò´ûö¶®Âò!");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1015)
+                          Move ("DDC 037:Ä°ò´·¢¢û¢û úöö®ò≠„.\n\n"+;
+                          "í¶ ò•†Êö®ò≠¶ õ‚§ úß†´®‚ßú´ò† §ò ò¢¢·•ú† Æ®„©û!");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 1100)
+                          Move "DDC 037:ãû òß¶õú°´„ Ñ´ò†®Âò-ï®„©û" to lsError_Message
+                          Case Break
+
+                     //òßÊ validate delete
+                     Case (iError_Num = 2007)
+                          Move ("DDC 037:ÄõÁ§ò´û û õ†òö®ò≠„ !\n\ní¶ Ä•†Êö®ò≠¶ õ†òö®·≠ú´ò† £Ê§¶§ òß¶ °†§„©ú†™ !");
+                          to lsError_Message
+                     Case Break
+                     Case (iError_Num = 2100)
+                          Move "DDC 037:ãû òß¶õú°´„ Ñ´ò†®Âò-ï®„©û" to lsError_Message
+                          Case Break
+
+                     Case Else
+                          Forward Send Operation_Not_Allowed iError_Num
+                Case End
+
+                Error iError_Num lsError_Message
+      End_Procedure // operation_not_allowed
+
+      //1001:baxio_hmnial > 0
+      //1002:baxio_v2 > 0            (õ‚§ úß†´®‚ßú´ò† ‚§ò ò•†Êö®ò≠¶ §ò ‚Æú† £ûõú§†°„ ò•Âò ©ú §Ê£†©£ò úöö®ò≠„™
+      //1003:baxio_c_code2 <> ""     (õ‚§ úß†´®‚ßú´ò† ‚§ò ò•†Êö®ò≠¶ §ò £„§ ‚Æú† §Ê£†©£ò)
+
+      //1004:baxio_v0 > 0            (õ‚§ úß†´®‚ßú´ò† ‚§ò ò•†Êö®ò≠¶ §ò ‚Æú† £ûõú§†°„ ò•Âò ©ú °Á®†¶ §Ê£†©£ò Æ®„©û™
+      //1005:baxio_v00 > 0 if flag 3 (õ‚§ úß†´®‚ßú´ò† ‚§ò ò•†Êö®ò≠¶ §ò ‚Æú† £ûõú§†°„ ò•Âò ©ú õú¨´ú®úÁ¶§ §Ê£†©£ò Æ®„©û™
+      //1006:baxio_vr > 0  of flag 4 (õ‚§ úß†´®‚ßú´ò† ‚§ò ò•†Êö®ò≠¶ §ò ‚Æú† £ûõú§†°„ ò•Âò ©ú §Ê£†©£ò reporting
+
+
+      //1007:õû£†¶¨®öÂò §‚¶¨ ò•†¶ö®·≠¶¨ úß†´®‚ßú´ò† £Ê§¶§ òß¶ ´¶ bmove_dd, õû¢òõ„ ß®‚ßú†
+      //       If (baxio.recnum=0) then operation_origin must be = bmove_dd
+      //1008:´®¶ß¶ß¶Âû©û (edit) baxio_c_code2 £Ê§¶§ òßÊ bmove_dd
+      //1009:´®¶ß¶ß¶Âû©û (edit) baxio_v2      £Ê§¶§ òßÊ bmove_dd
+      //1010:´®¶ß¶ß¶Âû©û (edit) baxio_v0      £Ê§¶§ òßÊ bmove_dd
+      //1011:´®¶ß¶ß¶Âû©û (edit) baxio_v00     £Ê§¶§ òßÊ bmove_dd
+      //1012:´®¶ß¶ß¶Âû©û (edit) baxio_vr      £Ê§¶§ òßÊ bmove_dd
+
+      //1013:ú·§ ´¶ status úÂ§ò† ú•¶≠¢û£‚§¶, òßòö¶®úÁú¶§´ò† Ê¢ò ´ò ßú®ò†´‚®‡ edits
+
+      //1014:òßòö¶®úÁú´ò† û ò¢¢òö„ parent baxiokat record
+      //1015:òßòö¶®úÁú´ò† û ò¢¢òö„ parent year     record
+      Function Validate_Save Returns Integer
+               Integer iReturnVal
+
+               Forward Get Validate_Save to iReturnVal
+
+               If (Not(iReturnVal));
+               Begin
+
+                //---------‚¢úöÆ¶† õû£†¶¨®öÂò™ §‚¶¨ baxio record----------------------
+                //sososo £ûß‡™ ß®úßú† §ò ßò†•‡ £ú ´û§ current record ????
+                If (Baxio.Recnum =  0);
+                Begin //ú·§ õû£†¶¨®öÈ §‚¶ record
+                      //1007:‚¢úöÆ¶™ õû£†¶¨®öÂò™ §‚¶¨ ò•†¶ö®·≠¶¨ òß¶ ´¶ baxio_dd
+
+                      If (pifromxrhsh(Self)=0) Begin
+                        If (Not((Main_File(OPERATION_ORIGIN)) =  Bmove.File_Number)) Send Operation_Not_Allowed 1007
+                      End
+                End   //´‚¢¶™ ú¢‚öÆ‡§ õû£†¶¨®öÂò™ §‚¶¨ baxio record
+
+
+                //---------‚¢úöÆ¶† editing existing baxio records---------------------
+                Else;
+                Begin //edit an existing record
+                      //1008:´®¶ß¶ß¶Âû©û (edit) baxio_c_code2 £Ê§¶§ òßÊ bmove_dd
+
+                      If (pifromxrhsh(Self)=0) Begin
+
+                        If (;
+                            ((psB_Baxio_C_Code2(Self))     <> Baxio.Baxio_C_Code2) and;
+                            ((Main_File(OPERATION_ORIGIN)) <> Bmove.File_Number);
+                            )                                                       Send Operation_Not_Allowed 1008
+                        //1009:´®¶ß¶ß¶Âû©û (edit) baxio_v2 £Ê§¶§ òßÊ bmove_dd
+                        If (;
+                            ((pnB_Baxio_V2(Self))          <> Baxio.Baxio_V2      ) and;
+                            ((Main_File(OPERATION_ORIGIN)) <> Bmove.File_Number);
+                            )                                                       Send Operation_Not_Allowed 1009
+                        //1010:´®¶ß¶ß¶Âû©û (edit) baxio_v0 £Ê§¶§ òßÊ bmove_dd
+                        If (;
+                            ((pnB_Baxio_V0(Self))          <> Baxio.Baxio_V0      ) and;
+                            ((Main_File(OPERATION_ORIGIN)) <> Bmove.File_Number);
+                            )                                                       Send Operation_Not_Allowed 1010
+                        //1011:´®¶ß¶ß¶Âû©û (edit) baxio_v00 £Ê§¶§ òßÊ bmove_dd
+                        If (;
+                            ((pnB_Baxio_V00(Self))         <> Baxio.Baxio_V00     ) and;
+                            ((Main_File(OPERATION_ORIGIN)) <> Bmove.File_Number);
+                            )                                                       Send Operation_Not_Allowed 1011
+                        //1012:´®¶ß¶ß¶Âû©û (edit) baxio_vr £Ê§¶§ òßÊ bmove_dd
+                        If (;
+                            ((pnB_Baxio_Vr(Self))          <> Baxio.Baxio_Vr      ) and;
+                            ((Main_File(OPERATION_ORIGIN)) <> Bmove.File_Number);
+                            )                                                       Send Operation_Not_Allowed 1012
+
+                      End
+                        // Egine rem 20/12/2001 giati an orisoume sta metrhta gia paradeigma
+                        // oti to status SE einai exoflhmeno, tote xtypaei to validation sto
+                        // kleisimo toy barticle. Alloste den vlepoume giati den mporei na
+                        // anoigokleisei
+//                      //1013:ú·§ ´¶ status úÂ§ò† ú•¶≠¢û£‚§¶, òßòö¶®úÁ¶§´ò† Ê¢ò ´ò ßú®ò†´‚®‡ edits òß¶ ´¶ bmove
+//                      If (;
+//                           ((piB_Baxio_Status(Self))      = 2                    ) and;
+//                           ((Main_File(OPERATION_ORIGIN)) =  Bmove.File_Number);
+//                         )                                                       Send Operation_Not_Allowed 1013
+
+                      If (pifromxrhsh(Self)=0) Begin
+                        //1014:òßòö¶®úÁú´ò† û ò¢¢òö„ parent baxiokat record
+                        If (Not;
+                            ((piB_Baxiokat_Code(Self)) =  Baxiokat.Baxiokat_Code);
+                            )                                                       Send Operation_Not_Allowed 1014
+
+                        //1015:òßòö¶®úÁú´ò† û ò¢¢òö„ parent year record
+                        If (Not;
+                            ((piB_Year_Year    (Self)) =  SysCurXr.Year_Year        );
+                            )                                                       Send Operation_Not_Allowed 1015
+                      End
+                End   //´‚¢¶™ ú¢‚öÆ‡§ editing existing baxio records
+
+                //¢¶ß¶Â ‚¢úöÆ¶†
+                //1001:baxio_hmnial > 0
+                If (Not(Baxio.Baxio_Hmnial > 0 ))   Send Operation_Not_Allowed 1001
+                //1002:baxio_v2 > 0 (õ‚§ úß†´®‚ßú´ò† ‚§ò ò•†Êö®ò≠¶ §ò ‚Æú† £ûõú§†°„ ò•Âò ©ú §Ê£†©£ò úöö®ò≠„™
+                If (Not(Baxio.Baxio_V2 > 0))         Send Operation_Not_Allowed 1002
+                //1003:baxio_c_code2 <> ""
+                If (Not(Baxio.Baxio_C_Code2 <>""))    Send Operation_Not_Allowed 1003
+                //1004:baxio_v0 > 0 (õ‚§ úß†´®‚ßú´ò† ‚§ò ò•†Êö®ò≠¶ §ò ‚Æú† £ûõú§†°„ ò•Âò ©ú °Á®†¶ §Ê£†©£ò Æ®„©ú‡™
+//--------------If (Not(Baxio.Baxio_V0 > 0))         Send Operation_Not_Allowed 1004
+                //1005:baxio_v00> 0 (õ‚§ úß†´®‚ßú´ò† ‚§ò ò•†Êö®ò≠¶ §ò ‚Æú† £ûõú§†°„ ò•Âò ©ú õú¨´ú®úÁ¶§ §Ê£†©£ò Æ®„©ú‡™
+//--------------If (Not(Baxio.Baxio_V00> 0))         Send Operation_Not_Allowed 1005
+                //1006:baxio_vr > 0 (õ‚§ úß†´®‚ßú´ò† ‚§ò ò•†Êö®ò≠¶ §ò ‚Æú† £ûõú§†°„ ò•Âò ©ú §Ê£†©£ò reporting
+//--------------If (Not(Baxio.Baxio_VR > 0))         Send Operation_Not_Allowed 1006
+                //1100:cby = globals
+
+                If (pifromxrhsh(Self)=0) Begin
+
+                    If ( ;
+                        (Not(Baxio.Company_Code = SyscurXr.Company_Code)) or;
+                        (Not(Baxio.Branch_Code  = SyscurXr.Branch_Code )) or;
+                        (Not(Baxio.Year_Year    = SyscurXr.Year_Year   ));
+                        )                                                   Send Operation_Not_Allowed 1100
+
+               End
+
+               End //´‚¢¶™ °Èõ†°ò validation
+               Function_Return iReturnVal
+      End_Function //validate_save
+
+
+      //2007:û õ†òö®ò≠„ ò•†¶ö®·≠¶¨ úß†´®‚ßú´ò† £Ê§¶§ òß¶ ´¶ bmove_dd
+      Function Validate_Delete  Returns Integer
+               Integer iReturnVal
+               Forward Get Validate_Delete  To iReturnVal
+               If (Not(iReturnVal));
+               Begin
+
+                  //2007:‚¢úöÆ¶™ õ†òö®ò≠„™ ò•†¶ö®·≠¶¨ (£Ê§¶§ òß¶ bmove_dd)
+                  If ((Main_File(OPERATION_ORIGIN)) <> Bmove.File_Number)          Send Operation_Not_Allowed 2007
+
+                  //2100:cby = globals
+                  If ( ;
+                      (Not(Baxio.Company_Code = Syscurxr.Company_Code)) or;
+                      (Not(Baxio.Branch_Code  = Syscurxr.Branch_Code )) or;
+                      (Not(Baxio.Year_Year    = Syscurxr.Year_Year        ));
+                      )                                                   Send Operation_Not_Allowed 2100
+               End //´‚¢¶™ °Èõ†°ò validation
+               Function_Return iReturnVal
+      End_Function //validate_delete
+
+
+//------------------------------------------------------------------
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Baxio.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Bmove.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Baxiokat.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecb.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecb.Baxio_Rec0  To Baxio.Baxio_Rec0
+
+        // Field-based properties.......................
+
+        // Baxio.Company_Code
+
+        // Baxio.Branch_Code
+
+        // Baxio.Year_Year
+
+        // Baxio.Baxiokat_Code
+
+        // Baxio.Baxio_Code
+        Set Field_Prompt_Object    Field Baxio.Baxio_Code To (SL037(Self))
+
+        // Baxio.Baxio_Rec0
+        Set Field_Prompt_Object    Field Baxio.Baxio_Rec0 To (SL037(Self))
+
+        // Baxio.Year_Recr
+
+        // Baxio.Baxiokat_Recr
+
+        // Baxio.Baxio_Recr
+
+        // Baxio.Baxio_Status
+        Set Field_Value_Table      Field Baxio.Baxio_Status To (Baxio_Status_VT(Self))
+
+        // Baxio.Baxio_Place
+        Set Field_Value_Table      Field Baxio.Baxio_Place To (Baxio_Baxio_Place_VT(Self))
+
+        // Baxio.Baxio_File_In
+        Set Field_Value_Table      Field Baxio.Baxio_File_In To (Bfile_VT(Self))
+
+        // Baxio.Baxio_Code_In
+        //DDB/ Comment_Short       Field Baxio.Baxio_Code_In To "To BIAXIOKAT_FILE °òü¶®Âùú† ´û§ ©Æú´†°„ ¢Â©´ò"
+
+        // Baxio.Baxio_Epon_In
+
+        // Baxio.Baxio_Fpar_In
+
+        // Baxio.Baxio_File_Out
+        Set Field_Value_Table      Field Baxio.Baxio_File_Out To (Bfile_VT(Self))
+
+        // Baxio.Baxio_Code_Out
+
+        // Baxio.Baxio_Epon_Out
+
+        // Baxio.Baxio_Fpar_Out
+
+        // Baxio.Baxio_Lfile
+
+        // Baxio.Baxio_Lcode
+        Set Field_Value_Table      Field Baxio.Baxio_Lcode To (Bfile_VT(Self))
+
+        // Baxio.Baxio_Lepon
+
+        // Baxio.Baxio_Lpar
+
+        // Baxio.Baxio_Bank00000
+        Set Field_Value_Table      Field Baxio.Baxio_Bank00000 To (Baxio_Baxio_Bank_VT(Self))
+
+        // Baxio.Baxio_Hmniae
+        Set Field_Prompt_Object    Field Baxio.Baxio_Hmniae To (SL037(Self))
+
+        // Baxio.Baxio_Hmniap000
+        Set Field_Prompt_Object    Field Baxio.Baxio_Hmniap000 To (SL037(Self))
+
+        // Baxio.Baxio_Hmnial
+        //DDB/ Comment_Short       Field Baxio.Baxio_Hmnial To "Ü£/§Âò ä„•û™:"
+
+        // Baxio.Baxio_Ekdoths
+
+        // Baxio.Baxio_Ekdothse
+
+        // Baxio.Baxio_Sediatagh
+
+        // Baxio.Baxio_Sdiataghe
+        Set Field_Prompt_Object    Field Baxio.Baxio_Sdiataghe To (SL037(Self))
+
+        // Baxio.Baxio_Banka
+        Set Field_Value_Table      Field Baxio.Baxio_Banka To (Baxio_Baxio_Banka_VT(Self))
+
+        // Baxio.Baxio_Opistho
+
+        // Baxio.Baxio_No
+
+        // Baxio.Baxio_V2
+
+        // Baxio.Baxio_V0
+
+        // Baxio.Baxio_V00
+
+        // Baxio.Baxio_Vr
+
+        // Baxio.Baxio_Rate0
+
+        // Baxio.Baxio_Rate00
+
+        // Baxio.Baxio_Rater
+
+        // Baxio.Baxio_C_Code2
+        Set Field_Entry_msg        Field Baxio.Baxio_C_Code2 To get_Default_Axio_C_Code2
+        Set Field_Options          Field Baxio.Baxio_C_Code2 To DD_CAPSLOCK   
+        Set Field_Prompt_Object    Field Baxio.Baxio_C_Code2 To (slNomism(Self))
+
+        // Baxio.Baxio_Lixi_Yyyy
+
+        // Baxio.Baxio_Lixi_Mm
+
+        // Baxio.Baxio_Lixi_Dd
+
+        // Baxio.Baxio_Bmove_Laa
+
+        // Baxio.Baxio_Desm
+
+        // Baxio.Baxio_From
+        Set Field_Value_Table      Field Baxio.Baxio_From To (Baxio_Baxio_From_VT(Self))
+
+        // Baxio.Baxio_Topos
+        Set Field_Value_Table      Field Baxio.Baxio_Topos To (Baxio_Baxio_Topos_VT1(Self))
+
+        //DDB-DefineFieldEnd
+
+        Set Main_File            To Baxio.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Bmove.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Baxiokat.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecb.File_Number  DD_LOCK_ON_NEW_SAVE
+
+        Define_Auto_Increment  Sysrecb.Baxio_Rec0  To Baxio.Baxio_Rec0
+
+        // Field-based properties.......................
+
+        // Baxio.Company_Code
+
+        // Baxio.Branch_Code
+
+        // Baxio.Year_Year
+
+        // Baxio.Baxiokat_Code
+
+        // Baxio.Baxio_Code
+        Set Field_Label_Long       Field Baxio.Baxio_Code         To "â‡õ†°Ê™ Ä•†¶ö®·≠¶¨"
+        Set Field_Label_Short      Field Baxio.Baxio_Code         To "â‡õ†°Ê™"
+        Set Field_Options          Field Baxio.Baxio_Code         To DD_AUTOFIND    DD_NOPUT
+        Set Field_Prompt_Object    Field Baxio.Baxio_Code         To (sl037(Self))
+        Set Key_Field_State        Field Baxio.Baxio_Code         To TRUE
+
+        // Baxio.Baxio_Rec0
+        Set Field_Options          Field Baxio.Baxio_Rec0         To DD_AUTOFIND    DD_REQUIRED
+        Set Field_Prompt_Object    Field Baxio.Baxio_Rec0         To (sl037(Self))
+        Set Key_Field_State        Field Baxio.Baxio_Rec0         To TRUE
+
+        // Baxio.Year_Rec0
+
+        // Baxio.Baxiokat_Rec0
+
+        // Baxio.Baxio_Status
+        Set Field_Class_Name       Field Baxio.Baxio_Status       To "dbComboForm_EZ"
+        Set Field_Label_Long       Field Baxio.Baxio_Status       To "âò´·©´ò©û"
+        Set Field_Label_Short      Field Baxio.Baxio_Status       To "âò´·©´ò©û"
+        Set Field_Options  Field Baxio.Baxio_Status  To DD_DISPLAYONLY
+        Set Field_Value_Table      Field Baxio.Baxio_Status       To (Baxio_Status_VT(Self))
+
+        // Baxio.Baxio_Place
+        Set Field_Class_Name       Field Baxio.Baxio_Place        To "dbComboForm_EZ"
+        Set Field_Label_Long       Field Baxio.Baxio_Place        To "Ñ¨®Â©°ú´ò†"
+        Set Field_Label_Short      Field Baxio.Baxio_Place        To "Ñ¨®Â©°ú´ò†"
+        Set Field_Options          Field Baxio.Baxio_Place        To DD_DISPLAYONLY
+        Set Field_Value_Table      Field Baxio.Baxio_Place        To (Baxio_Baxio_Place_VT(Self))
+
+        // Baxio.Baxio_File_In
+        Set Field_Value_Table      Field Baxio.Baxio_File_In      To (Bfile_VT(Self))
+
+        // Baxio.Baxio_Code_In
+        Set Field_Label_Long       Field Baxio.Baxio_Code_In      To "èò®ú¢„≠üû ÄßÊ"
+        Set Field_Label_Short      Field Baxio.Baxio_Code_In      To "èò®ú¢„≠üû ÄßÊ"
+        Set Field_Options          Field Baxio.Baxio_Code_In      To DD_DISPLAYONLY
+
+        // Baxio.Baxio_Epon_In
+        Set Field_Label_Long       Field Baxio.Baxio_Epon_In      To "Ñß‡§¨£Âò"
+        Set Field_Label_Short      Field Baxio.Baxio_Epon_In      To "Ñß‡§¨£Âò"
+        Set Field_Options          Field Baxio.Baxio_Epon_In      To DD_DISPLAYONLY
+
+        // Baxio.Baxio_Fpar_In
+        Set Field_Label_Long       Field Baxio.Baxio_Fpar_In      To "èò®/°Ê èò®ò¢òô„™"
+        Set Field_Label_Short      Field Baxio.Baxio_Fpar_In      To "èò®/°Ê èò®ò¢."
+        Set Field_Options          Field Baxio.Baxio_Fpar_In      To DD_DISPLAYONLY
+
+        // Baxio.Baxio_File_Out
+        Set Field_Value_Table      Field Baxio.Baxio_File_Out     To (Bfile_VT(Self))
+
+        // Baxio.Baxio_Code_Out
+        Set Field_Label_Long       Field Baxio.Baxio_Code_Out     To "è®È´¶™ èò®ò¢„ß´û™"
+        Set Field_Label_Short      Field Baxio.Baxio_Code_Out     To "è®È´¶™ èò®ò¢„ß´û™"
+        Set Field_Options          Field Baxio.Baxio_Code_Out     To DD_DISPLAYONLY
+
+        // Baxio.Baxio_Epon_Out
+        Set Field_Label_Long       Field Baxio.Baxio_Epon_Out     To "Ñß‡§¨£Âò"
+        Set Field_Label_Short      Field Baxio.Baxio_Epon_Out     To "Ñß‡§¨£Âò"
+        Set Field_Options          Field Baxio.Baxio_Epon_Out     To DD_DISPLAYONLY
+
+        // Baxio.Baxio_Fpar_Out
+        Set Field_Options          Field Baxio.Baxio_Fpar_Out     To DD_DISPLAYONLY
+
+        // Baxio.Baxio_Lfile
+        Set Field_Value_Table      Field Baxio.Baxio_Lfile        To (Bfile_VT(Self))
+
+        // Baxio.Baxio_Lcode
+        Set Field_Label_Long       Field Baxio.Baxio_Lcode        To "íú¢ú¨´òÂ¶™ èò®ò¢„ß´û™"
+        Set Field_Label_Short      Field Baxio.Baxio_Lcode        To "íú¢.èò®ò¢„ß´û™"
+        Set Field_Options          Field Baxio.Baxio_Lcode        To DD_DISPLAYONLY
+
+        // Baxio.Baxio_Lepon
+        Set Field_Options          Field Baxio.Baxio_Lepon        To DD_DISPLAYONLY
+
+        // Baxio.Baxio_Lpar
+        Set Field_Label_Long       Field Baxio.Baxio_Lpar         To "èò®/°Ê èò®·õ¶©û™"
+        Set Field_Label_Short      Field Baxio.Baxio_Lpar         To "èò®/°Ê èò®·õ¶©û™"
+        Set Field_Options          Field Baxio.Baxio_Lpar         To DD_DISPLAYONLY
+
+        // Baxio.Baxio_Bank00000
+        Set Field_Class_Name       Field Baxio.Baxio_Bank00000    To "dbComboForm_EZ"
+        Set Field_Value_Table      Field Baxio.Baxio_Bank00000    To (Baxio_Baxio_Bank_VT(Self))
+
+        // Baxio.Baxio_Hmniae
+        Set Field_Class_Name       Field Baxio.Baxio_Hmniae       To "dbSpinForm_EZ"
+        Set Field_Label_Long       Field Baxio.Baxio_Hmniae       To "Ü£/§Âò Ñ°õ¶©û™"
+        Set Field_Label_Short      Field Baxio.Baxio_Hmniae       To "Ü£/§Âò Ñ°õ¶©û™"
+        Set Field_Prompt_Object    Field Baxio.Baxio_Hmniae       To (sl037(Self))
+
+        // Baxio.Baxio_Hmniap000
+        Set Field_Class_Name       Field Baxio.Baxio_Hmniap000    To "dbSpinForm_EZ"
+        Set Field_Label_Long       Field Baxio.Baxio_Hmniap000    To "Ü£/§Âò èò®ò¢òô„™"
+        Set Field_Label_Short      Field Baxio.Baxio_Hmniap000    To "Ü£/§Âò èò®ò¢òô„™"
+        Set Field_Prompt_Object    Field Baxio.Baxio_Hmniap000    To (sl037(Self))
+
+        // Baxio.Baxio_Hmnial
+        Set Field_Class_Name       Field Baxio.Baxio_Hmnial       To "dbSpinForm_EZ"
+        Set Field_Label_Long       Field Baxio.Baxio_Hmnial       To "Ü£/§Âò ä„•û™"
+        Set Field_Label_Short      Field Baxio.Baxio_Hmnial       To "Ü£/§Âò ä„•û™"
+        Set Field_Options          Field Baxio.Baxio_Hmnial       To DD_REQUIRED
+        Set Field_Prompt_Object    Field Baxio.Baxio_Hmnial       To (sl037(Self))
+
+        // Baxio.Baxio_Ekdoths
+        Set Field_Label_Long       Field Baxio.Baxio_Ekdoths      To "Ä®Æ†°Ê™ Ñ°õÊ´û™"
+        Set Field_Label_Short      Field Baxio.Baxio_Ekdoths      To "Ä®Æ.Ñ°õÊ´û™"
+
+        // Baxio.Baxio_Ekdothse
+        Set Field_Label_Long       Field Baxio.Baxio_Ekdothse     To "Ñß‡§¨£Âò Ä®Æ†°¶Á Ñ°õÊ´û"
+        Set Field_Label_Short      Field Baxio.Baxio_Ekdothse     To "Ñß‡§¨£Âò"
+
+        // Baxio.Baxio_Sediatagh
+        Set Field_Label_Long       Field Baxio.Baxio_Sediatagh    To "ëú É†ò´òö„"
+        Set Field_Label_Short      Field Baxio.Baxio_Sediatagh    To "ëú É†ò´òö„"
+
+        // Baxio.Baxio_Sdiataghe
+        Set Field_Label_Long       Field Baxio.Baxio_Sdiataghe    To "Ñß‡§¨£Âò Ä®Æ†°¶Á É†°ò†¶ÁÆ¶¨"
+        Set Field_Label_Short      Field Baxio.Baxio_Sdiataghe    To "Ñß‡§¨£Âò"
+
+        // Baxio.Baxio_Banka
+        Set Field_Class_Name       Field Baxio.Baxio_Banka        To "dbComboForm_EZ"
+        Set Field_Label_Long       Field Baxio.Baxio_Banka        To "í®·ßúùò"
+        Set Field_Label_Short      Field Baxio.Baxio_Banka        To "í®·ßúùò"
+        Set Field_Value_Table      Field Baxio.Baxio_Banka        To (Baxio_Baxio_Banka_VT(Self))
+
+        // Baxio.Baxio_Opistho
+        Set Field_Label_Long       Field Baxio.Baxio_Opistho      To "ä¶†ß¶Â éß†©ü¶ö®·≠¶†"
+
+        // Baxio.Baxio_No
+        Set Field_Label_Long       Field Baxio.Baxio_No           To "Ä®†ü£Ê™"
+        Set Field_Label_Short      Field Baxio.Baxio_No           To "Ä®†ü£Ê™"
+
+        // Baxio.Baxio_V2
+        Set Field_Label_Long       Field Baxio.Baxio_V2           To "è¶©Ê"
+        Set Field_Label_Short      Field Baxio.Baxio_V2           To "è¶©Ê"
+        Set Field_Options          Field Baxio.Baxio_V2           To DD_REQUIRED
+
+        // Baxio.Baxio_V0
+        Set Field_Label_Long       Field Baxio.Baxio_V0           To "è¶©Ê âÁ®†¶ åÊ£†©£ò ï®„©ú‡™"
+        Set Field_Label_Short      Field Baxio.Baxio_V0           To "è¶©Ê(â¨®. åÊ£.ï®.)"
+
+        // Baxio.Baxio_V00
+        Set Field_Label_Long       Field Baxio.Baxio_V00          To "è¶©Ê Éú¨´ú®úÁ¶§  åÊ£†©£ò ï®„©ú‡™"
+        Set Field_Label_Short      Field Baxio.Baxio_V00          To "è¶©Ê(Éú¨´. åÊ£.ï®.)"
+
+        // Baxio.Baxio_Vr
+        Set Field_Label_Long       Field Baxio.Baxio_Vr           To "è¶©Ê åÊ£†©£ò Reporting"
+        Set Field_Label_Short      Field Baxio.Baxio_Vr           To "è¶©Ê( åÊ£.Rep.)"
+
+        // Baxio.Baxio_Rate0
+        Set Field_Label_Long       Field Baxio.Baxio_Rate0        To "Rate 1"
+        Set Field_Label_Short      Field Baxio.Baxio_Rate0        To "Rate 1"
+
+        // Baxio.Baxio_Rate00
+        Set Field_Label_Long       Field Baxio.Baxio_Rate00       To "Rate 2"
+        Set Field_Label_Short      Field Baxio.Baxio_Rate00       To "Rate 2"
+
+        // Baxio.Baxio_Rater
+        Set Field_Label_Long       Field Baxio.Baxio_Rater        To "Rate 3"
+        Set Field_Label_Short      Field Baxio.Baxio_Rater        To "Rate 3"
+
+        // Baxio.Baxio_C_Code2
+        Set Field_Class_Name       Field Baxio.Baxio_C_Code2      To "dbComboForm_EZ"
+        Set Field_Label_Long       Field Baxio.Baxio_C_Code2      To "åÊ£†©£ò"
+        Set Field_Label_Short      Field Baxio.Baxio_C_Code2      To "åÊ£†©£ò"
+        Set Field_Options          Field Baxio.Baxio_C_Code2      To DD_REQUIRED
+
+        // Baxio.Baxio_Lixi_Yyyy
+        Set Field_Options          Field Baxio.Baxio_Lixi_Yyyy    To DD_DISPLAYONLY
+
+        // Baxio.Baxio_Lixi_Mm
+        Set Field_Options          Field Baxio.Baxio_Lixi_Mm      To DD_DISPLAYONLY
+
+        // Baxio.Baxio_Lixi_Dd
+        Set Field_Options          Field Baxio.Baxio_Lixi_Dd      To DD_DISPLAYONLY
+
+        // Baxio.Baxio_Bmove_Laa
+        Set Field_Options          Field Baxio.Baxio_Bmove_Laa    To DD_DISPLAYONLY
+
+    End_Procedure    // Define_Fields
+
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Baxio.Baxio_Status To 1
+        Set Field_Changed_Value   Field Baxio.Baxio_Place To 1
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Baxio_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use SL037.SL         // SL037
+Use slnomism.sl      // slNomism
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

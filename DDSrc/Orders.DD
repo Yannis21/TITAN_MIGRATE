@@ -1,0 +1,176 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : ORDERS.DD
+// Class Name: Orders_DataDictionary
+// Revision  : 13
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Orders
+Open Ordersd
+Open Sysrecc
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl94  sl94.SL
+//DDB/ ExternalSelectionList slNomism  slnomism.sl
+Register_Object sl94
+Register_Object slNomism
+//DDB-SelectionEnd
+
+Class Orders_DataDictionary  is a DataDictionary_Sec
+
+     Procedure Update
+        Forward Send Update
+        move syscurxr.company_code to orders.company_code
+        move syscurxr.branch_code  to orders.branch_code
+        move syscurxr.year_year    to orders.year_year
+     End_Procedure   // Update
+
+
+
+     Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                         (Trim(String(orders.rec0)))))) to orders.recr
+
+    End_Procedure   //
+
+    Procedure Entry_orders_date Integer iField Date dDate
+         Local Integer Changed
+         Get Field_Changed_State iField to Changed
+         If ( Changed=0 AND dDate = 0) Begin
+           SysDate4 dDate
+           Set Field_Default_Value iField to dDate
+         End
+    End_Procedure
+
+
+
+
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Orders.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Ordersd.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Orders_Rec0  To Orders.Rec0
+
+        // Field-based properties.......................
+
+        // Orders.Company_Code
+
+        // Orders.Branch_Code
+
+        // Orders.Year_Year
+
+        // Orders.Rec0
+
+        // Orders.Recr
+        Set Field_Prompt_Object    Field Orders.Recr To (sl94(Self))
+
+        // Orders.Descr
+
+        // Orders.Date
+        Set Field_Entry_msg        Field Orders.Date To Entry_orders_date
+        Set Field_Mask_Type        Field Orders.Date To MASK_DATE_WINDOW
+        Set Field_Prompt_Object    Field Orders.Date To (sl94(Self))
+
+        // Orders.Ourdate
+        Set Field_Mask_Type        Field Orders.Ourdate To MASK_DATE_WINDOW
+
+        // Orders.Resp
+
+        // Orders.Eggrish
+        Set Field_Mask             Field Orders.Eggrish To "#"
+        Set Field_Mask_Type        Field Orders.Eggrish To MASK_NUMERIC_WINDOW
+
+        // Orders.Eggrishdate
+        Set Field_Mask_Type        Field Orders.Eggrishdate To MASK_DATE_WINDOW
+
+        // Orders.Eggrishname
+
+        // Orders.Akyrh
+        Set Field_Mask             Field Orders.Akyrh To "#"
+        Set Field_Mask_Type        Field Orders.Akyrh To MASK_NUMERIC_WINDOW
+
+        // Orders.Okey
+        Set Field_Mask             Field Orders.Okey To "#"
+        Set Field_Mask_Type        Field Orders.Okey To MASK_NUMERIC_WINDOW
+
+        // Orders.Finish
+        Set Field_Mask             Field Orders.Finish To "#"
+        Set Field_Mask_Type        Field Orders.Finish To MASK_NUMERIC_WINDOW
+
+        // Orders.Metasx
+        Set Field_Mask             Field Orders.Metasx To "#"
+        Set Field_Mask_Type        Field Orders.Metasx To MASK_NUMERIC_WINDOW
+
+        // Orders.Metasxdate
+        Set Field_Mask_Type        Field Orders.Metasxdate To MASK_DATE_WINDOW
+
+        // Orders.Metasxname
+
+        // Orders.Qty
+
+        // Orders.Fpa
+
+        // Orders.Disc
+
+        // Orders.Extra
+
+        // Orders.Net
+
+        // Orders.Total
+
+        // Orders.Nomisma
+        Set Field_Prompt_Object    Field Orders.Nomisma To (slNomism(Self))
+
+        // Orders.Sxolia
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Orders_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl94.SL          // sl94
+Use slnomism.sl      // slNomism
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

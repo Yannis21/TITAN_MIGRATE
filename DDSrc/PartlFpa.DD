@@ -1,0 +1,72 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : PARTLFPA.DD
+// Class Name: Partlfpa_DataDictionary
+// Revision  : 7
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Partlfpa
+Open Particle
+Open Fpa
+
+//DDB-HeaderEnd
+ 
+Class Partlfpa_DataDictionary  is a DataDictionary_Sec
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Partlfpa.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Particle.File_Number
+        Send Add_Server_File  Fpa.File_Number
+
+        // Field-based properties.......................
+
+        // Partlfpa.Partl_Recr
+
+        // Partlfpa.Fpa_Pososto
+
+        // Partlfpa.Partlfpa_Poso
+
+        // Partlfpa.Poso_Pro_Ekpt
+
+        // Partlfpa.Poso_Ekpt
+
+        // Partlfpa.Poso_Pro_Fpa
+
+        // Partlfpa.Poso_Fpa
+
+        // Partlfpa.Poso_Me_Fpa
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Partlfpa_DataDictionary
+//DDB-FileEnd

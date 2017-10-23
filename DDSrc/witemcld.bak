@@ -1,0 +1,91 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : WITEMCLD.DD
+// Class Name: Witemcld_DataDictionary
+// Revision  : 2
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Witemcld
+Open Witemcl
+
+//DDB-HeaderEnd
+
+Class Witemcld_DataDictionary  is a DataDictionary_sec
+ 
+    // Update:
+ 
+    Procedure Update
+        Forward Send Update 
+        move witemcl.item_code   to witemcld.item_code
+        move witemcl.client_code to witemcld.client_code
+        // Insert Code Here
+    End_Procedure   // Update
+ 
+    Procedure Shmera integer iField  Date dDate
+        Local Integer Changed
+        Get Field_Changed_State iField to Changed
+        If (Changed=0 AND dDate =0) Begin
+            SysDate4 dDate
+            Set Field_Default_Value iField to dDate
+        End
+     End_Procedure   // Shmera
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Witemcld.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Witemcl.File_Number
+
+        // Field-based properties.......................
+
+        // Witemcld.Item_Code
+
+        // Witemcld.Client_Code
+
+        // Witemcld.Rec0
+
+        // Witemcld.Value_Date
+        Set Field_Entry_msg        Field Witemcld.Value_Date To Shmera
+
+        // Witemcld.Axia00
+
+        // Witemcld.Qty
+
+        // Witemcld.Pcdisc
+
+        // Witemcld.Orio
+
+        // Witemcld.Pagioorio
+
+        // Witemcld.Pcdiscantlia
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Witemcld_DataDictionary
+//DDB-FileEnd

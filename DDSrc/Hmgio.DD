@@ -1,0 +1,95 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : HMGIO.DD
+// Class Name: Hmgio_DataDictionary
+// Revision  : 8
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Hmgio
+Open Hmctyp
+Open Sysrecc
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Hmgio_Hmgio_Module_VT
+
+Object Hmgio_Hmgio_Module_VT  is a CodeValidationTable
+    Set Type_Value        To "MODULE"
+    Set Validate_State    To FALSE
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Hmgio_Hmgio_Module_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList Hmgio  Hmgio.SL
+Register_Object Hmgio
+//DDB-SelectionEnd
+
+Class Hmgio_DataDictionary  is a DataDictionary_Sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Hmgio.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Hmctyp.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Hmgio_Code  To Hmgio.Hmgio_Code
+
+        // Field-based properties.......................
+
+        // Hmgio.Hmgio_Code
+        Set Field_Options          Field Hmgio.Hmgio_Code To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Hmgio.Hmgio_Code To (Hmgio(Self))
+        Set Key_Field_State        Field Hmgio.Hmgio_Code To TRUE
+
+        // Hmgio.Hmgio_Descr
+        Set Field_Prompt_Object    Field Hmgio.Hmgio_Descr To (Hmgio(Self))
+
+        // Hmgio.Hmgio_Module
+        Set Field_Value_Table      Field Hmgio.Hmgio_Module To (Hmgio_Hmgio_Module_VT(Self))
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Hmgio_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use Hmgio.SL         // Hmgio
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

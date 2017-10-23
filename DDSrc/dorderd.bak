@@ -1,0 +1,197 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : DORDERD.DD
+// Class Name: Dorderd_DataDictionary
+// Revision  : 22
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Dorderd
+Open Dorderh
+Open Sysrecc
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Dorderd_Pumpm_VT1
+Register_Object Dorderd_Kathish_VT
+
+Object Dorderd_Pumpm_VT1  is a CodeValidationTable
+    Set Type_Value        To "PUMPSXR"
+    Set Allow_Blank_State To TRUE
+    Set Table_Title       To "‰à› ¡¦å ®¨âà©žª ˜¤«¢å˜ª"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Dorderd_Pumpm_VT1
+
+Object Dorderd_Kathish_VT  is a CodeValidationTable
+    Set Type_Value        To "KATISH"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Dorderd_Kathish_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl053  sl053.SL
+Register_Object sl053
+//DDB-SelectionEnd
+Open Item
+
+Class Dorderd_DataDictionary is a DataDictionary_Sec
+ 
+    Function Validate_Delete  Returns Integer
+        Local Integer iReturnVal
+        Forward Get Validate_Delete  To iReturnVal
+        If (Not(iReturnVal)) Begin
+            If (DorderD.Qty_Se_Progr>0) Error 6000 'DDC 061: “§á¨®œ  §¦©æ«ž«˜ ©œ §¨¦š¨˜££˜« ©£æ\nƒœ¤ £§¦¨œå«œ ¤˜ › ˜š¨á¯œ«œ «ž¤ œšš¨˜­ã'            
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Delete
+ 
+ 
+    Function fsItemQual String sItemCode Returns String
+        Clear Item
+        move sItemCode to Item.Item_Code
+        Find Eq Item by Index.5
+        Function_Return Item.Item_Qual
+    End_Function
+
+    Procedure Update
+        Forward Send Update
+        Move Cn.CN_SiteW                            to DorderD.SiteW
+        Move Cn.CN_Code                             to DorderD.CN_Code
+        Move Cn.CN_Recr                             to DorderD.CN_Recr
+        Move DorderH.DorderH_ID                     to DorderD.DorderH_ID
+        Move (fsItemQual(Self,DorderD.Item_Code))   to DorderD.Quality
+        Move (Trim(DorderD.Deop_ID)='')             to DorderD.Not_Ex_Deop
+        Move (DateToWeekDay(DorderD.Hmnia_Parad))   to DorderD.DateW
+        
+        Move (Round_Number((DorderD.Posothta*DorderD.Timh_Monados),2)) ;
+                                                    to DorderD.TotAm
+        Add DorderD.TotAm                           to DorderH.DorderH_TotAm
+        Add DorderD.TotAm                           to Clients.Posa_Apo_Parag
+        Move (DorderD.Posothta-DorderD.Qty_Se_Progr) to DorderD.Ypol_Posothta
+        If (DorderD.Ypol_Posothta<0) Error 6001 'DDC 061: “§æ¢¦ §¦ §¦©æ«ž«˜ª < 0'            
+    End_Procedure   // Update
+
+    Procedure Backout
+        Forward Send Backout
+        Sub DorderD.TotAm From DorderH.DorderH_TotAm
+        Sub DorderD.TotAm From Clients.Posa_Apo_Parag
+    End_Procedure   // Backout
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Dorderd.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Dorderh.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Dorderd_Rec0  To Dorderd.Dorderd_Rec0
+
+        // Field-based properties.......................
+
+        // Dorderd.Dorderh_Recr
+
+        // Dorderd.Quality
+
+        // Dorderd.Hmnia_Parad
+
+        // Dorderd.Ora_Parad
+        Set Field_Mask             Field Dorderd.Ora_Parad To "##:##"
+
+        // Dorderd.Posothta
+
+        // Dorderd.Ypol_Posothta
+
+        // Dorderd.Timh_Monados
+
+        // Dorderd.Sxolia
+
+        // Dorderd.Sitew
+
+        // Dorderd.Company_Code
+
+        // Dorderd.Dorderh_Id
+
+        // Dorderd.Item_Code
+
+        // Dorderd.Pump_Id
+        Set Field_Prompt_Object    Field Dorderd.Pump_Id To (sl053(Self))
+
+        // Dorderd.Deop_Id
+
+        // Dorderd.Btmcode1
+
+        // Dorderd.Btmcode2
+
+        // Dorderd.Btmcode3
+
+        // Dorderd.Pumpm
+        Set Field_Value_Table      Field Dorderd.Pumpm To (Dorderd_Pumpm_VT1(Self))
+
+        // Dorderd.Dorderd_Rec0
+
+        // Dorderd.Datew
+
+        // Dorderd.Caronstime
+
+        // Dorderd.Not_Ex_Deop
+        Set Field_Checkbox_Values  Field Dorderd.Not_Ex_Deop To "1"  "0"
+        Set Field_Class_Name       Field Dorderd.Not_Ex_Deop To "dbCheckBoxsub"
+
+        // Dorderd.Totam
+
+        // Dorderd.Qty_Se_Progr
+
+        // Dorderd.Kathish
+        Set Field_Value_Table      Field Dorderd.Kathish To (Dorderd_Kathish_VT(Self))
+
+        // Dorderd.Loipes_Xreoseis
+        Set Field_Checkbox_Values  Field Dorderd.Loipes_Xreoseis To "1"  "0"
+        Set Field_Class_Name       Field Dorderd.Loipes_Xreoseis To "dbCheckBoxsub"
+
+        // Dorderd.Selected
+
+        // Dorderd.Xhmika_Prosth
+
+        // Dorderd.Mhtres
+
+        // Dorderd.Cn_Code
+
+        // Dorderd.Cn_Recr
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Dorderd_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl053.SL         // sl053
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

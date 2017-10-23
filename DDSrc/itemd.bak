@@ -1,0 +1,121 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : ITEMD.DD
+// Class Name: Itemd_DataDictionary
+// Revision  : 23
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Itemd
+Open Itemtehn
+Open Sysrecw
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl026  sl026.sl
+Register_Object sl026
+//DDB-SelectionEnd
+
+Class Itemd_DataDictionary  is a DataDictionary_Sec
+
+    Procedure OnConstrain
+        Constrain ITEMD.company eq SysCurXR.Company_Code
+        Constrain itemd.branch  eq SysCurXR.Branch_Code
+    End_Procedure
+
+
+    // Update:
+    Procedure Update
+        Forward Send Update
+        move syscurxr.company_code to itemd.company
+        move syscurxr.branch_code  to itemd.branch
+        number wtot##
+        move item.item_code  to itemd.item_code
+        move item.item_recr  to itemd.item_recr
+   //     move ((itemd.itemd_axia * itemd.itemd_qty * itemd.itemd_fpa) / 100) to wtot##
+   //     move ((itemd.itemd_axia * itemd.itemd_qty) + wtot##) to itemd.itemd_total
+    End_Procedure   // Update
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Itemd.Itemd_Rec0)))))) to Itemd.Itemd_Recr
+    End_Procedure   // Creating
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Itemd.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Itemtehn.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecw.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecw.Itemd_Rec0  To Itemd.Itemd_Rec0
+
+        // Field-based properties.......................
+
+        // Itemd.Item_Code
+
+        // Itemd.Item_Recr
+
+        // Itemd.Itemd_Code
+        Set Field_Prompt_Object    Field Itemd.Itemd_Code         To (sl026(Self))
+
+        // Itemd.Itemd_Rec0
+
+        // Itemd.Itemd_Recr
+
+        // Itemd.Itemd_Qty
+
+        // Itemd.Itemd_Fpa
+
+        // Itemd.Itemd_Axia
+
+        // Itemd.Itemd_Total
+
+        // Itemd.Company
+
+        // Itemd.Branch
+
+        // Itemd.Itemtehn_Recr
+
+        // Itemd.Sap_Aa
+
+        // Itemd.Sap_Cc
+
+        // Itemd.Itemtehn_Code
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Itemd_DataDictionary
+//DDB-Selection-pkg-Start
+Use sl026.sl         // sl026
+//DDB-Selection-pkg-End
+//DDB-FileEnd

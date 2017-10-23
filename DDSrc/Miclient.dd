@@ -1,0 +1,41 @@
+Use DataDict.pkg
+
+Open MICLIENT
+Open MICN
+Open MICITIES
+Open MIAREAS
+Open MIPRESP
+
+Register_Object Miclient_sl
+
+Class Miclient is a DataDictionary
+    
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Set Main_file to MICLIENT.File_Number
+
+        Set Add_Server_File to MICITIES.File_Number
+        Set Add_Server_File to MIAREAS.File_Number
+        Set Add_Server_File to MIPRESP.File_Number
+
+        Set Add_Client_File to MICN.File_Number
+
+        Set Foreign_Field_Option DD_KEYFIELD DD_NOPUT to True
+        Set Foreign_Field_Option DD_KEYFIELD DD_FINDREQ to True
+        Set Foreign_Field_Option DD_INDEXFIELD DD_NOPUT to True
+        Set Foreign_Field_Option DD_DEFAULT DD_DISPLAYONLY to True
+
+        Set Field_Prompt_Object Field MICLIENT.CLIENT_ID to Miclient_sl
+
+        Set Field_Prompt_Object Field MICLIENT.CLIENT_NAME to Miclient_sl
+
+        Set Field_Prompt_Object Field MICLIENT.CLIENT_AFM to Miclient_sl
+
+    End_Procedure
+
+End_Class
+
+#IFDEF Is$WebApp
+#ELSE
+Use Miclient.sl
+#ENDIF

@@ -1,0 +1,143 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : WFLAGKIN.DD
+// Class Name: Wflagkin_DataDictionary
+// Revision  : 15
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Wflagkin
+Open Wtypkin
+Open Sysrecw
+Open Syscurxr
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Wflagkin_Wflagkin_Flag_VT
+
+Object Wflagkin_Wflagkin_Flag_VT  is a CodeValidationTable
+    Set Type_Value        To "WFLAGS"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Wflagkin_Wflagkin_Flag_VT
+//DDB-ValidationEnd
+
+Class Wflagkin_DataDictionary  is a DataDictionary
+
+    Procedure Operation_Not_Allowed Integer iError_Num
+        String lsError_Message
+        Case Begin
+            Case (iError_Num = 70001)
+                Move "DDC 019:ƒœ¤ œ§ «¨â§¦¤«˜  Flags ˜¤à «à¤ 2 ¯ž­åà¤" to lsError_Message
+            Case Break
+            Case (iError_Num = 70002)
+                Move "DDC 019:ƒœ¤ œ§ «¨â§¦¤«˜  Flags £ž›œ¤ ¡á" to lsError_Message
+            Case Break
+            Case Else
+                Forward Send Operation_Not_Allowed iError_Num
+        Case End
+        Error iError_Num lsError_Message
+    End_Procedure // operation_not_allowed
+
+
+    Function Validate_Save  Returns Integer
+        Integer iReturnVal
+        Forward Get Validate_Save  To iReturnVal
+        If (Not(iReturnVal)) Begin
+                 If (Length(Trim(Wflagkin.Wflagkin_Flag))>2)    Move 70001 to iReturnVal
+            Else If (Wflagkin.Flag_Numeric=0)                   Move 70002 to iReturnVal
+            If (iReturnVal) Send Operation_Not_Allowed iReturnVal
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+
+
+    // Update:
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move Company.Company_Code   to Wflagkin.Company_Code
+        Move Branch.Branch_Code     to Wflagkin.Branch_Code
+        Move Year.Year_Year         to Wflagkin.Year_Year
+        Move Wtypkin.Wtypkin_Code   to Wflagkin.Wtypkin_Code
+        
+        Move Wflagkin.Wflagkin_Flag to Wflagkin.Flag_Numeric
+        
+    End_Procedure   // Update
+ 
+     Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Wflagkin.Wflagkin_Rec0)))))) to Wflagkin.Wflagkin_Recr
+    End_Procedure   // Creating
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Wflagkin.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Wtypkin.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecw.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Syscurxr.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecw.Wflagkin_Rec0  To Wflagkin.Wflagkin_Rec0
+
+        // Field-based properties.......................
+
+        // Wflagkin.Company_Code
+
+        // Wflagkin.Branch_Code
+
+        // Wflagkin.Year_Year
+
+        // Wflagkin.Wtypkin_Code
+
+        // Wflagkin.Wflagkin_Flag
+        Set Field_Value_Table      Field Wflagkin.Wflagkin_Flag To (Wflagkin_Wflagkin_Flag_VT(Self))
+
+        // Wflagkin.Wtypkin_Recr
+
+        // Wflagkin.Wflagkin_Descr
+
+        // Wflagkin.Wflagkin_Rec0
+        Set Field_Options          Field Wflagkin.Wflagkin_Rec0 To DD_AUTOFIND   
+
+        // Wflagkin.Wflagkin_Recr
+
+        // Wflagkin.Flag_Numeric
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Wflagkin_DataDictionary
+//DDB-FileEnd

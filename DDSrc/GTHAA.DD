@@ -1,0 +1,173 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GTHAA.DD
+// Class Name: Gthaa_DataDictionary
+// Revision  : 33
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Gthaa
+Open Gthhmgio
+Open Sysrecg
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList SL063  Sl063.sl
+Register_Object SL063
+//DDB-SelectionEnd
+
+Class Gthaa_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Property Integer piMustNOTConstrain Public 0
+    End_Procedure
+
+
+    Procedure OnConstrain
+        Forward Send OnConstrain
+        If (piMustNOTConstrain(Self)) Begin
+        End
+        Else Begin
+            Constrain GTHAA.Company_Code  eq SysCurGL.Company_Code
+            Constrain GTHAA.Branch_Code   eq SysCurGL.Branch_Code
+            Constrain GTHAA.Year_Year     eq SysCurGL.Year_Year
+        End
+    End_Procedure
+
+
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move SysCurGL.Company_Code  to GTHAA.Company_Code
+        Move SysCurGL.Branch_Code   to GTHAA.Branch_Code
+        Move SysCurGL.Year_Year     to GTHAA.Year_Year
+        Move SysCurGL.Year_Recr     to GTHAA.Year_Recr
+        Move Gthhmgio.Gthhmgio_Code to GTHAA.Gthhmgio_Code
+    End_Procedure   // Update
+
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurGL.Branch_Site))+;
+                          (Trim(String(Gthaa.Gthaa_Rec0)))))) to Gthaa.Gthaa_Recr
+    End_Procedure   // Creating
+
+////////////////////////////
+
+    Function Validate_Save  Returns Integer
+        Integer iReturnVal
+        Forward Get Validate_Save To iReturnVal
+        If (Not(iReturnVal)) Begin
+            If ( ;
+                (Not(Gthaa.Company_Code = SysCurGL.Company_Code)) or;
+                (Not(Gthaa.Branch_Code  = SysCurGL.Branch_Code )) or;
+                (Not(Gthaa.Year_Year    = SysCurGL.Year_Year   ))   ;
+                ) Send Operation_Not_Allowed 1100
+        End
+        Function_Return iReturnVal
+    End_Function   //validate_save
+
+
+    Function Validate_Delete  Returns Integer
+        Local Integer iReturnVal
+        Forward Get Validate_Delete  To iReturnVal
+        If (Not(iReturnVal)) Begin
+            If ( ;
+                (Not(Gthaa.Company_Code = SysCurGL.Company_Code)) or;
+                (Not(Gthaa.Branch_Code  = SysCurGL.Branch_Code )) or;
+                (Not(Gthaa.Year_Year    = SysCurGL.Year_Year   ))   ;
+                ) Send Operation_Not_Allowed 2100
+        End
+        Function_Return iReturnVal
+    End_Function   // validate_delete
+
+
+
+    Procedure Operation_Not_Allowed  Integer iError_Num
+        Case Begin
+            Case (iError_Num = 1100)
+                Error 1100 "DDC 162:‹ž ˜§¦›œ¡«ã „«˜ ¨å˜-•¨ã©ž"
+                Case Break
+
+            Case (iError_Num = 2100)
+                Error 2100 "DDC 162:‹ž ˜§¦›œ¡«ã „«˜ ¨å˜-•¨ã©ž"
+                Case Break
+
+            Case Else
+                Forward Send Operation_Not_Allowed  iError_Num
+        Case End
+    End_Procedure   //operation_not_allowed
+
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Gthaa.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Gthhmgio.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecg.Gthaa_Rec0  To Gthaa.Gthaa_Rec0
+
+        // Field-based properties.......................
+
+        // Gthaa.Company_Code
+
+        // Gthaa.Branch_Code
+
+        // Gthaa.Year_Year
+
+        // Gthaa.Gthhmgio_Code
+
+        // Gthaa.Gthaa_Rec0
+
+        // Gthaa.Year_Recr
+
+        // Gthaa.Gthhmgio_Recr
+
+        // Gthaa.Gthaa_Lhmnia
+        //DDB/ Comment_Short       Field Gthaa.Gthaa_Lhmnia To "„¤ž£œ¨é¤œ«˜  ˜§æ ?"
+
+        // Gthaa.Gthaa_Laa
+
+        // Gthaa.Gthaa_Recr
+        Set Field_Prompt_Object    Field Gthaa.Gthaa_Recr To (SL063(Self))
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+End_Class    // Gthaa_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use Sl063.sl         // SL063
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

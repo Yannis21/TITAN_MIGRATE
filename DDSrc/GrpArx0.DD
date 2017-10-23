@@ -1,0 +1,85 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GRPARX0.DD
+// Class Name: Grparx0_DataDictionary
+// Revision  : 8
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Grparx0
+Open Grpped0
+Open Usergrps
+Open Arxeia
+
+//DDB-HeaderEnd
+
+Class Grparx0_DataDictionary  is a DataDictionary_Sec
+ 
+    // Update:
+ 
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move (String(grpArx0.Group_ID)+String(GrpArx0.Arxeio_ID)) to GrpArx0.GrpArx0_Recr
+    End_Procedure   // Update
+ 
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Grparx0.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Grpped0.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Usergrps.File_Number
+        Send Add_Server_File  Arxeia.File_Number
+
+        // Field-based properties.......................
+
+        // Grparx0.Group_Id
+
+        // Grparx0.Arxeio_Id
+
+        // Grparx0.Allow_Read
+
+        // Grparx0.Allow_Change
+
+        // Grparx0.Allow_Create
+
+        // Grparx0.Allow_Delete
+
+        // Grparx0.Allow_Copy
+
+        // Grparx0.Grparx0_Recr
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Grparx0_DataDictionary
+//DDB-FileEnd

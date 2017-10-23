@@ -1,0 +1,81 @@
+Use DFAllEnt.pkg
+Use cCJStandardCommandBarSystem.pkg
+
+Object oHtmlHelp is a cHtmlHelp
+End_Object
+
+Object oApplication is a cApplication
+    Set peHelpType to htHtmlHelp
+
+    Procedure OnCreate
+        Handle hoCmdLine
+        Integer iNumArgs iArg
+        Get phoCommandLine to hoCmdLine
+    End_Procedure
+
+End_Object
+
+Use oEditContextMenu.pkg
+Use oDEOEditContextMenu.pkg
+
+
+Use MERTECH.INC
+//Login 'PIS2003DEV'  'SA' '123' 'SQL_DRV'
+//Login 'PISDEV'      'SA' '123' 'SQL_DRV'
+
+Open CLIENTS
+Open MICLIENT
+
+
+Object oMain is a Panel
+
+    Set Label to "Test1 "
+
+    Set Location to 4 3
+    Set Size to 300 450
+
+    Object oCommandBarSystem is a cCJCommandBarSystem
+        Set pbTimerUpdate to True
+//
+        Procedure OnCreateCommandBars
+            Handle hoOptions
+            Get OptionsObject to hoOptions
+            Forward Send OnCreateCommandBars
+        End_Procedure
+//
+        Object oMenuBar is a cCJMenuBar
+
+            Object oShowCallsMenuItem is a cCJMenuItem
+                Set psCaption to "Test1 "
+                Set psTooltip to "Test1 "
+                
+                Procedure OnExecute Variant vCommandBarControl
+                    Handle hoClient
+                    Get Client_Id to hoClient
+                    Send Activate_Migrate101 of hoClient
+                End_Procedure
+
+            End_Object
+
+        End_Object
+  
+    End_Object
+
+    Object oClientArea is a ClientArea
+        Use StdAbout.pkg
+
+        Procedure Activate_About
+            Send DoAbout "" "" "" "" ""
+        End_Procedure
+
+        //------
+        Use Migrate101.vw
+
+        //------
+    End_Object
+    
+End_Object
+
+
+Send Activate_Migrate101 of (oClientArea(oMain))
+Start_UI

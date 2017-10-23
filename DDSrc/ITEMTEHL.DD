@@ -1,0 +1,79 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : ITEMTEHL.DD
+// Class Name: Itemtehl_DataDictionary
+// Revision  : 1
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Itemtehl
+Open Item
+
+//DDB-HeaderEnd
+open itemtehn
+
+Set_attribute  DF_FILE_ALIAS of itemtehl.File_number to DF_FILE_IS_ALIAS
+Set_attribute  DF_FILE_ALIAS of itemtehn.File_number  to DF_FILE_IS_MASTER
+
+// clear the relationship in the alias file
+Set_relate itemtehl.item_code to |FN0,0
+
+
+Class Itemtehl_DataDictionary  is a DataDictionary_sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Itemtehl.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Item.File_Number
+
+        // Field-based properties.......................
+
+        // Itemtehl.Item_Code
+
+        // Itemtehl.Hmnia
+
+        // Itemtehl.Aa
+
+        // Itemtehl.Rec0
+
+        // Itemtehl.Recr
+
+        // Itemtehl.Company
+
+        // Itemtehl.Branch
+
+        // Itemtehl.Code
+
+        // Itemtehl.Sap_Hmnia
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Itemtehl_DataDictionary
+//DDB-FileEnd

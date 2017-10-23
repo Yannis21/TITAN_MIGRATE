@@ -1,0 +1,225 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : YPOPROSF.DD
+// Class Name: Ypoprosf_DataDictionary
+// Revision  : 70
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Ypoprosf
+Open Camovedd
+Open Yclients
+Open Sysrecc
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Ypoprosf_Aities_Mh_Anal_VT
+Register_Object Ypoprosf_Status_VT
+Register_Object Ypoprosf_Pay_Tropos_VT
+Register_Object Ypoprosf_Velxr_VT
+
+Object Ypoprosf_Aities_Mh_Anal_VT  is a CodeValidationTable
+    Set Type_Value        To "PR_AITIA"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Ypoprosf_Aities_Mh_Anal_VT
+
+Object Ypoprosf_Status_VT  is a CodeValidationTable
+    Set Type_Value        To "PR_STATUS"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Ypoprosf_Status_VT
+
+Object Ypoprosf_Pay_Tropos_VT  is a CodeValidationTable
+    Set Type_Value        To "PAY_TERMS"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Ypoprosf_Pay_Tropos_VT
+
+Object Ypoprosf_Velxr_VT  is a CodeValidationTable
+    Set Type_Value        To "ELXREOSH"
+    Set Table_Title       To "•¨âà©ž „¢¢œ §é¤ ”¦¨«åà¤"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Ypoprosf_Velxr_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl198  sl198.sl
+//DDB/ ExternalSelectionList sl197  sl197.SL
+Register_Object sl198
+Register_Object sl197
+//DDB-SelectionEnd
+
+Class Ypoprosf_DataDictionary  is a DataDictionary_sec
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Ypoprosf.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Camovedd.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Yclients.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Aa_Ypoprosf  To Ypoprosf.Aa_Ypoprosf
+
+        // Field-based properties.......................
+
+        // Ypoprosf.Aa_Ypoprosf
+        Set Field_Options          Field Ypoprosf.Aa_Ypoprosf To DD_AUTOFIND   
+        Set Key_Field_State        Field Ypoprosf.Aa_Ypoprosf To TRUE
+
+        // Ypoprosf.Kodikos
+
+        // Ypoprosf.Pelaths
+
+        // Ypoprosf.Sls_Id
+
+        // Ypoprosf.Hm_Apostolhs
+        Set Field_Entry_msg        Field Ypoprosf.Hm_Apostolhs To Entry_ypoprosf_date
+        Set Field_Mask_Type        Field Ypoprosf.Hm_Apostolhs To MASK_DATE_WINDOW
+
+        // Ypoprosf.Ypeyth_Pelath
+
+        // Ypoprosf.Thl_Ypeythynou
+
+        // Ypoprosf.Periex_Prosf
+
+        // Ypoprosf.Sxolia
+
+        // Ypoprosf.Aities_Mh_Anal
+        Set Field_Value_Table      Field Ypoprosf.Aities_Mh_Anal To (Ypoprosf_Aities_Mh_Anal_VT(Self))
+
+        // Ypoprosf.Metasx
+
+        // Ypoprosf.Metasx_Date
+        Set Field_Entry_msg        Field Ypoprosf.Metasx_Date To Entry_ypoprosf_date
+        Set Field_Mask_Type        Field Ypoprosf.Metasx_Date To MASK_DATE_WINDOW
+
+        // Ypoprosf.Date
+
+        // Ypoprosf.Rial_Date
+
+        // Ypoprosf.Qty
+
+        // Ypoprosf.Hour
+
+        // Ypoprosf.Disc
+
+        // Ypoprosf.Fpa
+
+        // Ypoprosf.Net
+
+        // Ypoprosf.Total
+
+        // Ypoprosf.Hm_Timol
+        Set Field_Mask_Type        Field Ypoprosf.Hm_Timol To MASK_DATE_WINDOW
+
+        // Ypoprosf.Aitia_Kathyst
+
+        // Ypoprosf.Ar_Symbashs
+
+        // Ypoprosf.Status
+        Set Field_Value_Table      Field Ypoprosf.Status To (Ypoprosf_Status_VT(Self))
+
+        // Ypoprosf.Clorder_Recr
+
+        // Ypoprosf.Topos
+
+        // Ypoprosf.Pay_Tropos
+        Set Field_Value_Table      Field Ypoprosf.Pay_Tropos To (Ypoprosf_Pay_Tropos_VT(Self))
+
+        // Ypoprosf.Clients_Text
+
+        // Ypoprosf.City
+        Set Field_Prompt_Object    Field Ypoprosf.City To (sl198(Self))
+
+        // Ypoprosf.Area
+        Set Field_Prompt_Object    Field Ypoprosf.Area To (sl197(Self))
+
+        // Ypoprosf.Add_No
+
+        // Ypoprosf.Nomos
+
+        // Ypoprosf.Xora
+
+        // Ypoprosf.Phone
+
+        // Ypoprosf.Zipcode
+
+        // Ypoprosf.Cn_Code
+
+        // Ypoprosf.Deop_Date
+        Set Field_Mask_Type        Field Ypoprosf.Deop_Date To MASK_DATE_WINDOW
+
+        // Ypoprosf.Deop_Lhxh
+        Set Field_Mask_Type        Field Ypoprosf.Deop_Lhxh To MASK_DATE_WINDOW
+
+        // Ypoprosf.Statero
+
+        // Ypoprosf.Velxr
+        Set Field_Value_Table      Field Ypoprosf.Velxr To (Ypoprosf_Velxr_VT(Self))
+
+        // Ypoprosf.Eleiph
+
+        // Ypoprosf.Enarxh
+        Set Field_Mask_Type        Field Ypoprosf.Enarxh To MASK_DATE_WINDOW
+
+        // Ypoprosf.Lhxh
+        Set Field_Mask_Type        Field Ypoprosf.Lhxh To MASK_DATE_WINDOW
+
+        // Ypoprosf.Deop
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+    
+    Procedure Entry_ypoprosf_date Integer iField Date dDate
+         Local Integer Changed
+         Get Field_Changed_State iField to Changed
+         If ( Changed=0 AND dDate = 0) Begin
+           SysDate4 dDate
+           Set Field_Default_Value iField to dDate
+         End
+    End_Procedure
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Ypoprosf.Sls_Id To "01.01.00000"
+        Set Field_Changed_Value   Field Ypoprosf.Pay_Tropos To "0"
+        Set Field_Changed_Value   Field Ypoprosf.Velxr To "0"
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Ypoprosf_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl198.sl         // sl198
+Use sl197.SL         // sl197
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

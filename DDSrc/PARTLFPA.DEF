@@ -1,0 +1,41 @@
+-----------------------------------------------------------------------------
+  DATE: 03/05/111      TIME: 16:04                                  PAGE:  1
+  FILE DEFINITION FOR FILE: PARTLFPA (# 103)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:PARTLFPA
+  USER DISPLAY NAME         : PartlFpa
+  DATAFLEX FILE NAME        : PARTLFPA
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 77        ( USED: 77 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 141376 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  PARTL_RECR       ASC     12     1  1   PARTICLE.FIELD_43 (14,43)
+  2  FPA_POSOSTO      NUM    4.2    13  1   FPA.FIELD_1 (104,1)
+  3  PARTLFPA_POSO    NUM   14.8    16      
+  4  POSO_PRO_EKPT    NUM   14.8    27      
+  5  POSO_EKPT        NUM   14.8    38      
+  6  POSO_PRO_FPA     NUM   14.8    49      
+  7  POSO_FPA         NUM   14.4    60      
+  8  POSO_ME_FPA      NUM   14.4    69      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    PARTL_RECR      NO  NO       15     3       2     ON-LINE
+       FPA_POSOSTO     NO  NO 
+
+  2    FPA_POSOSTO     NO  NO       15     3       2     ON-LINE
+       PARTL_RECR      NO  NO 
+

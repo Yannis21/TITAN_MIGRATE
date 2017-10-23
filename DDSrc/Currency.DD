@@ -1,0 +1,74 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : CURRENCY.DD
+// Class Name: Currency_DataDictionary
+// Revision  : 1
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Currency
+Open Rates
+
+//DDB-HeaderEnd
+ 
+Class Currency_DataDictionary  is a DataDictionary_sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Currency.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Rates.File_Number
+
+        // Field-based properties.......................
+
+        // Currency.Currency_C_Code
+
+        // Currency.Currency_Rec0
+
+        // Currency.Currency_Type
+
+        // Currency.Currency_Dec
+
+        // Currency.Currency_Sign0
+
+        // Currency.Currency_Sign00
+
+        // Currency.Currency_Signr
+
+        // Currency.Currency_Euro
+
+        // Currency.Currency_Units
+
+        // Currency.Currency_Rate_E
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Currency_DataDictionary
+//DDB-FileEnd

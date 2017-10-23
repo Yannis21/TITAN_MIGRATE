@@ -1,0 +1,372 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : COPEN.DD
+// Class Name: Copen_DataDictionary
+// Revision  : 66
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Copen
+Open Cmoves
+Open Cmovesa
+Open Sysrecc
+Open Syscurxr
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Copen_Copen_C_Code2_VT
+Register_Object Copen_Copen_M_Code_VT
+
+Object Copen_Copen_C_Code2_VT  is a CodeValidationTable
+    Set Type_Value        To "CURRENCY"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Copen_Copen_C_Code2_VT
+
+Object Copen_Copen_M_Code_VT  is a CodeValidationTable
+    Set Type_Value        To "MODULE"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Copen_Copen_M_Code_VT
+//DDB-ValidationEnd
+
+Class Copen_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Save_Main_File
+        If (Operation_Origin<>Self) Begin
+            If Copen.Recnum Eq 0 Procedure_Return
+        End
+        Forward Send Save_Main_File
+    End_Procedure
+
+    Procedure Default_Initial_Amount Integer iField Number nVal
+        Integer iChanged
+        Get Field_Changed_State iField to iChanged
+        If ((iChanged=0) And (nVal=0)) Begin
+            If (Cmoves.Axia_ypol_sysx<=CmovesA.Axia_ypol_sysx) ;
+                 Set Field_Default_Value iField to Cmoves.Axia_ypol_sysx
+            Else Set Field_Default_Value iField to CmovesA.Axia_ypol_sysx
+        End
+    End_procedure
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Property Integer piCmovesID         Public 0
+        Property Integer piIsSaved          Public 0
+        Property Integer piFromBP           Public 0
+        Property Integer piNotMoveSyscurXr  Public 0
+    End_Procedure
+
+    Procedure End_Construct_Object
+        Integer iCmovesID
+        Forward Send End_Construct_Object
+        Move (Find_Server_DDO(Self,Cmoves.File_Number)) to iCmovesID
+        Set piCmovesID to iCmovesID
+    End_Procedure
+
+     Procedure Creating
+        Forward Send Creating
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Copen.Copen_Rec0)))))) to Copen.Copen_Recr
+    End_Procedure   // Creating
+
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move SysCurXR.Company_Code  to Copen.Company_Code
+        Move SysCurXR.Branch_Code   to Copen.Branch_Code
+        Move SysCurXR.Year_Year     to Copen.Year_Year
+        Move Clients.Client_ID      to Copen.Client_ID
+        Move Ctypkin.Ctypkin_Code   to Copen.Ctypkin_Code
+
+        Move 0 to Copen.Copen_X0
+        Move 0 to Copen.Copen_P0
+        If      (Cmovesa.Cmoves_X0 <> 0) Move Copen.Copen_Axia0 to Copen.Copen_X0
+        Else If (Cmovesa.Cmoves_P0 <> 0) Move Copen.Copen_Axia0 to Copen.Copen_P0
+        Move Cmovesa.Cmoves_Recr    to Copen.Cmovesa_Recr
+        
+        Add Copen.Copen_Axia0       to Cmoves.Axia_Sysxet
+    End_Procedure   // Update
+
+    Procedure Backout
+        Forward Send Backout
+        Sub Copen.Copen_Axia0   From Cmoves.Axia_Sysxet
+    End_Procedure //backout
+
+
+    Procedure Operation_Not_Allowed Integer iError_Num
+        String lsError_Message
+        Case Begin
+            //˜§æ validate save
+
+            Case (iError_Num = 1006)
+                Move "DDC 009:€›ç¤˜«ž ž œšš¨˜­ã. \n’¦ §¦©æ ƒ„Œ £§¦¨œå ¤˜ œå¤˜  0" to lsError_Message
+            Case Break
+            Case (iError_Num = 1010)
+                Move "DDC 009:€›ç¤˜«ž ž œšš¨˜­ã. \n¦©æ ‘¬©®â« ©žª £ž›œ¤ ¡æ" to lsError_Message
+            Case Break
+            Case (iError_Num = 1011)
+                Move "DDC 009:€›ç¤˜«ž ž œšš¨˜­ã. \n’¦ §¦©æ ©¬©®â« ©žª â®œ  ¬§œ¨™œå \n’¦ › ˜Ÿâ© £¦ §¦©æ §¨¦ª ©¬©®â« ©ž" to lsError_Message
+            Case Break
+            Case (iError_Num = 1012)
+                Move "DDC 009:€›ç¤˜«ž ž œšš¨˜­ã. \n’¦ ¦©æ ©¬©®â« ©žª â®œ  ¬§œ¨™œå \n’¦ ¬§æ¢¦ §¦¬ §¦©¦ç §¨¦ª ©¬©®â« ©ž" to lsError_Message
+            Case Break
+
+            Case (iError_Num = 10001)
+                Move "DDC 009:ƒœ¤ £§æ¨œ©˜ ¤˜ œ§˜¤˜«¦§¦Ÿœ«žŸé \n©«ž¤ «¨â®¦¬©˜ œšš¨˜­ã \n’¦ ˜¨®œå¦ â®œ  ¬§¦©«œå ž£ á \n•¨œå˜œ«˜  ˜¤˜› ¦¨šá¤à©ž" to lsError_Message
+            Case Break
+            //˜§æ validate delete
+            Case (iError_Num = 10002)
+                Move "DDC 009:€›ç¤˜«ž ž › ˜š¨˜­ã. \nƒœ¤ ™¨å©¡à š ˜ › ˜š¨˜­ã «ž¤ ©¬©®œ« ©£â¤ž (˜¤«å©«¨¦­ž) œšš¨˜­ã" to lsError_Message
+            Case Break
+            Case (iError_Num = 1101)
+                Move ("DDC 009:€¡˜«á¢¢ž¢ž „šš¨˜­ã.\n\n"+;
+                "’¦ ˜©¬©®â« ©«¦ ®¨œà©« ¡æ ¬§æ¢¦ §¦ œå¤˜  ˜¨¤ž« ¡æ !");
+                to lsError_Message
+            Case Break
+            Case (iError_Num = 1102)
+                Move ("DDC 009:€¡˜«á¢¢ž¢ž „šš¨˜­ã.\n\n"+;
+                "’¦ ˜©¬©®â« ©«¦ § ©«à« ¡æ ¬§æ¢¦ §¦ œå¤˜  ˜¨¤ž« ¡æ !");
+                to lsError_Message
+            Case Break
+            Case (iError_Num = 1103)
+                Move ("DDC 009:€¡˜«á¢¢ž¢ž „šš¨˜­ã.\n\n"+;
+                "† ¡á¢¬¯ž «žª ®¨âà©žª œå¤˜  ˜¨¤ž« ¡ã !");
+                to lsError_Message
+            Case Break
+            Case (iError_Num = 1104)
+                Move ("DDC 009:€¡˜«á¢¢ž¢ž „šš¨˜­ã.\n\n"+;
+                "† ¡á¢¬¯ž «žª §å©«à©žª œå¤˜  ˜¨¤ž« ¡ã !");
+                to lsError_Message
+            Case Break
+            //---------------------------------------Ÿœ« ¡âª ®¨œé©œ ª-----------------
+            Case (iError_Num = 1105)
+                Move ("DDC 009:€¡˜«á¢¢ž¢ž •¨œà©« ¡ã „šš¨˜­ã.\n\n"+;
+                "’¦ ˜©¬©®â« ©«¦ ®¨œà©« ¡æ ¬§æ¢¦ §¦ ¬§œ¨™˜å¤œ  «ž¤ ¦¢ ¡ã ®¨âà©ž !");
+                to lsError_Message
+            Case Break
+            Case (iError_Num = 1106)
+                Move ("DDC 009:€¡˜«á¢¢ž¢ž •¨œà©« ¡ã „šš¨˜­ã.\n\n"+;
+                "† ¡á¢¬¯ž «žª ®¨âà©žª ¬§œ¨™˜å¤œ  «ž¤ ¦¢ ¡ã ®¨âà©ž !");
+                to lsError_Message
+            Case Break
+            Case (iError_Num = 1107)
+                Move ("DDC 009:€¡˜«á¢¢ž¢ž •¨œà©« ¡ã „šš¨˜­ã.\n\n"+;
+                "’¦ ˜©¬©®â« ©«¦ § ©«à« ¡æ ¬§æ¢¦ §¦ ›â¤ œå¤˜  £ž›œ¤ ¡æ !");
+                to lsError_Message
+            Case Break
+            Case (iError_Num = 1108)
+                Move ("DDC 009:€¡˜«á¢¢ž¢ž •¨œà©« ¡ã „šš¨˜­ã.\n\n"+;
+                "† ¡á¢¬¯ž «žª §å©«à©žª ›â¤ œå¤˜  £ž›œ¤ ¡ã !");
+                to lsError_Message
+            Case Break
+            //---------------------------------------˜¨¤ž« ¡âª ®¨œé©œ ª---------------
+            Case (iError_Num = 1109)
+                Move ("DDC 009:€¡˜«á¢¢ž¢ž €¨¤ž« ¡ã •¨œà©« ¡ã „šš¨˜­ã.\n\n"+;
+                "’¦ ˜©¬©®â« ©«¦ ®¨œà©« ¡æ ¬§æ¢¦ §¦ ›â¤ œå¤˜  £ž›œ¤ ¡æ!");
+                to lsError_Message
+            Case Break
+            Case (iError_Num = 1110)
+                Move ("DDC 009:€¡˜«á¢¢ž¢ž €¨¤ž« ¡ã •¨œà©« ¡ã „šš¨˜­ã.\n\n"+;
+                "† ¡á¢¬¯ž «žª ®¨âà©žª ›â¤ œå¤˜  £ž›œ¤ ¡ã !");
+                to lsError_Message
+            Case Break
+            Case (iError_Num = 1111)
+                Move ("DDC 009:€¡˜«á¢¢ž¢ž €¨¤ž« ¡ã •¨œà©« ¡ã „šš¨˜­ã.\n\n"+;
+                "’¦ ˜©¬©®â« ©«¦ § ©«à« ¡æ ¬§æ¢¦ §¦ ¬§œ¨™˜å¤œ  «ž¤ ˜§æ¢¬«ž « £ã «žª ˜¨¤ž« ¡ãª ®¨âà©žª !");
+                to lsError_Message
+            Case Break
+            Case (iError_Num = 1112)
+                Move ("DDC 009:€¡˜«á¢¢ž¢ž €¨¤ž« ¡ã •¨œà©« ¡ã „šš¨˜­ã.\n\n"+;
+                "† ¡á¢¬¯ž «žª §å©«à©žª ¬§œ¨™˜å¤œ  «ž¤ ˜§æ¢¬«ž « £ã «žª ˜¨¤ž« ¡ãª ®¨âà©žª !");
+                to lsError_Message
+            Case Break
+            //---------------------------------------Ÿœ« ¡âª § ©«é©œ ª----------------
+            Case (iError_Num = 1113)
+                Move ("DDC 009:€¡˜«á¢¢ž¢ž  ©«à« ¡ã „šš¨˜­ã.\n\n"+;
+                "’¦ ˜©¬©®â« ©«¦ ®¨œà©« ¡æ ¬§æ¢¦ §¦ ›â¤ œå¤˜  £ž›œ¤ ¡æ !");
+                to lsError_Message
+            Case Break
+            Case (iError_Num = 1114)
+                Move ("DDC 009:€¡˜«á¢¢ž¢ž  ©«à« ¡ã „šš¨˜­ã.\n\n"+;
+                "† ¡á¢¬¯ž «žª ®¨âà©žª ›â¤ œå¤˜  £ž›œ¤ ¡ã !");
+                to lsError_Message
+            Case Break
+            Case (iError_Num = 1115)
+                Move ("DDC 009:€¡˜«á¢¢ž¢ž  ©«à« ¡ã „šš¨˜­ã.\n\n"+;
+                "’¦ ˜©¬©®â« ©«¦ § ©«à« ¡æ ¬§æ¢¦ §¦ ¬§œ¨™˜å¤œ  «ž¤ ¦¢ ¡ã §å©«à©ž !");
+                to lsError_Message
+            Case Break
+            Case (iError_Num = 1116)
+                Move ("DDC 009:€¡˜«á¢¢ž¢ž  ©«à« ¡ã „šš¨˜­ã.\n\n"+;
+                "† ¡á¢¬¯ž «žª §å©«à©žª ¬§œ¨™˜å¤œ  «ž¤ ¦¢ ¡ã §å©«à©ž !");
+                to lsError_Message
+            Case Break
+            //---------------------------------------˜¨àž« ¡âª § ©«é©œ ª----------------
+            Case (iError_Num = 1117)
+                Move ("DDC 009:€¡˜«á¢¢ž¢ž €¨¤ž« ¡ã  ©«à« ¡ã „šš¨˜­ã.\n\n"+;
+                "’¦ ˜©¬©®â« ©«¦ ®¨œà©« ¡æ ¬§æ¢¦ §¦ ›â¤ œå¤˜  £ž›œ¤ ¡æ!");
+                to lsError_Message
+            Case Break
+            Case (iError_Num = 1118)
+                Move ("DDC 009:€¡˜«á¢¢ž¢ž €¨¤ž« ¡ã  ©«à« ¡ã „šš¨˜­ã.\n\n"+;
+                "† ¡á¢¬¯ž «žª ®¨âà©žª ›â¤ œå¤˜  £ž›œ¤ ¡ã !");
+                to lsError_Message
+            Case Break
+            Case (iError_Num = 1119)
+                Move ("DDC 009:€¡˜«á¢¢ž¢ž €¨¤ž« ¡ã  ©«à« ¡ã „šš¨˜­ã.\n\n"+;
+                "’¦ ˜©¬©®â« ©«¦ § ©«à« ¡æ ¬§æ¢¦ §¦ ¬§œ¨™˜å¤œ  «ž¤ ˜§æ¢¬«ž « £ã «žª ˜¨¤ž« ¡ãª §å©«à©žª !");
+                to lsError_Message
+            Case Break
+            Case (iError_Num = 1120) //soso ayto den xoraei display stin othoni !
+                Move ("DDC 009:€¡˜«á¢¢ž¢ž €¨¤ž« ¡ã  ©«à« ¡ã „šš¨˜­ã.\n\n"+;
+                "† ¡á¢¬¯ž «žª §å©«à©žª ¬§œ¨™˜å¤œ  «ž¤ ˜§æ¢¬«ž « £ã «žª ˜¨¤ž« ¡ãª §å©«à©žª !");
+                to lsError_Message
+            Case Break
+
+            Case (iError_Num = 1009)
+                Clear Codemast
+                Move "MODULE" to Codemast.Type
+                Move Cmoves.Module_From to Codemast.Code
+                Find Eq Codemast by Index.1 //type+code
+                Move ("DDC 009:€›ç¤˜«ž ž œšš¨˜­ž!\n\n(† ¡å¤ž©ž ˜¢¢áœ  £æ¤¦¤ ˜§æ "+;
+                (Trim(Codemast.Description))+" )") to lsError_Message
+            Case Break
+
+
+            //˜§æ validate delete
+            Case (iError_Num = 2001)
+                Move ("DDC 009:€›ç¤˜«ž ž › ˜š¨˜­ã!\n\n˜¨˜¡˜¢é ¡˜¢â©˜«œ «ž¤ P.I.S. !");
+                to lsError_Message
+            Case Break
+
+            Case Else
+                Forward Send Operation_Not_Allowed iError_Num
+        Case End
+
+        Error iError_Num lsError_Message
+    End_Procedure   //operation_not_allowed
+
+
+    Function Validate_Save Returns Integer
+        Integer iReturnVal
+        Forward Get Validate_Save to iReturnVal
+        If (Not(iReturnVal)) Begin
+                 If     (Copen.Copen_Axia0               = 0)    Send Operation_Not_Allowed 1006
+//            Else If (Not(Copen.Copen_M_Code = gs_Module_Code))   Send Operation_Not_Allowed 1009
+            Else If (Copen.Copen_Axia0=0)                        Send Operation_Not_Allowed 1010
+            Else If (Copen.Copen_Axia0>Cmoves.Axia_pros_sysx)    Send Operation_Not_Allowed 1011
+        End
+        Function_Return iReturnVal
+    End_Function //validate_save
+
+    Function Validate_Delete Returns Integer
+             Integer iReturnVal
+             Forward Get Validate_Delete  To iReturnVal
+             If (Not(iReturnVal)) Begin
+                If (piFromBP(Self)=0) If (Not(Copen.Copen_M_Code = gs_Module_Code)) Send Operation_Not_Allowed 2001
+             End
+             Function_Return iReturnVal
+    End_Function   // validate_delete
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Copen.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Cmoves.File_Number
+        Send Add_Server_File  Cmovesa.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Syscurxr.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Copen_Rec0  To Copen.Copen_Rec0
+
+        // Field-based properties.......................
+
+        // Copen.Company_Code
+
+        // Copen.Branch_Code
+
+        // Copen.Year_Year
+
+        // Copen.Custprom_Code
+
+        // Copen.Client_Id
+
+        // Copen.Ctypkin_Code
+
+        // Copen.Cmoves_Recr
+
+        // Copen.Copen_Recr
+
+        // Copen.Copen_Rec0
+        Set Field_Options          Field Copen.Copen_Rec0 To DD_AUTOFIND   
+
+        // Copen.Copen_X0
+
+        // Copen.Copen_P0
+
+        // Copen.Copen_X00
+
+        // Copen.Copen_P00
+
+        // Copen.Copen_Xr
+
+        // Copen.Copen_Pr
+
+        // Copen.Copen_X2
+
+        // Copen.Copen_P2
+
+        // Copen.Copen_C_Code2
+        Set Field_Value_Table      Field Copen.Copen_C_Code2 To (Copen_Copen_C_Code2_VT(Self))
+
+        // Copen.Copen_M_Code
+        Set Field_Value_Table      Field Copen.Copen_M_Code To (Copen_Copen_M_Code_VT(Self))
+
+        // Copen.Cmovesa_Recr
+
+        // Copen.Cmovesa_Recnum
+
+        // Copen.Copen_Axia0
+        Set Field_Entry_msg        Field Copen.Copen_Axia0 To Default_Initial_Amount
+
+        // Copen.Copen_Axia00
+
+        // Copen.Copen_Axiar
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Copen_DataDictionary
+//DDB-FileEnd

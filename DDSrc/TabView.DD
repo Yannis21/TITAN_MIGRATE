@@ -1,0 +1,95 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : TABVIEW.DD
+// Class Name: Tabview_DataDictionary
+// Revision  : 4
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Tabview
+Open Grptabv
+Open Grptabv0
+Open Oth
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList slTabView  slTabView.SL
+Register_Object slTabView
+//DDB-SelectionEnd
+
+Class Tabview_DataDictionary  is a DataDictionary_sec
+ 
+    // Update:
+ 
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here  
+        Move Oth.View_Name  to TabView.View_Name
+        Move Oth.View_Label to TabView.View_Label
+        Move Oth.View_ID    to TabView.View_ID
+    End_Procedure   // Update
+ 
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Tabview.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Grptabv.File_Number
+        Send Add_Client_File  Grptabv0.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Oth.File_Number
+
+        // Field-based properties.......................
+
+        // Tabview.View_Name
+
+        // Tabview.View_Id
+
+        // Tabview.Tab_Label
+        Set Field_Options          Field Tabview.Tab_Label To DD_AUTOFIND   
+
+        // Tabview.View_Label
+
+        // Tabview.Tabview_Aa
+        Set Field_Options          Field Tabview.Tabview_Aa To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Tabview.Tabview_Aa To (slTabView(Self))
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Tabview_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use slTabView.SL     // slTabView
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

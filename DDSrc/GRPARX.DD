@@ -1,0 +1,90 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GRPARX.DD
+// Class Name: Grparx_DataDictionary
+// Revision  : 21
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Grparx
+Open Grppedia
+Open Users
+Open Arxeia
+Open Grppedia
+
+//DDB-HeaderEnd
+
+Class Grparx_DataDictionary  is a DataDictionary_sec
+
+    // Update:
+
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move (String(GrpArx.User_ID)+String(GrpArx.Arxeio_ID)) to GrpArx.GrpArx_Recr
+    End_Procedure   // Update
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Grparx.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Grppedia.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Users.File_Number
+        Send Add_Server_File  Arxeia.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Grppedia.File_Number  DD_LOCK_ON_NEW_SAVE
+
+        // Field-based properties.......................
+
+        // Grparx.User_Id
+
+        // Grparx.Arxeio_Id
+        Set Field_Options          Field Grparx.Arxeio_Id To DD_AUTOFIND   
+
+        // Grparx.Allow_Read
+
+        // Grparx.Allow_Change
+
+        // Grparx.Allow_Create
+
+        // Grparx.Allow_Delete
+
+        // Grparx.Allow_Copy
+
+        // Grparx.Grparx_Recr
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Grparx_DataDictionary
+//DDB-FileEnd

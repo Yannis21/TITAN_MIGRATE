@@ -1,0 +1,200 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : WITEMX.DD
+// Class Name: Witemx_DataDictionary
+// Revision  : 81
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Witemx
+Open Wam
+Open Pmoves
+Open Wcmoves
+Open Camovedd
+Open Witemxen
+Open Pmovesl
+Open Witemxt
+Open Item
+Open Sysrecw
+Open Syscurxr
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList SL22s  sl22s.sl
+Register_Object SL22s
+//DDB-SelectionEnd
+
+Class Witemx_DataDictionary  is a DataDictionary
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Property Integer piMustNOTConstrain Public 0
+    End_Procedure //construct_object
+
+    Procedure OnConstrain
+        Forward Send OnConstrain
+        If (piMustNOTConstrain(Self)) Begin
+        End
+        Else Begin
+            Constrain Witemx.Company_Code  eq SysCurXR.Company_Code
+            Constrain Witemx.Branch_Code   eq SysCurXR.Branch_Code
+            Constrain Witemx.Year_Year     eq SysCurXR.Year_Year
+        End
+    End_Procedure
+
+    Procedure Save_Main_File
+        If (Operation_Origin<>Self) Begin
+            If Witemx.Recnum Eq 0 Procedure_Return
+        End
+        Forward Send Save_Main_File
+    End_Procedure
+
+    // Update:
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move SysCurXR.Company_Code  to Witemx.Company_Code
+        Move SysCurXR.Branch_Code   to Witemx.Branch_Code
+        Move SysCurXR.Year_Year     to Witemx.Year_Year
+        Move SysCurXR.Year_Recr     to Witemx.Year_Recr
+        Move Witemkat.Witemkat_Code to Witemx.Witemkat_Code
+        Move Units.Units_Code       to Witemx.Units_Code
+        Move Item.Item_Code         to Witemx.Item_Code
+        Move Item.Item_Code         to Witemx.Witemx_Code
+        Move Item.Item_Descr        to Witemx.Witemx_Descr
+        Move Item.Wapokat_Code      to Witemx.ITEM_APOKAT_COD 
+        Move Item.link1             to witemx.link1
+        move Item.link2             to witemx.link2
+        Move (Round_Number((Witemx.Axia_Xre/Witemx.Qty_Xre),4))  to Witemx.Mesosta_Xre
+        Move (Round_Number((Witemx.Axia_Pis/Witemx.Qty_Pis),4))  to Witemx.Mesosta_Pis
+    End_Procedure   // Update
+
+
+    Procedure Backout
+        Forward Send Backout
+        Move (Round_Number((Witemx.Axia_Xre/Witemx.Qty_Xre),4))  to Witemx.Mesosta_Xre
+        Move (Round_Number((Witemx.Axia_Pis/Witemx.Qty_Pis),4))  to Witemx.Mesosta_Pis
+    End_Procedure   // Update
+
+    Procedure Creating
+        Forward Send Creating
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                       (Trim(String(Witemx.Witemx_Rec0)))))) to Witemx.Witemx_Recr
+    End_Procedure   // Creating
+
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Witemx.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Wam.File_Number
+        Send Add_Client_File  Pmoves.File_Number
+        Send Add_Client_File  Wcmoves.File_Number
+        Send Add_Client_File  Camovedd.File_Number
+        Send Add_Client_File  Witemxen.File_Number
+        Send Add_Client_File  Pmovesl.File_Number
+        Send Add_Client_File  Witemxt.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Item.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecw.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Syscurxr.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecw.Witemx_Rec0  To Witemx.Witemx_Rec0
+
+        // Field-based properties.......................
+
+        // Witemx.Company_Code
+
+        // Witemx.Branch_Code
+
+        // Witemx.Year_Year
+
+        // Witemx.Units_Code
+
+        // Witemx.Witemkat_Code
+
+        // Witemx.Item_Code
+
+        // Witemx.Witemx_Code
+        Set Field_Options          Field Witemx.Witemx_Code To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Witemx.Witemx_Code To (SL22s(Self))
+        Set Key_Field_State        Field Witemx.Witemx_Code To TRUE
+
+        // Witemx.Witemx_Recr
+        Set Field_Options          Field Witemx.Witemx_Recr To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Witemx.Witemx_Recr To (SL22s(Self))
+
+        // Witemx.Year_Recr
+
+        // Witemx.Item_Recr
+
+        // Witemx.Witemx_Descr
+        Set Field_Prompt_Object    Field Witemx.Witemx_Descr To (SL22s(Self))
+
+        // Witemx.Witemx_Rec0
+
+        // Witemx.Witemx_Yeardesc
+
+        // Witemx.Item_Apokat_Cod
+
+        // Witemx.Qty_Xre
+
+        // Witemx.Qty_Pis
+
+        // Witemx.Axia_Xre
+
+        // Witemx.Axia_Pis
+
+        // Witemx.Mesosta_Xre
+
+        // Witemx.Mesosta_Pis
+
+        // Witemx.Link1
+
+        // Witemx.Link2
+
+        // Witemx.Not_To_Be_Used
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Witemx_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl22s.sl         // SL22s
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

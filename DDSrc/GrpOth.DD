@@ -1,0 +1,83 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GRPOTH.DD
+// Class Name: Grpoth_DataDictionary
+// Revision  : 11
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Grpoth
+Open Users
+Open Viewflds
+
+//DDB-HeaderEnd
+
+Class Grpoth_DataDictionary  is a DataDictionary_Sec
+ 
+    // Update:
+ 
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move ViewFlds.SCR_FIELD_NAME    to GrpOth.SCR_FIELD_NAME
+        Move ViewFlds.View_Name         to GrpOth.View_Name
+        Move ViewFlds.USR_FIELD_NAME    to GrpOth.USR_FIELD_NAME
+    End_Procedure   // Update
+ 
+ 
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Grpoth.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Users.File_Number
+        Send Add_Server_File  Viewflds.File_Number
+
+        // Field-based properties.......................
+
+        // Grpoth.User_Id
+
+        // Grpoth.Viewflds_Recr
+
+        // Grpoth.Allow_Read
+
+        // Grpoth.Allow_Change
+
+        // Grpoth.Allow_Copy
+
+        // Grpoth.View_Name
+
+        // Grpoth.Scr_Field_Name
+
+        // Grpoth.Usr_Field_Name
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Grpoth_DataDictionary
+//DDB-FileEnd

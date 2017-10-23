@@ -1,0 +1,469 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : CLIENTS.DD
+// Class Name: Clients_DataDictionary
+// Revision  : 229
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Clients
+Open Cmoves
+Open Particle
+Open Cmovesa
+Open Cn
+Open Particll
+Open Clnbank
+Open Tpclient
+Open Clorder
+Open Clitem
+Open Cities
+Open Areas
+Open Payresp
+Open Syscurxr
+Open Sysrecc
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Clients_Client_Doy_VT
+Register_Object Clients_Client_Job_VT
+Register_Object Clients_Client_Categfpa_VT
+Register_Object Clients_Client_Catjob_VT1
+Register_Object Clients_Client_Idiot_VT
+Register_Object Clients_Feregios_VT
+
+Object Clients_Client_Doy_VT  is a CodeValidationTable
+    Set Type_Value        To "DOY"
+    Set Validate_State    To FALSE
+    Set Allow_Blank_State To TRUE
+    Set Table_Title       To "ƒ..“"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Clients_Client_Doy_VT
+
+Object Clients_Client_Job_VT  is a CodeValidationTable
+    Set Type_Value        To "JOB"
+    Set Validate_State    To FALSE
+    Set Allow_Blank_State To TRUE
+    Set Table_Title       To "„§˜ššâ¢£˜«˜"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Clients_Client_Job_VT
+
+Object Clients_Client_Categfpa_VT  is a CodeValidationTable
+    Set Type_Value        To "VAT_STATUS"
+    Set Validate_State    To FALSE
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Clients_Client_Categfpa_VT
+
+Object Clients_Client_Catjob_VT1  is a CodeValidationTable
+    Set Type_Value        To "JOB"
+    Set Validate_State    To FALSE
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Clients_Client_Catjob_VT1
+
+Object Clients_Client_Idiot_VT  is a CodeValidationTable
+    Set Type_Value        To "IDIOT"
+    Set Validate_State    To FALSE
+    Set Allow_Blank_State To TRUE
+    Set Table_Title       To "€¨®œå¦ ˆ› ¦«ã«à¤"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Clients_Client_Idiot_VT
+
+Object Clients_Feregios_VT  is a CodeValidationTable
+    Set Type_Value        To "FEREGIOS"
+    Set Allow_Blank_State To TRUE
+    Set Table_Title       To "ƒœå¡«œª ”œ¨œšš¬æ««˜ª ”¦¨âà¤"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Clients_Feregios_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl100  sl100.SL
+Register_Object sl100
+//DDB-SelectionEnd
+Open Sysfile
+open year
+
+Class Clients_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Property Integer piMustNOTConstrain Public 0
+        Property Integer piCheckPlaf        Public 0
+    End_Procedure
+
+    // Backout:
+    Procedure Backout
+        Forward Send Backout
+        // Insert Code Here
+    End_Procedure   // Backout
+
+
+
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move SysCurXR.Company_Code  to Clients.Company_Code
+        Move SysCurXR.Branch_Code   to Clients.Branch_Code
+        Move SysCurXR.Year_Year     to Clients.Year_Year
+        //Move Custprom.Custprom_Code to Clients.Custprom_Code
+        Move (Clients.Xreosh-Clients.Pistosh)   to Clients.Ypoloipo
+        Move (Clients.Plafon-Clients.Ypoloipo)  to Clients.Overhead
+
+        //Move Clients.Client_Address     to Clients.Client_LastUpd
+
+        //betolink
+        Move SysCurXR.Beto_Site      to Clients.Client_SiteW
+        Move Clients.Client_Rec0     to Clients.Client_SN
+        Move Clients.Client_id       to Clients.Client_Repm
+        Move Clients.Company_Code    to Clients.CLIENT_COMPANY
+        Move Clients.Client_id       to Clients.Client_RepMatch
+     //   Move (gsfCode_Mast('JOB',Clients.Client_CatJob)) to Clients.Client_Job
+    End_Procedure   // Update
+
+
+    Procedure Creating
+        date ddate iYes
+        Forward Send Creating
+        // Insert Code Here
+
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Clients.Client_Rec0))))));
+                                    to Clients.Client_Recr
+        Move '1'                    to Clients.Client_Active
+        get fsgCode_With_Zeroes Clients.Client_Rec0 Sysfile.Client_Digits SysCurXr.Company_Code SysCurXr.Branch_Code  to Clients.Client_ID
+        sysdate4 ddate
+        move ddate                  to Clients.Client_Hmnia
+        clear year
+        move syscurxr.company_code  to year.company_code
+        move syscurxr.branch_code   to year.branch_code
+        move syscurxr.year_year     to year.year_year
+        find eq year by index.1
+        If (found=1) begin
+            move year.clients_plafon to clients.plafon
+            move year.clients_ofeilh to clients.orio_syn_ofeilh
+        end
+    End_Procedure   // Creating
+
+    Function Validate_Save  Returns Integer
+        Integer iReturnVal iCheck iYes
+        Forward Get Validate_Save  To iReturnVal
+        If (Not(iReturnVal)) Begin
+
+            If (clients.is_eksoter <> '1') begin
+                If (Clients.Is_Xondr='1') Begin
+                    If (Sysfile.Check_Afm=1) Begin
+                        Move (Check_AFM(Clients.Client_Afm)) to iCheck
+                        If (iCheck) Begin
+                                 If (iCheck=1) Move 4001 to iReturnVal
+                            Else If (iCheck=2) Move 4002 to iReturnVal
+                            Else If (iCheck=3) Move 4003 to iReturnVal
+                        End
+                    End
+                End
+            End
+
+            If (piCheckPlaf(Self)=1) Begin
+                If ((Clients.Plafon>0) And ((Clients.Ypoloipo+Clients.Posa_Apo_Dap)>Clients.Plafon)) Begin
+                    Get YesNo_Box ' §œ¢á«ª â®œ  ¬§â¨™˜© ˜¤¦ ®«¦ç Š¦š/£¦ç\nŒ˜ ©¬¤œ®å©à ;' '„§ ™œ™˜åà© 4000 Clients' to iYes
+                    If (iYes=MBR_NO) Error 4004 'DDC100: ƒ ˜¡¦§ã › ˜› ¡˜©å˜ª ˜§¦ «¦¤ ®¨ã©«' //Move 4004 to iReturnVal
+                End
+                Else If ((PayResp.Plafon<>0) And (PayResp.Plafon<=PayResp.Synolikh_Ofeilh)) Begin
+                    Get YesNo_Box ' ¬§œçŸ¬¤¦ª §¢¨à£ãª ›œ¤ â®œ  › ˜Ÿâ© £ §å©«à©\nŒ˜ ©¬¤œ®å©à ©«¤ ›£ ¦¬¨šå˜ œšš¨˜­ãª §œ¢á«;' to iYes
+                    If (iYes=MBR_NO) Error 4005 'DDC100: ƒ ˜¡¦§ã › ˜› ¡˜©å˜ª ˜§¦ «¦¤ ®¨ã©«'  //Move 4005 to iReturnVal
+                End
+                Else If ((Clients.Orio_Syn_Ofeilh>0) And (Clients.Synolikh_Ofeilh>Clients.Orio_Syn_Ofeilh)) Begin
+                    Get YesNo_Box ' §œ¢á«ª â®œ  ¬§â¨™˜© ©¬¤¦¢ ¡ãª ¦­œ ¢ãª\nŒ˜ ©¬¤œ®å©à ;' '„§ ™œ™˜åà© 4001 Clients' to iYes
+                    If (iYes=MBR_NO) Error 4005 'DDC100: ƒ ˜¡¦§ã › ˜› ¡˜©å˜ª ˜§¦ «¦¤ ®¨ã©«'  //Move 4005 to iReturnVal
+                End
+                Else If ((Clients.Orio_Syn_Ofeilh>0) And (PayResp.Orio_Syn_Ofeilh>0) And (Clients.Synolikh_Ofeilh>Payresp.Orio_Syn_Ofeilh)) Begin
+                    Get YesNo_Box ' §œ¢á«ª â®œ  ¬§â¨™˜© ©¬¤¦¢ ¡ãª ¦­œ ¢ãª\nŒ˜ ©¬¤œ®å©à ;' '„§ ™œ™˜åà© 4002 Clients' to iYes
+                    If (iYes=MBR_NO) Error 4006 'DDC100: ƒ ˜¡¦§ã › ˜› ¡˜©å˜ª ˜§¦ «¦¤ ®¨ã©«'   //Move 4006 to iReturnVal
+                End
+                If ((Clients.Plafon>0) And ((Clients.Ypoloipo+Clients.Posa_Apo_Parag)>Clients.Plafon)) Begin
+                    Send Info_Box '’˜ §¦©á «à¤ £œ¨©åà¤ §˜¨˜ššœ¢ é¤\n¬§œ¨™˜å¤¦¬¤ «¦ › ˜Ÿâ© £¦ ¬§æ¢¦ §¦\n™á© §¢˜­æ¤ «¦¬ §œ¢á«' '¨¦©¦®ã !!!'
+                End
+            End
+
+            If (iReturnVal) Begin
+                Send Operation_Not_Allowed iReturnVal
+            End
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+
+
+    Procedure Operation_Not_Allowed Integer iError_Num
+        String lsError_Message
+
+        Case Begin
+            Case (iError_Num = 4001)
+                Move "DDC 100: Š˜¤Ÿ˜©£â¤¦ €”‹ œ¢á«" ;
+                    to lsError_Message
+              Case Break
+            Case (iError_Num = 4002)
+                Move "DDC 100: ’¦ €”‹ œ¢á« ›œ¤ œå¤˜  9 ¯ã­ ¦" ;
+                    to lsError_Message
+              Case Break
+            Case (iError_Num = 4003)
+                Move "DDC 100: €¡˜«á¢¢¢¦ª ®˜¨˜¡«ã¨˜ª ©«¦ €”‹ œ¢á«" ;
+                    to lsError_Message
+              Case Break
+            Case (iError_Num = 4004)
+                Move "DDC 100: ’¦ ©ç¤¦¢¦ (ƒ ˜Ÿâ© £¦ “§æ¢¦ §¦+¦©˜ ˜§¦ ƒ.€)\n¬§œ¨™˜å¤œ  «¦ §¢˜­æ¤ «¦¬ §œ¢á«" ;
+                    to lsError_Message
+              Case Break
+            Case (iError_Num = 4005)
+                Move "DDC 100: † ©¬¤¦¢ ¡ã ¦­œ ¢ã ¬§œ¨™˜å¤œ \n«¦ æ¨ ¦ ©¬¤¦¢ ¡ãª ¦­œ ¢ãª" ;
+                    to lsError_Message
+              Case Break
+            Case (iError_Num = 4006)
+                Move "DDC 100: † ©¬¤¦¢ ¡ã ¦­œ ¢ã ¬§œ¨™˜å¤œ \n«¦ æ¨ ¦ ©¬¤¦¢ ¡ãª ¦­œ ¢ãª «¦¬ “§œ¬Ÿç¤¦¬" ;
+                    to lsError_Message
+              Case Break
+
+            Case Else
+                Forward Send Operation_Not_Allowed iError_Num
+        Case End
+
+        Error iError_Num lsError_Message
+    End_Procedure // operation_not_allowed
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Clients.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Cmoves.File_Number
+        Send Add_Client_File  Particle.File_Number
+        Send Add_Client_File  Cmovesa.File_Number
+        Send Add_Client_File  Cn.File_Number
+        Send Add_Client_File  Particll.File_Number
+        Send Add_Client_File  Clnbank.File_Number
+        Send Add_Client_File  Tpclient.File_Number
+        Send Add_Client_File  Clorder.File_Number
+        Send Add_Client_File  Clitem.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Cities.File_Number
+        Send Add_Server_File  Areas.File_Number
+        Send Add_Server_File  Payresp.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Syscurxr.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Client_Rec0  To Clients.Client_Rec0
+
+        // Field-based properties.......................
+
+        // Clients.Company_Code
+
+        // Clients.Branch_Code
+
+        // Clients.Year_Year
+
+        // Clients.Custprom_Code
+
+        // Clients.Client_Id
+        Set Field_Options          Field Clients.Client_Id To DD_AUTOFIND    DD_NOPUT
+        Set Field_Prompt_Object    Field Clients.Client_Id To (sl100(Self))
+        Set Key_Field_State        Field Clients.Client_Id To TRUE
+
+        // Clients.Client_Name
+        Set Field_Prompt_Object    Field Clients.Client_Name To (sl100(Self))
+
+        // Clients.Client_Afm
+        Set Field_Options          Field Clients.Client_Afm To DD_AUTOFIND
+
+        // Clients.Client_Rec0
+        Set Field_Options          Field Clients.Client_Rec0 To DD_AUTOFIND
+
+        // Clients.Custprom_Recr
+
+        // Clients.Client_Recr
+        Set Field_Options          Field Clients.Client_Recr To DD_AUTOFIND
+
+        // Clients.Last_Xreosh
+
+        // Clients.Last_Pistosh
+
+        // Clients.Last_Order
+        Set Field_Class_Name       Field Clients.Last_Order To "dbComboFormSub"
+
+        // Clients.Client_Doy
+        Set Field_Value_Table      Field Clients.Client_Doy To (Clients_Client_Doy_VT(Self))
+
+        // Clients.Client_Address
+
+        // Clients.Client_City_Id
+
+        // Clients.Client_Area
+
+        // Clients.Client_Job
+        Set Field_Value_Table      Field Clients.Client_Job To (Clients_Client_Job_VT(Self))
+
+        // Clients.Client_Respons
+
+        // Clients.Client_Zipcode
+
+        // Clients.Client_Phone
+
+        // Clients.Client_Fax
+
+        // Clients.Client_Mobile
+
+        // Clients.Client_Aoh
+
+        // Clients.Client_Email
+
+        // Clients.Client_Class
+
+        // Clients.Client_Details
+
+        // Clients.Client_Sitew
+
+        // Clients.Client_Codem
+
+        // Clients.Client_Categfpa
+        Set Field_Value_Table      Field Clients.Client_Categfpa To (Clients_Client_Categfpa_VT(Self))
+
+        // Clients.Client_Fpa
+
+        // Clients.Client_Public
+
+        // Clients.Client_Sn
+
+        // Clients.Client_Repm
+
+        // Clients.Client_Active
+
+        // Clients.Client_Reported
+
+        // Clients.Client_Pelprom
+
+        // Clients.Client_Lastupd
+
+        // Clients.Client_Markexp
+
+        // Clients.Client_Catjob
+        Set Field_Value_Table      Field Clients.Client_Catjob To (Clients_Client_Catjob_VT1(Self))
+
+        // Clients.Is_Promhtheyths
+
+        // Clients.Xreosh
+
+        // Clients.Pistosh
+
+        // Clients.Ypoloipo
+
+        // Clients.Plafon
+
+        // Clients.Overhead
+
+        // Clients.Client_Company
+
+        // Clients.Client_Repmatch
+
+        // Clients.Client_Hmnia
+
+        // Clients.Client_Presp
+
+        // Clients.Client_Locked
+
+        // Clients.Synolikh_Ofeilh
+
+        // Clients.Client_Idiot
+        Set Field_Value_Table      Field Clients.Client_Idiot To (Clients_Client_Idiot_VT(Self))
+
+        // Clients.Client_Add_No
+
+        // Clients.Client_Nomos
+
+        // Clients.Client_Xora
+
+        // Clients.Polh_Recr
+
+        // Clients.Presp_Id
+
+        // Clients.Sum_Pct_Tpcl
+
+        // Clients.Is_Client
+
+        // Clients.Sysxetish
+
+        // Clients.Poso_Se_Apait
+
+        // Clients.Client_Glcode
+
+        // Clients.Is_Eksoter
+
+        // Clients.Is_Xondr
+
+        // Clients.Orio_Syn_Ofeilh
+
+        // Clients.Posa_Apo_Dap
+
+        // Clients.Client_Doybtm
+
+        // Clients.Posa_Apo_Parag
+
+        // Clients.Client_Ptyppar
+
+        // Clients.Client_Seira
+
+        // Clients.Hpso
+
+        // Clients.Hpal
+
+        // Clients.Feregios
+        Set Field_Value_Table      Field Clients.Feregios To (Clients_Feregios_VT(Self))
+
+        // Clients.Diakin
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Clients.Client_Doy To "0"
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Clients_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl100.SL        // sl100
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

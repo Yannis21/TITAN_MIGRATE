@@ -1,0 +1,74 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : SysSet.DD
+// Class Name: Sysset_DataDictionary
+// Revision  : 0
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Sysset
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Sysset_View_Class_Bp_VT
+
+Object Sysset_View_Class_Bp_VT  is a CodeValidationTable
+    Set Type_Value        To ""
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Sysset_View_Class_Bp_VT
+//DDB-ValidationEnd
+
+Class Sysset_DataDictionary  is a DataDictionary_sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Sysset.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Field-based properties.......................
+
+        // Sysset.Modules
+
+        // Sysset.Funct_Proc
+
+        // Sysset.View_Class_Bp
+        Set Field_Value_Table      Field Sysset.View_Class_Bp To (Sysset_View_Class_Bp_VT(Self))
+
+        // Sysset.Descr
+
+        // Sysset.Value
+        Set Field_Checkbox_Values  Field Sysset.Value To "1"  "0"
+        Set Field_Class_Name       Field Sysset.Value To "dbCheckBoxsub"
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Sysset.Value To 0
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Sysset_DataDictionary
+//DDB-FileEnd

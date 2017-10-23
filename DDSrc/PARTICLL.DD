@@ -1,0 +1,250 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : PARTICLL.DD
+// Class Name: Particll_DataDictionary
+// Revision  : 1
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Particll
+Open Clients
+Open Ptyppar
+Open Nomisma
+
+//DDB-HeaderEnd
+Open particll
+Set_attribute  DF_FILE_ALIAS of particll.File_number  to DF_FILE_IS_ALIAS
+Set_attribute  DF_FILE_ALIAS of particle.File_number  to DF_FILE_IS_MASTER
+
+// clear the relationship in the alias file
+Set_relate particll.client_recr  to  |FN0,0
+Set_relate particll.ptyppar_recr to |FN0,0
+Set_relate particll.nomisma_code to |FN0,0
+Class Particll_DataDictionary  is a DataDictionary_sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Particll.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Clients.File_Number
+        Send Add_Server_File  Ptyppar.File_Number
+        Send Add_Server_File  Nomisma.File_Number
+
+        // Field-based properties.......................
+
+        // Particll.Company_Code
+
+        // Particll.Branch_Code
+
+        // Particll.Year_Year
+
+        // Particll.Ctypkin_Code
+
+        // Particll.Wtypkin_Code
+
+        // Particll.Ptyppar_Code
+
+        // Particll.Pseira_Seira
+
+        // Particll.Custprom_Code
+
+        // Particll.Client_Id
+
+        // Particll.Partl_No
+
+        // Particll.Cn_Recr
+
+        // Particll.Pseira_Recr
+
+        // Particll.Partl_Hmnia
+
+        // Particll.Partl_Rec0
+
+        // Particll.Partl_Lastno
+
+        // Particll.Partl_Tdiakin
+
+        // Particll.Partl_Car
+
+        // Particll.Partl_Reldoc
+
+        // Particll.Partl_Toposf
+
+        // Particll.Partl_Toposa
+
+        // Particll.Partl_Troposa
+
+        // Particll.Partl_Tof
+
+        // Particll.Partl_Disctof
+
+        // Particll.Partl_Disccl
+
+        // Particll.Partl_Autodisc
+
+        // Particll.Partl_Time
+
+        // Particll.Partl_Totambd
+
+        // Particll.Partl_Amdiscpms
+
+        // Particll.Partl_Totdiscpc
+
+        // Particll.Partl_Discam
+
+        // Particll.Partl_Totamad
+
+        // Particll.Partl_Vatpct
+
+        // Particll.Partl_Vatam
+
+        // Particll.Partl_Genam
+
+        // Particll.Partl_Extra
+
+        // Particll.Partl_Extravatp
+
+        // Particll.Partl_Extravat
+
+        // Particll.Partl_Payam
+
+        // Particll.Partl_Befypol
+
+        // Particll.Partl_Currypol
+
+        // Particll.Partl_Tottem
+
+        // Particll.Partl_Det
+
+        // Particll.Partl_Recr
+
+        // Particll.Cn_Code
+
+        // Particll.Client_Recr
+
+        // Particll.Ptyppar_Recr
+
+        // Particll.Partl_Ekleise
+
+        // Particll.Partl_Ekl_Recr
+
+        // Particll.Partl_Ektyposh
+
+        // Particll.Partl_Akyrosh
+
+        // Particll.Partl_Akyr_Recr
+
+        // Particll.Partl_Nooflines
+
+        // Particll.Cmoves_Recr
+
+        // Particll.Nomisma_Code
+
+        // Particll.Isotimia
+
+        // Particll.Wcmoves_Recr
+
+        // Particll.Partl_Module
+
+        // Particll.Partl_Timol
+
+        // Particll.Partl_Selected
+
+        // Particll.Partl_Tim_Recr
+
+        // Particll.Partl_Vsn
+
+        // Particll.Sls_Id
+
+        // Particll.Presp_Id
+
+        // Particll.Cnt_Id
+
+        // Particll.Topos_Apostolhs
+
+        // Particll.Tropos_Diakin
+
+        // Particll.Ora_Apostolhs
+
+        // Particll.Skopos_Diakin
+
+        // Particll.Tropos_Plhromhs
+
+        // Particll.Odhgos_Code
+
+        // Particll.Odhgos_Name
+
+        // Particll.Oxhma_Code
+
+        // Particll.Oxhma_Descr
+
+        // Particll.Antlia_Code
+
+        // Particll.Antlia_Descr
+
+        // Particll.Partl_Euro
+
+        // Particll.Disc_Vat_Pct
+
+        // Particll.Disc_Vat_Poso
+
+        // Particll.Total_Vat_Poso
+
+        // Particll.Exei_Sxetika
+
+        // Particll.Aitiol
+
+        // Particll.Max_Days_Date
+
+        // Particll.Timol_Qty
+
+        // Particll.Timol_Ypol
+
+        // Particll.Epilogh_Ekkrem
+
+        // Particll.No_Print_Module
+
+        // Particll.Prohg_Ypol
+
+        // Particll.Trex_Ypol
+
+        // Particll.Parakrat_Pct
+
+        // Particll.Parakrat_Poso
+
+        // Particll.Cms_Parak_Recr
+
+        // Particll.Enhm_Logik
+
+        // Particll.Se_Logik
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Particll_DataDictionary
+//DDB-FileEnd

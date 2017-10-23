@@ -1,0 +1,82 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : HMWTYP.DD
+// Class Name: Hmwtyp_DataDictionary
+// Revision  : 1
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Hmwtyp
+Open Hmgiow
+Open Wtypkin
+
+//DDB-HeaderEnd
+
+Class Hmwtyp_DataDictionary  is a DataDictionary_Sec
+
+    // Update:
+
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move SysCurXR.Company_Code  to HmWtyp.Company_Code
+        Move SysCurXR.Branch_Code   to HmWtyp.Branch_Code
+        Move SysCurXR.Year_Year     to HmWtyp.Year_Year
+        Move Wtypkin.Wtypkin_Code   to HmWtyp.Wtypkin_Code
+    End_Procedure   // Update
+
+
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Hmwtyp.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Hmgiow.File_Number
+        Send Add_Server_File  Wtypkin.File_Number
+
+        // Field-based properties.......................
+
+        // Hmwtyp.Hmgiow_Code
+
+        // Hmwtyp.Wtypkin_Recr
+
+        // Hmwtyp.Company_Code
+
+        // Hmwtyp.Branch_Code
+
+        // Hmwtyp.Year_Year
+
+        // Hmwtyp.Wtypkin_Code
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Hmwtyp_DataDictionary
+//DDB-FileEnd

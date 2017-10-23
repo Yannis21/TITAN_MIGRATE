@@ -1,0 +1,50 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: WAX (# 16)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:WAX
+  USER DISPLAY NAME         : Wax
+  DATAFLEX FILE NAME        : WAX
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 136       ( USED: 136 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 186 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC      3     1  1   
+  2  BRANCH_CODE      ASC      3     4  1   
+  3  YEAR_YEAR        NUM    4.0     7  1   
+  4  WAPOKAT_CODE     ASC     10     9  1   
+  5  WAPOMAST_CODE    ASC     10    19  1   
+  6  WAX_CODE         ASC     10    29  1   
+  7  YEAR_RECR        ASC      7    39      
+  8  WAPOMAST_RECR    ASC     12    46      WAPOMAST.FIELD_6 (23,6)
+  9  WAX_REC0         NUM   14.0    58      
+ 10  WAX_RECR         ASC     12    65  2   
+ 11  WAX_DESCR        ASC     60    77  3   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY_CODE    NO  NO       38     3       6     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       WAPOKAT_CODE    NO  NO 
+       WAPOMAST_CODE   NO  NO 
+       WAX_CODE        NO  NO 
+
+  2    WAX_RECR        NO  NO       12     3       1     ON-LINE
+
+  3    WAX_DESCR       NO  NO       72     3       2     ON-LINE
+       WAX_RECR        NO  NO 
+

@@ -1,0 +1,122 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : VIEWS.DD
+// Class Name: Views_DataDictionary
+// Revision  : 29
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Views
+Open Grpview0
+Open Grpviews
+Open Sysrec
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList slViews  slviews.sl
+Register_Object slViews
+//DDB-SelectionEnd
+
+Class Views_DataDictionary  is a DataDictionary_sec
+
+    // Validate_Save:
+
+    Function Validate_Save  Returns Integer
+        Local Integer iReturnVal
+        Forward Get Validate_Save  To iReturnVal
+        If (Not(iReturnVal)) Begin
+            // Insert Code Here
+            If (Views.Menu_Name='') Move 1002 to iReturnVal
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+
+
+
+
+    Function Validate_Delete  Returns Integer
+        Local Integer iReturnVal
+        Forward Get Validate_Delete  To iReturnVal
+        If (Not(iReturnVal)) Begin
+            // ‰“‹„ ’€ DELETION ‚ˆ€ Œ€ ‹†Œ ’‘€‰ˆ‘“Œ ’€ ƒˆ‰€ˆ—‹€’€ “ ’“•Œ
+            // „•“Œ †ƒ† ˆ‘’„ˆ
+            Move 1001 to iReturnVal
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Delete
+
+    Procedure Operation_Not_Allowed  Integer iError_Num
+//        Else If iError_Num eq 1002 Error 1002 "DD 246 Views - ƒœ¤ ›å¤œ«˜  ˜§¦ «¦ ©ç©«£˜\n›¬¤˜«æ««˜ › ˜š¨˜­ãª ©«¦ ©¬š¡œ¡¨ £â¤¦ ˜¨®œå¦"
+        If iError_Num eq 1001 Error 1001 "DD 246 Views - ƒœ¤ ›å¤œ«˜  ˜§¦ «¦ ©ç©«£˜\n›¬¤˜«æ««˜ › ˜š¨˜­ãª ©«¦ ©¬š¡œ¡¨ £â¤¦ ˜¨®œå¦"
+        Else Forward Send Operation_Not_Allowed  iError_Num
+    End_Procedure   // Operation_Not_Allowed
+
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Views.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Grpview0.File_Number
+        Send Add_Client_File  Grpviews.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrec.File_Number  DD_LOCK_ON_NEW_SAVE
+
+        Define_Auto_Increment  Sysrec.View_Id  To Views.View_Id
+
+        // Field-based properties.......................
+
+        // Views.View_Id
+        Set Field_Options          Field Views.View_Id To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Views.View_Id To (slViews(Self))
+        Set Key_Field_State        Field Views.View_Id To TRUE
+
+        // Views.Menu_Name
+        Set Field_Prompt_Object    Field Views.Menu_Name To (slViews(Self))
+        Set Key_Field_State        Field Views.Menu_Name To TRUE
+
+        // Views.Obj_View_Name
+
+        // Views.View_Label
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Views_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use slviews.sl       // slViews
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

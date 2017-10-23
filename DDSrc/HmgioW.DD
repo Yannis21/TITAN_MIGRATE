@@ -1,0 +1,93 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : HMGIOW.DD
+// Class Name: Hmgiow_DataDictionary
+// Revision  : 3
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Hmgiow
+Open Hmwtyp
+Open Sysrecw
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Hmgiow_Hmgiow_Module_VT
+
+Object Hmgiow_Hmgiow_Module_VT  is a CodeValidationTable
+    Set Type_Value        To "MODULE"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Hmgiow_Hmgiow_Module_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList HmgioW  HmgioW.SL
+Register_Object HmgioW
+//DDB-SelectionEnd
+
+Class Hmgiow_DataDictionary  is a DataDictionary_Sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Hmgiow.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Hmwtyp.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecw.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecw.Hmgiow_Code  To Hmgiow.Hmgiow_Code
+
+        // Field-based properties.......................
+
+        // Hmgiow.Hmgiow_Code
+        Set Field_Options          Field Hmgiow.Hmgiow_Code To DD_AUTOFIND
+        Set Field_Prompt_Object    Field Hmgiow.Hmgiow_Code To (HmgioW(Self))
+
+        // Hmgiow.Hmgiow_Descr
+        Set Field_Options          Field Hmgiow.Hmgiow_Descr To DD_AUTOFIND
+        Set Field_Prompt_Object    Field Hmgiow.Hmgiow_Descr To (HmgioW(Self))
+
+        // Hmgiow.Hmgiow_Module
+        Set Field_Value_Table      Field Hmgiow.Hmgiow_Module To (Hmgiow_Hmgiow_Module_VT(Self))
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Hmgiow_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use HmgioW.SL        // HmgioW
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

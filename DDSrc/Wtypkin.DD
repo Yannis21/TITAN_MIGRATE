@@ -1,0 +1,138 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : WTYPKIN.DD
+// Class Name: Wtypkin_DataDictionary
+// Revision  : 49
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Wtypkin
+Open Ptyppar
+Open Wcmoves
+Open Hmwtyp
+Open Wflagkin
+Open Sysrecw
+Open Syscurxr
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Wtypkin_Wtypkin_Module_VT
+
+Object Wtypkin_Wtypkin_Module_VT  is a CodeValidationTable
+    Set Type_Value        To "MODULE"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Wtypkin_Wtypkin_Module_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl029a  sl029a.SL
+Register_Object sl029a
+//DDB-SelectionEnd
+
+Class Wtypkin_DataDictionary  is a DataDictionary
+               
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Property Integer piMustNOTConstrain Public 0
+    End_Procedure
+
+    Procedure Save_Main_File
+        If (Operation_Origin<>Self) Begin
+            If Wtypkin.Recnum Eq 0 Procedure_Return
+        End
+        Forward Send Save_Main_File
+    End_Procedure
+
+
+     Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Wtypkin.Wtypkin_Rec0)))))) to Wtypkin.Wtypkin_Recr
+    End_Procedure   // Creating
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Wtypkin.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Ptyppar.File_Number
+        Send Add_Client_File  Wcmoves.File_Number
+        Send Add_Client_File  Hmwtyp.File_Number
+        Send Add_Client_File  Wflagkin.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecw.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Syscurxr.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecw.Wtypkin_Rec0  To Wtypkin.Wtypkin_Rec0
+
+        // Field-based properties.......................
+
+        // Wtypkin.Company_Code
+
+        // Wtypkin.Branch_Code
+
+        // Wtypkin.Year_Year
+
+        // Wtypkin.Wtypkin_Code
+        Set Field_Options          Field Wtypkin.Wtypkin_Code To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Wtypkin.Wtypkin_Code To (sl029a(Self))
+        Set Key_Field_State        Field Wtypkin.Wtypkin_Code To TRUE
+
+        // Wtypkin.Wtypkin_Rec0
+        Set Field_Options          Field Wtypkin.Wtypkin_Rec0 To DD_AUTOFIND   
+
+        // Wtypkin.Wtypkin_Recr
+
+        // Wtypkin.Year_Recr
+
+        // Wtypkin.Wtypkin_Descr
+        Set Field_Prompt_Object    Field Wtypkin.Wtypkin_Descr To (sl029a(Self))
+
+        // Wtypkin.Wtypkin_Anti
+
+        // Wtypkin.Wtypkin_Module
+        Set Field_Value_Table      Field Wtypkin.Wtypkin_Module To (Wtypkin_Wtypkin_Module_VT(Self))
+
+        // Wtypkin.Max_Days_Sx_Par
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Wtypkin_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl029a.SL        // sl029a
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

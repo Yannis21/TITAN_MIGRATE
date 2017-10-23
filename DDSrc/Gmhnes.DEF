@@ -1,0 +1,68 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: GMHNES (# 158)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : GMHNES
+  USER DISPLAY NAME         : Gmhnes
+  DATAFLEX FILE NAME        : GMHNES
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 256       ( USED: 201 )
+  MAX NUMBER OF RECORDS     : 10000     ( USED: 22 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC     10     1  1   
+  2  BRANCH_CODE      ASC     10    11  1   
+  3  YEAR_YEAR        NUM    4.0    21  1   
+  4  GPLAN_CODE       ASC     20    23  1   
+  5  GMHNES_YYYY      NUM    4.0    43  1   
+  6  GMHNES_PERIOD    NUM    4.0    45  1   
+  7  GMHNES_REC0      NUM   14.0    47      
+  8  GPLAN_RECR       ASC     12    54  3   GPLAN.FIELD_55 (150,55)
+  9  GMHNES_SX0       NUM   14.8    66      
+ 10  GMHNES_SP0       NUM   14.8    77      
+ 11  GMHNES_SX00      NUM   14.8    88      
+ 12  GMHNES_SP00      NUM   14.8    99      
+ 13  GMHNES_SX1       NUM   14.8   110      
+ 14  GMHNES_SP1       NUM   14.8   121      
+ 15  GMHNES_SX2       NUM   14.8   132      
+ 16  GMHNES_SP2       NUM   14.8   143      
+ 17  GMHNES_SXR       NUM   14.8   154      
+ 18  GMHNES_SPR       NUM   14.8   165      
+ 19  GMHNES_GHMNOREC  NUM   14.0   176      
+ 20  YEAR_RECR        ASC      7   183      
+ 21  GMHNES_RECR      ASC     12   190  2   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY_CODE    NO  NO       46     4       6     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       GPLAN_CODE      NO  NO 
+       GMHNES_YYYY     NO  NO 
+       GMHNES_PERIOD   NO  NO 
+
+  2    GMHNES_RECR     NO  NO       12     3       1     ON-LINE
+
+  3    GPLAN_RECR      NO  NO       16     3       3     ON-LINE
+       GMHNES_YYYY     NO  NO 
+       GMHNES_PERIOD   NO  NO 
+
+  4    COMPANY_CODE    NO  NO       46     4       6     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       GMHNES_YYYY     NO  NO 
+       GMHNES_PERIOD   NO  NO 
+       GPLAN_CODE      NO  NO 
+

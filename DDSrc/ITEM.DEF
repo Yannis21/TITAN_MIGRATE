@@ -1,0 +1,64 @@
+-----------------------------------------------------------------------------
+  DATE: 27/12/105      TIME: 14:47                                  PAGE:  1
+  FILE DEFINITION FOR FILE: ITEML (# 46)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:ITEM
+  USER DISPLAY NAME         : iteml
+  DATAFLEX FILE NAME        : ITEML
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 364       ( USED: 364 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 362 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  UNITS_CODE       ASC     10     1  1   
+  2  UNITS_RECR       ASC     12    11      UNITS.FIELD_4 (25,4)
+  3  WITEMKAT_CODE    ASC     10    23  1   
+  4  WITEMKAT_RECR    ASC     12    33      WITEMKAT.FIELD_4 (24,4)
+  5  ITEM_CODE        ASC     20    45  5   
+  6  ITEM_REC0        NUM   14.0    65  3   
+  7  ITEM_DESCR       ASC    150    72  3   
+  8  ITEM_RECR        ASC     12   222  2   
+  9  FPA_POSOSTO      NUM    4.2   234      FPA.FIELD_1 (104,1)
+ 10  ITEM_QUAL        ASC     10   237  6   
+ 11  WAPOKAT_CODE     ASC     10   247      
+ 12  ITEM_ANALYSH     ASC      1   257      
+ 13  ITEM_ORIO        NUM   10.2   258      
+ 14  CODEGLPOL        ASC     20   264      
+ 15  CODEGLAGO        ASC     20   284      
+ 16  LINK1            ASC     20   304      
+ 17  LINK2            ASC     20   324      
+ 18  GROUP            NUM    2.0   344      
+ 19  SAP              ASC     20   345      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    UNITS_CODE      NO  NO       40     3       3     ON-LINE
+       WITEMKAT_CODE   NO  NO 
+       ITEM_CODE       NO  NO 
+
+  2    ITEM_RECR       NO  NO       12     3       1     ON-LINE
+
+  3    ITEM_DESCR      NO  NO       157    3       2     ON-LINE
+       ITEM_REC0       NO  NO 
+
+  4    WITEMKAT_CODE   NO  NO       40     3       3     ON-LINE
+       UNITS_CODE      NO  NO 
+       ITEM_CODE       NO  NO 
+
+  5    ITEM_CODE       NO  NO       20     3       1     ON-LINE
+
+  6    ITEM_QUAL       NO  NO       30     3       2     ON-LINE
+       ITEM_CODE       NO  NO 
+

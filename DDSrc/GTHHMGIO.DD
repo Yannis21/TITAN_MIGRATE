@@ -1,0 +1,98 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GTHHMGIO.DD
+// Class Name: Gthhmgio_DataDictionary
+// Revision  : 33
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Gthhmgio
+Open Gtypkin
+Open Gthaa
+Open Sysrecg
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Gthhmgio_Gthhmgio_Period_VT
+
+Object Gthhmgio_Gthhmgio_Period_VT  is a CodeValidationTable
+    Set Type_Value        To "PERIOD"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Gthhmgio_Gthhmgio_Period_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList Gthhmgio  Gthhmgio.SL
+Register_Object Gthhmgio
+//DDB-SelectionEnd
+
+Class Gthhmgio_DataDictionary  is a DataDictionary_Sec
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Gthhmgio.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Gtypkin.File_Number
+        Send Add_Client_File  Gthaa.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecg.Gthhmgio_Rec0  To Gthhmgio.Gthhmgio_Rec0
+
+        // Field-based properties.......................
+
+        // Gthhmgio.Gthhmgio_Code
+        Set Field_Options          Field Gthhmgio.Gthhmgio_Code To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Gthhmgio.Gthhmgio_Code To (Gthhmgio(Self))
+        Set Key_Field_State        Field Gthhmgio.Gthhmgio_Code To TRUE
+
+        // Gthhmgio.Gthhmgio_Rec0
+
+        // Gthhmgio.Gthhmgio_Descr
+        Set Field_Prompt_Object    Field Gthhmgio.Gthhmgio_Descr To (Gthhmgio(Self))
+
+        // Gthhmgio.Gthhmgio_Period
+        Set Field_Value_Table      Field Gthhmgio.Gthhmgio_Period To (Gthhmgio_Gthhmgio_Period_VT(Self))
+
+        // Gthhmgio.Gthhmgio_Recr
+        Set Field_Options          Field Gthhmgio.Gthhmgio_Recr To DD_AUTOFIND   
+        Set Key_Field_State        Field Gthhmgio.Gthhmgio_Recr To TRUE
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+End_Class    // Gthhmgio_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use Gthhmgio.SL      // Gthhmgio
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

@@ -1,0 +1,47 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: RP3 (# 222)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : Rp3
+  USER DISPLAY NAME         : Rp3
+  DATAFLEX FILE NAME        : RP3
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 256       ( USED: 162 )
+  MAX NUMBER OF RECORDS     : 10000     ( USED: 3 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  RP1_KODIKOS      NUM   14.0     1  2   
+  2  SEIRA_EMFANISHS  NUM    6.0     8  2   
+  3  DESCR            ASC     50    11      
+  4  RP2_AA           NUM   14.0    61  1   RP2.FIELD_4 (221,4)
+  5  RP3_AA           NUM   14.0    68  3   
+  6  MAINFILE         NUM    4.0    75      
+  7  MAINFILE_FIELD   NUM    4.0    77      
+  8  TMP_FILE         NUM    4.0    79      
+  9  TMP_FIELD        NUM    4.0    81      
+ 10  MAINFILEN        ASC     20    83      
+ 11  MAINFILE_FIELDN  ASC     20   103      
+ 12  TMP_FILEN        ASC     20   123      
+ 13  TMP_FIELDN       ASC     20   143      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    RP2_AA          NO  NO       7      3       1     ON-LINE
+
+  2    RP1_KODIKOS     NO  NO       10     3       2     ON-LINE
+       SEIRA_EMFANISHS NO  NO 
+
+  3    RP3_AA          NO  NO       7      3       1     ON-LINE
+

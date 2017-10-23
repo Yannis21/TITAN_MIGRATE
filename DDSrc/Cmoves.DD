@@ -1,0 +1,644 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : CMOVES.DD
+// Class Name: Cmoves_DataDictionary
+// Revision  : 149
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Cmoves
+Open Copen
+Open Ctypkin
+Open Clients
+Open Sysrecc
+Open Syscurxr
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl006  sl006.SL
+//DDB/ ExternalSelectionList slNomism  slnomism.sl
+//DDB/ ExternalSelectionList sl041  sl041.SL
+Register_Object sl006
+Register_Object slNomism
+Register_Object sl041
+//DDB-SelectionEnd
+ 
+Use Payresp.DD
+//Use PmsSxet.DD
+
+Class Cmoves_DataDictionary  is a DataDictionary
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Property Integer piFromBP           Public 0
+        Property Integer piNotMoveSyscurXr  Public 0   
+        Property Integer piFromSysxet       Public 0   
+        Property Integer piFromxrhsh        Public 0  //ú§õú†•û ¶´† ú®Æú´ò† òß¶ £ú´ò≠¶®· ¨ß¶¢¶Âß‡§
+    End_Procedure
+
+    Function Validate_Save  Returns Integer
+        Integer iReturnVal iOpen_Items iCheck ifromxrhsh iYes
+        String sModule
+        get pifromxrhsh to ifromxrhsh
+        Forward Get Validate_Save  To iReturnVal
+        If (Not(iReturnVal)) Begin
+            if (cmoves.cmoves_recr='')  Send Operation_Not_Allowed 3263
+            Clear Branch
+            Move SyscurXr.Company_Code  to Branch.Company_Code
+            Move SyscurXr.Branch_Code   to Branch.Branch_Code
+            Find Eq Branch By Index.1
+            If (Not(Found)) Move 6666 to iReturnVal
+            Else If ((Branch.Locked_Until<>'') And (Cmoves.Cmoves_Hmnia<=Branch.Locked_Until)) Move 6667 to iReturnVal
+            
+            If (Cmoves.Axia_Ypol_Sysx<0) Begin
+                Move 10101 to iReturnVal
+            End
+            Else Begin
+                
+                Move Ctypkin.Check_Overhead to iCheck
+                If (iCheck) Begin
+                    If ((Clients.Plafon>0) And (Clients.Overhead<0) And (Sysfile.Over_Overhead<>'1')) Begin
+                        Get YesNo_Box 'é ¨ß.ß¢û®‡£È§ ‚Æú† ¨ß‚®ôò©û ß¢ò≠Ê§\nåò ©¨§úÆÂ©‡ ;' 'Ñß†ôúôòÂ‡©û 3000 Cmoves' to iYes
+                        If (iYes=MBR_NO) Move 11170 to iReturnVal
+                    End
+                    Else If ((PayResp.Plafon>0) And (PayResp.Overhead<0) And (Sysfile.Over_Overhead<>'1')) Begin
+                        Get YesNo_Box 'é ¨ß.ß¢û®‡£È§ ‚Æú† ¨ß‚®ôò©û ß¢ò≠Ê§\nåò ©¨§úÆÂ©‡ ;' 'Ñß†ôúôòÂ‡©û 3001 Cmoves' to iYes
+                        If (iYes=MBR_NO) Move 11171 to iReturnVal
+                    End
+                End
+                
+                If (iReturnVal) Send Operation_Not_Allowed iReturnVal
+                
+                If ((Cmoves.Prn_Theor='1') And (piFromBP(Self)<>1)) Move 22278 to iReturnVal
+                Else If ((Clients.Client_Locked='1') And (piFromBP(Self)<>1)) Move 11172 to iReturnVal
+                
+                // ò§ ú®Æú´ò† òß¶ £ú´ò≠¶®· ¨ß¶¢¶Âß‡§ £û§ ´¶§ °¶ôú†™ „ òß¶ open items (©¨©Æú´†©ú†™)
+                Else If ((Cmoves.Cmoves_Hmnia<syscurxr.Year_Xrhshfrom and ifromxrhsh<>1 And (piFromSysxet(Self)<>1)) Or ;
+                         (Cmoves.Cmoves_Hmnia>Syscurxr.Year_Xrhshto and ifromxrhsh<>1 And (piFromSysxet(Self)<>1))) Move 22277 to iReturnVal
+                Else Begin
+                    If (Cmoves.Module_From='') Move 22250 to iReturnVal
+                    Else Begin
+                        If (piFromBP(Self)<>1) Begin // Ä§ õú§ ß®¶ú®Æú´ò† òß¶ ´†™ 2 Business Process
+                            If (Cmoves.Module_From<>gs_Module_Code) Move 22288 to iReturnVal
+                            Else If (Cmoves.Recnum<>0) Begin // Ä§ õú§ °ò§ú† create §úò úöö®ò≠û
+                                If (Cmoves.Barticl_Recr<>'') Move 22284 to iReturnVal
+                                Else If (Cmoves.Partl_Recr  <>'') Begin
+                                    If (Cmoves.Module_From='01') Move 22283 to iReturnVal
+                                    Else If (Cmoves.Module_From='02') Move 22282 to iReturnVal
+                                End
+                            End
+                        End
+                    End
+                End
+            End
+            If (iReturnVal) Send Operation_Not_Allowed iReturnVal
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+
+    Function Validate_Delete  Returns Integer
+        Integer iReturnVal
+        String sModule
+        Forward Get Validate_Delete  To iReturnVal
+        If (Not(iReturnVal)) Begin
+
+            Clear Branch
+            Move SyscurXr.Company_Code  to Branch.Company_Code
+            Move SyscurXr.Branch_Code   to Branch.Branch_Code
+            Find Eq Branch By Index.1
+            If (Not(Found)) Move 6668 to iReturnVal
+            Else If ((Branch.Locked_Until<>'') And (Cmoves.Cmoves_Hmnia<=Branch.Locked_Until)) Move 6669 to iReturnVal
+            
+            If (iReturnVal) Send Operation_Not_Allowed iReturnVal
+            
+            If (Cmoves.Prn_Theor='1') Move 22279 to iReturnVal
+            Else If (piFromBP(Self)<>1) Begin
+                If (Cmoves.Module_From<>gs_Module_Code) Move 22289 to iReturnVal
+                Else Begin
+                    If (Cmoves.Barticl_Recr<>'') Move 22287 to iReturnVal
+                    Else If (Cmoves.Partl_Recr  <>'') Begin
+                        If (Cmoves.Module_From='01') Move 22286 to iReturnVal
+                        Else If (Cmoves.Module_From='02') Move 22285 to iReturnVal
+                    End
+                End
+            End
+            If (iReturnVal) Send Operation_Not_Allowed iReturnVal
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Delete
+
+    Procedure Save_Main_File
+        If (Operation_Origin<>Self) Begin
+            If Cmoves.Recnum Eq 0 Procedure_Return
+        End
+        If (Cmoves.Cn_Code<>'') Begin
+            Clear Cn
+            Move Cmoves.Cn_Code to Cn.Cn_Code
+            Find Eq Cn By Index.5 // Cn:Index.5:Cn_Code
+            Move Cn.Cn_Sls_ID      to Cmoves.Sls_ID
+            Move cn.Mhxanik_id     to Cmoves.Mhxanik_Id
+            Move Cn.CN_Cnt_ID      to Cmoves.Cnt_ID
+            Move Cn.Cn_Recr        to Cmoves.Cn_Recr
+        End
+        Else Begin
+            Move ''     to Cmoves.Sls_ID
+            Move ''     to Cmoves.Cnt_ID
+            Move ''     to Cmoves.Cn_Recr
+            Move ''     to Cmoves.Mhxanik_id
+        End
+        Forward Send Save_Main_File
+    End_Procedure   // Save_Main_File
+
+
+    Procedure Update
+        String sNomisma
+        Forward Send Update
+        
+        If (piNotMoveSyscurXr(Self)=0) Begin
+            Move SysCurXR.Company_Code      to Cmoves.Company_Code
+            Move SysCurXR.Branch_Code       to Cmoves.Branch_Code
+        End
+        
+        //ò§ öÂ§ú´ò† £ú´ò≠¶®· ¨ß¶¢¶Âß‡§
+        if (pifromxrhsh(self)=1)            Move (SysCurXR.Year_Year+1) to Cmoves.Year_Year
+        else If (piNotMoveSyscurXr(Self)=0) Move SysCurXR.Year_Year     to Cmoves.Year_Year
+        
+        //Move Custprom.Custprom_Code to Cmoves.Custprom_Code
+        Move Clients.Client_ID          to Cmoves.Client_ID
+        Move Clients.Client_Name        to Cmoves.Client_Name
+        Move Ctypkin.Ctypkin_Descr      to Cmoves.Ctypkin_Descr
+
+        // js 28/03/2002 Gia na mhn allazei sta Copen me to Ctypkin tou CmovesA
+        If (Cmoves.Ctypkin_Code='') ;
+            Move Ctypkin.Ctypkin_Code   to Cmoves.Ctypkin_Code
+
+
+        Move payresp.presp_ID           to Cmoves.Presp_ID
+
+        ///an enhmeronei synolikh ofeilh pelath
+        if (Cmoves.enhm_ofeilh='1') begin
+            Add (Cmoves.Cmoves_x0-Cmoves.cmoves_p0) to Clients.Synolikh_ofeilh
+            Add (Cmoves.Cmoves_x0-Cmoves.cmoves_p0) to Payresp.Synolikh_ofeilh
+        end
+
+        If (Cmoves.Enhm_Ypol_Pel='1') Begin
+            If (Cmoves.Cmoves_x0<>0) Begin
+                Add Cmoves.Cmoves_x0 to Clients.Xreosh
+                Add Cmoves.Cmoves_x0 to PayResp.Xreosh
+            End
+            Else If (Cmoves.Cmoves_p0<>0) Begin
+                Add Cmoves.Cmoves_p0 to Clients.Pistosh
+                Add Cmoves.Cmoves_p0 to PayResp.Pistosh
+            End
+            if ((clients.client_ptyppar='113') and (clients.client_public<>1)) begin
+                move 1 to clients.client_public  
+                Move '01/01/1753'   to Clients.SAP_Hmnia
+                move '' to clients.status
+            end     
+        End
+        If (Cmoves.Enhm_Hmnies_Pel='1') Begin
+            If (Cmoves.Cmoves_x0<>0) Begin
+                Move Cmoves.Cmoves_Hmnia   to Clients.Last_Xreosh
+                Move Cmoves.Cmoves_Hmnia   to PayResp.Last_Xreosh
+            End
+            Else If (Cmoves.Cmoves_p0<>0) Begin
+                Move Cmoves.Cmoves_Hmnia   to Clients.Last_Pistosh
+                Move Cmoves.Cmoves_Hmnia   to PayResp.Last_Pistosh
+            End
+            if ((clients.client_ptyppar='113') and (clients.client_public<>1)) begin 
+                move 1 to clients.client_public
+                move '' to clients.status  
+                Move '01/01/1753'   to Clients.SAP_Hmnia
+            end 
+        End
+
+             If ((Cmoves.Cmoves_M_Code='') And (Cmoves.Module_From  <>'')) Move Cmoves.Module_From     to Cmoves.Cmoves_M_Code
+        Else If ((Cmoves.Module_From  ='') And (Cmoves.Cmoves_M_Code<>'')) Move Cmoves.Cmoves_M_Code   to Cmoves.Module_From
+
+        If (Ctypkin.Open_Item='1') Move (Cmoves.Axia_Pros_Sysx-Cmoves.Axia_Sysxet) to Cmoves.Axia_Ypol_Sysx
+        Else Begin
+            Move 0 to Cmoves.Axia_Pros_Sysx
+            Move 0 to Cmoves.Axia_Sysxet
+            Move 0 to Cmoves.Axia_Ypol_Sysx
+        End
+
+        // js 23/01/2002
+        // Enhmerosh Pediou Flag_Ypol to opoio antiprosopeyei
+        // to an h eggrafh exei diathesimo ypoloipo pros sysxetish
+        Move (Cmoves.Axia_Ypol_Sysx<>0) to Cmoves.Flag_Ypol
+
+        // js 23/01/2002
+        // Enhmerosh Pediou Flag_Open to opoio antiprosopeyei
+        // an einai xreosh=1, pistosh=2, arnhtikh xreosh=2 arnhtikh Pistosh=1
+        // gia na emfanizei ta antistrofa sto copen
+        If (Ctypkin.Open_Item='1') Begin
+            If ((Cmoves.Cmoves_X0<>0) And ((Cmoves.Cmoves_P0=0))) Begin
+                Move 1                          to Cmoves.Flag_Copen
+                If (Cmoves.Cmoves_X0<0) Move 2  to Cmoves.Flag_Copen
+            End
+            Else If ((Cmoves.Cmoves_P0<>0) And ((Cmoves.Cmoves_X0=0))) Begin
+                Move 2                          to Cmoves.Flag_Copen
+                If (Cmoves.Cmoves_P0<0) Move 1  to Cmoves.Flag_Copen
+            End
+            Else Move 0 to Cmoves.Flag_Copen
+        End
+        Else Move 0 to Cmoves.Flag_Copen
+    End_Procedure   // Update
+
+    Procedure Backout
+        Forward Send Backout
+
+        if (Cmoves.enhm_ofeilh='1') begin
+            sub (Cmoves.Cmoves_x0-Cmoves.cmoves_p0) from Clients.Synolikh_ofeilh
+            sub (Cmoves.Cmoves_x0-Cmoves.cmoves_p0) from Payresp.Synolikh_ofeilh
+        end
+
+//        if (Cmoves.enhm_ofeilh='2') begin
+//            sub ((Cmoves.Cmoves_x0-Cmoves.cmoves_p0)*-1) from Clients.Synolikh_ofeilh
+//            sub ((Cmoves.Cmoves_x0-Cmoves.cmoves_p0)*-1) from Payresp.Synolikh_ofeilh
+//        end
+
+        If (Cmoves.Enhm_Ypol_Pel='1') Begin
+            If (Cmoves.Cmoves_x0<>0) Begin
+                Sub Cmoves.Cmoves_x0 From Clients.Xreosh
+                Sub Cmoves.Cmoves_x0 From PayResp.Xreosh
+            End
+            Else If (Cmoves.Cmoves_p0<>0) Begin
+                Sub Cmoves.Cmoves_p0 From Clients.Pistosh
+                Sub Cmoves.Cmoves_p0 From PayResp.Pistosh
+            End
+        End
+    End_Procedure
+
+    Procedure Creating
+        Forward Send Creating
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Cmoves.Cmoves_Rec0)))))) to Cmoves.Cmoves_Recr
+
+        //If ((Cmoves.Module_From='' ) Or (piFromBP(Self)<>1)) Move gs_Module_Code to Cmoves.Module_From
+
+        If (Ctypkin.Open_Item ='1') Begin
+                 If (Cmoves.Cmoves_x0<>0) Move (Abs(Cmoves.Cmoves_x0)) to Cmoves.Axia_Pros_Sysx
+            Else If (Cmoves.Cmoves_p0<>0) Move (Abs(Cmoves.Cmoves_p0)) to Cmoves.Axia_Pros_Sysx
+        End
+    End_Procedure   // Creating
+
+
+    Procedure Operation_Not_Allowed Integer iError_Num
+        String lsError_Message
+
+        Case Begin
+            
+            Case (iError_Num = 3263)
+                Move "DDC 006: ë≠·¢£ò 6666 ÄõÁ§ò´û û úöö®ò≠û!\nâú§Ê Cmoverecr!! Protem !!" to lsError_Message
+            Case Break
+            
+            Case (iError_Num = 6666)
+                Move "DDC 006: ë≠·¢£ò 6666 ÄõÁ§ò´û û úöö®ò≠û!\nÉú§ ô®‚üû°ú ´¶ ò®ÆúÂ¶ ¨ß¶°ò´ò©´û£·´‡§" to lsError_Message
+            Case Break
+
+            Case (iError_Num = 6667)
+                Move "DDC 006: ë≠·¢£ò 6667 ÄõÁ§ò´û û úöö®ò≠û!\nÜ£/§Âò °Â§û©û™ ß®¶öú§‚©´ú®û û£/§Âò™ °¢ú†õÈ£ò´¶™" to lsError_Message
+            Case Break
+
+            Case (iError_Num = 6668)
+                Move "DDC 006: ë≠·¢£ò 6668 ÄõÁ§ò´û û õ†òö®ò≠„!\nÉú§ ô®‚üû°ú ´¶ ò®ÆúÂ¶ ¨ß¶°ò´ò©´û£·´‡§" to lsError_Message
+            Case Break
+
+            Case (iError_Num = 6669)
+                Move "DDC 006: ë≠·¢£ò 6669 ÄõÁ§ò´û û õ†òö®ò≠„!\nÜ£/§Âò °Â§û©û™ ß®¶öú§‚©´ú®û û£/§Âò™ °¢ú†õÈ£ò´¶™" to lsError_Message
+            Case Break
+
+            Case (iError_Num = 22277)
+                Move "DDC 006:ÄõÁ§ò´û û úöö®ò≠û!\n\nÜ£ú®¶£û§Âú™ ú°´Ê™ ¶®Â‡§ Æ®„©û™" to lsError_Message
+            Case Break
+
+            Case (iError_Num = 22278)
+                Move "DDC 006:ÄõÁ§ò´û û úöö®ò≠„!\n\ÑÆú† ´¨ß‡üú† üú‡®û£‚§¶" to lsError_Message
+            Case Break
+
+            Case (iError_Num = 22279)
+                Move "DDC 006:ÄõÁ§ò´û û õ†òö®ò≠„!\n\ÑÆú† ´¨ß‡üú† üú‡®û£‚§¶" to lsError_Message
+            Case Break
+
+            Case (iError_Num = 11170)
+                Move "DDC 006:í¶ ß†©´‡´†°Ê Ê®†¶ ´¶¨ ≠¶®‚ò ‚Æú† ú•ò§´¢ûüúÂ" to lsError_Message
+            Case Break
+
+            Case (iError_Num = 11171)
+                Move "DDC 006:í¶ ß†©´‡´†°Ê Ê®†¶ ´¶¨ ìß. è¢û®‡£È§ ‚Æú† ú•ò§´¢ûüúÂ" to lsError_Message
+            Case Break
+
+            Case (iError_Num = 11172)
+                Move "DDC 006:é ≠¶®‚ò™ úÂ§ò† °¢ú†õ‡£‚§¶™ ¢Êö‡ ß†©´‡´†°¶Á ¶®Â¶¨" to lsError_Message
+            Case Break
+
+            Case (iError_Num = 22288)
+                Clear Codemast
+                Move "MODULE" to Codemast.Type
+                Move Cmoves.Module_From to Codemast.Code
+                Find Eq Codemast by Index.1 //type+code
+                Move ("DDC 006:ÄõÁ§ò´û û úöö®ò≠û!\n\n(Ü °Â§û©û ò¢¢·ùú† £Ê§¶§ òßÊ "+;
+                (Trim(Codemast.Description))+" )") to lsError_Message
+            Case Break
+
+            Case (iError_Num = 22250)
+                Move "DDC 006:ÄõÁ§ò´û û úöö®ò≠û!\n\ní¶ °Á°¢‡£ò (Module) ´û™ úöö®ò≠„™ úÂ§ò† °ú§Ê" to lsError_Message
+            Case Break
+
+            Case (iError_Num = 22284)
+                Move "DDC 006:ÄõÁ§ò´û û úöö®ò≠û!\n\nÜ °Â§û©û ò¢¢·ùú† £Ê§¶§ òßÊ ´ò Ä•†Êö®ò≠ò" to lsError_Message
+            Case Break
+            Case (iError_Num = 22283)
+                Move "DDC 006:ÄõÁ§ò´û û úöö®ò≠û!\n\nÜ °Â§û©û ò¢¢·ùú† £Ê§¶§ òßÊ ´†™ è‡¢„©ú†™" to lsError_Message
+            Case Break
+            Case (iError_Num = 22282)
+                Move "DDC 006:ÄõÁ§ò´û û úöö®ò≠û!\n\nÜ °Â§û©û ò¢¢·ùú† £Ê§¶§ òßÊ ´†™ Äö¶®‚™" to lsError_Message
+            Case Break
+
+            //òßÊ validate delete
+            Case (iError_Num = 22289)
+                Clear Codemast
+                Move "MODULE" to Codemast.Type
+                Move Cmoves.Module_From to Codemast.Code
+                Find Eq Codemast by Index.1 //type+code
+                Move ("DDC 006:ÄõÁ§ò´û û õ†òö®ò≠„!\n\n(Ü °Â§û©û õ†òö®·≠ú´ò† £Ê§¶§ òßÊ "+;
+                (Trim(Codemast.Description))+" )") to lsError_Message
+            Case Break
+
+            Case (iError_Num = 22287)
+                Move "DDC 006:ÄõÁ§ò´û û õ†òö®ò≠„!\n\nÜ °Â§û©û õ†òö®·≠ú´ò† £Ê§¶§ òßÊ ´ò Ä•†Êö®ò≠ò" to lsError_Message
+            Case Break
+            Case (iError_Num = 22286)
+                Move "DDC 006:ÄõÁ§ò´û û õ†òö®ò≠„!\n\nÜ °Â§û©û õ†òö®·≠ú´ò† £Ê§¶§ òßÊ ´†™ è‡¢„©ú†™" to lsError_Message
+            Case Break
+            Case (iError_Num = 22285)
+                Move "DDC 006:ÄõÁ§ò´û û õ†òö®ò≠„!\n\nÜ °Â§û©û õ†òö®·≠ú´ò† £Ê§¶§ òßÊ ´†™ Äö¶®‚™" to lsError_Message
+            Case Break
+
+            //‚¢úöÆ¶† open items
+            Case (iError_Num = 10101)
+                Move ("DDC 006:Ä°ò´·¢¢û¢û Ñöö®ò≠„.\n\n"+;
+                "í¶ ©¨©Æú´†©£‚§¶ ß¶©Ê úÂ§ò† £úöò¢Á´ú®¶\nòß¶ ´¶ ò®Æ†°· õ†òü‚©†£¶ ß®¶™ ©¨©Æ‚´†©û");
+                to lsError_Message
+            Case Break
+
+            Case Else
+                Forward Send Operation_Not_Allowed iError_Num
+        Case End
+
+        Error iError_Num lsError_Message
+    End_Procedure // operation_not_allowed
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Cmoves.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Copen.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Ctypkin.File_Number
+        Send Add_Server_File  Clients.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_NEW_SAVE_DELETE
+        Send Add_System_File  Syscurxr.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Cmoves_Rec0  To Cmoves.Cmoves_Rec0
+
+        // Field-based properties.......................
+
+        // Cmoves.Company_Code
+
+        // Cmoves.Branch_Code
+
+        // Cmoves.Year_Year
+
+        // Cmoves.Custprom_Code
+
+        // Cmoves.Client_Id
+
+        // Cmoves.Ctypkin_Code
+
+        // Cmoves.Cmoves_Recr
+
+        // Cmoves.Cmoves_Rec0
+        Set Field_Options          Field Cmoves.Cmoves_Rec0 To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Cmoves.Cmoves_Rec0 To (sl006(Self))
+
+        // Cmoves.Cmoves_Hmnia
+        Set Field_Prompt_Object    Field Cmoves.Cmoves_Hmnia To (sl006(Self))
+
+        // Cmoves.Ctypkin_Recr
+
+        // Cmoves.Cmoves_Par
+
+        // Cmoves.Partl_Recr
+        //DDB/ Comment_Short       Field Cmoves.Partl_Recr To "ë¨§õú©û record £ú °Á°¢‡£ò è‡¢„©ú‡§"
+
+        // Cmoves.Cmoves_Axia
+
+        // Cmoves.Cmoves_X0
+
+        // Cmoves.Cmoves_P0
+
+        // Cmoves.Cmoves_X00
+
+        // Cmoves.Cmoves_P00
+
+        // Cmoves.Cmoves_X1
+
+        // Cmoves.Cmoves_P1
+
+        // Cmoves.Cmoves_X2
+
+        // Cmoves.Cmoves_P2
+
+        // Cmoves.Cmoves_Dlixis
+
+        // Cmoves.Cmoves_A_Code
+
+        // Cmoves.Cmoves_Status_E
+
+        // Cmoves.Cmoves_Status_A
+
+        // Cmoves.Cmoves_S0
+
+        // Cmoves.Cmoves_Ys0
+
+        // Cmoves.Cmoves_S1
+
+        // Cmoves.Cmoves_Ys1
+
+        // Cmoves.Cmoves_S2
+
+        // Cmoves.Cmoves_Ys2
+
+        // Cmoves.Cmoves_Sc_Code2
+        Set Field_Prompt_Object    Field Cmoves.Cmoves_Sc_Code2 To (slNomism(Self))
+
+        // Cmoves.Cmoves_Open
+
+        // Cmoves.Cmoves_Aopen
+
+        // Cmoves.Cmoves_M_Code
+
+        // Cmoves.Cmoves_Yn_Myf
+
+        // Cmoves.Cmoves_Myf_Axia
+
+        // Cmoves.Cmoves_Kk
+
+        // Cmoves.Cmoves_C_Code2
+
+        // Cmoves.Cn_Code
+        Set Field_Prompt_Object    Field Cmoves.Cn_Code To (sl041(Self))
+
+        // Cmoves.Client_Recr
+
+        // Cmoves.Barticl_Recr
+
+        // Cmoves.Cmoves_Qty
+
+        // Cmoves.Cmove_Totambd0
+
+        // Cmoves.Cmove_Discam0
+
+        // Cmoves.Cmove_Totamad0
+
+        // Cmoves.Cmove_Vatam0
+
+        // Cmoves.Cmove_Extra0
+
+        // Cmoves.Cmove_Totambd00
+
+        // Cmoves.Cmove_Discam00
+
+        // Cmoves.Cmove_Totamad00
+
+        // Cmoves.Cmove_Vatam00
+
+        // Cmoves.Cmove_Extra00
+
+        // Cmoves.Cmove_Totambd1
+
+        // Cmoves.Cmove_Discam1
+
+        // Cmoves.Cmove_Totamad1
+
+        // Cmoves.Cmove_Vatam1
+
+        // Cmoves.Cmove_Extra1
+
+        // Cmoves.Module_From
+
+        // Cmoves.Parast_Abrev
+
+        // Cmoves.Enhm_Ypol_Pel
+
+        // Cmoves.Enhm_Hmnies_Pel
+
+        // Cmoves.Sls_Id
+
+        // Cmoves.Presp_Id
+
+        // Cmoves.Cnt_Id
+
+        // Cmoves.Cmoves_Open_Sx0
+
+        // Cmoves.Cmoves_Open_Sp0
+
+        // Cmoves.Cmoves_Open_Yx0
+
+        // Cmoves.Cmoves_Open_Yp0
+
+        // Cmoves.Cmoves_Open_Sx1
+
+        // Cmoves.Cmoves_Open_Sp1
+
+        // Cmoves.Cmoves_Open_Sx2
+
+        // Cmoves.Cmoves_Open_Sp2
+
+        // Cmoves.Cmoves_Topen
+
+        // Cmoves.Cn_Recr
+
+        // Cmoves.Axia_Pros_Sysx
+
+        // Cmoves.Axia_Sysxet
+
+        // Cmoves.Axia_Ypol_Sysx
+
+        // Cmoves.Axia_Pros_Sys00
+
+        // Cmoves.Axia_Sysxet00
+
+        // Cmoves.Axia_Ypol_Sys00
+
+        // Cmoves.Axia_Pros_Sysr
+
+        // Cmoves.Axia_Sysxetr
+
+        // Cmoves.Axia_Ypol_Sysr
+
+        // Cmoves.Mhxanik_Id
+
+        // Cmoves.Prn_Theor
+
+        // Cmoves.Is_Closed
+
+        // Cmoves.Flag_Copen
+
+        // Cmoves.Flag_Ypol
+
+        // Cmoves.Ctypkin_Descr
+
+        // Cmoves.Client_Name
+
+        // Cmoves.Enhm_Ofeilh
+
+        // Cmoves.Sap_Hmnia
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Cmoves_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl006.SL         // sl006
+Use slnomism.sl      // slNomism
+Use sl041.SL         // sl041
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

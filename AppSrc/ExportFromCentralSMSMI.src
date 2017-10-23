@@ -1,0 +1,145 @@
+//------------------------------------------------------
+//------------------------------------------------------
+// 1. Ola ta MI... arxeia briskontai ston kentriko server se mia bash SMSMI
+// 2. To programma ayto se VDF14 trexei stiw diafores perifereiakes monades
+//    kai skanarei tis markarismenes eggrafes sthn topikh SMS bash
+//    tis opoies stelnei sta MIxxxxx arxeia ston kentriko server.
+//----
+// 3. To proto login na einai PANTA to login ston server sthn topikh SMS bash
+// 4. To deytero login tha exei kleidomeno to IP tou kentrikou Server sta INT/TD
+//    kai to mono pou allazoume einai h bash, epilegontas thn SMSMI anti 
+//    ths SMS tou protou login.
+//----------------------
+//----------------------
+// Xrhsimopoioume pedia tou CN / MICN pou den prpei na peiraxtoun 
+// giati xrhsmeyoun eite gia calculated pedia tou Tolh pou enhmerothikan
+// meso script h gia tiw zones ton ergvn sto MICN afou den exoume sta 
+// arxeia MI, oute Brabch oute CNZones klp....
+//----------------------
+// MICN.CN_VDETAILS         Perigrafh Zonhs (apo to arxeio zones)
+// MICN.CN_CLIENTMATCH      Zonh ID (apo to arxeio Zones)
+// MICN.CN_ZONE             Brzones.BRZONE_RECR
+// MICN.CN_PUMPID           Excel Column AM Sales Office
+// MICN.CN_PUMPLICENSE      Excel Column AT Ñ®ö¶©´·©†¶ ´®¶≠¶õ†©Âò™
+//----------------------
+//----------------------
+
+
+//------------------------------------------------------
+//------------------------------------------------------
+
+Use DFAllEnt.pkg
+Use cCJStandardCommandBarSystem.pkg
+Use cCJCommandBarSystem.pkg
+
+Object oHtmlHelp is a cHtmlHelp
+End_Object
+
+Object oApplication is a cApplication
+    Set peHelpType to htHtmlHelp
+
+    Procedure OnCreate
+        Handle hoCmdLine
+        Integer iNumArgs iArg
+        Get phoCommandLine to hoCmdLine
+    End_Procedure
+
+End_Object
+
+Use oEditContextMenu.pkg
+Use oDEOEditContextMenu.pkg
+
+
+Use MERTECH.INC
+//Login 'PIS2003DEV'  'SA' '123' 'SQL_DRV'
+//Login 'PISDEV'      'SA' '123' 'SQL_DRV'
+
+Open MICLIENT
+Open MICN
+Open MICONSTR
+Open MISalesm
+Open MIMHXAN
+Open MIPRESP
+Open MICodtyp
+Open MIcodema
+Open MIORDH
+Open MIORDD
+Open MIAREAS
+Open MICITIES
+Open MITOWNS
+Open MICOUNTR
+
+
+Object oMain is a Panel
+
+    Set Label to "Ñ•òö‡ö„ òß¶ SMSMI ©ú ò®ÆúÂ¶"
+
+    Set Location to 4 3
+    Set Size to 300 450
+
+    Object oCommandBarSystem is a cCJCommandBarSystem
+        Set pbTimerUpdate to True
+//
+        Procedure OnCreateCommandBars
+            Handle hoOptions
+            Get OptionsObject to hoOptions
+            Forward Send OnCreateCommandBars
+        End_Procedure
+//
+        Object oMenuBar is a cCJMenuBar
+
+            Object oMainMenu1 is a cCJMenuItem
+                Set psCaption to "èêéÇêÄããÄíÄ ÑçÄÇóÇÜë ëíéàïÑàóå" 
+                Set psTooltip to "èêéÇêÄããÄíÄ ÑçÄÇóÇÜë ëíéàïÑàóå"
+                Set peControlType to xtpControlPopup
+
+                Object oExportDataClientsCNToFile is a cCJMenuItem
+                    Set psCaption to "Ñ•òö‡ö„ ë´¶†ÆúÂ‡§ èÑäÄíóå / ÑêÇóå / äéàèóå ©ú Ä®ÆúÂ¶"
+                    Set psTooltip to "Ñ•òö‡ö„ ë´¶†ÆúÂ‡§ ©ú Ä®ÆúÂ¶"
+
+                    Procedure OnExecute Variant vCommandBarControl
+                        Handle hoClient
+                        Get Client_Id to hoClient
+                        Send Activate_ExportFromSMSMI2 of hoClient
+                    End_Procedure
+                End_Object
+
+                Object oExportDataClientsCNToFile is a cCJMenuItem
+                    Set psCaption to "Ñ•òö‡ö„ ë´¶†ÆúÂ‡§ ÉÑéè ©ú Ä®ÆúÂ¶"
+                    Set psTooltip to "Ñ•òö‡ö„ ë´¶†ÆúÂ‡§ ÉÑéè ©ú Ä®ÆúÂ¶"
+ 
+                    Procedure OnExecute Variant vCommandBarControl
+                        Handle hoClient
+                        Get Client_Id to hoClient
+                        Send Activate_ExportDEOPNew3 of hoClient
+                    End_Procedure
+                End_Object
+
+            End_Object // Object oMainMenu1 is a cCJMenuItem
+
+        End_Object // Object oMenuBar is a cCJMenuBar
+  
+    End_Object // // Object oCommandBarSystem is a cCJCommandBarSystem
+
+    Object oClientArea is a ClientArea
+        Use StdAbout.pkg
+        //------
+        Use ExportFromSMSMI2.vw
+        //Use ExportFromSMSMI2DEOP_NEW.vw
+        //Use ExportDeopNew1.vw
+        Use ExportDeopNew2.vw
+        Use ExportDEOPNew3.vw
+        //Use ExportFromSMSMI2DEOP.vw
+
+        //------
+        Procedure Activate_About
+            Send DoAbout "" "" "" "" ""
+        End_Procedure
+
+    End_Object
+    
+End_Object
+
+
+//Send Activate_ExportFromSMSMI2 of (oClientArea(oMain))
+Start_UI

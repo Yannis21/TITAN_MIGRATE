@@ -1,0 +1,45 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: WTYPKIN (# 29)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:WTYPKIN
+  USER DISPLAY NAME         : Wtypkin
+  DATAFLEX FILE NAME        : WTYPKIN
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 128       ( USED: 128 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 47 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC      3     1      
+  2  BRANCH_CODE      ASC      3     4      
+  3  YEAR_YEAR        NUM    4.0     7      
+  4  WTYPKIN_CODE     ASC     10     9  1   
+  5  WTYPKIN_REC0     NUM   14.0    19      
+  6  WTYPKIN_RECR     ASC     12    26  2   
+  7  YEAR_RECR        ASC      7    38      
+  8  WTYPKIN_DESCR    ASC     60    45  3   
+  9  WTYPKIN_ANTI     ASC     20   105      
+ 10  WTYPKIN_MODULE   ASC      2   125      
+ 11  MAX_DAYS_SX_PAR  NUM    4.0   127      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    WTYPKIN_CODE    NO  NO       10     3       1     ON-LINE
+
+  2    WTYPKIN_RECR    NO  NO       12     3       1     ON-LINE
+
+  3    WTYPKIN_DESCR   NO  NO       72     3       2     ON-LINE
+       WTYPKIN_RECR    NO  NO 
+

@@ -1,0 +1,155 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : WITEMXT.DD
+// Class Name: Witemxt_DataDictionary
+// Revision  : 19
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Witemxt
+Open Witemx
+Open Sysrecw
+
+//DDB-HeaderEnd
+
+Class Witemxt_DataDictionary  is a DataDictionary_Sec
+
+   Begin_Constraints
+        //Forward Send OnConstrain
+        Constrain WitemxT.Company_Code  eq SysCurXR.Company_Code
+        Constrain WitemxT.Branch_Code   eq SysCurXR.Branch_Code
+        Constrain WitemxT.Year_Year     eq SysCurXR.Year_Year
+    End_Constraints
+
+    // Update:
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move SysCurXR.Company_Code  to WitemxT.Company_Code
+        Move SysCurXR.Branch_Code   to WitemxT.Branch_Code
+        Move SysCurXR.Year_Year     to WitemxT.Year_Year
+        Move Witemx.Witemx_Recr     to WitemxT.Witemx_Recr
+        Move Item.Item_Code         to Witemxt.Item_Code
+    End_Procedure   // Update
+
+     Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        //Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+        //                  (Trim(String(WitemxT.WitemxT_Rec0)))))) to WitemxT.Witemx_Recr
+    End_Procedure   // Creating
+   
+    Procedure Shmera integer iField  Date dDate
+        Local Integer Changed
+        Get Field_Changed_State iField to Changed
+        If (Changed=0 AND dDate =0) Begin
+            SysDate4 dDate
+            Set Field_Default_Value iField to dDate
+        End
+     End_Procedure   // Shmera
+
+//    Procedure Operation_Not_Allowed Integer iError_Num
+//        String lsError_Message
+//        Case Begin
+//            Case (iError_Num = 3001)
+//                Move "WITEMXT.DD (189): í¶ ‚´¶™ ´û™ û£/§Âò™ †©ÆÁ¶™ \nõú§ ´ò†®†·ùú† £ú ´¶ ‚´¶™ ´¶¨ SYSCURXR" to lsError_Message
+//            Case Break
+//            Case (iError_Num = 3002)
+//                Move "WITEMXT.DD (189): í¶ ‚´¶™ ´û™ û£/§Âò™ †©ÆÁ¶™ \nõú§ ´ò†®†·ùú† £ú ´¶ ‚´¶™ ´¶¨ WITEMX" to lsError_Message
+//            Case Break
+//            Case Else
+//                Forward Send Operation_Not_Allowed iError_Num
+//        Case End
+//        Error iError_Num lsError_Message
+//    End_Procedure // operation_not_allowed
+
+    Function Validate_Save  Returns Integer
+        Integer iReturnVal iEtos
+
+        Forward Get Validate_Save  To iReturnVal
+//        If (Not(iReturnVal)) Begin
+//            Move (TheYearSegment(Witemxt.Value_Date)) to iEtos
+//                 If (SyscurXR.Year_Year<>iEtos) Move 3001 to iReturnVal
+//            Else If (Witemx.Year_Year  <>iEtos) Move 3002 to iReturnVal
+//            If (iReturnVal) Send Operation_Not_Allowed iReturnVal
+//        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Witemxt.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Witemx.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecw.File_Number  DD_LOCK_ON_NEW_SAVE_DELETE
+
+        Define_Auto_Increment  Sysrecw.Witemxt_Rec0  To Witemxt.Witemxt_Rec0
+
+        // Field-based properties.......................
+
+        // Witemxt.Company_Code    
+
+        // Witemxt.Branch_Code     
+
+        // Witemxt.Year_Year       
+
+        // Witemxt.Witemxt_Rec0    
+        Set Field_Options          Field Witemxt.Witemxt_Rec0     To DD_AUTOFIND   
+
+        // Witemxt.Witemx_Recr     
+
+        // Witemxt.Axia            
+
+        // Witemxt.Axia0           
+
+        // Witemxt.Axia00          
+
+        // Witemxt.Axiar           
+
+        // Witemxt.Value_Date      
+        Set Field_Entry_msg        Field Witemxt.Value_Date       To Shmera
+        Set Field_Mask_Type        Field Witemxt.Value_Date       To MASK_DATE_WINDOW
+
+        // Witemxt.Qty             
+
+        // Witemxt.Pcdisc          
+
+        // Witemxt.Orio            
+
+        // Witemxt.Pagioorio       
+
+        // Witemxt.Pcdiscantlia    
+
+        // Witemxt.Item_Code       
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Witemxt_DataDictionary
+//DDB-FileEnd

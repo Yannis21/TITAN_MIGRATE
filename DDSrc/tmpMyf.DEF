@@ -1,0 +1,94 @@
+-----------------------------------------------------------------------------
+  DATE: 22/12/105      TIME: 17:43                                  PAGE:  1
+  FILE DEFINITION FOR FILE: TMPMYF (# 86)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : tmpMyf
+  USER DISPLAY NAME         : tmpMyf
+  DATAFLEX FILE NAME        : TMPMYF
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 384       ( USED: 334 )
+  MAX NUMBER OF RECORDS     : 1000000   ( USED: 104 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC     10     1      
+  2  BRANCH_CODE      ASC     10    11      
+  3  MYF_YEAR         NUM    4.0    21  1   
+  4  MODULE           ASC      2    23  2   
+  5  TYPOS_RECORD     NUM    4.0    25  1   
+  6  AA               NUM    4.0    27  4   
+  7  AFM              ASC      9    29  6   
+  8  CLIENT_ID        ASC     20    38  2   
+  9  CLIENT_NAME      ASC     27    58  1   
+ 10  JOB              ASC     15    85      
+ 11  YPOXREOS         ASC      1   100      
+ 12  POLH             ASC     10   101      
+ 13  ODOS             ASC     16   111      
+ 14  ARITHMOS         ASC      3   127      
+ 15  TK               ASC      5   130      
+ 16  PLHTHOS          NUM    8.0   135      
+ 17  AXIA             NUM   14.2   139      
+ 18  AGROTHS          NUM    2.0   147      
+ 19  DHMOSIO_ANEY     NUM    2.0   148      
+ 20  R1_DOY           NUM    4.0   149      
+ 21  R1_AR_FAKEL      NUM    6.0   151      
+ 22  R1_EPONYMIA      ASC     18   154      
+ 23  R1_AFM           ASC      9   172      
+ 24  R1_ANTIKEIMENO   ASC     16   181      
+ 25  R1_POLH          ASC     10   197      
+ 26  R1_ODOS          ASC     16   207      
+ 27  R1_ARITHMOS      ASC      3   223      
+ 28  R1_TK            ASC      5   226      
+ 29  R1_THLEFONO      ASC     10   231      
+ 30  R1_FAX           ASC     10   241      
+ 31  R1_EMAIL         ASC     34   251      
+ 32  R1_EIDOS         ASC      4   285      
+ 33  S_PLHTHOS_KAN    NUM   14.0   289      
+ 34  S_PLHTHOS_DHM    NUM   14.0   296      
+ 35  S_PLHTHOS_TOTAL  NUM   14.0   303      
+ 36  S_AXIA_KAN       NUM   14.2   310      
+ 37  S_AXIA_DHM       NUM   14.2   318      
+ 38  S_AXIA_TOTAL     NUM   14.2   326      
+ 39  WRONG_AFM        NUM    2.0   334  5   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    MYF_YEAR        NO  NO       36     6       5     ON-LINE
+       TYPOS_RECORD    NO  NO 
+       MODULE          NO  NO 
+       CLIENT_NAME     NO  NO 
+       RECNUM          NO  NO 
+
+  2    MYF_YEAR        NO  NO       26     5       4     ON-LINE
+       MODULE          NO  NO 
+       TYPOS_RECORD    NO  NO 
+       CLIENT_ID       NO  NO 
+
+  3    MYF_YEAR        NO  NO       34     6       4     ON-LINE
+       TYPOS_RECORD    NO  NO 
+       CLIENT_NAME     NO  NO 
+       RECNUM          NO  NO 
+
+  4    MODULE          NO  NO       7      4       3     ON-LINE
+       AA              NO  NO 
+       RECNUM          NO  NO 
+
+  5    WRONG_AFM       NO  NO       4      3       2     ON-LINE
+       RECNUM          NO  NO 
+
+  6    MYF_YEAR        NO  NO       15     4       4     ON-LINE
+       MODULE          NO  NO 
+       TYPOS_RECORD    NO  NO 
+       AFM             NO  NO 
+

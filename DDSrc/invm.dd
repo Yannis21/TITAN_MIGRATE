@@ -1,0 +1,1100 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : INVM.DD
+// Class Name: Invm_DataDictionary
+// Revision  : 49
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Invm
+Open Tadvc
+Open Seiram
+Open Sysrec
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Invm_Invm_Status_VT
+Register_Object Invm_Garticl_C_Code2_VT
+Register_Object Invm_Kathestos_Fpa_VT
+
+Object Invm_Invm_Status_VT  is a DescriptionValidationTable
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "0"  "¨¦©à¨ ¤æ"
+        Send Add_Table_Value  "1"  "„¤£œ¨à£â¤¦"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Invm_Invm_Status_VT
+
+Object Invm_Garticl_C_Code2_VT  is a CodeValidationTable
+    Set Type_Value        To "CURRENCY"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Invm_Garticl_C_Code2_VT
+
+Object Invm_Kathestos_Fpa_VT  is a CodeValidationTable
+    Set Type_Value        To "VAT_STATUS"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Invm_Kathestos_Fpa_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl130  Sl130.sl
+Register_Object sl130
+//DDB-SelectionEnd
+
+Use SL110.sl //meso
+Use SL101.sl //de
+Use SL104.sl //cust
+Use SL138.sl //broker
+Use SL136.sl //mshop
+Use SL105.sl //cprod
+Use SL107.sl //prod
+
+Use SL118.sl //afmmeso
+Use SL102.sl //afmde
+Use SL106.sl //afmcust
+Use SL139.sl //afmbrok
+Use SL137.sl //afmmshop
+
+
+Class Invm_DataDictionary  is a DataDictionary_Ez
+
+//******************************ja code start************************************
+//§¨¦©¦©®!  ¡¢á©  œå¤˜  £ «œ¢ãª !
+
+      //private
+      //¡˜¢œå«˜  ˜§¦ «¤:1. new_current_record
+      Function private.Selection_List_1234567 String asID;
+                                              String asValue;
+                                              String asSelect_Mode;
+                                              Returns Integer
+
+               //œá¤ «¦ select_mode œå¤˜  ¡˜£å˜ œ§ ¢¦šã, ›â¤ ¬§á¨®œ  ¢å©«˜
+               If (asSelect_Mode = ""   ) Function_Return 0
+
+               //œá¤ «¦ select_mode œå¤˜  £å˜ œ§ ¢¦šã,
+               //¡˜   « £ã ›â¤ œå¤˜  ¡œ¤ã,
+               //›â¤ ¬§á¨®œ  ¢å©«˜
+               If (;
+                    (asSelect_Mode = "1"   ) and;
+                    (asValue      <> ""   )    ;
+                  ) Function_Return 0
+
+
+               //œ­'æ©¦¤ «¦ select_mode œå˜¤  ›¢à£â¤¦ œå«œ £å˜, œå«œ §¦¢¢˜§¢âª œ§ ¢¦šâª,
+               //¡˜   ˜¤«å©«¦ ® « £ã œå¤˜  ¡œ¤ã,
+               //«æ«œ œ§ ©«¨â­œ«˜   ¡˜«á¢¢¢ ¢å©«˜, ˜¤á¢¦š˜ £œ «¦ asid
+                    If (asID = "1") Function_Return (SL110(Self)) //› ˜­£ ©« ¡æ £â©¦
+               Else If (asID = "2") Function_Return (SL101(Self)) //› ˜­£ ©« ¡ã
+               Else If (asID = "3") Function_Return (SL104(Self)) //› ˜­£ æ£œ¤¦ª
+               Else If (asID = "4") Function_Return (SL138(Self)) //broker
+               Else If (asID = "5") Function_Return (SL136(Self)) //media shop
+               Else If (asID = "6") Function_Return (SL105(Self)) //cprod
+               Else If (asID = "7") Function_Return (SL107(Self)) //prod
+               Else                 Function_Return 0             //›â¤ ¬§á¨®œ  ¢å©«˜
+      End_Function //private.selection_list_1234567
+
+
+      //private
+      //¡˜¢œå«˜  ˜§¦ «¤:1. new_current_record
+      //©œ«á¨œ  prompt lists, prompt button & enabled_state
+      Procedure private.Set_VI_of_all_Connected_DEOs Integer aiField;
+                                                     Integer aiPrompt_Object_id
+
+                Integer liMax liCount liDeo liTemp
+
+                Get Data_Set_User_Interface_Count to liMax
+                Decrement liMax
+                For liCount from 0 to liMax
+                    Move (Data_Set_User_Interface(Self,liCount)) to liDeo
+                    Get Data_Field of liDeo Item 0 to liTemp
+                    If (liTemp = aiField);
+                    Begin //œá¤ ™¨¡˜ deo (dbform?) §¦¬ ˜¤˜­â¨œ«˜  ©«¦ §œ›å¦ lifield
+
+                          Set Prompt_Object of liDeo to aiPrompt_Object_id
+
+                          If (aiPrompt_Object_id <> 0);
+                          Begin
+                               Set Item_Option        of liDeo Item 0 to NoEnter FALSE
+                               Set Prompt_Button_Mode of liDeo        to PB_promptOn
+                               Set Enabled_State      of liDeo        to TRUE
+                          End
+                          Else;
+                          Begin
+                               Set Item_Option        of liDeo Item 0 To NoEnter TRUE
+                               Set Prompt_Button_Mode of liDeo        to PB_promptOff
+                               Set Enabled_State      of liDeo        to FALSE
+                          End
+
+                          //©œ«á¨œ  value & enabled_state
+                          //Send private.Prepare_Invm_Values liDeo aiField
+                    End
+                Loop
+      End_Procedure //private.set_vi_of_all_connected_dEOS
+
+
+      Procedure Update0
+                If (Seiram.Meso_Select="");
+                Begin //¡˜£å˜ œ§ ¢¦šã £â©¦¬
+                      Move "" to Invm.Invm_Meso_Code
+                      // js 11/04/2000 sososos Move "" to Invm.Meso_Afm
+                End
+                Else If (Seiram.Meso_Select="1");
+                Begin //£å˜ œ§ ¢¦šã £â©¦¬
+
+                End
+
+      End_Procedure //update0
+
+//******************************ja code end**************************************
+
+
+
+
+      Procedure Construct_Object
+                Forward Send Construct_Object
+
+                Property Integer    piFromAutoTim       Public  0
+                Property Integer    piTouchedByMe       Public  0
+                Property Integer    piOldArithmos       Public  0
+                Property Integer    piOldSeiraRec0      Public  0
+                Property Date       pdOldHmnia          Public ''
+                Property String     psOldEkdothsAFM     Public ''
+                Property String     psOldApodekthsAFM   Public ''
+                Property String     psOldMesolabhthsAFM Public ''
+                Property Number     pnOldFpaPoso        Public  0
+                Property Number     pnNewFpaPoso        Public  0
+                Property Number     pnOldSynPoso        Public  0
+                Property Number     pnNewSynPoso        Public  0
+                Property Integer    piDontCheckClosed   Public  0
+                Property Integer    piDontCheckSent     Public  0
+                Property String     psOldClosed         Public ''
+                Property String     psOldSentToSfi      Public ''
+
+
+
+
+                PROPERTY INTEGER PIXESE FALSE
+
+
+
+      End_Procedure //construct_object
+
+
+      //æ¢˜ «˜ ddo ˜¬«ãª «ãª ¡¢á©ª, œ¤£œ¨é¤¦¬¤ «˜ parents seiram_ddo's
+      //£œ «¦ ddo id «¦¬ invm
+      Procedure End_Construct_Object
+                Integer liSeiram_dd
+                Forward Send End_Construct_Object
+                Move (Find_Server_DDO(Self,Seiram.File_Number )) to liSeiram_dd
+                //â¢œš®¦  ¬§¦®¨œà« ¡ãª ç§˜¨¥ª seiram server
+                If (liSeiram_dd  = 0) Error 10000 "Invm does not have a Seiram  Server ! ! !"
+                //properties «¦¬ seiram
+                Set piInvm_dd  of liSeiram_dd to Self
+      End_Procedure   //end_construct_object
+
+
+      Procedure Clear_Main_File
+                Forward Send Clear_Main_File
+
+                Set piFromAutoTim       To      0
+                Set piTouchedByMe       To      0
+                Set piOldArithmos       To      0
+                Set piOldSeiraRec0      To      0
+                Set pdOldHmnia          To     ''
+                Set psOldEkdothsAFM     To     ''
+                Set psOldApodekthsAFM   To     ''
+                Set psOldMesolabhthsAFM To     ''
+                Set pnOldFpaPoso        To      0
+                Set pnNewFpaPoso        To      0
+                Set pnOldSynPoso        To      0
+                Set pnNewSynPoso        To      0
+                Set piDontCheckClosed   To      0
+                Set piDontCheckSent     To      0
+                Set psOldClosed         To     ''
+                Set psOldSentToSfi      To     ''
+      End_Procedure
+
+
+      Procedure New_Current_Record  Integer aiOldRec  Integer aiNewRec
+                String  lsProdCompT lsAmoibh
+                Integer liEidos## liKinhsh##
+                Number  lnFpa
+                Integer liTparastm_Eidos liTparastm_Kinhs
+
+                Forward Send New_Current_Record  aiOldRec aiNewRec
+
+                Set pdOldHmnia          to Invm.Invm_Hmnia
+                Set piOldArithmos       to Invm.Invm_Arithmos
+                Set piOldSeiraRec0      to Invm.Seiram_Rec0
+                Set psOldEkdothsAFM     to Invm.Invm_Ekd_Afm
+                Set psOldApodekthsAFM   to Invm.Invm_Apo_Afm
+                Set psOldMesolabhthsAFM to Invm.Invm_Mes_Afm
+                Set psOldClosed         to Invm.Closed
+                Set psOldSentToSfi      to Invm.Sent_To_Sfi
+
+
+
+
+                //ja code:start------------------------------------------------------------
+
+                INTEGER LIXESE
+                GET PIXESE TO LIXESE
+                IF (LIXESE = FALSE) PROCEDURE_RETURN
+
+                Send private.Set_VI_of_all_Connected_DEOs Field Invm.Invm_Meso_Code;
+                                                          (private.Selection_List_1234567(Self,"1",Invm.Invm_Meso_Code ,Seiram.Meso_Select  ))
+
+                Send private.Set_VI_of_all_Connected_DEOs Field Invm.Invm_De_Code;
+                                                          (private.Selection_List_1234567(Self,"2",Invm.Invm_De_Code   ,Seiram.De_Select    ))
+
+                Send private.Set_VI_of_all_Connected_DEOs Field Invm.Invm_Cust_Code;
+                                                          (private.Selection_List_1234567(Self,"3",Invm.Invm_Cust_Code ,Seiram.Cust_Select  ))
+
+                Send private.Set_VI_of_all_Connected_DEOs Field Invm.Invm_Brok_Code;
+                                                          (private.Selection_List_1234567(Self,"4",Invm.Invm_Brok_Code ,Seiram.Broker_Select))
+
+                Send private.Set_VI_of_all_Connected_DEOs Field Invm.Invm_Mshop_Code;
+                                                          (private.Selection_List_1234567(Self,"5",Invm.Invm_Mshop_Code,Seiram.Mshop_Select ))
+
+                Send private.Set_VI_of_all_Connected_DEOs Field Invm.Invm_Cprod_Code;
+                                                          (private.Selection_List_1234567(Self,"6",Invm.Invm_Cprod_Code,Seiram.Cprod_Select ))
+
+                Send private.Set_VI_of_all_Connected_DEOs Field Invm.Invm_Prod_Code;
+                                                          (private.Selection_List_1234567(Self,"7",Invm.Invm_Prod_Code ,Seiram.Prod_Select  ))
+
+                //ja code:end------------------------------------------------------------
+
+
+
+      End_Procedure   //new_current_record
+
+
+
+      Procedure Creating
+          Number lnTmp
+          Forward Send Creating
+
+          Set piTouchedByMe to 1
+          Move '1'              to Invm.Built_Up
+          Move '1'              to Invm.To_Be_Printed
+          Move Seiram.What_Am_I to Invm.What_Am_I
+
+          If (Seiram.Seiram_Flag05 = 1);
+          Begin
+               Move (Seiram.Last_No_Minus+1) to lnTmp
+               Move (lnTmp*(-1))             to Invm.Invm_Arithmos
+               Move lnTmp                    to Seiram.Last_No_Minus
+          End
+
+          Move 'GRD' to Invm.GARTICL_C_CODE2
+          Move 1     to Invm.GARTICL_RATE0
+      End_Procedure   //creating
+
+
+
+      Function Check_If_Valid_Afm String fsAfm String fsCode Returns Integer
+          Integer rVal
+          Clear CustProm
+          Move fsAfm to CustProm.Custprom_Afm
+          Find eq CustProm by Index.3 //index.3:custprom:custprom_afm
+          If (Not(found)) Function_Return 1
+          Else Begin
+              If (fsCode=Invm.Invm_Meso_Code) Begin
+                  Clear AfmMeso
+                  Move CustProm.Custprom_Code to AfmMeso.CustProm_Code
+                  Move fsCode                 to AfmMeso.Meso_Code
+                  Find eq AfmMeso By Index.1 //index.1:afmmeso:meso_code+custprom_code
+                  If (Not(Found)) Function_Return 1
+              End
+              Else If (fsCode=Invm.Invm_DE_Code) Begin
+                  Clear AfmDE
+                  Move CustProm.Custprom_Code to AfmDE.CustProm_Code
+                  Move fsCode                 to AfmDE.DE_Code
+                  Find eq AfmDE By Index.1 //index.1:afmde:de_code+custprom_code
+                  If (Not(Found)) Function_Return 1
+              End
+              Else If (fsCode=Invm.Invm_Cust_Code) Begin
+                  Clear AfmCust
+                  Move CustProm.Custprom_Code to AfmCust.CustProm_Code
+                  Move fsCode                 to AfmCust.Cust_Code
+                  Find eq AfmCust By Index.1 //index.1:afmcust:cust_code+custprom_code
+                  If (Not(Found)) Function_Return 1
+              End
+              Else If (fsCode=Invm.Invm_Brok_Code) Begin
+                  Clear AfmBrok
+                  Move CustProm.Custprom_Code to AfmBrok.CustProm_Code
+                  Move fsCode                 to AfmBrok.Broker_Code
+                  Find eq AfmBrok By Index.1 //index.1:afmbrok:broker_code+custprom_code
+                  If (Not(Found)) Function_Return 1
+              End
+              Else If (fsCode=Invm.Invm_Mshop_Code) Begin
+                  Clear AfmMshop
+                  Move CustProm.Custprom_Code to AfmMshop.CustProm_Code
+                  Move fsCode                 to AfmMshop.Mshop_Code
+                  Find eq AfmMshop By Index.1 //index.1:afmmshop:mshop_code+custprom_code
+                  If (Not(Found)) Function_Return 1
+              End
+              Else Function_Return 1
+          End
+          Function_Return rVal
+      End_Function //check_if_valid_afm
+
+
+      //1???:›£ ¦¬¨šå˜ ¤â¦¬ record £æ¤¦¤ ˜§æ invm_dd
+      Function Validate_Save  Returns Integer
+          Integer iReturnVal liInt liHasChild
+          Forward Get Validate_Save  To iReturnVal
+
+          If (Not(iReturnVal)) Begin
+              // 25/02/2000 jsjsjs £§¡œ §¨¦©Ÿ¡ ¤˜ £§¦¨œ  ¤˜ ˜¢¢˜œ  «˜ §˜¨˜¡˜«à ©«¦ ®œ ˜
+              // ˜¤ ›œ¤ ¬§˜¨®¦¬¤ œ£­˜¤ ©œ ª ©«¦ §˜¨˜©«˜« ¡¦
+              Move Invm.Invm_Posa_Child to liHasChild
+
+                   If ((pdOldHmnia         (Self)<>'') and (pdOldHmnia         (Self)<>Invm.Invm_Hmnia)    and (liHasChild>0)) Move 5001 to iReturnVal
+              Else If ((piOldArithmos      (Self)<> 0) and (piOldArithmos      (Self)<>Invm.Invm_Arithmos) and (liHasChild>0)) Move 5002 to iReturnVal
+              Else If ((piOldSeiraRec0     (Self)<> 0) and (piOldSeiraRec0     (Self)<>Invm.Seiram_Rec0)   and (liHasChild>0)) Move 5003 to iReturnVal
+              Else If ((psOldEkdothsAFM    (Self)<>'') and (psOldEkdothsAFM    (Self)<>Invm.Invm_Ekd_Afm)  and (liHasChild>0)) Move 5004 to iReturnVal
+              Else If ((psOldApodekthsAFM  (Self)<>'') and (psOldApodekthsAFM  (Self)<>Invm.Invm_Apo_Afm)  and (liHasChild>0)) Move 5005 to iReturnVal
+              Else If ((psOldMesolabhthsAFM(Self)<>'') and (psOldMesolabhthsAFM(Self)<>Invm.Invm_Mes_Afm)  and (liHasChild>0)) Move 5006 to iReturnVal
+              ///////////////////////
+
+              Else If ((Invm.invm_Arithmos = 0)   and (Current_Record(Self)))                                 Move 5007 to iReturnVal
+              Else If ((Invm.Built_Up   ='1')     and (piTouchedByMe(Self)<>1)) Begin
+                  //Showln Invm.Built_Up '--'  (piTouchedByMe(Self))
+                  Move 5008 to iReturnVal
+              End
+              Else If (psOldClosed(Self)='1')  Begin
+                  If (piDontCheckClosed(Self)=0) Move 5019 to iReturnVal
+              End
+              Else If (Invm.Printed     ='1')                                                               Move 5009 to iReturnVal
+              Else If (Invm.Enhmerosh_GL='1')                                                               Move 5010 to iReturnVal
+              Else If ((Invm.Invm_Ekd_Afm='') and (piFromAutoTim(Self)=0) and (Current_Record(Self)))       Move 5015 to iReturnVal
+              Else If ((Invm.Invm_Apo_Afm='') and (piFromAutoTim(Self)=0) and (Current_Record(Self)))       Move 5016 to iReturnVal
+              Else Begin
+                  If (piFromAutoTim(Self)=0) Begin
+                      If (Trim(Invm.Invm_Ekdoth)<>'') Begin
+                          Move (Check_If_Valid_Afm(Self,Invm.Invm_Ekd_Afm,Invm.Invm_Ekdoth)) to liInt
+                          If (liInt=1) Move 5017 to iReturnVal
+                      End
+                      Else Begin
+                          If (Trim(Invm.Invm_Apodekth)<>'') Begin
+                              Move (Check_If_Valid_Afm(Self,Invm.Invm_Apo_Afm,Invm.Invm_Apodekth)) to liInt
+                              If (liInt=1) Move 5018 to iReturnVal
+                          End
+                          Else Begin
+                              If (Trim(Invm.Invm_Mesolabhth)<>'') Begin
+                                  Move (Check_If_Valid_Afm(Self,Invm.Invm_Mes_Afm,Invm.Invm_Mesolabhth)) to liInt
+                                  If (liInt=1) Move 5020 to iReturnVal
+                              End
+                          End
+                      End
+                  End
+              End
+              if (iReturnVal) Send Operation_Not_Allowed iReturnVal
+          End
+          Function_Return iReturnVal
+      End_Function   //validate_save
+
+
+      Function Validate_Delete  Returns Integer
+          Local Integer iReturnVal
+          Forward Get Validate_Delete  To iReturnVal
+          If (Not(iReturnVal)) ;
+              Begin
+                       If ((Invm.Built_Up   ='1') and (piTouchedByMe(Self)<>'1'))                               Move 5011 to iReturnVal
+                  Else If (Invm.Printed     ='1')                                                               Move 5012 to iReturnVal
+                  Else If (Invm.Enhmerosh_GL='1')                                                               Move 5013 to iReturnVal
+                  Else If (Invm.Closed      ='1')                                                               Move 5014 to iReturnVal
+                  if (iReturnVal) Send Operation_Not_Allowed iReturnVal
+              End
+          Function_Return iReturnVal
+      End_Function   //validate_delete
+
+
+      Procedure Operation_Not_Allowed  Integer iError_Num
+               If iError_num eq 5001 error 5001 "DD130:invm - ƒœ¤ œ§ «¨â§œ«˜  ˜¢¢˜šã £œ¨¦£¤å˜ª §˜¨˜©«˜« ¡¦ç"
+          Else If iError_num eq 5002 error 5002 "DD130:invm - ƒœ¤ œ§ «¨â§œ«˜  ˜¢¢˜šã ˜¨ Ÿ£¦ç §˜¨˜©«˜« ¡¦ç"
+          Else If iError_num eq 5003 error 5003 "DD130:invm - ƒœ¤ œ§ «¨â§œ«˜  ˜¢¢˜šã ©œ ¨áª §˜¨˜©«˜« ¡¦ç"
+          Else If iError_num eq 5004 error 5004 "DD130:invm - ƒœ¤ œ§ «¨â§œ«˜  ˜¢¢˜šã œ¡›æ« ©«¦ §˜¨˜©«˜« ¡æ \n(‰à› ¡æ  €”‹)"
+          Else If iError_num eq 5005 error 5005 "DD130:invm - ƒœ¤ œ§ «¨â§œ«˜  ˜¢¢˜šã ˜§¦›â¡« ©«¦ §˜¨˜©«˜« ¡æ \n(‰à› ¡æ  €”‹)"
+          Else If iError_num eq 5006 error 5006 "DD130:invm - ƒœ¤ œ§ «¨â§œ«˜  ˜¢¢˜šã £œ©¦¢˜™«ã ©«¦ §˜¨˜©«˜« ¡æ \n(‰à› ¡æ  €”‹)"
+          Else If iError_num eq 5007 error 5007 "DD130:invm - ƒœ¤ â®œ  ›¦Ÿœå ˜¨ Ÿ£æª §˜¨˜©«˜« ¡¦ç"
+          Else If iError_num eq 5008 error 5008 "DD130:invm - ƒœ¤ œ§ «¨â§œ«˜  ˜¢¢˜šã ©«¦ §˜¨˜©«˜« ¡æ. •¨©£¦§¦ œå«˜  ˜§¦ á¢¢¦ ®¨ã©«"
+          Else If iError_num eq 5009 error 5009 "DD130:invm - ƒœ¤ œ§ «¨â§œ«˜  ˜¢¢˜šã ©«¦ §˜¨˜©«˜« ¡æ. „®œ  «¬§àŸœå"
+          Else If iError_num eq 5010 error 5010 "DD130:invm - ƒœ¤ œ§ «¨â§œ«˜  ˜¢¢˜šã ©«¦ §˜¨˜©«˜« ¡æ. „®œ  ¢¦š ©« ¡¦§¦ Ÿœå"
+          Else If iError_num eq 5011 error 5011 "DD130:invm - ƒœ¤ œ§ «¨â§œ«˜  › ˜š¨˜­ ©«¦ §˜¨˜©«˜« ¡æ. •¨©£¦§¦ œå«˜  ˜§¦ á¢¢¦ ®¨ã©«"
+          Else If iError_num eq 5012 error 5012 "DD130:invm - ƒœ¤ œ§ «¨â§œ«˜  › ˜š¨˜­ ©«¦ §˜¨˜©«˜« ¡æ. „®œ  «¬§àŸœå"
+          Else If iError_num eq 5013 error 5013 "DD130:invm - ƒœ¤ œ§ «¨â§œ«˜  › ˜š¨˜­ ©«¦ §˜¨˜©«˜« ¡æ. „®œ  ¢¦š ©« ¡¦§¦ Ÿœå"
+          Else If iError_num eq 5014 error 5014 "DD130:invm - ƒœ¤ œ§ «¨â§œ«˜  › ˜š¨˜­ ©«¦ §˜¨˜©«˜« ¡æ. „®œ  ¡¢œå©œ "
+          Else If iError_num eq 5015 error 5015 "DD130:invm - ƒœ¤ â®œ«œ §¨¦©› ¦¨å©œ  €”‹ ©«¦¤ œ¡›æ« «¦¬ §˜¨˜©«˜« ¡¦ç"
+          Else If iError_num eq 5016 error 5016 "DD130:invm - ƒœ¤ â®œ«œ §¨¦©› ¦¨å©œ  €”‹ ©«¦¤ ˜§¦›â¡« «¦¬ §˜¨˜©«˜« ¡¦ç"
+          Else If iError_num eq 5017 error 5017 "DD130:invm - ƒœ¤ ¬§á¨®œ  ¡˜«˜®/¤¦ «¦ €”‹ «¦¬ œ¡›æ« ©«¦ ˜¨®œå¦ ‘¬¤˜¢¢˜©/¤à¤"
+          Else If iError_num eq 5018 error 5018 "DD130:invm - ƒœ¤ ¬§á¨®œ  ¡˜«˜®/¤¦ «¦ €”‹ «¦¬ ˜§¦›â¡« ©«¦ ˜¨®œå¦ ‘¬¤˜¢¢˜©/¤à¤"
+          Else If iError_num eq 5019 error 5019 "DD130:invm - ƒœ¤ œ§ «¨â§œ«˜  ˜¢¢˜šã ©«¦ §˜¨˜©«˜« ¡æ. „®œ  ¡¢œå©œ "
+          Else If iError_num eq 5020 error 5020 "DD130:invm - ƒœ¤ ¬§á¨®œ  ¡˜«˜®/¤¦ «¦ €”‹ «¦¬ £œ©¦¢/«ã ©«¦ ˜¨®œå¦ ‘¬¤˜¢¢˜©/¤à¤"
+          else Forward Send Operation_Not_Allowed  iError_Num
+      End_Procedure   // Operation_Not_Allowed
+
+
+    Procedure Backout
+              String lsProdCompT lsAmoibh
+              Integer liEidos## liKinhsh##
+              Number lnFpa
+
+              Forward Send Backout
+
+              Move Tparastm.Tparastm_Kinhs    to liKinhsh##
+              Move Tparastm.Tparastm_Eidos    to liEidos##
+              Move Prod.Comp_Amoibh_Tim       to lsProdCompT
+              Move Seiram.Einai_Amoibh        to lsAmoibh
+              Move (Trim(lsProdCompT))        to lsProdCompT
+
+              If (lsProdCompT<>'') Begin
+                  If ((liKinhsh##<>1) and (Trim(lsAmoibh)='')) Begin
+                      Move Invm.Invm_s11T to lnFpa
+                      Set pnOldSynPoso    to Invm.Invm_S10t
+                  End
+                  Else Begin
+                      Move Invm.Invm_s11  to lnFpa
+                      Set pnOldSynPoso    to Invm.Invm_S10
+                  End
+              End
+              Else Begin
+                  Move Invm.Invm_s11 to lnFpa
+                  Set pnOldSynPoso   to Invm.Invm_S10
+              End
+              Set pnOldFpaPoso to lnFpa
+
+              Send Compute_Invm_Totals
+    End_Procedure //backout
+
+
+
+      Procedure Update
+                String lsProdCompT lsAmoibh
+                Number lnFpa
+                String lsStr lsAfm lsStatus
+                Integer liInt1 liInt2 liInt3 liEidos## liKinhsh##
+
+                Forward Send Update
+
+                Move Tparastm.Tparastm_Kinhs    to liKinhsh##
+                Move Tparastm.Tparastm_Eidos    to liEidos##
+                Set Agores                      to liKinhsh##       //ï ë•„ˆ ˆ‘‡„í ’ PROPERTY ?? sosososososo
+                Set Timologio                   to (Abs(liEidos##)) //ï ë•„ˆ ˆ‘‡„í ’ PROPERTY ?? sosososososo
+
+                Move Tparastm.What_Am_I       to Invm.What_Am_I
+                Move Tparastm.Who_Am_I        to Invm.Who_Am_I
+                Move Tparastm.Who_Am_I_Name   to Invm.Who_Am_I_Name
+                Move Tparastm.Who_Am_I_AFM    to Invm.Who_Am_I_AFM
+                Move Tparastm.Tparastm_Kinhs  to Invm.Tparastm_Kinhs
+                Move Tparastm.Tparastm_Code   to Invm.Tparastm_Code
+                Move Seiram.Seiram_Seira      to Invm.Seiram_Seira
+
+                ///// SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS
+                ///// SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS
+                ///// sos jsjsjsjs 15/12/99  ¨œ§œ  ¤˜ £œ ¤¦¬¤ ¡œ¤˜ «˜ §œ› ˜
+                ///// š ˜«  ˜¢¢¦ à¤œ  «¤ check_afm ©«¦ 5200 §˜¨˜©«˜« ¡¦
+                ////  œ¢œš®œ  §¨à«˜ «¦¤ broker ¦§¦«œ ™¨ ©¡œ  0 ˜¢¢˜ ¦®  €”‹
+                ////  €¤ ¦£àª £œ ¤¦¬¤ ¡œ¤á «¦«œ ›œ¤ §˜ œ  «¦ selection ©« ¢ ©«˜ œ§ ¢¦šª «ª « £¦¢¦š©ª
+                If NOT (Seiram.Seiram_Typos Contains '4')   Move ''  to Invm.Invm_Brok_Code
+                If NOT (Seiram.Seiram_Typos Contains '5')   Move ''  to Invm.Invm_Mshop_Code
+//              If NOT (Seiram.Seiram_Typos Contains '4')   Move '0' to Invm.Invm_Brok_Code
+//              If NOT (Seiram.Seiram_Typos Contains '5')   Move '0' to Invm.Invm_Mshop_Code
+                ///// SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS
+                ///// SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS SOS
+
+
+
+
+                //¡˜Ÿ¦¨ ©£æª ©¬¤˜¢¢˜©¦£â¤¦¬
+                Move Seiram.Seiram_Typos to lsStr
+                Move (Left(lsStr   ,1))  to liInt1 //œ¡›æ«ª
+                Move (Mid (lsStr ,1,2))  to liInt2 //˜§¦›â¡«ª
+                Move (Mid (lsStr ,1,3))  to liInt3 //£œ©¦¢˜™«ãª
+
+                //ja//If (Seiram.Tparastm_Kinhs='1');
+                If (Tparastm.Tparastm_Kinhs='1');
+                Begin //¡æ©«¦ª
+                      Move Invm.Invm_Ekdoth   to Invm.Invm_PelProm
+                      Move Invm.Invm_Ekd_Afm  to lsAfm
+                End
+                Else;
+                Begin //â©¦›¦
+                      Move Invm.Invm_Apodekth to Invm.Invm_PelProm
+                      Move Invm.Invm_Apo_Afm  to lsAfm
+                End
+
+
+                //¬§¦¢¦š ©£æª ©¬¤«œ¢œ©«ã ­§˜, ˜¤á¢¦š˜ £œ «¦ ¡˜Ÿœ©«éª ­§˜ «¦¬ œ¡á©«¦«œ ©¬¤˜¢¢˜©¦£â¤¦¬
+                Clear CustProm
+                Move (Trim(lsAfm)) to Custprom.Custprom_Afm
+                Find Eq Custprom by Index.3 // index.3:custprom:custprom_afm
+                Move (Trim(CustProm.Custprom_VatSta)) to lsStatus
+
+                Case Begin
+                    Case (lsStatus='1') // ‰˜¤¦¤ ¡æ ”€
+                        Move Sysfile.Pct_Fpa_Kanon to Invm.Syntelesths_Fpa
+                    Case Break
+                    Case (lsStatus='2') // ƒœ¤ ¬§æ¡œ «˜  ©œ ”€
+                        Move 0 to Invm.Syntelesths_Fpa
+                    Case Break
+                    Case (lsStatus='3') // „ › ¡æ ”€ 1
+                        Move Sysfile.Pct_Fpa_Eidiko1 to Invm.Syntelesths_Fpa
+                    Case Break
+                    Case (lsStatus='4') // „ › ¡æ ”€ 2
+                        Move Sysfile.Pct_Fpa_Eidiko2 to Invm.Syntelesths_Fpa
+                    Case Break
+                Case End
+
+
+                //¡˜Ÿ¦¨ ©£æª ©«¦ ®œåà¤ œ¡›æ«
+                If (liInt1 = 1) Begin //œ¡›æ«ª=£â©¦
+                                                  Move Invm.Invm_Ekd_Afm to Invm.Invm_Meso_Afm
+                    If (Invm.Invm_Meso_Code = '') Move Invm.Invm_Ekdoth  to Invm.Invm_Meso_Code
+                End
+                Else If (liInt1 = 2) Begin //œ¡›æ«ª=› ˜­£ ©« ¡ã
+                                                  Move Invm.Invm_Ekd_Afm to Invm.Invm_De_Afm
+                    If (Invm.Invm_De_Code   = '') Move Invm.Invm_Ekdoth  to Invm.Invm_De_Code
+                End
+                Else If (liInt1 = 3) Begin //œ¡›æ«ª=› ˜­£ æ£œ¤¦ª
+                                                  Move Invm.Invm_Ekd_Afm to Invm.Invm_Cust_Afm
+                    If (Invm.Invm_Cust_Code = '') Move Invm.Invm_Ekdoth  to Invm.Invm_Cust_Code
+                End
+                Else If (liInt1 = 4) Begin //œ¡›æ«ª=broker
+                                                  Move Invm.Invm_Ekd_Afm to Invm.Invm_Brok_Afm
+                    If (Invm.Invm_Brok_Code = '') Move Invm.Invm_Ekdoth  to Invm.Invm_Brok_Code
+                End
+                Else If (liInt1 = 5) Begin //œ¡›æ«ª=media shop
+                                                  Move Invm.Invm_Ekd_afm to Invm.Invm_Mshop_Afm
+                    If (Invm.Invm_Mshop_Code= '') Move Invm.Invm_Ekdoth  to Invm.Invm_Mshop_Code
+                End
+
+
+                //¡˜Ÿ¦¨ ©£æª ©«¦ ®œåà¤ ˜§¦›â¡«
+                If (liInt2 = 1) Begin //˜§¦›â¡«ª=£â©¦
+                                                  Move Invm.Invm_Apo_Afm  to Invm.Invm_Meso_Afm
+                    If (Invm.Invm_Meso_Code = '') Move Invm.Invm_Apodekth to Invm.Invm_Meso_Code
+                End
+                Else If (liInt2 = 2) Begin //˜§¦›â¡«ª=› ˜­£ ©« ¡ã
+                                                  Move Invm.Invm_Apo_Afm  to Invm.Invm_De_Afm
+                    If (Invm.Invm_De_Code   = '') Move Invm.Invm_Apodekth to Invm.Invm_De_Code
+                End
+                Else If (liInt2 = 3) Begin //˜§¦›â¡«ª=› ˜­£ æ£œ¤¦ª
+                                                  Move Invm.Invm_Apo_Afm  to Invm.Invm_Cust_Afm
+                    If (Invm.Invm_Cust_Code = '') Move Invm.Invm_Apodekth to Invm.Invm_Cust_Code
+                End
+                Else If (liInt2 = 4) Begin //˜§¦›â¡«ª=broker
+                                                  Move Invm.Invm_Apo_Afm  to Invm.Invm_Brok_Afm
+                    If (Invm.Invm_Brok_Code = '') Move Invm.Invm_Apodekth to Invm.Invm_Brok_Code
+                End
+                Else If (liInt2 = 5) Begin //˜§¦›â¡«ª=media shop
+                                                  Move Invm.Invm_Apo_Afm  to Invm.Invm_Mshop_Afm
+                    If (Invm.Invm_Mshop_Code= '') Move Invm.Invm_Apodekth to Invm.Invm_Mshop_Code
+                End
+
+
+                //¡˜Ÿ¦¨ ©£æª ©«¦ ®œåà¤ £œ©¦¢˜™«ã, œá¤ ¬§á¨®œ 
+                If (liInt3 <> 0);
+                Begin //œá¤ ¬§á¨®œ  £œ©¦¢˜™«ãª
+                      If (liInt3 = 1) Begin //£œ©¦¢˜™«ãª=£â©¦
+                                                        Move Invm.Invm_Mes_Afm    to Invm.Invm_Meso_Afm
+                          If (Invm.Invm_Meso_Code = '') Move Invm.Invm_Mesolabhth to Invm.Invm_Meso_Code
+                      End
+                      Else If (liInt3 = 2) Begin //£œ©¦¢˜™«ãª=› ˜­£ ©« ¡ã
+                                                        Move Invm.Invm_Mes_Afm    to Invm.Invm_De_Afm
+                          If (Invm.Invm_DE_Code   = '') Move Invm.Invm_Mesolabhth to Invm.Invm_De_Code
+                      End
+                      Else If (liInt3 = 3) Begin //£œ©¦¢˜™«ãª=› ˜­£ æ£œ¤¦ª
+                                                        Move Invm.Invm_Mes_Afm    to Invm.Invm_Cust_Afm
+                          If (Invm.Invm_Cust_Code = '') Move Invm.Invm_Mesolabhth to Invm.Invm_Cust_Code
+                      End
+                      Else If (liInt3 = 4) Begin //£œ©¦¢˜™«ãª=broker
+                                                        Move Invm.Invm_Mes_Afm    to Invm.Invm_Brok_Afm
+                          If (Invm.Invm_Brok_Code = '') Move Invm.Invm_Mesolabhth to Invm.Invm_Brok_Code
+                      End
+                      Else If (liInt3 = 5) Begin //£œ©¦¢˜™«ãª=media shop
+                                                        Move Invm.Invm_Mes_Afm    to Invm.Invm_Mshop_Afm
+                          If (Invm.Invm_Mshop_Code= '') Move Invm.Invm_Mesolabhth to Invm.Invm_Mshop_Code
+                      End
+                End
+
+
+                If (Invm.Printed='1')   Move '' to Invm.To_Be_Printed //????š ˜«å ?sososososo
+
+
+
+                //œ¤£â¨à© status
+                Move Invm.Printed       to liInt1
+                Move Invm.Enhmerosh_Gl  to liInt2
+
+                Case Begin
+                    Case ((liInt1=0) and (liInt2=0))
+                        // NOT Printed and NOT Enhmerosh_GL
+                        Move 0 to Invm.Invm_Status
+                    Case Break
+                    Case ((liInt1=1) and (liInt2=0))
+                        // Printed and NOT Enhmerosh_GL
+                        Move 1 to Invm.Invm_Status
+                    Case Break
+                    Case ((liInt1=0) and (liInt2=1))
+                        // NOT Printed and Enhmerosh_GL
+                        Move 2 to Invm.Invm_Status
+                    Case Break
+                    Case ((liInt1=1) and (liInt2=1))
+                        // Printed and Enhmerosh_GL
+                        Move 3 to Invm.Invm_Status
+                    Case Break
+                Case End
+
+                //sososososo to prod §àª «¦ ™¨å©¡œ  ???????
+                Move Prod.Comp_Amoibh_Tim   to lsProdCompT
+                Move Seiram.Einai_Amoibh    to lsAmoibh
+                Move (Trim(lsProdCompT))    to lsProdCompT
+                If (lsProdCompT<>'') Begin
+                    If ((Agores(Self)<>1) and (Trim(lsAmoibh)=''))  Begin
+                        Move Invm.Invm_S11T to lnFpa
+                        Set pnNewSynPoso    to Invm.Invm_S10t
+                    End
+                    Else Begin
+                        Move Invm.Invm_S11  to lnFpa
+                        Set pnNewSynPoso    to Invm.Invm_S10
+                    End
+                End
+                Else Begin
+                    Move Invm.Invm_S11      to lnFpa
+                    Set pnNewSynPoso        to Invm.Invm_S10
+                End
+
+
+
+                If (Invm.Invm_Brok_Code ='') Move '0' to Invm.Invm_Brok_Code  //˜§'œ¬Ÿœå˜ª
+                If (Invm.Invm_Mshop_Code='') Move '0' to Invm.Invm_Mshop_Code //˜§'œ¬Ÿœå˜ª
+
+                Set pnNewFpaPoso to lnFpa
+
+                Send Compute_Invm_Totals
+
+
+                INTEGER LIXESE
+                GET PIXESE TO LIXESE
+                IF (LIXESE = FALSE) PROCEDURE_RETURN
+
+
+                //Send Update0
+
+      End_Procedure //update
+
+
+      Procedure Compute_Invm_Totals
+
+                //  ”€ ƒ˜§˜¤à¤ ›œ¤ ¬­å©«˜«˜  §¨¦ª «¦ §˜¨¦¤ ©«˜ Media. “§˜¨®œ  š ˜ ¢¦š¦¬ª ¦£¦ ¦£¦¨­ ˜ª
+                //  £œ «¤ ˜¨˜šàš ¦§¦¬ œ¡œ  §˜åœ  «¦ ”§˜ ›˜§˜¤à¤.
+                Move 0 to Invm.Poso_Fpa_Dapanh
+                Move 0 to Invm.Poso_Fpa_Esodo
+                Move 0 to Invm.Poso_Fpa_Kostos
+
+                If (Seiram.Tparastm_Kinhs='1') Begin  /// €¤ «¦ §˜¨˜©«˜« ¡æ œ ¤˜  €š¦¨œª/‰‘’‘ //
+                    If (Seiram.Seiram_Nomos='1') Begin    ///////// €¤ œ ¤˜  ‰æ©«¦ª ‰€ˆ “§˜šæ£œ¤ ©œ ¨á
+                        Move Invm.Invm_S04  to Invm.Invm_S10
+                    End
+                    Else Begin                            ///////// €¤ œ ¤˜  ‰æ©«¦ª ‰€ˆ ‹† “§˜šæ£œ¤ ©œ ¨á
+                        Move Invm.Invm_S06  to Invm.Invm_S10
+                    End
+                End
+
+                Else Begin                            /// €¤ «¦ §˜¨˜©«˜« ¡æ œ ¤˜  à¢ã©œ ª/„‘ƒ //
+                    If (Seiram.Einai_Amoibh='1') Begin    ///////// €¤ œ ¤˜  „©¦›¦ ‰€ˆ §˜¨˜©«˜« ¡æ €‹ˆ†‘
+                        Move Invm.Amoibh_Poso to Invm.Invm_S10
+                    End
+                    Else Begin                            ///////// €¤ œ ¤˜  „©¦›¦ ‰€ˆ §˜¨˜©«˜« ¡æ ƒˆ€”†‹ˆ‘†‘
+                        If (Invm.Invm_S71T>0) Begin  /////////  A¤ œ®œ  œ › ¡ ˜£¦ ™ « £¦¢¦š©ª
+                            Move (Invm.Invm_S06+Invm.Invm_S71t+Invm.Invm_S72) to Invm.Invm_s08t
+                            Move Invm.Invm_S08t                               to Invm.Invm_s10t
+                        End
+                        Else Begin                           /////////  ƒœ¤ œ®œ  œ › ¡ ˜£¦ ™ « £¦¢¦š©ª
+                            Move (Invm.Invm_S06+Invm.Invm_S71 +Invm.Invm_S72) to Invm.Invm_s08
+                            Move Invm.Invm_S08                                to Invm.Invm_s10
+                        End
+                    End
+                End
+
+                If (OPERATION_ORIGIN <> Self) Begin
+                    Move (Round(Invm.Invm_S10 *Invm.Syntelesths_Fpa/100)) to Invm.Invm_S11
+                    Move (Round(Invm.Invm_S10t*Invm.Syntelesths_Fpa/100)) to Invm.Invm_S11t
+                End
+
+                Move (Invm.Invm_S10 +Invm.Invm_S11)                     to Invm.Invm_S12
+                Move (Invm.Invm_S10t+Invm.Invm_S11t)                    to Invm.Invm_S12t
+
+                If (Seiram.Tparastm_Kinhs='1') Move Invm.Invm_S11       to Invm.Poso_Fpa_Kostos
+                Else Begin
+                    If (Invm.Invm_s11t<>0)  Move Invm.Invm_S11t         to Invm.Poso_Fpa_Esodo
+                    Else                    Move Invm.Invm_S11          to Invm.Poso_Fpa_Esodo
+                End
+
+                Move (Round(Invm.Amoibh_Poso_Com*Invm.Amoibh_Pct/100))  to Invm.Amoibh_Poso
+
+      End_Procedure //compute_invm_totals
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Invm.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Tadvc.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Seiram.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrec.File_Number  DD_LOCK_ON_NEW_SAVE
+
+        Define_Auto_Increment  Sysrec.Invm_Rec0  To Invm.Invm_Rec0
+
+        // Field-based properties.......................
+
+        // Invm.What_Am_I          
+
+        // Invm.Who_Am_I           
+
+        // Invm.Tparastm_Code      
+
+        // Invm.Seiram_Seira       
+
+        // Invm.Invm_Hmnia         
+        Set Field_Label_Long       Field Invm.Invm_Hmnia          To "†£/¤å˜ ˜¨/¡¦ç"
+        Set Field_Label_Short      Field Invm.Invm_Hmnia          To "†£/¤å˜"
+        Set Field_Prompt_Object    Field Invm.Invm_Hmnia          To (sl130(Self))
+
+        // Invm.Invm_Arithmos      
+        Set Field_Label_Long       Field Invm.Invm_Arithmos       To "€¨.˜¨/¡¦ç"
+        Set Field_Label_Short      Field Invm.Invm_Arithmos       To "€¨ Ÿ£æª"
+        Set Field_Prompt_Object    Field Invm.Invm_Arithmos       To (sl130(Self))
+
+        // Invm.Invm_Pelprom       
+
+        // Invm.Invm_Rec0          
+        Set Field_Options          Field Invm.Invm_Rec0           To DD_AUTOFIND   
+
+        // Invm.Seiram_Rec0        
+
+        // Invm.Invm_Status        
+        Set Field_Value_Table      Field Invm.Invm_Status         To (Invm_Invm_Status_VT(Self))
+
+        // Invm.Tparastm_Kinhs     
+
+        // Invm.Invm_Seira         
+        Set Field_Label_Long       Field Invm.Invm_Seira          To "‘œ ¨á ˜¨/¡¦ç"
+        Set Field_Label_Short      Field Invm.Invm_Seira          To "‘œ ¨á"
+
+        // Invm.Invm_S01           
+        Set Field_Label_Long       Field Invm.Invm_S01            To "€¨® ¡ã"
+        Set Field_Label_Short      Field Invm.Invm_S01            To "€¨® ¡ã"
+
+        // Invm.Invm_S02           
+        Set Field_Label_Long       Field Invm.Invm_S02            To "˜©.„¡§«à©"
+        Set Field_Label_Short      Field Invm.Invm_S02            To "˜©.„¡§«à©"
+
+        // Invm.Invm_S03a          
+        Set Field_Label_Long       Field Invm.Invm_S03a           To "„ ›.„¡§«à©"
+        Set Field_Label_Short      Field Invm.Invm_S03a           To "„ ›.„¡§«à©"
+
+        // Invm.Invm_S03b          
+        Set Field_Label_Long       Field Invm.Invm_S03b           To "„¡§«à© ‹œ«¨«¦åª"
+        Set Field_Label_Short      Field Invm.Invm_S03b           To "„¡§«à© ‹œ«¨«¦åª"
+
+        // Invm.Invm_S03           
+        Set Field_Label_Long       Field Invm.Invm_S03            To "Š¦ §âª „¡§«é©œ ª"
+        Set Field_Label_Short      Field Invm.Invm_S03            To "Š¦ §âª „¡§«é©œ ª"
+
+        // Invm.Invm_S04           
+        Set Field_Label_Long       Field Invm.Invm_S04            To "Net"
+        Set Field_Label_Short      Field Invm.Invm_S04            To "Net"
+
+        // Invm.Invm_S51           
+
+        // Invm.Invm_S52           
+
+        // Invm.Invm_S53           
+
+        // Invm.Invm_S54           
+
+        // Invm.Invm_S55           
+
+        // Invm.Invm_S56           
+
+        // Invm.Invm_S05           
+        Set Field_Label_Long       Field Invm.Invm_S05            To "‘ç¤¦¢¦ „§ ™˜¨ç¤©œà¤"
+        Set Field_Label_Short      Field Invm.Invm_S05            To "„§ ™˜¨ç¤©œ ª"
+
+        // Invm.Invm_S06           
+        Set Field_Label_Long       Field Invm.Invm_S06            To "Gross"
+        Set Field_Label_Short      Field Invm.Invm_S06            To "Gross"
+
+        // Invm.Invm_S71           
+        Set Field_Label_Long       Field Invm.Invm_S71            To "€£¦ ™ã ƒ„"
+        Set Field_Label_Short      Field Invm.Invm_S71            To "€£¦ ™ã ƒ„"
+
+        // Invm.Invm_S72           
+        Set Field_Label_Long       Field Invm.Invm_S72            To "Flat Fees"
+        Set Field_Label_Short      Field Invm.Invm_S72            To "Flat Fees"
+
+        // Invm.Invm_S08           
+        Set Field_Label_Long       Field Invm.Invm_S08            To "’œ¢ ¡ã"
+        Set Field_Label_Short      Field Invm.Invm_S08            To "’œ¢ ¡ã"
+
+        // Invm.Invm_S10           
+
+        // Invm.Invm_S11           
+
+        // Invm.Invm_S12           
+
+        // Invm.Invm_Ekdoth        
+        Set Field_Label_Long       Field Invm.Invm_Ekdoth         To "„¡›æ«ª"
+        Set Field_Label_Short      Field Invm.Invm_Ekdoth         To "„¡›æ«ª"
+
+        // Invm.Invm_Apodekth      
+        Set Field_Label_Long       Field Invm.Invm_Apodekth       To "€§¦›â¡«ª"
+        Set Field_Label_Short      Field Invm.Invm_Apodekth       To "€§¦›â¡«ª"
+
+        // Invm.Invm_Mesolabhth    
+        Set Field_Label_Long       Field Invm.Invm_Mesolabhth     To "‹œ©¦¢˜™«ãª"
+        Set Field_Label_Short      Field Invm.Invm_Mesolabhth     To "‹œ©¦¢˜™«ãª"
+
+        // Invm.Invm_Ekd_Afm       
+        Set Field_Label_Long       Field Invm.Invm_Ekd_Afm        To "€”‹ „¡›æ«"
+        Set Field_Label_Short      Field Invm.Invm_Ekd_Afm        To "€”‹ „¡›æ«"
+
+        // Invm.Invm_Apo_Afm       
+        Set Field_Label_Long       Field Invm.Invm_Apo_Afm        To "€”‹ €§¦›â¡«"
+        Set Field_Label_Short      Field Invm.Invm_Apo_Afm        To "€”‹ €§¦›â¡«"
+
+        // Invm.Invm_Mes_Afm       
+        Set Field_Label_Long       Field Invm.Invm_Mes_Afm        To "€”‹ ‹œ©¦¢˜™«ã"
+        Set Field_Label_Short      Field Invm.Invm_Mes_Afm        To "€”‹ ‹œ©¦¢˜™«ã"
+
+        // Invm.Invm_Meso_Code     
+        Set Field_Label_Long       Field Invm.Invm_Meso_Code      To "ƒ ˜­.‹â©¦"
+        Set Field_Label_Short      Field Invm.Invm_Meso_Code      To "‹â©¦"
+
+        // Invm.Invm_De_Code       
+        Set Field_Label_Long       Field Invm.Invm_De_Code        To "ƒ ˜­.„«˜ ¨œå˜"
+        Set Field_Label_Short      Field Invm.Invm_De_Code        To "ƒ ˜­£ ©« ¡ã"
+
+        // Invm.Invm_Cust_Code     
+        Set Field_Label_Long       Field Invm.Invm_Cust_Code      To "ƒ ˜­£ æ£œ¤¦ª"
+        Set Field_Label_Short      Field Invm.Invm_Cust_Code      To "ƒ ˜­£ æ£œ¤¦ª"
+
+        // Invm.Invm_Brok_Code     
+        Set Field_Label_Long       Field Invm.Invm_Brok_Code      To "Broker"
+        Set Field_Label_Short      Field Invm.Invm_Brok_Code      To "Broker"
+
+        // Invm.Invm_Mshop_Code    
+        Set Field_Label_Long       Field Invm.Invm_Mshop_Code     To "Media Shop"
+        Set Field_Label_Short      Field Invm.Invm_Mshop_Code     To "Media Shop"
+
+        // Invm.Invm_Cprod_Code    
+        Set Field_Label_Long       Field Invm.Invm_Cprod_Code     To "¨¦äæ¤/“§¨œ©å˜"
+        Set Field_Label_Short      Field Invm.Invm_Cprod_Code     To "¨¦äæ¤/“§¨œ©å˜"
+
+        // Invm.Invm_Prod_Code     
+        Set Field_Label_Long       Field Invm.Invm_Prod_Code      To "ƒ ˜­.Š¦š/£æª"
+        Set Field_Label_Short      Field Invm.Invm_Prod_Code      To "ƒ ˜­.Š¦š/£æª"
+
+        // Invm.Invm_Meso_Afm      
+        Set Field_Label_Long       Field Invm.Invm_Meso_Afm       To "€”‹ ‹â©¦¬"
+        Set Field_Label_Short      Field Invm.Invm_Meso_Afm       To "€”‹ ‹â©¦¬"
+
+        // Invm.Invm_De_Afm        
+        Set Field_Label_Long       Field Invm.Invm_De_Afm         To "€”‹ ƒ ˜­£ ©« ¡ãª"
+        Set Field_Label_Short      Field Invm.Invm_De_Afm         To "€”‹ ƒ ˜­£ ©« ¡ãª"
+
+        // Invm.Invm_Cust_Afm      
+        Set Field_Label_Long       Field Invm.Invm_Cust_Afm       To "€”‹ ƒ ˜­£ ¦£â¤¦¬"
+        Set Field_Label_Short      Field Invm.Invm_Cust_Afm       To "€”‹ ƒ ˜­£ ¦£â¤¦¬"
+
+        // Invm.Invm_Brok_Afm      
+        Set Field_Label_Long       Field Invm.Invm_Brok_Afm       To "€”‹ Broker"
+        Set Field_Label_Short      Field Invm.Invm_Brok_Afm       To "€”‹ Broker"
+
+        // Invm.Invm_Mshop_Afm     
+        Set Field_Label_Long       Field Invm.Invm_Mshop_Afm      To "€”‹ Media Shop"
+        Set Field_Label_Short      Field Invm.Invm_Mshop_Afm      To "€”‹ Media Shop"
+
+        // Invm.Invm_Posa_Child    
+
+        // Invm.Built_Up           
+        Set Field_Checkbox_Values  Field Invm.Built_Up            To "1"  ""
+
+        // Invm.To_Be_Printed      
+        Set Field_Checkbox_Values  Field Invm.To_Be_Printed       To "1"  ""
+
+        // Invm.Enhmerosh_Gl       
+        Set Field_Checkbox_Values  Field Invm.Enhmerosh_Gl        To "1"  ""
+
+        // Invm.Printed            
+        Set Field_Checkbox_Values  Field Invm.Printed             To "1"  ""
+
+        // Invm.Invm_Auto_Inv      
+        Set Field_Checkbox_Values  Field Invm.Invm_Auto_Inv       To "1"  ""
+
+        // Invm.Invm_Line1         
+        Set Field_Label_Long       Field Invm.Invm_Line1          To "˜¨˜«¨ã©œ ª 1"
+        Set Field_Label_Short      Field Invm.Invm_Line1          To "˜¨˜«¨ã©œ ª 1"
+
+        // Invm.Invm_Line2         
+        Set Field_Label_Long       Field Invm.Invm_Line2          To "˜¨˜«¨ã©œ ª 2"
+        Set Field_Label_Short      Field Invm.Invm_Line2          To "˜¨˜«¨ã©œ ª 2"
+
+        // Invm.Invm_Line3         
+        Set Field_Label_Long       Field Invm.Invm_Line3          To "˜¨˜«¨ã©œ ª 3"
+        Set Field_Label_Short      Field Invm.Invm_Line3          To "˜¨˜«¨ã©œ ª 3"
+
+        // Invm.Invm_Line4         
+        Set Field_Label_Long       Field Invm.Invm_Line4          To "˜¨˜«¨ã©œ ª 4"
+        Set Field_Label_Short      Field Invm.Invm_Line4          To "˜¨˜«¨ã©œ ª 4"
+
+        // Invm.Invm_Line5         
+        Set Field_Label_Long       Field Invm.Invm_Line5          To "˜¨˜«¨ã©œ ª 5"
+        Set Field_Label_Short      Field Invm.Invm_Line5          To "˜¨˜«¨ã©œ ª 5"
+
+        // Invm.Invm_Line6         
+        Set Field_Label_Long       Field Invm.Invm_Line6          To "˜¨˜«¨ã©œ ª 6"
+        Set Field_Label_Short      Field Invm.Invm_Line6          To "˜¨˜«¨ã©œ ª 6"
+
+        // Invm.Gbridgeh_Rec0      
+
+        // Invm.Garticl_Aitiol     
+
+        // Invm.Garticl_C_Code2    
+        Set Field_Label_Long       Field Invm.Garticl_C_Code2     To "Œæ£ ©£˜"
+        Set Field_Label_Short      Field Invm.Garticl_C_Code2     To "Œæ£ ©£˜"
+        Set Field_Value_Table      Field Invm.Garticl_C_Code2     To (Invm_Garticl_C_Code2_VT(Self))
+
+        // Invm.Garticl_Rate0      
+        Set Field_Label_Long       Field Invm.Garticl_Rate0       To "ˆ©¦« £å˜ 0"
+        Set Field_Label_Short      Field Invm.Garticl_Rate0       To "ˆ©¦« £å˜ 0"
+
+        // Invm.Garticl_Rate00     
+        Set Field_Label_Long       Field Invm.Garticl_Rate00      To "ˆ©¦« £å˜ 00"
+        Set Field_Label_Short      Field Invm.Garticl_Rate00      To "ˆ©¦« £å˜ 00"
+
+        // Invm.Garticl_Rater      
+        Set Field_Label_Long       Field Invm.Garticl_Rater       To "ˆ©¦« £å˜ R"
+        Set Field_Label_Short      Field Invm.Garticl_Rater       To "ˆ©¦« £å˜ R"
+
+        // Invm.Kathestos_Fpa      
+        Set Field_Label_Long       Field Invm.Kathestos_Fpa       To "‰˜Ÿœ©«éª ”€"
+        Set Field_Label_Short      Field Invm.Kathestos_Fpa       To "‰˜Ÿœ©«éª ”€"
+        Set Field_Value_Table      Field Invm.Kathestos_Fpa       To (Invm_Kathestos_Fpa_VT(Self))
+
+        // Invm.Syntelesths_Fpa    
+        Set Field_Label_Long       Field Invm.Syntelesths_Fpa     To "‘¬¤«œ¢œ©«ãª ”€"
+        Set Field_Label_Short      Field Invm.Syntelesths_Fpa     To "‘¬¤«œ¢œ©«ãª ”€"
+
+        // Invm.Poso_Fpa_Kostos    
+        Set Field_Label_Long       Field Invm.Poso_Fpa_Kostos     To "”€ ‰æ©«¦¬ª"
+        Set Field_Label_Short      Field Invm.Poso_Fpa_Kostos     To "”€ ‰æ©«¦¬ª"
+
+        // Invm.Poso_Fpa_Esodo     
+        Set Field_Label_Long       Field Invm.Poso_Fpa_Esodo      To "”€ „©æ›à¤"
+        Set Field_Label_Short      Field Invm.Poso_Fpa_Esodo      To "”€ „©æ›à¤"
+
+        // Invm.Poso_Fpa_Dapanh    
+        Set Field_Label_Long       Field Invm.Poso_Fpa_Dapanh     To "”€ ƒ˜§˜¤é¤"
+        Set Field_Label_Short      Field Invm.Poso_Fpa_Dapanh     To "”€ ƒ˜§˜¤é¤"
+
+        // Invm.Amoibh_Pct         
+
+        // Invm.Amoibh_Compute     
+
+        // Invm.Amoibh_Poso_Com    
+
+        // Invm.Amoibh_Poso        
+
+        // Invm.Invm_S71t          
+
+        // Invm.Invm_S08t          
+
+        // Invm.Invm_S10t          
+
+        // Invm.Invm_S11t          
+
+        // Invm.Invm_S12t          
+
+        // Invm.Invm_Pct71t        
+
+        // Invm.Invm_Comp_71t      
+
+        // Invm.Who_Am_I_Name      
+
+        // Invm.Who_Am_I_Afm       
+
+        // Invm.Invm_Cash          
+
+        // Invm.Invm_Nomos         
+
+        // Invm.Sent_To_Sfi        
+
+        // Invm.Closed             
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Invm.Garticl_Rate0       To 1
+        Set Field_Changed_Value   Field Invm.Kathestos_Fpa       To "1"
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+    Procedure Save_Main_File
+        If (Invm.Invm_Posa_Child=0) Begin
+            Move '' to Invm.Invm_Meso_Code
+            Move '' to Invm.Invm_DE_Code
+            Move '' to Invm.Invm_Cust_Code
+            Move '' to Invm.Invm_Brok_Code
+            Move '' to Invm.Invm_Mshop_Code
+        End
+        Forward Send Save_Main_File
+    End_Procedure //save_main_file
+
+
+End_Class    // Invm_DataDictionary
+
+
+
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use Sl130.sl         // sl130
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

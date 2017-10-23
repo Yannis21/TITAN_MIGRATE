@@ -1,0 +1,113 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : CTYPKINA.DD
+// Class Name: Ctypkina_DataDictionary
+// Revision  : 5
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Ctypkina
+
+//DDB-HeaderEnd
+
+//define alias-master condition
+Set_Attribute DF_FILE_ALIAS of Ctypkina.File_Number to DF_FILE_IS_ALIAS
+Set_Attribute DF_FILE_ALIAS of Ctypkin.File_Number  to DF_FILE_IS_MASTER
+
+Class Ctypkina_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Property Integer piMustNOTConstrain Public 0
+    End_Procedure
+
+    Procedure OnConstrain000
+        Forward Send OnConstrain
+        If (piMustNOTConstrain(Self)) Begin
+        End
+        Else Begin
+            Constrain Ctypkina.Company_Code  eq SysCurXR.Company_Code
+            Constrain Ctypkina.Branch_Code   eq SysCurXR.Branch_Code
+            Constrain Ctypkina.Year_Year     eq SysCurXR.Year_Year
+        End
+    End_Procedure
+
+    Procedure Update00
+        Forward Send Update
+        Move SysCurXR.Company_Code  to Ctypkina.Company_Code
+        Move SysCurXR.Branch_Code   to Ctypkina.Branch_Code
+        Move SysCurXR.Year_Year     to Ctypkina.Year_Year
+        Move SysCurXR.Year_Recr     to Ctypkina.Year_Recr
+    End_Procedure   // Update
+
+    Procedure Creating00
+        Forward Send Creating
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Ctypkina.Ctypkin_Rec0)))))) to Ctypkina.Ctypkin_Recr
+    End_Procedure   // Creating
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Ctypkina.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Field-based properties.......................
+
+        // Ctypkina.Company_Code
+
+        // Ctypkina.Branch_Code
+
+        // Ctypkina.Year_Year
+
+        // Ctypkina.Ctypkin_Code
+
+        // Ctypkina.Ctypkin_Rec0
+
+        // Ctypkina.Ctypkin_Recr
+
+        // Ctypkina.Year_Recr
+
+        // Ctypkina.Ctypkin_Descr
+
+        // Ctypkina.Ctypkin_Anti
+
+        // Ctypkina.Ctypkin_Flags
+
+        // Ctypkina.Ctypkin_Module
+
+        // Ctypkina.Open_Item
+
+        // Ctypkina.Check_Overhead
+
+        // Ctypkina.Max_Days_Sx_Par
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Ctypkina_DataDictionary
+
+//DDB-FileEnd

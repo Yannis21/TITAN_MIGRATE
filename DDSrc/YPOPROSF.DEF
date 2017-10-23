@@ -1,0 +1,83 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: YPOPROSF (# 92)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:YPOPROSF
+  USER DISPLAY NAME         : Ypoprosf
+  DATAFLEX FILE NAME        : YPOPROSF
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 2290      ( USED: 2290 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 28 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  AA_YPOPROSF      NUM   14.0     1  1   
+  2  KODIKOS          ASC     16     8      
+  3  PELATHS          ASC     20    24  2   YCLIENTS.FIELD_1 (91,1)
+  4  SLS_ID           ASC     20    44      
+  5  HM_APOSTOLHS     DAT      3    64      
+  6  YPEYTH_PELATH    ASC     40    67      
+  7  THL_YPEYTHYNOU   ASC     20   107      
+  8  PERIEX_PROSF     ASC    250   127      
+  9  SXOLIA           TEX   1024   377      
+ 10  AITIES_MH_ANAL   ASC      1  1401      
+ 11  METASX           ASC      1  1402      
+ 12  METASX_DATE      DAT      3  1403      
+ 13  DATE             DAT      3  1406      
+ 14  RIAL_DATE        DAT      3  1409      
+ 15  QTY              NUM   14.2  1412      
+ 16  HOUR             NUM   14.2  1420      
+ 17  DISC             NUM   14.2  1428      
+ 18  FPA              NUM   14.2  1436      
+ 19  NET              NUM   14.2  1444      
+ 20  TOTAL            NUM   14.2  1452      
+ 21  HM_TIMOL         DAT      3  1460      
+ 22  AITIA_KATHYST    ASC     20  1463      
+ 23  AR_SYMBASHS      ASC     20  1483      
+ 24  STATUS           ASC      1  1503      
+ 25  CLORDER_RECR     ASC     12  1504      
+ 26  TOPOS            ASC    100  1516      
+ 27  PAY_TROPOS       ASC      2  1616      
+ 28  CLIENTS_TEXT     TEX    512  1618      
+ 29  CITY             NUM   14.0  2130      
+ 30  AREA             NUM   14.0  2137      
+ 31  ADD_NO           ASC      5  2144      
+ 32  NOMOS            ASC      5  2149      
+ 33  XORA             ASC      5  2154      
+ 34  PHONE            ASC     50  2159      
+ 35  ZIPCODE          ASC     10  2209      
+ 36  CN_CODE          ASC     20  2219  3   
+ 37  DEOP_DATE        DAT      3  2239      
+ 38  DEOP_LHXH        DAT      3  2242      
+ 39  STATERO          NUM   14.0  2245      
+ 40  VELXR            ASC      1  2252      
+ 41  ELEIPH           NUM   14.0  2253      
+ 42  ENARXH           DAT      3  2260      
+ 43  LHXH             DAT      3  2263      
+ 44  DEOP             ASC     25  2266      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    AA_YPOPROSF     NO  NO       7      3       1     ON-LINE
+
+  2    PELATHS         NO  NO       27     3       2     ON-LINE
+       AA_YPOPROSF     NO  NO 
+
+  3    CN_CODE         NO  NO       27     3       2     ON-LINE
+       AA_YPOPROSF     NO  NO 
+
+  4    PELATHS         NO  NO       47     3       3     ON-LINE
+       CN_CODE         NO  NO 
+       AA_YPOPROSF     NO  NO 
+

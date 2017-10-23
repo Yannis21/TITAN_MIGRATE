@@ -1,0 +1,88 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: CLORDER (# 96)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:CLORDER
+  USER DISPLAY NAME         : Clorder
+  DATAFLEX FILE NAME        : CLORDER
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 614       ( USED: 614 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC     10     1  1   
+  2  BRANCH_CODE      ASC     10    11  1   
+  3  YEAR_YEAR        NUM    4.0    21  1   
+  4  AAPAR            ASC     10    23  1   
+  5  CLIENTS_CODE     ASC     20    33  1   CLIENTS.FIELD_5 (100,5)
+  6  ARMOD            ASC     30    53      
+  7  ORDER1_RECR      ASC     12    83      
+  8  REC0             NUM   14.0    95      
+  9  RECR             ASC     12   102  2   
+ 10  OUR_DATE         DAT      3   114      
+ 11  RIAL_DATE        DAT      3   117  4   
+ 12  QTY              NUM   14.2   120      
+ 13  UNITPRICE        NUM   14.6   128      
+ 14  DISC             NUM   14.6   138      
+ 15  FPA              NUM   14.6   148      
+ 16  NET              NUM   14.6   158      
+ 17  EXTRA            NUM   14.6   168      
+ 18  TOTAL            NUM   14.6   178      
+ 19  AAPARPROM        ASC     15   188      
+ 20  TROPOS           ASC     20   203      
+ 21  DATE             DAT      3   223  8   
+ 22  HOW_PAY          ASC     20   226      
+ 23  FINISH           NUM    2.0   246  7   
+ 24  OKEY             NUM    2.0   247  5   
+ 25  AKYRH            NUM    2.0   248  6   
+ 26  SXOLIA           TEX    304   249      
+ 27  POSODTL          NUM   14.6   553      
+ 28  QTYDTL           NUM   14.6   563      
+ 29  NOMISMA          ASC     10   573      
+ 30  MODULE           ASC      2   583  1   
+ 31  CODETYPE         ASC     30   585      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY_CODE    NO  NO       54     3       6     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       CLIENTS_CODE    NO  NO 
+       AAPAR           NO  NO 
+       MODULE          NO  NO 
+
+  2    RECR            NO  NO       12     3       1     ON-LINE
+
+  3    AAPAR           NO  NO       22     3       2     ON-LINE
+       RECR            NO  NO 
+
+  4    RIAL_DATE       NO  NO       15     3       2     ON-LINE
+       RECR            NO  NO 
+
+  5    OKEY            NO  NO       13     3       2     ON-LINE
+       RECR            NO  NO 
+
+  6    AKYRH           YES NO       13     3       2     ON-LINE
+       RECR            NO  NO 
+
+  7    FINISH          NO  NO       13     3       2     ON-LINE
+       RECR            NO  NO 
+
+  8    COMPANY_CODE    NO  NO       37     3       5     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       DATE            NO  NO 
+       RECR            NO  NO 
+

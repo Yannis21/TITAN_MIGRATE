@@ -1,0 +1,92 @@
+-----------------------------------------------------------------------------
+  DATE: 10/03/116      TIME: 16:00                                  PAGE:  1
+  FILE DEFINITION FOR FILE: WITEMX (# 17)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : WITEMX
+  USER DISPLAY NAME         : Witemx
+  DATAFLEX FILE NAME        : WITEMX
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 512       ( USED: 417 )
+  MAX NUMBER OF RECORDS     : 1000000   ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC     10     1  5   
+  2  BRANCH_CODE      ASC     10    11  5   
+  3  YEAR_YEAR        NUM    4.0    21  5   
+  4  UNITS_CODE       ASC     10    23  1   
+  5  WITEMKAT_CODE    ASC     10    33  1   
+  6  ITEM_CODE        ASC     20    43  1   
+  7  WITEMX_CODE      ASC     20    63  5   
+  8  WITEMX_RECR      ASC     12    83  2   
+  9  YEAR_RECR        ASC      7    95      
+ 10  ITEM_RECR        ASC     12   102  7   ITEM.FIELD_8 (26,8)
+ 11  WITEMX_DESCR     ASC    150   114  3   
+ 12  WITEMX_REC0      NUM   14.0   264  3   
+ 13  WITEMX_YEARDESC  ASC     30   271      
+ 14  ITEM_APOKAT_COD  ASC     10   301      
+ 15  QTY_XRE          NUM   14.8   311      
+ 16  QTY_PIS          NUM   14.8   322      
+ 17  AXIA_XRE         NUM   14.8   333      
+ 18  AXIA_PIS         NUM   14.8   344      
+ 19  MESOSTA_XRE      NUM   14.8   355      
+ 20  MESOSTA_PIS      NUM   14.8   366      
+ 21  LINK1            ASC     20   377      
+ 22  LINK2            ASC     20   397      
+ 23  NOT_TO_BE_USED   NUM    2.0   417  8   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY_CODE    NO  NO       82     8       7     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       UNITS_CODE      NO  NO 
+       WITEMKAT_CODE   NO  NO 
+       ITEM_CODE       NO  NO 
+       WITEMX_CODE     NO  NO 
+
+  2    WITEMX_RECR     NO  NO       12     4       1     ON-LINE
+
+  3    WITEMX_DESCR    NO  NO       157    13      2     ON-LINE
+       WITEMX_REC0     NO  NO 
+
+  4    WITEMX_CODE     NO  NO       32     6       2     ON-LINE
+       WITEMX_RECR     NO  NO 
+
+  5    COMPANY_CODE    NO  NO       42     6       4     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       WITEMX_CODE     NO  NO 
+
+  6    COMPANY_CODE    NO  NO       62     7       5     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       ITEM_CODE       NO  NO 
+       WITEMX_CODE     NO  NO 
+
+  7    ITEM_RECR       NO  NO       19     5       2     ON-LINE
+       WITEMX_REC0     NO  NO 
+
+  8    NOT_TO_BE_USED  NO  NO       43     6       5     ON-LINE
+       WITEMX_CODE     NO  NO 
+       COMPANY_CODE    NO  NO 
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+
+  9    COMPANY_CODE    NO  NO       43     6       5     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       NOT_TO_BE_USED  NO  NO 
+       WITEMX_CODE     NO  NO 
+

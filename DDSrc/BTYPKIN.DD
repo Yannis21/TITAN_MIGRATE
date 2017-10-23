@@ -1,0 +1,796 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : BTYPKIN.DD
+// Class Name: Btypkin_DataDictionary
+// Revision  : 114
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Btypkin
+Open Bflagkin
+Open Bkinkat
+Open Barticl
+Open Sysrecb
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+//DDB/ ExternalValidationTable Bfile_VT  Baxio.pkg
+
+Register_Object Bfile_VT
+Register_Object Btypkin_Btypkin_Anti_Xp_VT
+Use Baxio.pkg        // Bfile_VT
+
+Object Btypkin_Btypkin_Anti_Xp_VT  is a DescriptionValidationTable
+
+    Procedure Fill_List
+        Forward Send Fill_List
+        Send Add_Table_Value  "1"  "ï®úÈ§ú´ò†"
+        Send Add_Table_Value  "2"  "è†©´È§ú´ò†"
+    End_Procedure    // Fill_List
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Btypkin_Btypkin_Anti_Xp_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList SL031  SL031.SL
+//DDB/ ExternalSelectionList sl007  sl007.SL
+//DDB/ ExternalSelectionList sl007r  sl007r.SL
+Register_Object SL031
+Register_Object sl007
+Register_Object sl007r
+//DDB-SelectionEnd
+
+// JSJSJSJS 24/01/2001 Register_Object SL056 //¢Â©´ò gplan
+//Register_Object SL056 //¢Â©´ò vendor
+
+
+Open SysCurXr
+
+Open Barticl //©ú´·®ú† prompt objects
+// JSJSJSJS 24/01/2001 Open Gtypkin //ô®Â©°ú† rec0 ©´û§ update, externalyy updated, lock on save
+//Open Ctypkin //ô®Â©°ú† rec0 ©´û§ update, externalyy updated, lock on save
+//Open Vtypkin //ô®Â©°ú† rec0 ©´û§ update, externalyy updated, lock on save
+
+
+// JSJSJSJS 24/01/2001 Use SL056.SL //¢Â©´ò gplan
+//Use SL102.SL //¢Â©´ò customer
+//Use SL???.SL //¢Â©´ò vendor
+Use sl100.sl // Clients selection list
+
+//*********************************************************************************
+//*          A N A L Y S I S                                                      *
+//*********************************************************************************
+//Ü °·üú °Â§û©û ò•†¶ö®·≠‡§ òß¶´ú¢úÂ £Âò ©¨§ò¢¢òö„.
+//Ñß¶£‚§‡™ ¶®Âùú´ò† £¶§¶©„£ò§´ò ‚§ò™ ©¨§ò¢¢ò©Ê£ú§¶™
+
+//íÈ®ò, ¶† õ†·≠¶®¶† ´Áß¶† ©¨§ò¢¢ò©¶£‚§‡§ ß¶¨ ¨ß¶©´û®Âùú† ´¶ ©Á©´û£ò ©„£ú®ò, úÂ§ò†
+//¶† ú•„™ : 1  "ä¶öò®†ò©£Ê™ Çä : contsrained ¢Â©´ò gplan apo-eos Btypkin.Gplan_Code_Apo
+//                                                               Btypkin.Gplan_Code_Apo
+//                               ©´û§ ßú®Âß´‡©û ò¨´„, ¶ ¢¶öò®†ò©£Ê™ ß¶¨ üò úß†¢úöúÂ
+//                               ©´¶ barticl, üò "≠·ú†" ´û§ Æ®‚‡©û/ßÂ©´‡©û ß¶¨ ‚Æ¶¨£ú
+//                               õû¢È©ú† ©´¶ ßúõÂ¶ Btypkin.Btypkin_Anti_Xp.
+//          2  "èú¢·´û™        : ¢Â©´ò customer
+//          3  "è®¶£ûüú¨´„™    : ¢Â©´ò vendor
+//          4  "ä¶†ß¶Â         : ú·§ ´¶ modula ò•†¶ö®·≠‡§ ß¶¨¢ûüúÂ ò¨´Ê§¶£ò,
+//                               ´Ê´ú ´¶§ ©¨§ò¢¢ò©Ê£ú§¶ òß¢È™ ´¶§ ß¢û°´®¶¢¶ö¶Á£ú.
+
+//Ü ©¨§ò¢¢òö„ öÂ§ú´ò† £ú ò•†Êö®ò≠ò, ·®ò ß®‚ßú† §ò ö§‡®Âù¶¨£ú ú·§ üò õ†ò°†§„©¶¨£ú
+//£Ê§¶§ 1 ´Áß¶ ò•†¶ö®·≠‡§, „ ß¶¢¢¶Á™ (ßúõÂ¶ Btypkin.Baxiokat_Code).
+//Ñ·§ ò¨´Ê úÂ§ò† 0, ´Ê´ú ©´¶ grid ´¶¨ bmove ¶ user £ò™ õû¢È§ú† baxiokat,
+//ò¢¢¶†È™ ´¶ ßúõÂ¶ úÂ§ò† °¢ú†õ‡£‚§¶.
+
+Class Btypkin_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Construct_Object
+              Forward Send Construct_Object
+
+              //object id ´È§ ddo servers ö†ò ´· barticl+bmove+baxio+baxiokat
+              //©ú´·®¶§´ò† òß¶ ´û§ end_construct ´¶¨ bmove
+              //Æ®û©†£úÁ¶¨§ ©´û§ private.exit_btypkin_code
+              //ö†ò §ò ©ú´·®¶¨§ ´¶ visual interface
+              Property Integer piBarticl_dd  0
+              Property Integer piBmove_dd    0
+              Property Integer piBaxio_dd    0
+              Property Integer piBaxiokat_dd 0
+              Property Integer piMustNOTConstrain Public 0
+    End_Procedure   //construct_object
+
+//      //private
+//      //°ò¢úÂ´ò† òß¶ ´û§ private.Exit_Btypkin_Code
+//      Procedure private.Set_Prompt_Objects_of_all_Connected_DEOs Integer liPrompt_Object_id ;
+//                                                                 Integer liField            ;
+//                                                                 Integer iMustConstrain     ;
+//                                                                 String  sPelProm
+//                Integer iMax iCount iDEO liTemp liBarticl_dd iPelListID
+
+//                Move (sl100(Self)) to iPelListID
+//             //   den exei nohma giati den kanoyn tipota sthn lista
+//             //   If (iPelListID) Set piMustConstrain     Of iPelListID to 0
+//             //   If (iPelListID) Set psIsPromhtheyths    Of iPelListID to ''
+
+//                Get piBarticl_dd to liBarticl_dd
+//                If (liBarticl_dd <> 0);
+//                Begin //ú·§ Ê§´‡™ ¨ß·®Æú† client ddo £ú main file ´¶ barticl
+//                     Get Data_Set_User_Interface_Count of liBarticl_dd to iMax
+//                     Decrement iMax
+//                     For iCount from 0 to iMax
+//                         Move (Data_Set_User_Interface(liBarticl_dd ,iCount)) to iDEO
+//                         Get Data_Field of iDEO Item 0 to liTemp
+//                         If (liTemp = liField);
+//                         Begin //ú·§ ô®û°ò deo (dfform?) ß¶¨ ò§ò≠‚®ú´ò† ©´¶ ßúõÂ¶ ©¨§ò¢¢ò©Ê£ú§¶™
+//                            If (liPrompt_Object_id <> 0);
+//                               Begin
+//                                  Set Prompt_Object      of iDEO to liPrompt_Object_id
+//                                  Set Prompt_Button_Mode of iDEO to PB_promptOn
+//                                  If (iMustConstrain) Begin
+//                                  //   den exei nohma giati den kanoyn tipota sthn lista
+//                                  //  If (liPrompt_Object_id) Set piMustConstrain     Of liPrompt_Object_id to iMustConstrain
+//                                  //  If (liPrompt_Object_id) Set psIsPromhtheyths    Of liPrompt_Object_id to sPelProm
+//                                  End
+//                            End
+//                            Else Begin
+//                                Set Prompt_Object      of iDEO to 0
+//                                Set Prompt_Button_Mode of iDEO to PB_promptOff
+//                            End
+//                         End
+//                     Loop
+//                End
+//      End_Procedure //private.set_prompt_objects_of_all_connected_dEOS
+
+
+//    //private
+//    //°ò¢úÂ´ò† òßÊ: iexit ´¶¨ btypkin_code
+//    //°ò¢úÂ    ´„§: private.Set_Prompt_Objects_of_all_Connected_DEOS
+//    //©ú´·®ú†     : ´· prompt objects ö†ò ´¶ barticl_anti, ò§·¢¶öò £ú ´¶ btypkin_anti.
+//    Procedure private.Exit_Btypkin_Code Integer liField Integer liBtypkin_Code
+//              Integer liBtypkin_Anti1 liBaxiokat_Num liBtypkin_Anti2
+//              Integer liBaxiokat_dd liBarticl_dd
+//              String lsBarticlCode1
+
+//            // btypkin_anti
+//            // "-1" "É‚§ ìß·®Æú†"
+//            // "0"  "Data Entry"
+//            // "1"  "ä¶öò®†ò©£È§ Çä"
+//            // "2"  "î¶®‚ò™"
+//            // "3"  "è®¶£ûüú¨´È§"
+//            // "5"  "é ë¨§ò¢¢ò©Ê£ú§¶™"
+//            // "6"  "íú¢.èò®ò¢„ß´û™"
+
+
+
+//              Get Field_Current_Value Field Btypkin.Btypkin_Anti1 to liBtypkin_Anti1
+//              Get Field_Current_Value Field Btypkin.Btypkin_Anti2 to liBtypkin_Anti2
+//              Case Begin
+//                   Case (liBtypkin_Anti1 = 1) //©¨§ò¢¢ò©Ê£ú§¶™ òßÊ ö¢
+//                         Send private.Set_Prompt_Objects_of_all_Connected_DEOs 0 Field Barticl.Barticl_Code1 0 ''
+//                   Case Break
+
+//                   Case (liBtypkin_Anti1 = 2) //©¨§ò¢¢ò©Ê£ú§¶™ òßÊ ßú¢·´ú™
+//                        Send private.Set_Prompt_Objects_of_all_Connected_DEOs (SL100(Self)) Field Barticl.Barticl_Code1 1 ''
+//                   Case Break
+
+//                   Case (liBtypkin_Anti1 = 3) //©¨§ò¢¢ò©Ê£ú§¶™ òßÊ ß®¶£ûüú¨´‚™=> ¢†©´ò ßú¢ò´‡§
+//                        Send private.Set_Prompt_Objects_of_all_Connected_DEOs (SL100(Self)) Field Barticl.Barticl_Code1 1 '1'
+//                   Case Break
+
+//                   Case Else //=4 ¢¶†ß¶Â:©¨§ò¢¢ò©Ê£ú§¶™ £ú user manual data entry
+//                        Send private.Set_Prompt_Objects_of_all_Connected_DEOs 0  Field Barticl.Barticl_Code1 0 ''
+//                   Case Break
+//              Case End
+
+//              Case Begin
+//                   Case (liBtypkin_Anti2 = 1) //©¨§ò¢¢ò©Ê£ú§¶™ òßÊ ö¢
+//                        Send private.Set_Prompt_Objects_of_all_Connected_DEOs 0 Field Barticl.Barticl_Code2 0 ''
+//                   Case Break
+
+//                   Case (liBtypkin_Anti2 = 2) //©¨§ò¢¢ò©Ê£ú§¶™ òßÊ ßú¢·´ú™
+//                        Send private.Set_Prompt_Objects_of_all_Connected_DEOs (SL100(Self)) Field Barticl.Barticl_Code2 1 ''
+//                   Case Break
+
+//                   Case (liBtypkin_Anti2 = 3) //©¨§ò¢¢ò©Ê£ú§¶™ òßÊ ß®¶£ûüú¨´‚™=> ä†©´ò èú¢ò´È§
+//                        Send private.Set_Prompt_Objects_of_all_Connected_DEOs (SL100(Self)) Field Barticl.Barticl_Code2 1 '1'
+//                   Case Break
+
+//                   Case Else //=4 ¢¶†ß¶Â:©¨§ò¢¢ò©Ê£ú§¶™ £ú user manual data entry
+//                        Send private.Set_Prompt_Objects_of_all_Connected_DEOs 0  Field Barticl.Barticl_Code2 0 ''
+//                   Case Break
+//              Case End
+//    End_Procedure //private.exit_btypkin_code
+
+//    // New_Current_Record:
+
+//    Procedure New_Current_Record  Integer iOldRec  Integer iNewRec
+//        Integer liBtypkinCodeFldNum
+//        Forward Send New_Current_Record  iOldRec iNewRec
+//        Get_FieldNumber Btypkin.Btypkin_Code to liBtypkinCodeFldNum
+//        Send private.Exit_Btypkin_Code liBtypkinCodeFldNum Btypkin.Btypkin_Code
+//        // Insert Code Here
+//    End_Procedure   // New_Current_Record
+
+
+    //ò) ú§û£‚®‡©û £„ related ßúõÂ‡§
+    //ô) ò§·ö§‡©û properties
+    //ö) õ†òÆúÂ®†©û calculated ßúõÂ‡§
+    //õ) ú§û£‚®‡©û òü®¶†©´È§ (adjust_balances)
+    //ú) ú§û£‚®‡©û properties after
+    Procedure Update
+
+              Forward Send Update
+
+              //ò) ú§û£‚®‡©û £„ related ßúõÂ‡§
+                Move SysCurXR.Company_Code  to Btypkin.Company_Code
+                Move SysCurXR.Branch_Code   to Btypkin.Branch_Code
+                Move SysCurXR.Year_Year     to Btypkin.Year_Year
+                Move SysCurXR.Year_Recr     to Btypkin.Year_Recr
+
+              //ô) ò§·ö§‡©û properties
+
+              //ö) õ†òÆúÂ®†©û calculated ßúõÂ‡§
+              //ö.1:Gplan_Code_Apo1 (conditional)
+              //ö.2:Gplan_Code_Eos1 (conditional)
+              If (Btypkin.Btypkin_Anti1 <> 1);
+              Begin //ÊÆ† òß¶ öú§†°„ ¢¶ö†©´†°„
+             // gts 02/12/04 oxi gia titana
+             //      Move "" to Btypkin.Gplan_Code_Apo1
+             //      Move "" to Btypkin.Gplan_Code_Eos1
+              End
+
+              //ö.3:Gplan_Code_Apo2 (conditional)
+              //ö.4:Gplan_Code_Eos2 (conditional)
+              If (Btypkin.Btypkin_Anti2 <> 1);
+              Begin //ÊÆ† òß¶ öú§†°„ ¢¶ö†©´†°„
+                   Move "" to Btypkin.Gplan_Code_Apo2
+                   Move "" to Btypkin.Gplan_Code_Eos2
+              End
+
+              //ö.3:gtypkin_rec0 (conditional)
+              Case Begin
+                   Case (Btypkin.Gtypkin_Code <> 0) //ú§û£ú®È§ú† öú§†°„ ¢¶ö†©´†°„
+//jsjsjs 24/01/2001
+//                         Clear Gtypkin
+//                         Move Btypkin.Company_Code to Gtypkin.Company_Code
+//                         Move Btypkin.Branch_Code  to Gtypkin.Branch_Code
+//                         Move Btypkin.Year_Year    to Gtypkin.Year_Year
+//                         Move Btypkin.Gtypkin_Code to Gtypkin.Gtypkin_Code
+//                         Find Eq Gtypkin by Index.1 //company_code+branch_code+year_year+gtypkin_code
+//                         If (Found = 1) Move Gtypkin.Gtypkin_Rec0 to Btypkin.Gtypkin_Rec0
+//                         Else           Send Operation_Not_Allowed 3001 //õ‚§ ô®‚üû°ú ´¶ gtypkin_rec0, please reindex
+//jsjsjs 24/01/2001
+                   Case Break
+                   Case Else                        //õ‚§ ú§û£ú®È§ú† öú§†°„ ¢¶ö†©´†°„
+                         Move 0 to Btypkin.Gtypkin_Rec0
+              Case End
+
+              //ö.4:ctypkin_rec0 (conditional)
+              Case Begin
+                   Case (Btypkin.Ctypkin_Code <> 0) //ú§û£ú®È§ú† ßú¢·´ú™
+                         Clear Ctypkin
+                         Move Btypkin.Company_Code to Ctypkin.Company_Code
+                         Move Btypkin.Branch_Code  to Ctypkin.Branch_Code
+                         Move Btypkin.Year_Year    to Ctypkin.Year_Year
+                         Move Btypkin.Ctypkin_Code to Ctypkin.Ctypkin_Code
+                         Find Eq Ctypkin by Index.1 //company_code+branch_code+year_year+Ctypkin_code
+                         If (Found = 1) Begin
+                            Move Ctypkin.Ctypkin_Rec0 to Btypkin.Ctypkin_Rec0
+                            Move Ctypkin.Ctypkin_Recr to Btypkin.Ctypkin_Recr
+                         End
+                         Else           Send Operation_Not_Allowed 3002 //õ‚§ ô®‚üû°ú ´¶ Ctypkin_rec0, please reindex
+                   Case Break
+                   Case Else                        //õ‚§ ú§û£ú®È§ú† ßú¢·´ú™
+                         Move  0 to Btypkin.Ctypkin_Rec0
+                         Move '' to Btypkin.Ctypkin_Recr
+              Case End
+
+              //ö.5:vtypkin_rec0 (conditional)
+              Case Begin
+                   Case (Btypkin.Vtypkin_Code <> 0) //ú§û£ú®È§ú† ß®¶£ûüú¨´‚™
+                         //Clear Vtypkin
+                         //Move Btypkin.Company_Code to Vtypkin.Company_Code
+                         //Move Btypkin.Branch_Code  to Vtypkin.Branch_Code
+                         //Move Btypkin.Year_Year    to Vtypkin.Year_Year
+                         //Move Btypkin.Vtypkin_Code to Vtypkin.Vtypkin_Code
+                         //Find Eq Vtypkin by Index.1 //company_code+branch_code+year_year+Vtypkin_code
+                         //If (Found = 1) Move Vtypkin.Vtypkin_Rec0 to Btypkin.Vtypkin_Rec0
+                         //Else           Send Operation_Not_Allowed 3003 //õ‚§ ô®‚üû°ú ´¶ Vtypkin_rec0, please reindex
+                   Case Break
+                   Case Else                        //õ‚§ ú§û£ú®È§ú† ß®¶£ûüú¨´‚™
+                         Move 0 to Btypkin.Vtypkin_Rec0
+              Case End
+
+              //ö.6:btypkin_l_hmnia (conditional)
+              If (Btypkin.Btypkin_L_No = 0) Move 0 to Btypkin.Btypkin_L_Hmnia
+
+
+              //õ) ú§û£‚®‡©û òü®¶†©´È§ (adjust_balances)
+
+              //ú) ú§û£‚®‡©û properties after
+    End_Procedure //update
+
+    Procedure Creating
+              Forward Send Creating
+              //jsjsjs 24/01/2001 Add 1 to Year.Year_NumBtypkin //ò®†ü£Ê™ ·®ü®‡§ ´û™ Æ®„©û™
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Btypkin.Btypkin_Rec0)))))) to Btypkin.Btypkin_Recr
+    End_Procedure //creating
+
+//    Procedure OnConstrain
+//        Set piMustNOTConstrain to True
+        
+//        If (piMustNOTConstrain(Self)) Begin
+//        End
+//        Else Begin
+//            Constrain Btypkin.Company_Code  eq SysCurXR.Company_Code
+//            Constrain Btypkin.Branch_Code   eq SysCurXR.Branch_Code
+//            Constrain Btypkin.Year_Year     eq SysCurXR.Year_Year
+//        End
+//    End_Procedure
+
+
+    Procedure Operation_Not_Allowed Integer iError_Num
+              String lsError_Message
+              Case Begin
+                   //òßÊ validate save
+                   Case (iError_Num = 1001)
+                        //Move ("DDC 141:Ä°ò´·¢¢û¢û âÂ§û©û !\n\nÜ ´®¶ß¶ß¶Âû©û úß†´®‚ßú´ò† £Ê§¶§ ©´û§ ´ú¢ú¨´òÂò °Â§û©û ´¶¨ ò•†¶ö®·≠¶¨ !");
+                        //to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1100)
+                        Move "DDC 141:ãû òß¶õú°´„ Ñ´ò†®Âò-ï®„©û" to lsError_Message
+                        Case Break
+
+                   //òßÊ validate delete
+                   Case (iError_Num = 2001)
+                        //Clear Codemast
+                        //Move ("DDC 141:ÄõÁ§ò´û û õ†òö®ò≠„ !\n\nÜ õ†òö®ò≠„ úß†´®‚ßú´ò† £Ê§¶§ ©´û§ ´ú¢ú¨´òÂò °Â§û©û ´¶¨ ò•†¶ö®·≠¶¨ !");
+                        //to lsError_Message
+                   Case Break
+                   Case (iError_Num = 2100)
+                        Move "DDC 141:ãû òß¶õú°´„ Ñ´ò†®Âò-ï®„©û" to lsError_Message
+                        Case Break
+
+                   //òßÊ update
+                   Case (iError_Num = 3001)
+                        Move ("DDC 141:É‚§ ô®‚üû°ú û ò§´Â©´¶†Æû °Â§û©û ´û™ Çú§†°„™ ä¶ö†©´†°„™ !\n\nèò®ò°ò¢¶Á£ú ´®‚•´ú ´¶§ é¢†°Ê Ñ¢úöÆ¶ ´û™ ´û™ Å·©û™ !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 3002)
+                        Move ("DDC 141:É‚§ ô®‚üû°ú û ò§´Â©´¶†Æû °Â§û©û ´È§ èú¢ò´È§ !\n\nèò®ò°ò¢¶Á£ú ´®‚•´ú ´¶§ é¢†°Ê Ñ¢úöÆ¶ ´û™ ´û™ Å·©û™ !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 3003)
+                        Move ("DDC 141:É‚§ ô®‚üû°ú û ò§´Â©´¶†Æû °Â§û©û ´È§ è®¶£ûüú¨´È§ !\n\nèò®ò°ò¢¶Á£ú ´®‚•´ú ´¶§ é¢†°Ê Ñ¢úöÆ¶ ´û™ ´û™ Å·©û™ !");
+                        to lsError_Message
+                   Case Break
+
+
+
+                   Case Else
+                        Forward Send Operation_Not_Allowed iError_Num
+              Case End
+
+              Error iError_Num lsError_Message
+    End_Procedure // operation_not_allowed
+
+
+//    //1001:
+//    //òßòö¶®úÁú´ò† ´¶ btypkin §ò ò¢¢·ùú† parent year
+//    Function Validate_Save Returns Integer
+//             Integer iReturnVal
+
+//             Forward Get Validate_Save to iReturnVal
+
+//             If (Not(iReturnVal));
+//             Begin
+//                  //1100:cby = globals
+//                  If ( ;
+//                      (Not(Btypkin.Company_Code = SysCurXR.Company_Code))or ;
+//                      (Not(Btypkin.Branch_Code  = SysCurXR.Branch_Code)) or ;
+//                      (Not(Btypkin.Year_Year    = SysCurXR.Year_Year))      ;
+//                      )                                                   Send Operation_Not_Allowed 1100
+//             End //´‚¢¶™ °Èõ†°ò validation
+//             Function_Return iReturnVal
+//    End_Function   // validate_save
+
+
+//    //2001:
+//    Function Validate_Delete  Returns Integer
+//             Integer iReturnVal
+//             Forward Get Validate_Delete  To iReturnVal
+//             If (Not(iReturnVal));
+//             Begin
+
+//                  //2100:cby = globals
+//                  If ( ;
+//                      (Not(Btypkin.Company_Code = SysCurXR.Company_Code))or ;
+//                      (Not(Btypkin.Branch_Code  = SysCurXR.Branch_Code)) or ;
+//                      (Not(Btypkin.Year_Year    = SysCurXR.Year_Year))      ;
+//                      )                                                   Send Operation_Not_Allowed 2100
+//             End //´‚¢¶™ °Èõ†°ò validation
+//             Function_Return iReturnVal
+//    End_Function   // Validate_Delete
+
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Btypkin.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Bflagkin.File_Number
+        Send Add_Client_File  Bkinkat.File_Number
+        Send Add_Client_File  Barticl.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecb.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecb.Btypkin_Rec0  To Btypkin.Btypkin_Rec0
+
+        // Field-based properties.......................
+
+        // Btypkin.Company_Code
+        //DDB/ Comment_Short       Field Btypkin.Company_Code To "Ñ§û£ú®È§ú´ò† ©´û§ update"
+
+        // Btypkin.Branch_Code
+        //DDB/ Comment_Short       Field Btypkin.Branch_Code To "Ñ§û£ú®È§ú´ò† ©´û§ update"
+
+        // Btypkin.Year_Year
+        //DDB/ Comment_Short       Field Btypkin.Year_Year To "Ñ§û£ú®È§ú´ò† ©´û§ update"
+
+        // Btypkin.Btypkin_Code
+        Set Field_Prompt_Object    Field Btypkin.Btypkin_Code To (SL031(Self))
+
+        // Btypkin.Btypkin_Rec0
+
+        // Btypkin.Btypkin_Recr
+
+        // Btypkin.Year_Recr
+
+        // Btypkin.Btypkin_Descr
+        Set Field_Prompt_Object    Field Btypkin.Btypkin_Descr To (SL031(Self))
+
+        // Btypkin.Gtypkin_Code
+
+        // Btypkin.Ctypkin_Code
+        Set Field_Prompt_Object    Field Btypkin.Ctypkin_Code To (sl007(Self))
+
+        // Btypkin.Vtypkin_Code
+
+        // Btypkin.Gtypkin_Rec0
+
+        // Btypkin.Ctypkin_Rec0
+
+        // Btypkin.Vtypkin_Rec0
+
+        // Btypkin.Btypkin_Anti1
+        Set Field_Value_Table      Field Btypkin.Btypkin_Anti1 To (Bfile_VT(Self))
+
+        // Btypkin.Gplan_Code_Apo1
+
+        // Btypkin.Gplan_Code_Eos1
+
+        // Btypkin.Btypkin_Anti2
+        Set Field_Value_Table      Field Btypkin.Btypkin_Anti2 To (Bfile_VT(Self))
+
+        // Btypkin.Gplan_Code_Apo2
+
+        // Btypkin.Gplan_Code_Eos2
+
+        // Btypkin.Bflagkin_Num
+
+        // Btypkin.Bkinkat_Num
+        //DDB/ Comment_Short       Field Btypkin.Bkinkat_Num To "ìß¶¢¶öÂùú´ò† ©´û§ update ´¶¨ bkinkat."
+
+        // Btypkin.Btypkin_Anti_Xp
+        Set Field_Value_Table      Field Btypkin.Btypkin_Anti_Xp To (Btypkin_Btypkin_Anti_Xp_VT(Self))
+
+        // Btypkin.Btypkin_Printer
+
+        // Btypkin.Btypkin_Pdescr
+
+        // Btypkin.Btypkin_Form
+
+        // Btypkin.Btypkin_L_No
+
+        // Btypkin.Btypkin_L_Hmnia
+        Set Field_Mask_Type        Field Btypkin.Btypkin_L_Hmnia To MASK_DATE_WINDOW
+
+        // Btypkin.Btypkin_Seira
+
+        // Btypkin.Btypkin_Abr
+
+        // Btypkin.Btypkin_Flag01
+        //DDB/ Comment_Short       Field Btypkin.Btypkin_Flag01 To "ìß¶¢¶öÂùú´ò† ©´û§ update/backout ´¶¨ bflagkin."
+
+        // Btypkin.Btypkin_Flag02
+
+        // Btypkin.Btypkin_Flag03
+
+        // Btypkin.Btypkin_Flag04
+
+        // Btypkin.Btypkin_Flag05
+        Set Field_Checkbox_Values  Field Btypkin.Btypkin_Flag05 To "1"  "0"
+
+        // Btypkin.Btypkin_Flag06
+
+        // Btypkin.Btypkin_Flag07
+
+        // Btypkin.Btypkin_Flag08
+
+        // Btypkin.Btypkin_Flag09
+
+        // Btypkin.Btypkin_Flag10
+
+        // Btypkin.Btypkin_Flag11
+
+        // Btypkin.Btypkin_Flag12
+
+        // Btypkin.Btypkin_Flag13
+
+        // Btypkin.Btypkin_Flag14
+
+        // Btypkin.Btypkin_Flag15
+
+        // Btypkin.Btypkin_Flag16
+
+        // Btypkin.Btypkin_Flag17
+
+        // Btypkin.Btypkin_Flag18
+
+        // Btypkin.Btypkin_Flag19
+
+        // Btypkin.Btypkin_Flag20
+
+        // Btypkin.Btypkin_Sign
+        Set Field_Checkbox_Values  Field Btypkin.Btypkin_Sign To "1"  "-1"
+
+        // Btypkin.Ctypkin_Recr
+        Set Field_Prompt_Object    Field Btypkin.Ctypkin_Recr To (sl007r(Self))
+
+        // Btypkin.Label
+
+        // Btypkin.Locked
+
+        // Btypkin.Locked_Date
+        Set Field_Mask_Type        Field Btypkin.Locked_Date To MASK_DATE_WINDOW
+
+        //DDB-DefineFieldEnd
+
+        Set Main_File            To Btypkin.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Bflagkin.File_Number
+        Send Add_Client_File  Barticl.File_Number
+        Send Add_Client_File  Bkinkat.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecb.File_Number  DD_LOCK_ON_NEW_SAVE
+        //Send Add_System_File  Gtypkin.File_Number  DD_LOCK_ON_SAVE
+
+        Define_Auto_Increment  Sysrecb.Btypkin_Rec0  To Btypkin.Btypkin_Rec0
+
+        // Field-based properties.......................
+
+        // Btypkin.Company_Code
+
+        // Btypkin.Branch_Code
+
+        // Btypkin.Year_Year
+
+        // Btypkin.Btypkin_Code
+        Set Field_Label_Long       Field Btypkin.Btypkin_Code     To "â‡õ†°Ê™ âÂ§û©û™"
+        Set Field_Label_Short      Field Btypkin.Btypkin_Code     To "âÂ§û©û"
+        Set Field_Options          Field Btypkin.Btypkin_Code     To DD_AUTOFIND    DD_REQUIRED
+        Set Field_Prompt_Object    Field Btypkin.Btypkin_Code     To (sl031(Self))
+        Set Key_Field_State        Field Btypkin.Btypkin_Code     To TRUE
+
+        // Btypkin.Btypkin_Rec0
+        Set Field_Options          Field Btypkin.Btypkin_Rec0     To DD_AUTOFIND    DD_NOPUT       DD_REQUIRED
+        Set Key_Field_State        Field Btypkin.Btypkin_Rec0     To TRUE
+
+        // Btypkin.Year_Rec0
+
+        // Btypkin.Btypkin_Descr
+        Set Field_Label_Long       Field Btypkin.Btypkin_Descr    To "èú®†ö®ò≠„ âÂ§û©û™"
+        Set Field_Label_Short      Field Btypkin.Btypkin_Descr    To "èú®†ö®ò≠„"
+        Set Field_Prompt_Object    Field Btypkin.Btypkin_Descr    To (sl031(Self))
+
+        // Btypkin.Gtypkin_Code
+        Set Field_Label_Long       Field Btypkin.Gtypkin_Code     To "âÂ§û©û Çä"
+        Set Field_Label_Short      Field Btypkin.Gtypkin_Code     To "âÂ§û©û Çä"
+        //Set Field_Prompt_Object    Field Btypkin.Gtypkin_Code     To (SL055(Self))
+
+        // Btypkin.Ctypkin_Code
+        Set Field_Label_Long       Field Btypkin.Ctypkin_Code     To "âÂ§û©û èú¢ò´È§"
+        Set Field_Label_Short      Field Btypkin.Ctypkin_Code     To "âÂ§û©û èú¢ò´È§"
+
+        // Btypkin.Vtypkin_Code
+        Set Field_Label_Long       Field Btypkin.Vtypkin_Code     To "âÂ§û©û è®¶£ûüú¨´È§"
+        Set Field_Label_Short      Field Btypkin.Vtypkin_Code     To "âÂ§û©û è®¶£ûüú¨´È§"
+
+        // Btypkin.Gtypkin_Rec0
+        Set Field_Options          Field Btypkin.Gtypkin_Rec0     To DD_DISPLAYONLY
+
+        // Btypkin.Ctypkin_Rec0
+        Set Field_Options          Field Btypkin.Ctypkin_Rec0     To DD_DISPLAYONLY
+
+        // Btypkin.Vtypkin_Rec0
+        Set Field_Options          Field Btypkin.Vtypkin_Rec0     To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_Anti1
+        Set Field_Class_Name       Field Btypkin.Btypkin_Anti1    To "dbComboForm_EZ"
+        Set Field_Label_Long       Field Btypkin.Btypkin_Anti1    To "ë¨§ò¢¢ò©Ê£ú§¶™ òß¶ ò®ÆúÂ¶:"
+        Set Field_Label_Short      Field Btypkin.Btypkin_Anti1    To "ë¨§ò¢¢ò©Ê£ú§¶™"
+        Set Field_Value_Table      Field Btypkin.Btypkin_Anti1    To (Bfile_VT(Self))
+
+        // Btypkin.Gplan_Code_Apo1
+        Set Field_Label_Long       Field Btypkin.Gplan_Code_Apo1  To "Äß¶ â‡õ†°Ê Çä"
+        Set Field_Label_Short      Field Btypkin.Gplan_Code_Apo1  To "Äß¶ â‡õ†°Ê Çä"
+
+        // Btypkin.Gplan_Code_Eos1
+        Set Field_Label_Long       Field Btypkin.Gplan_Code_Eos1  To "Ñ‡™ â‡õ†°Ê Çä"
+        Set Field_Label_Short      Field Btypkin.Gplan_Code_Eos1  To "Ñ‡™ â‡õ†°Ê Çä"
+
+        // Btypkin.Btypkin_Anti2
+        Set Field_Class_Name       Field Btypkin.Btypkin_Anti2    To "dbComboForm_EZ"
+        Set Field_Label_Long       Field Btypkin.Btypkin_Anti2    To "èò®ò¢„ß´û™ òß¶ ò®ÆúÂ¶:"
+        Set Field_Label_Short      Field Btypkin.Btypkin_Anti2    To "èò®ò¢„ß´û™"
+        Set Field_Value_Table      Field Btypkin.Btypkin_Anti2    To (Bfile_VT(Self))
+
+        // Btypkin.Gplan_Code_Apo2
+        Set Field_Label_Long       Field Btypkin.Gplan_Code_Apo2  To "Äß¶ â‡õ†°Ê Çä"
+        Set Field_Label_Short      Field Btypkin.Gplan_Code_Apo2  To "Äß¶ â‡õ†°Ê Çä"
+
+        // Btypkin.Gplan_Code_Eos2
+        Set Field_Label_Long       Field Btypkin.Gplan_Code_Eos2  To "Ñ‡™ â‡õ†°Ê Çä"
+        Set Field_Label_Short      Field Btypkin.Gplan_Code_Eos2  To "Ñ‡™ â‡õ†°Ê Çä"
+
+        // Btypkin.Bflagkin_Num
+        Set Field_Label_Long       Field Btypkin.Bflagkin_Num     To "è¢„ü¶™ Flags"
+        Set Field_Label_Short      Field Btypkin.Bflagkin_Num     To "è¢„ü¶™ Flags"
+        Set Field_Options          Field Btypkin.Bflagkin_Num     To DD_DISPLAYONLY
+
+        // Btypkin.Bkinkat_Num
+        Set Field_Label_Long       Field Btypkin.Bkinkat_Num      To "è¢„ü¶™ âò´ûö¶®†È§ Ä•†È§"
+        Set Field_Label_Short      Field Btypkin.Bkinkat_Num      To "è¢„ü¶™ âò´.Ä•†È§"
+        Set Field_Options          Field Btypkin.Bkinkat_Num      To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_Anti_Xp
+        Set Field_Class_Name       Field Btypkin.Btypkin_Anti_Xp  To "dbComboForm_EZ"
+        Set Field_Label_Long       Field Btypkin.Btypkin_Anti_Xp  To "é ©¨§ò¢¢ò©Ê£ú§¶™:"
+        Set Field_Label_Short      Field Btypkin.Btypkin_Anti_Xp  To "ïè ë¨§ò¢¢ò©¶£‚§¶¨"
+        Set Field_Value_Table      Field Btypkin.Btypkin_Anti_Xp  To (Btypkin_Btypkin_Anti_Xp_VT(Self))
+
+        // Btypkin.Btypkin_Printer
+        Set Field_Label_Long       Field Btypkin.Btypkin_Printer  To "É†úÁü¨§©û Ñ°´¨ß‡´„"
+        Set Field_Label_Short      Field Btypkin.Btypkin_Printer  To "Ñ°´¨ß‡´„™"
+
+        // Btypkin.Btypkin_Pdescr
+        Set Field_Label_Long       Field Btypkin.Btypkin_Pdescr   To "íÂ´¢¶™ Ñ°´Áß‡©û™"
+        Set Field_Label_Short      Field Btypkin.Btypkin_Pdescr   To "íÂ´¢¶™ Ñ°´Áß‡©û™"
+
+        // Btypkin.Btypkin_Form
+        Set Field_Label_Long       Field Btypkin.Btypkin_Form     To "îÊ®£ò Ñ°´Áß‡©û™"
+        Set Field_Label_Short      Field Btypkin.Btypkin_Form     To "îÊ®£ò"
+
+        // Btypkin.Btypkin_L_No
+        Set Field_Label_Long       Field Btypkin.Btypkin_L_No     To "íú¢ú¨´òÂ¶™ Ä®†ü£Ê™"
+        Set Field_Label_Short      Field Btypkin.Btypkin_L_No     To "íú¢.Ä®."
+        //Set Field_Options          Field Btypkin.Btypkin_L_No     To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_L_Hmnia
+        Set Field_Label_Long       Field Btypkin.Btypkin_L_Hmnia  To "íú¢ú¨´òÂò Ü£/§Âò"
+        Set Field_Label_Short      Field Btypkin.Btypkin_L_Hmnia  To "íú¢.Ü£/§Âò"
+        Set Field_Options          Field Btypkin.Btypkin_L_Hmnia  To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_Seira
+        Set Field_Label_Long       Field Btypkin.Btypkin_Seira    To "ëú†®·"
+        Set Field_Label_Short      Field Btypkin.Btypkin_Seira    To "ëú†®·"
+
+        // Btypkin.Btypkin_Abr
+        Set Field_Label_Long       Field Btypkin.Btypkin_Abr      To "ë¨§´¶£¶ö®ò≠Âò"
+        Set Field_Label_Short      Field Btypkin.Btypkin_Abr      To "ë¨§´/≠Âò"
+
+        // Btypkin.Btypkin_Flag01
+        Set Field_Options          Field Btypkin.Btypkin_Flag01   To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_Flag02
+        Set Field_Options          Field Btypkin.Btypkin_Flag02   To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_Flag03
+        Set Field_Options          Field Btypkin.Btypkin_Flag03   To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_Flag04
+        Set Field_Options          Field Btypkin.Btypkin_Flag04   To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_Flag05
+        Set Field_Options          Field Btypkin.Btypkin_Flag05   To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_Flag06
+        Set Field_Options          Field Btypkin.Btypkin_Flag06   To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_Flag07
+        Set Field_Options          Field Btypkin.Btypkin_Flag07   To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_Flag08
+        Set Field_Options          Field Btypkin.Btypkin_Flag08   To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_Flag09
+        Set Field_Options          Field Btypkin.Btypkin_Flag09   To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_Flag10
+        Set Field_Options          Field Btypkin.Btypkin_Flag10   To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_Flag11
+        Set Field_Options          Field Btypkin.Btypkin_Flag11   To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_Flag12
+        Set Field_Options          Field Btypkin.Btypkin_Flag12   To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_Flag13
+        Set Field_Options          Field Btypkin.Btypkin_Flag13   To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_Flag14
+        Set Field_Options          Field Btypkin.Btypkin_Flag14   To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_Flag15
+        Set Field_Options          Field Btypkin.Btypkin_Flag15   To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_Flag16
+        Set Field_Options          Field Btypkin.Btypkin_Flag16   To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_Flag17
+        Set Field_Options          Field Btypkin.Btypkin_Flag17   To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_Flag18
+        Set Field_Options          Field Btypkin.Btypkin_Flag18   To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_Flag19
+        Set Field_Options          Field Btypkin.Btypkin_Flag19   To DD_DISPLAYONLY
+
+        // Btypkin.Btypkin_Flag20
+        Set Field_Options          Field Btypkin.Btypkin_Flag20   To DD_DISPLAYONLY
+
+    End_Procedure    // Define_Fields
+
+
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Btypkin.Btypkin_Anti1 To 0
+        Set Field_Changed_Value   Field Btypkin.Btypkin_Anti2 To 0
+        Set Field_Changed_Value   Field Btypkin.Btypkin_Anti_Xp To 1
+        Set Field_Changed_Value   Field Btypkin.Btypkin_Flag05 To 0
+        Set Field_Changed_Value   Field Btypkin.Btypkin_Sign To 1
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+End_Class    // Btypkin_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use SL031.SL         // SL031
+Use sl007.SL         // sl007
+Use sl007r.SL        // sl007r
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

@@ -1,0 +1,52 @@
+-----------------------------------------------------------------------------
+  DATE: 13/11/103      TIME: 10:31                                  PAGE:  1
+  FILE DEFINITION FOR FILE: GMOVEDDA (# 79)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : GmoveDD
+  USER DISPLAY NAME         : GmoveDDA
+  DATAFLEX FILE NAME        : GMOVEDDA
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 256       ( USED: 224 )
+  MAX NUMBER OF RECORDS     : 1000000   ( USED: 7 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  GPLAN_RECR       ASC     12     1      
+  2  GPLAN_CODE       ASC     20    13  1   
+  3  INIT_GPLAN_CODE  ASC     20    33      
+  4  INIT_GPLAN_RECR  ASC     12    53      
+  5  ARXIKO_POSO      NUM   14.4    65      
+  6  SYMMETAB         ASC     20    74  1   
+  7  ANTIMETAB        ASC     20    94      
+  8  ME_POSOSTO       NUM    2.0   114      
+  9  POSO_POSOSTO     NUM   14.2   115      
+ 10  COMPANY_CODE     ASC     12   123      
+ 11  BRANCH_CODE      ASC     12   135      
+ 12  POSO             NUM   14.4   147      
+ 13  BHMA             NUM    4.0   156  1   
+ 14  SYMMETAB_XRPI    NUM    2.0   158      
+ 15  GARTICL_RECR     ASC     12   159  1   
+ 16  GMOVE_RECR       ASC     12   171  1   
+ 17  BHMA_FROM        NUM    4.0   183      
+ 18  GPLAN_FROM       ASC     20   185      
+ 19  SYMMETAB_FROM    ASC     20   205      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    GARTICL_RECR    NO  NO       66     8       5     ON-LINE
+       GMOVE_RECR      NO  NO 
+       BHMA            NO  NO 
+       GPLAN_CODE      NO  NO 
+       SYMMETAB        NO  NO 
+

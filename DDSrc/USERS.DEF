@@ -1,0 +1,61 @@
+-----------------------------------------------------------------------------
+  DATE: 01/09/111      TIME: 13:34                                  PAGE:  1
+  FILE DEFINITION FOR FILE: USERS (# 250)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:USERS
+  USER DISPLAY NAME         : USERS
+  DATAFLEX FILE NAME        : USERS
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 509       ( USED: 509 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 19 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  GRP_ID           NUM    4.0     1  4   USERGRPS.FIELD_1 (249,1)
+  2  USER_ID          NUM    4.0     3  3   
+  3  LOGIN_ID         ASC     15     5  1   
+  4  NAME             ASC     50    20  2   
+  5  PASSWORD         ASC    200    70      
+  6  ALLOW_READ       ASC      1   270      
+  7  ALLOW_CHANGE     ASC      1   271      
+  8  ALLOW_CREATE     ASC      1   272      
+  9  ALLOW_DELETE     ASC      1   273      
+ 10  ADMIN_RIGHTS     ASC      1   274      
+ 11  ALLOW_COPY       ASC      1   275      
+ 12  DEPARTM_CODE     ASC     10   276  5   DEPARTM.FIELD_1 (235,1)
+ 13  NO_ALLAGH_TIMHS  ASC      1   286      
+ 14  LAST_LOGIN_DATE  DAT      3   287      
+ 15  LAST_LOGIN_TIME  ASC      5   290      
+ 16  LAST_PASSWORD    ASC    200   295      
+ 17  LAST_CHANGE      DAT      3   495      
+ 18  NEXT_CHANGE      DAT      3   498      
+ 19  ANENERGOS        ASC      1   501      
+ 20  BLOCK_UNTIL_D    DAT      3   502      
+ 21  BLOCK_UNTIL_T    ASC      5   505      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    LOGIN_ID        NO  NO       15     3       1     ON-LINE
+
+  2    NAME            NO  NO       65     3       2     ON-LINE
+       LOGIN_ID        NO  NO 
+
+  3    USER_ID         NO  NO       2      3       1     ON-LINE
+
+  4    GRP_ID          NO  NO       4      3       2     ON-LINE
+       USER_ID         NO  NO 
+
+  5    DEPARTM_CODE    NO  NO       12     3       2     ON-LINE
+       USER_ID         NO  NO 
+

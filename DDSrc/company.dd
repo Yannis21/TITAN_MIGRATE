@@ -1,0 +1,171 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : COMPANY.DD
+// Class Name: Company_DataDictionary
+// Revision  : 64
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Company
+Open Branch
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Company_Company_Doy_VT
+Register_Object Company_Company_J_Code_VT
+
+Object Company_Company_Doy_VT  is a CodeValidationTable
+    Set Type_Value        To "DOY"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Company_Company_Doy_VT
+
+Object Company_Company_J_Code_VT  is a CodeValidationTable
+    Set Type_Value        To "JOB"
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Company_Company_J_Code_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl001  sl001.sl
+Register_Object sl001
+//DDB-SelectionEnd
+ 
+Class Company_DataDictionary  is a DataDictionary
+ 
+    // Update:
+ 
+    Procedure Update
+        Forward Send Update
+        move 'DOY' to company.doy_type
+        move 'JOB' to company.jcode_type 
+        // Insert Code Here
+    End_Procedure   // Update
+ 
+
+    // Operation_Not_Allowed:
+
+    Procedure Operation_Not_Allowed  Integer iError_Num
+        // Insert Code Here
+        Case Begin
+             Case (iError_Num = 1001)
+                  Error 1001 "DDC 051:€¡˜«á¢¢ž¢¦ª ‰à› ¡æª „«˜ ¨œå˜ª!\n\n‰œ¤æª ‰à› ¡æª"
+             Case Break
+
+             Case Else
+                  Forward Send Operation_Not_Allowed  iError_Num
+        Case End
+    End_Procedure   // Operation_Not_Allowed
+
+
+    // Validate_Save:
+
+    Function Validate_Save  Returns Integer
+        Local Integer iReturnVal
+        Forward Get Validate_Save  To iReturnVal
+        If (Not(iReturnVal)) Begin
+            // Insert Code Here
+            If (Company.Company_Code="") Send Operation_Not_Allowed 1001
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Company.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Branch.File_Number
+
+        // Field-based properties.......................
+
+        // Company.Company_Code
+        Set Field_Options          Field Company.Company_Code To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Company.Company_Code To (sl001(Self))
+
+        // Company.Company_Name
+        Set Field_Options          Field Company.Company_Name To DD_REQUIRED   
+        Set Field_Prompt_Object    Field Company.Company_Name To (sl001(Self))
+
+        // Company.Company_Afm
+        Set Field_Options          Field Company.Company_Afm To DD_AUTOFIND   
+
+        // Company.Company_Addr
+
+        // Company.Company_Tk
+
+        // Company.Company_Poli
+
+        // Company.Company_Doy
+        Set Field_Value_Table      Field Company.Company_Doy To (Company_Company_Doy_VT(Self))
+
+        // Company.Company_J_Code
+        Set Field_Value_Table      Field Company.Company_J_Code To (Company_Company_J_Code_VT(Self))
+
+        // Company.Company_C_Code0
+
+        // Company.Company_C_Cod00
+
+        // Company.Company_C_Coder
+
+        // Company.Company_Tel
+
+        // Company.Company_Fax
+
+        // Company.Company_Email
+
+        // Company.Company_Resp
+
+        // Company.Company_Bitmap
+
+        // Company.Beto_Site
+
+        // Company.Logo
+
+        // Company.Doy_Type
+
+        // Company.Jcode_Type
+
+        // Company.Sap_Code
+
+        // Company.Sap_Path
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+End_Class    // Company_DataDictionary
+
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl001.sl         // sl001
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

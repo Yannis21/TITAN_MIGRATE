@@ -1,0 +1,40 @@
+-----------------------------------------------------------------------------
+  DATE: 11/03/108      TIME: 12:04                                  PAGE:  1
+  FILE DEFINITION FOR FILE: CMN_SALM (# 215)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : CMN_SALM
+  USER DISPLAY NAME         : CMN_SALM
+  DATAFLEX FILE NAME        : CMN_SALM
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 256       ( USED: 208 )
+  MAX NUMBER OF RECORDS     : 10000     ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  SALMAN_CODE      ASC     20     1  1   
+  2  SALMAN_DESCR     ASC     50    21  2   
+  3  INACTIVE         NUM    4.0    71      
+  4  ORIGINATOR       ASC    100    73      
+  5  EXP2KP01         NUM   14.4   173      
+  6  EXP2KP20         NUM   14.4   182      
+  7  EXP2KP21         NUM   14.4   191      
+  8  EXP2KP22         NUM   14.4   200      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    SALMAN_CODE     NO  NO       20     3       1     ON-LINE
+
+  2    SALMAN_DESCR    NO  NO       70     5       2     ON-LINE
+       SALMAN_CODE     NO  NO 
+

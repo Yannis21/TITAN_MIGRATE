@@ -1,0 +1,139 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : PSEIRA.DD
+// Class Name: Pseira_DataDictionary
+// Revision  : 34
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Pseira
+Open Ptyppar
+Open Sysrecp
+Open Syscurxr
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl013  sl013.SL
+Register_Object sl013
+//DDB-SelectionEnd
+
+Class Pseira_DataDictionary  is a DataDictionary
+
+    Procedure Save_Main_File
+        If (Operation_Origin<>Self) Begin
+            If Pseira.Recnum Eq 0 Procedure_Return
+        End
+        Forward Send Save_Main_File
+    End_Procedure
+
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move SysCurXR.Company_Code  to Pseira.Company_Code
+        Move SysCurXR.Branch_Code   to Pseira.Branch_Code
+        Move SysCurXR.Year_Year     to Pseira.Year_Year
+        Move Ctypkin.Ctypkin_Code   to Pseira.Ctypkin_Code
+        Move Wtypkin.Wtypkin_Code   to Pseira.Wtypkin_Code
+        Move Ptyppar.Ptyppar_Code   to Pseira.Ptyppar_Code
+    End_Procedure   // Update
+
+
+     Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Pseira.Pseira_Rec0)))))) to Pseira.Pseira_Recr
+    End_Procedure   // Creating
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Pseira.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Ptyppar.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecp.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Syscurxr.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecp.Pseira_Rec0  To Pseira.Pseira_Rec0
+
+        // Field-based properties.......................
+
+        // Pseira.Company_Code
+
+        // Pseira.Branch_Code
+
+        // Pseira.Year_Year
+
+        // Pseira.Ctypkin_Code
+
+        // Pseira.Wtypkin_Code
+
+        // Pseira.Ptyppar_Code
+
+        // Pseira.Ptyppar_Recr
+
+        // Pseira.Pseira_Seira
+        Set Field_Options          Field Pseira.Pseira_Seira To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Pseira.Pseira_Seira To (sl013(Self))
+
+        // Pseira.Pseira_Rec0
+        Set Field_Options          Field Pseira.Pseira_Rec0 To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Pseira.Pseira_Rec0 To (sl013(Self))
+
+        // Pseira.Pseira_Recr
+        Set Field_Options          Field Pseira.Pseira_Recr To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Pseira.Pseira_Recr To (sl013(Self))
+
+        // Pseira.Pseira_Printer
+
+        // Pseira.Pseira_Form
+
+        // Pseira.Pseira_Autonum
+
+        // Pseira.Autonum_Plus
+
+        // Pseira.Autonum_Minus
+
+        // Pseira.Auto_Plus_Last
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Pseira_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl013.SL         // sl013
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

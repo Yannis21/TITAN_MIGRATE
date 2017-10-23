@@ -1,0 +1,87 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GRPPED0.DD
+// Class Name: Grpped0_DataDictionary
+// Revision  : 8
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Grpped0
+Open Grparx0
+Open Pedia
+
+//DDB-HeaderEnd
+
+Class Grpped0_DataDictionary  is a DataDictionary_Sec
+ 
+    // Update:
+ 
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move UserGrps.Grp_ID    to GrpPed0.Group_ID
+        Move Arxeia.Arxeio_ID   to GrpPed0.Arxeio_ID
+        Move Pedia.Pedio_Number to GrpPed0.Pedio_ID
+    End_Procedure   // Update
+ 
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Grpped0.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Grparx0.File_Number
+        Send Add_Server_File  Pedia.File_Number
+
+        // Field-based properties.......................
+
+        // Grpped0.Grparx0_Recr
+
+        // Grpped0.Group_Id
+
+        // Grpped0.Arxeio_Id
+
+        // Grpped0.Pedio_Id
+
+        // Grpped0.Allow_Read
+
+        // Grpped0.Allow_Change
+
+        // Grpped0.Allow_Create
+
+        // Grpped0.Allow_Delete
+
+        // Grpped0.Allow_Copy
+
+        // Grpped0.Pedio_Recr
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Grpped0_DataDictionary
+//DDB-FileEnd

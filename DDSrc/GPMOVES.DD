@@ -1,0 +1,433 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GPMOVES.DD
+// Class Name: Gpmoves_DataDictionary
+// Revision  : 21
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Gpmoves
+Open Gparticl
+Open Gplan
+
+//DDB-HeaderEnd
+
+Class Gpmoves_DataDictionary  is a DataDictionary_Sec
+
+    // Constrain:
+    Procedure Constrain
+        Forward Send Constrain
+        // Insert Code Here
+        Constrain GPmoves.Company_Code eq SysCurGL.Company_Code
+        Constrain GPmoves.Branch_Code  eq SysCurGL.Branch_Code
+        Constrain GPmoves.Year_Year    eq SysCurGL.Year_Year
+
+    End_Procedure   // Constrain
+
+    // Deleting:
+
+    Procedure Deleting
+        Forward Send Deleting
+        // Insert Code Here
+    End_Procedure   // Deleting
+
+
+    // Creating:
+
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+    End_Procedure   // Creating
+
+    // Construct_Object:
+
+    Procedure Construct_Object
+        // Insert Code Here
+        forward send Construct_Object
+
+    End_Procedure   // Construct_Object
+
+    // Backout:
+
+    Procedure Backout
+        Forward Send Backout
+
+        sub GPmoves.Gmoves_x2  from GParticl.Garticl_Sx2
+        sub GPmoves.Gmoves_p2  from GParticl.Garticl_Sp2
+        calc (GParticl.Garticl_Syp2-GPmoves.Gmoves_x2+GPmoves.Gmoves_p2) to GParticl.Garticl_Syp2
+
+        //******************************************************
+        if (GPmoves.Gmoves_x2 > 0) Sub 1 from GParticl.Garticl_XreLine
+        if (GPmoves.Gmoves_x2 < 0) Sub 1 from GParticl.Garticl_PisLine
+        if (GPmoves.Gmoves_p2 > 0) Sub 1 from GParticl.Garticl_PisLine
+        if (GPmoves.Gmoves_p2 < 0) Sub 1 from GParticl.Garticl_XreLine
+
+        Sub 1 from GParticl.Garticl_Mlines
+        //******************************************************
+
+        // Insert Code Here
+    End_Procedure   // Backout
+
+
+    // Update:
+
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+
+        Move SyscurGL.Company_Code to Gpmoves.Company_Code
+        Move SyscurGL.Branch_Code  to Gpmoves.Branch_Code
+        Move SyscurGL.Year_Year    to Gpmoves.Year_Year
+
+        Move Gplan.Gplan_Code         to GPmoves.Gplan_Code
+        Move Gthhmgio.Gthhmgio_Code   to GPmoves.Gthhmgio_Code
+        Move Gthhmgio.Gthhmgio_Recr   to GPmoves.Gthhmgio_Recr
+        Move Gthhmgio.Gthhmgio_Period to GPmoves.Gthhmgio_Period
+        Move GParticl.Garticl_C_Code2 to GPmoves.Gmoves_C_Code2
+
+
+
+
+
+        add GPmoves.Gmoves_x2  to GParticl.Garticl_Sx2
+        add GPmoves.Gmoves_p2  to GParticl.Garticl_Sp2
+        calc (GParticl.Garticl_Syp2+GPmoves.Gmoves_x2-GPmoves.Gmoves_p2) to GParticl.Garticl_Syp2
+
+        //******************************************************
+        if (GPmoves.Gmoves_x2 > 0) add 1 to GParticl.Garticl_XreLine
+        if (GPmoves.Gmoves_x2 < 0) add 1 to GParticl.Garticl_PisLine
+        if (GPmoves.Gmoves_p2 > 0) add 1 to GParticl.Garticl_PisLine
+        if (GPmoves.Gmoves_p2 < 0) add 1 to GParticl.Garticl_XreLine
+
+        add 1 to GParticl.Garticl_Mlines
+        //******************************************************
+
+
+    End_Procedure   // Update
+
+
+    // Request_Save:
+
+    Procedure Request_Save
+        // Insert Code Here
+           forward send request_save
+    End_Procedure   // Request_Save
+
+
+    //1100:cby = globals
+    // Validate_Save:
+
+    Function Validate_Save  Returns Integer
+        Local Integer iReturnVal
+        Forward Get Validate_Save  To iReturnVal
+
+
+        If (Not(iReturnVal)) Begin
+            // Insert Code Here
+            //1100:cby = globals
+            If ( ;
+                (Not(Gpmoves.Company_Code = SysCurGL.Company_Code)) or;
+                (Not(Gpmoves.Branch_Code  = SysCurGL.Branch_Code )) or;
+                (Not(Gpmoves.Year_Year    = SysCurGL.Year_year   ));
+                ) Send Operation_Not_Allowed 1100
+         End
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+
+    //2100:cby = globals
+    // Validate_Delete:
+
+    Function Validate_Delete  Returns Integer
+        Local Integer iReturnVal
+        Forward Get Validate_Delete  To iReturnVal
+        If (Not(iReturnVal)) Begin
+            // Insert Code Here
+            //2100:cby = globals
+            If ( ;
+                (Not(Gpmoves.Company_Code = SysCurGL.Company_Code)) or;
+                (Not(Gpmoves.Branch_Code  = SysCurGL.Branch_Code )) or;
+                (Not(Gpmoves.Year_Year    = SysCurGL.Year_Year   ));
+                ) Send Operation_Not_Allowed 2100
+         End
+        Function_Return iReturnVal
+    End_Function   // Validate_Delete
+
+
+    Procedure Operation_Not_Allowed  Integer iError_Num
+        Case Begin
+            Case (iError_Num = 1100)
+                Error 1100 "DDC 164:‹ž ˜§¦›œ¡«ã „«˜ ¨å˜-•¨ã©ž"
+                Case Break
+
+            Case (iError_Num = 2100)
+                Error 2100 "DDC 164:‹ž ˜§¦›œ¡«ã „«˜ ¨å˜-•¨ã©ž"
+                Case Break
+
+            Case Else
+                Forward Send Operation_Not_Allowed  iError_Num
+        Case End
+    End_Procedure   //operation_not_allowed
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Gpmoves.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Gparticl.File_Number
+        Send Add_Server_File  Gplan.File_Number
+
+        // Field-based properties.......................
+
+        // Gpmoves.Company_Code
+
+        // Gpmoves.Branch_Code
+
+        // Gpmoves.Year_Year
+
+        // Gpmoves.Gtypkin_Code
+
+        // Gpmoves.Garticl_Recr
+
+        // Gpmoves.Gplan_Recr
+
+        // Gpmoves.Gmoves_Rec0
+
+        // Gpmoves.Gmoves_Recr
+
+        // Gpmoves.Gplan_Code
+
+        // Gpmoves.Gmoves_Aitiol
+
+        // Gpmoves.Gmoves_X0
+
+        // Gpmoves.Gmoves_P0
+
+        // Gpmoves.Gmoves_X0k
+
+        // Gpmoves.Gmoves_P0k
+
+        // Gpmoves.Gmoves_X00
+
+        // Gpmoves.Gmoves_P00
+
+        // Gpmoves.Gmoves_X00k
+
+        // Gpmoves.Gmoves_P00k
+
+        // Gpmoves.Gmoves_X1
+
+        // Gpmoves.Gmoves_P1
+
+        // Gpmoves.Gmoves_X2
+
+        // Gpmoves.Gmoves_P2
+
+        // Gpmoves.Gmoves_X2k
+
+        // Gpmoves.Gmoves_P2k
+
+        // Gpmoves.Gmoves_Xr
+
+        // Gpmoves.Gmoves_Pr
+
+        // Gpmoves.Gmoves_Xrk
+
+        // Gpmoves.Gmoves_Prk
+
+        // Gpmoves.Gmoves_Dlixis
+
+        // Gpmoves.Gmoves_A_Code
+
+        // Gpmoves.Gthhmgio_Code
+
+        // Gpmoves.Gthhmgio_Recr
+
+        // Gpmoves.Gmoves_Aa
+
+        // Gpmoves.Gmoves_Status_E
+
+        // Gpmoves.Gmoves_Status_A
+
+        // Gpmoves.Gmoves_S0
+
+        // Gpmoves.Gmoves_Ys0
+
+        // Gpmoves.Gmoves_S1
+
+        // Gpmoves.Gmoves_Ys1
+
+        // Gpmoves.Gmoves_S2
+
+        // Gpmoves.Gmoves_Ys2
+
+        // Gpmoves.Gmoves_Sc_Code2
+
+        // Gpmoves.Gmoves_Open
+
+        // Gpmoves.Gmoves_Aopen
+
+        // Gpmoves.Gmoves_M_Code
+
+        // Gpmoves.Gmoves_Yn_Myf
+
+        // Gpmoves.Gmoves_Myf_Axia
+
+        // Gpmoves.Gmoves_Kk
+
+        // Gpmoves.Gmoves_C_Code2
+
+        // Gpmoves.Gthhmgio_Period
+
+        //DDB-DefineFieldEnd
+
+        Set Main_File            To Gpmoves.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Gparticl.File_Number
+        Send Add_Server_File  Gplan.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_NEW_SAVE
+
+        Define_Auto_Increment  Sysrecg.Gpmoves_Rec0  To GPmoves.Gmoves_Rec0
+
+        // Field-based properties.......................
+
+        // Gpmoves.Company_Code
+
+        // Gpmoves.Branch_Code
+
+        // Gpmoves.Year_Year
+
+        // Gpmoves.Gtypkin_Code
+
+        // Gpmoves.Garticl_Rec0
+
+        // Gpmoves.Gplan_Rec0
+
+        // Gpmoves.Gmoves_Rec0
+
+        // Gpmoves.Gmoves_Pkid
+
+        // Gpmoves.Garticl_Pkid
+
+        // Gpmoves.Gplan_Code
+
+        // Gpmoves.Gmoves_Aitiol
+
+        // Gpmoves.Gmoves_X0
+
+        // Gpmoves.Gmoves_P0
+
+        // Gpmoves.Gmoves_X0k
+
+        // Gpmoves.Gmoves_P0k
+
+        // Gpmoves.Gmoves_X00
+
+        // Gpmoves.Gmoves_P00
+
+        // Gpmoves.Gmoves_X00k
+
+        // Gpmoves.Gmoves_P00k
+
+        // Gpmoves.Gmoves_X1
+
+        // Gpmoves.Gmoves_P1
+
+        // Gpmoves.Gmoves_X2
+
+        // Gpmoves.Gmoves_P2
+
+        // Gpmoves.Gmoves_X2k
+
+        // Gpmoves.Gmoves_P2k
+
+        // Gpmoves.Gmoves_Xr
+
+        // Gpmoves.Gmoves_Pr
+
+        // Gpmoves.Gmoves_Xrk
+
+        // Gpmoves.Gmoves_Prk
+
+        // Gpmoves.Gmoves_Dlixis
+
+        // Gpmoves.Gmoves_A_Code
+
+        // Gpmoves.Gthhmgio_Code
+
+        // Gpmoves.Gthhmgio_Rec0
+
+        // Gpmoves.Gmoves_Aa
+
+        // Gpmoves.Gmoves_Status_E
+
+        // Gpmoves.Gmoves_Status_A
+
+        // Gpmoves.Gmoves_S0
+
+        // Gpmoves.Gmoves_Ys0
+
+        // Gpmoves.Gmoves_S1
+
+        // Gpmoves.Gmoves_Ys1
+
+        // Gpmoves.Gmoves_S2
+
+        // Gpmoves.Gmoves_Ys2
+
+        // Gpmoves.Gmoves_Sc_Code2
+
+        // Gpmoves.Gmoves_Open
+
+        // Gpmoves.Gmoves_Aopen
+
+        // Gpmoves.Gmoves_M_Code
+
+        // Gpmoves.Gmoves_Yn_Myf
+
+        // Gpmoves.Gmoves_Myf_Axia
+
+        // Gpmoves.Gmoves_Kk
+
+        // Gpmoves.Gmoves_C_Code2
+
+        // Gpmoves.Gthhmgio_Period
+
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Gpmoves_DataDictionary
+
+
+
+
+//DDB-FileEnd

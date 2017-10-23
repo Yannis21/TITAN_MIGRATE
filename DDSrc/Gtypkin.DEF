@@ -1,0 +1,71 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: GTYPKIN (# 151)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : GTYPKIN
+  USER DISPLAY NAME         : Gtypkin
+  DATAFLEX FILE NAME        : GTYPKIN
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 384       ( USED: 263 )
+  MAX NUMBER OF RECORDS     : 10000     ( USED: 2 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC     10     1      
+  2  BRANCH_CODE      ASC     10    11      
+  3  YEAR_YEAR        NUM    4.0    21      
+  4  GTYPKIN_CODE     NUM    6.0    23  1   
+  5  GTYPKIN_REC0     NUM   14.0    26      
+  6  YEAR_RECR        ASC     12    33      
+  7  GTHHMGIO_CODE    NUM    4.0    45  4   
+  8  GTHHMGIO_RECR    ASC     12    47      GTHHMGIO.FIELD_5 (155,5)
+  9  GTYPKIN_DESCR    ASC     60    59      
+ 10  GTYPKIN_ANTI     ASC     20   119      
+ 11  GTYPKIN_PRINTER  ASC     60   139      
+ 12  GTYPKIN_FORM     ASC     10   199      
+ 13  GTYPKIN_L_NO     NUM   14.0   209      
+ 14  GTYPKIN_L_HMNIA  DAT      6   216      
+ 15  GTYPKIN_SEIRA    ASC      3   219      
+ 16  GTYPKIN_ABR      ASC     10   222      
+ 17  GTYPKIN_FLAG01   NUM    2.0   232      
+ 18  GTYPKIN_FLAG02   NUM    2.0   233      
+ 19  GTYPKIN_FLAG03   NUM    2.0   234      
+ 20  GTYPKIN_FLAG04   NUM    2.0   235      
+ 21  GTYPKIN_FLAG05   NUM    2.0   236      
+ 22  GTYPKIN_FLAG06   NUM    2.0   237      
+ 23  GTYPKIN_FLAG07   NUM    2.0   238      
+ 24  GTYPKIN_FLAG08   NUM    2.0   239      
+ 25  GTYPKIN_FLAG09   NUM    2.0   240      
+ 26  GTYPKIN_FLAG10   NUM    2.0   241      
+ 27  GTYPKIN_FLAG11   NUM    2.0   242      
+ 28  GTYPKIN_FLAG12   NUM    2.0   243      
+ 29  GTYPKIN_FLAG13   NUM    2.0   244      
+ 30  GTYPKIN_FLAG14   NUM    2.0   245      
+ 31  GTYPKIN_FLAG15   NUM    2.0   246      
+ 32  GTYPKIN_FLAG16   NUM    2.0   247      
+ 33  GTYPKIN_FLAG17   NUM    2.0   248      
+ 34  GTYPKIN_FLAG18   NUM    2.0   249      
+ 35  GTYPKIN_FLAG19   NUM    2.0   250      
+ 36  GTYPKIN_FLAG20   NUM    2.0   251      
+ 37  GTYPKIN_RECR     ASC     12   252  2   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    GTYPKIN_CODE    NO  NO       3      2       1     ON-LINE
+
+  2    GTYPKIN_RECR    NO  NO       12     3       1     ON-LINE
+
+  4    GTHHMGIO_CODE   NO  NO       14     3       2     ON-LINE
+       GTYPKIN_RECR    NO  NO 
+

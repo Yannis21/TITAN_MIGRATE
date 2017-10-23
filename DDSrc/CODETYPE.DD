@@ -1,0 +1,84 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : CODETYPE.DD
+// Class Name: Codetype_DataDictionary
+// Revision  : 4
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Codetype
+Open Codemast
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList CodeType_SL  codetype.sl
+Register_Object CodeType_SL
+//DDB-SelectionEnd
+
+Class Codetype_DataDictionary is a DataDictionary
+
+    // Disallow blank keys
+    Function Validate_Save Returns Integer
+        If CodeType.Type eq '' Begin
+            Error 300 '‰œ¤âª « £âª ›œ¤ œ§ «¨â§¦¤˜« .'
+            Function_Return 1
+        End
+    End_Function // Validate_Save
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Codetype.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Codemast.File_Number
+
+        // Field-based properties.......................
+
+        // Codetype.Type
+        Set Field_Options          Field Codetype.Type To DD_AUTOFIND    DD_REQUIRED    DD_CAPSLOCK   
+        Set Field_Prompt_Object    Field Codetype.Type To (CodeType_SL(Self))
+        Set Key_Field_State        Field Codetype.Type To TRUE
+
+        // Codetype.Description
+        Set Field_Prompt_Object    Field Codetype.Description To (CodeType_SL(Self))
+
+        // Codetype.Comment
+        Set Status_Help            Field Codetype.Comment To "‹å˜ ˜¤˜¢¬« ¡æ«œ¨ž §œ¨ š¨˜­ã «žª ¡˜«žš¦¨å˜ª «¦¬ ¡à› ¡¦ç."
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+End_Class    //  Codetype_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use codetype.sl      // CodeType_SL
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

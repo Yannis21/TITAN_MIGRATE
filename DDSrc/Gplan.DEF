@@ -1,0 +1,105 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: GPLAN (# 150)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : GPLAN
+  USER DISPLAY NAME         : Gplan
+  DATAFLEX FILE NAME        : GPLAN
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 1152      ( USED: 783 )
+  MAX NUMBER OF RECORDS     : 1000000   ( USED: 54 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC     10     1  1   
+  2  BRANCH_CODE      ASC     10    11  1   
+  3  YEAR_YEAR        NUM    4.0    21      
+  4  GPLAN_CODE       ASC     20    23  3   
+  5  GPLAN_REC0       NUM   14.0    43      
+  6  YEAR_RECR        ASC     12    50      
+  7  GPLAN_DESCR1     ASC     60    62  6   
+  8  GPLAN_DESCR2     ASC     60   122      
+  9  GPLAN_BATHMOS    NUM    2.0   182      
+ 10  GPLAN_ANOEP      ASC     20   183      
+ 11  GPLAN_O_CODE     ASC     10   203      
+ 12  GPLAN_YN_XFER    NUM    2.0   213      
+ 13  GPLAN_YN_LAST    NUM    2.0   214  4   
+ 14  GPLAN_YN_KIN     NUM    2.0   215      
+ 15  GPLAN_YN_KK      NUM    2.0   216      
+ 16  GPLAN_XPM        NUM    2.0   217      
+ 17  GPLAN_YN_XY      NUM    2.0   218      
+ 18  GPLAN_YN_PY      NUM    2.0   219      
+ 19  GPLAN_FPAENT     ASC      1   220      
+ 20  GPLAN_FPAENT_YN  NUM    2.0   221      
+ 21  GPLAN_AFM        ASC     20   222      
+ 22  GPLAN_ADDR       ASC     50   242      
+ 23  GPLAN_TK         ASC     10   292      
+ 24  GPLAN_POLI       ASC     30   302      
+ 25  GPLAN_DOY        ASC     10   332      
+ 26  GPLAN_J_CODE     ASC     10   342      
+ 27  GPLAN_C_CODE2    ASC     10   352      
+ 28  GPLAN_TEL        ASC     20   362      
+ 29  GPLAN_EMAIL      ASC     80   382      
+ 30  GPLAN_RESP       ASC     20   462      
+ 31  GPLAN_BITMAP     ASC     80   482      
+ 32  GPLAN_REP_CODE   ASC     20   562      
+ 33  GPLAN_REP_PCT    NUM    4.4   582      
+ 34  GPLAN_I_XY_CODE  ASC     20   586      
+ 35  GPLAN_I_PY_CODE  ASC     20   606      
+ 36  GPLAN_I_CTYPKIN  NUM    6.0   626      
+ 37  GPLAN_I_A_CODE   ASC     10   629      
+ 38  GPLAN_YN_MYFP    NUM    2.0   639      
+ 39  GPLAN_YN_MYFA    NUM    2.0   640      
+ 40  GPLAN_MYFNUMP    NUM   14.0   641      
+ 41  GPLAN_MYFVALP    NUM   14.8   648      
+ 42  GPLAN_MYFNUMA    NUM   14.0   659      
+ 43  GPLAN_MYFVALA    NUM   14.4   666      
+ 44  GPLAN_MYF_SUMP   NUM    2.0   675      
+ 45  GPLAN_MYF_SUMA   NUM    2.0   676      
+ 46  GPLAN_SX0        NUM   14.8   677      
+ 47  GPLAN_SP0        NUM   14.8   688      
+ 48  GPLAN_SX00       NUM   14.8   699      
+ 49  GPLAN_SP00       NUM   14.8   710      
+ 50  GPLAN_SXR        NUM   14.8   721      
+ 51  GPLAN_SPR        NUM   14.8   732      
+ 52  GPLAN_SX2        NUM   14.8   743      
+ 53  GPLAN_SP2        NUM   14.8   754      
+ 54  GPLAN_GMHNNOREC  NUM   14.0   765      
+ 55  GPLAN_RECR       ASC     12   772  2   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY_CODE    NO  NO       40     6       3     ON-LINE
+       BRANCH_CODE     NO  NO 
+       GPLAN_CODE      NO  NO 
+
+  2    GPLAN_RECR      NO  NO       12     4       1     ON-LINE
+
+  3    GPLAN_CODE      NO  NO       40     6       3     ON-LINE
+       COMPANY_CODE    NO  NO 
+       BRANCH_CODE     NO  NO 
+
+  4    COMPANY_CODE    NO  NO       41     6       4     ON-LINE
+       BRANCH_CODE     NO  NO 
+       GPLAN_YN_LAST   NO  NO 
+       GPLAN_CODE      NO  NO 
+
+  5    COMPANY_CODE    NO  NO       100    9       4     ON-LINE
+       BRANCH_CODE     NO  NO 
+       GPLAN_DESCR1    NO  NO 
+       GPLAN_CODE      NO  NO 
+
+  6    GPLAN_DESCR1    NO  NO       63     7       2     ON-LINE
+       RECNUM          NO  NO 
+

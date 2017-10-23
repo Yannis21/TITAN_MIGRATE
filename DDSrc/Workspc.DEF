@@ -1,0 +1,53 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: WORKSPC (# 78)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : Workspc
+  USER DISPLAY NAME         : Workspc
+  DATAFLEX FILE NAME        : WORKSPC
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 512       ( USED: 485 )
+  MAX NUMBER OF RECORDS     : 1000      ( USED: 1 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  ID               ASC     10     1  1   
+  2  TITLOS           ASC     60    11  2   
+  3  APPSRCEXTRAPATH  ASC    200    71  3   
+  4  DATAEXTRAPATH    ASC    200   271  6   
+  5  WORKING          ASC      1   471  4   
+  6  FILELIST_NAME    ASC     12   472      
+  7  YEAR             NUM    4.0   484  5   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    ID              NO  NO       10     2       1     ON-LINE
+
+  2    TITLOS          NO  NO       70     4       2     ON-LINE
+       ID              NO  NO 
+
+  3    APPSRCEXTRAPATH NO  YES      210    10      2     ON-LINE
+       ID              NO  NO 
+
+  4    WORKING         NO  NO       71     4       3     ON-LINE
+       TITLOS          NO  NO 
+       ID              NO  NO 
+
+  5    YEAR            NO  NO       72     4       3     ON-LINE
+       TITLOS          NO  NO 
+       ID              NO  NO 
+
+  6    DATAEXTRAPATH   NO  NO       210    10      2     ON-LINE
+       ID              NO  NO 
+

@@ -1,0 +1,45 @@
+-----------------------------------------------------------------------------
+  DATE: 10/10/112      TIME: 09:38                                  PAGE:  1
+  FILE DEFINITION FOR FILE: BANKS (# 127)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : Banks
+  USER DISPLAY NAME         : Banks
+  DATAFLEX FILE NAME        : BANKS
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 170       ( USED: 108 )
+  MAX NUMBER OF RECORDS     : 1000000   ( USED: 102 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  BANK_ID          ASC      4     1  2   
+  2  BANK_NAME        ASC     50     5  4   
+  3  BANK_OLDER_CODE  ASC      4    55  1   
+  4  BANK_OLDER_DESC  ASC     50    59  3   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    BANK_OLDER_CODE NO  NO       8      4       2     ON-LINE
+       BANK_ID         NO  NO 
+
+  2    BANK_ID         NO  NO       8      4       2     ON-LINE
+       BANK_OLDER_CODE NO  NO 
+
+  3    BANK_OLDER_DESC NO  NO       58     7       3     ON-LINE
+       BANK_OLDER_CODE NO  NO 
+       BANK_ID         NO  NO 
+
+  4    BANK_NAME       NO  NO       58     7       3     ON-LINE
+       BANK_ID         NO  NO 
+       BANK_OLDER_CODE NO  NO 
+

@@ -1,0 +1,38 @@
+-----------------------------------------------------------------------------
+  DATE: 26/07/2017      TIME: 09:17                                  PAGE:  1
+  FILE DEFINITION FOR FILE: MICITIES (# 140)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : MICITIES
+  USER DISPLAY NAME         : MICITIES
+  DATAFLEX FILE NAME        : MICITIES
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 34        ( USED: 34 )
+  MAX NUMBER OF RECORDS     : 1000000   ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  CITY_ID          NUM    4.0     1  1   
+  2  CITY_DESCR       ASC     30     3  2   
+  3  TOWN_ID          NUM    4.0    33  3   TOWNS.FIELD_2 (57,2)
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    CITY_ID         NO  NO       2      3       1     ON-LINE
+
+  2    CITY_DESCR      NO  NO       32     6       2     ON-LINE
+       CITY_ID         NO  NO 
+
+  3    TOWN_ID         NO  NO       4      3       2     ON-LINE
+       CITY_ID         NO  NO 
+

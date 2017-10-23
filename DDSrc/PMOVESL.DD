@@ -1,0 +1,239 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : PMOVESL.DD
+// Class Name: Pmovesl_DataDictionary
+// Revision  : 5
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Pmovesl
+Open Wax
+Open Witemx
+Open Particle
+
+//DDB-HeaderEnd
+Open pmovesl
+Set_attribute  DF_FILE_ALIAS of pmovesl.File_number to DF_FILE_IS_ALIAS
+Set_attribute  DF_FILE_ALIAS of pmoves.File_number  to DF_FILE_IS_MASTER
+
+// clear the relationship in the alias file
+Set_relate pmovesl.wax_recr to  |FN0,0
+Set_relate pmovesl.witemx_recr to |FN0,0
+Set_relate pmovesl.partl_recr to |FN0,0
+Class Pmovesl_DataDictionary  is a DataDictionary_Sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Pmovesl.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Wax.File_Number
+        Send Add_Server_File  Witemx.File_Number
+        Send Add_Server_File  Particle.File_Number
+
+        // Field-based properties.......................
+
+        // Pmovesl.Company_Code
+
+        // Pmovesl.Branch_Code
+
+        // Pmovesl.Year_Year
+
+        // Pmovesl.Ctypkin_Code
+
+        // Pmovesl.Wtypkin_Code
+
+        // Pmovesl.Custprom_Code
+
+        // Pmovesl.Client_Id
+
+        // Pmovesl.Cn_Code
+
+        // Pmovesl.Ptyppar_Code
+
+        // Pmovesl.Partl_Hmnia
+
+        // Pmovesl.Pseira_Seira
+
+        // Pmovesl.Partl_No
+
+        // Pmovesl.Partl_Rec0
+
+        // Pmovesl.Witemkat_Code
+
+        // Pmovesl.Units_Code
+
+        // Pmovesl.Item_Code
+
+        // Pmovesl.Witemx_Code
+
+        // Pmovesl.Wapokat_Code
+
+        // Pmovesl.Wapomast_Code
+
+        // Pmovesl.Wax_Code
+
+        // Pmovesl.Wax_Recr
+
+        // Pmovesl.Witemx_Recr
+
+        // Pmovesl.Partl_Recr
+
+        // Pmovesl.Pms_Rec0
+
+        // Pmovesl.Pms_No
+
+        // Pmovesl.Pms_Recr
+
+        // Pmovesl.Pms_Unitcode
+
+        // Pmovesl.Pms_Qty
+
+        // Pmovesl.Pms_Unitprice
+
+        // Pmovesl.Pms_Ambd
+
+        // Pmovesl.Pms_Pctdisc
+
+        // Pmovesl.Pms_Discam
+
+        // Pmovesl.Pms_Amaftdisc
+
+        // Pmovesl.Pms_Vatpct
+
+        // Pmovesl.Pms_Vatam
+
+        // Pmovesl.Pms_Exrampct
+
+        // Pmovesl.Pms_Exdet
+
+        // Pmovesl.Pms_Payable
+
+        // Pmovesl.Pms_Axia
+
+        // Pmovesl.Pms_X0
+
+        // Pmovesl.Pms_P0
+
+        // Pmovesl.Pms_X00
+
+        // Pmovesl.Pms_P00
+
+        // Pmovesl.Pms_X1
+
+        // Pmovesl.Pms_P1
+
+        // Pmovesl.Pms_X2
+
+        // Pmovesl.Pms_P2
+
+        // Pmovesl.Pms_Dlixis
+
+        // Pmovesl.Pms_A_Code
+
+        // Pmovesl.Pms_Status_E
+
+        // Pmovesl.Pms_Status_A
+
+        // Pmovesl.Pms_S0
+
+        // Pmovesl.Pms_Ys0
+
+        // Pmovesl.Pms_S1
+
+        // Pmovesl.Pms_Ys1
+
+        // Pmovesl.Pms_S2
+
+        // Pmovesl.Pms_Ys2
+
+        // Pmovesl.Pms_Sc_Code2
+
+        // Pmovesl.Pms_Open
+
+        // Pmovesl.Pms_Aopen
+
+        // Pmovesl.Pms_M_Code
+
+        // Pmovesl.Pms_Yn_Myf
+
+        // Pmovesl.Pms_Myf_Axia
+
+        // Pmovesl.Pms_Kk
+
+        // Pmovesl.Pms_C_Code2
+
+        // Pmovesl.Pms_Cn_Code
+
+        // Pmovesl.Wcmoves_Recr
+
+        // Pmovesl.Pms_Module
+
+        // Pmovesl.Btnl2_Recr
+
+        // Pmovesl.Btnemp_Recr
+
+        // Pmovesl.Btarticle_Recr
+
+        // Pmovesl.Sls_Id
+
+        // Pmovesl.Presp_Id
+
+        // Pmovesl.Cnt_Id
+
+        // Pmovesl.Mhxanik_Id
+
+        // Pmovesl.Extra_Epimer
+
+        // Pmovesl.Ekpt_Epimer
+
+        // Pmovesl.Clorderd_Recr
+
+        // Pmovesl.Witemx_Descr
+
+        // Pmovesl.Ptyppar_Descr
+
+        // Pmovesl.Ti_Typonei_Pms
+
+        // Pmovesl.Timol_Qty
+
+        // Pmovesl.Timol_Ypol
+
+        // Pmovesl.Posa_Apo_Dap
+
+        // Pmovesl.Qty_Ypol
+
+        // Pmovesl.Pms_Selected
+
+        // Pmovesl.Qty_Kinhshs
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Pmovesl_DataDictionary
+//DDB-FileEnd

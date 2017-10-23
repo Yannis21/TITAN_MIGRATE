@@ -1,0 +1,66 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : RP1.DD
+// Class Name: Rp1_DataDictionary
+// Revision  : 3
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Rp1
+Open Rp2
+Open Sysrec
+
+//DDB-HeaderEnd
+
+Class Rp1_DataDictionary  is a DataDictionary_Sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Rp1.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Rp2.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrec.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrec.Rp1_Kodikos  To Rp1.Kodikos
+
+        // Field-based properties.......................
+
+        // Rp1.Kodikos
+        Set Field_Options          Field Rp1.Kodikos To DD_AUTOFIND   
+        Set Key_Field_State        Field Rp1.Kodikos To TRUE
+
+        // Rp1.Perigrafh
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Rp1_DataDictionary
+//DDB-FileEnd

@@ -1,0 +1,134 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : PAGMOVES.DD
+// Class Name: Pagmoves_DataDictionary
+// Revision  : 37
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Pagmoves
+Open Pagia
+Open Pagkin
+Open Sysrecg
+
+//DDB-HeaderEnd
+
+Class Pagmoves_DataDictionary  is a DataDictionary_sec
+ 
+     
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+    
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here 
+        Move SysCurXR.Company_Code       to pagmoves.Company_Code
+        Move SysCurXR.Branch_Code        to pagmoves.Branch_Code
+        Move SysCurXR.Year_Year          to pagmoves.Year_Year
+        move pagia.pagia_code            to pagmoves.pagia_code
+        move pagia.pagia_codea           to pagmoves.pagia_codea 
+        if ((pagkin.pagkin_code = '102') OR (pagkin.pagkin_code = '103')) add pagmoves.pagmoves_axia to pagia.pagia_synol   
+    End_Procedure   // Update
+ 
+ //   Procedure OnConstrain
+ //       Forward Send OnConstrain
+ //       Constrain pagmoves.Company_Code  eq SysCurXR.Company_Code
+ //       Constrain pagmoves.Branch_Code   eq SysCurXR.Branch_Code
+ //       Constrain pagmoves.Year_Year     eq SysCurXR.Year_Year
+ //   End_Procedure
+    
+     Procedure Creating
+        Forward Send Creating
+        // Insert Code Here   
+        
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(pagmoves.pagmoves_rec0)))))) to pagmoves.pagmoves_Recr
+        move pagmoves.pagmoves_date  to pagia.pagia_lastdate
+    End_Procedure   // Creating  
+    
+     Procedure Backout
+        Forward Send Backout
+        // Insert Code Here
+        if ((pagkin.pagkin_code = '102') or (pagkin.pagkin_code = '103')) sub  pagmoves.pagmoves_axia from pagia.pagia_synol 
+     End_Procedure 
+    
+    
+    
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Pagmoves.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Pagia.File_Number
+        Send Add_Server_File  Pagkin.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecg.Pagmoves_Rec0  To Pagmoves.Pagmoves_Rec0
+
+        // Field-based properties.......................
+
+        // Pagmoves.Company_Code
+
+        // Pagmoves.Branch_Code
+
+        // Pagmoves.Year_Year
+
+        // Pagmoves.Pagia_Code
+
+        // Pagmoves.Pagia_Codea
+
+        // Pagmoves.Pagia_Recr
+
+        // Pagmoves.Pagmoves_Rec0
+
+        // Pagmoves.Pagmoves_Recr
+
+        // Pagmoves.Pagmoves_Date
+        Set Field_Mask_Type        Field Pagmoves.Pagmoves_Date To MASK_DATE_WINDOW
+
+        // Pagmoves.Pagmoves_No
+
+        // Pagmoves.Pagmoves_Parast
+
+        // Pagmoves.Pagmoves_Axia
+
+        // Pagmoves.Pagmoves_Posost
+
+        // Pagmoves.Pagmoves_Qty
+
+        // Pagmoves.Pagkin_Code
+
+        // Pagmoves.Ektyp_Theor
+
+        // Pagmoves.Se_Logik
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Pagmoves_DataDictionary
+//DDB-FileEnd

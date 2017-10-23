@@ -1,0 +1,104 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : WAPOMAST.DD
+// Class Name: Wapomast_DataDictionary
+// Revision  : 14
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Wapomast
+Open Wax
+Open Wapokat
+Open Sysrecw
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl023  sl023.sl
+Register_Object sl023
+//DDB-SelectionEnd
+
+Class Wapomast_DataDictionary  is a DataDictionary
+    // Update:
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+//        Move SysCurXR.Company_Code   to Wapomast.Company_Code
+//        Move SysCurXR.Branch_Code     to Wapomast.Branch_Code
+//        Move SysCurXR.Year_Year         to Wapomast.Year_Year
+        Move Wapokat.Wapokat_Code   to Wapomast.Wapokat_Code
+    End_Procedure   // Update
+ 
+     Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(Wapomast.Wapomast_Rec0)))))) to Wapomast.Wapomast_Recr
+    End_Procedure   // Creating
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Wapomast.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Wax.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Wapokat.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecw.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecw.Wapomast_Rec0  To Wapomast.Wapomast_Rec0
+
+        // Field-based properties.......................
+
+        // Wapomast.Wapokat_Code   
+
+        // Wapomast.Wapokat_Recr   
+
+        // Wapomast.Wapomast_Code  
+        Set Field_Options          Field Wapomast.Wapomast_Code   To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Wapomast.Wapomast_Code   To (sl023(Self))
+
+        // Wapomast.Wapomast_Rec0  
+        Set Field_Options          Field Wapomast.Wapomast_Rec0   To DD_AUTOFIND   
+
+        // Wapomast.Wapomast_Descr 
+        Set Field_Prompt_Object    Field Wapomast.Wapomast_Descr  To (sl023(Self))
+
+        // Wapomast.Wapomast_Recr  
+        Set Field_Options          Field Wapomast.Wapomast_Recr   To DD_AUTOFIND   
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Wapomast_DataDictionary
+//DDB-Selection-pkg-Start
+Use sl023.sl         // sl023
+//DDB-Selection-pkg-End
+//DDB-FileEnd

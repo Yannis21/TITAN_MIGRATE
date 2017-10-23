@@ -1,0 +1,86 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : BANKS.DD
+// Class Name: Banks_DataDictionary
+// Revision  : 8
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Banks
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList slBanks  slBanks.SL
+Register_Object slBanks
+//DDB-SelectionEnd
+
+Class Banks_DataDictionary is a DataDictionary_Sec
+ 
+//    Procedure Save_Main_File
+//        Forward Send Save_Main_File
+//        // Insert Code Here
+//        If (Trim(Banks.Bank_Older_Code)<>"") Begin
+//            Clear Codemast
+//            Move "BANK"                                     to Codemast.Type
+//            Move Banks.Bank_Older_Code                      to Codemast.Code
+//            Find Eq Codemast by Index.1
+//            if (Found)  Move (Trim(Codemast.Description))   to Banks.Bank_Older_Desc
+//            Else        Move ""                             to Banks.Bank_Older_Desc
+//        End
+//        Else Move "" to Banks.Bank_Older_Desc
+//    End_Procedure   // Save_Main_File
+ 
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Banks.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Field-based properties.......................
+
+        // Banks.Bank_Id
+        Set Field_Options          Field Banks.Bank_Id To DD_AUTOFIND   
+
+        // Banks.Bank_Name
+
+        // Banks.Bank_Older_Code
+        Set Field_Prompt_Object    Field Banks.Bank_Older_Code To (slBanks(Self))
+
+        // Banks.Bank_Older_Desc
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Banks_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use slBanks.SL       // slBanks
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

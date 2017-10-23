@@ -1,0 +1,241 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : BRANCH.DD
+// Class Name: Branch_DataDictionary
+// Revision  : 95
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Branch
+Open Year
+Open Brzones
+Open Tpbranch
+Open Company
+Open Sysrecg
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Branch_Branch_Doy_VT
+Register_Object Branch_Branch_C_Code0_VT
+
+Object Branch_Branch_Doy_VT  is a CodeValidationTable
+    Set Type_Value        To "DOY"
+    Set Validate_State    To FALSE
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Branch_Branch_Doy_VT
+
+Object Branch_Branch_C_Code0_VT  is a CodeValidationTable
+    Set Type_Value        To ""
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Branch_Branch_C_Code0_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList SL002  Sl002.sl
+Register_Object SL002
+//DDB-SelectionEnd
+
+Class Branch_DataDictionary  is a DataDictionary
+ 
+    Procedure Save_Main_File
+        Forward Send Save_Main_File
+        // Insert Code Here
+    End_Procedure   // Save_Main_File
+ 
+    Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(Branch.Branch_Site))+;
+                          (Trim(String(Branch.Branch_Rec0)))))) to Branch.Branch_Recr
+    End_Procedure   // Creating
+
+    Procedure Operation_Not_Allowed  Integer iError_Num
+        // Insert Code Here
+        Case Begin
+             Case (iError_Num = 1001)
+                  Error 1001 "DDC 002:€¡˜«á¢¢ž¢¦ª ‰à› ¡æª “§¦¡˜«˜©«ã£˜«¦ª!\n\n‰œ¤æª ‰à› ¡æª"
+             Case Break
+
+             Case Else
+                  Forward Send Operation_Not_Allowed  iError_Num
+        Case End
+    End_Procedure   // Operation_Not_Allowed
+
+
+    // Validate_Save:
+
+    Function Validate_Save  Returns Integer
+        Local Integer iReturnVal
+        Forward Get Validate_Save  To iReturnVal
+        If (Not(iReturnVal)) Begin
+            // Insert Code Here
+            If (Branch.Branch_Code="") Send Operation_Not_Allowed 1001
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Branch.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOENTER     DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Year.File_Number
+        Send Add_Client_File  Brzones.File_Number
+        Send Add_Client_File  Tpbranch.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Company.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecg.Branch_Rec0  To Branch.Branch_Rec0
+
+        // Field-based properties.......................
+
+        // Branch.Company_Code
+
+        // Branch.Branch_Code
+        Set Field_Options          Field Branch.Branch_Code To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Branch.Branch_Code To (SL002(Self))
+        Set Key_Field_State        Field Branch.Branch_Code To TRUE
+
+        // Branch.Branch_Rec0
+
+        // Branch.Branch_Recr
+
+        // Branch.Branch_Name
+        Set Field_Prompt_Object    Field Branch.Branch_Name To (SL002(Self))
+
+        // Branch.Branch_Afm
+
+        // Branch.Branch_Addr
+
+        // Branch.Branch_Tk
+
+        // Branch.Branch_Poli
+
+        // Branch.Branch_Doy
+        Set Field_Value_Table      Field Branch.Branch_Doy To (Branch_Branch_Doy_VT(Self))
+
+        // Branch.Branch_J_Code
+
+        // Branch.Branch_C_Code0
+        Set Field_Value_Table      Field Branch.Branch_C_Code0 To (Branch_Branch_C_Code0_VT(Self))
+
+        // Branch.Branch_C_Code00
+
+        // Branch.Branch_C_Coder
+
+        // Branch.Branch_Tel
+
+        // Branch.Branch_Fax
+
+        // Branch.Branch_Email
+
+        // Branch.Branch_Resp
+
+        // Branch.Branch_Bitmap
+
+        // Branch.Branch_Site
+
+        // Branch.Branch_Apoth
+
+        // Branch.Beto_Site
+
+        // Branch.Path_Exp
+
+        // Branch.Exp_Txtname
+
+        // Branch.Send_Phone
+
+        // Branch.Send_Path_Files
+
+        // Branch.Send_Path_Conf
+
+        // Branch.Tomeas_Code
+
+        // Branch.Ftp_Sec_Retry
+
+        // Branch.Ftp_Sec_Exit
+
+        // Branch.Ras_Name
+
+        // Branch.Ras_Passw
+
+        // Branch.Ras_Domain
+
+        // Branch.Last_Hmnia_Ekt
+
+        // Branch.Deop_Logo
+
+        // Branch.Entolh
+
+        // Branch.Paragogh
+
+        // Branch.Locked_Until
+
+        // Branch.Sap_Code
+
+        // Branch.Perioxh
+
+        // Branch.Egkatastash
+
+        // Branch.Date_Locked
+        Set Field_Mask_Type        Field Branch.Date_Locked To MASK_DATE_WINDOW
+
+        // Branch.Ypokat1
+
+        // Branch.Ypokat1a
+
+        // Branch.Ypokat2
+
+        // Branch.Edra1
+
+        // Branch.Edra1a
+
+        // Branch.Edra2
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+End_Class    // Branch_DataDictionary
+
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use Sl002.sl         // SL002
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

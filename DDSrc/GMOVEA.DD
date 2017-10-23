@@ -1,0 +1,451 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GMOVEA.DD
+// Class Name: Gmovea_DataDictionary
+// Revision  : 17
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Gmovea
+Open Gopen
+Open Garticl
+Open Gplan
+
+//DDB-HeaderEnd
+
+//open master file
+Open Gmove
+
+//define alias-master condition
+Set_Attribute DF_FILE_ALIAS of Gmovea.File_Number to DF_FILE_IS_ALIAS
+Set_Attribute DF_FILE_ALIAS of Gmove.File_Number  to DF_FILE_IS_MASTER
+
+//clear all relationships from the alias file
+Set_Relate Gmovea.Garticl_Recr to |FN0,0
+Set_Relate Gmovea.Gplan_Recr   to |FN0,0
+
+
+Class Gmovea_DataDictionary  is a DataDictionary_Sec
+
+
+      //private
+      //œ¤ž£œ¨é¤œ  «˜ 13 §œ›å˜ open item
+      //¡˜¢œå«˜  ˜§æ update
+      Procedure private.Do_Compute_Open_Itemsa
+                Case Begin
+                     Case (Gmovea.Gmove_X0 > 0) //˜«æ­ ¦ ®¨œà©« ¡æ record
+                          Move "+"                                                 to Gmovea.Gmove_Topen
+                          Move (     Gmovea.Gmove_X0  - Gmovea.Gmove_Open_Sx0) to Gmovea.Gmove_Open_Yx0
+                          Move 0                                                   to Gmovea.Gmove_Open_Yp0
+                     Case Break
+
+                     Case (Gmovea.Gmove_X0 < 0) //¯œ¬«¦- ®¨œà©« ¡æ record
+                          Move "-"                                                 to Gmovea.Gmove_Topen
+                          Move ((Abs(Gmovea.Gmove_X0))- Gmovea.Gmove_Open_Sp0) to Gmovea.Gmove_Open_Yp0
+                          Move 0                                                   to Gmovea.Gmove_Open_Yx0
+                     Case Break
+
+                     Case (Gmovea.Gmove_P0 > 0) //˜«æ­ ¦ § ©«à« ¡æ record
+                          Move "-"                                                 to Gmovea.Gmove_Topen
+                          Move (     Gmovea.Gmove_P0  - Gmovea.Gmove_Open_Sp0) to Gmovea.Gmove_Open_Yp0
+                          Move 0                                                   to Gmovea.Gmove_Open_Yx0
+                     Case Break
+
+                     Case (Gmovea.Gmove_P0 < 0) //¯œç«¦- ®¨œà©« ¡æ record
+                          Move "+"                                                 to Gmovea.Gmove_Topen
+                          Move ((Abs(Gmovea.Gmove_P0))- Gmovea.Gmove_Open_Sx0) to Gmovea.Gmove_Open_Yx0
+                          Move 0                                                   to Gmovea.Gmove_Open_Yp0
+                     Case Break
+                Case End
+      End_Procedure //private.do_compute_open_itemsa
+
+
+
+      //private
+      //œ¢âš®œ  «˜ 13 §œ›å˜ open item
+      //¡˜¢œå«˜  ˜§æ validate save
+      Function  private.fi_Validate_Open_Itemsa Returns Integer
+
+                 //1101+1102+1103+1104:â¢œš®¦  £ã ˜¨¤ž« ¡é¤ ¬§¦¢¦å§à¤ §¨¦ª ©¬©®â« ©ž ¡˜  ©¬©®œ« ©Ÿâ¤«à¤ §¦©é¤
+                           If (Not(Gmovea.Gmove_Open_Yx0 >= 0                       )) Function_Return 1101
+                           If (Not(Gmovea.Gmove_Open_Yp0 >= 0                       )) Function_Return 1102
+                           If (Not(Gmovea.Gmove_Open_Sx0 >= 0                       )) Function_Return 1103
+                           If (Not(Gmovea.Gmove_Open_Sp0 >= 0                       )) Function_Return 1104
+
+                 Case Begin
+                      //1105+1106+1107+1108:â¢œš®¦  š ˜ ˜«æ­ ¦ ®¨œà©« ¡æ record
+                      Case (Gmovea.Gmove_X0 > 0)
+                           If (Not(Gmovea.Gmove_Open_Yx0 <=      Gmovea.Gmove_X0  )) Function_Return 1105
+                           If (Not(Gmovea.Gmove_Open_Sx0 <=      Gmovea.Gmove_X0  )) Function_Return 1106
+                           If (Not(Gmovea.Gmove_Open_Yp0  = 0                       )) Function_Return 1107
+                           If (Not(Gmovea.Gmove_Open_Sp0  = 0                       )) Function_Return 1108
+                      Case Break
+                      //1109+1110+1111+1112:â¢œš®¦  š ˜ ¯œ¬«¦- ®¨œà©« ¡æ record
+                      Case (Gmovea.Gmove_X0 < 0)
+                           If (Not(Gmovea.Gmove_Open_Yx0  = 0                       )) Function_Return 1109
+                           If (Not(Gmovea.Gmove_Open_Sx0  = 0                       )) Function_Return 1110
+                           If (Not(Gmovea.Gmove_Open_Yp0 <= (Abs(Gmovea.Gmove_X0)))) Function_Return 1111
+                           If (Not(Gmovea.Gmove_Open_Sp0 <= (Abs(Gmovea.Gmove_X0)))) Function_Return 1112
+                      Case Break
+                      //1113+1114+1115+1116:â¢œš®¦  š ˜ ˜«æ­ ¦ § ©«à« ¡æ record
+                      Case (Gmovea.Gmove_P0 > 0)
+                           If (Not(Gmovea.Gmove_Open_Yx0  = 0                       )) Function_Return 1113
+                           If (Not(Gmovea.Gmove_Open_Sx0  = 0                       )) Function_Return 1114
+                           If (Not(Gmovea.Gmove_Open_Yp0 <=      Gmovea.Gmove_P0  )) Function_Return 1115
+                           If (Not(Gmovea.Gmove_Open_Sp0 <=      Gmovea.Gmove_P0  )) Function_Return 1116
+                      Case Break
+                      //1117+1118+1119+1120:â¢œš®¦  š ˜ ¯œç«¦- ®¨œà©« ¡æ record
+                      Case (Gmovea.Gmove_P0 < 0)
+                           If (Not(Gmovea.Gmove_Open_Yx0 <= (Abs(Gmovea.Gmove_P0)))) Function_Return 1117
+                           If (Not(Gmovea.Gmove_Open_Sx0 <= (Abs(Gmovea.Gmove_P0)))) Function_Return 1118
+                           If (Not(Gmovea.Gmove_Open_Yp0  = 0                       )) Function_Return 1119
+                           If (Not(Gmovea.Gmove_Open_Sp0  = 0                       )) Function_Return 1120
+                      Case Break
+                 Case End
+
+                 Function_Return 0 //æ¢˜ ok
+      End_Function //private.fi_validate_open_itemsa
+
+    Procedure Update
+          Send private.Do_Compute_Open_Itemsa
+    End_Procedure //update
+
+    Procedure Operation_Not_Allowed Integer iError_Num
+              String lsError_Message
+              Case Begin
+                   //˜§æ validate save
+                   Case (iError_Num = 1101)
+                        Move ("DDC 067:€¡˜«á¢¢ž¢ž „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "’¦ ˜©¬©®â« ©«¦ ®¨œà©« ¡æ ¬§æ¢¦ §¦ œå¤˜  ˜¨¤ž« ¡æ !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1102)
+                        Move ("DDC 067:€¡˜«á¢¢ž¢ž „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "’¦ ˜©¬©®â« ©«¦ § ©«à« ¡æ ¬§æ¢¦ §¦ œå¤˜  ˜¨¤ž« ¡æ !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1103)
+                        Move ("DDC 067:€¡˜«á¢¢ž¢ž „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "† ¡á¢¬¯ž «žª ®¨âà©žª œå¤˜  ˜¨¤ž« ¡ã !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1104)
+                        Move ("DDC 067:€¡˜«á¢¢ž¢ž „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "† ¡á¢¬¯ž «žª §å©«à©žª œå¤˜  ˜¨¤ž« ¡ã !");
+                        to lsError_Message
+                   Case Break
+                   //---------------------------------------Ÿœ« ¡âª ®¨œé©œ ª-----------------
+                   Case (iError_Num = 1105)
+                        Move ("DDC 067:€¡˜«á¢¢ž¢ž •¨œà©« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "’¦ ˜©¬©®â« ©«¦ ®¨œà©« ¡æ ¬§æ¢¦ §¦ ¬§œ¨™˜å¤œ  «ž¤ ¦¢ ¡ã ®¨âà©ž !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1106)
+                        Move ("DDC 067:€¡˜«á¢¢ž¢ž •¨œà©« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "† ¡á¢¬¯ž «žª ®¨âà©žª ¬§œ¨™˜å¤œ  «ž¤ ¦¢ ¡ã ®¨âà©ž !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1107)
+                        Move ("DDC 067:€¡˜«á¢¢ž¢ž •¨œà©« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "’¦ ˜©¬©®â« ©«¦ § ©«à« ¡æ ¬§æ¢¦ §¦ ›â¤ œå¤˜  £ž›œ¤ ¡æ !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1108)
+                        Move ("DDC 067:€¡˜«á¢¢ž¢ž •¨œà©« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "† ¡á¢¬¯ž «žª §å©«à©žª ›â¤ œå¤˜  £ž›œ¤ ¡ã !");
+                        to lsError_Message
+                   Case Break
+                   //---------------------------------------˜¨¤ž« ¡âª ®¨œé©œ ª---------------
+                   Case (iError_Num = 1109)
+                        Move ("DDC 067:€¡˜«á¢¢ž¢ž €¨¤ž« ¡ã •¨œà©« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "’¦ ˜©¬©®â« ©«¦ ®¨œà©« ¡æ ¬§æ¢¦ §¦ ›â¤ œå¤˜  £ž›œ¤ ¡æ!");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1110)
+                        Move ("DDC 067:€¡˜«á¢¢ž¢ž €¨¤ž« ¡ã •¨œà©« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "† ¡á¢¬¯ž «žª ®¨âà©žª ›â¤ œå¤˜  £ž›œ¤ ¡ã !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1111)
+                        Move ("DDC 067:€¡˜«á¢¢ž¢ž €¨¤ž« ¡ã •¨œà©« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "’¦ ˜©¬©®â« ©«¦ § ©«à« ¡æ ¬§æ¢¦ §¦ ¬§œ¨™˜å¤œ  «ž¤ ˜§æ¢¬«ž « £ã «žª ˜¨¤ž« ¡ãª ®¨âà©žª !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1112)
+                        Move ("DDC 067:€¡˜«á¢¢ž¢ž €¨¤ž« ¡ã •¨œà©« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "† ¡á¢¬¯ž «žª §å©«à©žª ¬§œ¨™˜å¤œ  «ž¤ ˜§æ¢¬«ž « £ã «žª ˜¨¤ž« ¡ãª ®¨âà©žª !");
+                        to lsError_Message
+                   Case Break
+                   //---------------------------------------Ÿœ« ¡âª § ©«é©œ ª----------------
+                   Case (iError_Num = 1113)
+                        Move ("DDC 067:€¡˜«á¢¢ž¢ž  ©«à« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "’¦ ˜©¬©®â« ©«¦ ®¨œà©« ¡æ ¬§æ¢¦ §¦ ›â¤ œå¤˜  £ž›œ¤ ¡æ !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1114)
+                        Move ("DDC 067:€¡˜«á¢¢ž¢ž  ©«à« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "† ¡á¢¬¯ž «žª ®¨âà©žª ›â¤ œå¤˜  £ž›œ¤ ¡ã !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1115)
+                        Move ("DDC 067:€¡˜«á¢¢ž¢ž  ©«à« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "’¦ ˜©¬©®â« ©«¦ § ©«à« ¡æ ¬§æ¢¦ §¦ ¬§œ¨™˜å¤œ  «ž¤ ¦¢ ¡ã §å©«à©ž !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1116)
+                        Move ("DDC 067:€¡˜«á¢¢ž¢ž  ©«à« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "† ¡á¢¬¯ž «žª §å©«à©žª ¬§œ¨™˜å¤œ  «ž¤ ¦¢ ¡ã §å©«à©ž !");
+                        to lsError_Message
+                   Case Break
+                   //---------------------------------------˜¨àž« ¡âª § ©«é©œ ª----------------
+                   Case (iError_Num = 1117)
+                        Move ("DDC 067:€¡˜«á¢¢ž¢ž €¨¤ž« ¡ã  ©«à« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "’¦ ˜©¬©®â« ©«¦ ®¨œà©« ¡æ ¬§æ¢¦ §¦ ›â¤ œå¤˜  £ž›œ¤ ¡æ!");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1118)
+                        Move ("DDC 067:€¡˜«á¢¢ž¢ž €¨¤ž« ¡ã  ©«à« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "† ¡á¢¬¯ž «žª ®¨âà©žª ›â¤ œå¤˜  £ž›œ¤ ¡ã !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1119)
+                        Move ("DDC 067:€¡˜«á¢¢ž¢ž €¨¤ž« ¡ã  ©«à« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "’¦ ˜©¬©®â« ©«¦ § ©«à« ¡æ ¬§æ¢¦ §¦ ¬§œ¨™˜å¤œ  «ž¤ ˜§æ¢¬«ž « £ã «žª ˜¨¤ž« ¡ãª §å©«à©žª !");
+                        to lsError_Message
+                   Case Break
+                   Case (iError_Num = 1120) //soso ayto den xoraei display stin othoni !
+                        Move ("DDC 067:€¡˜«á¢¢ž¢ž €¨¤ž« ¡ã  ©«à« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+                        "† ¡á¢¬¯ž «žª §å©«à©žª ¬§œ¨™˜å¤œ  «ž¤ ˜§æ¢¬«ž « £ã «žª ˜¨¤ž« ¡ãª §å©«à©žª !");
+                        to lsError_Message
+                   Case Break
+
+
+                   //˜§æ validate delete
+                   Case (iError_Num = 2001)
+                        Move ("DDC 067:€›ç¤˜«ž ž › ˜š¨˜­ã!\n\n˜¨˜¡˜¢é ¡˜¢â©˜«œ «ž¤ Solution !");
+                        to lsError_Message
+                   Case Break
+
+                   Case Else
+                        Forward Send Operation_Not_Allowed iError_Num
+              Case End
+
+              Error iError_Num lsError_Message
+    End_Procedure   //operation_not_allowed
+
+
+    Function Validate_Save Returns Integer
+             Integer iReturnVal liOpen_Itemsa
+             Forward Get Validate_Save to iReturnVal
+
+             If (Not(iReturnVal));
+             Begin
+             //1101-1120:â¢œš®¦  open item
+              Move (private.fi_Validate_Open_Itemsa(Self)) to liOpen_Itemsa
+              If (liOpen_Itemsa <> 0) Send Operation_Not_Allowed liOpen_Itemsa
+             End //«â¢¦ª ¡é› ¡˜ validation
+
+
+             Function_Return iReturnVal
+    End_Function //validate_save
+
+
+    //2001:«¦ alias Gmovea ›â¤ œ§ «¨â§œ  ‰ € ‹ ˆ €   › ˜š¨˜­ã
+    Function Validate_Delete  Returns Integer
+             Send Operation_Not_Allowed 2001 //¢áŸ¦ª «¦¬ ¡é› ¡˜ !!!
+    End_Function //validate_delete
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Gmovea.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Gopen.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Garticl.File_Number
+        Send Add_Server_File  Gplan.File_Number
+
+        // Field-based properties.......................
+
+        // Gmovea.Company_Code
+
+        // Gmovea.Branch_Code
+
+        // Gmovea.Year_Year
+
+        // Gmovea.Gtypkin_Code
+
+        // Gmovea.Garticl_Hmnia
+
+        // Gmovea.Garticl_No
+
+        // Gmovea.Garticl_Recr
+
+        // Gmovea.Gplan_Recr
+
+        // Gmovea.Gmove_Rec0
+
+        // Gmovea.Gplan_Code
+
+        // Gmovea.Gmove_Aitiol
+
+        // Gmovea.Gmove_X0
+
+        // Gmovea.Gmove_P0
+
+        // Gmovea.Gmove_X0k
+
+        // Gmovea.Gmove_P0k
+
+        // Gmovea.Gmove_X00
+
+        // Gmovea.Gmove_P00
+
+        // Gmovea.Gmove_X00k
+
+        // Gmovea.Gmove_P00k
+
+        // Gmovea.Gmove_X1
+
+        // Gmovea.Gmove_P1
+
+        // Gmovea.Gmove_X2
+
+        // Gmovea.Gmove_P2
+
+        // Gmovea.Gmove_X2k
+
+        // Gmovea.Gmove_P2k
+
+        // Gmovea.Gmove_Xr
+
+        // Gmovea.Gmove_Pr
+
+        // Gmovea.Gmove_Xrk
+
+        // Gmovea.Gmove_Prk
+
+        // Gmovea.Gmove_Dlixis
+
+        // Gmovea.Gmove_A_Code
+
+        // Gmovea.Gthhmgio_Code
+
+        // Gmovea.Gmove_Aa
+
+        // Gmovea.Gmove_Open_Sx0
+
+        // Gmovea.Gmove_Open_Sp0
+
+        // Gmovea.Gmove_Open_Yx0
+
+        // Gmovea.Gmove_Open_Yp0
+
+        // Gmovea.Gmove_Open_Sx1
+
+        // Gmovea.Gmove_Open_Sp1
+
+        // Gmovea.Gmove_Open_Yx1
+
+        // Gmovea.Gmove_Open_Yp1
+
+        // Gmovea.Gmove_Open_Sx2
+
+        // Gmovea.Gmove_Open_Sp2
+
+        // Gmovea.Gmove_Open_Yx2
+
+        // Gmovea.Gmove_Open_Yp2
+
+        // Gmovea.Gmove_Sc_Code2
+
+        // Gmovea.Gmove_Open
+
+        // Gmovea.Gmove_Aopen
+
+        // Gmovea.Gmove_Topen
+
+        // Gmovea.Gmove_Kk
+
+        // Gmovea.Gthhmgio_Period
+
+        // Gmovea.Gplan_Yn_Myfp
+
+        // Gmovea.Gplan_Yn_Myfa
+
+        // Gmovea.Gplan_Myf_Sump
+
+        // Gmovea.Gplan_Myf_Suma
+
+        // Gmovea.Gtypkin_Flag01
+
+        // Gmovea.Gtypkin_Flag02
+
+        // Gmovea.Gtypkin_Flag03
+
+        // Gmovea.Gtypkin_Flag04
+
+        // Gmovea.Gtypkin_Flag05
+
+        // Gmovea.Gtypkin_Flag06
+
+        // Gmovea.Gtypkin_Flag07
+
+        // Gmovea.Gtypkin_Flag08
+
+        // Gmovea.Gtypkin_Flag09
+
+        // Gmovea.Gtypkin_Flag10
+
+        // Gmovea.Gtypkin_Flag11
+
+        // Gmovea.Gtypkin_Flag12
+
+        // Gmovea.Gtypkin_Flag13
+
+        // Gmovea.Gtypkin_Flag14
+
+        // Gmovea.Gtypkin_Flag15
+
+        // Gmovea.Gtypkin_Flag16
+
+        // Gmovea.Gtypkin_Flag17
+
+        // Gmovea.Gtypkin_Flag18
+
+        // Gmovea.Gtypkin_Flag19
+
+        // Gmovea.Gtypkin_Flag20
+
+        // Gmovea.Year_Recr
+
+        // Gmovea.Gmove_Recr
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+End_Class    // Gmovea_DataDictionary
+//DDB-FileEnd

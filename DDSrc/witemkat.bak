@@ -1,0 +1,120 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : WITEMKAT.DD
+// Class Name: Witemkat_DataDictionary
+// Revision  : 26
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Witemkat
+Open Item
+Open Sysrecw
+Open Syscurxr
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl024  sl024.SL
+Register_Object sl024
+//DDB-SelectionEnd
+
+Class Witemkat_DataDictionary  is a DataDictionary
+
+     Procedure Creating
+        Forward Send Creating
+        // Insert Code Here
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                          (Trim(String(WitemKat.WitemKat_Rec0)))))) to WitemKat.WitemKat_Recr
+    End_Procedure   // Creating
+   
+    Function Validate_Save  Returns Integer
+        Local Integer iReturnVal icheck
+        Forward Get Validate_Save  To iReturnVal
+        If (Not(iReturnVal)) Begin
+            // Insert Code Here
+//           if (witemkat.codegl <> '') begin
+//              Move (Check_log(witemkat.codegl)) to iCheck  
+//              if (icheck) Move 24001 to iReturnVal 
+//           end
+           If (iReturnVal) Send Operation_Not_Allowed iReturnVal
+        End
+        Function_Return iReturnVal
+    End_Function   // Validate_Save
+ 
+    Procedure Operation_Not_Allowed Integer iError_Num
+        String lsError_Message
+        Case Begin
+            Case (iError_Num = 24001)
+                Move "DDC 24: €¤ç§˜¨¡«¦ª ¢¦š. ‚.Š ¡˜«žš¦¨å˜ª œå›¦¬ª" to lsError_Message
+              Case Break
+            Case Else
+                Forward Send Operation_Not_Allowed iError_Num
+        Case End
+        Error iError_Num lsError_Message
+    End_Procedure // operation_not_allowed
+
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Witemkat.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Item.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecw.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Syscurxr.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecw.Witemkat_Rec0  To Witemkat.Witemkat_Rec0
+
+        // Field-based properties.......................
+
+        // Witemkat.Witemkat_Code  
+        Set Field_Options          Field Witemkat.Witemkat_Code   To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Witemkat.Witemkat_Code   To (sl024(Self))
+
+        // Witemkat.Witemkat_Rec0  
+        Set Field_Options          Field Witemkat.Witemkat_Rec0   To DD_AUTOFIND   
+
+        // Witemkat.Witemkat_Descr 
+        Set Field_Prompt_Object    Field Witemkat.Witemkat_Descr  To (sl024(Self))
+
+        // Witemkat.Witemkat_Recr  
+        Set Field_Options          Field Witemkat.Witemkat_Recr   To DD_AUTOFIND   
+
+        // Witemkat.Codeglpol      
+
+        // Witemkat.Codeglago      
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Witemkat_DataDictionary
+//DDB-Selection-pkg-Start
+Use sl024.SL         // sl024
+//DDB-Selection-pkg-End
+//DDB-FileEnd

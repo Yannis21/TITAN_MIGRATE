@@ -1,0 +1,2257 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GMOVE.DD
+// Class Name: Gmove_DataDictionary
+// Revision  : 100
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Gmove
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Gmove_Gmove_A_Code_VT
+
+Object Gmove_Gmove_A_Code_VT  is a CodeValidationTable
+    Set Type_Value        To "AITIOL"
+    Set Validate_State    To FALSE
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Gmove_Gmove_A_Code_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList SL002  sl002.sl
+Register_Object SL002
+//DDB-SelectionEnd
+Open Nomisma
+Open Gplanmod //«¦ ˜¨®œå¦ ˜¬«æ ®¨œ áœ«˜  £æ¤¦¤ š ˜ read
+
+
+//«¦ Gmove ©«¤ update/backout œ¤£œ¨é¤œ  «˜ œ¥ãª §œ›å˜:
+//   Gmove                        garticl
+//   x0                           xreline
+//   po                           pisline
+//  ----------                    omada
+//   x00                          other
+//   poo                          mlines
+//  ----------
+//   xr
+//   pr                           sx2
+//                                sp2
+//                                syp2
+//                               ---------
+//                                sx0
+//                                sp0
+//                                syp0
+//                                syp0k
+//                               ---------
+//                                sx00
+//                                sp00
+//                                syp00
+//                                syp00k
+//                               ---------
+//                                sxr
+//                                spr
+//                                sypr
+//                                syprk
+
+//«¦ Gmove ©«¤ request_save/delete œ¤£œ¨é¤œ  «˜ œ¥ãª ˜¨®œå˜/§œ›å˜:
+//    ghmnies  -->   gmhnes       gplan
+//    sx2            sx2          myfno1
+//    sp2            sp2          myfaxia1
+//  ----------
+//    sx0            sx0          myf2  ??
+//    sp0            sp0          myfaxia2
+//  ----------
+//    sx00           sx00
+//    sp00           sp00
+//  ----------
+//    sxr            sxr
+//    spr            spr
+//  ----------
+//    sx1            sx1
+//    sp1            sp1
+//  ----------
+//    gmnorec        ghmnorec
+
+
+
+// a n a l y s i s    g i a    t i s    l o g i s t i k e s    p e r i o d o u s
+//¬§¦¢¦š ©£æª ¢¦š ©« ¡ãª §œ¨ æ›¦¬ ˜¤˜­¦¨áª:
+//˜§¦ «˜ Ÿœà¨£â¤˜ £œ¨¦¢æš ˜ â®¦¬£œ hard coded « ª œ¥ãª ¢¦š ©« ¡âª §œ¨ æ›¦¬ª:
+//                                               †£œ¨¦£¤å˜               ““““     PERIOD
+//-109  „ˆƒ‘    -9                                                               -9
+//-108  „ˆƒ‘    -8                                                               -8
+//-107  „ˆƒ‘    -7                                                               -7
+//-106  „ˆƒ‘    -6                                                               -6
+//-105  €‚€”†    -5*******„šš¨˜­âª €§¦š¨˜­ãª    23/05/98 (fixed)        1998      -5
+//-104  „ˆƒ‘    -4                                                               -4
+//-103  „ˆƒ‘    -3                                                               -3
+//-102  „ˆƒ‘    -2                                                               -2
+//-101  „ˆƒ‘    -1                                                               -1
+
+//   0  12 (max 24) †‹„Š‚ˆ€‰„‘ „ˆƒˆ •†‘—‘  23/05/98 - 30/06/99     1998-1999  5-6-7..12-1-2..6
+
+// 101  „ˆƒ‘    +1                                                              101
+// 102  „ˆƒ‘    +2                                                              102
+// 103  „ˆƒ‘    +3                                                              103
+// 104  ’€‰’ˆ†‘† +4*******„šš¨˜­âª «˜¡«¦§¦å©ª                                  104
+// 105  „ˆƒ‘    +5                                                              105
+// 106  „ˆƒ‘    +6                                                              106
+// 107  „ˆƒ‘    +7                                                              107
+// 108  „ˆƒ‘    +8                                                              108
+// 109  ˆ‘Š‚ˆ‘‹‘ +9*******„šš¨˜­âª ‰¢œ ©å£˜«¦ª  30/06/99 (fixed)        1999     109
+
+//    £œ¨¦¢¦š ˜¡¦å §œ¨å¦›¦  ®¨ã©œàª ˜¤« ©«¦ ®¦ç¤ ©«¦çª 12 (ã maximum 24 £ã¤œª
+//  š ˜ «¤ §œ¨å§«à© «ª ¬§œ¨›à›œ¡á£¤ª ®¨ã©ª), ©«åª ¦§¦åœª ¡˜«˜®à¨¦ç¤«˜  £œ
+//   â«¦ª+£ã¤˜+£œ¨¦£¤å˜ æ¢œª ¦  œšš¨˜­âª.
+
+//  “§á¨®¦¬¤ œ§å©ª á¢¢œª 3 ¢¦š ©« ¡âª §œ¨å¦›¦ , ¦  ¦§¦åœª ®¨© £¦§¦ ¦ç¤«˜ 
+//  š ˜ «¤ §˜¨˜¡¦¢¦çŸ© «à¤ œšš¨˜­é¤ €§¦š¨˜­ãª (€¤¦åš£˜«¦ª),
+//  ˆ©¦¢¦š ©£¦ç (‰¢œ ©å£˜«¦ª) ¡˜  «˜¡«¦§¦å©ª.
+
+//  €§æ œ¡œå ¡˜  §â¨˜, «¦ ©ç©«£˜ £˜ª ›å¤œ  «¤ ›¬¤˜«æ««˜ ¦¨ ©£¦ç 9 §¨¦š¦¬£â¤à¤
+//  ¡˜  8 œ§¦£â¤à¤ §œ¨ æ›à¤, ©« ª ¦§¦åœª ¡˜«˜®à¨¦ç¤«˜  ¡˜«á §œ¨å§«à© ¦  œ¤› á£œ©œª
+//  œš¨˜­âª.
+
+//    œšš¨˜­âª ©œ ˜¬«âª « ª ¢¦š ©« ¡âª §œ¨ æ›¦¬ª, ¡˜«˜®à¨¦ç¤«˜  £œ
+//  £œ¨¦¢¦š ˜¡æ â«¦ª+¡à› ¡æ ¢¦š ©« ¡ãª §œ¨ æ›¦¬+fixed £œ¨¦£¤å˜.
+//  H fixed £œ¨¦£¤å˜, š ˜ £â¤ « ª §¨¦š¦ç£œ¤œª «ª 1 ¢¦š ©« ¡âª §œ¨ æ›¦¬ª
+//  œå¤˜   year_xrhshFROM, œ¤é š ˜ « ª £œ«˜šœ¤â©«œ¨œª «ª 1 ¢¦š ©« ¡âª
+//  §œ¨ æ›¦¬ª œå¤˜   year_xrhshTO.
+
+//  Move liYear   to Gmhnes.Gmhnes_YYYY    //£œ¨¦¢¦š ˜¡æ â«¦ª
+//  Move liPeriod to Gmhnes.Gmhnes_PERIOD  //¢¦š ©« ¡ã §œ¨å¦›¦ª
+
+// a n a l y s i s    g i a    t i n    M Y F
+
+////// js 09/04/2002 Use Convert.pkg   //package £œ«˜«¨¦§ãª ¤¦£ ©£á«à¤ â¢œš®¦ª š ˜ ˜¨¤« ¡âª ˜¥åœª ???
+
+Class Gmove_DataDictionary  is a DataDictionary_Sec
+
+
+      //****************************************************************************************
+      //**************P R O C E D U R A L    „ Œ † ‹„  — ‘ †    ˆ ‘  … “ ‚ ˆ — Œ**************
+      //****************************************************************************************
+
+
+      //¡˜¢œå«˜  ˜§æ save+delete_main_file, «˜ œ£§¢œ¡æ£œ¤˜ ˜¨®œå˜ œå¤˜  locked
+      // ¡˜  transaction is enabled!
+      //œ§å©ª â®à current record ©œ æ¢˜ «˜ parents.
+      //¡˜¢œå «¤ private.update_gmhnes_ghmnies
+      //œ§ ©«¨â­œ  «˜ œ¥ãª ¢áŸ: 3001 :˜¡˜«á¢¢¢¦ §¨æ©£¦ (¢áŸ¦ª «¦¬ ¡é› ¡˜)
+      //                         3002 :˜¤ç§˜¨¡«¦ª §œ¨ ¢§« ¡æª
+      //                         3003 :˜¤ç§˜¨¡«¦ª §œ¨ ¢§« ¡æª+˜¨® ¡æª  (˜¬«æ «¦ error ¬§¦›¢é¤œ  ®˜¢˜©£â¤ ™á©!)
+      //                         3004 :›â¤ £§æ¨œ©˜ ¤˜ ™¨é gplan by recr (˜¬«æ «¦ error ¬§¦›¢é¤œ  ®˜¢˜©£â¤ ™á©!)
+      //                         3005 :›â¤ â«¨œ¥œ ¦ç«œ update ¦ç«œ backout (¢áŸ¦ª ¡é› ¡˜)
+      //œ§å©ª ˜§¦ ¢áŸ¦ª «¦¬ ¡é› ¡˜, £§¦¨œå ¤˜ ›é©œ  ¡˜  Error 10001 "Wrong Num Arguments!\n\nPlease Call Solution!"
+      //á¢¢˜ § Ÿ˜¤á errors œå¤˜  1017 :˜§˜š¦¨œçœ«˜  ®¨œà©« ¡æ ¬§æ¢¦ §¦
+      //                         1018 :˜§˜š¦¨œçœ«˜  § ©«à« ¡æ ¬§æ¢¦ §¦
+
+//----------------------------------------------------
+// REM js 03/12/2007 To arxeio to xrhsimopoioume mono gia katagrafh allagon
+// ---------------------------------------------------      
+//      Function private.Trexe Returns Integer
+//               Integer liError liGplan_Recnum
+
+//               //£›œ¤ ©£æª property š ˜ «¬®æ¤ ¢áŸ
+//               Set piError to 0
+
+//               //˜§¦Ÿã¡œ¬© «¨â®¦¤«¦ª gplan recnum
+//               Move Gplan.Recnum to liGplan_Recnum
+
+//               Send private.Update_Gmhnes_Ghmnies //§¨¦©¦®ã! ˜¢¦ é¤œ  «¦ gplan current record !
+
+//               //˜¤á¡¢© «¨â®¦¤«¦ª gplan recnum
+//               Clear Gplan
+//               Move liGplan_Recnum to Gplan.Recnum
+//               Find Eq Gplan.Recnum
+//               If (Found = 0);
+//               Begin
+//                    Set piError to 0     //£›œ¤ ©£æª property š ˜ œ§æ£œ¤ ¡å¤©
+//                    Function_Return 3003 //› ˜¡¦§ã «¦¬ transaction!
+//               End                       //˜¤ç§˜¨¡«¦ª ˜¨® ¡æª (˜¬«æ «¦ error ¬§¦›¢é¤œ  ®˜¢˜©£â¤ ™á©!)
+//                                         //› æ«  ›â¤ £§æ¨œ©˜ ¤˜ ¥˜¤˜™¨é gplan by recnum!
+
+//               //˜¤áš¤à© property š ˜ «¬®æ¤ ¢áŸ
+//               Get piError to liError
+
+//               //£›œ¤ ©£æª property š ˜ œ§æ£œ¤ ¡å¤©
+//               Set piError to 0
+//               Function_Return liError
+//      End_Function //private.trexe
+//----------------------------------------------------
+// REM js 03/12/2007 To arxeio to xrhsimopoioume mono gia katagrafh allagon
+// ---------------------------------------------------      
+
+
+      //¡˜¢œå«˜  ˜§æ «¤ private.trexe
+      //¡˜¢œå «¤ private.update_isozygia 1 ­¦¨á š ˜ backout (˜­˜å¨œ© §˜¢˜ é¤ « £é¤) ¡˜ 
+      //                                  1 ­¦¨á š ˜ update  (§¨æ©Ÿœ© ¤âà¤ « £é¤)
+      //§¨â§œ  ¤˜ ¦§« £˜¨ ©Ÿœå š ˜ ¡˜¢ç«œ¨ «˜®ç««˜, æ§àª ˜¤˜¢çœ«˜  §˜¨˜¡á«à:
+      //¦  § Ÿ˜¤âª §œ¨ §«é©œ ª œå¤˜  ¦  œ¥ãª:
+      //  update     backout    u * b   vala   valb   remarks
+      //    0           0         0      -      -     ˜›ç¤˜«¦¤ (error 3005=¢áŸ¦ª ©«¦¤ ¡é› ¡˜)
+      //    0           1         0     false  true   delete Gmove
+      //    1           0         0     true   false  create Gmove
+      //    1           1         1       ?     ?     edit   Gmove
+      //œ¤é ©«¦ delete+create Gmove «˜ §¨áš£˜«˜ œå¤˜  ¥œ¡áŸ˜¨˜ æ©¦¤ ˜­¦¨á «¦ validation «¦¬ gplan,
+      //©«¦ edit Gmove,  ©®ç¦¬¤ «˜ §˜¨˜¡á«à:
+      //                                                                            vala   valb
+      // if gplan_recra = gplan_recrb --> validate only at update                   true   false ›¢˜›ã ¡á¤à edit ©«¦ å› ¦ gplan (˜¢¢áà £æ¤¦¤ ®¨âà©/§å©«à©)
+      // else                             validate both at backout and at update    true   true  ›¢˜›ã ˜¢¢áà «¦¬¢á® ©«¦¤ ¡à› ¡æ
+      //«â¢¦ª, œ¢âš®¦¤«˜  æ¢œª ¦  §˜¨á£œ«¨¦  before+after œá¤ œå¤˜  å©œª,
+      //¦§æ«œ ›â¤ œ¤£œ¨é¤à    ‰ € ‡  Š  “    «˜  ©¦çš ˜ (§® ¡á¤à £æ¤¦¤ ˜¢¢˜šã ˜ « ¦¢¦šå˜ª)
+//----------------------------------------------------
+// REM js 03/12/2007 To arxeio to xrhsimopoioume mono gia katagrafh allagon
+// ---------------------------------------------------      
+//      Procedure private.Update_Gmhnes_Ghmnies
+//                Integer liBackout liUpdate  liError
+
+//                Integer liB_Validate        liA_Validate
+
+//                Integer liB_Gthhmgio_Period
+//                String  lsB_Gplan_Recr
+//                Date    ldB_Garticl_Hmnia
+//                Number  lnB_Gmove_X2       lnB_Gmove_P2
+//                Number  lnB_Gmove_X0       lnB_Gmove_P0
+//                Number  lnB_Gmove_X00      lnB_Gmove_P00
+//                Number  lnB_Gmove_XR       lnB_Gmove_PR
+//                Number  lnB_Gmove_X1       lnB_Gmove_P1
+
+//                Integer liA_Gthhmgio_Period
+//                String  lsA_Gplan_Recr
+//                Date    ldA_Garticl_Hmnia
+//                Number  lnA_Gmove_X2       lnA_Gmove_P2
+//                Number  lnA_Gmove_X0       lnA_Gmove_P0
+//                Number  lnA_Gmove_X00      lnA_Gmove_P00
+//                Number  lnA_Gmove_XR       lnA_Gmove_PR
+//                Number  lnA_Gmove_X1       lnA_Gmove_P1
+
+//                //˜¤áš¤à© ¡˜«á©«˜©ª «¦¬ ddo
+//                Get piBackout    to liBackout
+//                Get piUpdate     to liUpdate
+
+//                //š ˜ ¢æš¦¬ª ˜©­˜¢œå˜ª, â¢œš®¦ª backout & update
+//                If (;
+//                     (liBAckout = 0) and;
+//                     (liUpdate  = 0);
+//                   ) Begin
+//                      Set piError to 3005 //›â¤ â«¨œ¥œ ¦ç«œ update ¦ç«œ backout (¢áŸ¦ª ¡é› ¡˜)
+//                      Procedure_Return    //› ˜¡¦§ã «¦¬ transaction! (£á¢¢¦¤ «œ¢œåàª ˜§åŸ˜¤¦, but who knows!
+//                     End
+
+//                //˜¤áš¤à© §˜¢˜ é¤ « £é¤
+//                Get piB_Gthhmgio_Period to liB_Gthhmgio_Period
+//                Get pdB_Garticl_Hmnia   to ldB_Garticl_Hmnia
+//                Get pnB_Gmove_X2       to lnB_Gmove_X2
+//                Get pnB_Gmove_P2       to lnB_Gmove_P2
+//                Get pnB_Gmove_X0       to lnB_Gmove_X0
+//                Get pnB_Gmove_P0       to lnB_Gmove_P0
+//                Get pnB_Gmove_X00      to lnB_Gmove_X00
+//                Get pnB_Gmove_P00      to lnB_Gmove_P00
+//                Get pnB_Gmove_XR       to lnB_Gmove_XR
+//                Get pnB_Gmove_PR       to lnB_Gmove_PR
+//                Get pnB_Gmove_X1       to lnB_Gmove_X1
+//                Get pnB_Gmove_P1       to lnB_Gmove_P1
+//                Get psB_Gplan_Recr     to lsB_Gplan_Recr
+
+//                //˜¤áš¤à© ¤âà¤ « £é¤
+//                Get piA_Gthhmgio_Period to liA_Gthhmgio_Period
+//                Get pdA_Garticl_Hmnia   to ldA_Garticl_Hmnia
+//                Get pnA_Gmove_X2       to lnA_Gmove_X2
+//                Get pnA_Gmove_P2       to lnA_Gmove_P2
+//                Get pnA_Gmove_X0       to lnA_Gmove_X0
+//                Get pnA_Gmove_P0       to lnA_Gmove_P0
+//                Get pnA_Gmove_X00      to lnA_Gmove_X00
+//                Get pnA_Gmove_P00      to lnA_Gmove_P00
+//                Get pnA_Gmove_XR       to lnA_Gmove_XR
+//                Get pnA_Gmove_PR       to lnA_Gmove_PR
+//                Get pnA_Gmove_X1       to lnA_Gmove_X1
+//                Get pnA_Gmove_P1       to lnA_Gmove_P1
+//                Get psA_Gplan_Recr     to lsA_Gplan_Recr
+
+//                //œá¤ æ¢œª ¦  §˜¨á£œ«¨¦  before+after œå¤˜  å©œª,
+//                //«æ«œ ›â¤ £§˜å¤à ¡˜Ÿæ¢¦¬ ©«¤ œ¤£â¨à©  ©¦¬šåà¤,
+//                //˜¢¢á ­œçšà ...«¨â®¦¤«˜ª!
+//                If (;
+//                     (liB_Gthhmgio_Period=liA_Gthhmgio_Period) and;
+//                     (ldB_Garticl_Hmnia  =ldA_Garticl_Hmnia)   and;
+//                     (lnB_Gmove_X2      =lnA_Gmove_X2)       and;
+//                     (lnB_Gmove_P2      =lnA_Gmove_P2)       and;
+//                     (lnB_Gmove_X0      =lnA_Gmove_X0)       and;
+//                     (lnB_Gmove_P0      =lnB_Gmove_P0)       and;
+//                     (lnB_Gmove_X00     =lnA_Gmove_X00)      and;
+//                     (lnB_Gmove_P00     =lnA_Gmove_P00)      and;
+//                     (lnB_Gmove_XR      =lnA_Gmove_XR)       and;
+//                     (lnB_Gmove_PR      =lnA_Gmove_PR)       and;
+//                     (lnB_Gmove_X1      =lnA_Gmove_X1)       and;
+//                     (lnB_Gmove_P1      =lnA_Gmove_P1)       and;
+//                     (lsB_Gplan_Recr    =lsA_Gplan_Recr);
+//                    ) Begin
+//                       Procedure_Return
+//                      End
+
+//                //©œ«á¨ ©£˜«˜ š ˜ gplan validations
+//                If (;
+//                    ((liUpdate * liBackout) = 0);
+//                   ) Begin //¡á¤à create or delete Gmove record, á¨˜ validate only at backout or update ˜¤«å©«¦ ®˜
+//                      Move 1 to liB_Validate
+//                      Move 1 to liA_Validate
+//                     End
+//                Else;
+//                If (;
+//                    (lsB_Gplan_Recr  = lsA_Gplan_Recr);
+//                   ) Begin //¡á¤à edit ©«¦ å› ¦ gplan record, á¨˜ validate only at update
+//                      Move 0 to liB_Validate
+//                      Move 1 to liA_Validate
+//                     End
+//                Else;
+//                If (;
+//                    (lsB_Gplan_Recr <> lsA_Gplan_Recr);
+//                   ) Begin //˜¢¢áà gplan record, á¨˜ validate both at backout and at update
+//                      Move 1 to liB_Validate
+//                      Move 1 to liA_Validate
+//                     End
+
+//                //˜­˜å¨œ© §˜¢˜ é¤ « £é¤
+//                If (liBackout = 1);
+//                Begin
+//                     Send private.Update_Isozygia liB_Gthhmgio_Period;
+//                                                  ldB_Garticl_Hmnia;
+//                                                  lsB_Gplan_Recr;
+//                                                  lnB_Gmove_X2;
+//                                                  lnB_Gmove_P2;
+//                                                  lnB_Gmove_X0;
+//                                                  lnB_Gmove_P0;
+//                                                  lnB_Gmove_X00;
+//                                                  lnB_Gmove_P00;
+//                                                  lnB_Gmove_XR;
+//                                                  lnB_Gmove_PR;
+//                                                  lnB_Gmove_X1;
+//                                                  lnB_Gmove_P1;
+//                                                  (-1);
+//                                                  liB_Validate
+//                     Get piError to liError
+//                     If (liError <> 0) Procedure_Return
+//                End //if (libackout = 1)
+
+//                //§¨æ©Ÿœ© ¤âà¤ « £é¤
+//                If (liUpdate = 1);
+//                Begin
+//                     Send private.Update_Isozygia liA_Gthhmgio_Period;
+//                                                  ldA_Garticl_Hmnia;
+//                                                  lsA_Gplan_Recr;
+//                                                  lnA_Gmove_X2;
+//                                                  lnA_Gmove_P2;
+//                                                  lnA_Gmove_X0;
+//                                                  lnA_Gmove_P0;
+//                                                  lnA_Gmove_X00;
+//                                                  lnA_Gmove_P00;
+//                                                  lnA_Gmove_XR;
+//                                                  lnA_Gmove_PR;
+//                                                  lnA_Gmove_X1;
+//                                                  lnA_Gmove_P1;
+//                                                  1;
+//                                                  liA_Validate
+//                End //if (liupdate = 1)
+//      End_Procedure//private.update_gmhnes_ghmnies
+
+
+//      //¡˜¢œå«˜  ˜§æ «¤ private.update_gmhnes_ghmnies
+//      Procedure private.Update_Isozygia Integer liGthhmgio_Period;
+//                                        Date    ldGarticl_Hmnia;
+//                                        String  lsGplan_Recr;
+//                                        Number  lnX2;
+//                                        Number  lnP2;
+//                                        Number  lnX0;
+//                                        Number  lnP0;
+//                                        Number  lnX00;
+//                                        Number  lnP00;
+//                                        Number  lnXR;
+//                                        Number  lnPR;
+//                                        Number  lnX1;
+//                                        Number  lnP1;
+//                                        Integer liSign;
+//                                        Integer liValidate
+
+//                String  lsGplan_Code
+//                Integer liGplan_Bathmos liYear liPeriod liCounter
+
+//                //š ˜ ¢æš¦¬ª ˜©­˜¢œå˜ª, £ã¤ «¬®æ¤ ¥œ§œ¨á©à «¦¬ª 255 ®˜¨˜¡«ã¨œª
+//                If (Num_Arguments <> 15 ) Error 10001 "Wrong Num Arguments!\n\nPlease Call Solution!"
+
+//                //**************************************************************************
+//                //01.¬§¦¢¦š ©£æª & â¢œš®¦ª §¨¦©ã£¦¬ (+ ã -)
+//                //**************************************************************************
+//                If (;
+//                     ((Abs(liSign)) <> 1 );
+//                   ) Begin
+//                      Set piError to 3001 //˜¡˜«á¢¢¢¦ §¨æ©£¦ (¢áŸ¦ª ¡é› ¡˜ª)
+//                      Procedure_Return    //› ˜¡¦§ã «¦¬ transaction!
+//                     End
+//                Move (lnX2  * liSign) to lnX2
+//                Move (lnP2  * liSign) to lnP2
+//                Move (lnX0  * liSign) to lnX0
+//                Move (lnP0  * liSign) to lnP0
+//                Move (lnX00 * liSign) to lnX00
+//                Move (lnP00 * liSign) to lnP00
+//                Move (lnXR  * liSign) to lnXR
+//                Move (lnPR  * liSign) to lnPR
+//                Move (lnX1  * liSign) to lnX1
+//                Move (lnP1  * liSign) to lnP1
+
+//                //**************************************************************************
+//                //02.¡˜Ÿ¦¨ ©£æª year & period ˜§¦ «¦ gthhmgio_period
+//                //**************************************************************************
+//                If (liGthHmgio_Period = 0);
+//                     Begin //£œ¨¦¢¦š ˜¡âª §œ¨å¦›¦  ®¨ã©œàª
+//                      Move (TheYearSegment (ldGarticl_Hmnia)) to liYear
+//                      Move (TheMonthSegment(ldGarticl_Hmnia)) to liPeriod
+//                     End
+//                Else Begin //œ › ¡ã §œ¨å¦›¦ª
+//                      Move (TheYearSegment (ldGarticl_Hmnia)) to liYear
+//                      Move liGthHmgio_Period                  to liPeriod
+//                     End
+
+//                //**************************************************************************
+//                //03.œç¨œ© ©®œ« ¡¦ç gplan ¡˜  ™˜Ÿ£¦ç
+//                //**************************************************************************
+//                Clear Gplan
+//                Move lsGplan_Recr to Gplan.Gplan_Recr
+//                Find Eq Gplan by Index.2 //gplan_recr
+//                If (Found = 0);
+//                Begin
+//                      Set piError to 3004 //˜¨® ¡æ gplan not found (®˜¢˜©£â¤ ™á©!)
+//                      Procedure_Return    //› ˜¡¦§ã «¦¬ transaction!
+//                End
+//                Move Gplan.Gplan_Bathmos to liGplan_Bathmos
+
+//                //**************************************************************************
+//                //04.œ¤£â¨à©  ©¦¬šåà¤ (gmhnes & ghmnies) ¡˜  ˜Ÿ¨¦ ©«é¤ gplan
+//                //**************************************************************************
+//                For liCounter From 1 to liGplan_Bathmos
+
+//                    //04.1:œç¨œ©/›£ ¦¬¨šå˜ & œ¤£â¨à© gmhnes
+//                    Clear Gmhnes
+//                    Move  Gplan.Gplan_Recr             to Gmhnes.Gplan_Recr
+//                    Move  liYear                       to Gmhnes.Gmhnes_YYYY
+//                    Move  liPeriod                     to Gmhnes.Gmhnes_Period
+//                    Find Eq Gmhnes by Index.3 //gplan_recr+gmhnes_yyyy+gmhnes_period
+//                    If (Found=0);
+//                    Begin //˜¨®ã ›£ ¦¬¨šå˜s ¤â¦¬ record gmhnes
+//                         Add 1 to SysrecG.Gmhnes_Rec0
+//                         Saverecord SysrecG
+//                         Move SysrecG.Gmhnes_Rec0       to Gmhnes.Gmhnes_Rec0
+//                         Move (Append('',((Trim(SysCurGL.Branch_Site))+;
+//                                         (Trim(String(Gmhnes.Gmhnes_Rec0)))))) to Gmhnes.Gmhnes_Recr
+
+//                         //œ¤£â¨à© £ã related §œ›åà¤
+//                         Move SysCurGL.Company_Code to Gmhnes.Company_Code
+//                         Move SysCurGL.Branch_Code  to Gmhnes.Branch_Code
+//                         Move SysCurGL.Year_Year    to Gmhnes.Year_Year
+//                         Move Gplan.Gplan_Code      to Gmhnes.Gplan_Code
+//                    End //«â¢¦ª ›£ ¦¬¨šå˜s ¤â¦¬ record gmhnes
+
+//                    //04.2:œç¨œ©/›£ ¦¬¨šå˜ gmhmnies
+//                    Clear Ghmnies
+//                    Move  Gmhnes.Gmhnes_Recr           to Ghmnies.Gmhnes_Recr
+//                    Move  ldGarticl_Hmnia              to Ghmnies.Ghmnies_Hmnia
+//                    Find Eq Ghmnies by Index.3 //gmhnes_recr+ghmnies_hmnia
+//                    If (Found=0);
+//                    Begin //›£ ¦¬¨šå˜ ¤â¦¬ record ghmnies
+//                         Add 1 to SysrecG.Ghmnies_Rec0
+//                         Saverecord SysrecG
+//                         Move SysrecG.Ghmnies_Rec0      to Ghmnies.Ghmnies_Rec0
+//                         Move (Append('',((Trim(SysCurGL.Branch_Site))+;
+//                                         (Trim(String(Ghmnies.Ghmnies_Rec0)))))) to Ghmnies.Ghmnies_Recr
+
+
+
+
+//                         //œ¤£â¨à© £ã related §œ›åà¤
+//                         Move SysCurGL.Company_Code to Ghmnies.Company_Code
+//                         Move SysCurGL.Branch_Code  to Ghmnies.Branch_Code
+//                         Move SysCurGL.Year_Year    to Ghmnies.Year_Year
+//                         Move Gplan.Gplan_Code      to Ghmnies.Gplan_Code
+//                         Move Gmhnes.Gmhnes_YYYY    to Ghmnies.Gmhnes_YYYY
+//                         Move Gmhnes.Gmhnes_Period  to Ghmnies.Gmhnes_Period
+//                    End //«â¢¦ª ›£ ¦¬¨šå˜s ¤â¦¬ record ghmnies
+
+//                    //04.3:œ¤£â¨à© gplan + gmhnes + ghmnies
+
+//                    //04.3.1:œ¤£â¨à© gplan (update+backout)
+//                    Add lnX0   to Gplan.Gplan_Sx0
+//                    Add lnP0   to Gplan.Gplan_Sp0
+//                    Add lnX00  to Gplan.Gplan_Sx00
+//                    Add lnP00  to Gplan.Gplan_Sp00
+//                    Add lnXR   to Gplan.Gplan_SxR
+//                    Add lnPR   to Gplan.Gplan_SpR
+//                  //Add lnX1   to Gplan.Gplan_Sx1
+//                  //Add lnP1   to Gplan.Gplan_Sp1
+
+//                    Add liSign to Gplan.Gplan_Gmhnnorec
+//                    //bale kai pedia gia periodoys (-) periodoys (0) periodous (+)!
+
+//                    //04.3.2:â¢œš®¦ª gplan (validations 1017 + 1018:â¢œš®¦  ¬§¦¢¦å§à¤)
+//                    //£æ¤¦¤ œá¤ ®¨œ áœ«˜ 
+//                    If (liValidate = TRUE);
+//                    Begin
+//                         //04.3.2.1:â¢œš®¦ª ®¨œà©« ¡¦ç ¬§¦¢¦å§¦¬
+//                         If (;
+//                                  (Gplan.Gplan_Yn_Xy = FALSE          ) and;
+//                              (Not(Gplan.Gplan_Sp0  >= Gplan.Gplan_Sx0));
+//                            );
+//                         Begin
+//                              Set psGplan_Code  to Gplan.Gplan_Code
+//                              Set pnGplan_Ypol0 to (Gplan.Gplan_Sx0-Gplan.Gplan_Sp0)
+//                              Set piError to 1017 //˜§˜š¦¨œçœ«˜  ®¨œà©« ¡æ ¬§æ¢¦ §¦
+//                              Procedure_Return   //› ˜¡¦§ã «¦¬ transaction!
+//                         End
+//                         //04.3.2.2:â¢œš®¦ª § ©«à« ¡¦ç ¬§¦¢¦å§¦¬
+//                         If (;
+//                                  (Gplan.Gplan_Yn_Py = FALSE          ) and;
+//                              (Not(Gplan.Gplan_Sx0  >= Gplan.Gplan_Sp0));
+//                            );
+//                         Begin
+//                              Set psGplan_Code  to Gplan.Gplan_Code
+//                              Set pnGplan_Ypol0 to (Gplan.Gplan_Sx0-Gplan.Gplan_Sp0)
+//                              Set piError to 1018 //˜§˜š¦¨œçœ«˜  § ©«à« ¡æ ¬§æ¢¦ §¦
+//                              Procedure_Return   //› ˜¡¦§ã «¦¬ transaction!
+//                         End
+//                    End //«â¢¦ª validation gplan
+
+//                    //04.3.3:œ¤£â¨à© ghhmnies (update+backout)
+//                    Add lnX2   to Ghmnies.Ghmnies_Sx2
+//                    Add lnP2   to Ghmnies.Ghmnies_Sp2
+//                    Add lnX0   to Ghmnies.Ghmnies_Sx0
+//                    Add lnP0   to Ghmnies.Ghmnies_Sp0
+//                    Add lnX00  to Ghmnies.Ghmnies_Sx00
+//                    Add lnP00  to Ghmnies.Ghmnies_Sp00
+//                    Add lnXR   to Ghmnies.Ghmnies_SxR
+//                    Add lnPR   to Ghmnies.Ghmnies_SpR
+//                    Add lnX1   to Ghmnies.Ghmnies_Sx1
+//                    Add lnP1   to Ghmnies.Ghmnies_Sp1
+
+//                    Add liSign to Ghmnies.Ghmnies_Gmnorec
+
+//                    //04.3.4:œ¤£â¨à© ghmnes (update+backout)
+//                    Add lnX2   to Gmhnes.Gmhnes_Sx2
+//                    Add lnP2   to Gmhnes.Gmhnes_Sp2
+//                    Add lnX0   to Gmhnes.Gmhnes_Sx0
+//                    Add lnP0   to Gmhnes.Gmhnes_Sp0
+//                    Add lnX00  to Gmhnes.Gmhnes_Sx00
+//                    Add lnP00  to Gmhnes.Gmhnes_Sp00
+//                    Add lnXR   to Gmhnes.Gmhnes_SxR
+//                    Add lnPR   to Gmhnes.Gmhnes_SpR
+//                    Add lnX1   to Gmhnes.Gmhnes_Sx1
+//                    Add lnP1   to Gmhnes.Gmhnes_Sp1
+
+//                    Add liSign to Gmhnes.Gmhnes_GhmNoRec
+
+//                    //04.3.5:©é© £¦ «à¤ 3 records
+//                    Saverecord Gplan
+//                    Saverecord Gmhnes
+//                    Saverecord Ghmnies
+
+//                    //04.4:œç¨œ© ¡à› ¡¦ç §œ¨ ¢§« ¡¦ç š ˜ £ã §¨à«¦™áŸ£ ¦¬ª !
+//                    //     («˜ §œ›å˜ gplan_anoep+gplan_bathmos â®¦¬¤ ã› validaristei ©«¦ gplan_dd) please check it!!!
+//                    If (Gplan.Gplan_Bathmos <> 1);
+//                    Begin
+//                          Move Gplan.Gplan_Anoep to lsGplan_Code
+//                          //04.5:œç¨œ© §œ¨ ¢§« ¡¦ç
+//                          Clear Gplan
+//                          Move SysCurGL.Company_Code to Gplan.Company_Code
+//                          Move SysCurGL.Branch_Code  to Gplan.Branch_Code
+//                          Move SysCurGL.Year_Year    to Gplan.Year_Year
+//                          Move lsGplan_Code          to Gplan.Gplan_Code
+//                          Find Eq Gplan by Index.1 //company_code+branch_code+year_year+gplan_code
+//                          If (Found = 0);
+//                          Begin
+//                                Set piError to 3002 //˜¤ç§˜¨¡«¦ª §œ¨ ¢§« ¡æª (reindex + check gplan)
+//                                Procedure_Return    //› ˜¡¦§ã «¦¬ transaction!
+//                          End
+//                    End
+//                Loop
+//      End_Procedure //private.update_isozygia
+//      //****************************************************************************************
+//      //**************P R O C E D U R A L    „ Œ † ‹„  — ‘ †    ˆ ‘  … “ ‚ ˆ — Œ**************
+//      //****************************************************************************************
+
+
+//      //private
+//      //œ¤£œ¨é¤œ  «˜ 13 §œ›å˜ open item
+//      //¡˜¢œå«˜  ˜§æ update
+//                     //§¨â§œ : yx between 0 and x0     yx>=0
+//                     //        yp         = 0
+//                     //        sx between 0 and x0
+//                     //        sp=0
+//      Procedure private.Do_Compute_Open_Items
+//                Case Begin
+//                     Case (Gmove.Gmove_X0 > 0)
+//                          Move "+"                                               to Gmove.Gmove_Topen
+//                          Move (     Gmove.Gmove_X0  - Gmove.Gmove_Open_Sx0) to Gmove.Gmove_Open_Yx0
+//                          Move 0                                                 to Gmove.Gmove_Open_Yp0
+//                     Case Break
+
+//                     Case (Gmove.Gmove_X0 < 0)
+//                          Move "-"                                               to Gmove.Gmove_Topen
+//                          Move ((Abs(Gmove.Gmove_X0))- Gmove.Gmove_Open_Sp0) to Gmove.Gmove_Open_Yp0
+//                          Move 0                                                 to Gmove.Gmove_Open_Yx0
+//                     Case Break
+
+//                     Case (Gmove.Gmove_P0 > 0)
+//                          Move "-"                                               to Gmove.Gmove_Topen
+//                          Move (     Gmove.Gmove_P0  - Gmove.Gmove_Open_Sp0) to Gmove.Gmove_Open_Yp0
+//                          Move 0                                                 to Gmove.Gmove_Open_Yx0
+//                     Case Break
+
+//                     Case (Gmove.Gmove_P0 < 0)
+//                          Move "+"                                               to Gmove.Gmove_Topen
+//                          Move ((Abs(Gmove.Gmove_P0))- Gmove.Gmove_Open_Sx0) to Gmove.Gmove_Open_Yx0
+//                          Move 0                                                 to Gmove.Gmove_Open_Yp0
+//                     Case Break
+//                Case End
+//      End_Procedure //private.Do_Compute_Open_Items
+
+
+
+//      //private
+//      //œ¢âš®œ  «˜ 13 §œ›å˜ open item
+//      //¡˜¢œå«˜  ˜§æ validate save
+//      Function  private.fi_Validate_Open_Items Returns Integer
+//                 //1101+1102+1103+1104:â¢œš®¦  £ã ˜¨¤« ¡é¤ ¬§¦¢¦å§à¤ §¨¦ª ©¬©®â« © ¡˜  ©¬©®œ« ©Ÿâ¤«à¤ §¦©é¤
+//                           If (Not(Gmove.Gmove_Open_Yx0 >= 0                      )) Function_Return 1101
+//                           If (Not(Gmove.Gmove_Open_Yp0 >= 0                      )) Function_Return 1102
+//                           If (Not(Gmove.Gmove_Open_Sx0 >= 0                      )) Function_Return 1103
+//                           If (Not(Gmove.Gmove_Open_Sp0 >= 0                      )) Function_Return 1104
+
+//                 Case Begin
+//                      //1105+1106+1107+1108:â¢œš®¦  š ˜ ˜«æ­ ¦ ®¨œà©« ¡æ record
+//                      Case (Gmove.Gmove_X0 > 0)
+//                           If (Not(Gmove.Gmove_Open_Yx0 <=      Gmove.Gmove_X0  )) Function_Return 1105
+//                           If (Not(Gmove.Gmove_Open_Sx0 <=      Gmove.Gmove_X0  )) Function_Return 1106
+//                           If (Not(Gmove.Gmove_Open_Yp0  = 0                      )) Function_Return 1107
+//                           If (Not(Gmove.Gmove_Open_Sp0  = 0                      )) Function_Return 1108
+//                      Case Break
+//                      //1109+1110+1111+1112:â¢œš®¦  š ˜ ¯œ¬«¦- ®¨œà©« ¡æ record
+//                      Case (Gmove.Gmove_X0 < 0)
+//                           If (Not(Gmove.Gmove_Open_Yx0  = 0                      )) Function_Return 1109
+//                           If (Not(Gmove.Gmove_Open_Sx0  = 0                      )) Function_Return 1110
+//                           If (Not(Gmove.Gmove_Open_Yp0 <= (Abs(Gmove.Gmove_X0)))) Function_Return 1111
+//                           If (Not(Gmove.Gmove_Open_Sp0 <= (Abs(Gmove.Gmove_X0)))) Function_Return 1112
+//                      Case Break
+//                      //1113+1114+1115+1116:â¢œš®¦  š ˜ ˜«æ­ ¦ § ©«à« ¡æ record
+//                      Case (Gmove.Gmove_P0 > 0)
+//                           If (Not(Gmove.Gmove_Open_Yx0  = 0                      )) Function_Return 1113
+//                           If (Not(Gmove.Gmove_Open_Sx0  = 0                      )) Function_Return 1114
+//                           If (Not(Gmove.Gmove_Open_Yp0 <=      Gmove.Gmove_P0  )) Function_Return 1115
+//                           If (Not(Gmove.Gmove_Open_Sp0 <=      Gmove.Gmove_P0  )) Function_Return 1116
+//                      Case Break
+//                      //1117+1118+1119+1120:â¢œš®¦  š ˜ ¯œç«¦- ®¨œà©« ¡æ record
+//                      Case (Gmove.Gmove_P0 < 0)
+//                           If (Not(Gmove.Gmove_Open_Yx0 <= (Abs(Gmove.Gmove_P0)))) Function_Return 1117
+//                           If (Not(Gmove.Gmove_Open_Sx0 <= (Abs(Gmove.Gmove_P0)))) Function_Return 1118
+//                           If (Not(Gmove.Gmove_Open_Yp0  = 0                      )) Function_Return 1119
+//                           If (Not(Gmove.Gmove_Open_Sp0  = 0                      )) Function_Return 1120
+//                      Case Break
+//                 Case End
+
+//                 Function_Return 0 //æ¢˜ ok
+//      End_Function  //private.fi_validate_open_items
+
+
+
+
+
+//      //private
+//      //™¨å©¡œ  œá¤ œ§ «¨â§œ«˜   ¡å¤©ã «¦¬ ©¬š¡œ¡¨ £â¤¦¬ ¢¦š˜¨ ˜©£¦ç
+//      //«¦¬ Gmove ˜§¦ «¦ «¨â®¦¤ module.
+//      //¡˜¢œå«˜  ˜§æ validate_save
+//      Function private.fiGplanmod_Module String  lsGplan_Recr;
+//                                         String  lsModule;
+//                                         Returns Integer
+//               Clear Gplanmod
+//               Move lsGplan_Recr to Gplanmod.Gplan_Recr
+//               Move lsModule     to Gplanmod.Gplanmod_Module
+//               Find Eq Gplanmod By Index.3 //gplan_recr+gplanmod_module
+//               Function_Return (Found)
+//      End_Function //private.fiGplanmod_Module
+
+
+//      Procedure private.Initialize_Properties
+//                //Gmove related properties
+//                Set psB_Gplan_Recr    to '' //gplan recr
+//                Set pnB_Gmove_X2      to 0  //X2          2:¤¦£ ©£˜ œšš¨˜­ãª
+//                Set pnB_Gmove_P2      to 0  //P2
+//                Set pnB_Gmove_X0      to 0  //x0          0:¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©ª
+//                Set pnB_Gmove_P0      to 0  //p0
+//                Set pnB_Gmove_X00     to 0  //x00         00:›œ¬«œ¨œç¦¤ ¤æ£ ©£˜ ®¨ã©ª
+//                Set pnB_Gmove_P00     to 0  //p00
+//                Set pnB_Gmove_XR      to 0  //xr          r:¤æ£ ©£˜ reporting
+//                Set pnB_Gmove_PR      to 0  //pr
+//                Set pnB_Gmove_X1      to 0  //X1          0:¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©ª ¦¨ ©« ¡¦§¦ £â¤˜
+//                Set pnB_Gmove_P1      to 0  //P1
+
+//                Set psA_Gplan_Recr    to '' //gplan recr
+//                Set pnA_Gmove_X2      to 0  //X2          2:¤¦£ ©£˜ œšš¨˜­ãª
+//                Set pnA_Gmove_P2      to 0  //P2
+//                Set pnA_Gmove_X0      to 0  //x0          0:¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©ª
+//                Set pnA_Gmove_P0      to 0  //p0
+//                Set pnA_Gmove_X00     to 0  //x00         00:›œ¬«œ¨œç¦¤ ¤æ£ ©£˜ ®¨ã©ª
+//                Set pnA_Gmove_P00     to 0  //p00
+//                Set pnA_Gmove_XR      to 0  //xr          r:¤æ£ ©£˜ reporting
+//                Set pnA_Gmove_PR      to 0  //pr
+//                Set pnA_Gmove_X2      to 0  //X1          0:¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©ª ¦¨ ©« ¡¦§¦ £â¤˜
+//                Set pnA_Gmove_P2      to 0  //P1
+
+//                //garticl related properties
+//                Set pdB_Garticl_Hmnia  to 0
+//                Set pdA_Garticl_Hmnia  to 0
+
+//                //properties š ˜ procedural œ¤£â¨à© ghmnies+gmhnes
+//                Set piB_Gthhmgio_Period to 0
+//////////////////Set piB_Gplan_Bathmos   to 0
+//////////////////Set psB_Gplan_Code      to ""
+//                Set piA_Gthhmgio_Period to 0
+//////////////////Set piA_Gplan_Bathmos   to 0
+//////////////////Set psA_Gplan_Code      to ""
+
+//                Set piError             to 0
+//                Set psGplan_Code        to ""
+//                Set pnGplan_Ypol0       to 0
+
+
+//                Set piUpdate           to 0
+//                Set piBackout          to 0
+//////////////////Set piTheorimeno       to 0
+
+//                Set piFireConvert      to 0 //????? £§àª ›œ¤ ®¨œ ˜œ«˜  œ›à?
+
+//                Set piB_Garticl_Aa     to 0 //š ˜ «¦¤ â¢œš®¦ ˜˜
+//                Set piA_Garticl_Aa     to 0
+
+//      End_Procedure //private.Initialize_Properties
+
+
+//      //¡˜  ˜¬«ã Ÿ˜ §¨â§œ  ¤˜ §áœ  global
+//      Function fnFindOmada string LsGplan_Fn## Returns Integer
+//               Local Integer liOmada##
+
+//                   If (Mid(lsGPlan_Fn##,1,1) eq "6") begin
+//                       Function_Return 1
+//                   end
+//                   If (Mid(lsGPlan_Fn##,1,1) eq "7") begin
+//                       Function_Return 1
+//                   end
+//                   If (Mid(lsGPlan_Fn##,2,1) eq "38") begin
+//                       Function_Return 1
+//                   end
+//                   If (Mid(lsGPlan_Fn##,2,1) eq "2") begin
+//                       Function_Return 1
+//                   end
+
+//               Function_Return 0
+//      End_Function
+
+
+//      //˜¬«ã £á¢¢¦¤ ®¨© £¦§¦ œå«˜  ˜§¦ «¦ view ¡˜  §¨â§œ  ¤˜ ­çšœ  ˜§¦ œ›é!
+//      Function FnXre_Pist Number lnXre## Number lnPist## Returns Integer
+//           If (lnXre## <> 0) Begin
+//               Function_Return 1
+//           end
+//           If (lnPist## <> 0) Begin
+//               Function_Return 2
+//           end
+//           Function_Return 0
+//      End_Function
+
+
+//    Procedure Construct_Object
+
+//              Forward Send Construct_Object
+
+//              //Gmove related properties
+//              Property String  psB_Gplan_Recr    ''  //gplan recr
+//              Property Number  pnB_Gmove_X2       0  //X2          2:¤¦£ ©£˜ œšš¨˜­ãª
+//              Property Number  pnB_Gmove_P2       0  //P2
+//              Property Number  pnB_Gmove_X0       0  //x0          0:¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©ª
+//              Property Number  pnB_Gmove_P0       0  //p0
+//              Property Number  pnB_Gmove_X00      0  //x00         00:›œ¬«œ¨œç¦¤ ¤æ£ ©£˜ ®¨ã©ª
+//              Property Number  pnB_Gmove_P00      0  //p00
+//              Property Number  pnB_Gmove_XR       0  //xr          r:¤æ£ ©£˜ reporting
+//              Property Number  pnB_Gmove_PR       0  //pr
+//              Property Number  pnB_Gmove_X1       0  //X1          0:¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©ª ¦¨ ©« ¡¦§¦ £â¤˜
+//              Property Number  pnB_Gmove_P1       0  //P1
+
+//              Property String  psA_Gplan_Recr    ''  //gplan recr
+//              Property Number  pnA_Gmove_X2       0  //X2          2:¤¦£ ©£˜ œšš¨˜­ãª
+//              Property Number  pnA_Gmove_P2       0  //P2
+//              Property Number  pnA_Gmove_X0       0  //x0          0:¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©ª
+//              Property Number  pnA_Gmove_P0       0  //p0
+//              Property Number  pnA_Gmove_X00      0  //x00         00:›œ¬«œ¨œç¦¤ ¤æ£ ©£˜ ®¨ã©ª
+//              Property Number  pnA_Gmove_P00      0  //p00
+//              Property Number  pnA_Gmove_XR       0  //xr          r:¤æ£ ©£˜ reporting
+//              Property Number  pnA_Gmove_PR       0  //pr
+//              Property Number  pnA_Gmove_X1       0  //X1          0:¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©ª ¦¨ ©« ¡¦§¦ £â¤˜
+//              Property Number  pnA_Gmove_P1       0  //P1
+
+//              //garticl related properties
+//              Property Date    pdA_Garticl_Hmnia   0
+//              Property Date    pdB_Garticl_Hmnia   0
+
+//              Property Integer piUpdate            0
+//              Property Integer piBackout           0
+////////////////Property Integer piTheorimeno        0 //©œ«á¨œ«˜  ˜§¦ «¤ request_save_th,  ¦§æ ˜
+//                                                           //                            ¡˜¢œå«˜  ˜§æ: a) doUpAA.pkg
+//                                                           //                                          b) doZeroAA.pkg
+
+//              //properties š ˜ procedural œ¤£â¨à© ghmnies+gmhnes
+//              Property Integer piB_Gthhmgio_Period  0
+//              Property Integer piA_Gthhmgio_Period  0
+////////////////Property Integer piB_Gplan_Bathmos    0
+////////////////Property Integer piA_Gplan_Bathmos    0
+////////////////Property String  psB_Gplan_Code       ""
+////////////////Property String  psA_Gplan_Code       ""
+
+//              Property Integer piError              0  //®¨© £¦§¦ ¦ç¤«˜  ˜§¦ « ª private
+//              Property String  psGplan_Code         "" //¨¦¬«å¤œª š ˜ «¤ procedural
+//              Property Number  pnGplan_Ypol0        0  //œ¤£â¨à© «à¤  ©¦¬šåà¤ æ«˜¤ œ¤«¦§åœ«˜  ¢áŸ¦ª
+//                                                       //¦§æ«œ  operation_not_allowed ¥â¨œ  §¦æª ¢¦š/£æª
+//                                                       //®«¬§áœ  error 1017 + 1017
+
+//              Property Integer piFireConvert        0 //ja//
+
+
+////////////////Property Integer piGarticl_dd         0 //object id of server garticl dd
+////////////////Property Integer pioDo_Update_Hmnies  0 //object id for business process object
+
+//              Property String  psGarticl_MyfCodp    "" //£æ¤¦¤ š ˜ display of error 1006
+//              Property String  psGarticl_MyfCoda    "" //£æ¤¦¤ š ˜ display of error 1007???
+
+
+
+//              Property Integer piB_Garticl_Aa       0 //š ˜ «¦¤ â¢œš®¦ ˜˜
+//              Property Integer piA_Garticl_Aa       0
+
+
+//    End_Procedure   //construct_object
+//----------------------------------------------------
+// REM js 03/12/2007 To arxeio to xrhsimopoioume mono gia katagrafh allagon
+// ---------------------------------------------------      
+
+
+
+//-     Procedure End_Construct_Object
+//- //////////////Integer liGarticl_dd
+//-               Forward Send End_Construct_Object
+//-               //find servers & clients
+//- //////////////Set piGarticl_dd to (Find_Server_DDO(Self,Garticl.File_Number))
+//- //////////////Get piGarticl_dd to liGarticl_dd
+//-
+//-               //Set piGmove_dd of liGarticl_dd to (Self)
+//-               //Set pioDo_Update_Hmnies to (oDoUpdateHmnies(Self))
+//     End_Procedure   //end_construct_object
+
+
+//----------------------------------------------------
+// REM js 03/12/2007 To arxeio to xrhsimopoioume mono gia katagrafh allagon
+// ---------------------------------------------------      
+//    Procedure Backout //sos œ›é «˜ properties b ©œ«á¨¦¤«˜  ˜§¦ «¦ Gmove
+//                      //¡˜  æ®  ˜§¦ «˜ parent buffers ! ! ! ! ! !
+
+//              Forward Send Backout
+
+//              Set pnB_Gmove_X2  to Gmove.Gmove_X2
+//              Set pnB_Gmove_P2  to Gmove.Gmove_P2
+//              Set pnB_Gmove_X0  to Gmove.Gmove_X0
+//              Set pnB_Gmove_P0  to Gmove.Gmove_P0
+//              Set pnB_Gmove_X00 to Gmove.Gmove_X00
+//              Set pnB_Gmove_P00 to Gmove.Gmove_P00
+//              Set pnB_Gmove_XR  to Gmove.Gmove_XR
+//              Set pnB_Gmove_PR  to Gmove.Gmove_PR
+//              Set pnB_Gmove_X1  to Gmove.Gmove_X1
+//              Set pnB_Gmove_P1  to Gmove.Gmove_P1
+
+//              //properties š ˜ procedural œ¤£â¨à© ghmnies+gmhnes
+//              //b) garticl related properties
+//              Set piB_Gthhmgio_Period to Gmove.Gthhmgio_Period //Gthhmgio.Gthhmgio_Period
+//              Set pdB_Garticl_Hmnia   to Gmove.Garticl_Hmnia
+//              Set psB_Gplan_Recr      to Gmove.Gplan_Recr
+
+//              Set piB_Garticl_Aa      to Gmove.Gmove_Aa //š ˜ «¦¤ â¢œš®¦ ˜˜
+
+
+//              Set piBackout           to 1
+
+//              Send private.Adjust_Balances (-1);
+//                                            Gmove.Gplan_Code;
+//                                            Gmove.Gplan_Myf_Sump;
+//                                            Gmove.Gplan_Myf_Suma;
+//                                            Gmove.Gplan_Yn_Myfp;
+//                                            Gmove.Gplan_Yn_Myfa;
+//                                            Gmove.Gtypkin_Flag07;
+//                                            Gmove.Gtypkin_Flag09;
+//                                            Gmove.Gtypkin_Flag11;
+//                                            Gmove.Gtypkin_Flag13
+//    End_Procedure   // backout
+
+
+//    Procedure Update //sos œ›é «˜ properties a ©œ«á¨¦¤«˜  ˜§¦ «˜ parent buffers
+//                     //¡˜  æ®  ˜§¦ «¦ Gmove! ! ! ! ! !
+//              Integer liFireConvert## //ja//sosososososo
+
+//              Get piFireconvert to liFireConvert## //ja//sosososososo
+//                                                   //˜¬«ã ¡˜Ÿ¦¨åœ  ©«¤ update œá¤
+//                                                   //Ÿ˜ «¨â¥¦¬¤ ¦  ¨¦¬«å¤œª £œ«˜«¨¦§ãª «à¤ ¤¦£ ©£á«à¤
+//                                                   //©œ«á¨œ«˜  ©œ 1 ˜§¦ «¤ check_Arthro_For_Ypol
+//                                                   // ¦§¦å˜ ¡˜¢œå«˜  ˜§æ: a) Gmove.vw   function child_exiting
+//                                                   //                      b) doAkArth.pkg (˜¡¬¨à« ¡æ á¨Ÿ¨¦)
+
+//              Forward Send Update
+
+//              //œ¤£â¨à© £ related §œ›åà¤
+//              Move SysCurGL.Company_Code    to Gmove.Company_Code
+//              If (Gmove.Branch_Code='') ;
+//                Move SysCurGL.Branch_Code   to Gmove.Branch_Code
+//              Move SysCurGL.Year_Year       to Gmove.Year_Year
+//              Move SysCurGL.Year_Recr       to Gmove.Year_Recr
+//              Move Gtypkin.Gtypkin_Code     to Gmove.Gtypkin_Code
+//              Move Garticl.Garticl_Hmnia    to Gmove.Garticl_Hmnia
+//              Move Garticl.Garticl_No       to Gmove.Garticl_No
+
+//              //Move Garticl.Garticl_C_Code2  to Gmove.Gmove_C_Code2       //????????
+//              Move Garticl.Garticl_AA       to Gmove.Gmove_AA
+//              //Move Garticl.Garticl_StatusE  to Gmove.Gmove_StatusE
+//              //Move Garticl.Garticl_StatusA  to Gmove.Gmove_StatusA
+
+//              Move Gplan.Gplan_Code         to Gmove.Gplan_Code
+
+//              Move Gthhmgio.Gthhmgio_Code   to Gmove.Gthhmgio_Code
+//              Move Gthhmgio.Gthhmgio_Period to Gmove.Gthhmgio_Period
+
+//              //›¬©«¬®éª ,§œ›å˜ ˜§˜¨˜å««˜ š ˜ «¤ ˜¢¢˜šã «¦¬ garticl!
+//              Move Gplan.Gplan_Code       to Gmove.Gplan_Code
+//              Move Gplan.Gplan_Myf_Sump   to Gmove.Gplan_Myf_Sump
+//              Move Gplan.Gplan_Myf_Suma   to Gmove.Gplan_Myf_Suma
+//              Move Gplan.Gplan_Yn_Myfp    to Gmove.Gplan_Yn_Myfp
+//              Move Gplan.Gplan_Yn_Myfa    to Gmove.Gplan_Yn_Myfa
+
+//              Move Gtypkin.Gtypkin_Flag01 to Gmove.Gtypkin_Flag01
+//              Move Gtypkin.Gtypkin_Flag02 to Gmove.Gtypkin_Flag02
+//              Move Gtypkin.Gtypkin_Flag03 to Gmove.Gtypkin_Flag03
+//              Move Gtypkin.Gtypkin_Flag04 to Gmove.Gtypkin_Flag04
+//              Move Gtypkin.Gtypkin_Flag05 to Gmove.Gtypkin_Flag05
+//              Move Gtypkin.Gtypkin_Flag06 to Gmove.Gtypkin_Flag06
+//              Move Gtypkin.Gtypkin_Flag07 to Gmove.Gtypkin_Flag07
+//              Move Gtypkin.Gtypkin_Flag08 to Gmove.Gtypkin_Flag08
+//              Move Gtypkin.Gtypkin_Flag09 to Gmove.Gtypkin_Flag09
+//              Move Gtypkin.Gtypkin_Flag10 to Gmove.Gtypkin_Flag10
+//              Move Gtypkin.Gtypkin_Flag11 to Gmove.Gtypkin_Flag11
+//              Move Gtypkin.Gtypkin_Flag12 to Gmove.Gtypkin_Flag12
+//              Move Gtypkin.Gtypkin_Flag13 to Gmove.Gtypkin_Flag13
+//              Move Gtypkin.Gtypkin_Flag14 to Gmove.Gtypkin_Flag14
+//              Move Gtypkin.Gtypkin_Flag15 to Gmove.Gtypkin_Flag15
+//              Move Gtypkin.Gtypkin_Flag16 to Gmove.Gtypkin_Flag16
+//              Move Gtypkin.Gtypkin_Flag17 to Gmove.Gtypkin_Flag17
+//              Move Gtypkin.Gtypkin_Flag18 to Gmove.Gtypkin_Flag18
+//              Move Gtypkin.Gtypkin_Flag19 to Gmove.Gtypkin_Flag19
+//              Move Gtypkin.Gtypkin_Flag20 to Gmove.Gtypkin_Flag20
+//----------------------------------------------------
+// REM js 03/12/2007 To arxeio to xrhsimopoioume mono gia katagrafh allagon
+// ---------------------------------------------------      
+
+              //˜¤áš¤à© properties
+
+              //› ˜®œå¨ © calculated §œ›åà¤
+              //Gmove_x0  Gmove_p0
+              //Gmove_x00 Gmove_p00
+              //Gmove_xr  Gmove_pr
+              //Gmove_ys0  00 r ??
+              //Gmove_ys1  00 r ??
+              //Gmove_ys2  00 r ??
+              //Gmove_x1  Gmove_p1    (˜¬«á œ¥˜¨«é¤«˜  ˜§¦ «¦ garticl_aa)
+              //Gmove statuse + statusa ???
+              //Gmove sx0  sp0  yx0  yp0
+              //Gmove sx00 sp00 yx00 yp00
+              //Gmove sxr  spr  yxr  ypr
+              //Gmove sx2  sp2  yx2  yp2
+
+//              //£œ«˜«¨¦§œª ¤¦£å©£˜«¦ª œšš¨˜­ãª (2) ©«˜ ¢¦ §á 3 ¤¦£å©£˜«˜  (0 00 r)
+//              //˜¤á¢¦š˜ £œ «˜ flags 3 ¡˜  4
+//              If (liFireConvert## = 0) ;
+//                 Begin
+//                  //*********************************************************
+//                  //£œ«˜«¨¦§ã ˜¥ é¤ ©œ ¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©ª “•„—’ˆ‰€ !   *
+//                  //*********************************************************
+//                  //®¨âà© 2-->0
+//                  Move (gnfConvert(Garticl.Garticl_C_Code2,;
+//                                   Year.Year_C_Code0,;
+//                                   Garticl.Garticl_Hmnia,;
+//                                   Gmove.Gmove_X2,;
+//                                   Garticl.Garticl_Rate0);
+//                                  ) to Gmove.Gmove_X0
+//                  //§å©«à© 2-->0
+//                  Move (gnfConvert(Garticl.Garticl_C_Code2,;
+//                                   Year.Year_C_Code0,;
+//                                   Garticl.Garticl_Hmnia,;
+//                                   Gmove.Gmove_P2,;
+//                                   Garticl.Garticl_Rate0);
+//                                  ) to Gmove.Gmove_P0
+
+//                  //*********************************************************
+//                  //flag 3:£œ«˜«¨¦§ã ˜¥ é¤ ©œ ›œ¬«œ¨œç¦¤ ¤æ£ ©£˜ ®¨ã©ª     *
+//                  //*********************************************************
+//                  If (Gtypkin.Gtypkin_Flag03 = TRUE);
+//                       Begin
+//                        //®¨âà© 2-->00
+//                        Move (gnfConvert(Garticl.Garticl_C_Code2,;
+//                                         Year.Year_C_Code00,;
+//                                         Garticl.Garticl_Hmnia,;
+//                                         Gmove.Gmove_X2,;
+//                                         Garticl.Garticl_Rate00);
+//                                        ) to Gmove.Gmove_X00
+//                        //§å©«à© 2-->00
+//                        Move (gnfConvert(Garticl.Garticl_C_Code2,;
+//                                         Year.Year_C_Code00,;
+//                                         Garticl.Garticl_Hmnia,;
+//                                         Gmove.Gmove_P2,;
+//                                         Garticl.Garticl_Rate00);
+//                                        ) to Gmove.Gmove_P00
+//                       End
+//                  Else Begin
+//                        Move 0            to Gmove.Gmove_X00
+//                        Move 0            to Gmove.Gmove_P00
+//                       End
+
+//                  //*********************************************************
+//                  //flag 4:£œ«˜«¨¦§ã ˜¥ é¤ ©œ ¤æ£ ©£˜ reporting             *
+//                  //*********************************************************
+//                  If (Gtypkin.Gtypkin_Flag04 = TRUE);
+//                       Begin
+//                        //®¨âà© 2-->r
+//                        Move (gnfConvert(Garticl.Garticl_C_Code2,;
+//                                         Year.Year_C_CodeR,;
+//                                         Garticl.Garticl_Hmnia,;
+//                                         Gmove.Gmove_X2,;
+//                                         Garticl.Garticl_RateR);
+//                                        ) to Gmove.Gmove_XR
+//                        //§å©«à© 2-->r
+//                        Move (gnfConvert(Garticl.Garticl_C_Code2,;
+//                                         Year.Year_C_CodeR,;
+//                                         Garticl.Garticl_Hmnia,;
+//                                         Gmove.Gmove_P2,;
+//                                         Garticl.Garticl_RateR);
+//                                        ) to Gmove.Gmove_PR
+//                       End
+//                  Else Begin
+//                        Move 0            to Gmove.Gmove_XR
+//                        Move 0            to Gmove.Gmove_PR
+//                       End
+
+//                 End//«â¢¦ª £œ«˜«¨¦§é¤ ¤¦£å©£˜«¦ª œšš¨˜­ãª ©«˜ ¢¦ §á 3 ¤¦£å©£˜«˜
+
+              //œá¤ «¦ á¨Ÿ¨¦ œå¤˜  ¦¨ ©« ¡¦§¦ £â¤¦,
+              // £œ«˜­¦¨á «à¤ ®¨œà§ ©«é©œà¤ 0 --> 1
+              //˜¢¢¦ éª, £›œ¤ ©£æª «à¤ ®¨œà§ ©«é©œà¤ 1
+//----------------------------------------------------
+// REM js 03/12/2007 To arxeio to xrhsimopoioume mono gia katagrafh allagon
+// ---------------------------------------------------      
+//              If (Garticl.Garticl_Aa > 0);
+//              Begin
+//               Move Gmove.Gmove_X0 to Gmove.Gmove_X1
+//               Move Gmove.Gmove_P0 to Gmove.Gmove_P1
+//              End
+//              Else;
+//              Begin
+//               Move 0                to Gmove.Gmove_X1
+//               Move 0                to Gmove.Gmove_P1
+//              End
+
+
+//              //œ¤£â¨à© §œ›åà¤ open items
+//              Send private.Do_Compute_Open_Items
+
+
+//              //œ¤£â¨à© ˜Ÿ¨¦ ©«é¤
+//              Send private.Adjust_Balances  1;
+//                                            Gplan.Gplan_Code;
+//                                            Gplan.Gplan_Myf_Sump;
+//                                            Gplan.Gplan_Myf_Suma;
+//                                            Gplan.Gplan_Yn_Myfp;
+//                                            Gplan.Gplan_Yn_Myfa;
+//                                            Gtypkin.Gtypkin_Flag07;
+//                                            Gtypkin.Gtypkin_Flag09;
+//                                            Gtypkin.Gtypkin_Flag11;
+//                                            Gtypkin.Gtypkin_Flag13
+
+//              //œ¤£â¨à© properties after
+//              //a) Gmove related properties
+//              Set pnA_Gmove_X2  to Gmove.Gmove_X2
+//              Set pnA_Gmove_P2  to Gmove.Gmove_P2
+//              Set pnA_Gmove_X0  to Gmove.Gmove_X0
+//              Set pnA_Gmove_P0  to Gmove.Gmove_P0
+//              Set pnA_Gmove_X00 to Gmove.Gmove_X00
+//              Set pnA_Gmove_P00 to Gmove.Gmove_P00
+//              Set pnA_Gmove_XR  to Gmove.Gmove_XR
+//              Set pnA_Gmove_PR  to Gmove.Gmove_PR
+//              Set pnA_Gmove_X1  to Gmove.Gmove_X1
+//              Set pnA_Gmove_P1  to Gmove.Gmove_P1
+
+//              //b) garticl related properties
+//              //c) properties š ˜ procedural œ¤£â¨à© ghmnies+gmhnes
+//              Set piA_Gthhmgio_Period to Gthhmgio.Gthhmgio_Period
+//              Set pdA_Garticl_Hmnia   to Garticl.Garticl_Hmnia
+//              Set psA_Gplan_Recr      to Gplan.Gplan_Recr
+
+//              Set piA_Garticl_Aa      to Gmove.Gmove_Aa //š ˜ «¦¤ â¢œš®¦ ˜˜
+
+//              Set piUpdate       to 1
+//    End_Procedure   //update
+
+//    Procedure Creating
+//        Forward Send Creating
+//        // Insert Code Here
+//        Move (Append('',((Trim(SysCurGL.Branch_Site))+;
+//                         (Trim(String(Gmove.Gmove_Rec0)))))) to Gmove.Gmove_Recr
+//    End_Procedure   // Creating
+
+
+//    //¡˜¢œå«˜  ˜§æ update & backout
+//    //Ÿâ¢œ  §¨¦©¦®ã, › æ«  ©«¤ £â¤ backout ®¨œ áœ«˜  «˜ 9 arguments ˜§¦ «¦ Gmove buffer,
+//    //œ¤é ©«¤ update «˜ ®¨œ áœ«˜  ˜§¦ «˜ parent buffers ! ! !
+//    Procedure private.Adjust_Balances Integer liSign;
+//                                      String  lsGplan_Code;
+//                                      Integer liGplan_Myf_Sump;
+//                                      Integer liGplan_Myf_Suma;
+//                                      Integer liGplan_Yn_Myfp;
+//                                      Integer liGplan_Yn_Myfa;
+//                                      Integer liGtypkin_Flag07;
+//                                      Integer liGtypkin_Flag09;
+//                                      Integer liGtypkin_Flag11;
+//                                      Integer liGtypkin_Flag13
+
+//              If (;
+//                   ((Abs(liSign)) <> 1 );
+//                 ) Begin
+//                    Error 1002 "€¡˜«á¢¢¢¦ §¨æ©£¦, ¢áŸ¦ª ¡é› ¡˜" //› ˜¡¦§ã «¦¬ transaction!
+//                    Procedure_Return
+//                   End
+
+//                   If (Gmove.Gmove_X2 > 0)                      Add liSign to Garticl.Garticl_XreLine
+//              Else If (Gmove.Gmove_X2 < 0)                      Add liSign to Garticl.Garticl_PisLine
+//                   If (Gmove.Gmove_P2 > 0)                      Add liSign to Garticl.Garticl_PisLine
+//              Else If (Gmove.Gmove_P2 < 0)                      Add liSign to Garticl.Garticl_XreLine
+//                   If ((fnFindOmada(Self,lsGplan_Code)) = 1)      Add liSign to Garticl.Garticl_Omada
+//              Else                                                Add liSign to Garticl.Garticl_Other
+//                                                                  Add liSign to Garticl.Garticl_Mlines //˜¬«æ ˜Ÿ¨¦åœ  ©«¦ year_numgtypkin
+//               //¤æ£ ©£˜ œšš¨˜­ãª
+//              Add ((Gmove.Gmove_X2                   ) * liSign)           to Garticl.Garticl_Sx2
+//              Add ((Gmove.Gmove_P2                   ) * liSign)           to Garticl.Garticl_Sp2
+//              Add ((Gmove.Gmove_X2-Gmove.Gmove_P2  ) * liSign)           to Garticl.Garticl_Syp2
+
+//              //¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©ª
+//              Add ((Gmove.Gmove_X0                   ) * liSign)           to Garticl.Garticl_Sx0
+//              Add ((Gmove.Gmove_P0                   ) * liSign)           to Garticl.Garticl_Sp0
+//              Add ((Gmove.Gmove_X0-Gmove.Gmove_P0  ) * liSign)           to Garticl.Garticl_Syp0
+//              Move (Abs(Garticl.Garticl_Syp0))                               to Garticl.Garticl_Syp0k
+
+//              //›œ¬«œ¨œç¦¤ ¤æ£ ©£˜ ®¨ã©ª
+//              Add ((Gmove.Gmove_X00                  ) * liSign)           to Garticl.Garticl_Sx00
+//              Add ((Gmove.Gmove_P00                  ) * liSign)           to Garticl.Garticl_Sp00
+//              Add ((Gmove.Gmove_X00-Gmove.Gmove_P00) * liSign)           to Garticl.Garticl_Syp00
+//              Move (Abs(Garticl.Garticl_Syp00))                              to Garticl.Garticl_Syp00k
+
+//              //¤æ£ ©£˜ reporting
+//              Add ((Gmove.Gmove_XR                   ) * liSign)           to Garticl.Garticl_SxR
+//              Add ((Gmove.Gmove_PR                   ) * liSign)           to Garticl.Garticl_SpR
+//              Add ((Gmove.Gmove_XR-Gmove.Gmove_PR  ) * liSign)           to Garticl.Garticl_SypR
+//              Move (Abs(Garticl.Garticl_SypR))                               to Garticl.Garticl_SypRk
+
+//              //¦¨ ©« ¡¦§¦ £â¤¦ ¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©ª
+//              Add ((Gmove.Gmove_X1                   ) * liSign)           to Garticl.Garticl_Sx1
+//              Add ((Gmove.Gmove_P1                   ) * liSign)           to Garticl.Garticl_Sp1
+
+
+//              //*********************************************************
+//              //flag 7:˜¬¥á¤œ  ‹“” §à¢ã©œà¤ (+˜¥å˜)                     *
+//              //*********************************************************
+//              If (liGtypkin_Flag07 = TRUE);
+//              Begin
+//                   Case Begin
+//                        Case (liGplan_Myf_Sump = 1) //£æ¤¦¤ ¦  ®¨œà©« ¡âª ¡ ¤ã©œ ª ˜Ÿ¨¦å¦¬¤ ©«¤ ‹“”
+//                              Add ((Abs(Gmove.Gmove_X0)) * liSign) to Garticl.Garticl_MyfValp
+//                        Case Break
+//                        Case (liGplan_Myf_Sump = 2) //£æ¤¦¤ ¦  § ©«à« ¡âª ¡ ¤ã©œ ª ˜Ÿ¨¦å¦¬¤ ©«¤ ‹“”
+//                              Add ((Abs(Gmove.Gmove_P0)) * liSign) to Garticl.Garticl_MyfValp
+//                        Case Break
+//                        Case (liGplan_Myf_Sump = 3) //æ¢œª ¦  ¡ ¤ã©œ ª (®¨œà©« ¡âª & § ©«à« ¡âª) ˜Ÿ¨¦å¦¬¤ ©«¤ ‹“”
+//                              Add ((Abs(Gmove.Gmove_X0)) * liSign) to Garticl.Garticl_MyfValp
+//                              Add ((Abs(Gmove.Gmove_P0)) * liSign) to Garticl.Garticl_MyfValp
+//                        Case Break
+//                   Case End
+
+//                   If (liGplan_Yn_Myfp = TRUE);
+//                       Begin
+//                        Add liSign to Garticl.Garticl_MyfChkp
+//                        If (liSign = 1);
+//                             Begin //sosososso *************!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//                              If (Garticl.Garticl_MyfCodp = "") Move Gplan.Gplan_Code to Garticl.Garticl_MyfCodp
+//                              If (Garticl.Garticl_MyfChkp = 1 ) Set psGarticl_MyfCodp to Garticl.Garticl_MyfCodp //£æ¤¦¤ š ˜ display of error 1006
+//                             End
+//                        Else Begin
+//                              Move "" to Garticl.Garticl_MyfCodp
+//                              If (Garticl.Garticl_MyfChkp = 0) Set psGarticl_MyfCodp  to ""                      //£æ¤¦¤ š ˜ display of error 1006
+//                             End
+//                       End
+//              End //«â¢¦ª ¡é› ¡˜ š ˜ flag07
+
+
+//              //*********************************************************
+//              //flag 9:£œ é¤œ  ‹“” §à¢ã©œà¤ (-˜¥å˜)                     *
+//              //*********************************************************
+//              If (liGtypkin_Flag09 = TRUE);
+//              Begin
+//                   Case Begin
+//                        Case (liGplan_Myf_Sump = 1) //£æ¤¦¤ ¦  ®¨œà©« ¡âª ¡ ¤ã©œ ª ˜Ÿ¨¦å¦¬¤ ©«¤ ‹“”
+//                              Sub ((Abs(Gmove.Gmove_X0)) * liSign) to Garticl.Garticl_MyfValp
+//                        Case Break
+//                        Case (liGplan_Myf_Sump = 2) //£æ¤¦¤ ¦  § ©«à« ¡âª ¡ ¤ã©œ ª ˜Ÿ¨¦å¦¬¤ ©«¤ ‹“”
+//                              Sub ((Abs(Gmove.Gmove_P0)) * liSign) to Garticl.Garticl_MyfValp
+//                        Case Break
+//                        Case (liGplan_Myf_Sump = 3) //æ¢œª ¦  ¡ ¤ã©œ ª (®¨œà©« ¡âª & § ©«à« ¡âª) ˜Ÿ¨¦å¦¬¤ ©«¤ ‹“”
+//                              Sub ((Abs(Gmove.Gmove_X0)) * liSign) to Garticl.Garticl_MyfValp
+//                              Sub ((Abs(Gmove.Gmove_P0)) * liSign) to Garticl.Garticl_MyfValp
+//                        Case Break
+//                   Case End
+
+//                   If (liGplan_Yn_Myfp = TRUE);
+//                       Begin
+//                        Add liSign to Garticl.Garticl_MyfChkp
+//                        If (liSign = 1);
+//                             Begin //sosososso *************!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//                              If (Garticl.Garticl_MyfCodp = "") Move Gplan.Gplan_Code to Garticl.Garticl_MyfCodp
+//                              If (Garticl.Garticl_MyfChkp = 1 ) Set psGarticl_MyfCodp to Garticl.Garticl_MyfCodp //£æ¤¦¤ š ˜ display of error 1006
+//                             End
+//                        Else Begin
+//                              Move "" to Garticl.Garticl_MyfCodp
+//                              If (Garticl.Garticl_MyfChkp = 0) Set psGarticl_MyfCodp  to ""                      //£æ¤¦¤ š ˜ display of error 1006
+//                             End
+//                       End
+//                   End //«â¢¦ª ¡é› ¡˜ š ˜ flag09
+
+//              //*********************************************************
+//              //flag 11:˜¬¥á¤œ  ‹“” ˜š¦¨é¤ (+˜¥å˜)                      *
+//              //*********************************************************
+//              If (liGtypkin_Flag11 = TRUE);
+//              Begin
+//                   Case Begin
+//                        Case (liGplan_Myf_Suma = 1) //£æ¤¦¤ ¦  ®¨œà©« ¡âª ¡ ¤ã©œ ª ˜Ÿ¨¦å¦¬¤ ©«¤ ‹“”
+//                              Add ((Abs(Gmove.Gmove_X0)) * liSign) to Garticl.Garticl_MyfVala
+//                        Case Break
+//                        Case (liGplan_Myf_Suma = 2) //£æ¤¦¤ ¦  § ©«à« ¡âª ¡ ¤ã©œ ª ˜Ÿ¨¦å¦¬¤ ©«¤ ‹“”
+//                              Add ((Abs(Gmove.Gmove_P0)) * liSign) to Garticl.Garticl_MyfVala
+//                        Case Break
+//                        Case (liGplan_Myf_Suma = 3) //æ¢œª ¦  ¡ ¤ã©œ ª (®¨œà©« ¡âª & § ©«à« ¡âª) ˜Ÿ¨¦å¦¬¤ ©«¤ ‹“”
+//                              Add ((Abs(Gmove.Gmove_X0)) * liSign) to Garticl.Garticl_MyfVala
+//                              Add ((Abs(Gmove.Gmove_P0)) * liSign) to Garticl.Garticl_MyfVala
+//                        Case Break
+//                   Case End
+
+//                   If (liGplan_Yn_Myfa = TRUE);
+//                       Begin
+//                        Add liSign to Garticl.Garticl_MyfChka
+//                        If (liSign = 1);
+//                             Begin //sosososso *************!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//                              If (Garticl.Garticl_MyfCoda = "") Move Gplan.Gplan_Code to Garticl.Garticl_MyfCoda
+//                              If (Garticl.Garticl_MyfChka = 1 ) Set psGarticl_MyfCoda to Garticl.Garticl_MyfCoda //£æ¤¦¤ š ˜ display of error 1006
+//                             End
+//                        Else Begin
+//                              Move "" to Garticl.Garticl_MyfCoda
+//                              If (Garticl.Garticl_MyfChka = 0) Set psGarticl_MyfCoda  to ""                      //£æ¤¦¤ š ˜ display of error 1006
+//                             End
+//                       End
+//              End //«â¢¦ª ¡é› ¡˜ š ˜ flag11
+
+//              //*********************************************************
+//              //flag 13:£œ é¤œ  ‹“” ˜š¦¨é¤ (-˜¥å˜)                      *
+//              //*********************************************************
+//              If (liGtypkin_Flag13 = TRUE);
+//              Begin
+//                   Case Begin
+//                        Case (liGplan_Myf_Suma = 1) //£æ¤¦¤ ¦  ®¨œà©« ¡âª ¡ ¤ã©œ ª ˜Ÿ¨¦å¦¬¤ ©«¤ ‹“”
+//                              Sub ((Abs(Gmove.Gmove_X0)) * liSign) to Garticl.Garticl_MyfVala
+//                        Case Break
+//                        Case (liGplan_Myf_Suma = 2) //£æ¤¦¤ ¦  § ©«à« ¡âª ¡ ¤ã©œ ª ˜Ÿ¨¦å¦¬¤ ©«¤ ‹“”
+//                              Sub ((Abs(Gmove.Gmove_P0)) * liSign) to Garticl.Garticl_MyfVala
+//                        Case Break
+//                        Case (liGplan_Myf_Suma = 3) //æ¢œª ¦  ¡ ¤ã©œ ª (®¨œà©« ¡âª & § ©«à« ¡âª) ˜Ÿ¨¦å¦¬¤ ©«¤ ‹“”
+//                              Sub ((Abs(Gmove.Gmove_X0)) * liSign) to Garticl.Garticl_MyfVala
+//                              Sub ((Abs(Gmove.Gmove_P0)) * liSign) to Garticl.Garticl_MyfVala
+//                        Case Break
+//                   Case End
+
+//                   If (liGplan_Yn_Myfa = TRUE);
+//                       Begin
+//                        Add liSign to Garticl.Garticl_MyfChka
+//                        If (liSign = 1);
+//                             Begin //sosososso *************!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//                              If (Garticl.Garticl_MyfCoda = "") Move Gplan.Gplan_Code to Garticl.Garticl_MyfCoda
+//                              If (Garticl.Garticl_MyfChka = 1 ) Set psGarticl_MyfCoda to Garticl.Garticl_MyfCoda //£æ¤¦¤ š ˜ display of error 1006
+//                             End
+//                        Else Begin
+//                              Move "" to Garticl.Garticl_MyfCoda
+//                              If (Garticl.Garticl_MyfChka = 0) Set psGarticl_MyfCoda  to ""                      //£æ¤¦¤ š ˜ display of error 1006
+//                             End
+//                       End
+//                   End //«â¢¦ª ¡é› ¡˜ š ˜ flag13
+
+
+//    End_Procedure //private.adjust_balances
+
+
+//    Procedure Save_Main_File
+//              Integer liTrexe_Result
+//              Forward Send Save_Main_File
+//              Get private.Trexe to liTrexe_Result //procedural › ˜®œå¨ © gmhnnes+ghmnies
+//              Send private.Initialize_Properties
+//              If (liTrexe_Result <> 0) Send Operation_Not_Allowed liTrexe_Result
+//    End_Procedure//save_main_file
+
+
+//    Procedure Delete_Main_File
+//              Integer liTrexe_Result
+//              Forward Send Delete_Main_File
+//              Get private.Trexe to liTrexe_Result//procedural › ˜®œå¨ © gmhnnes+ghmnies
+//              Send private.Initialize_Properties
+//              If (liTrexe_Result <> 0) Send Operation_Not_Allowed liTrexe_Result
+//    End_Procedure//delete_main_file
+
+
+//    Procedure Operation_Not_Allowed Integer iError_Num
+//              String lsError_Message lsGarticl_MyfCodp lsGarticl_MyfCoda lsGplan_Code lsGplan_Ypol
+//              Case Begin
+//                   //˜§æ validate save
+//                   Case (iError_Num = 1001)
+//                        Move ("DDC 157:€¡˜«á¢¢¢ „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+//                        "‹æ¤¦  •¨âà© ã £æ¤¦  å©«à© œ§ «¨â§œ«˜  ¤˜ â®¦¬¤ £ã £›œ¤ ¡ã « £ã!");
+//                        to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1002)
+//                        Move ("DDC 157:€¡˜«á¢¢¢ œšš¨˜­ã (ƒœ¬«œ¨â¦¤ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+//                        "‹æ¤¦  •¨âà© ã £æ¤¦  å©«à© œ§ «¨â§œ«˜  ¤˜ â®¦¬¤ £ã £›œ¤ ¡ã « £ã!");
+//                        to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1003)
+//                        Move ("DDC 157:€¡˜«á¢¢¢ œšš¨˜­ã (Œæ£ ©£˜ Reporting).\n\n"+;
+//                        "‹æ¤¦  •¨âà© ã £æ¤¦  å©«à© œ§ «¨â§œ«˜  ¤˜ â®¦¬¤ £ã £›œ¤ ¡ã « £ã!");
+//                        to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1004)
+//                        Move ("DDC 157:€¡˜«á¢¢¢ œšš¨˜­ã (Œæ£ ©£˜ ‰ ¤ã©œàª).\n\n"+;
+//                        "‹æ¤¦  •¨âà© ã £æ¤¦  å©«à© œ§ «¨â§œ«˜  ¤˜ â®¦¬¤ £ã £›œ¤ ¡ã « £ã!");
+//                        to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1005)
+//                        Move ("DDC 157:€›ç¤˜«  œšš¨˜­ã!\n\n’¦ á¨Ÿ¨¦ â®œ  ¦¨ ©« ¡¦§¦ Ÿœå (€/€= "+;
+//                        (String(Garticl.Garticl_AA))+" )") to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1006)
+//                        Get psGarticl_MyfCodp to lsGarticl_MyfCodp
+//                        Move ("DDC 157:€›ç¤˜«  œšš¨˜­ã!\n\n’¦ á¨Ÿ¨¦ §œ¨ â®œ  ã› 1 ¢¦š˜¨ ˜©£æ ‹“” à¢ã©œà¤! ("+;
+//                        (Trim(lsGarticl_MyfCodp))+")") to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1007)
+//                        Get psGarticl_MyfCoda to lsGarticl_MyfCoda
+//                        Move ("DDC 157:€›ç¤˜«  œšš¨˜­ã!\n\n’¦ á¨Ÿ¨¦ §œ¨ â®œ  ã› 1 ¢¦š˜¨ ˜©£æ ‹“” €š¦¨é¤! ("+;
+//                        (Trim(lsGarticl_MyfCoda))+")") to lsError_Message
+//                   Case Break
+
+//                   Case (iError_Num = 1009)
+//                        Clear Codemast
+//                        Move "MODULE" to Codemast.Type
+//                        Move Garticl.Garticl_M_Code to Codemast.Code
+//                        Find Eq Codemast by Index.1 //type+code
+//                        Move ("DDC 157:€›ç¤˜«  „šš¨˜­ã\n\n(† „šš¨˜­ã «¨¦§¦§¦ œå«˜  £æ¤¦¤ ˜§æ "+;
+//                        (Trim(Codemast.Description))+" )") to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1100)
+//                        Move "DDC 157:‹ ˜§¦›œ¡«ã „«˜ ¨å˜-•¨ã©" to lsError_Message
+//                        Case Break
+
+//                   //---------------------------------gplan related errors á£œ©˜ ˜§¦ Gmove
+//                   Case (iError_Num = 1013)
+//                        Move ("DDC 157:€›ç¤˜«  „šš¨˜­ã\n\n( "+(Trim(Gplan.Gplan_Code))+" ›â¤ œå¤˜  «œ¢œ¬«˜å¦¬ ™˜Ÿ£¦ç !)");
+//                        to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1014)
+//                        Clear Codemast
+//                        Move "MODULE" to Codemast.Type
+//                        Move gs_Module_Code to Codemast.Code
+//                        Find Eq Codemast by Index.1 //type+code
+//                        Move ("DDC 157:€›ç¤˜«  „šš¨˜­ã\n\n( "+(Trim(Gplan.Gplan_Code))+" ›â¤ ¡ ¤œå«˜  ˜§æ "+;
+//                        (Trim(Codemast.Description))+" )") to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1015)
+//                        Move ("DDC 157:€›ç¤˜«  „šš¨˜­ã\n\n( "+(Trim(Gplan.Gplan_Code))+" ›â®œ«˜  £æ¤¦¤ ®¨œé©œ ª !)");
+//                        to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1016)
+//                        Move ("DDC 157:€›ç¤˜«  „šš¨˜­ã\n\n( "+(Trim(Gplan.Gplan_Code))+" ›â®œ«˜  £æ¤¦¤ § ©«é©œ ª !)");
+//                        to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1019)
+//                        Clear Nomisma
+//                        Move Gplan.Gplan_C_Code2 to Nomisma.Nomisma_Code
+//                        Find Eq Nomisma by Index.1
+//                        If (Not(Found)) Move ("DDC 157:€›ç¤˜«  „šš¨˜­ã!\n\n( "+(Trim(Gplan.Gplan_Code))+" ¡ ¤œå«˜  £æ¤¦¤ ©œ "+;
+//                            (Trim(Nomisma.Nomisma_Descr))+" )") to lsError_Message
+//                   Case Break
+
+
+//                   //˜§æ validate delete
+//                   Case (iError_Num = 2001)
+//                        Move ("DDC 157:€›ç¤˜«  › ˜š¨˜­ã!\n\n’¦ á¨Ÿ¨¦ â®œ  ¦¨ ©« ¡¦§¦ Ÿœå (€/€= "+;
+//                        (String(Garticl.Garticl_AA))+" )") to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 2002)
+//                        Clear Codemast
+//                        Move "MODULE" to Codemast.Type
+//                        Move Garticl.Garticl_M_Code to Codemast.Code
+//                        Find Eq Codemast by Index.1 //type+code
+//                        Move ("DDC 157:€›ç¤˜«  › ˜š¨˜­ã!\n\n(† „šš¨˜­ã › ˜š¨á­œ«˜  £æ¤¦¤ ˜§æ "+;
+//                        (Trim(Codemast.Description))+" )") to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 2100)
+//                        Move "DDC 157:‹ ˜§¦›œ¡«ã „«˜ ¨å˜-•¨ã©" to lsError_Message
+//                        Case Break
+
+
+//                   //˜§æ private.trexe (save+delete main file)
+//                   //---------------------------------gplan related errors â£œ©˜ ˜§¦ œ¤£â¨à©  ©¦¬šåà¤
+//                   Case (iError_Num = 1017)
+//                        Get psGplan_Code  to lsGplan_Code
+//                        Get pnGplan_Ypol0 to lsGplan_Ypol
+//                        Set psGplan_Code  to "" //£›œ¤ ©£æª property š ˜ œ§æ£œ¤ ®¨ã©
+//                        Set pnGplan_Ypol0 to 0  //£›œ¤ ©£æª property š ˜ œ§æ£œ¤ ®¨ã©
+//                        Move ("DDC 157:€›ç¤˜«  „šš¨˜­ã\n\n "+(Trim(lsGplan_Code))+" ›â¤ ›â®œ«˜  ®¨œà©« ¡æ ¬§æ¢¦ §¦ ! (“="+;
+//                        lsGplan_Ypol+")") to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1018)
+//                        Get psGplan_Code  to lsGplan_Code
+//                        Get pnGplan_Ypol0 to lsGplan_Ypol
+//                        Set psGplan_Code  to "" //£›œ¤ ©£æª property š ˜ œ§æ£œ¤ ®¨ã©
+//                        Set pnGplan_Ypol0 to 0  //£›œ¤ ©£æª property š ˜ œ§æ£œ¤ ®¨ã©
+//                        Move ("DDC 157:€›ç¤˜«  „šš¨˜­ã\n\n "+(Trim(lsGplan_Code))+" ›â¤ ›â®œ«˜  § ©«à« ¡æ ¬§æ¢¦ §¦ ! (“="+;
+//                        lsGplan_Ypol+")") to lsError_Message
+//                   Case Break
+
+//                   Case (iError_Num = 3001) //¢áŸ¦ª «¦¬ ¡é› ¡˜
+//                        Move ("DDC 157:Transaction Aborted! (€¡˜«á¢¢¢¦ §¨æ©£¦)\n\n"+;
+//                              "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 3002) //®˜¢˜©£â¤¦ gplan (reindex gplan + check gplan
+//                        Move ("DDC 157:Transaction Aborted! (A¤ç§˜¨¡«¦ª §œ¨ ¢§« ¡æª)\n\n"+;
+//                              "˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ „¢œš®¦ Š¦š ©« ¡¦ç ‘®œ›å¦¬!") to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 3003) //›â¤ £§æ¨œ©˜ ¤˜ ¥˜¤˜™¨é gplan by recnum!
+//                        Move ("DDC 157:Transaction Aborted! (€¤ç§˜¨¡«¦ª €¨® ¡æª)\n\n"+;
+//                              "˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª!") to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 3004) //›â¤ £§æ¨œ©˜ ¤˜ ™¨é gplan by recr!
+//                        Move ("DDC 157:Transaction Aborted! (€¤ç§˜¨¡«¦ª €¨® ¡æª)\n\n"+;
+//                              "˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª!") to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 3005) //¢áŸ¦ª «¦¬ ¡é› ¡˜
+//                        Move ("DDC 157:Transaction Aborted! (update=0 + backout=0)\n\n"+;
+//                              "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ PIS ") to lsError_Message
+//                   Case Break
+
+
+//                   //â¢œš®¦  open items
+//                   Case (iError_Num = 1101)
+//                        Move ("DDC 157:€¡˜«á¢¢¢ „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+//                        "’¦ ˜©¬©®â« ©«¦ ®¨œà©« ¡æ ¬§æ¢¦ §¦ œå¤˜  ˜¨¤« ¡æ !");
+//                        to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1102)
+//                        Move ("DDC 157:€¡˜«á¢¢¢ „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+//                        "’¦ ˜©¬©®â« ©«¦ § ©«à« ¡æ ¬§æ¢¦ §¦ œå¤˜  ˜¨¤« ¡æ !");
+//                        to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1103)
+//                        Move ("DDC 157:€¡˜«á¢¢¢ „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+//                        "† ¡á¢¬¯ «ª ®¨âà©ª œå¤˜  ˜¨¤« ¡ã !");
+//                        to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1104)
+//                        Move ("DDC 157:€¡˜«á¢¢¢ „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+//                        "† ¡á¢¬¯ «ª §å©«à©ª œå¤˜  ˜¨¤« ¡ã !");
+//                        to lsError_Message
+//                   Case Break
+//                   //---------------------------------------Ÿœ« ¡âª ®¨œé©œ ª-----------------
+//                   Case (iError_Num = 1105)
+//                        Move ("DDC 157:€¡˜«á¢¢¢ •¨œà©« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+//                        "’¦ ˜©¬©®â« ©«¦ ®¨œà©« ¡æ ¬§æ¢¦ §¦ ¬§œ¨™˜å¤œ  «¤ ¦¢ ¡ã ®¨âà© !");
+//                        to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1106)
+//                        Move ("DDC 157:€¡˜«á¢¢¢ •¨œà©« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+//                        "† ¡á¢¬¯ «ª ®¨âà©ª ¬§œ¨™˜å¤œ  «¤ ¦¢ ¡ã ®¨âà© !");
+//                        to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1107)
+//                        Move ("DDC 157:€¡˜«á¢¢¢ •¨œà©« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+//                        "’¦ ˜©¬©®â« ©«¦ § ©«à« ¡æ ¬§æ¢¦ §¦ ›â¤ œå¤˜  £›œ¤ ¡æ !");
+//                        to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1108)
+//                        Move ("DDC 157:€¡˜«á¢¢¢ •¨œà©« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+//                        "† ¡á¢¬¯ «ª §å©«à©ª ›â¤ œå¤˜  £›œ¤ ¡ã !");
+//                        to lsError_Message
+//                   Case Break
+//                   //---------------------------------------˜¨¤« ¡âª ®¨œé©œ ª---------------
+//                   Case (iError_Num = 1109)
+//                        Move ("DDC 157:€¡˜«á¢¢¢ €¨¤« ¡ã •¨œà©« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+//                        "’¦ ˜©¬©®â« ©«¦ ®¨œà©« ¡æ ¬§æ¢¦ §¦ ›â¤ œå¤˜  £›œ¤ ¡æ!");
+//                        to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1110)
+//                        Move ("DDC 157:€¡˜«á¢¢¢ €¨¤« ¡ã •¨œà©« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+//                        "† ¡á¢¬¯ «ª ®¨âà©ª ›â¤ œå¤˜  £›œ¤ ¡ã !");
+//                        to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1111)
+//                        Move ("DDC 157:€¡˜«á¢¢¢ €¨¤« ¡ã •¨œà©« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+//                        "’¦ ˜©¬©®â« ©«¦ § ©«à« ¡æ ¬§æ¢¦ §¦ ¬§œ¨™˜å¤œ  «¤ ˜§æ¢¬« « £ã «ª ˜¨¤« ¡ãª ®¨âà©ª !");
+//                        to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1112)
+//                        Move ("DDC 157:€¡˜«á¢¢¢ €¨¤« ¡ã •¨œà©« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+//                        "† ¡á¢¬¯ «ª §å©«à©ª ¬§œ¨™˜å¤œ  «¤ ˜§æ¢¬« « £ã «ª ˜¨¤« ¡ãª ®¨âà©ª !");
+//                        to lsError_Message
+//                   Case Break
+//                   //---------------------------------------Ÿœ« ¡âª § ©«é©œ ª----------------
+//                   Case (iError_Num = 1113)
+//                        Move ("DDC 157:€¡˜«á¢¢¢  ©«à« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+//                        "’¦ ˜©¬©®â« ©«¦ ®¨œà©« ¡æ ¬§æ¢¦ §¦ ›â¤ œå¤˜  £›œ¤ ¡æ !");
+//                        to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1114)
+//                        Move ("DDC 157:€¡˜«á¢¢¢  ©«à« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+//                        "† ¡á¢¬¯ «ª ®¨âà©ª ›â¤ œå¤˜  £›œ¤ ¡ã !");
+//                        to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1115)
+//                        Move ("DDC 157:€¡˜«á¢¢¢  ©«à« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+//                        "’¦ ˜©¬©®â« ©«¦ § ©«à« ¡æ ¬§æ¢¦ §¦ ¬§œ¨™˜å¤œ  «¤ ¦¢ ¡ã §å©«à© !");
+//                        to lsError_Message
+//                   Case Break
+//                   Case (iError_Num = 1116)
+//                        Move ("DDC 157:€¡˜«á¢¢¢  ©«à« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+//                        "† ¡á¢¬¯ «ª §å©«à©ª ¬§œ¨™˜å¤œ  «¤ ¦¢ ¡ã §å©«à© !");
+//                        to lsError_Message
+//                   Case Break
+//                   //---------------------------------------˜¨à« ¡âª § ©«é©œ ª----------------
+//                   Case (iError_Num = 1117)
+//                        Move ("DDC 157:€¡˜«á¢¢¢ €¨¤« ¡ã  ©«à« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+//                        "’¦ ˜©¬©®â« ©«¦ ®¨œà©« ¡æ ¬§æ¢¦ §¦ ›â¤ œå¤˜  £›œ¤ ¡æ!");
+//                        to lsError_Message
+//                   Case Break
+                   
+//                   Case (iError_Num = 1118)
+//                        Move ("DDC 157:€¡˜«á¢¢¢ €¨¤« ¡ã  ©«à« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+//                        "† ¡á¢¬¯ «ª ®¨âà©ª ›â¤ œå¤˜  £›œ¤ ¡ã !");
+//                        to lsError_Message
+//                   Case Break
+                   
+//                   Case (iError_Num = 1119)
+//                        Move ("DDC 157:€¡˜«á¢¢¢ €¨¤« ¡ã  ©«à« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+//                        "’¦ ˜©¬©®â« ©«¦ § ©«à« ¡æ ¬§æ¢¦ §¦ ¬§œ¨™˜å¤œ  «¤ ˜§æ¢¬« « £ã «ª ˜¨¤« ¡ãª §å©«à©ª !");
+//                        to lsError_Message
+//                   Case Break
+                   
+//                   Case (iError_Num = 1120)
+//                        Move ("DDC 157:€¡˜«á¢¢¢ €¨¤« ¡ã  ©«à« ¡ã „šš¨˜­ã (‰ç¨ ¦ Œæ£ ©£˜ •¨ã©œàª).\n\n"+;
+//                        "† ¡á¢¬¯ «ª §å©«à©ª ¬§œ¨™˜å¤œ  «¤ ˜§æ¢¬« « £ã «ª ˜¨¤« ¡ãª §å©«à©ª !");
+//                        to lsError_Message
+//                   Case Break
+
+//                   Case (iError_Num = 3000)
+//                        Move "DDC 157:¨¦¡ç§«œ  ˜¤ç§˜¨¡«¦ ¬§¦¡˜«á©«£˜" to lsError_Message
+//                   Case Break
+
+
+//                   Case Else
+//                        Forward Send Operation_Not_Allowed iError_Num
+//              Case End
+
+//              Error iError_Num lsError_Message
+//    End_Procedure   //operation_not_allowed
+//----------------------------------------------------
+// REM js 03/12/2007 To arxeio to xrhsimopoioume mono gia katagrafh allagon
+// ---------------------------------------------------      
+
+
+
+    //1001:Gmove_x0  * Gmove_p0  = 0 (›â¤ œ§ «¨â§œ«˜  ©œ â¤˜ record ¤˜ â®à ¡˜  ®¨âà© ¡˜å §å©«à©)
+    //1002:Gmove_x00 * Gmove_p00 = 0
+    //1003:Gmove_rxr * Gmove_pr  = 0
+    //1004:Gmove_x2  * Gmove_p2
+
+    //1005:garticl_aa = 0:œ§ «¨â§œ«˜  save £æ¤¦¤ ©œ §¨¦©à¨ ¤âª ¡ ¤ã©œ ª-«˜ ¦¨ ©« ¡á á¨Ÿ¨˜ ›â¤ ˜¢¦ é¤¦¤«˜ 
+    //                   (§¨¦©¦®ã ©«¤ ®¦¨ã©© ˜˜ : §¨é«˜ ©éà Gmove ¡˜  £œ«á garticl!)
+    //                   § Ÿ˜¤æ¤ ¦ â¢œš®¦ª ˜¬«æª ¤˜ šå¤œ  £œ «¦ statuse
+
+
+    //1006:garticl_myfchkp <=1:©œ ¡áŸœ á¨Ÿ¨¦ œ§ «¨â§œ«˜  £æ¤¦¤ 1 œ¡›æ«ª/˜§¦›â¡«ª š ˜ ‹“” §à¢ã©œà¤
+    //1007:garticl_myfchka <=1:©œ ¡áŸœ á¨Ÿ¨¦ œ§ «¨â§œ«˜  £æ¤¦¤ 1 œ¡›æ«ª/˜§¦›â¡«ª š ˜ ‹“” ˜š¦¨é¤
+
+    //1008
+
+    //02/05/2000:¦ â¢œš®¦ª module šå¤œ«˜  £æ¤¦¤ ©«¦ garticl
+    //1009:m_code: œšš¨˜­ã œ§ «¨â§œ«˜  £æ¤¦¤ ˜§¦ ¦ module §¦¬ «¤ ›£ ¦ç¨š©œ <˜ ¡ ¬ ¨ ¦ ¤ !>
+
+
+    //1010:
+    //1011:
+    //1012:
+
+    //1013:gplan_yn_last = 1:¡å¤© £æ¤¦¤ ©œ «œ¢œ¬«˜å¦ ™˜Ÿ£æ
+    //1014:gplan_yn_kin  = 1:œ¢œš®¦ª ¡å¤©ª ˜§¦ «¦ «¨â®¦¤ module
+    //1015:gplan_xpm=1 + p2=0:œ¢œš®¦ª œå›¦¬ª ¡ ¤ã©œà¤
+    //1016:gplan_xpm=2 + x2=0:œ¢œš®¦ª œå›¦¬ª ¡ ¤ã©œà¤
+
+    //¦  §˜¨˜¡á«à 2 â¢œš®¦  šå¤¦¤«˜  ©«¤ private.trexe
+    //1017:gplan_yn_xy=0 + gplan_sx0>=gplan_sp0:˜§˜š¦¨œçœ«˜  ®¨œà©« ¡æ ¬§æ¢¦ §¦
+    //1018:gplan_yn_py=0 + gplan_sp0>=gplan_sx0:˜§˜š¦¨œçœ«˜  § ©«à« ¡æ ¬§æ¢¦ §¦
+    //1019:gplan_c_code2:œá¤ <> "", «æ«œ £æ¤¦¤ ¡ ¤ã©œ ª ©œ ˜¬«æ «¦ ¤æ£ ©£˜
+
+    //1100:cby = globals
+    //˜§˜š¦¨œçœ«˜  «¦ Gmove ¤˜ ˜¢¢áœ  parent garticl
+
+    //â¢œš®¦  open item
+    //1101:yx >= 0 §á¤«˜
+    //1102:yp >= 0 §á¤«˜
+    //1103:sx >= 0 §á¤«˜
+    //1104:sp >= 0 §á¤«˜
+
+    //1105:š ˜ ˜«æ­ ¦ ®¨œà©« ¡æ record: yx <= x0
+    //1106:                             sx <= x0
+    //1107:                             yp  =  0
+    //1108:                             sp  =  0
+
+    //1109:š ˜ ¯œ¬«¦- § ©«à« ¡æ record: yx  =  0
+    //1110:                             sx  =  0
+    //1111:                             yp  <= (abs(x0))
+    //1112:                             sp  <= (abs(x0))
+
+    //1113:š ˜ ˜«æ­ ¦ § ©«à« ¡æ record: yx  =  0
+    //1114:                             sx  =  0
+    //1115:                             yp  <= p0
+    //1116:                             sp  <= p0
+
+    //1117:š ˜ ¯œç«¦- ®¨œà©« ¡æ record: yx  =  0
+    //1118:                             sx  =  0
+    //1119:                             yp  <= (abs(p0))
+    //1120:                             sp  <= (abs(p0))
+
+
+    //        yp         = 0
+    //        sx between 0 and x0
+    //        sp=0
+
+
+//----------------------------------------------------
+// REM js 03/12/2007 To arxeio to xrhsimopoioume mono gia katagrafh allagon
+// ---------------------------------------------------      
+//    Function Validate_Save Returns Integer
+//             Integer iReturnVal liZeroAA liOpen_Items
+//             Forward Get Validate_Save to iReturnVal
+
+//             If (Not(iReturnVal));
+//             Begin
+
+//              //â¢œš®¦  ®¨œà§ ©«é©œà¤
+//              If (Not(Gmove.Gmove_X0 * Gmove.Gmove_P0 = 0)) Send Operation_Not_Allowed 1001
+//              If (Not(Gmove.Gmove_X00* Gmove.Gmove_P00= 0)) Send Operation_Not_Allowed 1002
+//              If (Not(Gmove.Gmove_Xr * Gmove.Gmove_Pr = 0)) Send Operation_Not_Allowed 1003
+//              If (Not(Gmove.Gmove_X2 * Gmove.Gmove_P2 = 0)) Send Operation_Not_Allowed 1004
+
+////            //â¢œš®¦ª ˜/˜ (¢¦š ©« ¡¦§¦å©ª)
+////            If (Not(Garticl.Garticl_AA = 0))                  Send Operation_Not_Allowed 1005
+
+//              //â¢œš®¦  ‹“”
+//              If (Not(Garticl.Garticl_MyfChkp <= 1))            Send Operation_Not_Allowed 1006
+//              If (Not(Garticl.Garticl_MyfChka <= 1))            Send Operation_Not_Allowed 1007
+
+
+
+////           02/05/2000:¦ â¢œš®¦ª module šå¤œ«˜  £æ¤¦¤ ©«¦ garticl
+////                      ¡˜  £æ¤¦¤ š ˜ regular data entry (æ®  š ˜ ®¦¨ãš©-£›œ¤ ©£æ ˜/˜!
+////---------->//1009:â¢œš®¦ª module œšš¨˜­ãª
+////---------->If (Not(Garticl.Garticl_M_Code = gs_Module_Code))  Send Operation_Not_Allowed 1009
+
+//             //¦  â¢œš®¦  «¦¬ gplan §¦¬ šå¤¦¤«˜  œ›é, ˜­¦¨æ¬¤ £æ¤¦¤ «¦¤ «œ¢œ¬«˜å¦ ™˜Ÿ£æ,
+//             //¦ ¦§¦å¦ª á¢¢à©«œ â®œ  ¡˜«˜®à¨Ÿœå ©«¦ Gmove.
+//             //¦  2 â¢œš®¦  ¬§¦¢¦å§à¤ (1017+1018) §¦¬ ˜­¦¨¦ç¤ ¡˜  æ¢¦¬ª «¦¬ª
+//             //§œ¨ ¢§« ¡¦çª, šå¤¦¤«˜  ©«¤ private.trexe
+//             //1013:â¢œš®¦ª «œ¢œ¬«˜å¦¬ ™˜Ÿ£¦ç
+//             If (Not(Gplan.Gplan_Yn_Last = TRUE             ))  Send Operation_Not_Allowed 1013
+
+//// js 10/05/2002
+////             //1014:â¢œš®¦ª ¡å¤©ª ˜§¦ «¦ «¨â®¦¤ module
+////             If (;
+////                  (Gplan.Gplan_Yn_Kin  = FALSE) and;
+////                  ((private.fiGplanmod_Module(Self,;
+////                                              Gplan.Gplan_Recr,;
+////                                              gs_Module_Code);
+////                   ) = FALSE);
+////                )                                               Send Operation_Not_Allowed 1014
+
+//             //1015+1016:â¢œš®¦  œå›¦¬ª ¡ ¤ã©œà¤
+//             //         š ˜ ®¨œ¦ç£œ¤¦¬ª ¢¦š/£¦çª,  §å©«à© §¨â§œ  ¤˜ œå¤˜  0
+//             If (   (Gplan.Gplan_Xpm  = 1) and;
+//                (Not(Gmove.Gmove_P2 = 0)))                    Send Operation_Not_Allowed 1015
+//             //         š ˜ § ©«¦ç£œ¤¦¬ª ¢¦š/£¦çª,  ®¨âà© §¨â§œ  ¤˜ œå¤˜  0
+//             If (   (Gplan.Gplan_Xpm  = 2) and;
+//                (Not(Gmove.Gmove_X2 = 0)))                    Send Operation_Not_Allowed 1016
+
+//             //1019:â¢œš®¦ª ¤¦£å©£˜«¦ª ¡å¤©ª ¢¦š˜¨ ˜©£¦ç
+//             If (;
+//                     (Gplan.Gplan_C_Code2 <> "") and;
+//                 (Not(Gplan.Gplan_C_Code2 = Garticl.Garticl_C_Code2));
+//                )                                               Send Operation_Not_Allowed 1019
+
+//             //1101-1120:â¢œš®¦  open item
+//              Move (private.fi_Validate_Open_Items(Self)) to liOpen_Items
+//              If (liOpen_Items <> 0) Send Operation_Not_Allowed liOpen_Items
+
+//              //1100:cby = globals
+//              If ( ;
+//                  (Not(Gmove.Company_Code = SysCurGL.Company_Code)) or;
+//                  (Trim(Gmove.Branch_Code)= '') or;
+//                  (Not(Gmove.Year_Year    = SysCurGL.Year_Year   ));
+//                  ) Send Operation_Not_Allowed 1100
+             
+//                Clear Branch
+//                Move Syscurgl.Company_Code  to Branch.Company_Code
+//                Move Gmove.Branch_Code      to Branch.Branch_Code
+//                Find Eq Branch By Index.1
+//                If (Not(Found)) Send Operation_Not_Allowed 3000
+             
+//             End //«â¢¦ª ¡é› ¡˜ validation
+             
+             
+//             Function_Return iReturnVal
+//    End_Function //validate_save
+
+
+//    //2001:«˜ ¦¨ ©« ¡á á¨Ÿ¨˜ ›â¤ › ˜š¨á­¦¤«˜ 
+//    //2002:«¦ á¨Ÿ¨¦ › ˜š¨á­œ«˜  £æ¤¦¤ ˜§¦ «¦ module §¦¬ «¦ ›£ ¦ç¨š©œ
+//    //2100:cby = globals
+
+//    Function Validate_Delete  Returns Integer
+//             Integer iReturnVal
+//             Forward Get Validate_Delete  To iReturnVal
+//             If (Not(iReturnVal));
+//             Begin
+
+//              //2001:â¢œš®¦ª ˜/˜ (¢¦š ©« ¡¦§¦å©ª)
+//              If (Garticl.Garticl_AA <> 0)                     Send Operation_Not_Allowed 2001
+
+//// js 10/05/2002
+////              //2002:â¢œš®¦ª module œšš¨˜­ãª
+////              If (Not(Garticl.Garticl_M_Code = gs_Module_Code)) Send Operation_Not_Allowed 2002
+
+//              //2100:cby = globals
+//              If ( ;
+//                  (Not(Gmove.Company_Code = SysCurGL.Company_Code)) or;
+//                  (Trim(Gmove.Branch_Code)= '') or;
+//                  (Not(Gmove.Year_Year    = SysCurGL.Year_Year   ));
+//                  ) Send Operation_Not_Allowed 2100
+//             End //«â¢¦ª ¡é› ¡˜ validation
+//             Function_Return iReturnVal
+//    End_Function //validate_delete
+
+
+
+//    Function fnCalcMonada Integer Rdigits## Returns Number
+//        Local Number lnMonada##
+//           move (1/(10^Rdigits##)) to lnMonada##
+//        Function_Return lnMonada##
+//    End_Function
+
+//    Function FnSetValues Integer fnCurr## Integer fnxp## Integer fnMulti## Number fnValue## Returns Integer
+//        Local Integer iRval##
+//        If (fnCurr## = 1) Begin //Local-Book
+//           if (Fnxp##= 1) Begin //Xreosh
+//            set field_Changed_Value Field Gmove.Gmove_X0 to ((abs(Gmove.Gmove_X0)+abs(fnValue##)) * fnMulti##) //ja//to Gmove.Gmove_X0
+//            set field_Changed_Value Field Gmove.Gmove_X0k to fnValue##
+//           end
+//           if (Fnxp##= 2) Begin //Pistosi
+//               set field_Changed_Value Field Gmove.Gmove_p0 to ((abs(Gmove.Gmove_p0)+abs(fnValue##)) * fnMulti##) //ja//to Gmove.Gmove_p0
+//               set field_Changed_Value Field Gmove.Gmove_p0k to fnValue##
+//           end
+//        end
+//        If (fnCurr## = 2) Begin //EUro
+//           if (Fnxp##= 1) Begin //Xreosh
+//            set field_Changed_Value Field Gmove.Gmove_X00 to ((abs(Gmove.Gmove_X00)+abs(fnValue##)) * fnMulti##) //ja//to Gmove.Gmove_X00
+//            set field_Changed_Value Field Gmove.Gmove_X00k to fnValue##
+//           end
+//           if (Fnxp##= 2) Begin //Pistosi
+//               set field_Changed_Value Field Gmove.Gmove_p00 to ((abs(Gmove.Gmove_p00)+abs(fnValue##)) * fnMulti##) //ja//to Gmove.Gmove_p00
+//               set field_Changed_Value Field Gmove.Gmove_p00k to fnValue##
+//           end
+//        end
+//        If (fnCurr## = 3) Begin //Reporting
+//           if (Fnxp##= 1) Begin //Xreosh
+//            set field_Changed_Value Field Gmove.Gmove_XR to ((abs(Gmove.Gmove_XR)+abs(fnValue##)) * fnMulti##) //ja//to Gmove.Gmove_XR
+//            set field_Changed_Value Field Gmove.Gmove_XRk to fnValue##
+//           end
+//           if (Fnxp##= 2) Begin //Pistosi
+//               set field_Changed_Value Field Gmove.Gmove_pR to ((abs(Gmove.Gmove_pR)+abs(fnValue##)) * fnMulti##) //ja//to Gmove.Gmove_pR
+//               set field_Changed_Value Field Gmove.Gmove_pRk to fnValue##
+//           end
+//        end
+//        move 0 to iRval##
+//        Function_Return iRval##
+//    End_Function
+
+//    // ˆ©¦©¡œ¢åœ  « ª ®¨œà§ ©«é©œ ª ©«˜ 3 ¤¦£å©£˜«˜ ˜¤ â®¦¬¤ §¨¦¡œå¯œ  › ˜­¦¨âª
+//    // ¢æšà Rate
+//    // pros to par;on ˜§œ¤œ¨š¦§¦ £â¤ š ˜«å §˜å¦¬£œ £æ¤¦ ©' œ¤˜ ¤æ£ ©£˜
+//    // sosososososoososososos ¤˜ œ¢œš®Ÿœå  ¢¦š ¡ã
+//    //¡˜¢œå«˜  ˜§æ: a) Gmove.vw   function exiting
+//    //              b) doAkArth.pkg (˜¡¬¨à« ¡æ á¨Ÿ¨¦)
+//    procedure check_Arthro_For_Ypol
+
+//        Local Integer liIndAxxre## LiIndAxpist##;     //Book
+//                      liIndAxxreE## LiIndAxpistE##;   //Euro
+//                      liIndAxxreR## LiIndAxpistR##;   //Reporting
+//                      limulti## liMatch##;
+//                      liCounterX## liCounterP##;
+//                      liCounterRecords## liRval1## liRval2## liXP##
+
+//        Local Number  lnCheckValueX## lnCheckValueP##;
+//                      lnCheckValueXOther## lnCheckValuePOther##;
+//                      lnSearchRecnum## lnSearchOtherRecnum##;
+//                      lnStartYpol## lnTotalYpol##
+
+//        Local Number  lnNewYpolL##;
+//                      lnNewYpolE##;
+//                      lnNewYpolR##
+
+//        Local Integer liIncome## liExpense## liOther##;
+//                      liLocal## liEuro## liReporting##
+
+//        Local String  lsChkGPlan_o_Code## lsChkGplanC##
+
+
+//        Procedure_Return 0
+
+//        Set  piFireConvert to 1
+
+
+//        //sosososo lathos, prpepei na kaneis get field curent value !!!!
+//        if ((Garticl.Garticl_Syp0k <> 0) or (Garticl.Garticl_Syp00k <> 0) or (Garticl.Garticl_SypRk <> 0)) begin
+
+//        if (Garticl.Garticl_Syp0k  <> 0)  Move 1 to liLocal##
+//        if (Garticl.Garticl_Syp00k <> 0)  Move 1 to liEuro##
+//        if (Garticl.Garticl_Syprk  <> 0)  Move 1 to liReporting##
+
+//        move (Garticl.Garticl_Sx0-Garticl.Garticl_Sp0)   to lnNewYpolL##
+//        move (Garticl.Garticl_Sx00-Garticl.Garticl_Sp00) to lnNewYpolE##
+//        move (Garticl.Garticl_SxR-Garticl.Garticl_SpR)   to lnNewYpolR##
+
+//            move 0 to liMulti##
+//            move 0 to liIndAxxre##
+//            move 0 to liIndAxPist##
+//            move 0 to liMatch##
+
+
+//            if ((Garticl.Garticl_Sx0-Garticl.Garticl_Sp0) > 0 ) move 1 to liIndAxxre##
+//            else;
+//            if ((Garticl.Garticl_Sx0-Garticl.Garticl_Sp0) < 0 ) move 1 to liIndAxPist##
+
+//            if ((Garticl.Garticl_Sx00-Garticl.Garticl_Sp00) > 0 ) move 1 to liIndAxxreE##
+//            else;
+//            if ((Garticl.Garticl_Sx00-Garticl.Garticl_Sp00) < 0 ) move 1 to liIndAxPistE##
+
+//            if ((Garticl.Garticl_SxR-Garticl.Garticl_SpR) > 0 ) move 1 to liIndAxxreR##
+//            else;
+//            if ((Garticl.Garticl_SxR-Garticl.Garticl_SpR) < 0 ) move 1 to liIndAxPistR##
+
+//            Send Request_Find to (self) First_Record Gmove.File_Number 2
+//            While ((Found) And (liMatch## = 0))
+
+//                If ((liLocal##=1) and (lnNewYpolL## <> 0)) begin  //BOOK............
+//                    Get Field_Current_Value Field Gmove.Gmove_X0 to lnCheckValueX##
+//                    Get Field_Current_Value Field Gmove.Gmove_P0 to lnCheckValueP##
+//                    if (liIndAxXre## =1) begin
+//                        if ((lnCheckValueX## < 0) or (lnCheckValueP## > 0 )) begin
+//                            if (lnCheckValueX## < 0)  move (fnSetValues(Self,1,1,-1,(fnCalcMonada(Self,0)))) to liRval1##
+//                            if (lnCheckValueP## > 0)  move (fnSetValues(Self,1,2,1,(fnCalcMonada(Self,0))))  to liRval1##
+
+//                            Set  piFireConvert to 1
+
+//                            Send Request_Save
+//                            if (lnNewYpolL## <> 0);
+//                            move (lnNewYpolL## - (fnCalcMonada(Self,0))) to lnNewYpolL##
+//                        end //if ((lnCheckValueX## < 0) or ....
+//                     end
+//                     else if (liIndAxPist## =1) begin
+//                        if ((lnCheckValueX## > 0) or (lnCheckValueP## < 0 )) begin
+//                            if (lnCheckValueX## > 0)  move (fnSetValues(Self,1,1,1,(fnCalcMonada(Self,0)))) to liRval1##
+//                            if (lnCheckValueP## < 0)  move (fnSetValues(Self,1,2,-1,(fnCalcMonada(Self,0))))  to liRval1##
+
+//                            //Move 1 to liFireConvert## //ja//
+//                            Set  piFireConvert to 1
+
+//                            Send Request_Save
+//                            if (lnNewYpolL## <> 0);
+//                            move (lnNewYpolL## + (fnCalcMonada(Self,0))) to lnNewYpolL##
+//                        end //if ((lnCheckValueX## < 0) or ....
+//                     end
+//                end //((liLocal##=1) and ..........
+
+//                If ((liEuro##=1) and (lnNewYpolE## <> 0)) Begin  //EURO...............
+//                    Get Field_Current_Value Field Gmove.Gmove_X00 to lnCheckValueX##
+//                    Get Field_Current_Value Field Gmove.Gmove_P00 to lnCheckValueP##
+//                    if (liIndAxXreE## =1) begin
+//                        if ((lnCheckValueX## < 0) or (lnCheckValueP## > 0 )) begin
+//                            if (lnCheckValueX## < 0)  move (fnSetValues(Self,2,1,-1,(fnCalcMonada(Self,2)))) to liRval1##
+//                            if (lnCheckValueP## > 0)  move (fnSetValues(Self,2,2,1,(fnCalcMonada(Self,2))))  to liRval1##
+
+//                            Set  piFireConvert to 1
+
+//                            Send Request_Save
+//                            if (lnNewYpolE## <> 0);
+//                            move (lnNewYpolE## - (fnCalcMonada(Self,2))) to lnNewYpolE##
+//                        end //if ((lnCheckValueX## < 0) or ....
+//                    end //Xrevsh
+//                    else if (liIndAxPistE## =1) begin
+//                        if ((lnCheckValueX## >  0) or (lnCheckValueP## < 0 )) begin
+//                            if (lnCheckValueX## > 0)  move (fnSetValues(Self,2,1,1,(fnCalcMonada(Self,2)))) to liRval1##
+//                            if (lnCheckValueP## < 0)  move (fnSetValues(Self,2,2,-1,(fnCalcMonada(Self,2))))  to liRval1##
+
+//                            Set  piFireConvert to 1
+
+//                            Send Request_Save
+//                            if (lnNewYpolE## <> 0);
+//                            move (lnNewYpolE## + (fnCalcMonada(Self,2))) to lnNewYpolE##
+//                        end //if ((lnCheckValueX## < 0) or ....
+//                    end //Pistosh
+//                end //ENd of EURO........
+
+
+//                If ((liReporting##=1) and (lnNewYpolR## <> 0)) begin
+//                    Get Field_Current_Value Field Gmove.Gmove_XR to lnCheckValueX##
+//                    Get Field_Current_Value Field Gmove.Gmove_PR to lnCheckValueP##
+//                    if (liIndAxXreR## =1) begin
+//                        if ((lnCheckValueX## < 0) or (lnCheckValueP## > 0 )) begin
+//                            if (lnCheckValueX## < 0)  move (fnSetValues(Self,3,1,-1,(fnCalcMonada(Self,2)))) to liRval1##
+//                            if (lnCheckValueP## > 0)  move (fnSetValues(Self,3,2,1,(fnCalcMonada(Self,2))))  to liRval1##
+
+//                            Set  piFireConvert to 1
+
+//                            Send Request_Save
+//                            if (lnNewYpolR## <> 0);
+//                            move (lnNewYpolR## - (fnCalcMonada(Self,0))) to lnNewYpolR##
+//                        end //if ((lnCheckValueX## < 0) or ....
+//                     end
+//                     else if (liIndAxPistR## =1) begin
+//                            if (lnCheckValueX## > 0)  move (fnSetValues(Self,3,1,1,(fnCalcMonada(Self,2)))) to liRval1##
+//                            if (lnCheckValueP## < 0)  move (fnSetValues(Self,3,2,-1,(fnCalcMonada(Self,2))))  to liRval1##
+
+//                            Set  piFireConvert to 1
+
+//                            Send Request_Save
+//                            if (lnNewYpolR## <> 0);
+//                            move (lnNewYpolR## + (fnCalcMonada(Self,0))) to lnNewYpolR##
+//                     end
+//                end //
+
+//                    if (liMatch## = 0);
+//                    Send Request_Find to (self) Next_Record Gmove.File_Number 2
+//            end  //While ((Found)
+//     end
+//        Set piFireConvert to 0
+//    end_Procedure
+//----------------------------------------------------
+// REM js 03/12/2007 To arxeio to xrhsimopoioume mono gia katagrafh allagon
+// ---------------------------------------------------      
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Gmove.File_Number
+        Set Cascade_Delete_State To FALSE
+
+
+        Define_Auto_Increment  Sysrecg.Gmove_Rec0  To Gmove.Gmove_Rec0
+
+        // Field-based properties.......................
+
+        // Gmove.Company_Code
+
+        // Gmove.Branch_Code
+        Set Field_Prompt_Object    Field Gmove.Branch_Code To (SL002(Self))
+
+        // Gmove.Year_Year
+
+        // Gmove.Gtypkin_Code
+
+        // Gmove.Garticl_Hmnia
+
+        // Gmove.Garticl_No
+
+        // Gmove.Garticl_Recr
+
+        // Gmove.Gplan_Recr
+
+        // Gmove.Gmove_Rec0
+        //DDB/ Comment_Short       Field Gmove.Gmove_Rec0 To "System ¡à› ¡æª œšš¨˜­ãª"
+
+        // Gmove.Gmove_Recr
+
+        // Gmove.Gplan_Code
+        //DDB/ Comment_Short       Field Gmove.Gplan_Code To "„¤£œ¨é¤œ«˜  ©«¤ Update"
+
+        // Gmove.Gmove_Aitiol
+
+        // Gmove.Gmove_A_Code
+        //DDB/ Comment_Short       Field Gmove.Gmove_A_Code To "‰à› ¡æª ˜ « ¦¢¦šå˜ª (codemast)"
+        Set Field_Class_Name       Field Gmove.Gmove_A_Code To "dbComboFormSub"
+        Set Field_Value_Table      Field Gmove.Gmove_A_Code To (Gmove_Gmove_A_Code_VT(Self))
+
+        // Gmove.Year_Recr
+
+        // Gmove.Pms_Recr
+
+        // Gmove.Partl_Recr
+
+        // Gmove.Bartl_Recr
+
+        // Gmove.Bmove_Recr
+
+        // Gmove.Module
+
+        // Gmove.Login_Id
+
+        // Gmove.Hmnia_Metabolhs
+
+        // Gmove.Ora_Metabolhs
+
+        // Gmove.Eidos_Metabolhs
+
+        // Gmove.Prev_Id
+
+        // Gmove.Cur_Id
+
+        // Gmove.Prev_Name
+
+        // Gmove.Cur_Name
+
+        // Gmove.Prev_Afm
+
+        // Gmove.Cur_Afm
+
+        // Gmove.Prev_Doy
+
+        // Gmove.Cur_Doy
+
+        // Gmove.Prev_Stoxos1
+
+        // Gmove.Cur_Stoxos1
+
+        // Gmove.Prev_Stoxos2
+
+        // Gmove.Cur_Stoxos2
+
+        // Gmove.Prev_Zonh
+
+        // Gmove.Cur_Zonh
+
+        // Gmove.Prev_Oxhma
+
+        // Gmove.Cur_Oxhma
+
+        // Gmove.Prev_Ox_Apobaro
+
+        // Gmove.Cur_Ox_Apobaro
+
+        // Gmove.Prev_Antlia
+
+        // Gmove.Cur_Antlia
+
+        // Gmove.Prev_Ant_Min_M3
+
+        // Gmove.Cur_Ant_Min_M3
+
+        // Gmove.Prev_Qual
+
+        // Gmove.Cur_Qual
+
+        // Gmove.Prev_M3
+
+        // Gmove.Cur_M3
+
+        // Gmove.Prev_Unitprice
+
+        // Gmove.Cur_Unitprice
+
+        // Gmove.Prev_Item
+
+        // Gmove.Cur_Item
+
+        // Gmove.Prev_Cn
+
+        // Gmove.Cur_Cn
+
+        // Gmove.Prev_Cn_Addr
+
+        // Gmove.Cur_Cn_Addr
+
+        // Gmove.Prev_Cn_Prosth
+
+        // Gmove.Cur_Cn_Prosth
+
+        // Gmove.Recr1
+
+        // Gmove.Recr2
+
+        // Gmove.Recr3
+
+        // Gmove.Recr4
+
+        // Gmove.Txt1
+
+        // Gmove.Txt2
+
+        // Gmove.Txt3
+
+        // Gmove.Txt4
+
+        // Gmove.Label1
+
+        // Gmove.Label2
+
+        // Gmove.Label3
+
+        // Gmove.Flagn1
+
+        // Gmove.Flagn2
+
+        // Gmove.Flagn3
+
+        // Gmove.Flaga1
+
+        // Gmove.Flaga2
+
+        // Gmove.Flaga3
+
+        // Gmove.Num1
+
+        // Gmove.Num2
+
+        // Gmove.Num3
+
+        // Gmove.Num4
+
+        // Gmove.Num5
+
+        // Gmove.Date1
+
+        // Gmove.Date2
+
+        // Gmove.Date3
+
+        // Gmove.Date4
+
+        // Gmove.Time1
+
+        // Gmove.Time2
+
+        // Gmove.Time3
+
+        // Gmove.Time4
+
+        // Gmove.Descr1
+
+        // Gmove.Descr2
+
+        // Gmove.Descr3
+
+        // Gmove.Smalltxt1
+
+        // Gmove.Smalltxt2
+
+        // Gmove.Smalltxt3
+
+        // Gmove.Prev_Parast
+
+        // Gmove.Cur_Parast
+
+        // Gmove.Prev_Seira
+
+        // Gmove.Cur_Seira
+
+        // Gmove.Prev_Hmnia
+
+        // Gmove.Cur_Hmnia
+
+        // Gmove.Prev_No
+
+        // Gmove.Cur_No
+
+        // Gmove.Prev_Aa_Deop
+
+        // Gmove.Cur_Aa_Deop
+
+        // Gmove.Prev_Vprice
+
+        // Gmove.Cur_Vprice
+
+        // Gmove.Prev_Pagiaxrm3
+
+        // Gmove.Cur_Pagiaxrm3
+
+        // Gmove.Prev_Eleiph
+
+        // Gmove.Cur_Eleiph
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+End_Class    // Gmove_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl002.sl         // SL002
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

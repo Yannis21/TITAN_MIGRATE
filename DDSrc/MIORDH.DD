@@ -1,0 +1,24 @@
+Use DataDict.pkg
+
+Open MIORDH
+Open MIORDD
+Open MICN
+
+Class Miordh is a DataDictionary
+    
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Set Main_file to MIORDH.File_Number
+
+        Set Add_Server_File to MICN.File_Number
+
+        Set Add_Client_File to MIORDD.File_Number
+
+        Set Foreign_Field_Option DD_KEYFIELD DD_NOPUT to True
+        Set Foreign_Field_Option DD_KEYFIELD DD_FINDREQ to True
+        Set Foreign_Field_Option DD_INDEXFIELD DD_NOPUT to True
+        Set Foreign_Field_Option DD_DEFAULT DD_DISPLAYONLY to True
+
+    End_Procedure
+
+End_Class

@@ -1,0 +1,68 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : PrnParam.DD
+// Class Name: Prnparam_DataDictionary
+// Revision  : 0
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Prnparam
+
+//DDB-HeaderEnd
+
+Class Prnparam_DataDictionary  is a DataDictionary_Sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Prnparam.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Field-based properties.......................
+
+        // Prnparam.Company
+        Set Field_Options          Field Prnparam.Company To DD_REQUIRED   
+
+        // Prnparam.Section_123
+        Set Field_Options          Field Prnparam.Section_123 To DD_REQUIRED   
+        Set Field_Value_Range      Field Prnparam.Section_123 To 1 3
+
+        // Prnparam.Image_No
+        Set Field_Options          Field Prnparam.Image_No To DD_AUTOFIND    DD_REQUIRED   
+        Set Field_Value_Range      Field Prnparam.Image_No To 1 100
+
+        // Prnparam.File_Field
+        Set Field_Options          Field Prnparam.File_Field To DD_REQUIRED   
+
+        // Prnparam.Akeraia
+        Set Field_Options          Field Prnparam.Akeraia To DD_REQUIRED   
+
+        // Prnparam.Dekadika
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Prnparam_DataDictionary
+//DDB-FileEnd

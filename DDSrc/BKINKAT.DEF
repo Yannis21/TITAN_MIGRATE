@@ -1,0 +1,54 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: BKINKAT (# 33)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:BKINKAT
+  USER DISPLAY NAME         : BKINKAT
+  DATAFLEX FILE NAME        : BKINKAT
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 99        ( USED: 99 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 33 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC     10     1      
+  2  BRANCH_CODE      ASC     10    11      
+  3  YEAR_YEAR        NUM    4.0    21      
+  4  BTYPKIN_CODE     NUM    6.0    23  1   
+  5  BAXIOKAT_CODE    NUM    6.0    26  1   
+  6  BKINKAT_CODE     NUM    6.0    29      
+  7  BKINKAT_REC0     NUM   14.0    32      
+  8  BKINKAT_RECR     ASC     12    39  2   
+  9  BTYPKIN_RECR     ASC     12    51  3   BTYPKIN.FIELD_6 (31,6)
+ 10  BAXIOKAT_RECR    ASC     12    63  4   BAXIOKAT.FIELD_4 (34,4)
+ 11  BKINKAT_YN_NEW   NUM    2.0    75      
+ 12  BAXIO_STAT_FROM  ASC      1    76      
+ 13  BAXIO_STAT_TO    ASC      1    77      
+ 14  BAXIO_PLAC_FROM  ASC      1    78      
+ 15  BAXIO_PLAC_TO    ASC      1    79      
+ 16  BKINKAT_GPLNCOD  ASC     20    80      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    BTYPKIN_CODE    NO  NO       6      3       2     ON-LINE
+       BAXIOKAT_CODE   NO  NO 
+
+  2    BKINKAT_RECR    NO  NO       12     3       1     ON-LINE
+
+  3    BTYPKIN_RECR    NO  NO       15     3       2     ON-LINE
+       BAXIOKAT_CODE   NO  NO 
+
+  4    BAXIOKAT_RECR   NO  NO       15     3       2     ON-LINE
+       BTYPKIN_CODE    NO  NO 
+

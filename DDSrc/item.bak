@@ -1,0 +1,204 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : ITEM.DD
+// Class Name: Item_DataDictionary
+// Revision  : 65
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Item
+Open Witemx
+Open Witemcl
+Open Itemtehn
+Open Units
+Open Witemkat
+Open Fpa
+Open Sysrecw
+Open Witemx
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Item_Item_Qual_VT
+Register_Object Item_Item_Analysh_VT
+
+Object Item_Item_Qual_VT  is a CodeValidationTable
+    Set Type_Value        To "QUAL"
+    Set Validate_State    To FALSE
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Item_Item_Qual_VT
+
+Object Item_Item_Analysh_VT  is a CodeValidationTable
+    Set Type_Value        To "ITEMANAL"
+    Set Table_Title       To "€¤á¢¬©ž „å›¦¬ª"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Item_Item_Analysh_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl22Search  sl22Search.SL
+//DDB/ ExternalSelectionList sl022  sl022.SL
+Register_Object sl22Search
+Register_Object sl022
+//DDB-SelectionEnd
+
+Class Item_DataDictionary  is a DataDictionary
+
+    Procedure Update
+        Forward Send Update
+        Move Witemkat.Witemkat_Code to Item.Witemkat_Code
+        Move Units.Units_Code       to Item.Units_Code     
+        If (Witemkat.Witemkat_Code='05') Move 1 to Item.Group
+    End_Procedure   // Update
+
+    Procedure Creating
+        Date dHmnia
+        Forward Send Creating
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                         (Trim(String(Item.Item_Rec0)))))) to Item.Item_Recr
+        
+        Clear Branch
+        Move SysCurXR.Company_Code    to Branch.Company_Code
+        Find Gt Branch By Index.1 
+        While ((Found=1) And (Branch.Company_Code=SysCurXR.Company_Code))
+            Clear Witemx
+            Move SysCurXR.Company_Code      to Witemx.Company_Code
+            Move Branch.Branch_Code         to Witemx.Branch_Code
+            Move SysCurXR.Year_Year         to Witemx.Year_Year
+            Move SysCurXR.Year_Year         to Witemx.Witemx_YearDesc
+            Move SysCurXR.Year_Recr         to Witemx.Year_Recr
+            Move Witemkat.Witemkat_Code     to Witemx.Witemkat_Code
+            Move Units.Units_Code           to Witemx.Units_Code
+            Move Item.Item_Code             to Witemx.Item_Code
+            Move Item.Item_Code             to Witemx.Witemx_Code
+            Move Item.Item_Descr            to Witemx.Witemx_Descr
+            Move Item.Wapokat_Code          to Witemx.ITEM_APOKAT_COD
+            Move Item.link1                 to Witemx.link1
+            Move Item.link2                 to Witemx.link2
+            Move Item.Item_Recr             to Witemx.Item_Recr
+            Move (Sysrecw.Witemx_Rec0+1)    to Witemx.Witemx_Rec0
+            Move (Sysrecw.Witemx_Rec0+1)    to Sysrecw.Witemx_Rec0
+            Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                           (Trim(String(Witemx.Witemx_Rec0)))))) ;
+                                          to Witemx.Witemx_Recr
+            Saverecord Sysrecw
+            Saverecord Witemx
+            
+            Find Gt Branch By Index.1 
+        Loop
+    End_Procedure   // Creating
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Item.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Witemx.File_Number
+        Send Add_Client_File  Witemcl.File_Number
+        Send Add_Client_File  Itemtehn.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Units.File_Number
+        Send Add_Server_File  Witemkat.File_Number
+        Send Add_Server_File  Fpa.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecw.File_Number  DD_LOCK_ON_ALL
+        Send Add_System_File  Witemx.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecw.Item_Rec0  To Item.Item_Rec0
+
+        // Field-based properties.......................
+
+        // Item.Units_Code
+
+        // Item.Units_Recr
+
+        // Item.Witemkat_Code
+
+        // Item.Witemkat_Recr
+
+        // Item.Item_Code
+        Set Field_Options          Field Item.Item_Code To DD_AUTOFIND   
+        Set Field_Prompt_Object    Field Item.Item_Code To (sl22Search(Self))
+        Set Key_Field_State        Field Item.Item_Code To TRUE
+
+        // Item.Item_Rec0
+        Set Field_Options          Field Item.Item_Rec0 To DD_AUTOFIND   
+
+        // Item.Item_Descr
+        Set Field_Prompt_Object    Field Item.Item_Descr To (sl22Search(Self))
+
+        // Item.Item_Recr
+        Set Field_Options          Field Item.Item_Recr To DD_AUTOFIND   
+
+        // Item.Fpa_Pososto
+        Set Key_Field_State        Field Item.Fpa_Pososto To TRUE
+
+        // Item.Item_Qual
+        Set Field_Value_Table      Field Item.Item_Qual To (Item_Item_Qual_VT(Self))
+
+        // Item.Wapokat_Code
+        Set Field_Prompt_Object    Field Item.Wapokat_Code To (sl022(Self))
+
+        // Item.Item_Analysh
+        Set Field_Class_Name       Field Item.Item_Analysh To "dbComboFormsub"
+        Set Field_Value_Table      Field Item.Item_Analysh To (Item_Item_Analysh_VT(Self))
+
+        // Item.Item_Orio
+
+        // Item.Codeglpol
+
+        // Item.Codeglago
+
+        // Item.Link1
+
+        // Item.Link2
+
+        // Item.Group
+
+        // Item.Sap
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Item.Item_Analysh To "0"
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Item_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl22Search.SL    // sl22Search
+Use sl022.SL         // sl022
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

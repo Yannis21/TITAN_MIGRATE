@@ -1,0 +1,167 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : GBRIDGEH.DD
+// Class Name: Gbridgeh_DataDictionary
+// Revision  : 20
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Gbridgeh
+Open Gbridged
+Open Sysrecg
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Gbridgeh_Gbridgeh_M_Code_VT
+
+Object Gbridgeh_Gbridgeh_M_Code_VT  is a CodeValidationTable
+    Set Type_Value        To "MODULE"
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Gbridgeh_Gbridgeh_M_Code_VT
+//DDB-ValidationEnd
+
+Register_Object oDo_GL_Maintainance //š ˜ ¢æš¦¬ª compilation
+Use doGlMntn.Bp                     //œ¤ž£â¨à©ž šœ¤ ¡ãª ¢¦š ©« ¡ãª
+
+
+Class Gbridgeh_DataDictionary  is a DataDictionary_Sec
+
+     Procedure Creating
+            Forward Send Creating
+            Move (Append('',((Trim(SysCurGL.Branch_Site))+;
+                             (Trim(String(Gbridgeh.Gbridgeh_Rec0)))))) to Gbridgeh.Gbridgeh_Recr
+    End_Procedure //creating
+
+      Procedure Construct_Object
+                Forward Send Construct_Object
+
+
+                Property  Integer piDo_GL_Maintainance       0 //object id «žª business process
+                                                               //§¦¬ œ¤ž£œ¨é¤œ  «ã¤ šœ¤ ¡ã ¢¦š ©« ¡ã
+                Property  Integer piDo_CUSTOMER_Maintainance 0 //object id «žª business process
+                                                               //§¦¬ œ¤ž£œ¨é¤œ  «¦¬ª §œ¢á«œª
+                Property  Integer piDo_VENDOR_Maintainance   0 //object id «žª business process
+                                                               //§¦¬ œ¤ž£œ¨é¤œ  «¦¬ª §¨¦£žŸœ¬«âª
+      End_Procedure //construct_object
+
+
+      Procedure End_Construct_Object
+                Forward Send End_Construct_Object
+
+                //object id «žª business process §¦¬ œ¤ž£œ¨é¤œ  «ž¤ šœ¤ ¡ã ¢¦š ©« ¡ã
+                Set piDo_GL_Maintainance       to (oDo_GL_Maintainance      (Self))
+
+                //object id «žª business process §¦¬ œ¤ž£œ¨é¤œ  «¦¬ª §œ¢á«œª
+//--------------Set piDo_CUSTOMER_Maintainance to (oDo_CUSTOMER_Maintainance(Self))
+
+                //object id «žª business process §¦¬ œ¤ž£œ¨é¤œ  «¦¬ª §¨¦£žŸœ¬«âª
+//------------->Set piDo_VENDOR_Maintainance   to (oDo_VENDOR_Maintainance  (Self))
+      End_Procedure   //end_construct_object
+
+
+      Procedure Test_Me
+                String lsGbridgeh_Recr
+                Get Field_Current_Value Field Gbridgeh.Gbridgeh_Recr to lsGbridgeh_Recr
+                Send Transaction_Update_GL_From_Gbridge to (piDo_GL_Maintainance(Self)) (Self);
+                                                                        lsGbridgeh_Recr;
+                                                                        0;
+                                                                        0;
+                                                                        0;
+                                                                        1
+      End_Procedure
+
+
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Gbridgeh.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Gbridged.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecg.File_Number  DD_LOCK_ON_NEW_SAVE
+
+        Define_Auto_Increment  Sysrecg.Gbridgeh_Rec0  To Gbridgeh.Gbridgeh_Rec0
+
+        // Field-based properties.......................
+
+        // Gbridgeh.Gbridgeh_Rec0
+
+        // Gbridgeh.Company_Code
+
+        // Gbridgeh.Branch_Code
+
+        // Gbridgeh.Year_Year
+
+        // Gbridgeh.Particle_Recnum
+
+        // Gbridgeh.Garticl_Recr
+
+        // Gbridgeh.Gtypkin_Recr
+
+        // Gbridgeh.Garticl_Hmnia
+
+        // Gbridgeh.Garticl_No
+
+        // Gbridgeh.Garticl_Aitiol
+
+        // Gbridgeh.Garticl_C_Code2
+
+        // Gbridgeh.Garticl_Rate0
+
+        // Gbridgeh.Garticl_Rate00
+
+        // Gbridgeh.Garticl_Rater
+
+        // Gbridgeh.Gbridgeh_Flag
+        Set Field_Checkbox_Values  Field Gbridgeh.Gbridgeh_Flag To "1"  "0"
+        Set Field_Label_Long       Field Gbridgeh.Gbridgeh_Flag To "„®œ  £œ«˜­œ¨Ÿœå"
+        Set Field_Label_Short      Field Gbridgeh.Gbridgeh_Flag To "„®œ  £œ«˜­œ¨Ÿœå"
+        Set Status_Help            Field Gbridgeh.Gbridgeh_Flag To "“§¦›ž¢é¤œ  œá¤ ž œšš¨˜­ã â®œ  œ¤ž£œ¨é©œ  «ž¤ ‚œ¤.Š¦š ©« ¡ã"
+
+        // Gbridgeh.Gbridgeh_M_Code
+        Set Field_Value_Table      Field Gbridgeh.Gbridgeh_M_Code To (Gbridgeh_Gbridgeh_M_Code_VT(Self))
+
+        // Gbridgeh.Gbridgeh_Recr
+
+        // Gbridgeh.Year_Recr
+
+        // Gbridgeh.Module_From
+
+        // Gbridgeh.Ptyppar_Code
+
+        // Gbridgeh.Client_Id
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Gbridgeh_DataDictionary
+//DDB-FileEnd

@@ -1,0 +1,91 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : RP4.DD
+// Class Name: Rp4_DataDictionary
+// Revision  : 7
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Rp4
+Open Rp3
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList sl245  sl245.sl
+//DDB/ ExternalSelectionList slPedia  slPedia.SL
+Register_Object sl245
+Register_Object slPedia
+//DDB-SelectionEnd
+
+Class Rp4_DataDictionary  is a DataDictionary_Sec
+ 
+    // Update:
+ 
+    Procedure Update
+        Forward Send Update
+        // Insert Code Here
+        Move rp1.Kodikos            to rp4.rp1_kodikos
+        Move rp2.seira_emfanishs    to rp4.seira_emfanishs
+        Move rp3.epiloges           to rp4.epiloges
+    End_Procedure   // Update
+ 
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Rp4.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Rp3.File_Number
+
+        // Field-based properties.......................
+
+        // Rp4.Rp3_Aa
+
+        // Rp4.Rp1_Kodikos
+
+        // Rp4.Seira_Emfanishs
+
+        // Rp4.Epiloges
+        Set Field_Prompt_Object    Field Rp4.Epiloges To (sl245(Self))
+
+        // Rp4.Synthikh
+        Set Field_Prompt_Object    Field Rp4.Synthikh To (slPedia(Self))
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Rp4_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use sl245.sl         // sl245
+Use slPedia.SL       // slPedia
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

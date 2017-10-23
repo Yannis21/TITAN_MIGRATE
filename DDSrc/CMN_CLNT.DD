@@ -1,0 +1,83 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : CMN_CLNT.DD
+// Class Name: Cmn_Clnt_DataDictionary
+// Revision  : 4
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Cmn_Clnt
+Open Cmn_Prof
+
+//DDB-HeaderEnd
+
+Class Cmn_Clnt_DataDictionary  is a DataDictionary_sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Cmn_Clnt.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Cmn_Prof.File_Number
+
+        // Field-based properties.......................
+
+        // Cmn_Clnt.Clnt_Code
+
+        // Cmn_Clnt.Comp_Name
+
+        // Cmn_Clnt.Prof_Code
+
+        // Cmn_Clnt.Tax_No
+
+        // Cmn_Clnt.Tax_Auth
+
+        // Cmn_Clnt.Vatpol_Code
+
+        // Cmn_Clnt.Address
+
+        // Cmn_Clnt.Zip
+
+        // Cmn_Clnt.City
+
+        // Cmn_Clnt.Contact
+
+        // Cmn_Clnt.Phone_1
+
+        // Cmn_Clnt.Phone_2
+
+        // Cmn_Clnt.Fax
+
+        // Cmn_Clnt.Lianikh
+
+        // Cmn_Clnt.Comments
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Cmn_Clnt_DataDictionary
+//DDB-FileEnd

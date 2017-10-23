@@ -1,0 +1,38 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: TRANSLAT (# 49)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : TRANSLAT
+  USER DISPLAY NAME         : Translat
+  DATAFLEX FILE NAME        : TRANSLAT
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 384       ( USED: 300 )
+  MAX NUMBER OF RECORDS     : 1000000   ( USED: 1395 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  LANG_CODE        ASC    100     1  2   
+  2  LANG_GREEK       ASC    100   101  1   
+  3  LANG_ENGLISH     ASC    100   201  3   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    LANG_GREEK      NO  NO       100    9       1     ON-LINE
+
+  2    LANG_CODE       NO  NO       200    20      2     ON-LINE
+       LANG_GREEK      NO  NO 
+
+  3    LANG_ENGLISH    NO  NO       200    20      2     ON-LINE
+       LANG_GREEK      NO  NO 
+

@@ -1,0 +1,42 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: CNZONES (# 66)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : SQL_DRV
+  FILE ROOT NAME            : SQL_DRV:CNZONES
+  USER DISPLAY NAME         : CnZones
+  DATAFLEX FILE NAME        : CNZONES
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 69        ( USED: 69 )
+  MAX NUMBER OF RECORDS     : 2147483647  ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : RECORD
+  HEADER INTEGRITY CHECKING : NO 
+  TRANSACTION TYPE          : SERVER LOGGED
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  CN_CODE          ASC     20     1  1   CN.FIELD_6 (41,6)
+  2  BRZONE_RECR      ASC     12    21  1   BRZONES.FIELD_4 (65,4)
+  3  CNZONE_REC0      NUM   14.0    33      
+  4  CNZONE_RECR      ASC     12    40  2   
+  5  BRANCH_RECR      ASC      6    52  3   
+  6  BETO_SITE_3      ASC      7    58      
+  7  ZONE_ID          ASC      5    65      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    CN_CODE         NO  NO       32     3       2     ON-LINE
+       BRZONE_RECR     NO  NO 
+
+  2    CNZONE_RECR     NO  NO       12     3       1     ON-LINE
+
+  3    CN_CODE         NO  NO       26     3       2     ON-LINE
+       BRANCH_RECR     NO  NO 
+

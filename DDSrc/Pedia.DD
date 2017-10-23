@@ -1,0 +1,90 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : PEDIA.DD
+// Class Name: Pedia_DataDictionary
+// Revision  : 39
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Pedia
+Open Grppedia
+Open Grpped0
+Open Arxeia
+
+//DDB-HeaderEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList slPedia  slPedia.SL
+Register_Object slPedia
+//DDB-SelectionEnd
+
+Class Pedia_DataDictionary  is a DataDictionary_Sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Pedia.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Grppedia.File_Number
+        Send Add_Client_File  Grpped0.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Arxeia.File_Number
+
+        // Field-based properties.......................
+
+        // Pedia.Arxeio_Id
+
+        // Pedia.Pedio_Number
+        Set Field_Prompt_Object    Field Pedia.Pedio_Number To (slPedia(Self))
+
+        // Pedia.Pedio_Name
+        Set Field_Prompt_Object    Field Pedia.Pedio_Name To (slPedia(Self))
+
+        // Pedia.Pedio_Type
+
+        // Pedia.Pedio_Length
+
+        // Pedia.Pedio_Precision
+
+        // Pedia.Pedio_Descr
+        Set Field_Prompt_Object    Field Pedia.Pedio_Descr To (slPedia(Self))
+
+        // Pedia.Pedio_Recr
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+End_Class    // Pedia_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use slPedia.SL       // slPedia
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd

@@ -1,0 +1,139 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : BRANCHL.DD
+// Class Name: Branchl_DataDictionary
+// Revision  : 0
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Branchl
+Open Company
+
+//DDB-HeaderEnd
+open Branch
+
+Set_attribute  DF_FILE_ALIAS of BranchL.File_number to DF_FILE_IS_ALIAS
+Set_attribute  DF_FILE_ALIAS of Branch.File_number  to DF_FILE_IS_MASTER
+
+// clear the relationship in the alias file
+Set_relate BranchL.company_code to |FN0,0
+
+
+Class Branchl_DataDictionary  is a DataDictionary_sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Branchl.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Company.File_Number
+
+        // Field-based properties.......................
+
+        // Branchl.Company_Code
+
+        // Branchl.Branch_Code
+
+        // Branchl.Branch_Rec0
+
+        // Branchl.Branch_Recr
+
+        // Branchl.Branch_Name
+
+        // Branchl.Branch_Afm
+
+        // Branchl.Branch_Addr
+
+        // Branchl.Branch_Tk
+
+        // Branchl.Branch_Poli
+
+        // Branchl.Branch_Doy
+
+        // Branchl.Branch_J_Code
+
+        // Branchl.Branch_C_Code0
+
+        // Branchl.Branch_C_Code00
+
+        // Branchl.Branch_C_Coder
+
+        // Branchl.Branch_Tel
+
+        // Branchl.Branch_Fax
+
+        // Branchl.Branch_Email
+
+        // Branchl.Branch_Resp
+
+        // Branchl.Branch_Bitmap
+
+        // Branchl.Branch_Site
+
+        // Branchl.Branch_Apoth
+
+        // Branchl.Beto_Site
+
+        // Branchl.Path_Exp
+
+        // Branchl.Exp_Txtname
+
+        // Branchl.Send_Phone
+
+        // Branchl.Send_Path_Files
+
+        // Branchl.Send_Path_Conf
+
+        // Branchl.Tomeas_Code
+
+        // Branchl.Ftp_Sec_Retry
+
+        // Branchl.Ftp_Sec_Exit
+
+        // Branchl.Ras_Name
+
+        // Branchl.Ras_Passw
+
+        // Branchl.Ras_Domain
+
+        // Branchl.Last_Hmnia_Ekt
+
+        // Branchl.Deop_Logo
+
+        // Branchl.Entolh
+
+        // Branchl.Paragogh
+
+        // Branchl.Locked_Until
+
+        // Branchl.Sap_Code
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Branchl_DataDictionary
+//DDB-FileEnd

@@ -1,0 +1,49 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: PAGKINMV (# 82)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : PAGKINMV
+  USER DISPLAY NAME         : Pagkinmv
+  DATAFLEX FILE NAME        : PAGKINMV
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 102       ( USED: 93 )
+  MAX NUMBER OF RECORDS     : 1000000   ( USED: 2 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  PAGKIN_RECR      ASC     12     1  1   PAGKIN.FIELD_4 (81,4)
+  2  PAGKINMV_REC0    NUM   14.0    13      
+  3  PAGKINMV_RECR    ASC     12    20      
+  4  PAGKIN_CODE      ASC     10    32      
+  5  GTYPKIN_CODE     NUM    6.0    42  1   
+  6  CODEGL           ASC     40    45  1   
+  7  ORDER            NUM    2.0    85  2   
+  8  SIGN             ASC      1    86      
+  9  XP               ASC      1    87      
+ 10  TYPE             ASC      4    88      
+ 11  FLAGGL           ASC      2    92  1   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    PAGKIN_RECR     NO  NO       57     7       4     ON-LINE
+       GTYPKIN_CODE    NO  NO 
+       FLAGGL          NO  NO 
+       CODEGL          NO  NO 
+
+  2    PAGKIN_RECR     NO  NO       58     7       5     ON-LINE
+       GTYPKIN_CODE    NO  NO 
+       CODEGL          NO  NO 
+       ORDER           NO  NO 
+       FLAGGL          NO  NO 
+

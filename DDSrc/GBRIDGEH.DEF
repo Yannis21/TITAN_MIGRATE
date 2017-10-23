@@ -1,0 +1,76 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: GBRIDGEH (# 168)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : GBRIDGEH
+  USER DISPLAY NAME         : GbridgeH
+  DATAFLEX FILE NAME        : GBRIDGEH
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 384       ( USED: 251 )
+  MAX NUMBER OF RECORDS     : 16000000  ( USED: 21 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  GBRIDGEH_REC0    NUM   14.0     1      
+  2  COMPANY_CODE     ASC     10     8  1   
+  3  BRANCH_CODE      ASC     10    18  1   
+  4  YEAR_YEAR        NUM    4.0    28  1   
+  5  PARTICLE_RECNUM  NUM   14.0    30  1   
+  6  GARTICL_RECR     ASC     12    37  6   
+  7  GTYPKIN_RECR     ASC     12    49  5   
+  8  GARTICL_HMNIA    DAT      6    61  4   
+  9  GARTICL_NO       ASC     30    64      
+ 10  GARTICL_AITIOL   ASC     60    94      
+ 11  GARTICL_C_CODE2  ASC     10   154      
+ 12  GARTICL_RATE0    NUM   14.8   164      
+ 13  GARTICL_RATE00   NUM   14.8   175      
+ 14  GARTICL_RATER    NUM   14.8   186      
+ 15  GBRIDGEH_FLAG    NUM    2.0   197  3   
+ 16  GBRIDGEH_M_CODE  ASC     10   198  3   
+ 17  GBRIDGEH_RECR    ASC     12   208  4   
+ 18  YEAR_RECR        ASC      7   220      
+ 19  MODULE_FROM      ASC      2   227  4   
+ 20  PTYPPAR_CODE     ASC      3   229  4   
+ 21  CLIENT_ID        ASC     20   232  4   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY_CODE    NO  NO       31     6       5     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       MODULE_FROM     NO  NO 
+       PARTICLE_RECNUM NO  NO 
+
+  2    GBRIDGEH_RECR   NO  NO       12     5       1     ON-LINE
+
+  3    GBRIDGEH_FLAG   NO  NO       23     6       3     ON-LINE
+       GBRIDGEH_M_CODE NO  NO 
+       GBRIDGEH_RECR   NO  NO 
+
+  4    COMPANY_CODE    NO  NO       63     8       9     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       MODULE_FROM     NO  NO 
+       GBRIDGEH_FLAG   NO  NO 
+       PTYPPAR_CODE    NO  NO 
+       CLIENT_ID       NO  NO 
+       GARTICL_HMNIA   NO  NO 
+       GBRIDGEH_RECR   NO  NO 
+
+  5    GTYPKIN_RECR    NO  NO       24     6       2     ON-LINE
+       GBRIDGEH_RECR   NO  NO 
+
+  6    GARTICL_RECR    NO  NO       24     6       2     ON-LINE
+       GBRIDGEH_RECR   NO  NO 
+

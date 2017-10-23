@@ -1,0 +1,69 @@
+-----------------------------------------------------------------------------
+  DATE: 09/11/104      TIME: 13:20                                  PAGE:  1
+  FILE DEFINITION FOR FILE: PAGMOVES (# 84)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : PAGMOVES
+  USER DISPLAY NAME         : Pagmoves
+  DATAFLEX FILE NAME        : PAGMOVES
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 384       ( USED: 165 )
+  MAX NUMBER OF RECORDS     : 1000000   ( USED: 16 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  COMPANY_CODE     ASC     10     1  1   
+  2  BRANCH_CODE      ASC     10    11  1   
+  3  YEAR_YEAR        NUM    4.0    21  1   
+  4  PAGIA_CODE       ASC     20    23  1   
+  5  PAGIA_CODEA      ASC      3    43  1   
+  6  PAGIA_RECR       ASC     20    46  3   PAGIA.FIELD_8 (83,8)
+  7  PAGMOVES_REC0    NUM   12.0    66      
+  8  PAGMOVES_RECR    ASC     12    72  2   
+  9  PAGMOVES_DATE    DAT      6    84  1   
+ 10  PAGMOVES_NO      NUM   10.0    87      
+ 11  PAGMOVES_PARAST  ASC     40    92      
+ 12  PAGMOVES_AXIA    NUM   14.6   132      
+ 13  PAGMOVES_POSOST  NUM    4.0   142      
+ 14  PAGMOVES_QTY     NUM   14.6   144      
+ 15  PAGKIN_CODE      ASC     10   154  1   PAGKIN.FIELD_1 (81,1)
+ 16  EKTYP_THEOR      ASC      1   164      
+ 17  SE_LOGIK         ASC      1   165      
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    COMPANY_CODE    NO  NO       58     7       7     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       PAGIA_CODE      NO  NO 
+       PAGIA_CODEA     NO  NO 
+       PAGKIN_CODE     NO  NO 
+       PAGMOVES_DATE   NO  NO 
+
+  2    PAGMOVES_RECR   NO  NO       12     4       1     ON-LINE
+
+  3    COMPANY_CODE    NO  NO       57     7       6     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       PAGIA_RECR      NO  NO 
+       PAGMOVES_DATE   NO  NO 
+       PAGMOVES_RECR   NO  NO 
+
+  4    COMPANY_CODE    NO  NO       60     7       7     ON-LINE
+       BRANCH_CODE     NO  NO 
+       YEAR_YEAR       NO  NO 
+       PAGIA_CODE      NO  NO 
+       PAGIA_CODEA     NO  NO 
+       PAGMOVES_DATE   NO  NO 
+       PAGMOVES_RECR   NO  NO 
+

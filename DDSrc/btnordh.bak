@@ -1,0 +1,197 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : BTNORDH.DD
+// Class Name: Btnordh_DataDictionary
+// Revision  : 58
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Btnordh
+Open Btnordd
+Open Cn
+Open Sysrecc
+
+//DDB-HeaderEnd
+//DDB-ValidationStart
+
+Register_Object Btnordh_Velxr_VT
+
+Object Btnordh_Velxr_VT  is a CodeValidationTable
+    Set Type_Value        To "ELXREOSH"
+    Set Validate_State    To FALSE
+    Set Allow_Blank_State To TRUE
+    //DDB-ValidationCustomStart
+    //DDB-ValidationCustomEnd
+End_Object   // Btnordh_Velxr_VT
+//DDB-ValidationEnd
+//DDB-SelectionStart
+//DDB/ ExternalSelectionList btnordh  btnordh.sl
+//DDB/ ExternalSelectionList slPayTerms  slPayTerms.SL
+Register_Object btnordh
+Register_Object slPayTerms
+//DDB-SelectionEnd
+
+Class Btnordh_DataDictionary  is a DataDictionary_Sec
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Property integer piactive  Public 0
+    End_Procedure
+
+    Procedure Creating
+        String  sClientCode sCNCode
+        Integer iClientCode iCnCode iAA
+        date ddate
+        Forward Send Creating
+        Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                        (Trim(String(BTNORDH.Rec0)))))) to BTNORDH.Recr
+
+        if (sysfile.ascclientid=0);
+            Move (fsgStripCodeFromID(Clients.Client_ID))    to iClientCode
+        else;
+            mid clients.client_id to sclientcode 5 7
+        Move (fsgStripCodeFromID(CN.CN_Code))           to iCnCode
+        Move Cn.AA_Deop                                 to iAA
+        Add 1                                           to iAA
+        Add 1                                           to Cn.AA_Deop
+
+        if (sysfile.ascclientid=0);
+            Get Sfi_All_Numbers iClientCode Sysfile.Client_Digits 0 to sClientCode
+        Get Sfi_All_Numbers iCNCode     Sysfile.Client_Digits 0 to sCNCode
+
+        Move (sClientCode+sCNCode+'/'+(String(iAA)))    to btnordh.aa_deop
+        sysdate4 ddate
+        if (btnordh.date_create='') move ddate to btnordh.date_create
+        if (btnordh.deop_date ='') move ddate to btnordh.deop_date
+        if (piactive(self)=1) move 0 to btnordh.deop_active
+        else move 1 to btnordh.deop_active
+        // Insert Code Here
+    End_Procedure   // Creating
+
+     Procedure Update
+        Forward Send Update
+
+        // Insert Code Here
+        Move SysCurXR.Company_Code  to btnordh.Vcompany
+        Move SysCurXR.Branch_Code   to btnordh.Vbranch
+        move syscurxr.year_year     to btnordh.vyear
+        move cn.cn_code             to btnordh.cn_code
+        move clients.client_id      to btnordh.client_id
+        move payresp.presp_id       to btnordh.presp_id
+        move cn.cn_sls_id           to btnordh.user_id
+        if (btnordh.deop_date = '');
+           move cn.cn_start_date to btnordh.deop_date
+     end_procedure
+
+
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Btnordh.File_Number
+        Set Cascade_Delete_State To FALSE
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Child (Client) file structure................
+        Send Add_Client_File  Btnordd.File_Number
+
+        // Parent (Server) file structure...............
+        Send Add_Server_File  Cn.File_Number
+
+        // External (System) file structure.............
+        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+
+        Define_Auto_Increment  Sysrecc.Btnordh_Rec0  To Btnordh.Rec0
+
+        // Field-based properties.......................
+
+        // Btnordh.Vcompany
+
+        // Btnordh.Vbranch
+
+        // Btnordh.Vyear
+
+        // Btnordh.Rec0
+
+        // Btnordh.Recr
+
+        // Btnordh.Aa_Deop
+        Set Field_Prompt_Object    Field Btnordh.Aa_Deop To (btnordh(Self))
+
+        // Btnordh.Cn_Recr
+
+        // Btnordh.Sxolia
+
+        // Btnordh.Cn_Code
+
+        // Btnordh.Client_Id
+
+        // Btnordh.Presp_Id
+
+        // Btnordh.Deop_Date
+        Set Field_Mask_Type        Field Btnordh.Deop_Date To MASK_DATE_WINDOW
+
+        // Btnordh.Deop_Active
+
+        // Btnordh.Eleiph
+
+        // Btnordh.Locked
+
+        // Btnordh.User_Id
+
+        // Btnordh.Date_Create
+
+        // Btnordh.Date_Modify
+
+        // Btnordh.Date_Locked
+
+        // Btnordh.Deop_Lhxh
+        Set Field_Mask_Type        Field Btnordh.Deop_Lhxh To MASK_DATE_WINDOW
+
+        // Btnordh.Statero
+
+        // Btnordh.Velxr
+        Set Field_Value_Table      Field Btnordh.Velxr To (Btnordh_Velxr_VT(Self))
+
+        // Btnordh.Timeout
+        Set Field_Prompt_Object    Field Btnordh.Timeout To (slPayTerms(Self))
+
+        // Btnordh.Timeout1
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Btnordh_DataDictionary
+//DDB-Selection-pkg-Start
+#IFDEF Is$WebApp
+#ELSE
+
+Use btnordh.sl       // btnordh
+Use slPayTerms.SL    // slPayTerms
+
+#ENDIF
+//DDB-Selection-pkg-End
+//DDB-FileEnd
