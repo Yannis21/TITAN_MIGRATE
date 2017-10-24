@@ -2,6 +2,10 @@
 // ExportFromSMSMI2
 //
 
+
+// MAKIS 24/10/2017
+
+
 Use DFClient.pkg
 Use DFEntry.pkg
 
@@ -18,10 +22,10 @@ Open MIORDD
 Open MIAREAS
 Open MICities
 Open MITOWNS
-Open MICOUNTR 
+Open MICOUNTR
 
 Open MINOMOS
-Open MIDHMOS 
+Open MIDHMOS
 Open MIDRAST
 
 
@@ -38,19 +42,19 @@ Object ExportFromSMSMI2 is a dbView
     Procedure Activate_View Returns Integer
         Integer rVal
         Forward Get MSG_Activate_View to rVal
-    
+
         Send IGNORE_ERROR to ERROR_INFO_OBJECT 4358
         Make_Directory "C:\TitanMig"
         Send TRAP_ERROR to ERROR_INFO_OBJECT 4358
-    
+
         Open tmpPagia Mode DF_EXCLUSIVE
         ZeroFile tmpPagia
         Open tmpPagia Mode DF_SHARE
-    
+
         Open tmplg Mode DF_EXCLUSIVE
         ZeroFile tmplg
         Open tmplg Mode DF_SHARE
-    
+
     //    Open MINOMOS Mode DF_EXCLUSIVE
     //    Open MIDHMOS Mode DF_EXCLUSIVE
     //    Open MIDRAST Mode DF_EXCLUSIVE
@@ -78,7 +82,7 @@ Object ExportFromSMSMI2 is a dbView
         Set Value item 0 to "C:\TitanMig\MICLIENT_MICN_MIPRESP.csv"
 
         //AB-StoreStart
-                                                                                                                                                                                                                                                                                                                        
+
         Procedure Prompt
             Boolean bSave
             String sFileTitle sFileName
@@ -89,49 +93,49 @@ Object ExportFromSMSMI2 is a dbView
                 Set Value of frmFileName item 0 to sFileName
             End
         End_Procedure
-        
+
         //AB-StoreEnd
 
     End_Object    // frmFileName
-    
+
     Object Button5 is a Button
 
         //AB-StoreTopStart
-                
+
         Property String psNotFoundClientDhmos Public ""
         Property String psNotFoundClientNomos Public ""
         Property String psNotFoundClientDrast Public ""
         Property String psNotFoundClientTrPlh Public ""
-        
+
         Property String psNotFoundErgoDhmos Public ""
         Property String psNotFoundErgoNomos Public ""
         Property String psNotFoundErgoDrast Public ""
         Property String psNotFoundErgoTrPlh Public ""
-        
+
         Property String psNotFoundPrespDhmos Public ""
         Property String psNotFoundPrespNomos Public ""
         Property String psNotFoundPrespDrast Public ""
-        Property String psNotFoundPrespTrPlh Public "" 
-        
+        Property String psNotFoundPrespTrPlh Public ""
+
         Property String psNotFoundMhxanDhmos Public ""
         Property String psNotFoundMhxanNomos Public ""
         Property String psNotFoundMhxanDrast Public ""
         Property String psNotFoundMhxanTrPlh Public ""
-        
+
         Property String psNotFoundConstrDhmos Public ""
         Property String psNotFoundConstrNomos Public ""
         Property String psNotFoundConstrDrast Public ""
         Property String psNotFoundConstrTrPlh Public ""
-        
+
         Property String psNotFoundSalesDhmos Public ""
         Property String psNotFoundSalesNomos Public ""
         Property String psNotFoundSalesDrast Public ""
         Property String psNotFoundSalesTrPlh Public ""
-        
-        
+
+
         Function fsTropoiPlhromhsPelath String asOurCode Returns String
             String sTheirCode
-        
+
             If      (asOurCode="K000") Move "G000" to sTheirCode
             Else If (asOurCode="K030") Move "G030" to sTheirCode
             Else If (asOurCode="K060") Move "G060" to sTheirCode
@@ -151,8 +155,8 @@ Object ExportFromSMSMI2 is a dbView
             End
             Function_Return sTheirCode
         End_Function
-        
-        
+
+
         //AB-StoreTopEnd
 
         Set Label to "ÑçÄÇóÇÜ ÉÑÉéãÑåóå"
@@ -163,7 +167,7 @@ Object ExportFromSMSMI2 is a dbView
         Set Form_TypeFace item 0 to "MS Sans Serif"
 
         //AB-StoreStart
-                
+
         Procedure OnClick
             String sFilename sLabel
             Integer bIsCreated iFS
@@ -177,19 +181,19 @@ Object ExportFromSMSMI2 is a dbView
                 Send Stop_Box "í¶ Ê§¶£ò ´¶¨ ò®úÂ¶¨ úÂ§ò† °ú§Ê" "ë≠·¢£ò 1002"
                 Procedure_Return
             End
-            
+
             //==================
             // Yannis 16/10/2017
             // Epeidh mporei na erthoun sthn enopoihmenh bash mono erga markarismena
             // giati o pelaths exei hdh erthei alla anixthke neo ergo gia paradeigma,
-            // Den mporei h epexergasia na arxizei sto epipedo tou pelath opos htan 
+            // Den mporei h epexergasia na arxizei sto epipedo tou pelath opos htan
             // mexri tora giati tha xasoume ta nea erga.
-            // Saronoume loipon prokatabolika ta erga, kai an o pelaths den einai 
-            // markarismenos ton markaroume etsi oste na mhn allaxoume tipota stous 
+            // Saronoume loipon prokatabolika ta erga, kai an o pelaths den einai
+            // markarismenos ton markaroume etsi oste na mhn allaxoume tipota stous
             // kodikes pou exagoun ta data gia ta arxeia kai ta excel.
             File_Size MICN to iFS
             String sMess
-        
+
             Clear MICN
             Find GE MICN.Recnum
             While (Found)
