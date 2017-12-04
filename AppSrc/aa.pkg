@@ -1,0 +1,297 @@
+
+//Begin_Constraints
+//    If (psModule(Self)<>'')     Constrain WCmoves.Module_From    Eq (psModule(Self))
+//End_Constraints
+
+Procedure Update
+    String  sNomisma
+    Date    dHmnia
+
+    Move WCmoves.WCmove_Hmnia               to  dHmnia
+    If (dHmnia='') Sysdate4                    WCmoves.WCmove_Hmnia
+
+    Move WCmoves.WCmove_Sc_Code2            to sNomisma
+    Move (Trim(sNomisma))                   to sNomisma
+    If (sNomisma='') Move SysCurXr.C_Code0  to WCmoves.WCmove_Sc_Code2
+    If (WCmoves.Partl_Recr='')  Send Compute_all_Fields 1
+    Forward Send Update
+End_Procedure
+
+Procedure Backout
+    Forward Send Backout
+    If (WCmoves.Partl_Recr='') Send Compute_all_Fields (-1)
+End_Procedure
+
+Procedure Compute_all_Fields Number aiSign
+    Integer iErr isClosed iInt iWithDeletion iClient iSign
+    Integer iOneWflag iiPartlNO iExitFlag iMustSaveWWCmoves iMustSaveClientYpoloipa
+    Integer iMustSaveWCmoves iMustSaveClient iMyf iInt2 iOneCflag
+
+    String  ssPtypparDescr ssSeiraDescr sWWCmovesRecr sRecr2 ssPtypparDescrShort
+    String  sRecr sParticle_WCmovesRecr sCtypkinRecr sCn_Code
+    String  sClientRecr sWCmovesRecr sNomisma sFlag sWtypkinRecr
+    String  sWitemxRecr sWaxRecr sClientID sPerigrafh sParticle_WWCmovesRecr
+
+    Number  nVatam nGenAm nExtra nPayam nDiscAm nIsotimia nTotAmBd nTotDiscPms nTotDiscPC
+    Number  nAthr1 nAthr2 nAthr3 nAthr4 nAthr5 nAthr6 nPoso nXre nPis nMyf nTotAmAd
+    Number  nPosothtaFinal nXreFinal nPisFinal nPosothta nAthr7 nAthr8
+
+    Date    dHmnia dLastPis dLastXre dLastXreParast dLastPisParast
+    String sModule
+
+    Number nQtyEisFinal nQtyExFinal nQtyEis nQtyEx
+
+
+    Get psModule to sModule
+
+    Move 1 to iSign
+
+//    If ((WCmoves.Module_From=sModule) And (WCmoves.Partl_Recr=''))  Begin
+
+    If (WCmoves.Partl_Recr='')  Begin
+
+        Move Wtypkin.Wtypkin_Recr       to sWtypkinRecr
+        move Witemx.Witemx_recr         to sWitemxrecr
+        Move WCmoves.WCmove_sc_code2    to sNomisma
+        Move (Trim(sNomisma))           to sNomisma
+
+        If (Trim(sWtypkinRecr)='') Begin
+            send stop_box tz.den_exete_epilexei_typo_kinhshs ("error 1011 KinApoth  "+tz.plhroforia)
+            Procedure_Return
+        End
+        Else If (Trim(sWitemxRecr)='') Begin
+            send stop_box "Δεν έχετε επιλέξει είδος" ("error 1012 KinApoth  "+tz.plhroforia)
+            Procedure_Return
+        End
+        Else If (Trim(sNomisma)='') Begin
+            send stop_box tz.den_exete_epilexei_nomisma ("error 1014 KinApoth  "+tz.plhroforia)
+            Procedure_Return
+        End
+
+        Move WCmoves.WCmove_Hmnia    to dHmnia
+        Move WCmoves.WCmove_Axia     to nPoso
+
+
+//////////////////////// jsjsjsjs 04/07/2001 jsjsjsjs
+
+                Move 0 to iOneWflag
+                Move 0 to iMustSaveWCmoves
+                Move 0 to nPosothtaFinal
+                Move 0 to nXreFinal
+                Move 0 to nPisFinal
+
+                Clear Wflagkin
+                Move sWtypkinRecr           to Wflagkin.Wtypkin_Recr
+                Find Gt Wflagkin By Index.4 // Wflagkin:Index.4:Wtypkin_Recr+Wflagkin_Recr
+                While ((Found=1) And (sWtypkinRecr=Wflagkin.Wtypkin_Recr))
+                    Move 1 to iOneWflag
+                    Move Wflagkin.Wflagkin_Flag to sFlag
+                    Move (Trim(sFlag)) to sFlag
+
+                    Send UpdateWait to (piTxtID(Self)) ('Ενημερωση Flags '+(String(Wflagkin.Recnum)))
+
+                //Set Label Of (piTxtID(Self)) to ((psTxt(self))+'  '+'Ενημερωση Flags '+(String(Wflagkin.Recnum)))
+
+                    Case Begin
+                        Case (sFlag='1')  // Dhmiourgei Kinhsh
+                            Move 1 to iMustSaveWCmoves
+                        Case Break
+
+                        Case (sFlag='2') // Antistrofh Proshmou
+                            Move (nPoso    *iSign*(-1)) to nPoso
+
+                            // KAI STHN POSOTHTA ?
+                            Move (nPosothta*iSign*(-1)) to nPosothta
+                        Case Break
+
+                        Case (sFlag='3') // Eisagogh
+                            Move (nPoso*iSign)  to nXre
+                            Move 0              to nPis
+                            Move nPosothta      to nQtyEis
+                            Move 0              to nQtyEx
+                        Case Break
+                        Case (sFlag='4') // Exagogh
+                            Move (nPoso*iSign)  to nPis
+                            Move 0              to nXre
+                            Move nPosothta      to nQtyEx
+                            Move 0              to nQtyEis
+                        Case Break
+                        Case (sFlag='5') // Epireazei Hmeromhnies
+//                                    If (nXre<>0) Begin
+//                                        Move dHmnia to dLastXre
+//                                        Move ''     to dLastPis
+//                                    End
+//                                    Else If (nPis<>0) Begin
+//                                        Move dHmnia to dLastPis
+//                                        Move ''     to dLastXre
+//                                    End
+                        Case Break
+                        Case (sFlag='6') // Epireazei timh kostous
+                        Case Break
+                        Case (sFlag='7') // Epireazei timh polhsh
+                        Case Break
+
+                        Case (sFlag='8') // Epireazei Posothtes
+                            Move nQtyEis    to nQtyEisFinal
+                            Move nQtyEx     to nQtyExFinal
+                        Case Break
+
+                        Case (sFlag='9') // Epireazei Axies
+                            Move nXre   to nXreFinal
+                            Move nPis   to nPisFinal
+                        Case Break
+
+                        Case (sFlag='10') // Epireazei Anamenomena
+                        Case Break
+
+                        Case (sFlag='11') // Epireazei Desmeymena
+                        Case Break
+
+                        Case (sFlag='12') // Xrhsimopoiei timh kostous
+                        Case Break
+
+                        Case (sFlag='13') // Xrhsimopoiei xondrikh timh polhshs
+                        Case Break
+
+                        Case (sFlag='14') // Xrhsimopoiei Lianikh timh polhshs
+                        Case Break
+
+                        Case (sFlag='15') // Xrhsimopoiei timh agoras
+                        Case Break
+
+                        Case (sFlag='16') // Xrhsimopoiei timh agoras se X.N
+                        Case Break
+
+                        Case (sFlag='17') // Xrhsimopoiei timh polhshs se X.N
+                        Case Break
+
+                        Case (sFlag='18') // Xrhsimopoiei timh Antikatastashs
+                        Case Break
+
+                        Case (sFlag='19') // Posothta lambanetai yp opsin se ypolog MYF
+                        Case Break
+
+                        Case (sFlag='20') // Epireazei ekkremh Delt. Paralabhs
+                        Case Break
+
+                        Case (sFlag='21') // Epireazei ekkremh Delt. Apostolhs
+                        Case Break
+
+                        Case (sFlag='22') // Akyrotikh Kinhsh
+                        Case Break
+
+                        Case (sFlag='31') // Xrhsimopoieui Tel. Timh Polhshs
+                        Case Break
+
+                        Case (sFlag='32') // Fysikh apografh
+                        Case Break
+
+                        Case (sFlag='33') // Ayt ypolog. posothtas apo axia
+                        Case Break
+
+                        Case (sFlag='34') // Epireazei Mark Up
+                        Case Break
+
+                    Case End
+                    Find Gt Wflagkin By Index.4 // Wflagkin:Index.4:Wtypkin_Recr+Wflagkin_Recr
+                Loop
+
+                If ((iOneWflag) And (iMustSaveWCmoves)) Begin
+
+                    If (nXreFinal<>0) Begin
+                        Move nXreFinal  to wcmoves.wcmove_Axia
+                        Move (fngConvertPoso(sNomisma,nXreFinal,SysCurXr.C_Code0,dHmnia,nIsotimia)) ;
+                                        to wcmoves.wcmove_x0
+                        Move (fngConvertPoso(sNomisma,nXreFinal,SysCurXr.C_Code00,dHmnia,nIsotimia)) ;
+                                        to wcmoves.wcmove_x00
+                        Move (fngConvertPoso(sNomisma,nXreFinal,SysCurXr.C_Coder,dHmnia,nIsotimia)) ;
+                                        to wcmoves.wcmove_x1
+                        Move nXreFinal  to wcmoves.wcmove_x2
+                        Move 0          to wcmoves.wcmove_p0
+                        Move 0          to wcmoves.wcmove_p00
+                        Move 0          to wcmoves.wcmove_p1
+                        Move 0          to wcmoves.wcmove_p2
+                    End
+                    Else If (nPisFinal<>0) Begin
+                        Move nPisFinal to wcmoves.wcmove_Axia
+                        Move (fngConvertPoso(sNomisma,nPisFinal,SysCurXr.C_Code0,dHmnia,nIsotimia)) ;
+                            to wcmoves.wcmove_p0
+                        Move (fngConvertPoso(sNomisma,nPisFinal,SysCurXr.C_Code00,dHmnia,nIsotimia)) ;
+                            to wcmoves.wcmove_p00
+                        Move (fngConvertPoso(sNomisma,nPisFinal,SysCurXr.C_Coder,dHmnia,nIsotimia)) ;
+                            to wcmoves.wcmove_p1
+                        Move nPisFinal to wcmoves.wcmove_p2
+                        Move 0          to wcmoves.wcmove_x0
+                        Move 0          to wcmoves.wcmove_x00
+                        Move 0          to wcmoves.wcmove_x1
+                        Move 0          to wcmoves.wcmove_x2
+                    End
+
+//                            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.Unit_price0 ;
+//                                to (fngConvertPoso(sNomisma,nUnitPrice,SysCurXr.C_Code0,dHmnia,nIsotimia))
+//                            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.Unit_price00 ;
+//                                to (fngConvertPoso(sNomisma,nUnitPrice,SysCurXr.C_Code00,dHmnia,nIsotimia))
+//                            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.Unit_priceR ;
+//                                to (fngConvertPoso(sNomisma,nUnitPrice,SysCurXr.C_CodeR,dHmnia,nIsotimia))
+
+
+                If (nQtyEisFinal<>0) Begin
+                    Move nQtyEisFinal to wcmoves.wcmove_Qty_Eisa
+                    Move 0 to wcmoves.wcmove_Qty_Exa
+                    Move nQtyEisFinal to WCmoves.WCmove_Qty
+                End
+                Else If (nQtyExFinal<>0) Begin
+                    Move nQtyExFinal to wcmoves.wcmove_Qty_Exa
+                    Move 0 to wcmoves.wcmove_Qty_Eisa
+                    Move nQtyExFinal to WCmoves.WCmove_Qty
+                End
+
+                    // jsjsjsjs 28/01/2001 Hard Coded tou kerata to nomisma eggrafhs
+                    Move sNomisma to WCmoves.WCmove_SC_Code2
+
+                    ///////////////////////
+
+//                            If ((nXreFinal<>0) Or (nPisFinal<>0)) Begin
+//                                Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_TotAmBd0    ;
+//                                    to (fngConvertPoso(sNomisma,nTotAmBd,SysCurXr.C_Code0,dHmnia,nIsotimia))
+//                                Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_DiscAm0    ;
+//                                    to (fngConvertPoso(sNomisma,nDiscAm,SysCurXr.C_Code0,dHmnia,nIsotimia))
+//                                Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_TotAmAd0    ;
+//                                    to (fngConvertPoso(sNomisma,nTotAmAd,SysCurXr.C_Code0,dHmnia,nIsotimia))
+//                                Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_Vatam0      ;
+//                                    to (fngConvertPoso(sNomisma,nVatam,SysCurXr.C_Code0,dHmnia,nIsotimia))
+//                                Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_Extra0      ;
+//                                    to (fngConvertPoso(sNomisma,nExtra,SysCurXr.C_Code0,dHmnia,nIsotimia))
+//                                ///////////////////////
+//                                Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_TotAmBd00   ;
+//                                    to (fngConvertPoso(sNomisma,nTotAmBd,SysCurXr.C_Code00,dHmnia,nIsotimia))
+//                                Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_DiscAm00   ;
+//                                    to (fngConvertPoso(sNomisma,nDiscAm,SysCurXr.C_Code00,dHmnia,nIsotimia))
+//                                Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_TotAmAd00   ;
+//                                    to (fngConvertPoso(sNomisma,nTotAmAd,SysCurXr.C_Code00,dHmnia,nIsotimia))
+//                                Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_Vatam00     ;
+//                                    to (fngConvertPoso(sNomisma,nVatam,SysCurXr.C_Code00,dHmnia,nIsotimia))
+//                                Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_Extra00     ;
+//                                    to (fngConvertPoso(sNomisma,nExtra,SysCurXr.C_Code00,dHmnia,nIsotimia))
+//                                ///////////////////////
+//                                Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_TotAmBd1    ;
+//                                    to (fngConvertPoso(sNomisma,nTotAmBd,SysCurXr.C_CodeR,dHmnia,nIsotimia))
+//                                Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_DiscAm1    ;
+//                                    to (fngConvertPoso(sNomisma,nDiscAm,SysCurXr.C_CodeR,dHmnia,nIsotimia))
+//                                Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_TotAmAd1    ;
+//                                    to (fngConvertPoso(sNomisma,nTotAmAd,SysCurXr.C_CodeR,dHmnia,nIsotimia))
+//                                Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_Vatam1      ;
+//                                    to (fngConvertPoso(sNomisma,nVatam,SysCurXr.C_CodeR,dHmnia,nIsotimia))
+//                                Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_Extra1      ;
+//                                    to (fngConvertPoso(sNomisma,nExtra,SysCurXr.C_CodeR,dHmnia,nIsotimia))
+//                            End
+                    ///////////////////////
+                End
+///////////////////////  jsjsjsjs 04/07/2001 jsjsjsjs
+
+    End
+End_procedure
+
+
+
+

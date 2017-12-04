@@ -1,0 +1,162 @@
+
+// Register all objects
+
+Register_Object Doakyr
+Register_Object pagmoves.DD
+Register_Object particle.dd
+Register_Object BARTICL.DD
+Register_Object gbridgeh.dd
+Register_Object gbridged.dd
+//AB-IgnoreStart
+
+Use Bproces.Sub
+Use DFAllEnt.pkg
+Use gbridgeh.DD
+Use gbridged.DD
+uSE particle.dd
+Use pagmoves.dd
+Use BARTICL.DD
+//AB-IgnoreEnd
+
+Object Doakyr is a BusinessProcessSub
+
+    //AB-StoreTopStart
+
+    Property    Integer piError     Public  0
+    property    integer piTxtID     public  0
+    property    integer piLathos    public  0
+    Property    Date    pddate      Public ''
+    Property    String  pirecnum    Public ''
+    property    string  pspar       public ''
+    property    string  psmodule    public ''
+
+    Set Status_Panel_State  to False
+    Set Display_Error_State to True
+
+    //AB-StoreTopEnd
+
+    Set Size to 82 140
+    Set Location to 72 182
+
+    //AB-DDOStart
+
+    Object particle_DD is a particle_DataDictionary
+    End_Object    // particle_DD
+
+    Object Gbridgeh_DD is a Gbridgeh_DataDictionary
+    End_Object    // Gbridgeh_DD
+
+    Object Gbridged_DD is a Gbridged_DataDictionary
+    End_Object    // Gbridged_DD
+
+    Object pagmoves_DD is a pagmoves_DataDictionary
+    End_Object    // pagmoves_DD
+
+    Object Barticl_DD is a Barticl_DataDictionary
+    End_Object    // Barticl_DD
+
+
+
+    Procedure Start_Processing
+        Integer iInt iCount ierr igtypkin  imsg irecnum icheck ilast iparticle rval
+        string  snomisma msgstr sptypparcode scodegl switemkata smodule  spartlno srecr
+        indicate err false
+        get pirecnum to irecnum
+        clear Gbridgeh
+        move irecnum to gbridgeh.recnum
+        Find eq Gbridgeh.recnum
+        if (found=1) begin
+            move gbridgeh.particle_recnum to iparticle
+            move gbridgeh.garticl_no      to spartlno
+            move gbridgeh.module_from     to smodule
+            move gbridgeh.gbridgeh_recr   to srecr
+            if (smodule='04') begin
+                clear barticl
+                move iparticle to barticl.recnum
+                Find eq barticl.recnum
+                if (found) begin
+                    move '' to barticl.se_logik
+                    Move '' to Barticl.partl_akyr_recr
+                    saverecord barticl
+                    Send UpdateWait to (piTxtID(Self))  ('„§˜¤˜­¦¨á ©œ §¨¦žš¦ç£œ¤ž ¡˜«á©«˜©ž §˜¨˜©«˜« ¡¦ç = '+(string (spartlno)))
+                    delete gbridgeh
+                    clear  gbridged
+                    move srecr to gbridged.gbridgeh_recr
+                    find ge gbridged by index.1
+                    While ((found) and (gbridged.gbridgeh_recr eq srecr))
+                        delete gbridged
+                        find gt gbridged by index.1
+                    loop
+                end
+            end
+            if (smodule='05') begin
+                clear pagmoves
+                move iparticle to pagmoves.recnum
+                find eq pagmoves.Recnum
+                if (found) begin
+                    move '' to pagmoves.se_logik
+                    saverecord pagmoves
+                    Send UpdateWait to (piTxtID(Self))  ('„§˜¤˜­¦¨á ©œ §¨¦žš¦ç£œ¤ž ¡˜«á©«˜©ž ¡å¤ž©žª §˜šå¦¬ = '+(string (spartlno)))
+                    delete gbridgeh
+                    clear  gbridged
+                    move srecr to gbridged.gbridgeh_recr
+                    find ge gbridged by index.1
+                    While ((found) and (gbridged.gbridgeh_recr eq srecr))
+                        delete gbridged
+                        find gt gbridged by index.1
+                    loop
+                end
+            end
+
+            if ((smodule='01')or(smodule = '02')) begin
+                clear particle
+                move iparticle to particle.recnum
+                find eq particle.recnum
+                if (found) begin
+                    move '' to particle.se_logik
+                    Move '' to Particle.partl_akyr_recr
+                    saverecord particle
+                    Send UpdateWait to (piTxtID(Self))  ('„§˜¤˜­¦¨á ©œ §¨¦žš¦ç£œ¤ž ¡˜«á©«˜©ž §˜¨˜©«˜« ¡¦ç = '+(string (spartlno)))
+                    delete gbridgeh
+                    clear  gbridged
+                    move srecr to gbridged.gbridgeh_recr
+                    find ge gbridged by index.1
+                    While ((found) and (gbridged.gbridgeh_recr eq srecr))
+                        delete gbridged
+                        find gt gbridged by index.1
+                    loop
+                end
+            end
+        end
+        else error 4444 'ƒœ¤ £§¦¨é ¤˜ œ§˜¤˜«¦§¦Ÿœ«žŸé ©«ã¤ œšš¨˜­ã Gbridgeh'
+        If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure // OnClick
+
+    Procedure OnProcess
+        Send Start_Processing
+    End_Procedure
+
+    Procedure Start_Process
+         Set piTxtID                         to (Wait(Self))
+         Set Button_State    of (Wait(Self)) to False
+         Set BarVisibleState of (Wait(Self)) to '' False
+         Send Popup                          to (Wait(Self))
+         Set piLathos                        to 0
+         Forward Send Start_Process
+    End_Procedure
+
+    Procedure OnError integer error_info string errMsg
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+    Procedure End_Process
+       Forward Send End_Process
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+    //AB-StoreEnd
+
+End_Object
+//AB/ End_Object    // prj

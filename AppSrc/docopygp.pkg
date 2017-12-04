@@ -1,0 +1,549 @@
+
+        Use COMPANY.DD
+        Use BRANCH.DD
+        Use YEAR.DD
+        Use GFORMAT.DD
+        Use GPLAN.DD
+
+Object oDoCopyGp Is A BusinessProcessSub
+
+        Object oarrayGplan_Aux1 is a cPinakas
+        End_Object
+        Property Integer pioarray_Gplan_Aux1 Public 0
+        Set pioarray_Gplan_Aux1 to (oarrayGplan_Aux1(self))
+
+
+        set Status_panel_state to false
+        set Display_Error_state to true
+
+
+        Local Number lnMasterFile_Rec## lnCopyFile_Rec##
+
+
+        Object Company_DD is a Company_DataDictionary
+        End_Object    // Company_DD
+
+        Object Branch_DD is a Branch_DataDictionary
+            Set DDO_Server to (Company_DD(Current_Object))
+        End_Object    // Branch_DD
+
+        Object Year_DD is a Year_DataDictionary
+            Set DDO_Server to (Branch_DD(Current_Object))
+        End_Object    // Year_DD
+
+        Object Gformat_DD is a Gformat_DataDictionary
+            Set DDO_Server to (Year_DD(Current_Object))
+
+            Procedure CONSTRAIN
+                Constrain Gformat relates to Year
+            End_Procedure
+
+        End_Object    // Gformat_DD
+
+        Object Gformat_DD_A is a Gformat_DataDictionary
+            Set DDO_Server to (Year_DD(Current_Object))
+
+            Procedure CONSTRAIN
+                Constrain Gformat relates to Year
+            End_Procedure
+
+        End_Object    // Gformat_DD
+
+        Object Gplan_DD is a Gplan_DataDictionary
+            Set DDO_Server to (Year_DD(Current_Object))
+
+            Procedure CONSTRAIN
+                Constrain Gplan relates to Year
+            End_Procedure
+
+        End_Object    // Gplan_DD
+
+        Object Gplan_DD_A is a Gplan_DataDictionary
+            Set DDO_Server to (Year_DD(Current_Object))
+            Procedure CONSTRAIN
+                Constrain Gplan relates to Year
+            End_Procedure
+        End_Object    // Gplan_DD
+
+//////////////////////////////////////////////////
+
+PROCEDURE Copy_Gplan Number Master_Rec## Number Copy_Rec##
+
+          Move Master_Rec## to lnMasterFile_Rec##
+          Move Copy_Rec##   to lnCopyFile_Rec##
+
+
+          SEND DOPROCESS
+
+END_PROCEDURE //trexe Copy_Plan
+////////////////////////////////////////////////////////////////////////////////////////////////
+//Function Create_Maskes_Code string lsGplan_Code_Bpo4##  Returns String
+//    Local String lsMaska##
+//    Local Integer Bathmos## CounterStr##
+
+
+//    For CounterStr## From 1 to (length(lsGplan_Code_Bpo4##))
+//        if (((Mid(lsGplan_Code_Bpo4##,1,CounterStr##)) ne ".") and (Bathmos## lt 1)) Begin
+//              Insert (Mid(lsGplan_Code_Bpo4##,1,CounterStr##)) in lsMaska## at CounterStr##
+//        End
+//        else begin
+//            if (Mid(lsGplan_Code_Bpo4##,1,CounterStr##) eq ".") add 1 to Bathmos##
+//        End
+//    Loop
+//
+//    Function_Return lsMaska##
+//End_Function
+
+
+Procedure Copy_Gformat_Bpo
+
+    Local Integer liErr## liCompanyDDo## liBranchDDo## liYearDDo## liGformatDDo## liGformatDDo_A##
+    Local Number  lnRecnumMaster2##
+    Local String  lsGformat_Code## lsGformat_Mask##
+
+    //Wait Dg
+    Move 0 to gnCounterOfRecords##
+
+    move 2 to gnNumberOfRecords##
+    set current_position of (WaitBar(wait(self))) to 0
+    set maximum_position of (WaitBar(wait(self))) to gnNumberOfRecords##
+    send popup to (Wait(self))
+
+
+
+    Move (Company_DD(self))     to liCompanyDDo##
+    Move (Branch_DD(self))      to liBranchDDo##
+    Move (Year_DD(self))        to liYearDDo##
+    Move (Gformat_DD(Self))     to liGformatDDo##
+    Move (Gformat_DD_A(Self))   to liGformatDDo_A##
+
+
+
+
+
+
+    Send Clear to liYearDDo##                        //
+    move lnMasterFile_Rec## to Year.Recnum
+    send find_by_Recnum to liYearDDo## Year.File_number lnMasterFile_Rec##
+
+
+    Send Clear to liGformatDDo##                  //Finds Copy Arthro
+    Send Find  to liGformatDDo## FIRST_Record 1
+
+
+    While (found eq 1)
+
+        add 1 to gnCounterOfRecords##
+        set maximum_position of (WaitBar(wait(self))) to ((gnNumberOfRecords##*gnCounterOfRecords##)+1)
+        set current_position of (WaitBar(wait(self))) to gnCounterOfRecords##
+
+        get field_current_value of liGformatDDo## field Gformat.Recnum to lnRecnumMaster2##
+
+
+        get field_current_value of liGformatDDo## field Gformat.Gformat_Code to lsGformat_Code##
+        get field_current_value of liGformatDDo## field Gformat.Gformat_Mask to lsGformat_Mask##
+
+        Send Clear to liYearDDo##                        //Finds Target File
+        move lnCopyFile_Rec##  to Year.Recnum
+        send find_by_Recnum to liYearDDo## Year.File_number lnCopyFile_Rec##
+
+
+        Send Clear to liGformatDDo_A##                  //Finds Copy Arthro
+        move lsGformat_Code## to Gformat.Gformat_Code
+        Send Find  to liGformatDDo_A## eq 1
+
+        if (Found eq 0) begin
+
+            Send Clear to liGformatDDo##
+
+            Send Clear to liGformatDDo_A##
+
+            set field_changed_value of liGformatDDo_A## field Gformat.Gformat_Code to lsGFormat_Code##
+            set field_changed_value of liGformatDDo_A## field Gformat.Gformat_Mask to lsGFormat_Mask##
+
+            Send Request_Save to liGformatDDo_A##
+
+        End
+
+
+        //Find Next record to copy
+        Send Clear to liYearDDo##
+        move lnMasterFile_Rec## to Year.Recnum
+        send find_by_Recnum to liYearDDo## Year.File_number lnMasterFile_Rec##
+
+        send Rebuild_constraints to liGformatDDo##
+
+        send Clear to liGformatDDo##
+        send find_by_Recnum to liGformatDDo## Gformat.File_number lnRecnumMaster2##
+
+        Send Find to liGformatDDo## gt 1
+
+    Loop
+
+        send Deactivate to (Wait(self))
+
+
+End_Procedure
+
+
+Function Create_Maskes_Code string lsGplan_Code_Bpo4## number lnBathmosBpo## Returns String
+    Local String lsMaska##
+    Local Integer Bathmos## CounterStr##
+
+
+    For CounterStr## From 1 to (length(lsGplan_Code_Bpo4##))
+        if (((Mid(lsGplan_Code_Bpo4##,1,CounterStr##)) ne ".") and (Bathmos## lt lnBathmosBpo##)) Begin
+              Insert (Mid(lsGplan_Code_Bpo4##,1,CounterStr##)) in lsMaska## at CounterStr##
+        End
+        else begin
+            if (Mid(lsGplan_Code_Bpo4##,1,CounterStr##) eq ".") begin
+                add 1 to Bathmos##
+                if (Bathmos## lt lnBathmosBpo##);
+                Insert (Mid(lsGplan_Code_Bpo4##,1,CounterStr##)) in lsMaska## at CounterStr##
+            end
+        End
+    Loop
+
+    Function_Return lsMaska##
+End_Function
+
+
+Function Create_Maskes string lsGplan_Code_Bpo4##  Returns String
+    Local String lsMaska##
+    Local Integer Bathmos## CounterStr##
+
+
+    For CounterStr## From 1 to (length(lsGplan_Code_Bpo4##))
+
+        //if (((Mid(lsGplan_Code_Bpo4##,1,CounterStr##)) eq ".") and (Bathmos## lt 1)) Begin
+        //      Insert (Mid(lsGplan_Code_Bpo4##,1,CounterStr##)) in lsMaska## at CounterStr##
+        //End
+        //else begin
+
+        if (Mid(lsGplan_Code_Bpo4##,1,CounterStr##) eq ".") Begin
+            Insert (Mid(lsGplan_Code_Bpo4##,1,CounterStr##)) in lsMaska## at CounterStr##
+        end
+        else begin
+            Insert "X" in lsMaska## at CounterStr##
+        end
+
+        //End
+    Loop
+    Insert "." in lsMaska## at (CounterStr##+1)
+
+    Function_Return lsMaska##
+End_Function
+
+Procedure Find_All_Last_Gplan
+    Local Integer liErr## liCompanyDDo## liBranchDDo## liYearDDo## liGplanDDo## liGformatDDo##
+
+
+    Local String  lsCode_1## lsFormat## lsFormat_Code## lsTrfCode##
+
+    Local Number  lnRecnumMaster1## lnLast##
+
+    Local Integer liBathmos_1## liRetVal##
+
+
+    //Wait Dg
+    Move 0 to gnCounterOfRecords##
+
+    move 2 to gnNumberOfRecords##
+    set current_position of (WaitBar(wait(self))) to 0
+    set maximum_position of (WaitBar(wait(self))) to gnNumberOfRecords##
+    send popup to (Wait(self))
+
+
+
+    Move (Company_DD(self))     to liCompanyDDo##
+    Move (Branch_DD(self))      to liBranchDDo##
+    Move (Year_DD(self))        to liYearDDo##
+    Move (Gplan_DD(Self))       to liGplanDDo##
+    Move (Gformat_DD(Self))     to liGformatDDo##
+
+
+    Send Clear to liYearDDo##                        //
+    move lnMasterFile_Rec## to Year.Recnum
+    send find_by_Recnum to liYearDDo## Year.File_number lnMasterFile_Rec##
+
+
+    Send Clear to liGplanDDo##                  //Finds Copy Arthro
+    Send Find  to liGplanDDo## Last_Record 3
+
+    While (found eq 1)
+
+
+
+        get field_current_value of liGplanDDo## field Gplan.Recnum to lnRecnumMaster1##
+        get field_current_value of liGplanDDo## field Gplan.Gplan_Yn_Last to lnLast##
+
+
+        get field_current_value of liGplanDDo## field Gplan.Gplan_Code to lsCode_1##
+
+        move (Create_Maskes_COde(Self,lsCode_1##,1)) to lsFormat_Code##
+        move (Create_Maskes(Self,lsCode_1##))      to lsFormat##
+
+
+Search_Again_Format:
+
+        Send Clear to liYearDDo##                        //Finds Target File
+        move lnCopyFile_Rec##  to Year.Recnum
+        send find_by_Recnum to liYearDDo## Year.File_number lnCopyFile_Rec##
+
+
+
+        Send Clear to liGFormatDDo##
+
+        Move Year.Company_Code   to Gformat.Company_Code
+        Move Year.Branch_Code    to Gformat.Branch_Code
+        Move Year.Year_Year      to Gformat.Year_Year
+        Move lsFormat_Code##     to Gformat.Gformat_Code
+
+        Send Find  to liGformatDDo## eq 1 //Find if Exists
+
+
+        if (Found Eq 0) begin
+
+            Send Clear to liGFormatDDo##
+
+            set field_changed_value of liGformatDDo## field Gformat.Company_code to Year.Company_Code
+            set field_changed_value of liGformatDDo## field Gformat.Branch_code  to Year.Branch_Code
+            set field_changed_value of liGformatDDo## field Gformat.Year_Year    to Year.Year_Year
+
+            set field_changed_value of liGformatDDo## field Gformat.Gformat_Code to lsFormat_Code##
+            set field_changed_value of liGformatDDo## field Gformat.Gformat_Mask to lsFormat##
+
+            Send Request_Save to liGformatDDo##
+
+        end
+        else Begin
+            Move (Compute_Bathmos(liGplanDDo##,lsCode_1##)) to liBathmos_1##
+            Move (fiCheck_Format(liGplanDDo##,lsCode_1##,gformat.gformat_mask,liBathmos_1##)) to liRetVal##
+            if (liRetVal## ne 0) Begin //Format is wrong
+                move lsCode_1## to lsTrfCode##
+                Move (Find_Previous(liGplanDDo##,lsCode_1##)) to lsCode_1##
+                move (Create_Maskes_COde(Self,lsCode_1##,liBathmos_1##)) to lsFormat_Code##
+                move (Create_Maskes(Self,lsTrfCode##))      to lsFormat##
+                goto Search_Again_Format
+            End
+        end  //manipulate format
+
+
+        move 0 to lnLast##
+
+        //Wait Dg
+        add 1 to gnCounterOfRecords##
+        set maximum_position of (WaitBar(wait(self))) to ((gnNumberOfRecords##*gnCounterOfRecords##)+1)
+        set current_position of (WaitBar(wait(self))) to gnCounterOfRecords##
+
+        //Find Next record to copy
+        Send Clear to liYearDDo##
+        move lnMasterFile_Rec## to Year.Recnum
+        send find_by_Recnum to liYearDDo## Year.File_number lnMasterFile_Rec##
+
+        send Rebuild_constraints to liGplanDDo##
+
+        send Clear to liGplanDDo##
+        send find_by_Recnum to liGplanDDo## Gplan.File_number lnRecnumMaster1##
+
+        Send Find to liGplanDDo## lt 3
+
+    Loop
+
+    send Deactivate to (Wait(self))
+
+
+End_Procedure
+
+
+Procedure Copy_Gplan_Bpo    //
+
+    Local Integer liErr## ;
+                  liCompanyDDo## liBranchDDo## liYearDDo##;
+                  liGplanDDo## liGplanDDo_A##
+
+   Local Number lnKeepGarticlRec0##
+
+   ///////////////////////////////////////////////
+   //LOCAL VARIABLES FOR PKID AND RECORD VALUES
+    Local String ldGarticl_Datebpo##
+
+    Local Number lnGp_Gtypkin_Code##;
+                 lnGp_Gtypkin_Rec0##;
+                 lnGp_Gthhmgio_Code##;
+                 lnGp_Gthhmgio_Rec0##;
+                 lnGp_Rate0##
+
+    Local String lsGp_Par##;
+                 lsGp_C_Code2##
+
+
+    Local Number lnGp_GPlan_Rec0##;
+                 lnGp_Gmoves_X2##;
+                 lnGp_Gmoves_P2##;
+                 Recnum##
+
+    Local STring lsGp_Gplan_Code##
+
+   ///
+    Local Number lnRecnumMaster##
+
+
+
+    //Array Variables and settings
+
+    Local Integer lioarray_Gplan_Aux1##
+    Local Integer liField_Count## liField##
+    Local String  lsFile_Value##
+
+        Get pioarray_Gplan_Aux1 to lioarray_Gplan_Aux1##
+        Get_Attribute DF_FILE_NUMBER_FIELDS of 56 to liField_Count## //gplan
+   /////////////////////////////////////////////
+
+
+
+        Move (Company_DD(self))     to liCompanyDDo##
+        Move (Branch_DD(self))      to liBranchDDo##
+        Move (Year_DD(self))        to liYearDDo##
+
+        Move (Gplan_DD(Self))       to liGplanDDo##
+        Move (Gplan_DD_A(Self))     to liGplanDDo_A##
+
+
+        //Wait Dg
+        Move 0 to gnCounterOfRecords##
+
+        move 2 to gnNumberOfRecords##
+        set current_position of (WaitBar(wait(self))) to 0
+        set maximum_position of (WaitBar(wait(self))) to gnNumberOfRecords##
+        send popup to (Wait(self))
+
+
+        Send Clear to liYearDDo##                        //
+        move lnMasterFile_Rec## to Year.Recnum
+        send find_by_Recnum to liYearDDo## Year.File_number lnMasterFile_Rec##
+
+
+        Send Clear to liGplanDDo##                  //Finds Copy Arthro
+        Send Find  to liGplanDDo## FIRST_Record 1
+
+
+        While (found eq 1)
+
+            add 1 to gnCounterOfRecords##
+            set maximum_position of (WaitBar(wait(self))) to ((gnNumberOfRecords##*gnCounterOfRecords##)+1)
+            set current_position of (WaitBar(wait(self))) to gnCounterOfRecords##
+
+
+
+            Send Delete_Data to lioarray_Gplan_Aux1##
+            Send Add_Item to lioarray_Gplan_Aux1## 0
+
+            Local Integer liField_Type##
+            For liField## from 4 to (liField_Count##-1)
+                get_attribute DF_FIELD_TYPE of 56 lifield## to liField_Type## //new vdf5.1
+                if (liField_Type## ne 3) begin
+                    get field_current_value of liGplanDDo## liField## to lsFile_Value##
+                    //exclude pkid new vdf5.1
+                    Send Add_Item to lioarray_Gplan_Aux1## lsFile_Value##
+                    move "" to lsFile_Value##
+                End
+                Else Begin
+                    Send Add_Item to lioarray_Gplan_Aux1## ""
+                    move "" to lsFile_Value##
+                End
+            Loop
+
+            //more sofisticated if we copy only bathmos
+
+            //Keep Recnum For Next_Record of Master File
+            get field_current_value of liGplanDDo## field Gplan.Recnum to lnRecnumMaster##
+
+
+            //-------------------------------------//////////////////////////////////////////
+
+            Send Clear to liYearDDo##                        //Finds Target File
+            move lnCopyFile_Rec##  to Year.Recnum
+            send find_by_Recnum to liYearDDo## Year.File_number lnCopyFile_Rec##
+
+            Send Clear to liGplanDDo##
+
+            Send Clear to liGplanDDo_A##
+
+            Move Year.Company_Code   to Gplan.Company_Code
+            Move Year.Branch_Code    to Gplan.Branch_Code
+            Move Year.Year_Year      to Gplan.Year_Year
+
+            Get Array_Value of lioarray_Gplan_Aux1## Item 1 to lsFile_Value##
+            Move lsFile_Value##      to Gplan.Gplan_Code
+
+            Send Find  to liGplanDDo_A## eq 1 //Find if Exists
+
+
+            If (Found eq 0) Begin   //Gplan_code does not Exists
+
+                Send Clear to liYearDDo##                        //Finds Target File
+                move lnCopyFile_Rec##  to Year.Recnum
+                send find_by_Recnum to liYearDDo## Year.File_number lnCopyFile_Rec##
+
+                Send Clear to liGplanDDo##
+
+                Send Clear to liGplanDDo_A##
+                set field_changed_value of liGplanDDo_A## 1 to Year.Company_Code
+                set field_changed_value of liGplanDDo_A## 2 to Year.Branch_Code
+                set field_changed_value of liGplanDDo_A## 3 to Year.Year_Year
+
+
+
+                For liField## from 4 to (liField_Count##-1)
+                    move "" to lsFile_Value##
+                    if ((liField## ne 5) and (liField## ne 6) and (liField## ne 7)) begin
+                        Get Array_Value of lioarray_Gplan_Aux1## Item (liField##-3) to lsFile_Value##
+                        set field_changed_value of liGplanDDo_A## lifield## to lsFile_Value##
+                    end
+
+                Loop
+
+                //*
+                Move Year.Company_code   to gs_Selected_Company_Code
+                Move Year.Branch_code    to gs_Selected_Branch_Code
+                Move Year.Year_Year      to gi_Selected_Year
+                //*
+            Get Array_Value of lioarray_Gplan_Aux1## Item 1 to lsFile_Value##
+
+
+                Send Request_Save to liGplanDDo_A##
+            End
+            else begin
+            End
+            Send Delete_Data to lioarray_Gplan_Aux1##
+
+            //Find Next record to copy
+            Send Clear to liYearDDo##
+            move lnMasterFile_Rec## to Year.Recnum
+            send find_by_Recnum to liYearDDo## Year.File_number lnMasterFile_Rec##
+
+            send Rebuild_constraints to liGplanDDo##
+
+            send Clear to liGplanDDo##
+            send find_by_Recnum to liGplanDDo## Gplan.File_number lnRecnumMaster##
+
+            Send Find to liGplanDDo## gt 1
+
+        Loop
+
+        send Deactivate to (Wait(self))
+
+
+End_Procedure
+
+
+Procedure OnProcess
+    //Send Find_All_Last_Gplan
+    send Copy_Gformat_Bpo
+    send Copy_Gplan_Bpo
+End_Procedure
+
+End_Object
+
+

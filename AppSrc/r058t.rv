@@ -1,0 +1,839 @@
+//AB/ Project R058T:TheorHm
+//AB/     Object prj is a Report_Project
+//AB/         Set ProjectName to "R058T:TheorHm"
+//AB/         Set ProjectFileName to "r058t.rv"
+
+// Project Object Structure
+//   R058T is a ReportView
+//     Syscurgl_DD is a DataDictionary
+//     grpSelectHmgio is a GroupSub
+//       frmGThHmgio is a FormSub
+//       otxtGthhmgio is a TextBoxSub
+//     grpSelectDate is a GroupSub
+//       frmFromDate is a FormSub
+//       frmToDate is a FormSub
+//       otxtFromDate is a TextBoxSub
+//       otxtToDate is a TextBoxSub
+//     grpSelectCurr is a GroupSub
+//       chkbCurr0 is a CheckBoxSub
+//       chkbCurr00 is a CheckBoxSub
+//       chkbCurrR is a CheckBoxSub
+//     rdgrpSelectPrint is a RadioGroupSub
+//       rdScreen is a RadioSub
+//       rdPrinter is a RadioSub
+//       rdFile is a RadioSub
+//       frmFile is a FormSub
+//     oPrint_bn is a ButtonSub
+//     oCancel_bn is a ButtonSub
+//     oClear_bn is a ButtonSub
+//     dbGroupSub1 is a dbGroupSub
+//       Syscurgl_Company_Name is a dbFormSub
+//       Syscurgl_Branch_Name is a dbFormSub
+//       Syscurgl_Year_Year is a dbFormSub
+//     GMovesT_BasicReport is a BasicReportSub
+
+// Register all objects
+Register_Object chkbCurr0
+Register_Object chkbCurr00
+Register_Object chkbCurrR
+Register_Object dbGroupSub1
+Register_Object frmFile
+Register_Object frmFromDate
+Register_Object frmGThHmgio
+Register_Object frmToDate
+Register_Object GMovesT_BasicReport
+Register_Object grpSelectCurr
+Register_Object grpSelectDate
+Register_Object grpSelectHmgio
+Register_Object oCancel_bn
+Register_Object oClear_bn
+Register_Object oPrint_bn
+Register_Object otxtFromDate
+Register_Object otxtGthhmgio
+Register_Object otxtToDate
+Register_Object R058T
+Register_Object rdFile
+Register_Object rdgrpSelectPrint
+Register_Object rdPrinter
+Register_Object rdScreen
+Register_Object Syscurgl_Branch_Name
+Register_Object Syscurgl_Company_Name
+Register_Object Syscurgl_DD
+Register_Object Syscurgl_Year_Year
+
+
+//AB/     Report View
+
+
+    //AB-StoreTopStart
+    Use DFAllRpt.pkg
+    
+    Use COMPANY.DD
+    Use BRANCH.DD
+    Use YEAR.DD
+    Use GTHHMGIO.DD
+    Use GTYPKIN.DD
+    Use GPLAN.DD
+    Use GARTICL.DD
+    Use GMOVE.DD
+    Use GMHNES.DD
+    Use GHMNIES.DD
+    Use GTHAA.DD
+    
+    Use rvi058T.pkg
+    Use TheorX.dg
+    
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use DFAllEnt.pkg
+    Use Group.Sub
+    Use Form.Sub
+    Use Txtbox.Sub
+    Use Chkbox.Sub
+    Use Rgroup.Sub
+    Use Radio.Sub
+    Use Button.Sub
+    Use dbGroup.Sub
+    Use dbForm.Sub
+
+    Use SysCurGL.dd
+    
+    //AB-IgnoreEnd
+
+    DEFERRED_VIEW Activate_R058T FOR ;
+    ;
+    Object R058T is a ReportView
+
+        //AB-StoreTopStart
+        Property Integer Sort_IndexR058_T 1
+        //AB-StoreTopEnd
+
+        Set Label to "Ü£ú®¶¢Êö†ò Çú§†°„™ ä¶ö†©´†°„™"
+        Set Size to 191 319
+        Set Location to 13 6
+
+        //AB-DDOStart
+
+        Object Syscurgl_DD is a SysCurGL_DataDictionary
+        End_Object    // Syscurgl_DD
+
+
+        //AB-DDOEnd
+
+        Object grpSelectHmgio is a GroupSub
+            Set Label to "Ñß†¢¶ö„ Ü£ú®¶¢¶öÂ¶¨"
+            Set Size to 26 310
+            Set Location to 26 3
+            Object frmGThHmgio is a FormSub
+                Set Size to 13 42
+                Set Location to 9 51
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Form_Datatype Item 0 to Mask_Numeric_Window
+                Set Prompt_Button_Mode to pb_PromptOn
+                Set Form_Margin Item 0 to 4
+                Set Form_Mask Item 0 to "####"
+                Set Value Item 0 to "1"
+
+                //AB-StoreStart
+                            
+                Set Prompt_Object to (Gthhmgio(Current_object))
+                
+                Procedure RetValue
+                    Set Value Item 0 to Gthhmgio.Gthhmgio_Code
+                End_Procedure // RetValue
+                
+                // this is called by the prompt list upon initialization. This will let us
+                // set special properties for the list's one time use. In this case we
+                // want the intial column and the export column to be name (col 1)
+                Procedure Prompt_Callback integer hPrompt
+                    set Export_Column  of hPrompt to 0
+                    Set Initial_Column of hPrompt to 0
+                    Set display_buffer_msg of hPrompt to msg_RetValue
+                End_procedure // Prompt_Callback
+                
+                
+                
+                
+                
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // frmGThHmgio
+
+            Object otxtGthhmgio is a TextBoxSub
+                Set Label to "â‡õ†°Ê™:"
+                Set Auto_Size_State to FALSE
+                Set FontSize to 4 0
+                Set Location to 10 6
+                Set Size to 10 43
+                Set Enabled_State to TRUE
+            End_Object    // otxtGthhmgio
+
+        End_Object    // grpSelectHmgio
+
+        Object grpSelectDate is a GroupSub
+            Set Label to "Ñß†¢¶ö„ Ü£ú®¶£û§Âò™ Ä®ü®‡§"
+            Set Size to 28 310
+            Set Location to 55 3
+            Object frmFromDate is a FormSub
+                Set Size to 13 55
+                Set Location to 10 51
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Form_Datatype Item 0 to Mask_Date_Window
+                Set Form_Mask Item 0 to "dd/MM/yyyy"
+
+                //AB-StoreStart
+                set Form_Datatype item 0 to mask_date_window
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // frmFromDate
+
+            Object frmToDate is a FormSub
+                Set Size to 13 55
+                Set Location to 10 191
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Form_Datatype Item 0 to Mask_Date_Window
+                Set Form_Mask Item 0 to "dd/MM/yyyy"
+
+                //AB-StoreStart
+                set Form_Datatype item 0 to mask_date_window
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // frmToDate
+
+            Object otxtFromDate is a TextBoxSub
+                Set Label to "ÄßÊ Ü£§Âò  :"
+                Set Auto_Size_State to FALSE
+                Set FontSize to 4 0
+                Set Location to 11 6
+                Set Size to 10 40
+                Set Enabled_State to TRUE
+            End_Object    // otxtFromDate
+
+            Object otxtToDate is a TextBoxSub
+                Set Label to "Ñ‡™ Ü£§Âò  :"
+                Set Auto_Size_State to FALSE
+                Set FontSize to 4 0
+                Set Location to 11 143
+                Set Size to 10 44
+                Set Enabled_State to TRUE
+            End_Object    // otxtToDate
+
+        End_Object    // grpSelectDate
+
+        Object grpSelectCurr is a GroupSub
+            Set Label to "Ñß†¢¶ö„ å¶£†©£·´‡§"
+            Set Size to 34 310
+            Set Location to 86 3
+            Object chkbCurr0 is a CheckBoxSub
+                Set Label to "0"
+                Set Size to 10 21
+                Set Location to 15 15
+
+                //AB-StoreStart
+                            
+                            
+                //AB-StoreEnd
+
+            End_Object    // chkbCurr0
+
+            Object chkbCurr00 is a CheckBoxSub
+                Set Label to "00"
+                Set Size to 10 25
+                Set Location to 15 69
+            End_Object    // chkbCurr00
+
+            Object chkbCurrR is a CheckBoxSub
+                Set Label to "rep"
+                Set Size to 10 27
+                Set Location to 15 123
+            End_Object    // chkbCurrR
+
+        End_Object    // grpSelectCurr
+
+        Object rdgrpSelectPrint is a RadioGroupSub
+            Set Label to "Ñ°´Áß‡©û "
+            Set Size to 26 310
+            Set Location to 122 3
+            Object rdScreen is a RadioSub
+                Set Label to "éüÊ§û"
+                Set Size to 10 35
+                Set Location to 12 8
+            End_Object    // rdScreen
+
+            Object rdPrinter is a RadioSub
+                Set Label to "Ñ°´¨ß‡´„™"
+                Set Size to 10 49
+                Set Location to 12 61
+            End_Object    // rdPrinter
+
+            Object rdFile is a RadioSub
+                Set Label to "Ä®ÆúÂ¶"
+                Set Size to 10 41
+                Set Location to 12 126
+                Set Auto_Size_State to FALSE
+            End_Object    // rdFile
+
+            Object frmFile is a FormSub
+                Set Size to 13 133
+                Set Location to 10 171
+                Set Color to clBtnFace
+                Set Label_Col_Offset to 2
+                Set Enabled_State to FALSE
+                Set Item_Shadow_State Item 0 to TRUE
+                Set Shadow_State Item 0 to TRUE
+            End_Object    // frmFile
+
+
+            //AB-StoreStart
+                    
+            Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+                If iNewItem EQ 0 Set Output_Device_Mode  To PRINT_TO_WINDOW
+                Else If iNewItem EQ 1  Set Output_Device_Mode  To PRINT_TO_PRINTER
+                Else If iNewItem EQ 2  Set Output_Device_Mode  To PRINT_TO_FILE
+                Set Enabled_State of frmFile to (iNewItem = 2)
+            End_Procedure // Notify_Select_State
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // rdgrpSelectPrint
+
+        Object oPrint_bn is a ButtonSub
+            Set Label to "Ñ°´‚¢ú©û (F2)"
+            Set Size to 18 53
+            Set Location to 155 203
+
+            //AB-StoreStart
+            Procedure OnClick
+                Send StartReport
+            End_Procedure //OnClick
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // oPrint_bn
+
+        Object oCancel_bn is a ButtonSub
+            Set Label to "Ñ•¶õ¶™ (Esc)"
+            Set Size to 18 53
+            Set Location to 155 259
+
+            //AB-StoreStart
+            Procedure OnClick
+                Send Request_Cancel
+            End_Procedure //OnClick
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // oCancel_bn
+
+        Object oClear_bn is a ButtonSub
+            Set Label to "Ä°Á®‡©û (F5)"
+            Set Size to 18 53
+            Set Location to 155 4
+            Set Focus_Mode to Pointer_Only
+
+            //AB-StoreStart
+                    
+            Set MDI_Container to (R058T(Self))
+            
+            Procedure OnClick
+                Delegate Send Request_Clear
+                Forward Send OnClick
+            End_Procedure // OnClick
+            
+            //AB-StoreEnd
+
+        End_Object    // oClear_bn
+
+        Object dbGroupSub1 is a dbGroupSub
+            Set Size to 28 310
+            Set Location to -4 3
+            Object Syscurgl_Company_Name is a dbFormSub
+                Entry_Item Syscurgl.Company_name
+                Set Server to (Syscurgl_DD(self))
+                Set Label to "Ñ´ò†®"
+                Set Size to 13 81
+                Set Location to 9 27
+                Set Color to clBtnFace
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Enabled_State to FALSE
+                Set Item_Shadow_State Item 0 to TRUE
+                Set Shadow_State Item 0 to TRUE
+            End_Object    // Syscurgl_Company_Name
+
+            Object Syscurgl_Branch_Name is a dbFormSub
+                Entry_Item Syscurgl.Branch_name
+                Set Server to (Syscurgl_DD(self))
+                Set Label to "ìß¶°ò´"
+                Set Size to 13 106
+                Set Location to 9 140
+                Set Color to clBtnFace
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Enabled_State to FALSE
+                Set Item_Shadow_State Item 0 to TRUE
+                Set Shadow_State Item 0 to TRUE
+            End_Object    // Syscurgl_Branch_Name
+
+            Object Syscurgl_Year_Year is a dbFormSub
+                Entry_Item Syscurgl.Year_year
+                Set Server to (Syscurgl_DD(self))
+                Set Label to "ï®„©û"
+                Set Size to 13 31
+                Set Location to 9 272
+                Set Color to clBtnFace
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Enabled_State to FALSE
+                Set Item_Shadow_State Item 0 to TRUE
+                Set Shadow_State Item 0 to TRUE
+            End_Object    // Syscurgl_Year_Year
+
+        End_Object    // dbGroupSub1
+
+
+        //AB-StoreStart
+        
+        Property String psDate_ToR058_T ""
+        Property String psDate_FromR058_T ""
+        Property Integer piGThHmgio_CodeR058_T 0
+        Property Integer piFirstPass 0
+        
+        //Multicurrency selection Constants
+        Property Integer piSeriesR058_T 0
+        Property Integer piKeepSectionTogetherR058_T 0 //All one by one currencies
+        Property Integer piState1R058_T 0
+        Property Integer piState2R058_T 0
+        Property Integer piState3R058_T 0
+        
+        //Program Variables
+        Property Number pnSynXreP 0
+        Property Number pnSynPistP 0
+        Property Number pnStartSelida 1
+        Property Number pnCurrentSelidaTheorimeno 0
+        
+        Property Integer piReportCancelled False
+        Property Number  pnSynXreSel  0
+        Property Number  pnSynPistSel 0
+        Property Number  pnTotalSynXreP 0
+        Property Number  pnTotalSynPistP 0
+        
+        Procedure StartReport
+           Integer iOutputDevice
+           String  FileName
+           Integer liGThHmgio_CodeR058_T liState1R058_T liState2R058_T liState3R058_T
+           String lsDate_FromR058_T lsDate_ToR058_T
+           Integer liRptId liCancel liRepPanelId
+        
+           // Collection Of selection Criteria from VIEW
+        
+           Get value of (frmGThHmgio(grpSelectHmgio(Self)))       item 0 to liGThHmgio_CodeR058_T
+           Set piGThHmgio_CodeR058_T to liGThHmgio_CodeR058_T
+           Get value of (frmFromDate(grpSelectDate(Self)))           item 0 to lsDate_FromR058_T
+           Set psDate_FromR058_T to lsDate_FromR058_T
+           Get value of (frmToDate(grpSelectDate(Self)))           item 0 to lsDate_ToR058_T
+           Set psDate_ToR058_T to lsDate_ToR058_T
+        
+           If (liGThHmgio_CodeR058_T = 0) Begin
+                Send Stop_Box "ÉÈ©´ú Ü£ú®¶¢Êö†¶." "è¢û®¶≠¶®Âò"
+                Procedure_Return
+           End
+           If (Date(lsDate_FromR058_T) = 0) Begin
+                Send Stop_Box "ÉÈ©´ú ò®Æ†°„ û£ú®¶£û§Âò." "è¢û®¶≠¶®Âò"
+                Procedure_Return
+           End
+           If (Date(lsDate_ToR058_T) = 0) Begin
+                Send Stop_Box "ÉÈ©´ú ´ú¢†°„ û£ú®¶£û§Âò." "è¢û®¶≠¶®Âò"
+                Procedure_Return
+           End
+           If (Date(lsDate_FromR058_T) > (Date(lsDate_ToR058_T))) Begin
+                Send Stop_Box "Ä®Æ†°„ û£ú®¶£û§Âò £úöò¢Á´ú®û òßÊ ´ú¢†°„." "è¢û®¶≠¶®Âò"
+                Procedure_Return
+           End
+           If ((Date(lsDate_ToR058_T)- (Date(lsDate_FromR058_T))) > 30) Begin
+                Send Stop_Box "ï®¶§†°Ê õ†·©´û£ò £úöò¢Á´ú®¶ ´‡§ 31 û£ú®È§." "è¢û®¶≠¶®Âò"
+                Procedure_Return
+           End
+           If ((Date(lsDate_FromR058_T) < Year.Year_XrhshFrom) or (Date(lsDate_FromR058_T) > Year.Year_XrhshTo)) Begin
+                Send Stop_Box "Ä®Æ†°„ û£ú®¶£û§Âò ú°´Ê™ Æ®„©û™." "è¢û®¶≠¶®Âò"
+                Procedure_Return
+           End
+        
+           Set piReportCancelled to False
+        
+           Get Output_Device_Mode To iOutputDevice
+        
+           If iOutputDevice EQ PRINT_TO_WINDOW Begin
+              Make_Temp_File "TXT" FileName
+              Move (".\" - FileName)  To FileName
+              Set Output_Device_Name  To FileName
+           End
+           Else If iOutputDevice EQ PRINT_TO_PRINTER ;
+               Set Output_Device_Name  To "Lpt1:"
+           Else If iOutputDevice EQ PRINT_TO_FILE Begin
+              Get Value of (frmFile(rdGrpSelectPrint(Self))) to FileName
+              If (FileName = "") Make_Temp_File "TXT" FileName
+              Move (".\" - FileName)  To FileName
+              Set Output_Device_Name  To FileName
+           End
+        
+            //--------------------------------------------------------------------------------
+            //Multicurrency Selection Criteria From VIEW
+            Set piSeriesR058_T to 0
+            Get checked_State of (chkbCurr0(grpSelectCurr(current_object))) to liState1R058_T
+            Set piState1R058_T to liState1R058_T
+            Get checked_State of (chkbCurr00(grpSelectCurr(current_object))) to liState2R058_T
+            Set piState2R058_T to liState2R058_T
+            Get checked_State of (chkbCurrR(grpSelectCurr(current_object))) to (piState3R058_T(Self))
+            Set piState3R058_T to liState3R058_T
+            //Get checked_State of (checkBoxSub4(grpSelectCurr(current_object))) to piKeepSectionTogetherR058_T
+            //--------------------------------------------------------------------------------
+        
+            //Initialize Values To run a new Report
+            Get Report_Object_Id to liRptId
+            If (liRptId) Begin
+                //Set status_panel_state of liRptId to False
+                Get Report_Status_Panel of liRptId to liRepPanelId
+                Set Button_Text of liRepPanelId to "Ä°Á®‡©û"
+                Send Rebuild_Constraints to liRptId
+                Set piInvokingReportId of TheorX to liRptId
+            End
+        
+            Set piFirstPass to 0
+            Set pnSynXreP to 0
+            Set pnSynPistP to 0
+            Set pnSynXreSel to 0
+            Set pnSynPistSel to 0
+            //
+        
+            if (piState1R058_T(Self) = 1) begin
+                    Set piSeriesR058_T to 1 //Book
+                    Set piState1R058_T to 0
+                    Send Run_Report
+            end
+        
+            if (piState2R058_T(Self) = 1) begin
+                    Set piSeriesR058_T to 2 //Euro
+                    Set piState2R058_T to 0
+                    send Run_Report
+            end
+        
+            if (piState3R058_T(Self) = 1) begin
+                    Set piSeriesR058_T to 3 //Euro
+                    Set piState3R058_T to 0
+                    send Run_Report
+            end
+        
+            if (piKeepSectionTogetherR058_T(Self) = 1) begin
+                Set piKeepSectionTogetherR058_T to 0
+                send page_bottom to (GMovesT_BasicReport(Current_Object))
+                formfeed
+            end
+        
+            If iOutputDevice EQ PRINT_TO_WINDOW Begin
+               Get piReportCancelled to liCancel
+               If (Not(liCancel)) Begin
+                  // Send DoRunEditor FileName
+                   RunProgram background "notepad" FileName
+                   EraseFile FileName
+               End
+            End
+        
+        End_Procedure   // StartReport
+        
+        Object GMovesT_BasicReport is a BasicReportSub
+        
+            if (piKeepSectionTogetherR058_T(Self) = 1) begin
+                set new_page_state to false
+            end
+        
+            Procedure Constrain
+                Integer liGThHmgio_CodeR058_T
+                String  lsDate_ToR058_T
+        
+                Constrain Gmove.Company_Code eq Syscurgl.Company_Code
+                Constrain Gmove.Branch_Code  eq Syscurgl.Branch_Code
+                Constrain Gmove.Year_Year    eq Syscurgl.Year_Year
+        
+                Get piGThHmgio_CodeR058_T to liGThHmgio_CodeR058_T
+                Get psDate_ToR058_T       to lsDate_ToR058_T
+                Constrain Gmove.GthHmgio_Code eq liGThHmgio_CodeR058_T
+                Constrain Gmove.Gmove_AA gt 0
+                If (lsDate_ToR058_T <> "") Constrain Gmove.Garticl_Hmnia   le lsDate_ToR058_T
+                Forward Send Constrain
+            End_Procedure // constrain
+        
+            Report_Main_File GMove
+            Report_breaks Gmove.Garticl_Hmnia
+            Set Report_Caption to "É†òõ†°ò©Âò ©ú ú•‚¢†•û"
+            Set Report_Title to "Ñ°´Áß‡©û áú‡®û£‚§¶¨ Ü£ú®¶¢¶öÂ¶¨"
+        
+        
+           Function Starting_Report Returns Integer
+              Zero_SubTotals  SubtotalR058_T.1 SubtotalR058_T.2 SubtotalR058_T.3 SubtotalR058_T.4
+              Zero_SubTotals  BodyR058_T.10  BodyR058_T.11
+              Zero_SubTotals  SubheaderR058_T.1 SubheaderR058_T.2
+           End_Function // Starting_Report
+        
+           Function Starting_Main_Report Returns Integer
+              Integer iRetVal liRepPanelId iOutputDevice
+        
+              Get Output_Device_Mode To iOutputDevice
+        
+              Forward Get Starting_Main_Report to iRetval
+        
+              Report_Index BY 12   // set the sort order
+        
+              Blankform HeaderR058_T.6    Thru HeaderR058_T.8
+              Get Report_Status_Panel to liRepPanelId
+              Set Button_Text of liRepPanelId to "Ä°Á®‡©û"
+              Set Report_Caption to "É†òõ†°ò©Âò ©ú ú•‚¢†•û"
+              Set Report_Title to "Ñ°´Áß‡©û áú‡®û£‚§¶¨ Ü£ú®¶¢¶öÂ¶¨"
+              Function_Return iRetVal
+           End_Function
+        
+           Procedure_Section Page_Top as HeaderR058_T
+              Integer iPage
+              Get Page_Count  To iPage
+        
+              PRINT GthHmgio.GthHmgio_Descr
+              Print iPage
+              print Syscurgl.Company_Name
+              print Syscurgl.Branch_Name
+              print Syscurgl.Year_Descr
+              OutPut_PageCheck
+            End_Procedure // Page_Top
+        
+            Procedure_Section SubHeader1 as SubheaderR058_T
+                Number lnStartSelida
+                Integer liCancel
+        
+                if (Gmove.Garticl_Hmnia >= (psDate_FromR058_T(Self)))   begin
+        
+                    if (piFirstPass(Self) = 0) Begin
+        
+                       ///spy 29/02/2000
+                       ///Set pnSynXreP    to SubtotalR058_T.3
+                       ///Set pnSynPistP   to SubtotalR058_T.4
+                    //MODAL
+                        Blankform BodyR058_T.1      Thru BodyR058_T.11
+                        Blankform SubheaderR058_T.1 Thru SubheaderR058_T.2
+                        Blankform SubtotalR058_T.1  Thru SubtotalR058_T.4
+                        Blankform TotalR058_T.1     Thru TotalR058_T.6
+                        Blankform SelidaR058_T.1    Thru SelidaR058_T.2
+                        Print (pnSynXreP(Self)) to SubheaderR058_T.1
+                        Print (pnSynPistP(Self)) to SubheaderR058_T.2
+        
+                        set Value of (frmSynXrePro(TheorX(Self)))  item 0 to SubheaderR058_T.1
+                        set Value of (frmSynPistPro(TheorX(Self))) item 0 to SubheaderR058_T.2
+        
+                    End
+                    if (piFirstPass(Self) = 0) Begin
+                        Send End_Status
+                        send popup_modal to (TheorX(self))
+                        Get piReportCancelled to liCancel
+                        If (Not(liCancel)) Send Resume_Status
+                        Else Begin
+                            Set Cancelled_State to True
+                        End
+                    //End
+                    //if (piFirstPass(Self) = 0) Begin
+                        Get Value of (FrmSelida(TheorX(Self)))     item 0 to lnStartSelida
+                        Set pnStartSelida to lnStartSelida
+                        Set pnCurrentSelidaTheorimeno to lnStartSelida
+                        Set Page_Count  To lnStartSelida
+                        Set pnCurrentSelidaTheorimeno to 0
+                    end
+        
+                    Set piFirstPass to 1
+                    //Selida Theorimenoy
+                    //set status_panel_state to True
+        
+                 end
+                 else Begin
+                    //set status_panel_state to False
+                 End
+                 if (Gmove.Garticl_Hmnia >= (psDate_FromR058_T(Self)))  OutPut_PageCheck
+            End_Procedure
+        
+        
+            Procedure_Section  Body as BodyR058_T
+        
+                Send Update_Status ("Ñöö®ò≠‚™: " + Gmove.Gplan_Code + Gmove.Gmove_Recr)
+        
+                Print Gmove.Gmove_AA             to BodyR058_T.1
+                Print Gmove.Garticl_Hmnia        to BodyR058_T.2
+                Print Gtypkin.Gtypkin_ABR        to BodyR058_T.3
+                Print Garticl.Garticl_No         to BodyR058_T.4
+                Print Gtypkin.Gtypkin_Seira      to BodyR058_T.5
+                Print Gmove.Gplan_Code           to BodyR058_T.6
+                Print Gplan.Gplan_Descr1         to BodyR058_T.7
+                Print Gmove.Gtypkin_Code         to BodyR058_T.8
+                Print Gmove.Gmove_Aitiol         to BodyR058_T.9
+        
+                if (piSeriesR058_T(Self) = 1) begin
+                    Print Gmove.Gmove_X2         to BodyR058_T.10
+                    Print Gmove.Gmove_P2         to BodyR058_T.11
+                end
+        
+                if (piSeriesR058_T(Self) = 2) begin
+                    Print Gmove.Gmove_X2           to BodyR058_T.10
+                    Print Gmove.Gmove_P2           to BodyR058_T.11
+                End
+                if (piSeriesR058_T(Self) = 3) begin
+                    Print Gmove.Gmove_X2            to BodyR058_T.10
+                    Print Gmove.Gmove_P2            to BodyR058_T.11
+                End
+        
+                if (piSeriesR058_T(Self) = 0) begin
+                end
+        
+                if (Gmove.Garticl_Hmnia >= (psDate_FromR058_T(Self)))  Begin
+                    OutPut_PageCheck
+                    Print (SelidaR058_T.1 + BodyR058_T.10) to SelidaR058_T.1
+                    Print (SelidaR058_T.2 + BodyR058_T.11) to SelidaR058_T.2
+                End
+            End_Procedure // Body
+        
+            procedure_section page_footer as SelidaR058_T
+              Print SelidaR058_T.1 to SubheaderR058_T.1
+              Print SelidaR058_T.2 to SubheaderR058_T.2
+              OutPut_PageCheck
+            End_Procedure // page_footer
+        
+            Procedure_Section  Subtotal1 as SubtotalR058_T
+        
+               Subtotal BodyR058_T.10 to SubtotalR058_T.1
+               Subtotal BodyR058_T.11 to SubtotalR058_T.2
+        
+               Print (SubtotalR058_T.1 + (pnSynXreP(Self))) to SubtotalR058_T.3
+               Print (SubtotalR058_T.2 + (pnSynPistP(Self))) to SubtotalR058_T.4
+        
+               //Print (SubheaderR058_T.1 + SubtotalR058_T.1) to SubtotalR058_T.3
+               //Print (SubheaderR058_T.2 + SubtotalR058_T.2) to SubtotalR058_T.4
+        
+               Print SubtotalR058_T.3 to SubheaderR058_T.1
+               Print SubtotalR058_T.4 to SubheaderR058_T.2
+        
+               ///spy 29/02/2000
+               ///if (Gmove.Garticl_Hmnia >= (psDate_FromR058_T(Self))) Begin
+               Set pnSynXreP          to SubheaderR058_T.1
+               Set pnSynPistP         to SubheaderR058_T.2
+               ///spy 29/02/2000
+               if (Gmove.Garticl_Hmnia >= (psDate_FromR058_T(Self))) Begin
+                   Output_PageCheck
+               End
+           end_Procedure // Subtotal1
+        
+        //   Procedure_Section  Total as TotalR058_T
+        //
+        //       Print (pnSynXreP(Self))  to TotalR058_T.1
+        //       Print (pnSynPistP(Self)) to TotalR058_T.2
+        //
+        //       //Subtotal SubtotalR058_T.1 to TotalR058_T.3
+        //       //Subtotal SubtotalR058_T.2 to TotalR058_T.4
+        //
+        //       print (SubtotalR058_T.3-(pnSynXreP(Self))) to TotalR058_T.3
+        //       print (SubtotalR058_T.4-(pnSynXreP(Self))) to TotalR058_T.4
+        //
+        //       print (TotalR058_T.1+TotalR058_T.3) to TotalR058_T.5
+        //       print (TotalR058_T.2+TotalR058_T.4) to TotalR058_T.6
+        //
+        //       if (Gmove.Garticl_Hmnia >= (psDate_FromR058_T(Self))) //OutPut_PageCheck
+        //   end_Procedure // Total
+        
+        
+           //Procedure_Section Page_Bottom as FooterR059_1
+           //    if (piKeepSectionTogetherR058_T ne 1)  OutPut_PageCheck
+           //End_Procedure
+        
+        
+           Procedure Ending_Report
+               Integer rVal
+        
+               Blankform BodyR058_T.1      Thru BodyR058_T.11
+               Blankform SubheaderR058_T.1 Thru SubheaderR058_T.2
+               Blankform SubtotalR058_T.1  Thru SubtotalR058_T.4
+               Blankform TotalR058_T.1     Thru TotalR058_T.6
+               Blankform SelidaR058_T.1    Thru SelidaR058_T.2
+           End_Procedure // Ending_Report
+        
+        
+        End_Object
+        
+        Procedure Activate_View Returns Integer
+            Integer Rval
+            String lsCompany lsBranch
+        
+            Forward Get MSG_Activate_View to Rval
+        
+            If (Not(rVal))  Begin
+        
+                set label of (chkbCurr0(grpSelectCurr(Self)))  To SysCurGL.C_Code0
+                set label of (chkbCurr00(grpSelectCurr(Self))) To SysCurGL.C_Code00
+                set label of (chkbCurrR(grpSelectCurr(Self)))  To SysCurGL.C_CodeR
+        
+                Set checked_State of (chkbCurr0(grpSelectCurr(current_object))) to 1
+            End
+            Procedure_Return rVal
+        End_Procedure // Activate_View
+        
+        Procedure Request_Clear
+            Set Value of (frmgthHmgio(grpSelectHmgio(Self))) Item 0 to 1
+            Set Value of (frmFromDate(grpSelectDate(Self)))  Item 0 to ""
+            Set Value of (frmToDate(grpSelectDate(Self)))    Item 0 to ""
+            Set checked_State of (chkbCurr0(grpSelectCurr(current_object))) to 1
+            Set checked_State of (chkbCurr00(grpSelectCurr(current_object))) to False
+            Set checked_State of (chkbCurrR(grpSelectCurr(current_object))) to False
+            Send Activate to (frmgthHmgio(grpSelectHmgio(Self)))
+        End_Procedure // Request_Clear
+        
+        //Set Verify_Exit_Msg To Get_No_Confirmation
+        On_Key kSave_Record Send KeyAction to oPrint_bn
+        On_Key kCancel      Send KeyAction to oCancel_bn
+        On_Key kClear       Send Request_Clear
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    CD_End_Object    // R058T
+
+
+    //AB-StoreStart
+    
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

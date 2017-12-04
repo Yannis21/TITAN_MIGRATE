@@ -1,0 +1,44 @@
+-----------------------------------------------------------------------------
+  DATE: 26/05/115      TIME: 08:32                                  PAGE:  1
+  FILE DEFINITION FOR FILE: TMPSAP (# 87)
+-----------------------------------------------------------------------------
+  DRIVER NAME               : DATAFLEX
+  FILE ROOT NAME            : TMPSAP
+  USER DISPLAY NAME         : Tmpsap
+  DATAFLEX FILE NAME        : TMPSAP
+-----------------------------------------------------------------------------
+  RECORD LENGTH             : 18        ( USED: 5 )
+  MAX NUMBER OF RECORDS     : 1000000   ( USED: 0 )
+  FILE COMPRESSION          : NONE
+  RE-USE DELETED SPACE      : YES
+  LOCKING TYPE              : FILE
+  HEADER INTEGRITY CHECKING : YES
+  TRANSACTION TYPE          : CLIENT ATOMIC
+  RECORD IDENTITY INDEX     : 0 ( 0 , 0 )
+  FILE LOGIN PARAMETER      : 
+  SYSTEM FILE               : NO 
+-----------------------------------------------------------------------------
+
+NUM  FIELD NAME       TYPE SIZE  OFFST IX   RELATES TO FILE.FIELD
+---  ---------------  ---- ----- ----- --   ---------------------------------
+  1  DATE             DAT      6     1  1   
+  2  APESTALEI        NUM    2.0     4  3   
+  3  KLEIDOMENO       NUM    2.0     5  4   
+
+
+INDEX# FIELDS          DES U/C    LENGTH LEVELS SEGMENTS MODE
+------ --------------- --- ---    ------ ------ -------- -------
+  1    DATE            NO  NO       3      3       1     ON-LINE
+
+  2    DATE            NO  NO       4      3       2     ON-LINE
+       KLEIDOMENO      NO  NO 
+
+  3    APESTALEI       NO  NO       4      3       2     ON-LINE
+       DATE            NO  NO 
+
+  4    KLEIDOMENO      NO  NO       4      3       2     ON-LINE
+       DATE            NO  NO 
+
+  5    DATE            NO  NO       4      3       2     ON-LINE
+       APESTALEI       NO  NO 
+

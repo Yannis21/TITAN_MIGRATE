@@ -1,0 +1,598 @@
+//AB/ Project ConnGL
+//AB/ Object prj is a Dialog_Project
+//AB/     Set ProjectName to "ConnGL"
+//AB/     Set ProjectFileName to "ConnGL.DG"
+
+// Project Object Structure
+//   ConnGL is a BasicPanelSub
+//     BitmapContainer1 is a BitmapContainerSub
+//     Textbox5 is a TextBoxSub
+//     ComboForm2 is a ComboFormSub
+//     Textbox6 is a TextBoxSub
+//     Form4 is a FormSub
+//     Textbox7 is a TextBoxSub
+//     Form5 is a FormSub
+//     Textbox8 is a TextBoxSub
+//     Form6 is a FormSub
+//     CheckBox1 is a CheckBoxSub
+//     oOK_bn is a ButtonSub
+//     oCancel_bn is a ButtonSub
+
+// Register all objects
+Register_Object BitmapContainer1
+Register_Object CheckBox1
+Register_Object ComboForm2
+Register_Object ConnGL
+Register_Object Form4
+Register_Object Form5
+Register_Object Form6
+Register_Object oCancel_bn
+Register_Object oOK_bn
+Register_Object Textbox5
+Register_Object Textbox6
+Register_Object Textbox7
+Register_Object Textbox8
+
+
+
+//AB-StoreTopStart
+
+///#INCLUDE
+Use mertech.inc
+
+//AB-StoreTopEnd
+
+//AB-IgnoreStart
+
+Use Panel.Sub
+Use Bitmap.Sub
+Use Txtbox.Sub
+Use Cmbfrm.Sub
+Use Form.Sub
+Use Chkbox.Sub
+Use Button.Sub
+
+
+//AB-IgnoreEnd
+
+Object ConnGL is a BasicPanelSub
+
+    //AB-StoreTopStart
+
+    //AB-StoreTopEnd
+
+    Set Sysmenu_Icon to FALSE
+    Set Minimize_Icon to FALSE
+    Set Label to "Login"
+    Set Size to 105 230
+    Set Location to 20 37
+
+    //AB-DDOStart
+
+
+    //AB-DDOEnd
+
+    Object BitmapContainer1 is a BitmapContainerSub
+        Set Size to 21 23
+        Set Location to 4 4
+        Set Bitmap to "Login1.bmp"
+        Set Border_Style to Border_None
+        Set Bitmap_Style to Bitmap_Center
+        Set Dialog_Caption to "Select a bitmap file"
+
+        //AB-StoreStart
+
+
+
+
+        //AB-StoreEnd
+
+    End_Object    // BitmapContainer1
+
+    Object Textbox5 is a TextBoxSub
+        Set Label to "Driver:"
+        Set FontSize to 4 0
+        Set Location to 6 34
+        Set Size to 13 40
+        Set Enabled_State to TRUE
+    End_Object    // Textbox5
+
+    Object ComboForm2 is a ComboFormSub
+
+        //AB-StoreTopStart
+
+        Set CapsLock_State to True
+
+        //AB-StoreTopEnd
+
+        Set Size to 13 85
+        Set Location to 6 76
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+
+        //AB-StoreStart
+        Procedure Combo_Fill_List
+                Local String Availdrv## TempDrv##
+                Local Integer HowMany i p1## p2##
+
+                get_profile_string "WorkSpaces" "CurrentWorkspace" to AvailDrv##
+                If AvailDrv## eq "" Get WorkspaceName of (ProgramWorkspace(Self)) to AvailDrv##
+                insert "WorkSpaces\" in AvailDrv## at 1
+                get_profile_string AvailDrv## "AvailableDrivers" to AvailDrv##
+
+                Move Availdrv## to Tempdrv##
+                Repeat
+                    Replace "|" in Tempdrv## With ""
+                    [Found] Increment HowMany
+                Until [Finderr]
+
+                Send Combo_add_Item ""
+
+                If HowMany lt 1 Begin
+                    If Availdrv## ne "" Send Combo_Add_Item (UpperCase(Availdrv##))
+                End
+                Else Begin
+                    For i From 0 to HowMany
+                        If i eq 0 Move 1 to p1##
+                        Else Begin
+                            Move ((Pos("|",Availdrv##))+1) to p1##
+                            Replace "|" in Availdrv## With ","
+                        End
+                        Move ((Pos("|",Availdrv##))) to p2##
+                        Send Combo_Add_Item (UpperCase(Mid(Availdrv##,(p2##-p1##),p1##)))
+                    Loop
+                End
+        End_Procedure
+
+        Set Allow_Blank_state to True
+
+
+
+        //AB-StoreEnd
+
+    End_Object    // ComboForm2
+
+    Object Textbox6 is a TextBoxSub
+        Set Label to "Server:"
+        Set FontSize to 4 0
+        Set Location to 22 34
+        Set Size to 13 40
+        Set Enabled_State to TRUE
+    End_Object    // Textbox6
+
+    Object Form4 is a FormSub
+        Set Size to 13 93
+        Set Location to 22 76
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+    End_Object    // Form4
+
+    Object Textbox7 is a TextBoxSub
+        Set Label to "User Name:"
+        Set FontSize to 4 0
+        Set Location to 38 34
+        Set Size to 13 40
+        Set Enabled_State to TRUE
+    End_Object    // Textbox7
+
+    Object Form5 is a FormSub
+        Set Size to 13 93
+        Set Location to 38 76
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+    End_Object    // Form5
+
+    Object Textbox8 is a TextBoxSub
+        Set Label to "Password:"
+        Set FontSize to 4 0
+        Set Location to 54 34
+        Set Size to 13 40
+        Set Enabled_State to TRUE
+    End_Object    // Textbox8
+
+    Object Form6 is a FormSub
+        Set Size to 13 93
+        Set Location to 54 76
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+
+        //AB-StoreStart
+        Set Password_State Item 0 to True
+
+        //AB-StoreEnd
+
+    End_Object    // Form6
+
+    Object CheckBox1 is a CheckBoxSub
+        Set Label to "Save Password"
+        Set Size to 10 66
+        Set Location to 73 76
+        Set Status_Help to "Remember The Password at Next Login"
+    End_Object    // CheckBox1
+
+    Object oOK_bn is a ButtonSub
+        Set Label to "Co&nnect"
+        Set Default_State to TRUE
+        Set Bitmap to "mcr.bmp"
+        Set Size to 28 33
+        Set Location to 9 184
+
+        //AB-StoreStart
+        Procedure OnClick
+            Set LoginOk to True
+            Send Stop_Modal_ui
+        End_Procedure
+        Set Status_Help to "ConnGL"
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //AB-StoreEnd
+
+    End_Object    // oOK_bn
+
+    Object oCancel_bn is a ButtonSub
+        Set Label to "&Cancel"
+        Set Bitmap to "exit2.bmp"
+        Set Size to 28 32
+        Set Location to 39 184
+
+        //AB-StoreStart
+        ON_KEY KENTER SEND Exit_Application to (ConnGL(Current_Object))
+        Procedure OnClick
+            Set LoginOk to False
+            Send Exit_Application to (ConnGL(Current_Object))
+        End_Procedure
+
+        Set Status_Help to "Close Application"
+
+
+
+
+
+
+
+
+
+
+
+        //AB-StoreEnd
+
+    End_Object    // oCancel_bn
+
+
+    //AB-StoreStart
+
+    Set Modal_State to True
+
+    // Now is WorkspaceAware
+
+    ON_KEY KENTER SEND OnClick to (oOk_bn(Current_Object))
+    ON_KEY KSAVE_RECORD SEND OK
+    ON_KEY KCANCEL SEND EXIT_APPLICATION
+    ON_KEY KCLOSE_PANEL SEND EXIT_APPLICATION
+
+    Set Locate_Mode to Center_On_Screen
+    Set Exit_Application_Local_State to False
+    Set Exit_MSG to Exit
+    Set Description_State to True
+
+    Property Integer LoginOk public false
+
+    External_Function32 WNetGetUser "WNetGetUserA" MPR.DLL ;
+        Pointer lpName Pointer lpUser_Name Pointer lpLength Returns DWord
+
+    Function Network_User_Name Returns String
+        Local String sName sLength
+        Local Pointer lpName_Addr lpLength_Addr
+        Local Integer iRetval
+
+        Movestr (Repeat (Character (0), 255)) To sName
+        GetAddress Of sName To lpName_Addr
+        Movestr (DwordToBytes (255)) To sLength
+        GetAddress Of sLength To lpLength_Addr
+
+        Moveint (WNetGetUser (0, lpName_Addr, lpLength_Addr)) To iRetval
+
+        If iRetval Eq 0 Function_Return (CString (sName))
+        Else Function_Return "User Unknown"
+    End_Function // Network_User_Name
+
+    Function fsCrypto String lsWay String lsOld Returns String
+        Local String lsNew lsTemp
+        Local Integer liCount
+           For liCount From 1 to (Length(lsOld))
+               Mid lsOld to lsTemp 1 liCount
+               If ((Uppercase(lsWay)) eq 'FORWARD') Begin
+               If ((Ascii(lsTemp) = 255)) Move (Character(32)) to lsTemp
+               Else Move (Character(Ascii(lsTemp)+1)) to lsTemp
+               End
+               Else Begin
+                   If ((Uppercase(lsWay)) eq 'BACKWARD') Begin
+                       If ((Ascii(lsTemp) = 32)) Move (Character(255)) to lsTemp
+                       Else Move (Character(Ascii(lsTemp)-1)) to lsTemp
+                   End
+               End
+               Append lsNew lsTemp
+           Loop
+        Function_Return (lsNew)
+    End_Function
+
+    Procedure Activating
+        Local String LoginDriver## LoginServer## LoginUserid## LoginPassword##
+        Local String LastLogin## LoginSeq##
+        Local Integer SavePassword##
+
+        Forward Send Activating
+
+        get_profile_string "WorkSpaces" "CurrentWorkspace" to LastLogin##
+        If LastLogin## eq "" Get WorkspaceName of (ProgramWorkspace(Self)) to LastLogin##
+        insert "WorkSpaces\" in LastLogin## at 1
+        Append LastLogin## "\" (Module_Name(Self)) "\LastLogin"
+        get_profile_string LastLogin## "LoginDriver" to LoginSeq##
+
+        If "|" in LoginSeq## move (left(LoginSeq##,(pos("|",LoginSeq##) -1))) to LoginDriver##
+        Else Move LoginSeq## to LoginDriver##
+        get_profile_string LastLogin## "LoginServer"  to LoginServer##
+        get_profile_string LastLogin## "LoginUserId"  to LoginUserId##
+        get_profile_string LastLogin## "SavePassword" to SavePassword##
+        If LoginUserId## eq "" Move (Network_User_Name(Current_Object)) to LoginUserId##
+
+        If (((UpperCase(LoginDriver##)) eq "DATAFLEX") or (LoginDriver## eq "")) Begin
+                Set Value of (ComboForm2(Current_Object)) Item 0 to ""
+                Set Value of (Form4(Current_Object))      Item 0 to ""
+        End
+        Else Begin
+            Set Value of (ComboForm2(Current_Object)) Item 0 to LoginDriver##
+            Set Value of (Form4(Current_Object))      Item 0 to LoginServer##
+        End
+        Set Value of (Form5(Current_Object))      Item 0 to LoginUserID##
+        Set Select_State of (CheckBox1(Current_Object)) Item 0 to SavePassword##
+        If (SavePassword##) Begin
+            Set_Registry_Root TO HKEY_CURRENT_USER "Software"
+            get_foreign_profile_string ("SubNet Hellas\"+(WorkspaceName(ProgramWorkspace(Self)))+"\"+(Module_Name(Self))) LoginUserID## "Access" to LoginPassword##
+            Set Value of (Form6(Current_Object))      Item 0 to (fsCrypto(Self,"backward",LoginPassword##))
+            SET_REGISTRY_ROOT to HKEY_LOCAL_MACHINE "SOFTWARE"
+        End
+    End_Procedure
+
+    Function LoginUser Returns Integer
+        Integer SavePassword## Size## PasswordOk
+        String LoginDriver## LoginServer## LoginUserid## LoginPassword## LoginSeq## LastLogin##
+        String lsLoginDate lsHH lsMM lsSS sDepartment
+        Integer liOpenCursors
+
+        Send Popup_Modal
+
+        Get Value of (ComboForm2(Current_Object)) Item 0 to LoginDriver##
+        Get Value of (Form4(Current_Object))      Item 0 to LoginServer##
+        Get Value of (Form5(Current_Object))      Item 0 to LoginUserID##
+        Get Value of (Form6(Current_Object))      Item 0 to LoginPassword##
+        Get Select_State of (CheckBox1(Current_Object)) Item 0 to SavePassword##
+        Set Value of (Form6(Current_Object))      Item 0 to ""
+
+        If ((LoginDriver## <> "") and (UpperCase(LoginDriver##)<>"DATAFLEX"))  begin
+            send ignore_error to (error_info_object(current_object)) 25000
+            send ignore_error to (error_info_object(current_object)) 4255
+            send ignore_error to (error_info_object(current_object)) 12293
+            login LoginServer## LoginUserId## LoginPassword## LoginDriver##
+            send trap_error to (error_info_object(current_object)) 25000
+            send trap_error to (error_info_object(current_object)) 4255
+            send trap_error to (error_info_object(current_object)) 12293
+            If LastErr eq 25000 Begin
+                Error LastErr "Invalid Login Information"
+                Set LoginOk to False
+                Send Exit_Application
+            End
+            If LastErr eq 4255 Begin
+                Error LastErr "Invalid Driver Name"
+                Set LoginOk to False
+                Send Exit_Application
+            End
+            If LastErr eq 12293 Begin
+                Error LastErr "(IBM CLI)Database alias name or Database name not found"
+                Set LoginOk to False
+                Send Exit_Application
+            End
+            Set LoginOk to True
+            If (UpperCase(LoginDriver##) = "ORA_DRV") Begin
+                GET_MAX_OPEN_CURSORS of LoginServer## to liOpenCursors
+                If (liOpenCursors <> 0) SET_MAX_OPEN_CURSORS of LoginServer## to (liOpenCursors+2)
+            End
+        End
+        Else Begin
+            Set LoginOk to True
+            Open "Users" as Users
+            Move "DATAFLEX" To LoginDriver##
+            Move "" to LoginServer##
+            File_Size Users to Size##
+            If Size## ne 0 Begin
+                 Clear Users
+                 Move LoginUSerId##   to Users.Login_Id
+                 Find eq Users by Index.1
+                 [Finderr] Begin
+                    Error 25000 "Unknown User"
+                    Set LoginOk to False
+                    Get LoginOk to PasswordOk
+                    Function_Return PasswordOk
+                 End
+                 [Found] Begin
+                    If (LoginPassword## ne Users.Password) Begin
+                        Error 25000 "Invalid Password"
+                        Set LoginOk to False
+                        Get LoginOk to PasswordOk
+                        Function_Return PasswordOk
+                    End
+                 End
+            End
+
+            //Close Users
+
+
+    //            ////// 01/03/2001 + 07/05/2001 H diaforopoihsh tou driver ana department
+    //            Integer bFileExists
+    //            Get Get_File_Exists  "C:\AutLogIn.txt" To bFileExists
+    //            If (NOT(bFileExists)) Begin
+
+    //                Get Get_File_Exists  "C:\UsrLogin.txt" To bFileExists
+    //                If (bFileExists) Begin
+
+    ////                        If Size## ne 0 Begin
+
+    //                            Local String ss1 ss2 ss3 ss4
+    //                            Local String dd1 dd2 dd3 dd4
+    //                            Move '' to dd1
+    //                            Move '' to dd2
+    //                            Move '' to dd3
+    //                            Move '' to dd4
+
+    //                            Direct_Input Channel 8 "C:\UsrLogin.txt"
+    //                            Readln Channel 8 ss1 ss2 ss3 ss4
+    //                            While (Not(Seqeof))
+    //                                Move (Trim(ss1)) to ss1
+    //                                Move (Trim(ss2)) to ss2
+    //                                Move (Trim(ss3)) to ss3
+    //                                Move (Trim(ss4)) to ss4
+    //                                Append dd1 '"' ss1 '"'
+    //                                Append dd2 '"' ss2 '"'
+    //                                Append dd3 '"' ss3 '"'
+    //                                Append dd4 '"' ss4 '"'
+    //                                Login dd1 dd2 dd3 dd4
+    //                                Readln Channel 8 ss1 ss2 ss3 ss4
+    //                            Loop
+
+
+    ////                            // Only Filmnet Users Log on to SQL
+    ////                            If (sDepartment='FILMNET') Begin
+    ////                                ////// 20/06/2001 js Allagh apo Oracle se SQL server
+    ////                                ////// login 'E-EPG'           'EPGDNS'    'DNS'   'ORA_DRV'
+    ////                                login '192.168.128.5'   'sa'    ''   'SQL_DRV'
+    ////                                login '192.168.119.120' 'EPGDNS'    'DNS'   'SQL_DRV'
+    ////                            End
+    ////                            Else login '192.168.128.5'      'sa'    ''   'SQL_DRV'
+    ////                            //Else login 'E-EPG'           'EPGDNS'    'DNS'   'ORA_DRV'
+
+    ////                        End
+    ////                        Else Begin
+    ////                            ////// 20/06/2001 js Allagh apo Oracle se SQL server
+    ////                            ///// login 'E-EPG'           'EPGDNS'    'DNS'   'ORA_DRV'
+    ////                            login '192.168.128.5'       'sa'    ''   'SQL_DRV'
+    ////                            //login '192.168.128.5'   'EPGDNS'    'DNS'   'SQL_DRV'
+    ////                            login '192.168.119.120' 'EPGDNS'    'DNS'   'SQL_DRV'
+    ////                        End
+
+
+    //                End
+
+    //            End
+    //            ////// 01/03/2001 + 07/05/2001 H diaforopoihsh tou driver ana department
+
+
+
+            ////// 01/03/2001 + 07/05/2001 H diaforopoihsh tou driver ana department
+            //*Integer bFileExists
+            //*Get Get_File_Exists  "C:\AutLogIn.txt" To bFileExists
+            //*If (NOT(bFileExists)) Begin
+            //*    If Size## ne 0 Begin
+            //*        // Only Filmnet Users Log on to SQL
+            //*        If (sDepartment='FILMNET') Begin
+            //*            login '192.168.126.51'  'sa'        '1'     'SQL_DRV'
+            //*            login '192.168.119.120' 'EPGDNS'    'DNS'   'SQL_DRV'
+            //*        End
+            //*        Else login '192.168.126.51'  'sa'        '1'     'SQL_DRV'
+            //*    End
+            //*    Else Begin
+            //*        login '192.168.126.51'  'sa'        '1'     'SQL_DRV'
+            //*        login '192.168.119.120' 'EPGDNS'    'DNS'   'SQL_DRV'
+            //*    End
+            //*
+            //*End
+            ////// 01/03/2001 + 07/05/2001 H diaforopoihsh tou driver ana department
+
+
+
+        End
+
+        Get LoginOk to PasswordOk
+        Sysdate lsLoginDate lsHH lsMM lsSS
+        get_profile_string "WorkSpaces" "CurrentWorkspace" to LastLogin##
+        If LastLogin## eq "" Get WorkspaceName of (ProgramWorkspace(Self)) to LastLogin##
+        insert "WorkSpaces\" in LastLogin## at 1
+        get_profile_string LastLogin## "AvailableDrivers" to LoginSeq##
+        If ((LoginDriver## ne "") and ((UpperCase(LoginDriver##)) ne "DATAFLEX")) Begin
+           If Not LoginDriver## in LoginSeq## Begin
+                 If LoginSeq## eq "" Move LoginDriver## to LoginSeq##
+                 Else Move (LoginSeq##+"|"+LoginDriver##) to LoginSeq##
+                 set_profile_string LastLogin## "AvailableDrivers" to LoginSeq##
+           End
+        End
+        Append LastLogin## "\" (Module_Name(Self))
+        Append LastLogin## "\LastLogin"
+        get_profile_string LastLogin## "LoginDriver" to LoginSeq##
+
+        If "|" in LoginSeq## Begin
+            If ((left(LoginSeq##,(pos("|",LoginSeq##) -1))) ne LoginDriver##) Insert (LoginDriver##+"|") in LoginSeq## at 1
+        End
+        Else Begin
+            If LoginSeq## eq "" Move LoginDriver## to LoginSeq##
+            Else If LoginSeq## ne LoginDriver## Insert (LoginDriver##+"|") in LoginSeq## at 1
+        End
+        Left LoginSeq## to LoginSeq## 250
+        set_profile_string LastLogin## "LoginDriver" to (UpperCase(LoginSeq##))
+        set_profile_string LastLogin## "LoginServer" to LoginServer##
+        set_profile_string LastLogin## "LoginUserId" to LoginUserId##
+        set_profile_string LastLogin## "SavePassword" to SavePassword##
+        If lsHH lt 10 Insert 0 in lsHH at 1
+        If lsMM lt 10 Insert 0 in lsMM at 1
+        If lsSS lt 10 Insert 0 in lsSS at 1
+        Append lsLoginDate " - " lsHH ":" lsMM ":" lsSS
+        set_profile_string LastLogin## "LoginTime" to lsLoginDate
+        If (SavePassword##) Begin
+            Set_Registry_Root TO HKEY_CURRENT_USER "Software"
+            set_foreign_profile_string ("SubNet Hellas\"+(WorkspaceName(ProgramWorkspace(Self)))+"\"+(Module_Name(Self))) LoginUserID## "Access" to (fsCrypto(Self,"forward",LoginPassword##))
+            SET_REGISTRY_ROOT to HKEY_LOCAL_MACHINE "SOFTWARE"
+        End
+        Else Begin
+            Set_Registry_Root TO HKEY_CURRENT_USER "Software"
+            set_foreign_profile_string ("SubNet Hellas\"+(WorkspaceName(ProgramWorkspace(Self)))+"\"+(Module_Name(Self))) LoginUserID## "Access" to ""
+            SET_REGISTRY_ROOT to HKEY_LOCAL_MACHINE "SOFTWARE"
+        End
+
+        Function_Return PasswordOk
+    End_Function
+
+    Procedure LoginGL For Desktop
+        Local Integer LoginPassword##
+        Get LoginUser of (ConnGL(Current_Object)) to LoginPassword##
+        If Not LoginPassword## Send Exit_Application
+    End_Procedure
+
+    Function CheckLogin For Desktop Returns Integer
+        Local Integer LoginPassword##
+        Get LoginUser of (ConnGL(Current_Object)) to LoginPassword##
+        Function_Return LoginPassword##
+    End_Function
+
+
+
+    //AB-StoreEnd
+
+End_Object    // ConnGL
+
+
+//AB-StoreStart
+
+
+
+//AB-StoreEnd
+
+//AB/ End_Object    // prj

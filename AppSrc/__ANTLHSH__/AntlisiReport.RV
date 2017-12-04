@@ -1,0 +1,1608 @@
+//AB/ Project AntlisiReport
+//AB/ Object prj is a Report_Project
+//AB/     Set ProjectName to "AntlisiReport"
+//AB/     Set ProjectFileName to "AntlisiReport.RV"
+
+// Project Object Structure
+//   AntlisiReport is a ReportViewSub
+//     AntlisiWQLReport is a CrystalReportsubsql
+//     Company_DD is a DataDictionary
+//     Branch_DD is a DataDictionary
+//     txtDateFrom is a Textbox
+//     frmHmApo is a FormSub
+//     txtDateTo is a Textbox
+//     frmHmEos is a FormSub
+//     txtEktyposh is a Textbox
+//     frmEktypCode is a Form
+//     frmEktypDescr is a Form
+//     dblstBranch is a dbListSub
+//     btnRun is a ButtonSub
+//     btnMess is a ButtonSub
+//     DestRadio is a RadioGroup
+//       ParathyroRadio is a Radio
+//       PrinterRadio is a Radio
+//       FileRadio is a Radio
+//     FileTypeGroup is a Group
+//       FileNameForm is a Form
+//         New_dialog is a SaveAsdialog
+//       TypeCombo is a ComboForm
+//       ApplyExtCheckBox is a CheckBox
+//       TextBoxSub25 is a TextBoxSub
+//       TextBoxSub26 is a TextBoxSub
+//     chkAnal is a CheckBoxSub
+
+// Register all objects
+Register_Object AntlisiReport
+Register_Object AntlisiWQLReport
+Register_Object ApplyExtCheckBox
+Register_Object Branch_DD
+Register_Object btnMess
+Register_Object btnRun
+Register_Object Company_DD
+Register_Object chkAnal
+Register_Object DestRadio
+Register_Object dblstBranch
+Register_Object FileNameForm
+Register_Object FileRadio
+Register_Object FileTypeGroup
+Register_Object frmEktypCode
+Register_Object frmEktypDescr
+Register_Object frmHmApo
+Register_Object frmHmEos
+Register_Object New_dialog
+Register_Object ParathyroRadio
+Register_Object PrinterRadio
+Register_Object TextBoxSub25
+Register_Object TextBoxSub26
+Register_Object TypeCombo
+Register_Object txtDateFrom
+Register_Object txtDateTo
+Register_Object txtEktyposh
+
+
+//AB/ Report View
+
+
+//AB-StoreTopStart
+Use dfallrpt
+use ctypkin.dd
+Use syscurxr.dd
+use clients.dd
+Use sl026a.sl
+use sl007.sl
+use sl100.sl
+open item
+open hmgiow
+open sysrep
+use hmgiow.sl
+use slrep.sl
+use sl024.sl
+Use sl041.sl
+use sl013.sl
+Open Particle
+Open Pmoves
+Open Ptyppar
+Open Wcmoves
+Open Cmoves
+Open Units
+Open Witemx
+Open Units
+Open WitemKat
+Open FPA
+Open Wax
+Open CN
+Open Clients
+
+Open Tmplg
+Open Pumps
+Open Pmoves
+Open gmove
+Open Particle
+Open Branch
+
+
+//AB-StoreTopEnd
+
+//AB-IgnoreStart
+
+Use Rptvw.Sub
+Use DFAllEnt.pkg
+Use Form.Sub
+Use dbList.Sub
+Use Button.Sub
+Use Txtbox.Sub
+Use Chkbox.Sub
+
+Use COMPANY.DD
+Use BRANCH.DD
+
+//AB-IgnoreEnd
+
+ACTIVATE_VIEW Activate_AntlisiReport FOR AntlisiReport
+
+Object AntlisiReport is a ReportViewSub
+
+    //AB-StoreTopStart
+    
+    property integer    epil            public  0
+    property integer    piwhat          public  0
+    Property String     psModule        Public ''
+    property string     psbranch        public ''
+    property string     psrep           public ''
+    property string     psKat           public ''
+    property string     psSeira         public ''
+    property string     psEgkatas       public ''
+    Property Integer    piPrintWhere    Public 0
+    Property Integer    piAnal          Public 0
+    
+    
+    /* DO NOT REMOVE THIS L2INE: IDE GENERATED CODE WILL GO HERE */
+    
+    Procedure Request_Cancel
+        Close Tmplg
+        Open Tmplg Mode DF_SHARE
+        Forward Send Request_Cancel
+    End_Procedure
+    
+    Object AntlisiWQLReport Is A CrystalReportsubsql
+    
+        Property Integer ReportReady Public False
+        Property Integer piIsExcel  Public 0
+        Property Integer piIsAscii  Public 0
+        Property Integer piAnal     Public 0
+    
+        Set Report_View_id To (Parent(Current_object))
+    
+        Procedure OnStartPrinting
+    
+            Local string    sClientCode sCNCode  sItemCode  sCategoryCode sHmgioCode sstr sbranch scode skat sbr sEktypCode
+            Local string    sClientName sCNDescr sItemDescr sCategoryDescr sHmgioDescr dHmniaApo dHmniaEos sname sSeira srep sEktypDescr
+            Local string    endtypkinn FileName flysh1 flysh2 slabel shmgio stext Selection
+            Local Integer   Destination SortOrder NumSortFields CurSortField repstatus FileType
+            Local Integer   SortDirection wdate fepil starttypkinn iint icheck icount irec iSX
+            date            apo eos
+    
+            move "" to sstr
+            move "" to sBranch
+            move "" to sText
+    
+            Get Select_Count of (dblstbranch(Self)) to iInt
+    
+            If (iInt>0) Begin
+                move '' to stext
+                move '' to sBranch
+                For iCount from 0 to (iInt-1)
+                    Get array_value of (Selected_Items(dblstbranch(self))) Item iCount to iRec
+                    Clear branch
+                    Move iRec to branch.Recnum
+                    Find Eq branch.Recnum
+                    move (Trim(branch.branch_code)) to scode
+                    move (Trim(branch.branch_name)) to sname
+                    Move (Append(sbranch,(trim(sname)+' '))) to sbranch
+                    Move (Append(stext  ,(trim(scode)+' '))) to stext
+                Loop
+            End
+    
+            get psModule                            to flysh1
+            Move (Trim(sBranch))                    to sBranch
+            Move (Trim(sText  ))                    to sText
+            Get Value Of frmHmApo           Item 0  to dHmniaApo
+            Get Value Of frmHmEos           Item 0  to dHmniaEos
+            Get Value Of frmEktypCode       Item 0  to sEktypCode
+            Get Value Of frmEktypDescr      Item 0  to sEktypDescr
+    
+            Set Formula "datefrom" to (Winql_date  (dHmniaApo))
+            Set Formula "dateto"   to (Winql_date  (dHmniaEos))
+            Set Formula "formula1" to (Winql_String(psModule(Self)))
+            Set Formula "flabel"   to (Winql_String(sEktypDescr))
+            Set Formula "fwhat"    to (Winql_number(piwhat(Self)))
+            Set Formula "fbranch"  to (Winql_String(sBranch))
+    
+            Set Formula "HideDetails"   to (Winql_number(1 - piAnal(Self)))
+    
+            get epil                    to fepil
+            Set Formula "fepil"         to (winql_number(fepil))
+    
+            Get WQLFileName             to FileName
+    
+    //        If (piPrintWhere(Self)=2) Begin
+    //            Set Output_Device_Mode          To WQL_PRINT_TO_FILE
+    //            Set Output_Destination          to WQL_PRINT_TO_FILE
+    //            Set ExportFileName              to (Trim(FileName))
+    //            Set ExportFormatType            to WQL_CharSeparatedType
+    //            Set FieldDelimiter              to ";"
+    //            Set StringDelimiter             to '"'
+    //            Set UseReportNumberFormat_State to True
+    //            Set UseReportDateFormat_State   To True
+    
+    //WQL_CommaSeparatedType
+    //WQL_CharSeparatedType
+    //WQL_TabSeparatedType
+    
+            //End
+            //Else Begin
+               Set Output_Device_Mode To WQL_PRINT_TO_WINDOW
+               Set Output_Destination to WQL_PRINT_TO_WINDOW
+            //End
+    
+            Append Selection (If(Selection <> "", " and ", ""))"{WCMOVES.YEAR_YEAR} = " (WinQL_Number(syscurxr.year_year))
+            Append Selection (If(Selection <> "", " and ", "")) "InStr('" sText "',{WCMOVES.BRANCH_CODE})<>0"
+            if (dHmniaApo<>"") Append Selection (If(Selection <> "", " and ", ""))"{WCMOVES.WCMOVE_HMNIA} >= " (winql_date(dHmniaApo))
+            if (dHmniaEos<>"") Append Selection (If(Selection <> "", " and ", ""))"{WCMOVES.WCMOVE_HMNIA} <= " (winql_date(dHmniaEos))
+            Append Selection (If(Selection <> "", " and ", ""))"{WCMOVES.WITEMKAT_CODE} = " '"' (trim("05")) '"'
+    
+            Set SelectionFormula To Selection
+    
+        End_procedure // OnStartPrinting
+    
+        Procedure Runpmoves3Report
+            String  sRep sDescr
+            Integer iOutput
+    
+            Get psRep                           to sRep
+            Get Value Of frmEktypDescr Item 0   to sDescr
+    
+            Move (UpperCase(sRep))              to sRep
+            Move (UpperCase(sDescr))            to sDescr
+    
+            Send Cursor_Wait To (Cursor_Control(Current_Object))
+    
+            Set Report_Name to (Trim(sRep))
+    
+            Send Run_report
+            Send Cursor_Ready To (Cursor_Control(Current_Object))
+    
+    //        If (piPrintWhere(Self)=2) Begin
+    //            Send ExportAsSapFormat
+    //        End
+    
+    
+            //move branch.PERIOXH         to sperioxh
+            //move branch.egkatastash     to segkatastash
+    
+        End_procedure // RunCustReport
+    
+    End_object // CustWQLReport
+    
+    
+    Procedure ProduceTheTextFile
+        Local string    sClientCode sCNCode  sItemCode  sCategoryCode sHmgioCode sstr sbranch scode skat sbr sEktypCode
+        Local string    sClientName sCNDescr sItemDescr sCategoryDescr sHmgioDescr dHmniaApo dHmniaEos sname sSeira srep sEktypDescr
+        Local string    endtypkinn FileName flysh1 flysh2 slabel shmgio stext Selection
+        Local Integer   Destination SortOrder NumSortFields CurSortField repstatus FileType
+        Local Integer   SortDirection wdate fepil starttypkinn iint icheck icount irec iSX iAnal
+        date            apo eos
+    
+        move "" to sstr
+        move "" to sBranch
+        move "" to sText
+    
+        Get Select_Count of (dblstbranch(Self)) to iInt
+    
+        If (iInt>0) Begin
+            move '' to stext
+            move '' to sBranch
+            For iCount from 0 to (iInt-1)
+                Get array_value of (Selected_Items(dblstbranch(self))) Item iCount to iRec
+                Clear branch
+                Move iRec to branch.Recnum
+                Find Eq branch.Recnum
+                move (Trim(branch.branch_code)) to scode
+                move (Trim(branch.branch_name)) to sname
+                Move (Append(sbranch,(trim(sname)+' '))) to sbranch
+                Move (Append(stext  ,(trim(scode)+' '))) to stext
+            Loop
+        End
+    
+        Get piAnal                              to iAnal
+        get psModule                            to flysh1
+        Move (Trim(sBranch))                    to sBranch
+        Move (Trim(sText  ))                    to sText
+        Get Value Of frmHmApo           Item 0  to dHmniaApo
+        Get Value Of frmHmEos           Item 0  to dHmniaEos
+        Get Value Of frmEktypCode       Item 0  to sEktypCode
+        Get Value Of frmEktypDescr      Item 0  to sEktypDescr
+    
+        Get WQLFileName                         to FileName
+    
+        Clear Wcmoves
+        Move dHmniaApo to Wcmoves.Wcmove_Hmnia
+        Find GE Wcmoves By Index.3
+        While ((Found) And (Wcmoves.Wcmove_Hmnia<=dHmniaEos))
+    
+            Set Label of btnMess to ("Ä§òùû´È úöö®ò≠‚™ ò§´¢†È§...  "+Trim(Wcmoves.Wcmove_Hmnia))
+    
+            If ((sText Contains Trim(WCMOVES.BRANCH_CODE)) And (Trim(WCMOVES.WITEMKAT_CODE)='05')) Begin
+    
+                Clear Pumps
+                Clear Pmoves
+                Clear Tmplg
+                Clear Particle
+                Clear Branch
+    
+                Move Wcmoves.Company_Code   to Branch.Company_Code
+                Move Wcmoves.Branch_Code    to Branch.Branch_Code
+                Find Eq branch By Index.1
+    
+                Move Wcmoves.Partl_Recr     to Pmoves.Pms_Recr
+                Find Eq Pmoves By Index.2
+                If (Not(Found)) Error 5501
+    
+                Move Pmoves.Partl_Recr     to Particle.Partl_Recr
+                Find Eq Particle By Index.2
+                If (Not(Found)) Error 5502
+    
+                Move Pmoves.Pump_ID         to Pumps.Pump_ID
+                Find Eq Pumps By Index.3
+                //If ((Trim(Pmoves.Pump_ID)<>"") And (Found=0)) Error 5502
+    
+                If (iAnal) Begin
+    
+                    // Deal with Tmplg unique index
+                    Move (Trim(Wcmoves.Branch_Code))                to Tmplg.Company_Code
+                    Move Wcmoves.Wcmove_Hmnia                       to Tmplg.Branch_Code
+                    Move Pumps.Ctype_ID                             to Tmplg.Year_Year
+                    Move (Trim(Wcmoves.Wcmove_Recr))                to Tmplg.Gtypkin_Recr
+                    Move (Trim(Pumps.Pump_License))                 to Tmplg.Gplan_Code
+    
+                         if (PUMPS.CTYPE_ID='1') Move "à.ï."        to Tmplg.Gmove_A_Code
+                    else if (PUMPS.CTYPE_ID='2') Move "É.ï."        to Tmplg.Gmove_A_Code
+                    else if (PUMPS.CTYPE_ID='3') Move "ÄåÑì"        to Tmplg.Gmove_A_Code
+                    else if (PUMPS.CTYPE_ID='4') Move "ÑêÇéäÄÅóå"   to Tmplg.Gmove_A_Code
+    
+                    Move Pmoves.Pump_ID                             to Tmplg.Gmove_SC_Code2
+    
+                    Move Branch.Egkatastash                         to Tmplg.Gmove_KK
+                    Move Branch.Perioxh                             to Tmplg.Gmove_Recr
+                    Move Particle.Ptyppar_Code                      to Tmplg.Year_Recr
+    
+                    Move Wcmoves.Wcmove_QTY                         to Tmplg.Gmove_X0
+                    Move Wcmoves.SX_Posothta_EX                     to Tmplg.Gmove_P0
+                    //Move Wcmoves.Wcmove_Axia                        to Tmplg.Gmove_X0K
+                    // Apoforologhmeno  19/09/2011
+                    Move Wcmoves.Wcmov_Totamad0                     to Tmplg.Gmove_X0K
+                    Move (Trim(Wcmoves.Wcmove_Par))                 to Tmplg.Gmove_Aitiol
+    
+                    Saverecord Tmplg
+                End
+                Else Begin
+                  Integer isFound
+                  Move 0 to isFound
+    
+    
+                    // Deal with Tmplg unique index
+                    Move (Trim(Wcmoves.Branch_Code))                to Tmplg.Company_Code
+                    Move Wcmoves.Wcmove_Hmnia                       to Tmplg.Branch_Code
+                    Move Pumps.Ctype_ID                             to Tmplg.Year_Year
+                    //Move (Trim(Wcmoves.Wcmove_Recr))                to Tmplg.Gtypkin_Recr
+                    Move (Trim(Pumps.Pump_License))                 to Tmplg.Gplan_Code
+    
+                    Find Eq Tmplg By Index.1
+                    Move (Found) to isFound
+    
+                    If (isFound) Reread Tmplg
+    
+                         if (PUMPS.CTYPE_ID='1') Move "à.ï."        to Tmplg.Gmove_A_Code
+                    else if (PUMPS.CTYPE_ID='2') Move "É.ï."        to Tmplg.Gmove_A_Code
+                    else if (PUMPS.CTYPE_ID='3') Move "ÄåÑì"        to Tmplg.Gmove_A_Code
+                    else if (PUMPS.CTYPE_ID='4') Move "ÑêÇéäÄÅóå"   to Tmplg.Gmove_A_Code
+    
+                    Move Pmoves.Pump_ID                             to Tmplg.Gmove_SC_Code2
+    
+                    Move Branch.Egkatastash                         to Tmplg.Gmove_KK
+                    Move Branch.Perioxh                             to Tmplg.Gmove_Recr
+                    Move Particle.Ptyppar_Code                      to Tmplg.Year_Recr
+    
+                    Add Wcmoves.Wcmove_QTY                          to Tmplg.Gmove_X0
+                    Add Wcmoves.SX_Posothta_EX                      to Tmplg.Gmove_P0
+    
+                    //Move Wcmoves.Wcmove_Axia                        to Tmplg.Gmove_X0K
+                    // Apoforologhmeno  19/09/2011
+                    Move Wcmoves.Wcmov_Totamad0                     to Tmplg.Gmove_X0K
+    
+                    //Move (Trim(Wcmoves.Wcmove_Par))                 to Tmplg.Gmove_Aitiol
+    
+                    Saverecord Tmplg
+    
+                    If (isFound) Unlock
+                End
+            End
+            Find GT Wcmoves By Index.3
+        Loop
+    
+        Direct_Output Channel 8 FileName
+        Clear Tmplg
+        Find GE Tmplg By Index.1
+        While (Found)
+    
+    //    Tmplg.Gmove_KK      // Egkatast
+    //    Tmplg.Gmove_Recr    // Perioxh
+    //    Tmplg.Year_Recr     // Ptyppar_Code
+    //    Tmplg.Branch_Code   // Hmnia
+    //    Tmplg.Gmove_A_Code  // Ctype Description
+    //    Tmplg.Gplan_Code    // Pump License Plate
+    //    Tmplg.Gmove_X0      // Antlhmena M3
+    //    Tmplg.Gmove_P0      // Timologhmena M3
+    //    Tmplg.Gmove_X0K     // Timologhmenh Axia
+    //    Tmplg.Gmove_Aitiol  // Parastatiko
+    
+    
+            Write   Channel 8       '"'
+            Write   Channel 8       (Trim(Tmplg.Gmove_KK))      // Egkatastash
+            Write   Channel 8       '"'
+            Write   Channel 8       ','
+    
+            Write   Channel 8       '"'
+            Write   Channel 8       (Trim(Tmplg.Gmove_Recr))    // Perioxh
+            Write   Channel 8       '"'
+            Write   Channel 8       ','
+    
+            Write   Channel 8       '"'
+            Write   Channel 8       (Trim(Tmplg.Year_Recr))     // Ptyppar _Code
+            Write   Channel 8       '"'
+            Write   Channel 8       ','
+    
+            Write   Channel 8       '"'
+            Write   Channel 8       (Trim(Tmplg.Branch_Code))   // Hmnia
+            Write   Channel 8       '"'
+            Write   Channel 8       ','
+    
+            Write   Channel 8       '"'
+            Write   Channel 8       (Trim(Tmplg.Gmove_A_Code))  // Ctype Descr
+            Write   Channel 8       '"'
+            Write   Channel 8       ','
+    
+            Write   Channel 8       '"'
+            Write   Channel 8       (Trim(Tmplg.Gplan_Code))    // Pump License
+            Write   Channel 8       '"'
+            Write   Channel 8       ','
+    
+            Move (String(Tmplg.Gmove_X0)) to sStr
+            Move (Replaces(",",sStr,""))  to sStr
+            Write   Channel 8       '"'
+            Write   Channel 8       (Trim(sStr))     // QTY  ANTLHMENA
+            Write   Channel 8       '"'
+            Write   Channel 8       ','
+    
+            Move (String(Tmplg.Gmove_P0)) to sStr
+            Move (Replaces(",",sStr,""))  to sStr
+            Write   Channel 8       '"'
+            Write   Channel 8       (Trim(sStr))     // SX_POSOTHTA_EX / QTY TIMOLOGHMENA
+            Write   Channel 8       '"'
+            Write   Channel 8       ','
+    
+            Move (String(Tmplg.Gmove_X0K)) to sStr
+            Move (Replaces(",",sStr,""))   to sStr
+            Write   Channel 8       '"'
+            Write   Channel 8       (Trim(sStr))     // AXIA / TIMOLOGHMENA AXIA
+            Write   Channel 8       '"'
+            Write   Channel 8       ','
+    
+            String sTmp
+            Move (Trim(Tmplg.Gmove_Aitiol)) to sTmp
+            Move (Replaces("*",sTmp,""))    to sTmp
+            Write   Channel 8       '"'
+            Write   Channel 8       (Trim(sTmp))  // Parastatiko AFAIROUME ta ***
+            Write   Channel 8       '"'
+    
+            Writeln Channel 8
+    
+            Find GT Tmplg By Index.1
+        Loop
+        Close_Output Channel 8
+    
+    
+        Copyfile FileName to (FileName+".Keep")
+    
+        Send ExportAsSapFormat
+    
+        Set Label of btnMess to ""
+    
+    End_Procedure
+    
+    //    Function ReportSort Returns Integer
+    //        Function_return (ReportSort(SortOrderGroup(Current_object)))
+    //    End_function // ReportSort
+    
+    //    Function DescAsc Returns Integer
+    //        Function_return (DescAsc(SortOrderGroup(Current_object)))
+    //    End_function // DescAsc
+    
+    Procedure AdjustFileTypeShadow Integer NewState
+        Set Object_Shadow_State Of (FileTypeGroup(Current_Object)) To NewState
+    End_procedure // AdjustFileTypeShadow
+    
+    //Procedure AdjustBoundaryShadow Integer GroupNum
+    //    Set Object_Shadow_State Of (groupSub1(Current_object)) To (GroupNum <> 0)
+    //    Set Object_Shadow_State Of (groupSub3(Current_object))   To (GroupNum = 0)
+    //End_procedure // AdjustBoundaryShadow
+    
+    Function WQLFileName Returns String
+        Function_return (WQLFileName(FileTypeGroup(Current_object)))
+    End_function // WQLFIleName
+    
+    Function WQLFileType Returns Integer
+        Function_return (WQLFileType(FileTypeGroup(Current_object)))
+    End_function // WQLFIleType
+    
+    
+    Procedure Activate_View Returns Integer
+        String sStr sModule StrDisp
+        Integer rVal iint icheck
+        string scompany sEgkatas
+    
+        set value of frmHmApo Item 0 to syscurxr.year_xrhshfrom
+        set value of frmHmEos Item 0 to syscurxr.year_xrhshto
+    
+        Set Label of btnMess to ""
+    
+        Forward Get Msg_Activate_View to rVal
+    
+        Get psMenuModule  Of Main_Menu  to sModule
+        Set psModule                    to sModule
+    
+        Move (gsfCode_mast("MODULE",(psModule(Self)))) to    StrDisp
+    
+        Set Label Of AntlisiWQLReport to "ë´ò´†©´†°· Í§´¢û©û™"
+    
+        Send Delete_Data            to (Selected_Items(dblstBRANCH(self)))
+        Send Find to (branch_dd(self)) First_Record 1
+        Set Dynamic_Update_State of (dblstbranch(self)) to false
+        While (Found=1)
+            get field_current_value of branch_dd field branch.company_code to scompany
+            get field_current_value of branch_dd field branch.branch_apoth to icheck
+            if ((syscurxr.company_code=scompany) and (icheck=1)) Begin
+                Set Array_Value of (Selected_Items(dblstbranch(self))) Item iInt to branch.Recnum
+            End
+            Add 1 to iInt
+            Send Find to (branch_dd(self)) Next_Record 1
+        Loop
+        Send Beginning_Of_Data   to (dblstbranch(self))
+        Set Dynamic_Update_State of (dblstbranch(self)) to true
+    
+        Open Tmplg Mode DF_EXCLUSIVE
+        Zerofile Tmplg
+    
+        Procedure_Return rVal
+    
+    End_Procedure
+    
+    //AB-StoreTopEnd
+
+    Set Label to "ë´ò´†©´†°· Í§´¢û©û™"
+    Set Size to 229 353
+    Set Location to 10 21
+    Set Color to 16757606
+
+    //AB-DDOStart
+
+    Object Company_DD is a Company_DataDictionary
+    End_Object    // Company_DD
+
+    Object Branch_DD is a Branch_DataDictionary
+        Set DDO_Server to (Company_DD(self))
+    End_Object    // Branch_DD
+
+    Set Server to (Branch_DD(self))
+
+    //AB-DDOEnd
+
+    Object txtDateFrom is a Textbox
+        Set Label to "ÄßÊ Ü£/§Âò"
+        Set Auto_Size_State to FALSE
+        Set Color to 16757606
+        Set Location to 9 9
+        Set Size to 10 41
+        Set TypeFace to "MS Sans Serif"
+    End_Object    // txtDateFrom
+
+    Object frmHmApo is a FormSub
+
+        //AB-StoreTopStart
+                                                                                                                                                                                                        
+        //AB-StoreTopEnd
+
+        Set Size to 13 74
+        Set Location to 7 53
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+        Set Form_Datatype Item 0 to Mask_Date_Window
+        Set Prompt_Button_Mode to pb_PromptOn
+        Set Form_Mask Item 0 to "d/M/yyyy"
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+                                                                                                                                                                                                        
+        set prompt_object to (ocalendar(self))
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // frmHmApo
+
+    Object txtDateTo is a Textbox
+        Set Label to "Ñ‡™ Ü£/§Âò"
+        Set Auto_Size_State to FALSE
+        Set Color to 16757606
+        Set Location to 9 132
+        Set Size to 10 41
+        Set TypeFace to "MS Sans Serif"
+    End_Object    // txtDateTo
+
+    Object frmHmEos is a FormSub
+
+        //AB-StoreTopStart
+                                                                                                                                                                                                        
+        //AB-StoreTopEnd
+
+        Set Size to 13 73
+        Set Location to 7 176
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+        Set Form_Datatype Item 0 to Mask_Date_Window
+        Set Prompt_Button_Mode to pb_PromptOn
+        Set Form_Mask Item 0 to "d/M/yyyy"
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+                                                                                                                                                                                                        
+        set prompt_object to (ocalendar(self))
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // frmHmEos
+
+    Object txtEktyposh is a Textbox
+        Set Label to "Ñ°´Áß‡©û"
+        Set Auto_Size_State to FALSE
+        Set Color to 16757606
+        Set Location to 179 7
+        Set Size to 10 37
+        Set TypeFace to "MS Sans Serif"
+    End_Object    // txtEktyposh
+
+    Object frmEktypCode is a Form
+
+        //AB-StoreTopStart
+                                                                                            
+        //AB-StoreTopEnd
+
+        Set Size to 13 73
+        Set Location to 177 46
+        Set Prompt_Button_Mode to pb_PromptOn
+
+        //AB-StoreStart
+                                                                                            
+        Set Prompt_Object to (SLrep(Current_object))
+        
+        procedure prompt
+            Set pskathg Of (slrep(Self)) to 'AntlisiReport.rv'
+            Forward Send Prompt
+        end_procedure
+        
+        procedure onchange
+            String sStr sModule StrDisp sKathg sCompany sDescr
+            Integer rVal iint icheck
+        
+            get value item 0 to skathg
+        
+            clear sysrep
+            move 'AntlisiReport.rv'     to sysrep.view
+            move skathg                 to sysrep.name
+        
+            find eq sysrep by index.1
+        
+            set value of frmEktypDescr Item 0   to sysrep.descr
+            set psrep                           to sysrep.name
+        
+        end_procedure
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // frmEktypCode
+
+    Object frmEktypDescr is a Form
+        Set Size to 13 214
+        Set Location to 177 125
+        Set Color to 16773345
+
+        //AB-StoreStart
+        set enabled_state to false
+        //AB-StoreEnd
+
+    End_Object    // frmEktypDescr
+
+    Object dblstBranch is a dbListSub
+
+        //AB-StoreTopStart
+                                                                                                                                                                                                        
+        //AB-StoreTopEnd
+
+        Set Main_File to Branch.File_Number
+        Set Size to 72 335
+        Set Location to 28 7
+        Set Color to 16773345
+        Set CurrentRowColor to 6750207
+        Set CurrentCellColor to 16773345
+        Set Highlight_Row_State to FALSE
+        Set Auto_Index_State to FALSE
+        Set Auto_Column_State to FALSE
+        Set Move_Value_Out_State to FALSE
+        Set Auto_Export_State to FALSE
+        Set Auto_Shadow_State to FALSE
+        Set Find_Search_State to FALSE
+        Set Select_Mode to Multi_Select
+
+        Begin_Row
+            Entry_Item ('')
+            Entry_Item Branch.Branch_code
+            Entry_Item Branch.Branch_name
+        End_Row
+
+        Set Form_Width    item 0 to 18
+        Set Header_Label  item 0 to ""
+        
+        Set Form_Width    item 1 to 50
+        Set Header_Label  item 1 to "â‡õ†°Ê™"
+        
+        Set Form_Width    item 2 to 260
+        Set Header_Label  item 2 to "ìß¶°ò´·©´û£ò"
+        
+
+        //AB-StoreStart
+                                                                                                                                                                                                        
+        Set Select_Mode                     to Multi_Select
+        Set Column_Option           item 0  to Noenter False
+        Set Column_checkBox_state   item 0  to true
+        Set Auto_Shadow_State               to False
+        Set Auto_Index_State                to False
+        Set Popup_Search_State              to True
+        Set Find_Search_State               to False
+        
+        Set Color                           to 15263976
+        Set TextColor                       to clWindowText
+        Set CurrentRowColor                 to 14205112
+        Set Highlight_row_color             to 14205112
+        Set CurrentRowTextColor             to clWindowText
+        Set CurrentCellColor                to 14205112
+        Set CurrentCellTextColor            to clBtnText
+        
+        
+        Procedure Toggle_Select
+            Local integer iBase iOffset iCol
+            Move 0 to iOffset
+        
+            Forward Send Toggle_Select
+        
+            Get Base_Item to iBase
+            Get Current_Col to iCol
+            Send DoDisplayCheckBox (iBase+iOffset) (Select_State(self,iBase))
+            Set Dynamic_Update_State to true
+        End_Procedure  //Toggle_Select
+        
+        Procedure Entry_Display Integer i1 Integer i2
+            Local integer iBase iOffset iSelItemsID bState
+        
+            Forward Send Entry_Display i1 i2
+        
+            Get base_Item to iBase
+            move 0 to iOffset
+            move (Selected_Items(self)) to iSelItemsID
+            Get find_element of iSelItemsID branch.recnum to bState
+            Send DoDisplayCheckBox (iBase+iOffset) (bState<>-1)
+            Set Dynamic_Update_State to true
+        End_Procedure // Entry_Display
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // dblstBranch
+
+    Object btnRun is a ButtonSub
+
+        //AB-StoreTopStart
+                                                                                                                                                        
+        //AB-StoreTopEnd
+
+        Set Bitmap to "printer0.BMP"
+        Set Size to 37 43
+        Set Location to 133 278
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+                                                                                                                                                        
+        Set TooltipValue to "Ñ°´Áß‡©û"
+        
+        Procedure OnClick
+            string dateapo dateeos datehh datemm dateyy msgstr
+            integer  listatus ihmgio iAnal iWhere
+        
+            Get Value Of frmHmApo Item 0 to dateapo
+            Get Value Of frmHmEos Item 0 to dateeos
+        
+            Get Checked_State of ChkAnal to iAnal
+        
+        
+            if dateeos eq "" begin
+                move 31 to datehh
+                move 12 to datemm
+                move syscurxr.year_year to dateyy
+                Append dateeos datehh
+                append dateeos datemm
+                append dateeos dateyy
+            end
+        
+            if dateapo eq "" begin
+                move 01 to datehh
+                move 01 to datemm
+                move syscurxr.year_year to dateyy
+                append dateapo datehh
+                append dateapo "/"
+                append dateapo datemm
+                append dateapo "/"
+                append dateapo dateyy
+            end
+        
+            move 0 to listatus
+        
+            if (dateapo ne "") begin
+                if ((dateapo < syscurxr.year_xrhshfrom) or (dateapo > syscurxr.year_xrhshto)) begin
+                    move "" to msgstr
+                    move 1 to listatus
+                    move "Ü£/§Âú™ Ñß†¢¶ö„™ Ñ°´Ê™ é®Â‡§ ï®„©û™" to msgstr
+                    error 999 msgstr
+                end
+            end
+        
+            if (dateeos ne "") begin
+                if ((dateeos < syscurxr.year_xrhshfrom) or (dateeos > syscurxr.year_xrhshto)) begin
+                    move "" to msgstr
+                    move 1 to listatus
+                    move "Ü£/§Âú™ Ñß†¢¶ö„™ Ñ°´Ê™ é®Â‡§ ï®„©û™" to msgstr
+                    error 999 msgstr
+                end
+            end
+        
+            Get piPrintWhere to iWhere
+            if (iWhere=2) Begin
+                Set piAnal Of AntlisiWQLReport to iAnal
+                Send ProduceTheTextFile
+            End
+            Else Begin
+                Set piAnal Of AntlisiWQLReport to iAnal
+                Send Runpmoves3Report To (AntlisiWQLReport(Current_Object))
+            End
+        End_Procedure
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // btnRun
+
+    Object btnMess is a ButtonSub
+        Set Label to "ButtonSub1"
+        Set Size to 14 346
+        Set Location to 195 1
+        Set Border_Style to Border_StaticEdge
+        Set Focus_Mode to NonFocusable
+        Set Form_FontWeight Item 0 to 600
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+        Procedure OnClick
+        
+        End_Procedure // OnClick
+        //AB-StoreEnd
+
+    End_Object    // btnMess
+
+    Object DestRadio is a RadioGroup
+
+        //AB-StoreTopStart
+                
+        //AB-StoreTopEnd
+
+        Set Label to "Ñ°´Áß‡©û"
+        Set Size to 61 49
+        Set Location to 108 6
+        Set Color to 16757606
+        Object ParathyroRadio is a Radio
+            Set Size to 13 30
+            Set Location to 12 12
+            Set Color to 16757606
+            Set Bitmap to "screen4.bmp"
+        End_Object    // ParathyroRadio
+
+        Object PrinterRadio is a Radio
+            Set Size to 10 31
+            Set Location to 30 12
+            Set Color to 16757606
+            Set Bitmap to "PRINT_M1.BMP"
+        End_Object    // PrinterRadio
+
+        Object FileRadio is a Radio
+            Set Size to 10 29
+            Set Location to 47 12
+            Set Color to 16757606
+            Set Bitmap to "FILE16.BMP"
+        End_Object    // FileRadio
+
+
+        //AB-StoreStart
+                
+        Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+        
+            Forward Send Notify_Select_State  iNewItem  iOldItem
+        
+                 If iNewItem Eq 0 Set Output_Device_Mode To WQL_PRINT_TO_WINDOW
+            Else If iNewItem Eq 1 Set Output_Device_Mode To WQL_PRINT_TO_PRINTER
+            Else If iNewItem Eq 2 Set Output_Device_Mode To WQL_PRINT_TO_FILE
+        
+            //Send AdjustFileTypeShadow (iNewItem < 2)
+        
+            Set piPrintWhere to iNewItem
+        
+            //--
+            Integer iAnal
+            Get Checked_State Of chkAnal    to iAnal
+        
+        //         If ((iNewItem=2) And (iAnal=0)) Set Value Of frmEktypCode Item 0 to "Antlisi01a.rpt"
+        //    Else If ((iNewItem=2) And (iAnal=1)) Set Value Of frmEktypCode Item 0 to "Antlisi01b.rpt"
+        //    Else If  (iNewItem=0) Set Value Of frmEktypCode Item 0 to "Antlisi02.rpt"
+        //    Else If  (iNewItem=1) Set Value Of frmEktypCode Item 0 to "Antlisi02.rpt"
+        
+            If (iNewItem=2) Set Value Of frmEktypCode Item 0 to "Antlisi01a.rpt"
+            Else            Set Value Of frmEktypCode Item 0 to "Antlisi02.rpt"
+        
+        End_Procedure
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // DestRadio
+
+    Object FileTypeGroup is a Group
+
+        //AB-StoreTopStart
+                
+        //AB-StoreTopEnd
+
+        Set Label to "Ä§ò≠¶®· Ä®ÆúÂ¶¨"
+        Set Size to 61 169
+        Set Location to 109 60
+        Set Color to 16757606
+        Object FileNameForm is a Form
+
+            //AB-StoreTopStart
+                                                                                                                                                                                                                        
+            //AB-StoreTopEnd
+
+            Set Size to 13 133
+            Set Location to 10 33
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Prompt_Button_Mode to pb_PromptOn
+
+            //AB-StoreStart
+                                                                                                                                                                                                                        
+            set value item 0 to "C:\Antlisi_Stat.csv"
+            
+            Procedure Prompt
+                Local String  SelectedFile
+                Local String  Extension
+                Local String  Filter
+                Local Integer Type
+                Local Integer Selected
+            
+                Get Value Item 0 To SelectedFile
+            
+                If SelectedFile Eq "" Begin
+                    Get WQLFileExt To Extension
+                    Move ("C:\Antlisi_Stat" + Extension) To SelectedFile
+                End
+            
+                Move "" To Filter
+                Get WQLFileTYpe To Type
+            
+                If Type Eq WQL_WordWinType ;
+                    Append Filter "Word for Windows (*.doc)|*.doc"
+                If ((Type Eq WQL_Xls2Type) Or (Type Eq WQL_Xls3Type) Or (Type Eq WQL_Xls4Type) Or (Type Eq WQL_Xls5Type)) ;
+                    Append Filter "Excel (*.xls)|*.xls"
+                If Type Eq WQL_RichTextFormatType ;
+                    Append Filter "Rich Text (*.rtf)|*.rtf"
+                If Type Eq WQL_TextType ;
+                    Append Filter "Text (*.txt)|*.txt"
+                If Type Eq WQL_RecordType ;
+                    Append Filter "Record Style (*.rec)|*.rec"
+                If Type Eq WQL_CommaSeparatedType ;
+                    Append Filter "Comma Separated Values (*.csv)|*.csv"
+                If Type Eq WQL_DIFType ;
+                    Append Filter "Data Interchange Format (*.dif)|*.dif"
+            
+                //Append Filter "|All Files|*.*"
+            
+            
+                Object New_dialog Is A SaveAsdialog
+                    Set Dialog_Caption        To "Item report export to disk, give file name"
+                    Set Filter_String         To Filter
+                    Set Hidereadonly_State    To True
+                    Set Overwriteprompt_State To True
+                    Set Showfiletitle_State   To True
+                    Set File_Title            To SelectedFile
+                End_object // New_dialog
+            
+                Get Show_Dialog Of (New_dialog(Current_object)) To Selected
+            
+                If Selected Begin
+                    Get File_Name Of (New_Dialog(Current_object)) To SelectedFile
+                    Set Value Item 0 To SelectedFile
+                End
+            
+                Send Request_Destroy_object To (New_dialog(Current_object))
+            
+            End_procedure // Start_Prompt
+            
+            Function FileName Returns String
+                Local String  SelectedFile
+                Get Value Item 0 To SelectedFile
+                If SelectedFile Eq "" ;
+                    move "C:\Antlisi_Stat.csv" to selectedfile
+                Function_return SelectedFile
+            End_function // FileName
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // FileNameForm
+
+        Object TypeCombo is a ComboForm
+
+            //AB-StoreTopStart
+                                                                                                                                                                                                                                                            
+            //AB-StoreTopEnd
+
+            Set Size to 13 133
+            Set Location to 29 33
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+
+            //AB-StoreStart
+                                                                                                                                                                                                                                                            
+            Set Entry_state Item 0 To False
+            
+            Set Combo_Sort_State To False
+            
+            Procedure Combo_Fill_List
+                Send Combo_Add_Item "Comma Separated"
+                Send Combo_Add_item "Word for Windows"
+                Send Combo_Add_Item "Excel 2.1"
+                Send Combo_Add_Item "Excel 3.0"
+                Send Combo_Add_Item "Excel 4.0"
+                Send Combo_Add_Item "Excel 5.0"
+                Send Combo_Add_Item "Rich Text"
+                Send Combo_Add_Item "Text"
+                Send Combo_Add_Item "Record Style"
+                Send Combo_Add_Item "Data Interchage Format (DIF)"
+            End_procedure // Combo_Fill_List
+            
+            Function FileType Returns Integer
+                Local String  FileTypeName
+                Local Integer FileTypeValue
+                Local Integer SelectedItem
+            
+                Get Value Item 0 To FileTypeName
+                Get Combo_Item_Matching FileTypeName To SelectedItem
+                Move WQL_TextType To FileTypeValue
+                If SelectedItem Ne -1 Begin
+                    If SelectedItem Eq 0 Move WQL_CommaSeparatedType To FileTypeValue
+                    If SelectedItem Eq 1 Move WQL_WordWinType        To FileTypeValue
+                    If SelectedItem Eq 2 Move WQL_Xls2Type           To FileTypeValue
+                    If SelectedItem Eq 3 Move WQL_Xls3Type           To FileTypeValue
+                    If SelectedItem Eq 4 Move WQL_Xls4Type           To FileTypeValue
+                    If SelectedItem Eq 5 Move WQL_Xls5Type           To FileTypeValue
+                    If SelectedItem Eq 6 Move WQL_RichTextFormatType To FileTypeValue
+                    If SelectedItem Eq 7 Move WQL_TextType           To FileTypeValue
+                    If SelectedItem Eq 8 Move WQL_RecordType         To FileTypeValue
+                    If SelectedItem Eq 9 Move WQL_DIFType            To FileTypeValue
+                End
+            
+                Function_return FileTypeValue
+            End_function // FileType
+            
+            Function FileExt Returns String
+                Local String  FileTypeExt
+                Local Integer FileTypeValue
+                Get FileType To FileTypeValue
+                If FileTypeValue Eq WQL_CommaSeparatedType Move ".csv" To FileTypeExt
+                If FileTypeValue Eq WQL_WordWinType        Move ".doc" To FileTypeExt
+                If FileTypeValue Eq WQL_Xls2Type           Move ".xls" To FileTypeExt
+                If FileTypeValue Eq WQL_Xls3Type           Move ".xls" To FileTypeExt
+                If FileTypeValue Eq WQL_Xls4Type           Move ".xls" To FileTypeExt
+                If FileTypeValue Eq WQL_Xls5Type           Move ".xls" To FileTypeExt
+                If FileTypeValue Eq WQL_RichTextFormatType Move ".rtf" To FileTypeExt
+                If FileTypeValue Eq WQL_TextType           Move ".txt" To FileTypeExt
+                If FileTypeValue Eq WQL_RecordType         Move ".rec" To FileTypeExt
+                If FileTypeValue Eq WQL_DIFType            Move ".dif" To FileTypeExt
+            
+                Function_return FileTypeExt
+            End_function // FileExt
+            
+            Procedure OnChange
+                Local String  OldName
+                Local String  Extension
+                Local Integer ChangeExt
+            
+                Get ChangeExtension To ChangeExt
+                If ChangeExt Begin
+                    Get WQLFileName To OldName
+                    Get FileExt To Extension
+                    Set WQLFileName To (Left(OldName, (Pos(".", Oldname) - 1)) + Extension)
+                End
+            End_procedure // OnChange
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // TypeCombo
+
+        Object ApplyExtCheckBox is a CheckBox
+            Set Label to "Apply combo extension"
+            Set Size to 10 89
+            Set Location to 47 33
+            Set Color to 16757606
+
+            //AB-StoreStart
+            Set Select_state Item 0 To True
+            
+            //AB-StoreEnd
+
+        End_Object    // ApplyExtCheckBox
+
+        Object TextBoxSub25 is a TextBoxSub
+            Set Label to "é§¶£ò"
+            Set Color to 16757606
+            Set FontSize to 4 0
+            Set Location to 10 6
+            Set Size to 10 23
+            Set TypeFace to "MS Sans Serif"
+            Set Enabled_State to TRUE
+        End_Object    // TextBoxSub25
+
+        Object TextBoxSub26 is a TextBoxSub
+            Set Label to "íÁß¶™"
+            Set Color to 16757606
+            Set FontSize to 4 0
+            Set Location to 30 5
+            Set Size to 10 23
+            Set TypeFace to "MS Sans Serif"
+            Set Enabled_State to TRUE
+        End_Object    // TextBoxSub26
+
+
+        //AB-StoreStart
+                
+        Set Enabled_State to False // (piPrintWhere(Self)=2)
+        
+        Function WQLFileName Returns String
+            Function_return (FileName(FileNameForm(Current_object)))
+        End_function // WQLFIleName
+        
+        Procedure Set WQLFileName String NewName
+            Set Value Of (FileNameForm(Current_object)) Item 0 To NewName
+        End_procedure // Set WQLFIleName
+        
+        Function WQLFileType Returns Integer
+            Function_return (FileType(TypeCombo(Current_object)))
+        End_function // WQLFIleType
+        
+        Function WQLFileExt Returns Integer
+            Function_return (FileExt(TypeCombo(Current_object)))
+        End_function // WQLFIleExt
+        
+        Function ChangeExtension Returns Integer
+            Function_return (Select_state(ApplyExtCheckBox(Current_object), 0))
+        End_function // ChangeExtension
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // FileTypeGroup
+
+    Object chkAnal is a CheckBoxSub
+
+        //AB-StoreTopStart
+                                                                            
+        //AB-StoreTopEnd
+
+        Set Label to "Ä§ò¢¨´†°·"
+        Set Size to 10 49
+        Set Location to 111 276
+        Set Color to 16757606
+
+        //AB-StoreStart
+                                                                            
+        Procedure OnChange
+            Integer iAnal iWhere
+            Get Checked_State Of chkAnal    to iAnal
+            Set piAnal                      to iAnal
+            Get piPrintWhere                to iWhere
+        
+        //         If ((iWhere=2) And (iAnal=0)) Set Value Of frmEktypCode Item 0 to "Antlisi01a.rpt"
+        //    Else If ((iWhere=2) And (iAnal=1)) Set Value Of frmEktypCode Item 0 to "Antlisi01b.rpt"
+        //    Else If  (iWhere=0)                Set Value Of frmEktypCode Item 0 to "Antlisi02.rpt"
+        //    Else If  (iWhere=1)                Set Value Of frmEktypCode Item 0 to "Antlisi02.rpt"
+        
+            //--
+        //         If ((iNewItem=2) And (iAnal=0)) Set Value Of frmEktypCode Item 0 to "Antlisi01a.rpt"
+        //    Else If ((iNewItem=2) And (iAnal=1)) Set Value Of frmEktypCode Item 0 to "Antlisi01b.rpt"
+        //    Else If  (iNewItem=0) Set Value Of frmEktypCode Item 0 to "Antlisi02.rpt"
+        //    Else If  (iNewItem=1) Set Value Of frmEktypCode Item 0 to "Antlisi02.rpt"
+        
+            If (iWhere=2) Set Value Of frmEktypCode Item 0 to "Antlisi01a.rpt"
+            Else          Set Value Of frmEktypCode Item 0 to "Antlisi02.rpt"
+        
+        End_Procedure
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // chkAnal
+
+
+    //AB-StoreStart
+    
+    Procedure ExportAsSapFormat
+        String FileName sRep vs1 vs2 vs3 vs4 vs5 vs6 vs7 vs8 vs9 vs10
+        String sArxeio sEgkatas sPoso sMonth sYear
+        Integer iAnal iPos iLength iDiafora iLen iInt
+        Number nPoso
+        Date sHmnia
+    
+        Get WQLFileName to FileName
+        If (Trim(FileName)="") Begin
+            Send Stop_Box "Éú§ ô®Â©°‡ ´¶ ò®ÆúÂ¶ £ú ´†™ úöö®ò≠‚™" "ë≠·¢£ò 5001"
+            Procedure_return
+        End
+    
+        Clear Branch
+        Move SyscurXr.Company_Code      to Branch.Company_Code
+        Move SyscurXr.Branch_Code       to Branch.Branch_Code
+        Find Eq Branch By Index.1
+        Move (Trim(Branch.Egkatastash)) to sEgkatas
+    
+        Get Value Of frmHmApo Item 0    to sHmnia
+        Move (TheMonthSegment(sHmnia))  to sMonth
+        If (Length(sMonth)=1) Insert "0" in sMonth at 1
+        Move (TheYearSegment(sHmnia))   to sYear
+    
+        Move ("C:\"+Trim(sEgkatas)+"PUMP"+Trim(sMonth)+Trim(sYear)+".TXT") to sArxeio
+    
+        Direct_Output Channel 7 sArxeio
+    
+        Direct_Input Channel 8 FileName
+        Readln Channel 8 vs1 vs2 vs3 vs4 vs5 vs6 vs7 vs8 vs9 vs10
+        While (Not(Seqeof))
+    
+            Set Label of btnMess to ("î´†·Æ§‡ ´¶ ò®ÆúÂ¶ ´Áß¶¨ SAP...  "+Trim(vs2)+"  "+Trim(vs6))
+    
+            Move (Trim(vs1 )) to vs1   // Egkatastash
+            Move (Trim(vs2 )) to vs2   // Perioxh
+            Move (Trim(vs3 )) to vs3   // Ptyppar
+            Move (Trim(vs4 )) to vs4   // Hmnia
+            Move (Trim(vs5 )) to vs5   // Eidos Antlias (IX DX)
+            Move (Trim(vs6 )) to vs6   // Pinakida
+            Move (Trim(vs7 )) to vs7   // Antlhthenta  M3
+            Move (Trim(vs8 )) to vs8   // Timologhmena M3
+            Move (Trim(vs9 )) to vs9   // Timologhmenh Axia
+            Move (Trim(vs10)) to vs10  // Parastatiko (Wcmoves_Par)
+            //--
+            Move (Replaces("/",vs4 ,"")) to vs4
+            Move (Replaces('"',vs10,"")) to vs10
+            //--
+    //        Move (Replaces(".",vs7,"")) to vs7
+    //        Move (Replaces(",",vs7,"")) to vs7
+    //        Move (Replaces(".",vs8,"")) to vs8
+    //        Move (Replaces(",",vs8,"")) to vs8
+    //        Move (Replaces(".",vs9,"")) to vs9
+    //        Move (Replaces(",",vs9,"")) to vs9
+    
+    
+            Move vs7                                             to nPoso
+            Move nPoso                                          to sPoso
+            Move (Trim(sPoso))                                  to sPoso
+            Move (Pos('.',sPoso))                               to iPos
+            Move (Length(sPoso))                                to iLength
+            Move (iLength-iPos)                                 to iDiafora
+            If (Pos('.',sPoso)=0)   Move (Append(sPoso,'.00' )) to sPoso
+            Else If (iDiafora =1)   Move (Append(sPoso,'0'   )) to sPoso
+            //Else If (iDiafora =2)   Move (Append(sPoso,'0'   )) to sPoso
+            Move (Replace('.',sPoso,''))                        to sPoso
+            Move (Length(sPoso))                                to iLen
+            For iInt From 1 to (10-iLen)
+                Move (Insert("0", sPoso,1))                     to sPoso
+            Loop
+            Move (Trim(sPoso))                                  to vs7
+    
+            Move vs8                                            to nPoso
+            Move nPoso                                          to sPoso
+            Move (Trim(sPoso))                                  to sPoso
+            Move (Pos('.',sPoso))                               to iPos
+            Move (Length(sPoso))                                to iLength
+            Move (iLength-iPos)                                 to iDiafora
+            If (Pos('.',sPoso)=0)   Move (Append(sPoso,'.00' )) to sPoso
+            Else If (iDiafora =1)   Move (Append(sPoso,'0'   )) to sPoso
+            //Else If (iDiafora =2)   Move (Append(sPoso,'0'   )) to sPoso
+            Move (Replace('.',sPoso,''))                        to sPoso
+            Move (Length(sPoso))                                to iLen
+            For iInt From 1 to (10-iLen)
+                Move (Insert("0", sPoso,1))                     to sPoso
+            Loop
+            Move (Trim(sPoso))                                  to vs8
+    
+            Move vs9                                            to nPoso
+            Move nPoso                                          to sPoso
+            Move (Trim(sPoso))                                  to sPoso
+            Move (Pos('.',sPoso))                               to iPos
+            Move (Length(sPoso))                                to iLength
+            Move (iLength-iPos)                                 to iDiafora
+            If (Pos('.',sPoso)=0)   Move (Append(sPoso,'.00'))  to sPoso
+            Else If (iDiafora =1)   Move (Append(sPoso,'0'  ))  to sPoso
+            Move (Replace('.',sPoso,''))                        to sPoso
+            Move (Length(sPoso))                                to iLen
+            For iInt From 1 to (10-iLen)
+                Move (Insert("0", sPoso,1))                     to sPoso
+            Loop
+            Move (Trim(sPoso))                                  to vs9
+            //--
+            Write   Channel 7 (Pad(Trim(vs1 )  , 4)) // Egkatastash
+            Write   Channel 7 (Pad(Trim(vs2 )  , 4)) // Perioxh
+            Write   Channel 7 (Pad(Trim(vs3 )  , 3)) // Ptyppar
+            Write   Channel 7 (Pad(Trim(vs4 )  , 8)) // Hmnia
+            Write   Channel 7 (Pad(Trim(vs5 )  , 2)) // Eidos Antlias (IX DX)
+            Write   Channel 7 (Pad(Trim(vs6 )  ,12)) // Pinakida
+            Write   Channel 7 (Pad(Trim(vs7 )  ,10)) // Antlhthenta  M3
+            Write   Channel 7 (Pad(Trim(vs8 )  ,10)) // Timologhmena M3
+            Write   Channel 7 (Pad(Trim(vs9 )  ,10)) // Timologhmenh Axia
+            Write   Channel 7 (Pad(Trim(vs10)  ,20)) // Parastatiko (Wcmoves_Par)
+            Writeln Channel 7
+            //--
+            Readln Channel 8 vs1 vs2 vs3 vs4 vs5 vs6 vs7 vs8 vs9 vs10
+        Loop
+    
+        Close_Output Channel 7
+        Close_Input  Channel 8
+    
+        Set Label of btnMess to ""
+    
+        Date dNoMatter
+        Sysdate dNoMatter
+    
+        Runprogram Wait "C:\VDF6\Develop\Empor\Programs\Convert_To_UTF.Exe" (String(dNoMatter)+" "+Trim(sArxeio)+" "+"1")
+    
+        EraseFile "C:\Antlisi_Stat.csv"
+    
+        Send Info_Box ("í¶ ò®ÆúÂ¶ úÂ§ò† ‚´¶†£¶ ©´¶ ´¶ß†°Ê õÂ©°¶ C ‡™ "+Trim(sArxeio)) "è¢û®¶≠¶®Âò"
+    End_Procedure
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //AB-StoreEnd
+
+End_Object    // AntlisiReport
+
+
+//AB-StoreStart
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+//AB-StoreEnd
+
+//AB/ End_Object    // prj

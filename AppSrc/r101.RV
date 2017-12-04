@@ -1,0 +1,829 @@
+//AB/ Project R101:ektyposh hmerologion foreon
+//AB/     Object prj is a Report_Project
+//AB/         Set ProjectName to "R101:ektyposh hmerologion foreon"
+//AB/         Set ProjectFileName to "r101.RV"
+
+// Project Object Structure
+//   r101 is a ReportView
+//     DestRadio is a RadioGroup
+//       WindowRadio is a Radio
+//     ButtonSub1 is a Button
+//     ButtonSub3 is a ButtonSub
+//     parWQLReport is a CrystalReportSubSQL
+
+// Register all objects
+Register_Object ButtonSub1
+Register_Object ButtonSub3
+Register_Object DestRadio
+Register_Object parWQLReport
+Register_Object r101
+Register_Object WindowRadio
+
+
+//AB/     Report View
+
+
+    //AB-StoreTopStart
+    Use dfallrpt
+
+
+
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use DFAllEnt.pkg
+    Use Button.Sub
+
+    //AB-IgnoreEnd
+
+    ACTIVATE_VIEW Activate_r101 FOR r101
+
+    Object r101 is a ReportView
+
+        //AB-StoreTopStart
+        property number pnhmgio     public 0
+        property string psmodule    public ''
+        //AB-StoreTopEnd
+
+        Set Label to "„¡«ç§à©ž †£œ¨¦¢¦šåà¤ ”¦¨âà¤"
+        Set Size to 48 177
+        Set Location to 10 167
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object DestRadio is a RadioGroup
+
+            //AB-StoreTopStart
+
+            //AB-StoreTopEnd
+
+            Set Label to "„¡«ç§à©ž"
+            Set Size to 29 49
+            Set Location to 2 1
+            Object WindowRadio is a Radio
+                Set Size to 13 30
+                Set Location to 12 12
+                Set Bitmap to "screen4.bmp"
+            End_Object    // WindowRadio
+
+
+            //AB-StoreStart
+            set visible_state of (destradio(self)) to false
+            Set Output_Device_Mode To WQL_PRINT_TO_WINDOW
+
+
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // DestRadio
+
+        Object ButtonSub1 is a Button
+
+            //AB-StoreTopStart
+
+            //AB-StoreTopEnd
+
+            Set Bitmap to "RUNPROG.BMP"
+            Set Size to 18 29
+            Set Location to 6 55
+
+            //AB-StoreStart
+            Procedure OnClick
+               Send RunparReport To (parWQLReport(Current_Object))
+            End_Procedure
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub1
+
+        Object ButtonSub3 is a ButtonSub
+
+            //AB-StoreTopStart
+
+            //AB-StoreTopEnd
+
+            Set Bitmap to "CANCEL.BMP"
+            Set Size to 18 29
+            Set Location to 6 89
+
+            //AB-StoreStart
+            Procedure OnClick
+                Send Request_Cancel
+            End_Procedure
+
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub3
+
+
+        //AB-StoreStart
+        Object parWQLReport Is A CrystalReportSubSQL
+            Property Integer ReportReady Public False
+            set Report_name    To "r101.rpt"
+            Set Report_View_id To (Parent(Current_object))
+
+             Procedure OnStartPrinting
+                Local String  Selection FileName smodule lsdate  wrecr
+                Local Integer FileType Destination SortOrder NumSortFields CurSortField
+                Local Integer SortDirection
+                local number nhmgio
+                Move "" To Selection
+                get pnhmgio to nhmgio
+                get psmodule to smodule
+                Append Selection  "{hmgio.hmgio_module} = " '"' (trim(smodule)) '"'
+                if (nhmgio<>0);
+                   Append Selection (If(Selection <> "", " and ", "")) "{hmgio.hmgio_code} = " '' (nhmgio) ''
+                Set SelectionFormula To Selection
+                Get NSortFields To NumSortFields
+                For CurSortField From 0 To (NumSortFields - 1)
+                Send DeleteNthSortField 0
+                Loop
+                If Selection Eq "" ;
+                    Set Formula "SelTxt" To ('"' + "NONE" + '"')
+                Else ;
+                    Set Formula "SelTxt" To ('"' + (Replaces('"', Selection, "")) + '"')
+                set formula "fmodule" to (winql_string(smodule))
+                move WQL_PRINT_TO_WINDOW to destination
+                If Destination EQ WQL_PRINT_TO_WINDOW ;
+                    Set ReportReady To False
+                Else ;
+                    Set ReportReady To True
+            End_procedure // OnStartPrinting
+            Procedure RunparReport
+                Send Cursor_Wait To (Cursor_Control(Current_Object))
+                Send Run_report
+                Send Cursor_Ready To (Cursor_Control(Current_Object))
+                If (ReportReady(Current_object)) ;
+                    Send Info_box "WinQL report ready."
+            End_procedure // RunCustReport
+
+        End_object
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // r101
+
+
+    //AB-StoreStart
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

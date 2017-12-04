@@ -1,0 +1,212 @@
+Use CrystalReport.pkg
+
+
+
+Type PEWindowOptions
+  Field PEWindowOptions.StructSize As Word
+  Field PEWindowOptions.hasGroupTree As Word
+  Field PEWindowOptions.canDrillDown As Word
+  Field PEWindowOptions.hasNavigationControls As Word
+  Field PEWindowOptions.hasCancelButton As Word
+  Field PEWindowOptions.hasPrintButton As Word
+  Field PEWindowOptions.hasExportButton As Word
+  Field PEWindowOptions.hasZoomControl As Word
+  Field PEWindowOptions.hasCloseButton As Word
+  Field PEWindowOptions.hasProgressControls As Word
+  Field PEWindowOptions.hasSearchButton As Word
+  Field PEWindowOptions.hasPrintSetupButton As Word
+  Field PEWindowOptions.hasRefreshButton As Word
+End_Type // PEWindowOptions
+
+External_Function32 PESetWindowOptions "PESetWindowOptions" CRPE32.DLL ;
+  Integer printJob pointer Options Returns Integer
+
+Class CrystalReportSubSQL Is A CrystalReport
+
+    Procedure Construct_Object
+        Forward send Construct_Object
+        // Everything on except hasGroupTree by default
+        property integer hasGroupTree 0
+        property integer canDrillDown 1
+        property integer hasNavigationControls 1
+        property integer hasCancelButton 1
+        property integer hasPrintButton 1
+        property integer hasExportButton 1
+        property integer hasZoomControl 1
+        property integer hasCloseButton 1
+        property integer hasProgressControls 1
+        property integer hasSearchButton 1
+        property integer hasPrintSetupButton 1
+        property integer hasRefreshButton 1
+
+        Set WindowStyle To (WS_MAXIMIZE iOr WS_OVERLAPPEDWINDOW)
+    End_Procedure // Construct_Object
+
+    Procedure OutputToWindow String sTitle Integer iLeft Integer iTop Integer iWidth Integer iHeight Integer iStyle Handle hParent
+        Integer iPrintJob iResult
+        String sPEWindowOptions
+        Pointer pPeWindowOptions
+
+        Get PrintJob To iPrintJob
+        FillType PEWindowOptions with 0     to sPEWindowOptions
+        put PEWindowOptions_Size            to sPEWindowOptions at PEWindowOptions.StructSize
+        put (hasGroupTree(self))            to sPEWindowOptions at PEWindowOptions.hasGroupTree
+        put (canDrillDown(self))            to sPEWindowOptions at PEWindowOptions.canDrillDown
+        put (hasNavigationControls(self))   to sPEWindowOptions at PEWindowOptions.hasNavigationControls
+        put (hasCancelButton(self))         to sPEWindowOptions at PEWindowOptions.hasCancelButton
+        put (hasPrintButton(self))          to sPEWindowOptions at PEWindowOptions.hasPrintButton
+        put (hasExportButton(self))         to sPEWindowOptions at PEWindowOptions.hasExportButton
+        put (hasZoomControl(self))          to sPEWindowOptions at PEWindowOptions.hasZoomControl
+        put (hasCloseButton(self))          to sPEWindowOptions at PEWindowOptions.hasCloseButton
+        put (hasProgressControls(self))     to sPEWindowOptions at PEWindowOptions.hasProgressControls
+        put (hasSearchButton(self))         to sPEWindowOptions at PEWindowOptions.hasSearchButton
+        put (hasPrintSetupButton(self))     to sPEWindowOptions at PEWindowOptions.hasPrintSetupButton
+        put (hasRefreshButton(self))        to sPEWindowOptions at PEWindowOptions.hasrefreshButton
+        GetAddress of sPEWindowOptions      to pPEWindowOptions
+        Move (PESetWindowOptions(iPrintJob, pPEWindowOptions)) to iResult
+        Forward Send OutputToWindow sTitle iLeft iTop iWidth iHeight iStyle hParent
+    End_Procedure // OutputToWindow
+
+    Procedure Set TmpFileDir String aDir
+        String lsCurrWspc lsDir
+
+//        If (ghoWorkSpace <> 0) Begin
+//            Get WorkSpaceName of ghoWorkSpace to lsCurrWspc
+//            Insert "WorkSpaces\" in lsCurrWspc at 1
+//            Get_Profile_String lsCurrWspc aDir to lsDir
+//            Set Report_Data_Path to lsDir
+//        End
+    End_Procedure
+
+    Procedure DoWinQLReport
+        // This can be used when reports must be able to run in different data directories
+        Set TmpFileDir to "TmpFileDir"
+        Forward Send DoWinQLReport
+    End_Procedure
+
+
+    // This hook procedure is called after the print job has been opened.
+
+    Procedure OnInitializeReport000
+    ////// SOS Na ginei xana OnInitializeReport ///////////
+
+        Integer iTables iMax iCount iType
+        String  sLocation sLocation2 sPath DirSep
+        String  sNewPath sNewLocation sDataPath sMyLocation
+
+//        Open Sysfile
+
+        String  sActualSQL
+        String  sActualTemp
+        String  sOldSQL
+        String  sOldTemp
+        String  sServerName
+        String  sDatabaseName
+        String  sUserID
+
+//        Move Sysfile.ActualSQL      to sActualSQL
+//        Move Sysfile.ActualTemp     to sActualTemp
+//        Move Sysfile.OldSQL         to sOldSQL
+//        Move Sysfile.OldTemp        to sOldTemp
+//        Move Sysfile.cServerName    to sServerName
+//        Move Sysfile.cDatabaseName  to sDatabaseName
+//        Move Sysfile.cUserID        to sUserID
+
+ //       Move 'SMS'                 to sOldSQL
+ //       Move 'C:\Dns_tmp\'         to sOldTemp
+ //       Move 'SMSMET'        to sActualSQL      // Database
+ //       Move 'C:\Dns_tmp\'         to sActualTemp
+ //      Move 'SMSMET'        to sServerName    // ODBC
+ //       Move 'SMSMET'        to sDatabaseName  // DataBase
+     //   Move 'sa'               to sUserID
+
+        Move 'SMS'                 to sOldSQL
+        Move 'C:\Dns_tmp\'         to sOldTemp
+        Move 'SMSDOMIKI'            to sActualSQL      // Database
+        Move 'C:\Dns_tmp\'         to sActualTemp
+        Move 'SMSDOMIKI'            to sServerName    // ODBC
+        Move 'SMSDOMIKI'            to sDatabaseName  // DataBase
+
+
+        Move (Trim(sActualSQL   )) to sActualSQL
+        Move (Trim(sActualTemp  )) to sActualTemp
+        Move (Trim(sOldSQL      )) to sOldSQL
+        Move (Trim(sOldTemp     )) to sOldTemp
+        Move (Trim(sServerName  )) to sServerName
+        Move (Trim(sDatabaseName)) to sDatabaseName
+        Move (Trim(sUserID      )) to sUserID
+
+
+        Forward Send OnInitializeReport
+
+        Move (Sysconf(SYSCONF_DIR_SEPARATOR)) To DirSep
+        Get NTables To iMax
+        Decrement iMax
+        Get Report_Data_Path                                    To sPath
+        If Not (Right(sPath,1)) Eq DirSep Move (sPath-DirSep)   To sPath
+        For iCount From 0 To iMax
+            Get NthTableLocation iCount         To sLocation
+            Get Report_Base_File_Name sLocation To sLocation2
+            Get NthTableDBType           iCount to iType
+
+            // An einai type 1 topiko
+            //               2=SQL
+            If (iType=2) Begin
+                If (sLocation contains sOldSQL) Begin
+                    Move (Replace(sOldSQL,sLocation,sActualSQL))    to sLocation
+                    Set NthTableLocation iCount                     to (Trim(sLocation))
+                End
+            End
+            Else If (iType=1) Begin
+                If (sLocation contains sOldTemp) Begin
+                    Move (Replace(sOldTemp,sLocation,sActualTemp))  to sLocation
+                    Set NthTableLocation iCount                     to (Trim(sLocation))
+                End
+            End
+            Set nthTableLogOnServerName     iCount to sServerName     0
+            Set nthTableLogOnDataBaseName   iCount to sDatabaseName   0
+            Set nthTableLogOnUserID         iCount to sUserID         0 // 'sa'     0
+        Loop // For iCount From 0 To iMax
+
+    End_Procedure // OnInitializeReport
+
+
+//                Showln '--------------------------------------------------------'
+//                Showln iCount
+//                Showln sLocation
+//                Showln sPath
+//                Showln sLocation2
+//                Showln iType
+
+                //If (Trim(LowerCase(sLocation2))='btnemp.dat') Begin
+                  //Set Report_Data_Path to ''
+                  //Get NthTableDBType              iCount to iType
+                    //Set nthTableLogOnPassword       iCount to '123'     0
+                  //Set NthTableLocation            iCount To "BTNEMP"
+                    //Set NthTableLocation iCount To (sPath-sLocation2)
+                  //Get NthTableLocation iCount                 To sMyLocation
+                  //Move (Replace(sLocation,sMyLocation,''))    To sMyLocation
+                  //Showln sMyLocation
+                  //Set NthTableLocation            iCount To sMyLocation
+                //End
+
+
+
+    // This hook procedure is called just before a print job is closed.
+    Procedure OnDeInitializeReport
+        Forward Send OnDEInitializeReport
+    End_Procedure // OnDeInitializeReport
+
+    // This hook procedure is called just before a the print job is started.
+    Procedure OnStartPrinting
+        Forward Send OnStartPrinting
+    End_Procedure // OnStartPrinting
+
+    // This hook procedure is called just after a print job has finished.
+    Procedure OnStopPrinting
+        Forward Send OnStopPrinting
+    End_Procedure // OnStopPrinting
+
+
+End_Class // CrystalReportSubSQL
+

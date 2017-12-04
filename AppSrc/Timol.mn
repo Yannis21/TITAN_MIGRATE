@@ -1,0 +1,60 @@
+
+Use Menu_Sec.Sub
+
+
+DFCreate_Menu Main_Menu 
+
+Property String psMenuModule Public ''           
+
+  
+  dfcreate_menu " — Š † ‘ „ ˆ ‘ " sales_popupmenu is a viewpopupmenu
+
+    on_item "ƒ ˜®œå¨ © ˜¨˜©«˜« ¡é¤ é¢©ª"             send activate_particle
+    on_item "‹˜ ¡æª â¢œš®¦ª ¡˜  ¦¨ ©« ¡ã œ¡«ç§à© §˜¨˜©«˜« ¡é¤ "  send activate_v14a
+
+    Procedure OnInitMenu
+       Forward Send OnInitMenu
+       Set psMenuModule to '01'
+       Move '01' to gs_Module_Code
+    End_Procedure
+
+  END_PULL_DOWN // Polhseis
+
+  dfcreate_menu "€ ‚   „ ‘ " purchase_popupmenu is a viewpopupmenu
+
+    on_item "ƒ ˜®œå¨ © ˜¨˜©«˜« ¡é¤ €š¦¨é¤"              send activate_particle
+
+    Procedure OnInitMenu
+       Forward Send OnInitMenu
+       Set psMenuModule to '02'
+       Move '02' to gs_Module_Code
+    End_Procedure 
+    
+  END_PULL_DOWN
+
+
+  dfcreate_menu "”¦¨¦¢¦š ¡æª „¡«¬§à«ãª" FHM_popupmenu is a viewpopupmenu
+
+    on_item "‰¢œå© £¦ †£â¨˜ª (…)"   Send Activate_vwZ
+    on_item ""                      Send None
+    on_item "‘«¦ ®œå˜"              Send Show_CTL
+
+    Procedure OnInitMenu
+       Forward Send OnInitMenu
+       Set psMenuModule to '02'
+       Move '02' to gs_Module_Code
+    End_Procedure 
+    
+
+  END_PULL_DOWN
+
+  End_Menu // Main_Menu
+
+    Procedure Show_CTL
+        Integer isOK  
+        Get fiShowCTL to isOK
+    End_Procedure
+       
+  
+Register_Object Client_Area
+

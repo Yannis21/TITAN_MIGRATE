@@ -1,0 +1,279 @@
+
+// Register all objects
+Register_Object pagkat_DD
+Register_Object Dopagia
+Register_Object pagkin_DD
+Register_Object pagia_DD
+Register_Object pagmoves_DD
+Register_Object sysrecg_DD
+
+//AB-IgnoreStart
+
+Use Bproces.Sub
+Use DFAllEnt.pkg
+use syscurxr.dd
+Use pagkat.DD
+Use pagkin.DD
+Use pagia.DD
+Use pagmoves.DD
+Use sysrecg.DD
+use r83_1.rv
+//AB-IgnoreEnd
+
+Object Dopagia is a BusinessProcessSub
+
+    //AB-StoreTopStart
+
+    Property    Date    pddate        Public ''
+    Property    String  pspagiafrom   Public ''
+    Property    String  pspagiato     Public ''
+    property    string  pskat         public ''
+    property    string  pskin         public ''
+    Property    String  psparpolhsh   Public ''
+    property    integer pitropos      public 0
+    property    integer pipososto     public 0
+    property    number  pnposo        public 0
+    Property    Integer piError       Public 0
+    property    integer piTxtID       public 0
+    property    integer piLathos      public 0
+    property    number  pnposopol     public 0
+
+    Open SysCurXr
+    Set Status_Panel_State to False
+    Set Display_Error_State to True
+
+    //AB-StoreTopEnd
+
+    Set Size to 82 140
+    Set Location to 72 182
+
+    //AB-DDOStart
+
+    Object sysrecg is a sysrecg_DataDictionary
+    End_Object    // sysrecg_DD
+
+
+    Object Pagkat_DD is a Pagkat_DataDictionary
+    End_Object    // Pagkat_DD
+
+    Object Pagkin_DD is a Pagkin_DataDictionary
+    End_Object    // Pagkin_DD
+
+    Object Pagia_DD is a Pagia_DataDictionary
+      Set DDO_Server to (Pagkat_DD(self))
+      begin_constraints
+           string  spagiafrom spagiato skat
+           integer idecimals
+           get fidekadika_nomismatos SysCurXr.C_Code0 to idecimals
+           get pskat            to skat
+           get pspagiafrom      to spagiafrom
+           get pspagiato        to spagiato
+      //     constrain pagia.company_code   eq syscurxr.company_code
+      //     constrain pagia.branch_code    eq syscurxr.branch_code
+     //      constrain pagia.year_year      eq syscurxr.year_year
+           if (skat <> '');
+              constrain pagia.pagkat_code eq skat
+           if (spagiafrom <> '');
+              constrain pagia.pagia_code  ge spagiafrom
+           if (spagiato   <> '');
+              constrain pagia.pagia_code  le spagiato
+           if (idecimals = 0) constrain pagia as (((pagia.pagia_axia*pagia.pagia_qty)-pagia.pagia_synol) > 1)
+           if (idecimals = 2) constrain pagia as (((pagia.pagia_axia*pagia.pagia_qty)-pagia.pagia_synol) > 0.01)
+
+      end_constraints
+    End_object
+
+    Object Pagmoves_DD is a Pagmoves_DataDictionary
+      Set DDO_Server to (Pagia_DD(self))
+      Set DDO_Server to (Pagkin_DD(self))
+      Set Constrain_File to Pagia.File_Number
+    End_object
+
+
+    //AB-DDOEnd
+
+
+    //AB-StoreStart
+
+    Procedure Start_Processing
+     String  scode sbydate  sparast sdate slastdate serr sdescr skin sist snewkin sparpolhsh
+     string  smodifdate
+     Number  naxia nqty ntotal nypol nposo  ndate nlastdate ndays nmin nposopol
+     integer  ipososto ikatpososto itropos1 itropos2 fpososto icount iyear ibyyear;
+              idecimals iposostol
+
+     get pddate      to sdate
+     get pitropos    to itropos1
+     get pipososto   to itropos2
+     get pnposo      to nposo
+     get pnposopol   to nposopol
+     get pskin       to skin
+     get psparpolhsh to sparpolhsh
+     move skin      to snewkin
+
+     if  (sdate = '') sysdate4 sdate
+     Get fiDekadika_Nomismatos SysCurXr.C_Code0 to iDecimals
+     if (idecimals=0) move 1    to nmin
+     else             move 0.01 to nmin
+     send Clear to pagia_DD
+     Send rebuild_constraints to (pagia_DD(Current_Object))
+     Send Find  to (pagia_dd(current_object)) FIRST_Record 3 //company+branch+yeat+pagkat+pagiacode
+     While (found = 1)
+         move 0 to icount
+         Get Field_Current_Value Of pagia_DD     Field pagia.pagia_bydate    to sbydate
+         Get Field_Current_Value Of pagia_DD     Field pagia.pagia_lastdate  to slastdate
+         Get Field_Current_Value Of pagia_DD     Field pagia.pagia_modifdate to smodifdate
+         Get Field_Current_Value Of pagia_dd     Field pagia.pagia_axia      to naxia
+         Get Field_Current_Value Of pagia_DD     Field pagia.pagia_pososto   to ipososto
+         Get Field_Current_Value Of pagia_DD     Field pagia.pagia_lpososto  to iposostol
+         Get Field_Current_Value Of pagia_dd     Field pagia.pagia_qty       to nqty
+         Get Field_Current_Value Of pagia_dd     Field pagia.pagia_synol     to nypol
+         Get Field_Current_Value Of pagia_dd     Field pagia.pagia_ist       to sist
+         Get Field_Current_Value Of pagkat_dd    Field pagkat.pagkat_pososto to ikatpososto
+         if (slastdate = '') move sbydate to slastdate
+         move sdate to ndate
+         if (smodifdate <> '') move '31/12/2100' to slastdate
+         move slastdate to nlastdate
+         if (ndate gt nlastdate ) begin
+               send Clear to pagmoves_dd
+               if (skin = '104')  move '102' to skin //ò§ ú†§ò† ß‡¢û©û üú¢¶¨£ú §ò °ò§ú† ß®È´ò òß¶©ôú©û
+               move skin to pagkin.pagkin_code
+               send find to pagkin_dd eq 1
+              if (found=1) begin
+                 if (itropos1=1) move ipososto to fpososto
+                 else if (itropos2=1) move ikatpososto to fpososto
+                 else move 0 to naxia
+                 if (iposostol <> 0) move ipososto     to fpososto
+                 move (round_number(((naxia*nqty)-nypol),idecimals)) to ntotal
+                 if (ntotal > nmin) begin
+                   if (nposo <> 0) begin
+                     if (naxia < nposo) begin
+                         move (ndate-nlastdate) to ndays
+                         Set Field_Changed_Value Of pagmoves_DD Field pagmoves.pagmoves_date   To sdate
+                         Set Field_Changed_Value Of pagmoves_DD Field pagmoves.pagmoves_axia   To (ntotal-nmin)
+                         Set Field_Changed_Value Of pagmoves_DD Field pagmoves.pagmoves_posost To 100
+                         Set Field_Changed_Value Of pagmoves_DD Field pagmoves.pagmoves_qty    To nqty
+                         Set Field_Changed_Value Of pagmoves_DD Field pagmoves.pagmoves_no     to ndays
+                         Set Field_Changed_Value Of pagia_DD    Field pagia.pagia_deaddate     To sdate
+                         send request_save to pagia_dd
+                         move 1 to icount
+                     end
+                   end
+                if (icount=0) begin
+                   move sdate      to ndate
+                   move slastdate  to nlastdate
+                   move (ndate-nlastdate) to ndays
+                   if (sist<>'1') begin
+                      move (round_number((((nqty*naxia)*fpososto)/100),idecimals)) to naxia
+                      move (round_number(((naxia*ndays)/365),idecimals)) to naxia
+                      if (naxia>ntotal) begin
+                         move (ntotal-nmin) to naxia
+                         Set Field_Changed_Value Of pagia_DD    Field pagia.pagia_deaddate     To sdate
+                         send request_save to pagia_dd
+                      end
+                   end
+                   else begin
+                      move (round_number(((ntotal*fpososto)/100),idecimals)) to naxia
+                      move (round_number(((naxia*ndays)/365),idecimals)) to naxia
+                      if (naxia>ntotal) begin
+                         move (ntotal-nmin) to naxia
+                         Set Field_Changed_Value Of pagia_DD    Field pagia.pagia_deaddate     To sdate
+                         send request_save to pagia_dd
+                      end
+                   end
+                   Set Field_Changed_Value Of pagmoves_DD Field pagmoves.pagmoves_date To sdate
+                   Set Field_Changed_Value Of pagmoves_DD Field pagmoves.pagmoves_axia To naxia
+                   Set Field_Changed_Value Of pagmoves_DD Field pagmoves.pagmoves_posost To fpososto
+                   Set Field_Changed_Value Of pagmoves_DD Field pagmoves.pagmoves_qty To nqty
+                   Set Field_Changed_Value Of pagmoves_DD Field pagmoves.pagmoves_no to ndays
+                end
+                reread sysrecg
+                move (sysrecg.pagmoves_no + 1) to sysrecg.pagmoves_no
+                saverecord sysrecg
+                unlock
+                move  'ÄßÊ©ô.èòöÂ¶¨ ò/ò èò®ò©´. ' to sparast
+                append sparast sysrecg.pagmoves_no
+                Set Field_Changed_Value of pagmoves_DD Field pagmoves.pagmoves_parast to sparast
+             //   Set Field_Changed_Value Of pagmoves_DD Field pagmoves.pagmoves_posost To fpososto
+                send request_save to pagmoves_dd
+                Get Field_Current_Value Of pagia_dd    Field pagia.pagia_descr     to sdescr
+                Send UpdateWait to (piTxtID(Self))  ('Ñöö®ò≠„ âÂ§û©û™ èòöÂ¶¨ '+(String(sdescr)))
+                move 0 to icount
+                if (snewkin = '104')  begin
+                  send clear to pagmoves_dd
+                  move snewkin to pagkin.pagkin_code
+                  send find  to pagkin_dd eq 1
+                  if (found=1) begin
+                    Set Field_Changed_Value Of pagmoves_DD Field pagmoves.pagmoves_date to sdate
+                    Set Field_Changed_Value Of pagmoves_DD Field pagmoves.pagkin_code To snewkin
+                    Set Field_Changed_Value Of pagmoves_DD Field pagmoves.pagmoves_parast To sparpolhsh
+                    Set Field_Changed_Value Of pagmoves_DD Field pagmoves.pagmoves_qty To nqty
+                    Set Field_Changed_Value Of pagia_DD    Field pagia.pagia_modifdate To sdate
+                    Set Field_Changed_Value Of pagia_DD    Field pagia.pagia_deaddate To sdate
+                    if (snewkin='104') begin
+                       Set Field_Changed_Value Of pagmoves_DD Field pagmoves.pagmoves_parast To sparpolhsh
+                       Set Field_Changed_Value Of pagia_DD    Field pagia.pagia_polposo   To nposopol
+                       Set Field_Changed_Value Of pagmoves_dd Field pagmoves.pagmoves_axia to (round_number((nqty*nposopol),idecimals))
+                       send request_save to pagia_dd
+                       send request_save to pagmoves_dd
+                    end
+                  end
+                end
+            end
+          end
+     end
+     else begin
+       if ((ndate eq nlastdate ) and (snewkin = '104'))  begin
+          send clear to pagmoves_dd
+          move '104' to pagkin.pagkin_code
+          send find to pagkin_dd eq 1
+          if (found=1) begin
+             Set Field_Changed_Value Of pagmoves_DD Field pagmoves.pagmoves_date to sdate
+             Set Field_Changed_Value Of pagmoves_DD Field pagmoves.pagkin_code To '002'
+             Set Field_Changed_Value Of pagmoves_DD Field pagmoves.pagmoves_parast To sparpolhsh
+             Set Field_Changed_Value Of pagmoves_DD Field pagmoves.pagmoves_qty To nqty
+             Set Field_Changed_Value Of pagia_DD    Field pagia.pagia_modifdate To sdate
+             Set Field_Changed_Value Of pagia_DD    Field pagia.pagia_deaddate To sdate
+             Set Field_Changed_Value Of pagia_DD    Field pagia.pagia_polposo   To nposopol
+             Set Field_Changed_Value Of pagmoves_Dd Field pagmoves.pagmoves_axia to (round_number((nqty*nposopol),idecimals))
+             send request_save to pagia_dd
+             send request_save to pagmoves_dd
+          end
+       end
+     end
+
+     send Find to pagia_DD next_record 3
+     Loop
+     if (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+     End_Procedure
+
+
+     Procedure OnProcess
+        Send Start_Processing
+     End_Procedure
+
+     Procedure Start_Process
+         Set piTxtID                         to (Wait(Self))
+         Set Button_State    of (Wait(Self)) to False
+         Set BarVisibleState of (Wait(Self)) to '' False
+         Send Popup                          to (Wait(Self))
+         Set piLathos                        to 0
+         Forward Send Start_Process
+     End_Procedure
+
+     Procedure OnError integer error_info string errMsg
+        If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+     End_Procedure
+
+
+     Procedure End_Process
+        Forward Send End_Process
+        If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+     End_Procedure
+
+
+    //AB-StoreEnd
+
+End_Object    // DoUpTim0
+
+//AB/ End_Object    // prj

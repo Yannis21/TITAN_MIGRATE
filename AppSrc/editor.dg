@@ -1,0 +1,390 @@
+//AB/ Project Editor Panel
+//AB/     Object prj is a Dialog_Project
+//AB/         Set ProjectName to "Editor Panel"
+//AB/         Set ProjectFileName to "Editor.DG"
+//AB/         Set GenerateFileName to "NONAME"
+
+// Project Object Structure
+//   oEditor is a BasicPanelSub
+//     oEditFile is a Text_WindowSub
+//     oStatusBar is a BasicPanelStatusBarSub
+//     oButtonBar is a BasicToolBar
+//     About_Dialog is a AboutDialog
+//     oOpenFile is a OpenDialogSub
+//     oFontDialog is a FontDialogSub
+//     oSaveFile is a SaveAsDialogSub
+
+// Register all objects
+Register_Object About_Dialog
+Register_Object oButtonBar
+Register_Object oEditFile
+Register_Object oEditor
+Register_Object oFontDialog
+Register_Object oOpenFile
+Register_Object oSaveFile
+Register_Object oStatusBar
+
+
+
+    //AB-StoreTopStart
+    String gs_WorkSpace gs_OpenFile
+
+    Cmdline gs_OpenFile
+    Cmdline gs_WorkSpace
+
+    #REPLACE CURRENT$WORKSPACE gs_WorkSpace
+
+    Use DfDafMac.pkg // For Cd_Popup_Object
+    Use Wspace.Sub   // For WorkspaceSub
+    Use Switcprg.pkg // DoAutoSwitchPartial
+    Use DfMenu.pkg
+    Use FONT_DLG.PKG
+    Use Stbarpsc.pkg
+    Use StdAbout.pkg // Standard "About" package.
+
+    //  Set date attributes as needed
+    Set_Date_Attribute sysdate4_State to (TRUE)
+    Set_Date_Attribute Date4_State    to (TRUE)
+    Set_Date_Attribute epoch_value    to 30
+
+    Object ProgramWorkspace is a WorkspaceSub
+        Set WorkspaceName to CURRENT$WORKSPACE
+        Set kEnter_Next_State to True
+    End_Object // ProgramWorkspace
+
+    //Set DoAutoSwitchPartial To ""
+
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use Panel.Sub
+    Use Textwin.Sub
+
+    //AB-IgnoreEnd
+
+
+    //AB-IgnoreEnd
+
+    Object oEditor is a BasicPanelSub
+
+        //AB-StoreTopStart
+        Register_Object oStatusBar
+        Register_Object oButtonBar
+        Register_Procedure DoOpenFile
+        Register_Procedure DoSaveFile
+        Register_Procedure DoSelectFonts
+
+        DFCreate_Menu Main_Menu
+
+            DFCreate_Menu "&€¨®œå¦" FilePopupMenu
+
+                On_Item "&Open" Send DoOpenFile
+                On_Item "&Save" Send DoSaveFile
+                On_Item "S&ave as" Send DoSaveAsFile
+                On_Item "" Send None
+                On_Item "&Fonts" Send DoSelectFonts
+                On_Item "" Send None
+                On_Item "E&xit" Send Exit_Application
+
+            End_Pull_down
+            Set Status_Help To ""
+
+
+            DFCreate_Menu '&‰œå£œ¤¦' Text_Menu
+
+                on_item "&€¨®ã ¡œ £â¤¦¬     \aCtrl+Home" send Beginning_Of_Data to oEditFile
+                on_item "&’œ¢¦ª ¡œ £â¤¦¬    \aCtrl+End"  send End_Of_Data       to oEditFile
+                on_item "&„ ©˜šàšã"                      send Mode_Insert       to oEditFile
+                on_item "„&§ ¡á¢¬¯ž"                     send Mode_Overwrite    to oEditFile
+                on_item "„&¬¨œ©ž ¡œ £â¤¦¬..."            send Search            to oEditFile
+                on_item "‹˜¨¡á¨ ©£˜ &¡¦££˜« ¦ç \aCtrl+\"    send Mark_Block     to oEditFile
+                on_item "‹˜¨¡á¨ ©£˜ &©«ã¢žª"              send Mark_Column      to oEditFile
+                on_item "€§&¦¡¦§ã   \aAlt+-"              send Cut_Marked_Area  to oEditFile
+                on_item "€&¤« š¨˜­ã  \aCtrl+-"            send Copy_Marked_Area to oEditFile
+                on_item "„§ ¡æ&¢¢ž©ž \aAlt++"             send Paste_Block      to oEditFile
+
+                Procedure OnInitMenu
+                    Integer iFocus iState
+
+                    Move oEditFile to iFocus
+                    If (ifocus) Begin
+                        Move (Read_Only_state(iFocus)) to iState
+                        Set Shadow_State Item 0 to iState
+                        Set Shadow_State Item 1 to iState
+                        Set Shadow_State Item 2 to iState
+                        Set Shadow_State Item 3 to iState
+                        Set Shadow_State Item 4 to iState
+                        Set Shadow_State Item 5 to iState
+                        Set Shadow_State Item 6 to iState
+                        Set Shadow_State Item 7 to iState
+                        Set Shadow_State Item 8 to iState
+                        Set Shadow_State Item 9 to iState
+                    End
+                End_Procedure
+
+            end_pull_down
+
+            On_Item "A&bout" Send Activate_About to oEditor
+
+        end_pull_down
+
+        //AB-StoreTopEnd
+
+        Set Maximize_Icon to TRUE
+        Set Label to "No File"
+        Set Size to 282 443
+        Set Location to 4 52
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object oEditFile is a Text_WindowSub
+            Set Size to 223 430
+            Set Location to 18 5
+
+            //AB-StoreStart
+
+            Set Fontsize to 14 0
+            Set Text_Limit to 65536 //MaximumCharacters
+            Set Locate_Mode to Center_On_Screen
+            Set TypeFace to "Courier"
+            Set File_Name to gs_OpenFile
+            send read //gs_OpenFile
+            Set status_line_object to (oStatusBar(Self))
+            Set Read_Only_State to True
+            Set Wrap_State to False
+
+
+            Send DoRegSize Self amBottomRight
+
+            //AB-StoreEnd
+
+        End_Object    // oEditFile
+
+
+        //AB-StoreStart
+
+        Object oStatusBar  is a BasicPanelStatusBarSub
+            Send AddPane 300  ""        sbLOWERED
+            Send AddPane 300  ""        sbLOWERED
+        End_Object // oStatusBar
+
+        Object oButtonBar IS A BasicToolBar
+
+            Send ImageList_Add "AbCode.bmp" // 0
+            // Large Icons
+            //Set default_icons to (IDB_STANDARD IOR IDB_VIEW IOR IDB_LARGE)
+            //Set Window_Style to CCS_NODIVIDER TRUE
+
+            //Send Add_Space
+
+            Send Add_button ICO_STD_FILEOPEN msg_DoOpenFile //ICO_STD_PRINT ICO_STD_PRINTPRE
+            Send Add_ToolTip "Open File"
+            Set  Status_Help To 'Open a File'
+
+            Send Add_button ICO_STD_FILESAVE msg_DoSaveFile //ICO_STD_PRINT ICO_STD_PRINTPRE
+            Send Add_ToolTip "Save"
+            Set  Status_Help To 'Save'
+
+            Send Add_Space
+
+            Send Add_button (ico_user+0) msg_DoSelectFonts //ICO_STD_PRINT ICO_STD_PRINTPRE
+            send add_tooltip "„§ ¢¦šã Fonts" 
+            set  status_help to "„§ ¢¦šã Fonts" 
+
+        End_Object // oButtonBar
+
+        Object About_Dialog is an AboutDialog
+            set productname to "Mini Editor"
+            set version to "version 4.0"
+            set copyright to "Copyright 1999 ‚ á¤¤žª ‘­˜ ¨æ§¦¬¢¦ª"
+            set author to ""
+            set logo to "DacAbout.bmp"  // square bitmaps of 42x42 work best
+        End_Object
+
+        Procedure Activate_About
+           Send Popup_Modal To (About_Dialog (Current_Object))
+        End_Procedure
+
+        Procedure DoOpenFile
+            Integer bOpen bReadOnly OpenDlg EditObjId
+            String sFileTitle sFileName
+
+            Move oEditFile to EditObjId
+            Object oOpenFile is an OpenDialog
+                Set Filter_String To ;
+                    'Text Files|*.txt|All Files|*.*'
+                Set Filter_Index      To 2
+                Set TickReadOnly_State to (Read_Only_State(EditObjId))
+                Move Current_object To OpenDlg
+            End_Object
+
+            Get Show_Dialog of OpenDlg To bOpen
+            If bOpen Begin
+                Get TickReadOnly_State of OpenDlg To bReadOnly
+                Get File_Title of OpenDlg To sFileTitle
+                Get File_Name  of OpenDlg To sFileName
+                Send Read to oEditFile sFileName
+                Move sFileName to gs_OpenFile
+                Set Label to sFileName
+            End
+            Send Destroy_object To OpenDlg
+        End_Procedure
+
+        Procedure DoSelectFonts
+            Integer FontDlg Selected liObjId
+
+            Move oEditFile to liObjId
+            //*** Create a font dialog object
+            Object oFontDialog Is A FontDialog
+              //Set Effects_State To False
+              //Set ANSIOnly_State
+              //Set FixedPitchOnly_State to False
+              //Set FontCharSet
+              //Set FontClipPrecision
+              //Set FontEscapement
+              //Set FontExists_State
+              //Set FontFamily
+              //Set FontOrientation
+              //Set FontOutPrecision
+              //Set FontPitch
+              //Set FontPointSize
+              //Set FontQuality
+              //Set FontRGBColors
+              //Set FontSizeMax
+              //Set FontSizeMin
+              //Set FontStrikeOut_State
+              //Set FontType
+              //Set FontTypes
+              //Set ForceFontExist_State
+              //Set NoFaceSel_State
+              //Set NoOEMFonts_State
+              //Set NoScriptSel_State
+              //Set NoSimulations_State
+              //Set NoSizeSel_State
+              //Set NoStyleSel_State
+              //Set NoVectorFonts_State
+              //Set NoVertFonts_State
+              //Set ScalableOnly_State
+              //Set ScriptsOnly_State
+              //Set SelectScript_State
+              //Set TTOnly_State
+              //Set ShowHelp_State
+              Set FontUnderline to False
+              Set FaceName      to (TypeFace(liObjId))
+              Set FontHeight    to (Hi(FontSize(liObjId)))
+              Set FontWidth     to (Low(FontSize(liObjId)))
+              Set FontWeight    to (FontWeight(liObjId))
+              Set FontItalic    to (FontItalics(liObjId))
+              Set FontUnderline to (FontUnderline(liObjId))
+              Set FontRGBColors to (TextColor(liObjId))
+              Set FontSizeMax   to 30
+              Set FontSizeMin   to 1
+
+              Move Current_object To FontDlg
+            End_object // oFontDialog
+
+            //*** Let the user select a font, if one was selected
+            //*** copy selection to the textbox
+            Get FontDialog Of (oFontDialog(Current_object)) To Selected
+
+            If Selected Begin
+              Set TypeFace      Of liObjId To ;
+                                   (FaceName(FontDlg))
+              Set FontSize      Of liObjId To ;
+                                   (FontHeight(FontDlg)) (FontWidth(FontDlg))
+              Set FontWeight    Of liObjId To ;
+                                   (FontWeight(FontDlg))
+              Set FontItalics   Of liObjId To ;
+                                   (FontItalic(FontDlg))
+              Set FontUnderline Of liObjId To ;
+                                   (FontUnderline(FontDlg))
+
+              Set TextColor     of liObjId To ;
+                                   (FontRGBColors(FontDlg))
+            End
+
+            //*** Destroy the font dialog object
+            Send Destroy_object To FontDlg
+        End_Procedure
+
+        Procedure DoSaveAsFile
+            Integer bSave SaveDlg
+            String sFileTitle sFileName
+
+            Object oSaveFile is a SaveAsDialog
+                Set Filter_String To ;
+                    'Text Files|*.txt|All Files|*.*'
+                Set Filter_Index      To 2
+                //Set Dialog_Caption    To 'Please Give the Package a Name...'
+
+                //Set CreatePrompt_State to True
+                Set File_Title to gs_OpenFile
+
+                Move Current_Object to SaveDlg
+            End_Object
+
+            Get Show_Dialog of SaveDlg To bSave
+            If bSave Begin
+                Get File_Title of SaveDlg To sFileTitle
+                Get File_Name  of SaveDlg To sFileName
+                Move sFileTitle to gs_OpenFile
+            End
+
+            //*** Destroy the Save dialog object
+            Send Destroy_object To SaveDlg
+        End_Procedure
+
+        Procedure DoSaveFile
+        End_Procedure
+
+        Procedure onResize
+            Forward Send onResize
+            Send AutoSizeLocate to (oStatusBar(Self))
+            Set GuiSize of (oButtonBar(Self)) to 10 10 // any size works
+        End_Procedure // onResize
+
+        Procedure Set Label String asLabel
+            If (gs_OpenFile <> "") Move gs_OpenFile to asLabel
+            Forward Set Label to asLabel
+        End_Procedure // Label
+
+
+
+
+
+
+
+
+
+        //AB-StoreEnd
+
+    End_Object    // oEditor
+
+
+    //AB-StoreStart
+
+
+    Start_UI oEditor
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

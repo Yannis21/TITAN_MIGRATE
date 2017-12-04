@@ -1,0 +1,278 @@
+
+        use r30_4.rv
+        use cust.dd
+        use catypes.dd
+        Use caitems.dd
+        use itemprom.dd
+        use caitemsd.dd
+        use witemkat.dd
+        use units.dd
+        use fpa.dd
+        use item.dd
+        use witemx.dd
+        use itemd.dd
+        use clients.dd
+        use witemcl.dd
+        Use COUNTRY.DD
+        Use TOWNS.DD
+        Use CITIES.DD
+        Use PAYRESP.DD
+        Use AREAS.DD
+
+        Object oDotrans is A BusinessProcessSub
+        set Status_panel_state to false
+        set Display_Error_state to true
+
+
+        Object Country_DD is a Country_DataDictionary
+        End_Object    // Country_DD
+
+        Object Towns_DD is a Towns_DataDictionary
+           Set DDO_Server to (Country_DD(self))
+        end_Object    // Towns_DD
+
+        Object Cities_DD is a Cities_DataDictionary
+           Set DDO_Server to (Towns_DD(self))
+        End_Object    // Cities_DD
+
+        Object Payresp_DD is a Payresp_DataDictionary
+        End_Object    // Payresp_DD
+
+        Object Areas_DD is a Areas_DataDictionary
+        End_Object    // Areas_DD
+
+        Object cust_DD is a cust_DataDictionary
+        End_Object
+
+        Object witemcl_DD is a witemcl_DataDictionary
+        End_Object
+
+        Object clients_DD is a clients_DataDictionary
+             Set DDO_Server to (Cities_DD(self))
+             Set DDO_Server to (Payresp_DD(self))
+             Set DDO_Server to (Areas_DD(self))
+           Function Validate_Save  Returns Integer
+               Integer iReturnVal
+               Function_Return 0
+           End_Function
+        End_Object
+
+        Object Witemkat_DD is a Witemkat_DataDictionary
+        End_Object    // Witemkat_DD
+
+        Object Units_DD is a Units_DataDictionary
+        End_Object    // Units_DD
+
+        Object Fpa_DD is a Fpa_DataDictionary
+        End_Object    // Fpa_DD
+
+        Object Item_DD is a Item_DataDictionary
+           Set DDO_Server to (Witemkat_DD(self))
+           Set DDO_Server to (Units_DD(self))
+           Set DDO_Server to (Fpa_DD(self))
+        End_Object    // Item_DD
+
+        Object Witemx_DD is a Witemx_DataDictionary
+           Set DDO_Server to (Item_DD(self))
+           Set Constrain_File to Item.File_Number
+        End_Object    // Witemx_DD
+
+
+        Object Itemd_DD is a Itemd_DataDictionary
+           Set DDO_Server to (Item_DD(self))
+           Set Constrain_File to Item.File_Number
+        End_Object    // Itemd_DD
+
+        Object catypes_DD is a catypes_DataDictionary
+        End_Object
+
+        Object caitems_DD is a caitems_DataDictionary
+               Set ddo_server to (catypes_dd(current_object))
+        End_Object    // Caitems_DD
+
+        Object caitemsd_DD is a caitemsd_DataDictionary
+           Set DDO_Server to (caitems_DD(Current_Object))
+           Set Constrain_File to caitems.File_Number
+           Begin_Constraints
+           End_Constraints
+        End_Object
+
+        Object Itemprom_DD is a Itemprom_DataDictionary
+        End_Object    // Itemprom_DD
+
+       PROCEDURE New_rec
+       SEND DOPROCESS
+END_PROCEDURE
+
+Procedure gr_rec
+        integer imm ifpa
+        string sunits switemkat sitem smm stype sname sanal frmrecnum scode scoded sclient
+        string safm saddr saddrl stel1 stel2 sfax smobile sdoy sarmod snewclient spromcode
+        number naxia nqty
+        date ddate
+        send clear to caitems_dd
+        //*****************************************************
+
+        Send Find   to caitems_DD first_record 1
+        While (found eq 1)
+           get field_current_value of caitems_dd field caitems.caitems_code   to sitem
+           get field_current_value of caitems_dd field caitems.caitems_mm     to imm
+           get field_current_value of caitems_dd field caitems.catypes_code   to stype
+           get field_current_value of caitems_dd field caitems.caitems_fpa    to ifpa
+           if  (imm = 1) move '01' to smm
+           if  (imm = 2) move '02' to smm
+           if  (imm = 3) move '07' to smm
+           if  (imm = 4) move '04' to smm
+           if  (imm = 5) move '05' to smm
+           if  (imm = 6) move '00' to smm
+           if  (imm = 7) move '06' to smm
+           if  (imm = 0) move '07' to smm
+           send clear to item_dd
+           move sitem to item.item_code
+           Send Find   to item_dd eq 5
+           if (found=0) begin
+              send clear to units_Dd
+              move smm to units.units_code
+              send find to units_dd eq 1
+              send clear to witemkat_dd
+              move stype to witemkat.witemkat_code
+              send find to witemkat_dd eq 1
+              if (found=0) begin
+                 get field_current_value of catypes_dd  field catypes.catypes_name to sname
+                 set field_changed_value of witemkat_dd field witemkat.witemkat_code to stype
+                 set field_changed_value of witemkat_dd field witemkat.witemkat_descr to sname
+                 send request_save to witemkat_dd
+              end
+              clear fpa
+              move ifpa to fpa.fpa_pososto
+              send find to fpa_dd eq 1
+              if (found=0) begin
+                 set field_changed_value of fpa_dd field fpa.fpa_pososto to ifpa
+                 send request_save to fpa_dd
+              end
+              get field_current_value of caitems_dd  field caitems.caitems_name to sname
+              get field_current_value of caitems_dd  field caitems.caitems_kind to sanal
+              set field_changed_value of item_dd     field item.item_code       to sitem
+              set field_changed_value of item_dd     field item.item_descr      to sname
+              set field_changed_value of item_dd     field item.item_analysh    to sanal
+              set field_changed_value of item_dd     field item.wapokat_code    to '02'
+              send request_save to item_dd
+              get field_current_value of item_dd  field item.recnum to frmrecnum
+              set value of (frmcount(r30_4(self))) to (string(frmrecnum))
+           end
+              send Rebuild_constraints to caitemsd_dd
+              Send Find  to caitemsd_dd first_record 1
+              While (found eq 1)
+                 get field_current_value of caitemsd_dd  field caitemsd.caitemsd_itcode to scode
+                 get field_current_value of caitemsd_dd  field caitemsd.caitemsd_code to scoded
+                 send clear to itemd_dd
+                 move scode   to itemd.item_code
+                 move scoded  to itemd.itemd_code
+                 send find to itemd_dd eq 1
+                 if (not(found)) begin
+                    set field_changed_value of itemd_dd    field itemd.itemd_code   to scoded
+                    get field_current_value of caitemsd_dd field caitemsd.caitemsd_qty to nqty
+                    set field_changed_value of itemd_dd    field itemd.itemd_qty    to nqty
+                    send request_save to itemd_dd
+                    get field_current_value of itemd_dd  field itemd.recnum to frmrecnum
+                    set value of (frmcount(r30_4(self))) to (string(frmrecnum))
+                 end
+              Send Find   to caitemsd_DD next_record 1
+              loop
+        Send Find   to caitems_DD next_record 1
+        loop
+        //***************************************************** ****************** ok
+ //       send clear to itemprom_dd
+ //       move '' to scode
+ //       Send Find  to itemprom_DD first_record 3
+ //       While (found eq 1)
+ //           send clear to cust_dd
+ //           get field_current_value of itemprom_dd field itemprom.prom_code to sclient
+ //           if (sclient <> scode) begin
+ //              move sclient to scode
+ //              move sclient to cust.cust_code
+ //              send find to cust_dd eq 1
+ //              if (found=1) begin
+ //                 send clear to clients_dd
+
+ //                 get field_current_value of cust_dd  field cust.customer_name to sname
+ //                 get field_current_value of cust_dd  field cust.customer_afm  to safm
+ //                 get field_current_value of cust_dd  field cust.customer_addr to saddr
+ //                 get field_current_value of cust_dd  field cust.customer_tel1 to stel1
+ //                 get field_current_value of cust_dd  field cust.customer_tel2 to stel2
+ //                 get field_current_value of cust_dd  field cust.customer_fax  to sfax
+ //                 get field_current_value of cust_dd  field cust.customer_mobile to smobile
+ //                 get field_current_value of cust_dd  field cust.customer_doy to sdoy
+ //                 get field_current_value of cust_dd  field cust.customer_armod to sarmod
+
+ //                 send clear to payresp_dd
+ //                 move '99.99.9999' to payresp.presp_id
+ //                 send find to payresp_dd eq 7
+
+ //                 set field_changed_value of clients_dd  field clients.client_name to sname
+ //                 set field_changed_value of clients_dd  field clients.client_afm  to safm
+ //                 set field_changed_value of clients_dd  field clients.client_address to saddr
+ //                 move '' to saddrl
+ //                 append saddrl stel1 ' ' stel2
+ //                 set field_changed_value of clients_dd  field clients.client_phone to saddrl
+ //                 set field_changed_value of clients_dd  field clients.client_fax  to sfax
+ //                 set field_changed_value of clients_dd  field clients.client_mobile to smobile
+ //                 set field_changed_value of clients_dd  field clients.client_doy to sdoy
+ //                 set field_changed_value of clients_dd  field clients.client_respons to sarmod
+ //                 set field_changed_value of clients_dd  field clients.is_promhtheyths to '1'
+ //                 send request_save to clients_dd
+ //                 get field_current_value of clients_dd  field clients.recnum to frmrecnum
+ //                 set value of (frmcount(r30_4(self))) to (string(frmrecnum))
+ //              end
+ //              get field_current_value of clients_dd  field clients.client_id to snewclient
+ //           end
+ //        get field_current_value of itemprom_dd  field itemprom.caitems_code to sitem
+ //        get field_current_value of itemprom_dd  field itemprom.prom_itemcode to spromcode
+ //        get field_current_value of itemprom_dd  field itemprom.prom_ldate to ddate
+ //        get field_current_value of itemprom_dd  field itemprom.prom_lprice to naxia
+ //        clear witemcl
+ //        move snewclient to witemcl.client_code
+ //        move sitem   to witemcl.item_code
+ //        find eq witemcl by index.2
+ //        if (not(found)) begin
+ //           move sitem      to witemcl.item_code
+ ///           move snewclient to witemcl.client_code
+ //           move spromcode  to witemcl.client_itemcode
+ //           move ddate      to witemcl.client_date
+ //           move naxia      to witemcl.client_price
+ //           saverecord witemcl
+ //           move witemcl.recnum to frmrecnum
+ //           set value of (frmcount(r30_4(self))) to (string(frmrecnum))
+ //        end
+ //        Send Find  to itemprom_DD next_record 3
+ //        loop
+
+     //    *********  „¤ž£â¨à©ž £œ „å›ž •¨ã©œàª
+         send clear to item_dd
+         send find to item_dd first_record 1
+         While (found eq 1)
+             send clear to witemx_dd
+             get field_current_value of item_dd  field item.item_code to sitem
+             move syscurxr.company_code to witemx.company_code
+             move syscurxr.branch_code  to witemx.branch_code
+             move syscurxr.year_year    to witemx.year_year
+             Move sitem                 to witemx.witemx_code
+             send find to witemx_dd eq 5
+             if (not(found)) begin
+                send request_save to witemx_dd
+                move witemx.recnum to frmrecnum
+                set value of (frmcount(r30_4(self))) to (string(frmrecnum))
+             end
+         send find to item_dd next_record 1
+         loop
+    // End_Transaction
+
+End_Procedure
+
+Procedure OnProcess
+       send gr_rec
+End_Procedure
+
+End_Object
+
+

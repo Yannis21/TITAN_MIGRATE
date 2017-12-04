@@ -1,0 +1,896 @@
+//AB/ Project r91_1:ektyposh prosforon
+//AB/ Object prj is a Report_Project
+//AB/     Set ProjectName to "r91_1:ektyposh prosforon"
+//AB/     Set ProjectFileName to "R91_1.rv"
+
+// Project Object Structure
+//   r91_1 is a ReportView
+//     DestRadio is a RadioGroup
+//       WindowRadio is a Radio
+//     ButtonSub1 is a Button
+//     ButtonSub3 is a ButtonSub
+//     prom1WQLReport is a crystalreportSubSQL
+
+// Register all objects
+Register_Object ButtonSub1
+Register_Object ButtonSub3
+Register_Object DestRadio
+Register_Object prom1WQLReport
+Register_Object r91_1
+Register_Object WindowRadio
+
+
+//AB/ Report View
+
+
+//AB-StoreTopStart
+Use dfallrpt
+//AB-StoreTopEnd
+
+//AB-IgnoreStart
+
+Use DFAllEnt.pkg
+Use Button.Sub
+
+//AB-IgnoreEnd
+
+ACTIVATE_VIEW Activate_r91_1 FOR r91_1
+
+Object r91_1 is a ReportView
+
+    //AB-StoreTopStart
+    property number          pnypoprosf  public 0
+    //AB-StoreTopEnd
+
+    Set Label to "ts.ektyposh_paraggelias_promhtheyth"
+    Set Size to 48 191
+    Set Location to 10 165
+
+    //AB-DDOStart
+
+
+    //AB-DDOEnd
+
+    Object DestRadio is a RadioGroup
+
+        //AB-StoreTopStart
+
+        //AB-StoreTopEnd
+
+        Set Label to "tz.ektyposh"
+        Set Size to 29 49
+        Set Location to 2 1
+        Object WindowRadio is a Radio
+            Set Size to 13 30
+            Set Location to 12 12
+            Set Bitmap to "screen4.bmp"
+        End_Object    // WindowRadio
+
+
+        //AB-StoreStart
+        set visible_state of (destradio(self)) to false
+        //***
+        //*** Procedure: Notify_Select_state
+        //*** Purpose  : Augemented to setup the output destination of the WinQL
+        //***            report. The procedure is sent when the user changes the
+        //***            selection.
+        //***
+
+        //Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+        //    Forward Send Notify_Select_State  iNewItem  iOldItem
+        //    If iNewItem Eq 0 ;
+                Set Output_Device_Mode To WQL_PRINT_TO_WINDOW
+        //    Else If iNewItem Eq 1;
+        //        Set Output_Device_Mode To WQL_PRINT_TO_PRINTER
+        //    Else If iNewItem Eq 2 ;
+        //        Set Output_Device_Mode To WQL_PRINT_TO_FILE
+
+
+        //    Send AdjustFileTypeShadow (iNewItem < 2)
+        //End_Procedure
+
+
+
+
+        //AB-StoreEnd
+
+    End_Object    // DestRadio
+
+    Object ButtonSub1 is a Button
+
+        //AB-StoreTopStart
+
+        //AB-StoreTopEnd
+
+        Set Bitmap to "RUNPROG.BMP"
+        Set Size to 18 29
+        Set Location to 6 55
+
+        //AB-StoreStart
+        Procedure OnClick
+           Send Runprom1report To (prom1WQLReport(Current_Object))
+        End_Procedure
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub1
+
+    Object ButtonSub3 is a ButtonSub
+
+        //AB-StoreTopStart
+
+        //AB-StoreTopEnd
+
+        Set Bitmap to "CANCEL.BMP"
+        Set Size to 18 29
+        Set Location to 6 89
+
+        //AB-StoreStart
+        Procedure OnClick
+            Send Request_Cancel
+        End_Procedure
+
+
+
+
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub3
+
+
+    //AB-StoreStart
+    Object prom1WQLReport Is A crystalreportSubSQL
+         Property Integer ReportReady Public False
+         Set Report_View_id To (Parent(Current_object))
+         set Report_name    To "r91_1.rpt"
+         Procedure OnStartPrinting
+         Local String  Selection FileName lsdate sitem spay
+         local number  nypoprosf npelates ncn
+         Local Integer FileType Destination SortOrder NumSortFields CurSortField
+         Local Integer SortDirection ifrom datefrom istadio
+         Move "" To Selection
+         move 'PAY_TERMS' to spay
+         get pnypoprosf to nypoprosf
+         Append Selection (If(Selection <> "", " and ", "")) "{CODEMAST.TYPE} = "  '"' (spay) '"'
+         Append Selection (If(Selection <> "", " and ", "")) "{ypoprosf.aa_ypoprosf} = "  '' (nypoprosf) ''
+          //*** Setup the selection formula
+
+
+         Set SelectionFormula To Selection
+
+    //     Get NSortFields To NumSortFields
+    //     For CurSortField From 0 To (NumSortFields - 1)
+    //     Send DeleteNthSortField 0
+    //     Loop
+
+         set GroupField PE_GROUPHEADER to "{ypoprosf.aa_ypoprosf}"
+
+            //*** Change the formula so the report reflects the selection. Remove
+            //*** quotes from the formula.
+            If Selection Eq "" ;
+                Set Formula "SelTxt" To ('"' + "NONE" + '"')
+            Else ;
+                Set Formula "SelTxt" To ('"' + (Replaces('"', Selection, "")) + '"')
+
+            move WQL_PRINT_TO_WINDOW to destination
+            If Destination EQ WQL_PRINT_TO_WINDOW ;
+                Set ReportReady To False
+            Else ;
+                Set ReportReady To True
+
+
+        End_procedure // OnStartPrinting
+
+
+        Procedure Runprom1Report
+            //*** We will be busy, change the cursor
+            Send Cursor_Wait To (Cursor_Control(Current_Object))
+            //*** Run the report
+            Send Run_report
+
+            //*** We are ready, change the cursor
+            Send Cursor_Ready To (Cursor_Control(Current_Object))
+
+            //*** Report you are finsihed for those seetings that do not use the
+            //*** screen
+            If (ReportReady(Current_object)) ;
+                Send Info_box "WinQL report ready."
+        End_procedure // RunCustReport
+
+    End_object // serviceWQLReport
+
+
+    //***
+    //*** Function: Startservice
+    //*** Purpose : The start customer name
+    //***
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //AB-StoreEnd
+
+End_Object    // r91_1
+
+
+//AB-StoreStart
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+//AB-StoreEnd
+
+//AB/ End_Object    // prj

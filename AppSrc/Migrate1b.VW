@@ -42,6 +42,10 @@
 //     chkZeroes is a CheckBoxSub
 //     chkStars is a CheckBoxSub
 //     chkBlanks is a CheckBoxSub
+//     frmCreateDate is a cSyDateForm
+//     TextBoxSub19 is a TextBoxSub
+//     frmOfeilh is a FormSub
+//     TextBoxSub20 is a TextBoxSub
 //     Rpt1_Report is a CrystalReportSubSQL
 //     RepMakeYpolErga is a CrystalReportSubSQL
 
@@ -65,7 +69,9 @@ Register_Object chkStars
 Register_Object chkZeroes
 Register_Object EnarxhErgouApo
 Register_Object EnarxhSkyrApo
+Register_Object frmCreateDate
 Register_Object frmFileName
+Register_Object frmOfeilh
 Register_Object frmYpoloipo
 Register_Object Migrate1b
 Register_Object Payresp_DD
@@ -81,6 +87,8 @@ Register_Object TextBoxSub13
 Register_Object TextBoxSub15
 Register_Object TextBoxSub17
 Register_Object TextBoxSub18
+Register_Object TextBoxSub19
+Register_Object TextBoxSub20
 Register_Object TextBoxSub4
 Register_Object TextBoxSub6
 Register_Object TextBoxSub8
@@ -91,7 +99,7 @@ Register_Object Towns_DD
 
 
 //AB-StoreTopStart
-
+        
 Open tmplg
 Open tmpPagia
 Open Cmoves
@@ -139,7 +147,9 @@ ACTIVATE_VIEW Activate_Migrate1b FOR Migrate1b
 Object Migrate1b is a dbViewSubs
 
     //AB-StoreTopStart
-        
+                
+    Open rptmp
+    
     //Object MyExcel is a Excel
     //    procedure End_construct_object
     //        forward send End_construct_object
@@ -158,7 +168,7 @@ Object Migrate1b is a dbViewSubs
     //AB-StoreTopEnd
 
     Set Label to "Ñ•òö‡ö„ Ñöö®ò≠È§"
-    Set Size to 382 422
+    Set Size to 382 421
     Set Location to 7 12
 
     //AB-DDOStart
@@ -193,14 +203,14 @@ Object Migrate1b is a dbViewSubs
 
     Object frmYpoloipo is a FormSub
         Set Size to 13 66
-        Set Location to 57 9
+        Set Location to 55 9
         Set Label_Col_Offset to 2
         Set Form_TypeFace Item 0 to "MS Sans Serif"
     End_Object    // frmYpoloipo
 
     Object TeleytaiaKinhshApo is a cSyDateForm
         Set Size to 13 66
-        Set Location to 57 95
+        Set Location to 55 95
         Set Label_Col_Offset to 2
         Set Label_Justification_Mode to jMode_Right
         Set Form_Mask Item 0 to "dd/MM/yyyy"
@@ -244,7 +254,7 @@ Object Migrate1b is a dbViewSubs
     Object ButtonSub1 is a ButtonSub
 
         //AB-StoreTopStart
-        
+                            
         //AB-StoreTopEnd
 
         Set Label to "ãò®°·®†©£ò Ñöö®ò≠È§"
@@ -255,7 +265,7 @@ Object Migrate1b is a dbViewSubs
         Set Form_TypeFace Item 0 to "MS Sans Serif"
 
         //AB-StoreStart
-        
+                            
         Set Label to 'ãò®°·®†©£ò Ñöö®ò≠È§ èú¢ò´È§'
         
         Procedure OnClick
@@ -264,13 +274,16 @@ Object Migrate1b is a dbViewSubs
             Integer iCheckAFM iChkNines iChkZeroes iChkBlanks iChkStars
             Integer i1 i2 i3 i4 i5 iCheckClients iCheckErga iCheckPresp
             Date    dApo0001 dEos0001 dEnarxhApo dEnarxhEos dSkyrodApo dSkyrodEos
-            Number  nYpoloipo
+            Date    dCreateDate
+            Number  nYpoloipo nOfeilh
         
             Get Label   to sLabel
             Move ""     to sTxt
         
             Get Value Of frmYpoloipo        Item 0 to nYpoloipo
             Get Value Of TeleytaiaKinhshApo Item 0 to dApo0001
+            Get Value Of frmOfeilh          Item 0 to nOfeilh
+            Get Value Of frmCreateDate      Item 0 to dCreateDate
         
             Get Checked_State Of chkAFM to iCheckAFM
         
@@ -290,14 +303,40 @@ Object Migrate1b is a dbViewSubs
             While (Found)
                 Add 1 to iInt
         
-                Integer isGood
+                Number NewOfeilhFromAging
+                Clear rptmp
+                Move "01"               to rptmp.Company_Code
+                Move ""                 to rptmp.Branch_Code
+                Move Clients.Client_ID  to rptmp.ID1
+                Move "5"                to rptmp.Seira
+                Find Eq rptmp By Index.1
+        
+                Move rptmp.Mhnas_Trex        to NewOfeilhFromAging
+                //If (Found) Move rptmp.Mhnas_Trex        to NewOfeilhFromAging
+                //Else       Move Clients.Synolikh_Ofeilh to NewOfeilhFromAging
+        
+                Integer isGood isYpoloipoOK isOfeilhOK
                 Move 1 to isGood
         
                 Move ("èú¢·´û™ "+String(iInt)+' òßÊ '+String(iFS)+"...  úß†¢‚öû©ò§ "+String(iCounter)+" Ñöö®ò≠‚™" ) to sTxt
                 Move (Trim(sTxt)) to sTxt
                 Set Label to sTxt
         
-                If ((nYpoloipo<>0) And (Clients.Ypoloipo < nYpoloipo)) Move 0 to isGood
+                If (nYpoloipo<>0) Begin
+                    If      (Clients.Ypoloipo <  0)         Move 1 to isYpoloipoOK
+                    Else If (Clients.Ypoloipo < nYpoloipo)  Move 0 to isYpoloipoOK
+                    Else                                    Move 1 to isYpoloipoOK
+                End
+                Else                                        Move 1 to isYpoloipoOK
+        
+                If (nOfeilh<>0) Begin
+                    If      (NewOfeilhFromAging <  0)      Move 1 to isOfeilhOK
+                    Else If (NewOfeilhFromAging < nOfeilh) Move 0 to isOfeilhOK
+                    Else                                   Move 1 to isOfeilhOK
+                End
+                Else                                       Move 1 to isOfeilhOK
+        
+                If ((isYpoloipoOK=0) And (isOfeilhOK=0)) Move 0 to isGood
         
                 If ((dApo0001<>"") And (isGood=1)) Begin
                     Clear Cmoves
@@ -318,6 +357,10 @@ Object Migrate1b is a dbViewSubs
                             (Clients.Client_ID=Cmoves.Client_ID) And ;
                             (Cmoves.Cmoves_Hmnia<=dEos0001))) Move 0 to isGood
                 End
+        
+        
+                If ( (dCreateDate<>"") And (Clients.Client_Hmnia<dCreateDate)) Move 0 to isGood
+        
         
                 Get Checked_State Of chkNines   to iChkNines
                 Get Checked_State Of chkZeroes  to iChkZeroes
@@ -454,6 +497,11 @@ Object Migrate1b is a dbViewSubs
         
         
         
+        
+        
+        
+        
+        
         //AB-StoreEnd
 
     End_Object    // ButtonSub1
@@ -461,7 +509,7 @@ Object Migrate1b is a dbViewSubs
     Object ButtonSub3 is a ButtonSub
 
         //AB-StoreTopStart
-                                                                                                            
+                                                                                                                                                                                    
         //AB-StoreTopEnd
 
         Set Label to "çú£ò®°·®†©£ò Ó¢‡§ ´‡§ úöö®ò≠È§"
@@ -471,7 +519,7 @@ Object Migrate1b is a dbViewSubs
         Set Form_TypeFace Item 0 to "MS Sans Serif"
 
         //AB-StoreStart
-                                                                                                            
+                                                                                                                                                                                    
         Set Label to 'çú£ò®°·®†©£ò Ó¢‡§ ´‡§ úöö®ò≠È§ èú¢ò´È§'
         
         Procedure OnClick
@@ -505,7 +553,7 @@ Object Migrate1b is a dbViewSubs
                 Move (Trim(sTxt)) to sTxt
                 Set Label to sTxt
         
-                If ((nYpoloipo<>0) And (Clients.Ypoloipo < nYpoloipo)) Move 0 to isGood
+                If ((nYpoloipo<>0) And (Clients.Ypoloipo = 0)) Move 0 to isGood
         
                 If ((dApo0001<>"") And (isGood=1)) Begin
                     Clear Cmoves
@@ -633,7 +681,7 @@ Object Migrate1b is a dbViewSubs
     Object ButtonSub7 is a ButtonSub
 
         //AB-StoreTopStart
-                        
+                                                                
         //AB-StoreTopEnd
 
         Set Label to "ìß¶¢Êöû©ú ìßÊ¢¶†ßò °ò† ã·®°ò®ú Î®öò"
@@ -643,7 +691,7 @@ Object Migrate1b is a dbViewSubs
         Set Form_TypeFace Item 0 to "MS Sans Serif"
 
         //AB-StoreStart
-                        
+                                                                
         Procedure OnClick
             Integer isChecked iFS iCount
             String sCode sLabel sMess sName
@@ -684,6 +732,15 @@ Object Migrate1b is a dbViewSubs
                         Move 1  to CN.ExportFlag
                         Sysdate    CN.ExportDate
                         Saverecord CN
+        
+                        Clear Clients
+                        Move CN.Client_ID to Clients.Client_ID
+                        Find Eq Clients By Index.6
+                        If (Found) Begin
+                            Move 1  to Clients.ExportFlag
+                            Sysdate    Clients.ExportDate
+                            Saverecord Clients
+                        End
         
                         Clear Constrct
                         Move CN.CN_Cnt_ID to Constrct.Cnt_ID
@@ -737,6 +794,7 @@ Object Migrate1b is a dbViewSubs
         
         
         
+        
         //AB-StoreEnd
 
     End_Object    // ButtonSub7
@@ -744,7 +802,7 @@ Object Migrate1b is a dbViewSubs
     Object ButtonSub8 is a ButtonSub
 
         //AB-StoreTopStart
-                        
+                                                                                                
         //AB-StoreTopEnd
 
         Set Label to "çú£·®°ò®ú Î®öò £ú ìßÊ¢¶†ßò"
@@ -754,7 +812,7 @@ Object Migrate1b is a dbViewSubs
         Set Form_TypeFace Item 0 to "MS Sans Serif"
 
         //AB-StoreStart
-                        
+                                                                                                
         Procedure OnClick
             Integer isChecked iFS iCount
             String sCode sLabel sMess sName
@@ -856,7 +914,7 @@ Object Migrate1b is a dbViewSubs
     Object frmFileName is a FormSub
 
         //AB-StoreTopStart
-                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                                                
         //AB-StoreTopEnd
 
         Set Size to 13 187
@@ -867,7 +925,7 @@ Object Migrate1b is a dbViewSubs
         Set Value Item 0 to "C:\TitanMig\ExcCust.csv"
 
         //AB-StoreStart
-                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                                                
         Procedure Prompt
             Boolean bSave
             String sFileTitle sFileName
@@ -886,7 +944,7 @@ Object Migrate1b is a dbViewSubs
     Object ButtonSub5 is a ButtonSub
 
         //AB-StoreTopStart
-                
+                                                                        
         Property String psNotFoundClientDhmos Public ""
         Property String psNotFoundClientNomos Public ""
         Property String psNotFoundClientDrast Public ""
@@ -952,7 +1010,7 @@ Object Migrate1b is a dbViewSubs
         Set Form_TypeFace Item 0 to "MS Sans Serif"
 
         //AB-StoreStart
-                
+                                                                        
         Procedure OnClick
             String sFilename sLabel
             Integer bIsCreated
@@ -1063,6 +1121,18 @@ Object Migrate1b is a dbViewSubs
                 End
             End
         
+        
+            // Find if Client and Presp have same AFM to skip presp
+            String sAFM1 sAFM2
+            Move (Check_AFM(Clients.Client_Afm)) to sAFM1
+            Clear Payresp
+            Move Clients.Presp_ID to Payresp.Presp_ID
+            Find Eq Payresp By Index.7
+            Move (Check_AFM(Payresp.Presp_Afm)) to sAFM2
+            Integer iSkipPresp
+            Move (Trim(sAFM1)=Trim(sAFM2)) to iSkipPresp
+        
+        
             //---
             Write   Channel 9   '"'
             Write   Channel 9   'Y001'
@@ -1073,10 +1143,14 @@ Object Migrate1b is a dbViewSubs
             Write   Channel 9   '"'
             Write   Channel 9   sDeli // End of Excel Column C  èò¢ò†Ê™ °Á®†¶™ °‡õ†°Ê™ ßú¢·´û SAP
             Write   Channel 9   sDeli // End of Excel Column D  ë¨£ß¢û®È§ú´ò† ö†ò ´¶¨™ Ship - to
-            Write   Channel 9   '"'
-            Write   Channel 9   (Trim(Clients.Presp_ID))
-            Write   Channel 9   '"'
+        
+            If (iSkipPresp=1) Begin
+                Write   Channel 9   '"'
+                Write   Channel 9   (Trim(Clients.Presp_ID))
+                Write   Channel 9   '"'
+            End
             Write   Channel 9   sDeli // End of Excel Column E  ëú ßú®Âß´‡©û ß¶¨ ¶ ß¢û®‡´„™ õ†ò≠‚®ú† òßÊ ´¶§ Operational Customer, ©´¶§ Operational ¶®Âùú´ò† ¶ ß¢û®‡´„™
+        
             Move (Trim(Clients.Presp_ID)) to sPrespID
             Write   Channel 9   sDeli // End of Excel Column F  ëú ßú®Âß´‡©û ß¶¨ ¶ ß¢û®‡´„™ õ†ò≠‚®ú† òßÊ ´¶§ Operational Customer, ©´¶§ Operational ¶®Âùú´ò† ¶ ß¢û®‡´„™
             Write   Channel 9   sDeli // End of Excel Column G  ëú ßú®Âß´‡©û ß¶¨ ¶ ß¢û®‡´„™ õ†ò≠‚®ú† òßÊ ´¶§ Operational Customer, ©´¶§ Operational ¶®Âùú´ò† ¶ ß¢û®‡´„™
@@ -2378,6 +2452,7 @@ Object Migrate1b is a dbViewSubs
         
         
         
+        
         //AB-StoreEnd
 
     End_Object    // ButtonSub5
@@ -2385,7 +2460,7 @@ Object Migrate1b is a dbViewSubs
     Object ButtonSub6 is a ButtonSub
 
         //AB-StoreTopStart
-                                                                                                                                
+                                                                                                                                                                                                        
         //AB-StoreTopEnd
 
         Set Label to "Zerofile and Rebuild MINOMOS-MIDHMOS-MIDRAST"
@@ -2395,7 +2470,7 @@ Object Migrate1b is a dbViewSubs
         Set Form_TypeFace Item 0 to "MS Sans Serif"
 
         //AB-StoreStart
-                                                                                                                                
+                                                                                                                                                                                                        
         Set Visible_State to False
         Set Enabled_State to False
         
@@ -2580,9 +2655,41 @@ Object Migrate1b is a dbViewSubs
         Set Checked_State to TRUE
     End_Object    // chkBlanks
 
+    Object frmCreateDate is a cSyDateForm
+        Set Size to 13 66
+        Set Location to 80 95
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+        Set Form_Mask Item 0 to "dd/MM/yyyy"
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+    End_Object    // frmCreateDate
+
+    Object TextBoxSub19 is a TextBoxSub
+        Set Label to "é≠ú†¢„  > òß¶"
+        Set Auto_Size_State to FALSE
+        Set Location to 69 9
+        Set Size to 10 59
+        Set TypeFace to "MS Sans Serif"
+    End_Object    // TextBoxSub19
+
+    Object frmOfeilh is a FormSub
+        Set Size to 13 66
+        Set Location to 80 9
+        Set Label_Col_Offset to 2
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+    End_Object    // frmOfeilh
+
+    Object TextBoxSub20 is a TextBoxSub
+        Set Label to "Ä§¶†ö£‚§¶™ ãú´· ´û§"
+        Set Auto_Size_State to FALSE
+        Set Location to 69 94
+        Set Size to 10 73
+        Set TypeFace to "MS Sans Serif"
+    End_Object    // TextBoxSub20
+
 
     //AB-StoreStart
-        
+                
     Procedure Activate_View Returns Integer
         Integer rVal
         Forward Get MSG_Activate_View to rVal
@@ -2837,29 +2944,30 @@ Object Migrate1b is a dbViewSubs
     
     
     
+    
     //AB-StoreEnd
 
 End_Object    // Migrate1b
 
 
 //AB-StoreStart
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 //AB-StoreEnd
 
 //AB/ End_Object    // prj

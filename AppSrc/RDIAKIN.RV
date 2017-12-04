@@ -1,0 +1,343 @@
+//AB/ Project rdiakin:aytomates endodiakiniseis
+//AB/ Object prj is a Report_Project
+//AB/     Set ProjectName to "rdiakin:aytomates endodiakiniseis"
+//AB/     Set ProjectFileName to "rdiakin.RV"
+
+// Project Object Structure
+//   Rdiakin is a ReportViewSub
+//     ButtonSub3 is a ButtonSub
+//     ButtonSub4 is a ButtonSub
+//     rdiakin_BasicReport is a BasicReport
+//       Wcmoves_DD is a Wcmoves_DataDictionary
+//       particle_DD is a particle_DataDictionary
+//       Witemxtr_DD is a Witemxtr_DataDictionary
+//       Witemxtd_DD is a Witemxtd_DataDictionary
+//       sysrecw_DD is a sysrecw_DataDictionary
+
+// Register all objects
+Register_Object ButtonSub3
+Register_Object ButtonSub4
+Register_Object particle_DD
+Register_Object Rdiakin
+Register_Object rdiakin_BasicReport
+Register_Object sysrecw_DD
+Register_Object Wcmoves_DD
+Register_Object Witemxtd_DD
+Register_Object Witemxtr_DD
+
+
+//AB/ Report View
+
+
+//AB-StoreTopStart
+Use dfallrpt.pkg
+Use wcmoves.dd
+Use witemxtr.dd
+use witemxtd.dd
+USE SYSCURXR.DD
+Open Syscurxr
+open sysfile
+use sysrecw.dd
+use particle.dd
+open pmoves
+//AB-StoreTopEnd
+
+//AB-IgnoreStart
+
+Use Rptvw.Sub
+Use Button.Sub
+
+//AB-IgnoreEnd
+
+ACTIVATE_VIEW Activate_Rdiakin FOR Rdiakin
+
+Object Rdiakin is a ReportViewSub
+
+    //AB-StoreTopStart
+    
+    Property Integer Sort_IndexRlog     Public 1
+    property number  pnqty              public 0
+    property string  psrecr             public ''
+    property string  psmodule           public ''
+    property date    pddate             public ''
+    property string  pspar              public ''
+    
+    //AB-StoreTopEnd
+
+    Set Label to "„¤›¦› ˜¡ ¤ã©œ ª"
+    Set Size to 39 186
+    Set Location to 1 23
+    Set Color to 16744448
+
+    //AB-DDOStart
+
+
+    //AB-DDOEnd
+
+    Object ButtonSub3 is a ButtonSub
+
+        //AB-StoreTopStart
+                                                                                                                                                                                                
+        //AB-StoreTopEnd
+
+        Set Bitmap to "RUNPROG.BMP"
+        Set Size to 18 27
+        Set Location to 3 119
+        Set Border_Style to Border_StaticEdge
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+                                                                                                                                                                                                
+        Procedure OnClick
+        
+        End_Procedure
+        
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub3
+
+    Object ButtonSub4 is a ButtonSub
+
+        //AB-StoreTopStart
+                                                                                                                                                                                                
+        //AB-StoreTopEnd
+
+        Set Bitmap to "CANCEL.BMP"
+        Set Size to 18 27
+        Set Location to 3 153
+        Set Border_Style to Border_StaticEdge
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+        Procedure OnClick
+            Send Request_Cancel
+        End_Procedure
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub4
+
+
+    //AB-StoreStart
+    
+    set output_device_name to none
+    
+    Procedure StartReport
+        Local Integer iOutputDevice
+        Local String  FileName
+        SEND RUN_REPORT
+    End_Procedure   // StartReport
+    
+    
+    Object rdiakin_BasicReport is a BasicReport
+    
+        Set Report_Title to "„¤ž£â¨à©ž ž£œ¨ž©åà¤ ¡ ¤ã©œà¤                   "
+        Set Report_Caption to "„¤ž£â¨à©ž ž£œ¨ž©åà¤ ¡ ¤ã©œà¤ "
+    
+        Set Status_Panel_State  to true
+        Set Display_Error_State to True
+    
+        Object Wcmoves_DD is a Wcmoves_DataDictionary
+            Begin_constraints
+                date ddate
+                get  pddate to ddate
+                Constrain wcmoves.company_code eq syscurxr.company_code
+                Constrain wcmoves.branch_code  eq syscurxr.branch_code
+                Constrain wcmoves.year_year    eq syscurxr.year_year
+                Constrain wcmoves.module_from  eq '01'
+                Constrain wcmoves.wcmove_hmnia eq ddate
+            End_constraints
+        End_Object    // Wcmoves_DD
+    
+        Object particle_DD is a particle_DataDictionary
+        End_Object    // particle_DD
+    
+        Object Witemxtr_DD is a Witemxtr_DataDictionary
+        End_Object    // Witemxt_DD
+    
+        Object Witemxtd_DD is a Witemxtd_DataDictionary
+            Set DDO_Server to (Witemxtr_DD(self))
+            Set Constrain_File to Witemxtr.File_Number
+        End_Object    // Btnordd_DD
+    
+        Object sysrecw_DD is a sysrecw_DataDictionary
+        End_Object    // Witemxt_DD
+    
+        Set Server To (wcmoves_dd(Self))
+    
+        //Breaks and Index for the report
+        Report_Index By Index.8
+        Report_breaks wcmoves.company_code wcmoves.branch_code wcmoves.year_year;
+                      wcmoves.module_from  wcmoves.wcmove_hmnia wcmoves.wax_recr;
+                      wcmoves.witemx_code  wcmoves.wcmove_open wcmoves.texnikh
+    
+        Function Starting_Main_Report Returns Integer
+          Integer iIndexRlog
+          Local Integer iRetVal
+          Forward Get Starting_Main_Report to iRetval
+          send rebuild_constraints to wcmoves_dd
+          Send Find to (wcmoves_dd(self)) First_Record 8
+        End_Function
+    
+        Procedure_Section subheader1
+        End_Procedure
+    
+        Procedure_Section subheader2
+        End_Procedure
+    
+        Procedure_Section subheader3
+        End_Procedure
+    
+        Procedure_Section subheader4
+        End_Procedure
+    
+        Procedure_Section subheader5
+        End_Procedure
+    
+        Procedure_Section subheader6
+        End_Procedure
+    
+        Procedure_Section subheader7
+        End_Procedure
+    
+        Procedure_Section subheader8
+       //     set pnqty to 0
+        End_Procedure
+    
+        Procedure_Section subheader9
+            set pnqty to 0
+        End_Procedure
+    
+        Procedure_Section  Body
+            string spar srecr
+            number nqty
+            get pspar to spar
+            get pnqty to nqty
+            if (sysfile.wapokat_etoima = wcmoves.wapokat_code) begin
+                clear particle
+                move wcmoves.particle_recr to particle.partl_recr
+                find eq particle by index.2
+                if (particle.ptyppar_code = spar) begin
+                    clear pmoves
+                    move wcmoves.partl_recr to pmoves.pms_recr
+                    find eq pmoves by index.2
+                    if (pmoves.pms_status_e=1);
+                        goto prosperase
+                    else;
+                        add wcmoves.wcmove_qty to nqty
+                end
+                set pnqty to nqty
+            end
+            prosperase:
+            send update_status ('Ešš¨˜­ã ' + string(wcmoves.witemx_code))
+        End_Procedure
+    
+        Procedure_Section subTOTAL9
+            string srecr
+            date ddate
+            number nqty
+            get psrecr to srecr
+            get pddate to ddate
+            get pnqty to nqty
+            clear witemxtd
+            clear witemxtr
+            reread
+            move (sysrecw.witemxtd_rec0 + 1) to sysrecw.witemxtd_rec0
+            saverecord sysrecw
+            move sysrecw.witemxtd_rec0 to witemxtd.rec0
+            Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                              (Trim(String(Witemxtd.Rec0)))))) to Witemxtd.Recr
+            move srecr to witemxtd.witemxtr_recr
+            move wcmoves.witemx_code to witemxtd.witemx_code
+            move nqty to witemxtd.qty_from
+            move wcmoves.wcmove_recr to witemxtd.wcmoves_recr
+            move wcmoves.wax_recr to witemxtd.wax_from
+            move wcmoves.wax_recr to witemxtd.wax_to
+            move wcmoves.wcmove_open to witemxtd.fpa_from
+            MOVE wcmoves.texnikh  to witemxtd.texnikh
+            if (nqty<>0) saverecord witemxtd
+            clear witemxtr
+            move srecr to witemxtr.recr
+            find eq witemxtr by index.2
+            if (found=1 and nqty <> 0) begin
+               add nqty to witemxtr.qty
+               saverecord witemxtr
+            end
+            unlock
+    
+        End_Procedure
+    
+        Procedure_Section subtotal8
+        End_Procedure
+    
+        Procedure_Section subtotal7
+        End_Procedure
+    
+        Procedure_Section subtotal6
+        End_Procedure
+    
+        Procedure_Section subtotal5
+        End_Procedure
+    
+        Procedure_Section subtotal4
+        End_Procedure
+    
+        Procedure_Section subtotal3
+        End_Procedure
+    
+        Procedure_Section subtotal2
+        End_Procedure
+    
+        Procedure_Section subtotal1
+        End_Procedure
+    
+       Procedure Ending_Report
+            set pnqty       to 0
+       End_Procedure
+    
+    End_Object
+    
+    
+    
+    //AB-StoreEnd
+
+End_Object    // Rdiakin
+
+
+//AB-StoreStart
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//AB-StoreEnd
+
+//AB/ End_Object    // prj

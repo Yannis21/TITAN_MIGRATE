@@ -1,0 +1,677 @@
+//AB/ Project R36old:ektyposh barticl
+//AB/     Object prj is a Report_Project
+//AB/         Set ProjectName to "R36old:ektyposh barticl"
+//AB/         Set ProjectFileName to "r36old.RV"
+
+// Project Object Structure
+//   r36old is a ReportView
+//     DestRadio is a RadioGroup
+//       WindowRadio is a Radio
+//       PrinterRadio is a Radio
+//     ButtonSub3 is a ButtonSub
+//     ButtonSub4 is a ButtonSub
+//     AXIO_BasicReport is a BasicReport
+//       Btypkin_DD is a Btypkin_DataDictionary
+//       Baxiokat_DD is a Baxiokat_DataDictionary
+//       Barticl_DD is a Barticl_DataDictionary
+//       Bsum_DD is a Bsum_DataDictionary
+//       Baxio_DD is a Baxio_DataDictionary
+//       Syscurxr_DD is a Syscurxr_DataDictionary
+//       Clients_DD is a Clients_DataDictionary
+//       Bmove_DD is a Bmove_DataDictionary
+
+// Register all objects
+Register_Object AXIO_BasicReport
+Register_Object Barticl_DD
+Register_Object Baxio_DD
+Register_Object Baxiokat_DD
+Register_Object Bmove_DD
+Register_Object Bsum_DD
+Register_Object Btypkin_DD
+Register_Object ButtonSub3
+Register_Object ButtonSub4
+Register_Object Clients_DD
+Register_Object DestRadio
+Register_Object PrinterRadio
+Register_Object r36old
+Register_Object Syscurxr_DD
+Register_Object WindowRadio
+
+
+//AB/     Report View
+
+
+    //AB-StoreTopStart
+                                                            
+    Use dfallrpt.pkg
+    use btypkin.dd
+    use baxiokat.dd
+    Use barticl.dd
+    use bsum.dd
+    use baxio.dd
+    use syscurxr.dd
+    use clients.dd
+    use bmove.dd
+    Use rvi36.pkg
+    open codemast
+    open company
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use DFAllEnt.pkg
+    Use Button.Sub
+
+    //AB-IgnoreEnd
+
+    ACTIVATE_VIEW Activate_r36old FOR r36old
+
+    Object r36old is a ReportView
+
+        //AB-StoreTopStart
+                
+        Property Integer Sort_Indexaxio   Public 1
+        Property string  psrecr           public ''
+        property integer piaa             public 0
+        //AB-StoreTopEnd
+
+        Set Label to "„¡«ç§à©ž Bmoves"
+        Set Size to 64 186
+        Set Location to 1 7
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object DestRadio is a RadioGroup
+
+            //AB-StoreTopStart
+                                    
+            //AB-StoreTopEnd
+
+            Set Label to "„¡«ç§à©ž"
+            Set Size to 42 49
+            Set Location to 2 1
+            Object WindowRadio is a Radio
+                Set Size to 13 30
+                Set Location to 12 12
+                Set Bitmap to "screen4.bmp"
+            End_Object    // WindowRadio
+
+            Object PrinterRadio is a Radio
+                Set Size to 10 31
+                Set Location to 30 12
+                Set Bitmap to "PRINT_M1.BMP"
+            End_Object    // PrinterRadio
+
+
+            //AB-StoreStart
+            Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+                Forward Send Notify_Select_State  iNewItem  iOldItem
+                If iNewItem EQ 0 Set Output_Device_Mode  To PRINT_TO_WINDOW
+              //  Set Output_Device_Mode  To PRINT_TO_WINDOW
+            End_Procedure
+            
+            
+            
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // DestRadio
+
+        Object ButtonSub3 is a ButtonSub
+
+            //AB-StoreTopStart
+                                                                                                                                                                                                                                                                        
+            //AB-StoreTopEnd
+
+            Set Bitmap to "RUNPROG.BMP"
+            Set Size to 18 27
+            Set Location to 6 59
+
+            //AB-StoreStart
+            Procedure OnClick
+            
+            
+            End_Procedure
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub3
+
+        Object ButtonSub4 is a ButtonSub
+
+            //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                        
+            //AB-StoreTopEnd
+
+            Set Bitmap to "CANCEL.BMP"
+            Set Size to 18 27
+            Set Location to 28 58
+
+            //AB-StoreStart
+            Procedure OnClick
+                Send Request_Cancel
+            End_Procedure
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub4
+
+
+        //AB-StoreStart
+                
+        //Selection Variables
+        
+        //HELP-VARIABLES
+        
+        Procedure StartReport
+        
+            Local Integer iOutputDevice
+            Local String  FileName
+            local integer inew_state
+            Get Output_Device_Mode To iOutputDevice
+            If iOutputDevice EQ 0 Begin
+               Make_Temp_File "TXT" FileName
+               Move (".\" - FileName)  To FileName
+               Set Output_Device_Name  To FileName
+              // set piprinter to 1
+            End
+            Else ;
+            Set Output_Device_Name  To "Lpt1:"
+        
+            SEND RUN_REPORT
+        
+         //   If iOutputDevice EQ 1 Begin
+         //      RunProgram background "notepad" FileName
+         //      EraseFile FileName
+          //  End
+        
+        End_Procedure   // StartReport
+        
+        
+        Object AXIO_BasicReport is a BasicReport
+        
+           Set Report_Title to "„¡«ç§à©ž €¥ ¦š¨á­à¤       "
+        
+           Object Btypkin_DD is a Btypkin_DataDictionary
+           End_Object    // Btypkin_DD
+        
+           Object Baxiokat_DD is a Baxiokat_DataDictionary
+           End_Object    // Baxiokat_DD
+        
+           Object Barticl_DD is a Barticl_DataDictionary
+              Set DDO_Server to (Btypkin_DD(self))
+           End_Object    // Barticl_DD
+        
+           Object Bsum_DD is a Bsum_DataDictionary
+              Set DDO_Server to (Barticl_DD(self))
+              Set Constrain_File to Barticl.File_Number
+           End_Object    // Bsum_DD
+        
+           Object Baxio_DD is a Baxio_DataDictionary
+              Set DDO_Server to (Baxiokat_DD(self))
+           End_Object    // Baxio_DD
+        
+           Object Syscurxr_DD is a Syscurxr_DataDictionary
+           End_Object    // Syscurxr_DD
+        
+            Object Clients_DD is a Clients_DataDictionary
+        
+            End_Object    // Clients_DD
+        
+        
+            Object Bmove_DD is a Bmove_DataDictionary
+                Set DDO_Server to (Barticl_DD(self))
+                Set DDO_Server to (Baxio_DD(self))
+                Set Constrain_File to Barticl.File_Number
+                begin_constraints
+                    constrain bmove.barticl_recr eq (psrecr(self))
+                end_constraints
+            End_Object    // Bmove_DD
+        
+        
+        
+        
+            //Main DD for the report
+            Set Server To (bmove_dd(Current_Object))
+        
+            //Breaks and Index for the report
+            Report_Index By Index.1
+            Function Starting_Main_Report Returns Integer
+              Integer iIndexaxio
+              Local Integer iRetVal
+              set page_feed to 66
+              set page_end to 60
+              set piaa to 0
+              Forward Get Starting_Main_Report to iRetval
+              send rebuild_constraints to bmove_dd
+              Send Find to (bmove_dd(self)) First_Record 1
+              Get Sort_Indexaxio  To iIndexaxio
+              Report_Index BY iIndexaxio
+           End_Function
+        
+           Procedure_Section Page_Top as HeaderR36
+               date ddate
+               sysdate4 ddate
+               clear company
+               move barticl.company_code  to company.company_code
+               find eq company by index.1
+               print company.company_name to headerr36.1
+               print ddate                to headerr36.2
+               clear codemast
+               move 'JOB' to codemast.type
+               move company.company_j_code to codemast.code
+               find eq codemast by index.1
+               move codemast.description   to headerr36.3
+               move barticl.barticl_no      to headerr36.4
+               move company.company_addr   to headerr36.5
+               move company.company_tk     to headerr36.6
+               move company.company_poli   to headerr36.7
+               move company.company_afm    to headerr36.8
+               clear codemast
+               move 'DOY' to codemast.type
+               move company.company_doy    to codemast.code
+               find eq codemast by index.1
+               move codemast.description   to headerr36.9
+               move btypkin.btypkin_descr  to headerr36.10
+               OutPut_PageCheck
+           End_Procedure
+        
+           Procedure_Section  Body as BodyR36
+              number iaa
+              get piaa                      to iaa
+              add 1                         to iaa
+              set piaa                      to iaa
+              print iaa                     to bodyr36.1
+              print baxiokat.baxiokat_descr to bodyr36.2
+              Print baxio.baxio_no          to bodyr36.3
+              clear codemast
+              move 'BANK' to codemast.type
+              move baxio.baxio_banka to codemast.code
+              find eq codemast by index.1
+              move baxio.baxio_epon_in    to bodyr36.4
+              move codemast.description   to bodyr36.5
+              move baxio.baxio_hmnial     to bodyr36.6
+              move baxio.baxio_c_code2    to bodyr36.7
+              print baxio.baxio_v2        to bodyr36.8
+              move baxio.baxio_epon_out   to bodyr36.9
+              add bodyr36.8               to totalr36.1
+              OutPut_PageCheck
+           End_Procedure
+        
+           PROCEDURE_SECTION TOTAL AS TOTALR36
+             // Subtotal BodyR36.8      TO totalr36.1
+              print totalr36.1
+              print company.company_name to totalr36.2
+              print barticl.sxolia1      to totalr36.3
+              print barticl.sxolia2      to totalr36.4
+              output_pagecheck
+           END_PROCEDURE
+        
+           Procedure Ending_Report
+             Blankform BodyR36.1      Thru BodyR36.9
+           End_Procedure
+        
+        End_Object
+        
+        
+        Procedure Activate_View Returns Integer
+            Local Integer Rval
+            Forward Get MSG_Activate_View to Rval
+        End_Procedure
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // r36old
+
+
+    //AB-StoreStart
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

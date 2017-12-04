@@ -1,0 +1,515 @@
+//AB/ Project R056:Gplan
+//AB/ Object prj is a Report_Project
+//AB/     Set ProjectName to "R056:Gplan"
+//AB/     Set ProjectFileName to "R056.rv"
+
+// Project Object Structure
+//   R056 is a ReportViewSub
+//     Syscurgl_DD is a DataDictionary
+//     GroupSub1 is a GroupSub
+//       frmGplan_Code_From is a FormSub
+//       frmGplan_Code_Eos is a FormSub
+//       TextBoxSub1 is a TextBoxSub
+//       TextBoxSub2 is a TextBoxSub
+//     RadioGroupSub1 is a RadioGroupSub
+//       RadioSub1 is a RadioSub
+//       RadioSub2 is a RadioSub
+//       RadioSub5 is a RadioSub
+//       frmFile is a FormSub
+//     RadioGroupSub2 is a RadioGroupSub
+//       RadioSub3 is a RadioSub
+//       RadioSub4 is a RadioSub
+//     oPrint_bn is a ButtonSub
+//     oExit_bn is a ButtonSub
+//     oClear_bn is a ButtonSub
+//     dbGroupSub1 is a dbGroupSub
+//       Syscurgl_Company_Name is a dbFormSub
+//       Syscurgl_Branch_Name is a dbFormSub
+//       Syscurgl_Year_Year is a dbFormSub
+//     Gplan_BasicReport is a BasicReportSub
+
+// Register all objects
+Register_Object dbGroupSub1
+Register_Object frmFile
+Register_Object frmGplan_Code_Eos
+Register_Object frmGplan_Code_From
+Register_Object Gplan_BasicReport
+Register_Object GroupSub1
+Register_Object oClear_bn
+Register_Object oExit_bn
+Register_Object oPrint_bn
+Register_Object R056
+Register_Object RadioGroupSub1
+Register_Object RadioGroupSub2
+Register_Object RadioSub1
+Register_Object RadioSub2
+Register_Object RadioSub3
+Register_Object RadioSub4
+Register_Object RadioSub5
+Register_Object Syscurgl_Branch_Name
+Register_Object Syscurgl_Company_Name
+Register_Object Syscurgl_DD
+Register_Object Syscurgl_Year_Year
+Register_Object TextBoxSub1
+Register_Object TextBoxSub2
+
+
+//AB/ Report View
+
+
+//AB-StoreTopStart
+Use DFAllRpt.pkg
+Use BasicRpt.Sub
+
+Use Gplan.DD
+
+Use Imagerpt.pkg
+//AB-StoreTopEnd
+
+//AB-IgnoreStart
+
+Use Rptvw.Sub
+Use DFAllEnt.pkg
+Use Group.Sub
+Use Form.Sub
+Use Txtbox.Sub
+Use Rgroup.Sub
+Use Radio.Sub
+Use Button.Sub
+Use dbGroup.Sub
+Use dbForm.Sub
+
+Use SysCurGL.dd
+
+//AB-IgnoreEnd
+
+DEFERRED_VIEW Activate_R056 FOR ;
+;
+Object R056 is a ReportViewSub
+
+    //AB-StoreTopStart
+    Property Integer Sort_Index  Public 1
+    
+    //AB-StoreTopEnd
+
+    Set Label to "Ñ°´Áß‡©û ä¶ö†©´†°¶Á ëÆúõÂ¶¨"
+    Set Size to 180 322
+    Set Location to 15 15
+
+    //AB-DDOStart
+
+    Object Syscurgl_DD is a SysCurGL_DataDictionary
+    End_Object    // Syscurgl_DD
+
+
+    //AB-DDOEnd
+
+    Object GroupSub1 is a GroupSub
+        Set Label to "Ñß†¢¶ö„ ä¶öò®†ò©£È§"
+        Set Size to 46 310
+        Set Location to 29 4
+        Object frmGplan_Code_From is a FormSub
+            Set Size to 13 211
+            Set Location to 10 60
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Prompt_Button_Mode to pb_PromptOn
+
+            //AB-StoreStart
+            Set Prompt_Object to (Sl150(Current_object))
+            
+            // this is called by the prompt list upon initialization. This will let us
+            // set special properties for the list's one time use. In this case we
+            // want the intial column and the export column to be name (col 1)
+            Procedure Prompt_Callback integer hPrompt
+                set Export_Column of hPrompt to 0
+                Set Initial_Column of hPrompt to 0
+            end_procedure
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // frmGplan_Code_From
+
+        Object frmGplan_Code_Eos is a FormSub
+            Set Size to 13 211
+            Set Location to 27 60
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Prompt_Button_Mode to pb_PromptOn
+
+            //AB-StoreStart
+            Set Prompt_Object to (Sl150(Current_object))
+            
+            // this is called by the prompt list upon initialization. This will let us
+            // set special properties for the list's one time use. In this case we
+            // want the intial column and the export column to be name (col 1)
+            Procedure Prompt_Callback integer hPrompt
+                set Export_Column of hPrompt to 0
+                Set Initial_Column of hPrompt to 0
+            end_procedure
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // frmGplan_Code_Eos
+
+        Object TextBoxSub1 is a TextBoxSub
+            Set Label to "ÄßÊ â‡õ†°Ê :"
+            Set Auto_Size_State to FALSE
+            Set FontSize to 4 0
+            Set Location to 12 8
+            Set Size to 10 47
+            Set Enabled_State to TRUE
+        End_Object    // TextBoxSub1
+
+        Object TextBoxSub2 is a TextBoxSub
+            Set Label to "Ñ‡™ â‡õ†°Ê :"
+            Set Auto_Size_State to FALSE
+            Set FontSize to 4 0
+            Set Location to 28 8
+            Set Size to 10 47
+            Set Enabled_State to TRUE
+        End_Object    // TextBoxSub2
+
+    End_Object    // GroupSub1
+
+    Object RadioGroupSub1 is a RadioGroupSub
+        Set Label to "Ñ°´Áß‡©û "
+        Set Size to 30 310
+        Set Location to 77 4
+        Object RadioSub1 is a RadioSub
+            Set Label to "éüÊ§û"
+            Set Size to 10 37
+            Set Location to 13 6
+        End_Object    // RadioSub1
+
+        Object RadioSub2 is a RadioSub
+            Set Label to "Ñ°´¨ß‡´„™"
+            Set Size to 10 49
+            Set Location to 13 53
+        End_Object    // RadioSub2
+
+        Object RadioSub5 is a RadioSub
+            Set Label to "Ä®ÆúÂ¶"
+            Set Size to 10 38
+            Set Location to 13 114
+            Set Auto_Size_State to FALSE
+        End_Object    // RadioSub5
+
+        Object frmFile is a FormSub
+            Set Size to 13 141
+            Set Location to 12 158
+            Set Color to clBtnFace
+            Set Label_Col_Offset to 2
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+                                                                                    
+            //AB-StoreEnd
+
+        End_Object    // frmFile
+
+
+        //AB-StoreStart
+        Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+            Forward Send Notify_Select_State  iNewItem  iOldItem
+            If iNewItem EQ 0     Set Output_Device_Mode  To PRINT_TO_WINDOW
+            Else If iNewItem EQ 1   Set Output_Device_Mode  To PRINT_TO_PRINTER
+            Else If iNewItem EQ 2   Set Output_Device_Mode  To PRINT_TO_FILE
+            Set Enabled_State of frmFile to (iNewItem = 2)
+        End_Procedure
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // RadioGroupSub1
+
+    Object RadioGroupSub2 is a RadioGroupSub
+        Set Label to "íò•†§Ê£û©û £ú "
+        Set Size to 28 310
+        Set Location to 109 4
+        Object RadioSub3 is a RadioSub
+            Set Label to "â‡õ†°Ê ä¶öò®†ò©£¶Á"
+            Set Size to 10 95
+            Set Location to 12 9
+        End_Object    // RadioSub3
+
+        Object RadioSub4 is a RadioSub
+            Set Label to "é§¶£ò©Âò  ä¶öò®†ò©£¶Á"
+            Set Size to 10 95
+            Set Location to 12 112
+        End_Object    // RadioSub4
+
+
+        //AB-StoreStart
+        Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+            Forward Send Notify_Select_State  iNewItem  iOldItem
+            Set Sort_Index  To (iNewItem + 1)
+        End_Procedure
+        
+        Set Visible_State to False
+        Set Enabled_State to False
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // RadioGroupSub2
+
+    Object oPrint_bn is a ButtonSub
+        Set Label to "Ñ°´‚¢ú©û (F2)"
+        Set Size to 18 53
+        Set Location to 142 203
+
+        //AB-StoreStart
+        Procedure OnClick
+            Send StartReport
+        End_Procedure
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // oPrint_bn
+
+    Object oExit_bn is a ButtonSub
+        Set Label to "Ñ•¶õ¶™ (Esc)"
+        Set Size to 18 53
+        Set Location to 143 261
+
+        //AB-StoreStart
+        Procedure OnClick
+            Send Request_Cancel
+        End_Procedure
+        
+        //AB-StoreEnd
+
+    End_Object    // oExit_bn
+
+    Object oClear_bn is a ButtonSub
+        Set Label to "Ä°Á®‡©û (F5)"
+        Set Size to 18 53
+        Set Location to 143 3
+        Set Focus_Mode to Pointer_Only
+
+        //AB-StoreStart
+                                                        
+        Set MDI_Container to (R056(Self))
+        
+        Procedure OnClick
+            Delegate Send Request_Clear
+            Forward Send OnClick
+        End_Procedure // OnClick
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // oClear_bn
+
+    Object dbGroupSub1 is a dbGroupSub
+        Set Size to 28 310
+        Set Location to -2 4
+        Object Syscurgl_Company_Name is a dbFormSub
+            Entry_Item Syscurgl.Company_name
+            Set Server to (Syscurgl_DD(self))
+            Set Label to "Ñ´ò†®"
+            Set Size to 13 81
+            Set Location to 9 27
+            Set Color to clBtnFace
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+        End_Object    // Syscurgl_Company_Name
+
+        Object Syscurgl_Branch_Name is a dbFormSub
+            Entry_Item Syscurgl.Branch_name
+            Set Server to (Syscurgl_DD(self))
+            Set Label to "ìß¶°ò´"
+            Set Size to 13 106
+            Set Location to 9 140
+            Set Color to clBtnFace
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+        End_Object    // Syscurgl_Branch_Name
+
+        Object Syscurgl_Year_Year is a dbFormSub
+            Entry_Item Syscurgl.Year_year
+            Set Server to (Syscurgl_DD(self))
+            Set Label to "ï®„©û"
+            Set Size to 13 32
+            Set Location to 9 275
+            Set Color to clBtnFace
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+        End_Object    // Syscurgl_Year_Year
+
+    End_Object    // dbGroupSub1
+
+
+    //AB-StoreStart
+    Property String psGplanCode_From ""
+    Property String psGplanCode_Eos  ""
+    
+    Procedure StartReport
+        Integer iOutputDevice
+        String  FileName
+        String lsFromCode lsToCode
+        Integer liRptId
+    
+        Get Output_Device_Mode To iOutputDevice
+    
+        If iOutputDevice EQ PRINT_TO_WINDOW Begin
+           Make_Temp_File "TXT" FileName
+           Move (".\" - FileName)  To FileName
+           Set Output_Device_Name  To FileName
+        End
+    
+        Else If iOutputDevice EQ PRINT_TO_PRINTER ;
+           Set Output_Device_Name  To "lpt1:" //  "WinLst:"
+        Else If iOutputDevice EQ PRINT_TO_FILE Begin
+           Get Value of (frmFile(RadioGroupSub1(Self))) to FileName
+           If (FileName = "") Begin
+               Make_Temp_File "TXT" FileName
+               Move (".\" - FileName)  To FileName
+           End
+           Set Output_Device_Name  To FileName
+        End
+    
+       Get value of (frmGplan_Code_From(GroupSub1(Self))) item 0 to lsFromCode
+       Set psGplanCode_From to lsFromCode
+       Get value of (frmGplan_Code_Eos(GroupSub1(Self)))  item 0 to lsToCode
+       Set psGplanCode_Eos  to lsToCode
+    
+       Get Report_Object_Id to liRptId
+       If (liRptId) Send Rebuild_Constraints to liRptId
+    
+       Send Run_Report
+    
+        If iOutputDevice EQ PRINT_TO_WINDOW Begin
+        //   Send DoRunEditor FileName
+           RunProgram background "NOTEPAD" FileName
+           //Send Info_Box "í‚¢¶™ õ†òõ†°ò©Âò™." "è¢û®¶≠¶®Âò"
+           EraseFile FileName
+        End
+    End_Procedure   // StartReport
+    
+    
+    Object Gplan_BasicReport is a BasicReportSub
+    
+       Report_Main_File Gplan
+       Set report_view_id to (Parent(Self))
+       Set report_caption to "É†òõ†°ò©Âò ©ú ú•‚¢†•û"
+       Set Report_Title to "Ñ°´Áß‡©û ¢¶ö†©´†°¶Á ©ÆúõÂ¶¨"
+    
+       Procedure Constrain
+            String lsFromCode lsToCode
+    
+            Get psGplanCode_From to lsFromCode
+            Get psGplanCode_Eos  to lsToCode
+    
+            Constrain Gplan.Company_Code eq gs_Selected_Company_Code
+            Constrain Gplan.Branch_Code  eq gs_Selected_Branch_Code
+            Constrain Gplan.Year_Year    eq gi_Selected_Year
+            If (lsFromCode <> "") Constrain Gplan.Gplan_Code   ge lsFromCode
+            If (lsToCode <> "")   Constrain Gplan.Gplan_Code   le lsToCode
+            Forward Send Constrain
+       End_Procedure // Constrain
+    
+    
+       Function Starting_Main_Report Returns Integer
+          Integer iRetVal
+          Integer iIndex liRepPanelId
+          Forward Get Starting_Main_Report to iRetval
+          Get Sort_Index  To iIndex
+          Report_Index BY iIndex    // set the sort order
+          Blankform Footer.1         // set date for report
+          Sysdate4 Header.1 Header.2 Header.3
+          Get Report_Status_Panel to liRepPanelId
+          Set Button_Text of liRepPanelId to "Ä°Á®‡©û"
+          Function_Return iRetVal
+       End_Function
+    
+       Procedure_Section Page_Top as Header
+          Integer iPage
+          Get Page_Count  To iPage
+          Print iPage to Header.4
+          print Company.Company_Name     to Header.5
+          print Branch.Branch_Name       to Header.6
+          print Year.Year_Descr          to Header.7
+          OutPut_PageCheck
+       End_Procedure
+    
+       Procedure_Section Body as Body
+         String lsLast
+         //Send Update_Status_Page
+         Send Update_Status ("Ñöö®ò≠‚™: " + Gplan.Gplan_Code)
+    
+         Print Gplan.Gplan_Code //toansi
+         Print Gplan.Gplan_Descr1
+         Print Gplan.Gplan_Anoep
+         if Gplan.Gplan_Yn_Last eq 1 move "*" to lsLast
+    
+         Print lsLast
+         //else print ""
+    
+         OutPut_PageCheck
+       End_Procedure
+    
+       Procedure_Section Page_Bottom as Footer
+         OutPut_PageCheck
+       End_Procedure
+    
+       Procedure Ending_Report
+           Integer rVal
+    
+           // Ñßò§ò≠¶®· ´‡§ Buffers
+       End_Procedure
+    
+    End_Object
+    
+    //Set Verify_Exit_Msg To Get_No_Confirmation
+    
+    Procedure Request_Clear
+        Set Value of (frmGplan_Code_From(GroupSub1(Self))) Item 0 to ""
+        Set Value of (frmGplan_Code_Eos(GroupSub1(Self)))  Item 0 to ""
+        Set Current_Radio of RadioGroupSub2 to 0
+        Send Activate to (frmGplan_Code_From(GroupSub1(Self)))
+    End_Procedure // Request_Clear
+    
+    //Set Verify_Exit_Msg To Get_No_Confirmation
+    On_Key kSave_Record Send KeyAction to oPrint_bn
+    On_Key kCancel      Send KeyAction to oExit_bn
+    On_Key kClear       Send Request_Clear
+    
+    
+    
+    
+    
+    
+    
+    //AB-StoreEnd
+
+CD_End_Object    // R056
+
+
+//AB-StoreStart
+
+
+
+//AB-StoreEnd
+
+//AB/ End_Object    // prj

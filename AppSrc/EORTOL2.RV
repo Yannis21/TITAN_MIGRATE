@@ -1,0 +1,481 @@
+//AB/ Project Eortol2n
+//AB/ Object prj is a REPORT_Project
+//AB/     Set ProjectName to "Eortol2n"
+//AB/     Set ProjectFileName to "eortol2.rv"
+
+// Project Object Structure
+//   eortol2_rpt is a ReportView
+//     Textbox1 is a Textbox
+//     Textbox2 is a Textbox
+//     Textbox3 is a Textbox
+//     oOnoma_Hmeromhnia is a RadioGroup
+//       rOnoma is a Radio
+//       rHmnia is a Radio
+//     oPrintTo is a RadioGroup
+//       oRadio1 is a Radio
+//       oRadio2 is a Radio
+//     Form1 is a Form
+//     Form2 is a Form
+//     Form3 is a Form
+//     Form4 is a Form
+//     oBtnPrint is a Button
+//     oBtnCancel is a Button
+//     ComboFormSub1 is a ComboFormSub
+//     ComboFormSub2 is a ComboFormSub
+//     eortol2_Report is a CrystalReportSub
+//     Etiket_Report is a CrystalReportSub
+
+// Register all objects
+Register_Object ComboFormSub1
+Register_Object ComboFormSub2
+Register_Object Etiket_Report
+Register_Object eortol2_Report
+Register_Object eortol2_rpt
+Register_Object Form1
+Register_Object Form2
+Register_Object Form3
+Register_Object Form4
+Register_Object oBtnCancel
+Register_Object oBtnPrint
+Register_Object oOnoma_Hmeromhnia
+Register_Object oPrintTo
+Register_Object oRadio1
+Register_Object oRadio2
+Register_Object rHmnia
+Register_Object rOnoma
+Register_Object Textbox1
+Register_Object Textbox2
+Register_Object Textbox3
+
+
+//AB/ Report View
+
+
+//AB-StoreTopStart
+
+Use DFAllRpt.pkg
+
+Open Eortolog
+
+//AB-StoreTopEnd
+
+//AB-IgnoreStart
+
+
+
+//AB-IgnoreEnd
+
+DEFERRED_VIEW Activate_eortol2_rpt FOR ;
+;
+Object eortol2_rpt is a ReportView
+
+    //AB-StoreTopStart
+
+    //AB-StoreTopEnd
+
+    Set Label to "Ñ¶®´¶¢Êö†¶"
+    Set Size to 191 253
+    Set Location to 7 9
+
+    //AB-DDOStart
+
+
+    //AB-DDOEnd
+
+    Object Textbox1 is a Textbox
+        Set Label to "é§¶£ò"
+        Set FontSize to 4 0
+        Set Size to 10 24
+        Set Location to 57 31
+    End_Object    // Textbox1
+
+    Object Textbox2 is a Textbox
+        Set Label to "Ü£‚®ò"
+        Set FontSize to 4 0
+        Set Size to 10 25
+        Set Location to 57 30
+    End_Object    // Textbox2
+
+    Object Textbox3 is a Textbox
+        Set Label to "ã„§ò™"
+        Set FontSize to 4 0
+        Set Size to 10 23
+        Set Location to 57 86
+    End_Object    // Textbox3
+
+    Object oOnoma_Hmeromhnia is a RadioGroup
+
+        //AB-StoreTopStart
+
+        //AB-StoreTopEnd
+
+        Set Label to "Ñß†¢¶ö„ ò§òù„´û©û™"
+        Set Size to 38 105
+        Set Location to 7 13
+        Set Current_Radio to 0
+        Object rOnoma is a Radio
+            Set Label to "Å·©û é§Ê£ò´¶™"
+            Set Size to 10 77
+            Set Location to 12 6
+        End_Object    // rOnoma
+
+        Object rHmnia is a Radio
+            Set Label to "Å·©û Ü£ú®¶£û§Âò™"
+            Set Size to 10 81
+            Set Location to 24 6
+            Set Status_Help to "Prints the report to printer"
+        End_Object    // rHmnia
+
+
+        //AB-StoreStart
+        Procedure Notify_Select_State integer NewId integer OldId
+            local integer rval
+              If NewId eq 0;
+                        begin
+                                set visible_state of (form2(current_object)) to false
+                                set visible_state of (form3(current_object)) to false
+                                set visible_state of (form4(current_object)) to false
+                                set visible_state of (textbox2(current_object)) to false
+                                set visible_state of (textbox3(current_object)) to false
+                                set visible_state of (textbox1(current_object)) to true
+                                set visible_state of (form1(current_object)) to true
+                        end
+              else  begin
+                                set visible_state of (form2(current_object)) to true
+                                set visible_state of (form3(current_object)) to true
+                                set visible_state of (form4(current_object)) to true
+                                set visible_state of (textbox2(current_object)) to true
+                                set visible_state of (textbox3(current_object)) to true
+                                set visible_state of (textbox1(current_object)) to false
+                                set visible_state of (form1(current_object)) to false
+                        end
+         end_procedure
+
+        //AB-StoreEnd
+
+    End_Object    // oOnoma_Hmeromhnia
+
+    Object oPrintTo is a RadioGroup
+        Set Label to "í®Êß¶™ ú°´Áß‡©û™"
+        Set Size to 38 105
+        Set Location to 7 133
+        Set Current_Radio to 0
+        Object oRadio1 is a Radio
+            Set Label to "éüÊ§û"
+            Set Size to 10 42
+            Set Location to 12 6
+        End_Object    // oRadio1
+
+        Object oRadio2 is a Radio
+            Set Label to "Ñ°´¨ß‡´„"
+            Set Size to 10 46
+            Set Location to 24 6
+        End_Object    // oRadio2
+
+    End_Object    // oPrintTo
+
+    Object Form1 is a Form
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+        Set Size to 13 75
+        Set Location to 57 59
+    End_Object    // Form1
+
+    Object Form2 is a Form
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+        Set Size to 13 19
+        Set Location to 57 58
+    End_Object    // Form2
+
+    Object Form3 is a Form
+
+        //AB-StoreTopStart
+        function  mhnas_olografos integer minas# returns string
+              local string lektiko_tou_mhna
+              if minas# eq  1 move "àò§¶¨ò®Â¶¨"     to lektiko_tou_mhna
+              if minas# eq  2 move "îúô®¶¨ò®Â¶¨"  to lektiko_tou_mhna
+              if minas# eq  3 move "Mò®´Â¶¨"        to lektiko_tou_mhna
+              if minas# eq  4 move "Aß®†¢Â¶¨"       to lektiko_tou_mhna
+              if minas# eq  5 move "Mò‰¶¨"           to lektiko_tou_mhna
+              if minas# eq  6 move "I¶¨§Â¶¨"           to lektiko_tou_mhna
+              if minas# eq  7 move "I¶¨¢Â¶¨"          to lektiko_tou_mhna
+              if minas# eq  8 move "A¨ö¶Á©´¶¨"      to lektiko_tou_mhna
+              if minas# eq  9 move "ëúß´ú£ô®Â¶¨"  to lektiko_tou_mhna
+              if minas# eq 10 move "é°´‡ô®Â¶¨"     to lektiko_tou_mhna
+              if minas# eq 11 move "å¶ú£ô®Â¶¨"       to lektiko_tou_mhna
+              if minas# eq 12 move "Éú°ú£ô®Â¶¨"   to lektiko_tou_mhna
+              function_return lektiko_tou_mhna
+        end_function
+
+        //AB-StoreTopEnd
+
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+        Set Size to 13 19
+        Set Location to 57 112
+
+        //AB-StoreStart
+        procedure onchange
+            local integer mhn#
+            get value of (form3(current_object)) item 0 to mhn#
+            if ((mhn# ge 1) and (mhn# le 12));
+                set value of  (form4(current_object)) item 0 to (mhnas_olografos(current_object,mhn#))
+        end_procedure
+
+        //AB-StoreEnd
+
+    End_Object    // Form3
+
+    Object Form4 is a Form
+
+        //AB-StoreTopStart
+
+
+
+
+        //AB-StoreTopEnd
+
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+        Set Size to 13 72
+        Set Location to 57 136
+
+        //AB-StoreStart
+        Set enabled_state to false
+
+
+
+        //AB-StoreEnd
+
+    End_Object    // Form4
+
+    Object oBtnPrint is a Button
+        Set Default_State to TRUE
+        Set Label to "Ñ°´Áß‡©û"
+        Set Size to 14 51
+        Set Location to 152 47
+
+        //AB-StoreStart
+        Procedure OnClick
+            Send StartReport
+        End_Procedure
+        //AB-StoreEnd
+
+    End_Object    // oBtnPrint
+
+    Object oBtnCancel is a Button
+        Set Label to "Ä°Á®‡©û"
+        Set Status_Help to "Ñß†©´®¶≠„"
+        Set Location to 152 150
+
+        //AB-StoreStart
+        Procedure OnClick
+            Send Close_Panel
+        End_Procedure
+        //AB-StoreEnd
+
+    End_Object    // oBtnCancel
+
+    Object ComboFormSub1 is a ComboFormSub
+
+        //AB-StoreTopStart
+
+        Set Entry_State item 0 to False
+        Set Default_Combo_Item to 0
+
+        //AB-StoreTopEnd
+
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+        Set Size to 14 129
+        Set Location to 90 64
+
+        //AB-StoreStart
+        procedure combo_fill_list
+           send combo_add_item "é¢¶†"
+           send combo_add_item "àõ†¶°´„´ú™"
+           send combo_add_item "Äö¶®ò©´‚™"
+           send combo_add_item "ä¶†ß¶Â"
+        End_procedure
+
+        //AB-StoreEnd
+
+    End_Object    // ComboFormSub1
+
+    Object ComboFormSub2 is a ComboFormSub
+
+        //AB-StoreTopStart
+
+        Set Entry_State item 0 to False
+        Set Default_Combo_Item to 0
+
+        //AB-StoreTopEnd
+
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+        Set Size to 14 129
+        Set Location to 110 64
+
+        //AB-StoreStart
+        procedure combo_fill_list
+           send combo_add_item "Ñ´†°‚´ú™"
+           send combo_add_item "Ñ¶®´¶¢Êö†¶"
+        End_procedure
+
+        //AB-StoreEnd
+
+    End_Object    // ComboFormSub2
+
+
+    //AB-StoreStart
+    // Procedures and functions used by the user interface
+
+    //This function is called by the procedure StartReport
+
+    Function Print_to_Screen_State Returns Integer
+            Function_Return (Current_radio(oPrintTo(Current_Object)))
+    End_Function
+
+    Function Current_Combo Returns String
+            Function_Return (Value(ComboFormSub1(Self),0))
+    End_Function
+
+    Function Current_Combo2 Returns String
+            Function_Return (Value(ComboFormSub2(Self),0))
+    End_Function
+
+
+    Function Sort_By Returns Integer
+            Function_Return (Current_Radio(oOnoma_Hmeromhnia(Current_Object)))
+    End_Function
+
+
+    Procedure StartReport
+        local integer toscreen  SortBy iDay iMonth iDayStop iMonthStop
+        local string sName sNameStop ComboChoice ComboChoice2
+
+        string epilegmenes_eggrafes
+
+        Get Current_Combo   to ComboChoice
+        Trim ComboChoice    to ComboChoice
+        Get Current_Combo2  to ComboChoice2
+        Trim ComboChoice2   to ComboChoice2
+        Indicate Etiketes   as (ComboChoice2 eq "Ñ´†°‚´ú™")
+        Indicate oloi       as (ComboChoice eq "é¢¶†")
+        Indicate Idio       as (ComboChoice eq "àõ†¶°´„´ú™")
+        Indicate Agor       as (ComboChoice eq "Äö¶®ò©´‚™")
+        Indicate Loip       as (ComboChoice eq "ä¶†ß¶Â")
+
+        Get Print_to_Screen_State to ToScreen
+        get Sort_By                             to SortBy
+
+        If ToScreen eq 0;
+            Set OutPut_Device_Mode to PRINT_TO_WINDOW
+        Else ;
+            Set OutPut_Device_Mode to PRINT_TO_PRINTER
+
+        if sortby eq 0;
+          begin
+           get value of (form1(current_object)) to sName
+
+           trim sName to sName
+
+           if sName eq '' move (character(254)) to sNameStop
+           else move sname to snamestop
+
+           move '' to epilegmenes_eggrafes
+           append  epilegmenes_eggrafes "["
+           clear eortolog
+           move sName to eortolog.onoma
+           find gt eortolog by index.1 // ¶§¶£ò+recnum
+           while ((found eq 1) and (eortolog.onoma le sNameStop))
+                Indicate mas_kanei false
+                     If (Oloi eq 1) indicate mas_kanei true
+                Else If (Idio eq 1) indicate mas_kanei as (eortolog.agoridio eq '1')
+                Else If (Agor eq 1) indicate mas_kanei as (eortolog.agoridio eq '2')
+                Else If (Loip eq 1) indicate mas_kanei as (eortolog.agoridio eq '3')
+                [Mas_Kanei] append epilegmenes_eggrafes eortolog.recnum ","
+                find gt eortolog by index.1 // ¶§¶£ò+recnum
+           end
+          end
+        else begin
+                    get value of (form2(current_object)) to iDay
+                    get value of (form3(current_object)) to iMonth
+                    if ((iDay eq 0) or (iMonth eq 0));
+                          begin
+                              move 31 to iDayStop
+                              move 12 to iMonthStop
+                         end
+                   else begin
+                                 move iDay to iDayStop
+                                move iMonth to iMonthStop
+                             end
+                   move '' to epilegmenes_eggrafes
+                   append  epilegmenes_eggrafes "["
+                   clear eortolog
+                   move iDay  to eortolog.mera
+                   move iMonth to eortolog.mhnas
+                   find gt eortolog by index.2 // mhnas_mera+recnum
+                   while ((found eq 1) and (eortolog.mhnas le iMonthStop))
+                       if ((eortolog.mera ge iDay) and (eortolog.mera le iDayStop));
+                          begin
+                                Indicate mas_kanei false
+                                If (Oloi eq 1) indicate mas_kanei true
+                                Else If (Idio eq 1) indicate mas_kanei as (eortolog.agoridio eq '1')
+                                Else If (Agor eq 1) indicate mas_kanei as (eortolog.agoridio eq '2')
+                                Else If (Loip eq 1) indicate mas_kanei as (eortolog.agoridio eq '3')
+                                [Mas_Kanei] append epilegmenes_eggrafes eortolog.recnum ","
+                           end
+                           find gt eortolog by index.2 // mhnas_mera+recnum
+                    end
+                 end
+           trim epilegmenes_eggrafes to epilegmenes_eggrafes
+           move (left(epilegmenes_eggrafes,(length(epilegmenes_eggrafes)-1))) to epilegmenes_eggrafes
+           append  epilegmenes_eggrafes "]"
+           trim epilegmenes_eggrafes to epilegmenes_eggrafes
+          If (Etiketes eq 1)    Send Run_Report to (Etiket_Report(Self))
+          Else                  Send run_report to (eortol2_Report(current_object))
+
+    End_Procedure
+
+    Object eortol2_Report is a CrystalReportSub
+        Set Report_Name to "Eortol2.rpt"
+//        Procedure OnInitializeReport
+//            local string selection
+//            Forward Send OnInitializeReport
+//            append selection "{eortolog.recnum} in "
+//            if (right(epilegmenes_eggrafes,2)) eq ",]" ;
+//                Begin
+//                        move (left(epilegmenes_eggrafes,(length(epilegmenes_eggrafes)-2))) to epilegmenes_eggrafes
+//                        append  epilegmenes_eggrafes "]"
+//                End
+//            append selection (Trim(epilegmenes_eggrafes))
+//            trim selection to selection
+//            Set SelectionFormula To Selection
+//       End_procedure
+    End_Object
+
+    Object Etiket_Report is a CrystalReportSub
+        Set Report_Name to "Etiket.rpt"
+//        Procedure OnInitializeReport
+//            local string selection
+//            Forward Send OnInitializeReport
+//            append selection "{eortolog.recnum} in "
+//            if (right(epilegmenes_eggrafes,2)) eq ",]" ;
+//                Begin
+//                        move (left(epilegmenes_eggrafes,(length(epilegmenes_eggrafes)-2))) to epilegmenes_eggrafes
+//                        append  epilegmenes_eggrafes "]"
+//                End
+//            append selection (Trim(epilegmenes_eggrafes))
+//            trim selection to selection
+//            Set SelectionFormula To Selection
+//       End_procedure
+
+    End_Object
+
+    //AB-StoreEnd
+
+CD_End_Object    // eortol2_rpt
+
+//AB/ End_Object    // prj

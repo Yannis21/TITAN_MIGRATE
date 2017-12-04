@@ -1,0 +1,321 @@
+
+
+Function fsCryptoNew String lsWay String lsOld Returns String
+    Local String lsNew sToumpa sStringEncrypted sTemp sStringDecrypted
+    Integer iCount iAsciiNum
+
+    Move (Trim(lsOld)) to lsOld
+    Move (Trim(lsWay)) to lsWay
+
+    If ((Uppercase(lsWay)) eq 'ENCRYPT') Begin
+        Move lsOld  to sStringDecrypted
+        Move ""     to sStringEncrypted
+        Move ""     to sToumpa
+
+        // 1. Prota to fernoume anapoda / toumpa
+        For iCount From 1 to (Length(sStringDecrypted))
+            Move (Mid(sStringDecrypted,1,iCount))   to sTemp
+            Move (Insert(sTemp,sToumpa,1))          to sToumpa
+        Loop
+
+        // 2. Ftiaxnoume to neo string prosthetontas ton xarakthra pou prokyptei
+        //    apo ton Ascii kodiko tou xarakthra + thn thesi tou mesa sto string
+        For iCount From 1 to (Length(sToumpa))
+            Move (Mid(sToumpa,1,iCount))            to sTemp
+            Move (Ascii(sTemp) + iCount)            to iAsciiNum
+            Move (Character(iAsciiNum))             to sTemp
+            Move (Append(sStringEncrypted,sTemp))   to sStringEncrypted
+        Loop
+        Move sStringEncrypted to lsNew
+    End
+    Else If ((Uppercase(lsWay)) eq 'DECRYPT') Begin
+        Move lsOld to sStringEncrypted
+        Move "" to sStringDecrypted
+        Move "" to sToumpa
+
+        // 1. Ftiaxnoume to palio string afairontas ton xarakthra pou prokyptei
+        //    apo ton Ascii kodiko tou xarakthra + thn thesi tou mesa sto string
+        For iCount From 1 to (Length(sStringEncrypted))
+            Move (Mid(sStringEncrypted,1,iCount))       to sTemp
+            Move (Ascii(sTemp) - iCount)                to iAsciiNum
+            Move (Character(iAsciiNum))                 to sTemp
+            Move (Append(sStringDecrypted,sTemp))       to sStringDecrypted
+        Loop
+
+        // 2. Meta, to fernoume anapoda / toumpa
+        For iCount From 1 to (Length(sStringDecrypted))
+            Move (Mid(sStringDecrypted,1,iCount))   to sTemp
+            Move (Insert(sTemp,sToumpa,1))          to sToumpa
+        Loop
+        Move sToumpa to lsNew
+    End
+    Else Send Info_Box ("The parameter lsWay must be ENCRYPT or DECRYPT\nThe returned string will be incorrect since you passed "+Trim(lsWay)) "Error 1001"
+    Function_Return (Trim(lsNew))
+End_Function
+
+
+Function HasOneCap string asPassw Integer aiGreek Returns Integer
+    Integer rVal
+    Integer iLength x
+    String  sChar
+    Move (Length(asPassw))  to iLength
+    Move 0                  to rVal
+    For x From 1 to iLength
+        Move (Mid(asPassw,1,x)) to sChar
+        If (aiGreek=0) Begin
+            If ( ;
+                 ( (Ascii(sChar)>=65 ) And (Ascii(sChar)<= 90)) Or  ;
+                 ( (Ascii(ToAnsi(sChar))>=193) And (Ascii(ToAnsi(sChar))<=219))  ;
+               ) Begin
+                Move 1      to rVal
+                Move 9999   to x
+            End
+        End
+        Else Begin
+            If ( (Ascii(sChar)>=65) And (Ascii(sChar)<=90) ) Begin
+                Move 1      to rVal
+                Move 9999   to x
+            End
+        End
+    Loop
+    Function_Return rVal
+End_Function
+
+Function HasOneSmall string asPassw Integer aiGreek Returns Integer
+    Integer rVal
+    Integer iLength x
+    String  sChar
+    Move (Length(asPassw))  to iLength
+    Move 0                  to rVal
+    For x From 1 to iLength
+        Move (Mid(asPassw,1,x)) to sChar
+        If (aiGreek=0) Begin
+            If ( ;
+                 ( (Ascii(sChar)>= 97) And (Ascii(sChar)<=122)) Or ;
+                 ( (Ascii(ToAnsi(sChar))>=220) And (Ascii(ToAnsi(sChar))<=254))    ;
+               ) Begin
+                Move 1      to rVal
+                Move 9999   to x
+            End
+        End
+        Else Begin
+            If ( (Ascii(sChar)>=97) And (Ascii(sChar)<=122)) Begin
+                Move 1      to rVal
+                Move 9999   to x
+            End
+        End
+    Loop
+    Function_Return rVal
+End_Function
+
+Function HasOneNumber string asPassw Returns Integer
+    Integer rVal
+    Integer iLength x
+    String  sChar
+    Move (Length(asPassw))  to iLength
+    Move 0                  to rVal
+    For x From 1 to iLength
+        Move (Mid(asPassw,1,x)) to sChar
+        If ( (Ascii(sChar)>=48) And (Ascii(sChar)<=57)) Begin
+            Move 1      to rVal
+            Move 9999   to x
+        End
+    Loop
+    Function_Return rVal
+End_Function
+
+Function HasOneSpecial string asPassw Returns Integer
+    Integer rVal
+    Integer iLength x
+    String  sChar
+    Move (Length(asPassw))  to iLength
+    Move 0                  to rVal
+    For x From 1 to iLength
+        Move (Mid(asPassw,1,x)) to sChar
+        If ( ;
+             ( (Ascii(sChar)>=33) And (Ascii(sChar)<=47)) Or ;
+             ( (Ascii(sChar)>=58) And (Ascii(sChar)<=64)) Or ;
+             ( (Ascii(sChar)>=91) And (Ascii(sChar)<=96))    ;
+           ) Begin
+            Move 1      to rVal
+            Move 9999   to x
+        End
+
+    Loop
+    Function_Return rVal
+End_Function
+
+Function HasOneGreek string asPassw Returns Integer
+    Integer rVal
+    Integer iLength x
+    String  sChar
+    Move (Length(asPassw))  to iLength
+    Move 0                  to rVal
+    For x From 1 to iLength
+        Move (Mid(asPassw,1,x)) to sChar
+        If ( ;
+             ((Ascii(ToAnsi(sChar))>=193) And (Ascii(ToAnsi(sChar))<=219)) Or ;
+             ((Ascii(ToAnsi(sChar))>=220) And (Ascii(ToAnsi(sChar))<=254))    ;
+           ) Begin
+            Move 1      to rVal
+            Move 9999   to x
+            Move sChar to gsMyStr
+        End
+    Loop
+    Function_Return rVal
+End_Function
+
+Function HasDuplicates String asPassw Returns Integer
+    Integer iLength x
+    String  s1 s2
+    Move (Length(asPassw)) to iLength
+    If (iLength > 2) Begin
+        For x From 1 to iLength
+            Move (Mid(asPassw, 1, x  )) to s1
+            If ((x+1)<=iLength) ;
+                Move (Mid(asPassw, 1, x+1)) to s2
+            Else Function_Return 0
+            If (s1=s2) Begin
+                Move (s1+s2) to gsMyStr
+                Function_Return 1
+            End
+        Loop
+    End
+    Function_Return 0
+End_Function
+
+Function HasInRow string asPassw Integer aiGreek Returns Integer
+    Integer rVal iNum
+    Integer iLength x
+    String  sChar  sChar2  sChar3  sSet1  sSet2
+    String  ssChar ssChar2 ssChar3 ssSet1 ssSet2
+    String  s1 s2 s3 s4 s5
+
+    Move (Length(asPassw))  to iLength
+    Move 0                  to rVal
+
+    Move "" to gsMyStr
+
+    For x From 1 to iLength
+        Move 0 to iNum
+        // Keep 3 consecutive characters
+        Move (Mid(asPassw,1,x))                         to sChar
+        If ((x+1)<=iLength) Move (Mid(asPassw,1,x+1))   to sChar2
+        Else                Move 1                      to iNum
+        If ((x+2)<=iLength) Move (Mid(asPassw,1,x+2))   to sChar3
+        Else                Move 1                      to iNum
+
+        If (iNum=0) Begin
+            // check if same type of character (Numbers)
+            If ( ((Ascii(sChar )>=48) And (Ascii(sChar )<=57)) And ;
+                 ((Ascii(sChar2)>=48) And (Ascii(sChar2)<=57)) And ;
+                 ((Ascii(sChar3)>=48) And (Ascii(sChar3)<=57))     ;
+               ) Begin
+                If (    ((Integer(sChar3)-Integer(sChar2))=1) And ;
+                        ((Integer(sChar2)-Integer(sChar ))=1)     ;
+                   ) Begin
+                   Move 1       to rVal
+                   Move 9999    to x
+                   Move (sChar+sChar2+sChar3) to gsMyStr
+
+                End
+                Else If (    ((Integer(sChar2)-Integer(sChar3))=1) And ;
+                             ((Integer(sChar )-Integer(sChar2))=1)     ;
+                        ) Begin
+                   Move 1       to rVal
+                   Move 9999    to x
+                   Move (sChar+sChar2+sChar3) to gsMyStr
+                End
+            End
+            // check if same type of character (Capital Letters)
+            Else Begin
+                Move "ABCDEFGHIJKLMNOPQRSTUVWXYZ"   to s1
+                Move "QWERTYUIOPASDFGHJKLZXCVBNM"   to s2
+                Move (UpperCase(sChar ))        to ssChar
+                Move (UpperCase(sChar2))        to ssChar2
+                Move (UpperCase(sChar3))        to ssChar3
+                Move (sChar +sChar2+sChar3)     to sSet1
+                Move (sChar3+sChar2+sChar )     to sSet2
+                Move (ssChar +ssChar2+ssChar3)  to ssSet1
+                Move (ssChar3+ssChar2+ssChar )  to ssSet2
+
+                If ( ((Ascii(ssChar )>=65) And (Ascii(ssChar )<=90)) And ;
+                     ((Ascii(ssChar2)>=65) And (Ascii(ssChar2)<=90)) And ;
+                     ((Ascii(ssChar3)>=65) And (Ascii(ssChar2)<=90))     ;
+                   ) Begin
+                    If ( (Pos(ssSet1,s1)>0) Or (Pos(ssSet2,s1)>0) Or ;
+                         (Pos(ssSet1,s2)>0) Or (Pos(ssSet2,s2)>0)  ) Begin
+                        Move 1      to rVal
+                        Move 9999   to x
+                        Move sSet1 to gsMyStr
+                    End
+                End
+            End
+        End
+    Loop
+    Function_Return rVal
+End_Function
+
+
+Function HasPasswordProblems string asPassw Integer i8Char    Integer i2Same  Integer iOneCap ;
+                                            Integer iOneSmall Integer iOneNum Integer iOneSpe ;
+                                            Integer iGreek    Integer iSeira  Integer iBlanks Returns Integer
+    Integer iHasProblems
+    Move 0 to iHasProblems
+
+         If ((i8Char   =1) And (Length(asPassw)<8))                     Move 1 to iHasProblems
+    Else If ((i2Same   =1) And (HasDuplicates (Self,asPassw       )=1)) Move 2 to iHasProblems
+    Else If ((iGreek   =1) And (HasOneGreek   (Self,asPassw       )=1)) Move 7 to iHasProblems
+    Else If ((iBlanks  =1) And (Pos(" ",asPassw)>0))                    Move 9 to iHasProblems
+    Else If ((iOneCap  =1) And (HasOneCap     (Self,asPassw,iGreek)=0)) Move 3 to iHasProblems
+    Else If ((iOneSmall=1) And (HasOneSmall   (Self,asPassw,iGreek)=0)) Move 4 to iHasProblems
+    Else If ((iOneNum  =1) And (HasOneNumber  (Self,asPassw       )=0)) Move 5 to iHasProblems
+    Else If ((iOneSpe  =1) And (HasOneSpecial (Self,asPassw       )=0)) Move 6 to iHasProblems
+    Else If ((iSeira   =1) And (HasInRow      (Self,asPassw,iGreek)=1)) Move 8 to iHasProblems
+
+    Function_Return iHasProblems
+End_Function
+
+
+Function fsVerifyThePasswordValidity String asPassword Returns Integer
+    Integer rVal bState
+    String  lsTheAppPath sPassw sMess
+    Integer i1 i2 i3 i4 i5 i6 i7 i8 i9 iMax iDays iResult
+
+    Reread Sysrec
+    Unlock
+
+    Move Sysrec.LIBCAST_CODE    to i1
+    Move Sysrec.AWARD_CODE      to i2
+    Move Sysrec.GIVAWRD_CODE    to i3
+    Move Sysrec.MOVIE_LNK_CODE  to i4
+    Move Sysrec.CAST_LNK_CODE   to i5
+    Move Sysrec.AWARDTP_CODE    to i6
+    Move Sysrec.FESTIVAL_CODE   to i7 // No Greek characters Hard Coded to 1
+    Move Sysrec.STWHAT_CODE     to i8
+    Move Sysrec.SNWHAT_CODE     to i9
+    Move Sysrec.LIBVIS_CODE     to iDays
+    Move Sysrec.TIKANEI_CODE    to iMax
+
+    Move "" to gsMyStr
+    Move 0  to iResult
+
+    Move (HasPasswordProblems(Self,asPassword,i1,i2,i3,i4,i5,i6,i7,i8,i9)) to iResult
+
+    Move gsMyStr        to sMess
+    Move (Trim(sMess))  to sMess
+
+         If (iResult=7) Send Stop_Box "ƒœ¤ œ§ «¨â§¦¤«˜  „¢¢ž¤ ¡¦å ®˜¨˜¡«ã¨œª"                   ("‘­á¢£˜ 1007  -> "+sMess+" <-")
+    Else If (iResult=1) Send Stop_Box "Ž ¡à› ¡æª §¨â§œ  ¤˜ œå¤˜  á¤à «à¤ 8 ®˜¨˜¡«ã¨à¤ "          "‘­á¢£˜ 1001"
+    Else If (iResult=2) Send Stop_Box "ƒœ¤ œ§ «¨â§¦¤«˜  2 å› ¦  ®˜¨˜¡«ã¨œª ›å§¢˜ ›å§¢˜"         ("‘­á¢£˜ 1002  -> "+sMess+" <-")
+    Else If (iResult=3) Send Stop_Box "Ž ¡à› ¡æª §¨â§œ  ¤˜ â®œ  «¦¬¢á® ©«¦¤ 1 ¡œ­˜¢˜å¦ š¨á££˜"   "‘­á¢£˜ 1003"
+    Else If (iResult=4) Send Stop_Box "Ž ¡à› ¡æª §¨â§œ  ¤˜ â®œ  «¦¬¢á® ©«¦¤ 1 §œæ š¨á££˜"       "‘­á¢£˜ 1004"
+    Else If (iResult=5) Send Stop_Box "Ž ¡à› ¡æª §¨â§œ  ¤˜ â®œ  «¦¬¢á® ©«¦¤ 1 ˜¨ Ÿ£æ"            "‘­á¢£˜ 1005"
+    Else If (iResult=6) Send Stop_Box "Ž ¡à› ¡æª §¨â§œ  ¤˜ â®œ  «¦¬¢á® ©«¦¤ 1 œ › ¡æ ®˜¨˜¡«ã¨˜"  "‘­á¢£˜ 1006"
+    Else If (iResult=8) Send Stop_Box "ƒœ¤ œ§ «¨â§¦¤«˜  §á¤à ˜§¦ 2 ©¬¤œ®æ£œ¤¦  ®˜¨˜¡«ã¨œª"      ("‘­á¢£˜ 1008  -> "+sMess+" <-")
+    Else If (iResult=9) Send Stop_Box "ƒœ¤ œ§ «¨â§¦¤«˜  ¡œ¤á ˜¤á£œ©˜ ©«¦¬ª ®˜¨˜¡«ã¨œª"           "‘­á¢£˜ 1009"
+
+
+    Function_return iResult
+End_function
+

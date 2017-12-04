@@ -1,0 +1,267 @@
+    Open SYSCURXR
+    Use COUNTRY.DD
+    Use TOWNS.DD
+    Use CITIES.DD
+    Use AREAS.DD
+    Use PAYRESP.DD
+    Use CLIENTS.DD
+    Use CONSTRCT.DD
+    Use SALESMEN.DD
+    Use MHXANIK.DD
+    Use CN.DD
+    Use BTNORDH.DD
+    Use BTNORDD.DD
+    Open BtnordhL
+    Open BtnorddL
+    use v193.vw
+
+      Object oDoCOPY is A BusinessProcessSub
+        set Status_panel_state to false
+        set Display_Error_state to true
+        property string psid
+        property string psrecr
+        property integer piTxtID public 0
+        property integer piLathos public 0
+
+        Object Country_DD is a Country_DataDictionary
+        End_Object    // Country_DD
+
+        Object Towns_DD is a Towns_DataDictionary
+            Set DDO_Server to (Country_DD(self))
+        End_Object    // Towns_DD
+
+        Object Cities_DD is a Cities_DataDictionary
+            Set DDO_Server to (Towns_DD(self))
+        End_Object    // Cities_DD
+
+        Object Areas_DD is a Areas_DataDictionary
+        End_Object    // Areas_DD
+
+        Object Payresp_DD is a Payresp_DataDictionary
+        End_Object    // Payresp_DD
+
+        Object Clients_DD is a Clients_DataDictionary
+            Set DDO_Server to (Cities_DD(self))
+            Set DDO_Server to (Areas_DD(self))
+            Set DDO_Server to (Payresp_DD(self))
+        End_Object    // Clients_DD
+
+        Object Constrct_DD is a Constrct_DataDictionary
+        End_Object    // Constrct_DD
+
+        Object Salesmen_DD is a Salesmen_DataDictionary
+        End_Object    // Salesmen_DD
+
+        Object Mhxanik_DD is a Mhxanik_DataDictionary
+        End_Object    // Mhxanik_DD
+
+        Object Cn_DD is a Cn_DataDictionary
+            Set DDO_Server to (Clients_DD(self))
+            Set DDO_Server to (Constrct_DD(self))
+            Set DDO_Server to (Salesmen_DD(self))
+            Set DDO_Server to (Mhxanik_DD(self))
+        End_Object    // Cn_DD
+
+        Object Btnordh_DD is a Btnordh_DataDictionary
+            Set DDO_Server to (Cn_DD(self))
+            send defineallextendedfields
+        End_Object    // Btnordh_DD
+
+        Object Btnordd_DD is a Btnordd_DataDictionary
+            Set DDO_Server to (Btnordh_DD(self))
+            Set Constrain_File to Btnordh.File_Number
+        End_Object    // Btnordd_DD
+
+
+
+    //    Object btnordh_DD is a btnordh_DataDictionary
+    //    End_Object  // btnordh_DD
+
+    //    Object btnordd_DD is a btnordd_DataDictionary
+    //    End_Object  // btnordd_DD
+
+PROCEDURE beg_copy string srecr
+          set psrecr to srecr
+          SEND DOPROCESS
+END_PROCEDURE
+
+Procedure upcopy_rec
+    local date ddate ddeopdate ddeoplhxh
+    local number  nqty nunitprice ndisc nprice nxrm3 neleiph npagiaxrm3 npagiaxrprice;
+                  nanopagia nsthsimo neleipes
+    local string  saadeop sitem sitemdescr squal skatish scnrecr ssxolia scncode sclientid;
+                  suserid  srecr sstatero selxr sel ss1 sPT
+    local integer irecnum irec
+
+    String sssRecr vorderbt vclient_id vcn_code deop_date arxh_date
+
+    SYSDATE4 ddate
+    get psrecr to srecr
+
+    clear btnordhL
+    move srecr to btnordhL.recr
+    find eq btnordhL by index.2
+    if (not(found))  error 3500 'ƒœ¤ ™¨å©¡à «¦ ˜¨® ¡æ ƒ.„.Ž.'
+
+    move btnordhL.cn_recr    to scnrecr
+    move btnordhL.velxr      to sel
+    move btnordhL.sxolia     to ssxolia
+    move btnordhL.deop_date  to ddeopdate
+    move btnordhL.eleiph     to neleiph
+    move btnordhL.user_id    to suserid
+    move btnordhL.statero    to sstatero
+    move btnordhL.deop_lhxh  to ddeoplhxh
+    move Btnordh.Timeout     to ss1
+
+    //----------
+    // Ginetai INACTIVE to DEOP (btnordhL.deop_active = 1 ==> €¤œ¤œ¨šæ)
+    move 1 to btnordhL.deop_active
+    //----------
+    move (ddate-1) to btnordhL.deop_lhxh
+    if (btnordhL.deop_lhxh < btnordhL.deop_date) move btnordhL.deop_date to btnordhL.deop_lhxh
+    saverecord btnordhL
+    //----------
+
+
+
+    //----------
+    // Ftiaxnetai to kainourgio Header BTNORDH
+    //----------
+    send clear to btnordh_dd
+    send clear to btnordd_dd
+
+    move scnrecr to cn.cn_recr
+    send find to cn_dd eq 2
+    if (not(found))  error 3501 'ƒœ¤ ™¨å©¡à «¦ â¨š¦'
+
+    set field_changed_value of btnordh_dd field btnordh.sxolia      to ssxolia
+    set field_changed_value of btnordh_dd field btnordh.deop_date   to ddate
+    set field_changed_value of btnordh_dd field btnordh.eleiph      to neleiph
+    set field_changed_value of btnordh_dd field btnordh.velxr       to sel
+    set field_changed_value of btnordh_dd field btnordh.user_id     to suserid
+    set field_changed_value of btnordh_dd field btnordh.statero     to sstatero
+    set field_changed_value of btnordh_dd field btnordh.deop_lhxh   to ddeoplhxh
+    set field_changed_value of btnordh_dd field btnordh.date_create to ddate
+    set field_changed_value of btnordh_dd field btnordh.Timeout     to ss1
+
+    send request_save to btnordh_dd
+
+    get field_current_value of btnordh_dd field btnordh.recnum      to irec
+    Get field_current_value of btnordh_dd field btnordh.Recr        to sssRecr
+    Get field_current_value of btnordh_dd field btnordh.aa_deop     to vorderbt
+    Get field_current_value of btnordh_dd field btnordh.client_id   to vclient_id
+    Get field_current_value of btnordh_dd field btnordh.cn_code     to vcn_code
+    Get field_current_value of btnordh_dd field btnordh.deop_date   to arxh_date
+    Get field_current_value of btnordh_dd field btnordh.deop_lhxh   to deop_date
+
+    set pirecnum of (v193(self)) to irec
+
+    Clear btnorddL
+    move srecr to btnorddL.btnordh_recr
+    Find Gt btnorddL By Index.1
+    While ((Found=1) And (sRecr=btnorddL.btnordh_recr))
+        move btnorddL.recnum         to irecnum
+        move btnorddL.vitem          to sitem
+        move btnorddL.vitem_descr    to sitemdescr
+        move btnorddL.vqual          to squal
+        move btnorddL.vqty           to nqty
+        move btnorddL.vunitprice     to nunitprice
+        move btnorddL.vdisc          to ndisc
+        move btnorddL.vprice         to nprice
+        move btnorddL.vkatish        to skatish
+        move btnorddL.vxrm3          to nxrm3
+        move btnorddL.vpagiaxrm3     to npagiaxrm3
+        move btnorddL.vpagiaxrprice  to npagiaxrprice
+        move btnorddL.vsthsimo       to nsthsimo
+        move btnorddL.veleipes       to neleipes
+        move btnorddL.velxr          to selxr
+
+        move 1 to btnorddL.vactive
+        move (ddate-1) to btnorddL.deop_date
+        if (btnorddL.deop_date < btnorddL.arxh_date) move btnorddL.arxh_date to btnorddL.deop_date
+
+        //Showln "========================="
+        //Showln "======   1    ==========="
+        //Showln "========================="
+        //Showln (Trim(sssRecr))
+        //Showln btnordd.vactive
+        //Showln (trim(sItem))
+        //Showln (Trim(vorderbt))
+        //Showln (Trim(vclient_id))
+        //Showln (Trim(vcn_code))
+        //Showln (Trim(deop_date))
+        //Showln (Trim(arxh_date))
+        //Showln "-------"
+        //Showln nqty
+        //Showln nunitprice
+        //Showln
+
+        saverecord btnorddL
+
+
+        send clear to btnordd_dd
+
+        Get field_current_value of btnordh_dd field btnordh.Recr            to sssRecr
+        Get field_current_value of btnordh_dd field btnordh.aa_deop         to vorderbt
+        Get field_current_value of btnordh_dd field btnordh.client_id       to vclient_id
+        Get field_current_value of btnordh_dd field btnordh.cn_code         to vcn_code
+        Get field_current_value of btnordh_dd field btnordh.deop_date       to arxh_date
+        Get field_current_value of btnordh_dd field btnordh.deop_lhxh       to deop_date
+
+        set field_changed_value of btnordd_dd field btnordd.vitem           to sitem
+        set field_changed_value of btnordd_dd field btnordd.vitem_descr     to sitemdescr
+        set field_changed_value of btnordd_dd field btnordd.vqual           to squal
+        set field_changed_value of btnordd_dd field btnordd.vqty            to nqty
+        set field_changed_value of btnordd_dd field btnordd.vunitprice      to nunitprice
+        set field_changed_value of btnordd_dd field btnordd.vdisc           to ndisc
+        set field_changed_value of btnordd_dd field btnordd.vprice          to nprice
+        set field_changed_value of btnordd_dd field btnordd.vkatish         to skatish
+        set field_changed_value of btnordd_dd field btnordd.vxrm3           to nxrm3
+        set field_changed_value of btnordd_dd field btnordd.vpagiaxrm3      to npagiaxrm3
+        set field_changed_value of btnordd_dd field btnordd.vpagiaxrprice   to npagiaxrprice
+        set field_changed_value of btnordd_dd field btnordd.vsthsimo        to nsthsimo
+        set field_changed_value of btnordd_dd field btnordd.veleipes        to neleipes
+        set field_changed_value of btnordd_dd field btnordd.velxr           to selxr
+
+        //Showln "========================="
+        //Showln "======   2    ==========="
+        //Showln "========================="
+
+        send request_save to btnordd_dd
+
+
+        Find Gt btnorddL by Index.1
+    Loop
+
+        //Showln ""
+        //Showln ""
+
+End_Procedure
+
+Procedure OnProcess
+       send upcopy_rec
+End_Procedure
+
+Procedure Start_Process
+         Set piTxtID                         to (Wait(Self))
+         Set Button_State    of (Wait(Self)) to False
+         Set BarVisibleState of (Wait(Self)) to '' False
+         Send Popup                          to (Wait(Self))
+         Set piLathos                        to 0
+         Forward Send Start_Process
+ End_Procedure
+
+    Procedure OnError integer error_info string errMsg
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+    Procedure End_Process
+       Forward Send End_Process
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+End_Object
+
+

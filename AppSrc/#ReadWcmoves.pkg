@@ -1,0 +1,52 @@
+
+Procedure Write_Wcmoves String asPath
+    Integer iFileNumber iFields iField_Type
+    String  sFullName sFileName sStr
+
+    Move '' to sFullName
+    Move Wcmoves.File_Number                           to iFileNumber
+    Get_Attribute DF_FILE_NUMBER_FIELDS Of iFileNumber to iFields
+    Get_Attribute DF_FILE_DISPLAY_NAME  Of iFileNumber to sFileName
+    Move (Trim(sFileName))                             to sFileName
+    Append sFullName (Trim(asPath)) (Trim(sFileName)) (Trim(SysCurXr.Branch_Code)) '.txt'
+
+    Direct_Output Channel 8 sFullName
+
+    For FieldIndex From 0 to iFields
+        Move Wcmoves.Recnum&  to sStr
+        Move (Trim(sStr))   to sStr
+        Write   Channel 8 sStr
+        Write   Channel 8 ','
+    Loop
+    Writeln Channel 8
+    Close_Output Channel 8
+
+End_Procedure
+
+Procedure Read_Wcmoves String asPath
+    Integer iFileNumber iFields iField_Type
+    String  sFullName sFileName sStr sPedio
+    Move '' to sFullName
+    Move Wcmoves.File_Number                           to iFileNumber
+    Get_Attribute DF_FILE_NUMBER_FIELDS Of iFileNumber to iFields
+    Get_Attribute DF_FILE_DISPLAY_NAME  Of iFileNumber to sFileName
+    Move (Trim(sFileName))                             to sFileName
+    Append sFullName (Trim(asPath)) (Trim(sFileName)) (Trim(SysCurXr.Branch_Code)) '.txt'
+
+    Direct_Input Channel 8 sFullName
+
+    While Not Seqeof
+        Clear Wcmast
+        For FieldIndex From 0 to iFields
+            Read    Channel 8 sPedio
+            Move (Trim(sPedio)) to Wcmast.Recnum&
+        Loop
+        Saverecord Wcmast
+        Read    Channel 8 sPedio
+        Readln  Channel 8
+    Loop
+
+End_Procedure
+
+
+

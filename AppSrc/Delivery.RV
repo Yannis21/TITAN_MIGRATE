@@ -1,0 +1,2078 @@
+//AB/ Project Concrete Delivery Report
+//AB/ Object prj is a Report_Project
+//AB/     Set ProjectName to "Concrete Delivery Report"
+//AB/     Set ProjectFileName to "Delivery.RV"
+
+// Project Object Structure
+//   DeliveryReport is a ReportViewSub
+//     Company_DD is a DataDictionary
+//     Branch_DD is a DataDictionary
+//     txtClientCode is a Textbox
+//     frmClientCode is a Form
+//     frmClientName is a FormSub
+//     txtCNCode is a TextBoxSub
+//     frmCNCode is a FormSub
+//     frmCNDescr is a FormSub
+//     txtItemCode is a TextBoxSub
+//     frmItemCode is a FormSub
+//     frmItemDescr is a FormSub
+//     txtCategoryCode is a TextBoxSub
+//     frmCategoryCode is a FormSub
+//     frmCategoryDescr is a FormSub
+//     txtDateFrom is a Textbox
+//     frmHmApo is a FormSub
+//     txtDateTo is a Textbox
+//     frmHmEos is a FormSub
+//     txtSeira is a Textbox
+//     frmSeira is a FormSub
+//     txtHmgioCode is a Textbox
+//     frmHmgioCode is a FormSub
+//     frmHmgioDescr is a FormSub
+//     txtEktyposh is a Textbox
+//     frmEktypCode is a Form
+//     frmEktypDescr is a Form
+//     dblstBranch is a dbListSub
+//     btnRun is a Button
+//     SortOrderGroup is a RadioGroup
+//       NumberSortRadio is a Radio
+//       NameSortRadio is a Radio
+//       DescAscCheckBox is a CheckBox
+//     GroupSub3 is a GroupSub
+//       F_ONO_APO is a FormSub
+//       F_ONO_EOS is a FormSub
+//       Textbox1 is a Textbox
+//       Textbox2 is a Textbox
+//     DestRadio is a RadioGroup
+//       WindowRadio is a Radio
+//       PrinterRadio is a Radio
+//       FileRadio is a Radio
+//     dbRadioGroupSub1 is a dbRadioGroupSub
+//       Radio1 is a RadioSub
+//       Radio2 is a RadioSub
+//       Radio3 is a RadioSub
+//     FileTypeGroup is a Group
+//       FileNameForm is a Form
+//         New_dialog is a SaveAsdialog
+//       TypeCombo is a ComboForm
+//       ApplyExtCheckBox is a CheckBox
+//       TextBoxSub23 is a TextBoxSub
+//       TextBoxSub24 is a TextBoxSub
+//     chkSX is a CheckBoxSub
+//     pmoves3WQLReport is a CrystalReportsubsql
+
+// Register all objects
+Register_Object ApplyExtCheckBox
+Register_Object Branch_DD
+Register_Object btnRun
+Register_Object Company_DD
+Register_Object chkSX
+Register_Object DeliveryReport
+Register_Object DescAscCheckBox
+Register_Object DestRadio
+Register_Object dblstBranch
+Register_Object dbRadioGroupSub1
+Register_Object F_ONO_APO
+Register_Object F_ONO_EOS
+Register_Object FileNameForm
+Register_Object FileRadio
+Register_Object FileTypeGroup
+Register_Object frmCategoryCode
+Register_Object frmCategoryDescr
+Register_Object frmClientCode
+Register_Object frmClientName
+Register_Object frmCNCode
+Register_Object frmCNDescr
+Register_Object frmEktypCode
+Register_Object frmEktypDescr
+Register_Object frmHmApo
+Register_Object frmHmEos
+Register_Object frmHmgioCode
+Register_Object frmHmgioDescr
+Register_Object frmItemCode
+Register_Object frmItemDescr
+Register_Object frmSeira
+Register_Object GroupSub3
+Register_Object NameSortRadio
+Register_Object New_dialog
+Register_Object NumberSortRadio
+Register_Object PrinterRadio
+Register_Object pmoves3WQLReport
+Register_Object Radio1
+Register_Object Radio2
+Register_Object Radio3
+Register_Object SortOrderGroup
+Register_Object TextBoxSub23
+Register_Object TextBoxSub24
+Register_Object Textbox1
+Register_Object Textbox2
+Register_Object TypeCombo
+Register_Object txtCategoryCode
+Register_Object txtClientCode
+Register_Object txtCNCode
+Register_Object txtDateFrom
+Register_Object txtDateTo
+Register_Object txtEktyposh
+Register_Object txtHmgioCode
+Register_Object txtItemCode
+Register_Object txtSeira
+Register_Object WindowRadio
+
+
+//AB/ Report View
+
+
+//AB-StoreTopStart
+Use dfallrpt
+use ctypkin.dd
+Use syscurxr.dd
+use clients.dd
+Use sl026a.sl
+use sl007.sl
+use sl100.sl
+open item
+open hmgiow
+open sysrep
+use hmgiow.sl
+use slrep.sl
+use sl024.sl
+use sl013.sl
+
+//AB-StoreTopEnd
+
+//AB-IgnoreStart
+
+Use Rptvw.Sub
+Use DFAllEnt.pkg
+Use Form.Sub
+Use Txtbox.Sub
+Use dbList.Sub
+Use Group.Sub
+Use dbRgroup.Sub
+Use Radio.Sub
+Use Chkbox.Sub
+
+Use COMPANY.DD
+Use BRANCH.DD
+
+//AB-IgnoreEnd
+
+ACTIVATE_VIEW Activate_DeliveryReport FOR DeliveryReport
+
+Object DeliveryReport is a ReportViewSub
+
+    //AB-StoreTopStart
+    
+    property integer    epil        public  0
+    property integer    piwhat      public  0
+    Property String     psModule    Public ''
+    property string     psbranch    public ''
+    property string     psrep       public ''
+    
+    //AB-StoreTopEnd
+
+    Set Label to "èò®òõÊ©ú†™ ë°¨®¶õ‚£ò´¶™ / Delivery Of Concrete"
+    Set Size to 225 355
+    Set Location to 10 23
+    Set Color to 13565951
+
+    //AB-DDOStart
+
+    Object Company_DD is a Company_DataDictionary
+    End_Object    // Company_DD
+
+    Object Branch_DD is a Branch_DataDictionary
+        Set DDO_Server to (Company_DD(self))
+    End_Object    // Branch_DD
+
+    Set Server to (Branch_DD(self))
+
+    //AB-DDOEnd
+
+    Object txtClientCode is a Textbox
+        Set Label to "î¶®‚ò™"
+        Set Auto_Size_State to FALSE
+        Set Color to 13565951
+        Set Location to 9 9
+        Set Size to 13 40
+        Set TypeFace to "MS Sans Serif"
+    End_Object    // txtClientCode
+
+    Object frmClientCode is a Form
+
+        //AB-StoreTopStart
+                                                                                                                                                                            
+        //AB-StoreTopEnd
+
+        Set Size to 13 74
+        Set Location to 9 53
+        Set Label_Justification_Mode to jMode_Right
+        Set Form_DataType to ascii_window
+        Set Prompt_Button_Mode to pb_PromptOn
+
+        //AB-StoreStart
+                                                                                                                                                                            
+        Set Prompt_Object to (sl100(Current_object))
+        
+        Procedure Prompt_Callback integer hPrompt
+            Set Export_Column   of hPrompt to 0
+            Set Initial_Column  of hPrompt to 0
+        end_procedure
+        
+        procedure prompt
+            Set psModule Of (sl100(Self)) to (psModule(Self))
+            Forward Send Prompt
+        end_procedure
+        
+        procedure onchange
+            String sClient
+            Get value item 0                to sClient
+            Move (fsclient(Self,sclient))   to sClient
+            Set value of frmClientName      to sClient
+        end_procedure
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // frmClientCode
+
+    Object frmClientName is a FormSub
+
+        //AB-StoreTopStart
+                                                                                                                                                                                
+        //AB-StoreTopEnd
+
+        Set Size to 13 215
+        Set Location to 9 128
+        Set Color to 13565951
+        Set Label_Col_Offset to 2
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+                                                                                                                                                                                
+        set enabled_state to false
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // frmClientName
+
+    Object txtCNCode is a TextBoxSub
+        Set Label to "Î®ö¶"
+        Set Auto_Size_State to FALSE
+        Set Color to 13565951
+        Set FontSize to 4 0
+        Set Location to 24 9
+        Set Size to 13 40
+        Set TypeFace to "MS Sans Serif"
+        Set Enabled_State to TRUE
+    End_Object    // txtCNCode
+
+    Object frmCNCode is a FormSub
+
+        //AB-StoreTopStart
+                                                                                                                        
+        Function fsErgoDescr String asCode Returns String
+            Clear Cn
+            Move asCode to Cn.Cn_Code
+            Find Eq Cn by Index.5
+            Function_Return (Trim(Cn.Cn_Descr))
+        End_Function
+        
+        
+        //AB-StoreTopEnd
+
+        Set Size to 13 74
+        Set Location to 25 53
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+        Set Prompt_Button_Mode to pb_PromptOn
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+                                                                                                                        
+        Set Prompt_Object to (sl041(Current_object))
+        
+        Procedure Prompt_Callback integer hPrompt
+            set Export_Column of hPrompt to 0
+            Set Initial_Column of hPrompt to 0
+        end_procedure
+        
+        Procedure Prompt
+            String sClient
+            Get Value Of frmClientCode Item 0 to sClient
+            Set Modal_State Of sl041 to True
+            If (Trim(sClient)>"") Set FragmaClient_ID Of sl041 to sClient
+            Forward Send Prompt
+            Set Modal_State Of sl041 to False
+            Set FragmaClient_ID Of sl041 to ""
+        End_Procedure
+        
+        procedure onchange
+            string sErgo
+            get value item 0                to sErgo
+            Move (fsErgoDescr(Self,sErgo))  to sErgo
+            set value of frmCNDescr         to sErgo
+        end_procedure
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // frmCNCode
+
+    Object frmCNDescr is a FormSub
+
+        //AB-StoreTopStart
+                                                                                                                                                                                
+        //AB-StoreTopEnd
+
+        Set Size to 13 215
+        Set Location to 25 128
+        Set Color to 13565951
+        Set Label_Col_Offset to 2
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+                                                                                                                                                                                
+        set enabled_state to false
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // frmCNDescr
+
+    Object txtItemCode is a TextBoxSub
+        Set Label to "ÑÂõ¶™"
+        Set Auto_Size_State to FALSE
+        Set Color to 13565951
+        Set FontSize to 4 0
+        Set Location to 42 9
+        Set Size to 13 40
+        Set TypeFace to "MS Sans Serif"
+        Set Enabled_State to TRUE
+    End_Object    // txtItemCode
+
+    Object frmItemCode is a FormSub
+
+        //AB-StoreTopStart
+                                                                                                                                                                            
+        //AB-StoreTopEnd
+
+        Set Size to 13 74
+        Set Location to 41 53
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+        Set Prompt_Button_Mode to pb_PromptOn
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+                                                                                                                                                                            
+        Set Prompt_Object to (SL22s(Current_object))
+        
+        Procedure Prompt_Callback integer hPrompt
+            set Export_Column of hPrompt to 0
+            Set Initial_Column of hPrompt to 0
+        end_procedure
+        
+        procedure onchange
+            string witem sdescr
+            get value item 0 to witem
+            move (fsitem(self,witem)) to sdescr
+            set value of frmItemDescr to sdescr
+        end_procedure
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // frmItemCode
+
+    Object frmItemDescr is a FormSub
+
+        //AB-StoreTopStart
+                                                                                                                                                                                
+        //AB-StoreTopEnd
+
+        Set Size to 13 215
+        Set Location to 41 128
+        Set Color to 13565951
+        Set Label_Col_Offset to 2
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+                                                                                                                                                                                
+        set enabled_state to false
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // frmItemDescr
+
+    Object txtCategoryCode is a TextBoxSub
+        Set Label to "âò´ûö¶®Âò"
+        Set Auto_Size_State to FALSE
+        Set Color to 13565951
+        Set FontSize to 4 0
+        Set Location to 56 9
+        Set Size to 13 40
+        Set TypeFace to "MS Sans Serif"
+        Set Enabled_State to TRUE
+    End_Object    // txtCategoryCode
+
+    Object frmCategoryCode is a FormSub
+
+        //AB-StoreTopStart
+                                                                                                                                                                            
+        //AB-StoreTopEnd
+
+        Set Size to 13 74
+        Set Location to 57 53
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+        Set Prompt_Button_Mode to pb_PromptOn
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+                                                                                                                                                                            
+        Set Prompt_Object to (sl024(Current_object))
+        
+        procedure onchange
+            string switemkat
+            get value item 0 to switemkat
+            move switemkat to witemkat.witemkat_code
+            find eq witemkat by index.1
+            if (found) set value of frmCategoryDescr to witemkat.witemkat_descr
+            else       set value of frmCategoryDescr to ''
+            set pskat to switemkat
+        end_procedure
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // frmCategoryCode
+
+    Object frmCategoryDescr is a FormSub
+
+        //AB-StoreTopStart
+                                                                                                                                                                                
+        //AB-StoreTopEnd
+
+        Set Size to 13 215
+        Set Location to 57 128
+        Set Color to 13565951
+        Set Label_Col_Offset to 2
+        Set Enabled_State to FALSE
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+        Set Item_Shadow_State Item 0 to TRUE
+        Set Shadow_State Item 0 to TRUE
+
+        //AB-StoreStart
+                                                                                                                                                                                
+        set enabled_state to false
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // frmCategoryDescr
+
+    Object txtDateFrom is a Textbox
+        Set Label to "ÄßÊ Ü£/§Âò"
+        Set Auto_Size_State to FALSE
+        Set Color to 13565951
+        Set Location to 84 9
+        Set Size to 10 41
+        Set TypeFace to "MS Sans Serif"
+    End_Object    // txtDateFrom
+
+    Object frmHmApo is a FormSub
+
+        //AB-StoreTopStart
+                                                                                                                                                                            
+        //AB-StoreTopEnd
+
+        Set Size to 13 73
+        Set Location to 83 53
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+        Set Form_Datatype Item 0 to Mask_Date_Window
+        Set Prompt_Button_Mode to pb_PromptOn
+        Set Form_Mask Item 0 to "d/M/yyyy"
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+                                                                                                                                                                            
+        set prompt_object to (ocalendar(self))
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // frmHmApo
+
+    Object txtDateTo is a Textbox
+        Set Label to "Ñ‡™ Ü£/§Âò"
+        Set Auto_Size_State to FALSE
+        Set Color to 13565951
+        Set Location to 99 9
+        Set Size to 10 41
+        Set TypeFace to "MS Sans Serif"
+    End_Object    // txtDateTo
+
+    Object frmHmEos is a FormSub
+
+        //AB-StoreTopStart
+                                                                                                                                                                            
+        //AB-StoreTopEnd
+
+        Set Size to 13 73
+        Set Location to 98 53
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+        Set Form_Datatype Item 0 to Mask_Date_Window
+        Set Prompt_Button_Mode to pb_PromptOn
+        Set Form_Mask Item 0 to "d/M/yyyy"
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+                                                                                                                                                                            
+        set prompt_object to (ocalendar(self))
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // frmHmEos
+
+    Object txtSeira is a Textbox
+        Set Label to "ëú†®·"
+        Set Auto_Size_State to FALSE
+        Set Color to 13565951
+        Set Location to 117 9
+        Set Size to 12 21
+        Set TypeFace to "MS Sans Serif"
+    End_Object    // txtSeira
+
+    Object frmSeira is a FormSub
+
+        //AB-StoreTopStart
+                                                                                                                                                                            
+        //AB-StoreTopEnd
+
+        Set Size to 13 73
+        Set Location to 117 53
+        Set Label_Col_Offset to 2
+        Set Prompt_Button_Mode to pb_PromptOn
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+                                                                                                                                                                            
+        Set Prompt_Object to (sl013(Current_object))
+        
+        procedure onchange
+            string sseira
+            get value item 0 to sseira
+            set psseira to sseira
+        end_procedure
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // frmSeira
+
+    Object txtHmgioCode is a Textbox
+        Set Label to "Ü£ú®¶¢Êö†¶"
+        Set Auto_Size_State to FALSE
+        Set Color to 13565951
+        Set Location to 140 9
+        Set Size to 10 43
+        Set TypeFace to "MS Sans Serif"
+    End_Object    // txtHmgioCode
+
+    Object frmHmgioCode is a FormSub
+
+        //AB-StoreTopStart
+                                                                                                                                                
+        //AB-StoreTopEnd
+
+        Set Size to 13 73
+        Set Location to 140 53
+        Set Label_Col_Offset to 2
+        Set Prompt_Button_Mode to pb_PromptOn
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+                                                                                                                                                
+        Set Prompt_Object to (hmgiow(Current_object))
+        Set Numeric_Mask Item 0 to 2 0 '*, '
+        
+        Procedure Prompt_Callback integer hPrompt
+            set Export_Column of hPrompt to 0
+            Set Initial_Column of hPrompt to 0
+        end_procedure
+        
+        procedure onchange
+            integer whmgio
+            get value item 0 to whmgio
+            move whmgio to hmgiow.hmgiow_code
+            find eq hmgiow by index.1
+            if (found) set value of frmHmgioDescr to hmgiow.hmgiow_descr
+            else       set value of frmHmgioDescr to ''
+        end_procedure
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // frmHmgioCode
+
+    Object frmHmgioDescr is a FormSub
+
+        //AB-StoreTopStart
+                                                                                                                                                                            
+        //AB-StoreTopEnd
+
+        Set Size to 13 116
+        Set Location to 154 9
+        Set Color to 13565951
+        Set Label_Col_Offset to 2
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+                                                                                                                                                                            
+        set enabled_state to false
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // frmHmgioDescr
+
+    Object txtEktyposh is a Textbox
+        Set Label to "Ñ°´Áß‡©û"
+        Set Auto_Size_State to FALSE
+        Set Color to 13565951
+        Set Location to 182 9
+        Set Size to 10 37
+        Set TypeFace to "MS Sans Serif"
+    End_Object    // txtEktyposh
+
+    Object frmEktypCode is a Form
+
+        //AB-StoreTopStart
+                                                    
+        //AB-StoreTopEnd
+
+        Set Size to 13 73
+        Set Location to 180 53
+        Set Prompt_Button_Mode to pb_PromptOn
+
+        //AB-StoreStart
+                                                    
+        Set Prompt_Object to (SLrep(Current_object))
+        
+        procedure prompt
+            Set pskathg Of (slrep(Self)) to 'DeliveryReport.rv'
+            Forward Send Prompt
+        end_procedure
+        
+        procedure onchange
+            String sStr sModule StrDisp sKathg sCompany sDescr
+            Integer rVal iint icheck
+        
+            get value                   item 0  to skathg
+            clear sysrep
+            move 'DeliveryReport.rv'            to sysrep.view
+            move skathg                         to sysrep.name
+            find eq sysrep by index.1
+            set value of frmEktypDescr Item 0   to sysrep.descr
+            set psrep                           to sysrep.name
+        
+            Get Value Of frmEktypDescr  Item 0  to sDescr
+            Move (UpperCase(sDescr))            to sDescr
+            If (sDescr Contains "EXCEL") Begin
+                Set piIsExcel Of pmoves3WQLReport to 1
+            End
+            Else Begin
+                Set piIsExcel Of pmoves3WQLReport to 0
+        //                    Set Visible_State Of chkAscii to False
+        //                    Set Enabled_State Of chkAscii to False
+            End
+        end_procedure
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // frmEktypCode
+
+    Object frmEktypDescr is a Form
+        Set Size to 13 251
+        Set Location to 194 9
+        Set Color to 13565951
+
+        //AB-StoreStart
+        set enabled_state to false
+        //AB-StoreEnd
+
+    End_Object    // frmEktypDescr
+
+    Object dblstBranch is a dbListSub
+        Set Main_File to Branch.File_Number
+        Set Size to 93 214
+        Set Location to 76 129
+        Set Color to 13565951
+        Set CurrentRowColor to 6750207
+        Set CurrentCellColor to 6750207
+        Set Highlight_Row_State to FALSE
+        Set Auto_Index_State to FALSE
+        Set Auto_Column_State to FALSE
+        Set Move_Value_Out_State to FALSE
+        Set Auto_Export_State to FALSE
+        Set Auto_Shadow_State to FALSE
+        Set Find_Search_State to FALSE
+        Set Select_Mode to Multi_Select
+
+        Begin_Row
+            Entry_Item ('')
+            Entry_Item Branch.Branch_code
+            Entry_Item Branch.Branch_name
+        End_Row
+
+        Set Form_Width    item 0 to 18
+        Set Header_Label  item 0 to ""
+        
+        Set Form_Width    item 1 to 50
+        Set Header_Label  item 1 to "â‡õ†°Ê™"
+        
+        Set Form_Width    item 2 to 138
+        Set Header_Label  item 2 to "ìß¶°ò´·©´û£ò"
+        
+
+        //AB-StoreStart
+                                                                                                                                                
+        Set Select_Mode                     to Multi_Select
+        Set Column_Option           item 0  to Noenter False
+        Set Column_checkBox_state   item 0  to true
+        Set Auto_Shadow_State               to False
+        Set Auto_Index_State                to False
+        Set Popup_Search_State              to True
+        Set Find_Search_State               to False
+        
+        Set Color                           to 13565951
+        Set TextColor                       to clWindowText
+        Set CurrentRowColor                 to 6750207
+        Set Highlight_row_color             to 6750207
+        Set CurrentRowTextColor             to clWindowText
+        Set CurrentCellColor                to 6750207
+        Set CurrentCellTextColor            to clBtnText
+        
+        
+        Procedure Toggle_Select
+            Local integer iBase iOffset iCol
+            Move 0 to iOffset
+            Get Base_Item to iBase
+            Get Current_Col to iCol
+            Forward Send Toggle_Select
+            Send DoDisplayCheckBox (iBase+iOffset) (Select_State(self,iBase))
+            Set Dynamic_Update_State to true
+            Set Dynamic_Update_State to true
+        End_Procedure  //Toggle_Select
+        
+        Procedure Entry_Display Integer i1 Integer i2
+            Local integer iBase iOffset iSelItemsID bState
+            Get base_Item to iBase
+            move 0 to iOffset
+            move (Selected_Items(self)) to iSelItemsID
+            Forward Send Entry_Display i1 i2
+            Get find_element of iSelItemsID branch.recnum to bState
+            Send DoDisplayCheckBox (iBase+iOffset) (bState<>-1)
+        End_Procedure // Entry_Display
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // dblstBranch
+
+    Object btnRun is a Button
+
+        //AB-StoreTopStart
+                                                                                                                        
+        //AB-StoreTopEnd
+
+        Set Bitmap to "printer1.BMP"
+        Set Size to 26 31
+        Set Location to 181 312
+
+        //AB-StoreStart
+                                                                                                                        
+        Procedure OnClick
+            string dateapo dateeos datehh datemm dateyy msgstr
+            integer  listatus ihmgio
+        
+            Get value of frmHmgioCode Item 0 to ihmgio
+            if (ihmgio = 0) begin
+                send info_box "Éú§ úßú¢‚öú† û£ú®¶¢Êö†¶ " "è¢û®¶≠¶®Âò"
+                procedure_return
+            end
+        
+            Get Value Of frmHmApo Item 0 to dateapo
+            Get Value Of frmHmEos Item 0 to dateeos
+        
+            if dateeos eq "" begin
+                move 31 to datehh
+                move 12 to datemm
+                move syscurxr.year_year to dateyy
+                Append dateeos datehh
+                append dateeos datemm
+                append dateeos dateyy
+            end
+        
+            if dateapo eq "" begin
+                move 01 to datehh
+                move 01 to datemm
+                move syscurxr.year_year to dateyy
+                append dateapo datehh
+                append dateapo "/"
+                append dateapo datemm
+                append dateapo "/"
+                append dateapo dateyy
+            end
+        
+            move 0 to listatus
+        
+            if (dateapo ne "") begin
+                if ((dateapo < syscurxr.year_xrhshfrom) or (dateapo > syscurxr.year_xrhshto)) begin
+                    move "" to msgstr
+                    move 1 to listatus
+                    move "Ü£/§Âú™ Ñß†¢¶ö„™ Ñ°´Ê™ é®Â‡§ ï®„©û™" to msgstr
+                    error 999 msgstr
+                end
+            end
+        
+            if (dateeos ne "") begin
+                if ((dateeos < syscurxr.year_xrhshfrom) or (dateeos > syscurxr.year_xrhshto)) begin
+                    move "" to msgstr
+                    move 1 to listatus
+                    move "Ü£/§Âú™ Ñß†¢¶ö„™ Ñ°´Ê™ é®Â‡§ ï®„©û™" to msgstr
+                    error 999 msgstr
+                end
+            end
+        
+           if (listatus = 0) begin
+               Send Runpmoves3Report To (pmoves3WQLReport(Current_Object))
+           end
+        
+        
+        
+        End_Procedure
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // btnRun
+
+    Object SortOrderGroup is a RadioGroup
+
+        //AB-StoreTopStart
+                                                                                                                                                                            
+        //AB-StoreTopEnd
+
+        Set Label to "â®†´„®†¶ íò•†§Ê£û©û™"
+        Set Size to 50 93
+        Set Location to 253 171
+        Set Color to 13565951
+        Object NumberSortRadio is a Radio
+            Set Label to "âò´· â‡õ†°Ê î¶®‚ò"
+            Set Size to 10 84
+            Set Location to 12 5
+            Set Color to 13565951
+        End_Object    // NumberSortRadio
+
+        Object NameSortRadio is a Radio
+            Set Label to "âò´· Ñß‡§¨£Âò"
+            Set Size to 10 71
+            Set Location to 24 4
+            Set Color to 13565951
+
+            //AB-StoreStart
+            set enabled_state to false
+            
+            //AB-StoreEnd
+
+        End_Object    // NameSortRadio
+
+        Object DescAscCheckBox is a CheckBox
+            Set Label to "îüÂ§¶¨©ò"
+            Set Size to 10 50
+            Set Location to 37 5
+            Set Color to 13565951
+
+            //AB-StoreStart
+            set enabled_state to false
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // DescAscCheckBox
+
+
+        //AB-StoreStart
+                                                                                                                                                                            
+        Set Visible_State to False
+        Set Enabled_State to False
+        
+        
+        //
+        //***
+        //*** Procedure: Notify_Select_state
+        //*** Purpose  : Augemented to setup the output destination of the WinQL
+        //***            report. The procedure is sent when the user changes the
+        //***            selection.
+        //***
+        
+        Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+            Forward Send Notify_Select_State  iNewItem  iOldItem
+        
+            //*** Dynamically shadow the boundary groups
+            //Send AdjustBoundaryShadow iNewItem
+        End_Procedure
+        
+        
+        //***
+        //*** Function:ReportSort
+        //*** Purpose : Returns the sort orde selected by the user
+        //***
+        
+        Function ReportSort Returns Integer
+            Local Integer SelOrder
+        
+            If (Select_state(NumberSortRadio(Current_object), 0)) ;
+                Move cust_no To SelOrder
+            Else ;
+                Move item_no To SelOrder
+        
+            Function_return SelOrder
+        End_function // ReportSort
+        
+        
+        //***
+        //*** Function: DescAsc
+        //*** Purpose : Returns if the sort order is descending or ascending
+        //***
+        
+        Function DescAsc Returns Integer
+            If (Select_state(DescAscCheckBox(Current_object), 0)) ;
+                Function_return PE_SF_DESCENDING
+            Else ;
+                Function_return PE_SF_ASCENDING
+        End_function // DescAsc
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // SortOrderGroup
+
+    Object GroupSub3 is a GroupSub
+        Set Label to "Ñß†¢¶ö„ Ñß‡§¨£Âò™ èú¢ò´È§"
+        Set Size to 40 283
+        Set Location to 44 1
+        Set Visible_State to FALSE
+        Object F_ONO_APO is a FormSub
+            Set Size to 13 211
+            Set Location to 9 60
+            Set Color to clBtnFace
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Prompt_Button_Mode to pb_PromptOn
+            Set Enabled_State to FALSE
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+            Set Implicit_Shadow_State to TRUE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+            //AB-StoreEnd
+
+        End_Object    // F_ONO_APO
+
+        Object F_ONO_EOS is a FormSub
+            Set Size to 13 211
+            Set Location to 24 60
+            Set Color to clBtnFace
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Prompt_Button_Mode to pb_PromptOn
+            Set Enabled_State to FALSE
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+            Set Implicit_Shadow_State to TRUE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+            //AB-StoreEnd
+
+        End_Object    // F_ONO_EOS
+
+        Object Textbox1 is a Textbox
+            Set Label to "ÄßÊ é§¶£ò©Âò :"
+            Set Location to 10 5
+            Set Size to 10 53
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // Textbox1
+
+        Object Textbox2 is a Textbox
+            Set Label to "ÑÈ™ é§¶£ò©Âò :"
+            Set Location to 25 4
+            Set Size to 10 53
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // Textbox2
+
+
+        //AB-StoreStart
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+        Function Startname Returns String
+            Function_return (Value(f_ono_apo(Current_object), 0))
+        End_function
+        
+        Function Endname Returns String
+            Function_return (Value(f_ono_eos(Current_object), 0))
+        End_function
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // GroupSub3
+
+    Object DestRadio is a RadioGroup
+
+        //AB-StoreTopStart
+                                                                                                                                                                            
+        //AB-StoreTopEnd
+
+        Set Label to "Ñ°´Á&ß‡©û"
+        Set Size to 55 49
+        Set Location to 212 113
+        Set Color to 13565951
+        Object WindowRadio is a Radio
+            Set Size to 13 30
+            Set Location to 12 12
+            Set Color to 13565951
+            Set Bitmap to "screen4.bmp"
+        End_Object    // WindowRadio
+
+        Object PrinterRadio is a Radio
+            Set Size to 10 31
+            Set Location to 28 12
+            Set Color to 13565951
+            Set Bitmap to "PRINT_M1.BMP"
+        End_Object    // PrinterRadio
+
+        Object FileRadio is a Radio
+            Set Size to 10 29
+            Set Location to 41 12
+            Set Color to 13565951
+            Set Bitmap to "FILE16.BMP"
+        End_Object    // FileRadio
+
+
+        //AB-StoreStart
+                                                                                                                                                                            
+                                                                                                                                                                            
+        Set Visible_State to False
+        Set Enabled_State to False
+        
+        
+        //***
+        //*** Procedure: Notify_Select_state
+        //*** Purpose  : Augemented to setup the output destination of the WinQL
+        //***            report. The procedure is sent when the user changes the
+        //***            selection.
+        //***
+        
+        Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+            Forward Send Notify_Select_State  iNewItem  iOldItem
+            If iNewItem Eq 0 ;
+                Set Output_Device_Mode To WQL_PRINT_TO_WINDOW
+            Else If iNewItem Eq 1;
+                Set Output_Device_Mode To WQL_PRINT_TO_PRINTER
+            Else If iNewItem Eq 2 ;
+                Set Output_Device_Mode To WQL_PRINT_TO_FILE
+        
+        
+            Send AdjustFileTypeShadow (iNewItem < 2)
+        End_Procedure
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // DestRadio
+
+    Object dbRadioGroupSub1 is a dbRadioGroupSub
+        Set Size to 50 61
+        Set Location to 240 170
+        Set Color to 13565951
+        Object Radio1 is a RadioSub
+            Set Label to "åÊ£†©£ò 1"
+            Set Size to 10 46
+            Set Location to 10 5
+            Set Color to 13565951
+
+            //AB-StoreStart
+            set label to syscurxr.c_code0
+            //AB-StoreEnd
+
+        End_Object    // Radio1
+
+        Object Radio2 is a RadioSub
+            Set Label to "åÊ£†©£ò 2"
+            Set Size to 10 46
+            Set Location to 23 5
+            Set Color to 13565951
+
+            //AB-StoreStart
+            set label to syscurxr.c_code00
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // Radio2
+
+        Object Radio3 is a RadioSub
+            Set Label to "åÊ£†©£ò 3"
+            Set Size to 10 46
+            Set Location to 36 5
+            Set Color to 13565951
+
+            //AB-StoreStart
+            set label to syscurxr.c_coder
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // Radio3
+
+
+        //AB-StoreStart
+                                                                                                                                                                            
+        Set Visible_State to False
+        Set Enabled_State to False
+        
+        Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+        
+            string snom1 snom2 snom3
+            Clear Nomisma
+            move syscurxr.c_code0 to nomisma.nomisma_code
+            Find eq Nomisma By Index.1 // Nomisma:Index.1:Nomisma_Code
+            move nomisma.dekadika to snom1
+            Clear Nomisma
+            move syscurxr.c_code00 to nomisma.nomisma_code
+            Find eq Nomisma By Index.1 // Nomisma:Index.1:Nomisma_Code
+            move nomisma.dekadika to snom2
+            clear nomisma
+            move syscurxr.c_coder to nomisma.nomisma_code
+            Find eq Nomisma By Index.1 // Nomisma:Index.1:Nomisma_Code
+            move nomisma.dekadika to snom3
+            Forward Send Notify_Select_State  iNewItem  iOldItem
+            If iNewItem Eq 0;
+                Set epil to snom1
+            Else If iNewItem Eq 1;
+                Set epil to snom2
+            Else If iNewItem Eq 2 ;
+                Set epil to snom3
+            If iNewItem Eq 0;
+                Set piwhat to 1
+            Else If iNewItem Eq 1;
+                Set piwhat to 2
+            Else If iNewItem Eq 2 ;
+                Set piwhat to 3
+        
+        End_Procedure
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // dbRadioGroupSub1
+
+    Object FileTypeGroup is a Group
+
+        //AB-StoreTopStart
+                                                                                                                                                                            
+        //AB-StoreTopEnd
+
+        Set Label to "Ä§ò≠¶®· Ä®ÆúÂ¶¨"
+        Set Size to 54 109
+        Set Location to 252 81
+        Set Color to 13565951
+        Object FileNameForm is a Form
+
+            //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+            //AB-StoreTopEnd
+
+            Set Size to 13 71
+            Set Location to 10 33
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Prompt_Button_Mode to pb_PromptOn
+
+            //AB-StoreStart
+            //*** Default item value
+            Set Value item 0 to "pmoves.doc"
+            
+            Procedure Prompt
+                Local String  SelectedFile
+                Local String  Extension
+                Local String  Filter
+                Local Integer Type
+                Local Integer Selected
+            
+                //*** Setup initial file name
+                Get Value Item 0 To SelectedFile
+                If SelectedFile Eq "" Begin
+                    Get WQLFileExt To Extension
+                    Move ("pmoves" + Extension) To SelectedFile
+                End
+            
+                //*** Create a filter for the save as dialog
+                Move "" To Filter
+                Get WQLFileTYpe To Type
+                If Type Eq WQL_WordWinType ;
+                    Append Filter "Word for Windows (*.doc)|*.doc"
+                If ((Type Eq WQL_Xls2Type) Or (Type Eq WQL_Xls3Type) Or (Type Eq WQL_Xls4Type) Or (Type Eq WQL_Xls5Type)) ;
+                    Append Filter "Excel (*.xls)|*.xls"
+                If Type Eq WQL_RichTextFormatType ;
+                    Append Filter "Rich Text (*.rtf)|*.rtf"
+                If Type Eq WQL_TextType ;
+                    Append Filter "Text (*.txt)|*.txt"
+                If Type Eq WQL_RecordType ;
+                    Append Filter "Record Style (*.rec)|*.rec"
+                If Type Eq WQL_CommaSeparatedType ;
+                    Append Filter "Comma Separated Values (*.csv)|*.csv"
+                If Type Eq WQL_DIFType ;
+                    Append Filter "Data Interchange Format (*.dif)|*.dif"
+                Append Filter "|All Files|*.*"
+            
+                //*** Create a save as dialog
+                Object New_dialog Is A SaveAsdialog
+                    //*** Setup title
+                    Set Dialog_Caption        To "Item report export to disk, give file name"
+                    Set Filter_String         To Filter
+                    Set Hidereadonly_State    To True
+                    Set Overwriteprompt_State To True
+                    Set Showfiletitle_State   To True
+                    Set File_Title            To SelectedFile
+                End_object // New_dialog
+            
+                //*** Start the save as dialog
+                Get Show_Dialog Of (New_dialog(Current_object)) To Selected
+                If Selected Begin
+                    Get File_Name Of (New_Dialog(Current_object)) To SelectedFile
+                    Set Value Item 0 To SelectedFile
+                End
+            
+                //*** Destroy the save as dialog
+                Send Request_Destroy_object To (New_dialog(Current_object))
+            End_procedure // Start_Prompt
+            
+            //***
+            //*** Function: FileName
+            //*** Purpose : Returns the name of the file to export to
+            //***
+            
+            Function FileName Returns String
+                Local String  SelectedFile
+            
+                //*** Get file name
+                Get Value Item 0 To SelectedFile
+                If SelectedFile Eq "" ;
+                    Move "pmoves.doc" To SelectedFile
+            
+                Function_return SelectedFile
+            End_function // FileName
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // FileNameForm
+
+        Object TypeCombo is a ComboForm
+
+            //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+            //AB-StoreTopEnd
+
+            Set Size to 13 69
+            Set Location to 25 33
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+
+            //AB-StoreStart
+            //*** Make sure the user picks a list item and cannot enter information
+            Set Entry_state Item 0 To False
+            
+            //*** Show list unsorted. This must be done because we raly on the order of the
+            //*** list to determine the type of the file. (See FileType function)
+            Set Combo_Sort_State To False
+            
+            //***
+            //*** Procedure: Combo_Fill_list
+            //*** Purpose  : Augemebnted to fill the list with export file types.
+            //***
+            
+            Procedure Combo_Fill_List
+                Send Combo_Add_item "Word for Windows"
+                Send Combo_Add_Item "Excel 2.1"
+                Send Combo_Add_Item "Excel 3.0"
+                Send Combo_Add_Item "Excel 4.0"
+                Send Combo_Add_Item "Excel 5.0"
+                Send Combo_Add_Item "Rich Text"
+                Send Combo_Add_Item "Text"
+                Send Combo_Add_Item "Record Style"
+                Send Combo_Add_Item "Comma Separated"
+                Send Combo_Add_Item "Data Interchage Format (DIF)"
+            End_procedure // Combo_Fill_List
+            
+            
+            //***
+            //*** Function: FileType
+            //*** Purpose : Type to export to
+            //***
+            
+            Function FileType Returns Integer
+                Local String  FileTypeName
+                Local Integer FileTypeValue
+                Local Integer SelectedItem
+            
+                Get Value Item 0 To FileTypeName
+                Get Combo_Item_Matching FileTypeName To SelectedItem
+                Move WQL_TextType To FileTypeValue
+                If SelectedItem Ne -1 Begin
+                    If SelectedItem Eq 0 Move WQL_WordWinType        To FileTypeValue
+                    If SelectedItem Eq 1 Move WQL_Xls2Type           To FileTypeValue
+                    If SelectedItem Eq 2 Move WQL_Xls3Type           To FileTypeValue
+                    If SelectedItem Eq 3 Move WQL_Xls4Type           To FileTypeValue
+                    If SelectedItem Eq 4 Move WQL_Xls5Type           To FileTypeValue
+                    If SelectedItem Eq 5 Move WQL_RichTextFormatType To FileTypeValue
+                    If SelectedItem Eq 6 Move WQL_TextType           To FileTypeValue
+                    If SelectedItem Eq 7 Move WQL_RecordType         To FileTypeValue
+                    If SelectedItem Eq 8 Move WQL_CommaSeparatedType To FileTypeValue
+                    If SelectedItem Eq 9 Move WQL_DIFType            To FileTypeValue
+                End
+            
+                Function_return FileTypeValue
+            End_function // FileType
+            
+            
+            //***
+            //*** Function: FileExt
+            //*** Purpose : Extension for the type to export to
+            //***
+            
+            Function FileExt Returns String
+                Local String  FileTypeExt
+                Local Integer FileTypeValue
+            
+                Get FileType To FileTypeValue
+                If FileTypeValue Eq WQL_WordWinType        Move ".doc" To FileTypeExt
+                If FileTypeValue Eq WQL_Xls2Type           Move ".xls" To FileTypeExt
+                If FileTypeValue Eq WQL_Xls3Type           Move ".xls" To FileTypeExt
+                If FileTypeValue Eq WQL_Xls4Type           Move ".xls" To FileTypeExt
+                If FileTypeValue Eq WQL_Xls5Type           Move ".xls" To FileTypeExt
+                If FileTypeValue Eq WQL_RichTextFormatType Move ".rtf" To FileTypeExt
+                If FileTypeValue Eq WQL_TextType           Move ".txt" To FileTypeExt
+                If FileTypeValue Eq WQL_RecordType         Move ".rec" To FileTypeExt
+                If FileTypeValue Eq WQL_CommaSeparatedType Move ".csv" To FileTypeExt
+                If FileTypeValue Eq WQL_DIFType            Move ".dif" To FileTypeExt
+            
+                Function_return FileTypeExt
+            End_function // FileExt
+            
+            
+            
+            //***
+            //*** Procedure: OnCloseUp
+            //*** Purpose  : Augemented to auto,matically change the extension of the
+            //***            filename
+            //***
+            
+            Procedure OnChange
+                Local String  OldName
+                Local String  Extension
+                Local Integer ChangeExt
+            
+                Get ChangeExtension To ChangeExt
+                If ChangeExt Begin
+                    Get WQLFileName To OldName
+                    Get FileExt To Extension
+                    Set WQLFileName To (Left(OldName, (Pos(".", Oldname) - 1)) + Extension)
+                End
+            End_procedure // OnChange
+            
+            //AB-StoreEnd
+
+        End_Object    // TypeCombo
+
+        Object ApplyExtCheckBox is a CheckBox
+
+            //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+            //AB-StoreTopEnd
+
+            Set Label to "Apply combo "
+            Set Size to 10 59
+            Set Location to 41 33
+            Set Color to 13565951
+
+            //AB-StoreStart
+            //*** Apply extensions by default
+            Set Select_state Item 0 To True
+            //AB-StoreEnd
+
+        End_Object    // ApplyExtCheckBox
+
+        Object TextBoxSub23 is a TextBoxSub
+            Set Label to "é§¶£ò"
+            Set Color to 13565951
+            Set FontSize to 4 0
+            Set Location to 10 6
+            Set Size to 10 25
+            Set TypeFace to "MS Sans Serif"
+            Set Enabled_State to TRUE
+        End_Object    // TextBoxSub23
+
+        Object TextBoxSub24 is a TextBoxSub
+            Set Label to "íÁß¶™"
+            Set Color to 13565951
+            Set FontSize to 4 0
+            Set Location to 26 5
+            Set Size to 10 23
+            Set TypeFace to "MS Sans Serif"
+            Set Enabled_State to TRUE
+        End_Object    // TextBoxSub24
+
+
+        //AB-StoreStart
+                                                                                                                                                                            
+                                                                                                                                                                            
+        Set Visible_State to False
+        Set Enabled_State to False
+        
+        
+        
+        Function WQLFileName Returns String
+            Function_return (FileName(FileNameForm(Current_object)))
+        End_function // WQLFIleName
+        
+        Procedure Set WQLFileName String NewName
+            Set Value Of (FileNameForm(Current_object)) Item 0 To NewName
+        End_procedure // Set WQLFIleName
+        
+        
+        //***
+        //*** Function: WQLFIleType
+        //*** Purpose : The extension type of the file to export to
+        //***
+        
+        Function WQLFileType Returns Integer
+            Function_return (FileType(TypeCombo(Current_object)))
+        End_function // WQLFIleType
+        
+        
+        //***
+        //*** Function: WQLFIleExt
+        //*** Purpose : The extension type of the file to export to
+        //***
+        
+        Function WQLFileExt Returns Integer
+            Function_return (FileExt(TypeCombo(Current_object)))
+        End_function // WQLFIleExt
+        
+        
+        
+        //***
+        //*** Function: ChangeExtension
+        //*** Purpose : Must extension be dynamically updated?
+        //***
+        
+        Function ChangeExtension Returns Integer
+            Function_return (Select_state(ApplyExtCheckBox(Current_object), 0))
+        End_function // ChangeExtension
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // FileTypeGroup
+
+    Object chkSX is a CheckBoxSub
+        Set Label to "Use SX_PARAST"
+        Set Size to 10 73
+        Set Location to 182 132
+    End_Object    // chkSX
+
+
+    //AB-StoreStart
+    
+    Procedure Activate_View Returns Integer
+        String sStr sModule StrDisp
+        Integer rVal iint icheck
+        string scompany
+    
+        set value of frmHmApo Item 0 to syscurxr.year_xrhshfrom
+        set value of frmHmEos Item 0 to syscurxr.year_xrhshto
+    
+        Forward Get Msg_Activate_View to rVal
+    
+        Set piIsExcel Of pmoves3WQLReport to 0
+    
+        Get psMenuModule  Of Main_Menu  to sModule
+        Set psModule                    to sModule
+    
+        Move (gsfCode_mast("MODULE",(psModule(Self)))) to    StrDisp
+    
+        Set Label Of DeliveryReport to "èò®òõÊ©ú†™ ë°¨®¶õ‚£ò´¶™ / Delivery Of Concrete"
+    
+        Send Delete_Data            to (Selected_Items(dblstBRANCH(self)))
+    
+        Send Find to (branch_dd(self)) First_Record 1
+        Set Dynamic_Update_State of (dblstbranch(self)) to false
+    
+        While (Found=1)
+            get field_current_value of branch_dd field branch.company_code to scompany
+            get field_current_value of branch_dd field branch.branch_apoth to icheck
+            if ((syscurxr.company_code=scompany) and (icheck=1)) Begin
+                Set Array_Value of (Selected_Items(dblstbranch(self))) Item iInt to branch.Recnum
+            End
+            Add 1 to iInt
+            Send Find to (branch_dd(self)) Next_Record 1
+        Loop
+        Send Beginning_Of_Data    to (dblstbranch(self))
+        Set Dynamic_Update_State of (dblstbranch(self)) to true
+    
+        Set Value Of frmHmgioCode Item 0 to "1"
+    
+        Procedure_Return rVal
+    
+    End_Procedure
+    
+    
+    Object pmoves3WQLReport Is A CrystalReportsubsql
+    
+        Property Integer ReportReady Public False
+        Property Integer piIsExcel  Public 0
+        Property Integer piIsAscii  Public 0
+    
+        Set Report_View_id To (Parent(Current_object))
+    
+        Procedure OnStartPrinting
+    
+            Local string    sClientCode sCNCode  sItemCode  sCategoryCode sHmgioCode sstr sbranch scode skat sbr sEktypCode
+            Local string    sClientName sCNDescr sItemDescr sCategoryDescr sHmgioDescr dHmniaApo dHmniaEos sname sSeira srep sEktypDescr
+            Local string    endtypkinn Selection FileName flysh1 flysh2 slabel shmgio stext
+            Local Integer   Destination SortOrder NumSortFields CurSortField repstatus FileType
+            Local Integer   SortDirection wdate fepil starttypkinn iint icheck icount irec iSX
+            date            apo eos
+    
+            move "" to sstr
+            move "" to sBranch
+            move "" to sText
+            Move "" To Selection
+    
+    
+            Append Selection (If(Selection <> "", " and ", ""))"{wcmoves.company_code} = " '"' (Trim(syscurxr.company_code)) '"'
+    
+            Get Select_Count of (dblstbranch(Self)) to iInt
+            If (iInt>0) Begin
+                For iCount from 0 to (iInt-1)
+                    Get array_value of (Selected_Items(dblstbranch(self))) Item iCount to iRec
+                    Clear branch
+                    Move iRec to branch.Recnum
+                    Find Eq branch.Recnum
+                    move (Trim(branch.branch_code)) to scode
+                    move (Trim(branch.branch_name)) to sname
+                    Move (Append(sbranch,(trim(sname)+' '))) to sbranch
+                    Move (Append(stext  ,(trim(scode)+' '))) to stext
+                Loop
+            End
+    
+            Move (Trim(sBranch)) to sBranch
+            Move (Trim(sText  )) to sText
+    
+            Append Selection (If(Selection <> "", " and ", "")) "InStr('" stext "',{wcmoves.branch_code})<>0"
+    
+    
+            Append Selection (If(Selection <> "", " and ", "")) "{wcmoves.year_year} = " '' (syscurxr.year_year) ''
+    
+            get  psModule to flysh1
+            Append Selection (If(Selection <> "", " and ", "")) "{wcmoves.module_from} = " '"' (Trim(flysh1)) '"'
+    
+            Get Value Of frmHmApo Item 0 to dHmniaApo
+            Get Value Of frmHmEos Item 0 to dHmniaEos
+    
+            If (trim(dHmniaApo)) ne 0 ;
+                 Append Selection (If(Selection <> "", " and ", "")) "{wcmoves.wcmove_hmnia} >= " (winql_date(dHmniaApo))
+            If (trim(dHmniaEos)) ne 0 ;
+                 Append Selection (If(Selection <> "", " and ", "")) "{wcmoves.wcmove_hmnia} <= " (winql_date(dHmniaEos))
+    
+            Get ReportSort  To SortOrder
+    
+            Get Value Of frmClientCode      Item 0 to sClientCode
+    
+            Get Value Of frmClientName      Item 0 to sClientName
+            Get Value Of frmCNCode          Item 0 to sCNCode
+            Get Value Of frmCNDescr         Item 0 to sCNDescr
+            Get Value Of frmItemCode        Item 0 to sItemCode
+            Get Value Of frmCategoryCode    Item 0 to sCategoryCode
+            Get Value Of frmHmgioCode       Item 0 to sHmgioCode
+            Get Value Of frmHmgioDescr      Item 0 to sHmgioDescr
+            Get Value Of frmEktypCode       Item 0 to sEktypCode
+            Get Value Of frmEktypDescr      Item 0 to sEktypDescr
+            Get Value Of frmSeira           Item 0 to sSeira
+    
+            If (Trim(sClientCode)) ne "" ;
+              Append Selection (If(Selection <> "", " and ", "")) "{wcmoves.client_id} = " '"' (Trim(sClientCode)) '"'
+    
+             If (Trim(sItemCode)) ne "" ;
+              Append Selection (If(Selection <> "", " and ", "")) "{wcmoves.item_code} = " '"' (Trim(sItemCode)) '"'
+    
+            If (Trim(sCNCode)) ne "" ;
+              Append Selection (If(Selection <> "", " and ", "")) "{wcmoves.CN_Code} = " '"' (Trim(sCNCode)) '"'
+    
+    
+            Move '' to sStr
+            clear hmwtyp
+            move sHmgioCode to hmwtyp.hmgiow_code
+            find gt hmwtyp by index.1
+            while  ((found) and (hmwtyp.hmgiow_code=sHmgioCode))
+                Move (Append(sStr,(trim(hmwtyp.wtypkin_code)+' '))) to sStr
+                find gt hmwtyp by index.1
+            loop
+            Move (Trim(sStr)) to sStr
+            Append Selection (If(Selection <> "", " and ", "")) "InStr('" sStr "',{wcmoves.wtypkin_code})<>0"
+    
+    
+            if ((sEktypCode='DeliveryReport1s.rpt') and (sSeira<>'')) ;
+               Append Selection (If(Selection <> "", " and ", "")) "{pmoves.pseira_seira} = " '"' (Trim(sSeira)) '"'
+    
+            If (Trim(sCategoryCode)) ne "" ;
+                Append Selection (If(Selection <> "", " and ", "")) "{wcmoves.witemkat_code} = " '"' (Trim(sCategoryCode)) '"'
+    
+            //===================================================================
+            // 23/02/2011 ALLAGH GIATI KOBEI KAPOIA PARASTATIKA OPOS PISTOTIKA
+            // TA OPOIAPROFANOS EINAI AYTONOMA KAI DEN EXOUN SYSXETISTEI
+            // AYTO EIXE GINEI GIA NA 'STRONEI' EMFANIASIAKA TO REPORT ALLA
+            // MPOROUME NA PAIXOUME ME TO HMEROLOGIO p.x. POLHSEON GIA NA
+            // XESKRTAROUME AYTA POU DEN THELOUME
+            //if (iSX>0) Append Selection (If(Selection <> "", " and ", "")) "{PMOVES.SX_PARAST} > " '"' '"'
+            //Else Append Selection (If(Selection <> "", " and ", "")) "{PMOVES.SX_PARAST} = " '"' '"'
+    
+            Append Selection (If(Selection <> "", " and ", "")) ;
+                "( ({PMOVES.SX_PARAST}='' AND {PARTICLE.PARTL_TIMOL}=0) OR ({PMOVES.SX_PARAST} >" '"' '"))'
+    
+            //===================================================================
+    
+    
+             Set Formula "datefrom" to (Winql_date  (dHmniaApo))
+             Set Formula "dateto"   to (Winql_date  (dHmniaEos))
+             Set Formula "fhmgio"   to (Winql_String(sHmgioDescr))
+             Set Formula "formula1" to (Winql_String(psModule(Self)))
+             Set Formula "flabel"   to (Winql_String(sEktypDescr))
+             Set Formula "fwhat"    to (Winql_number(piwhat(Self)))
+             Set Formula "fkat"     to (Winql_String(sCategoryDescr))
+             Set Formula "fbranch"  to (Winql_String(sBranch))
+    
+             If (Trim(sClientCode)>"") Begin
+                 Set Formula "fClient"  to (Winql_String(sClientCode))
+                 Set Formula "fClientN" to (Winql_String(sClientName))
+             End
+             Else Begin
+                 Set Formula "fClient"  to (Winql_String("ANY"))
+                 Set Formula "fClientN" to (Winql_String(""))
+             End
+    
+             If (Trim(sCNCode)>"") Begin
+                 Set Formula "fCN"      to (Winql_String(sCNCode))
+                 Set Formula "fCNN"     to (Winql_String(sCNDescr))
+             End
+             Else Begin
+                 Set Formula "fCN"      to (Winql_String("ANY"))
+                 Set Formula "fCNN"     to (Winql_String(""))
+             End
+    
+             Set Formula "fhmgio"   to (Winql_String(sHmgioDescr))
+    
+             Set SelectionFormula To Selection
+    
+             get epil to fepil
+             Set Formula "fepil" to (winql_number(fepil))
+    
+            If Selection Eq "" Set Formula "SelTxt" To ('"' + "NONE" + '"')
+            Else               Set Formula "SelTxt" To ('"' + (Replaces('"', Selection, "")) + '"')
+    
+            Get NSortFields To NumSortFields
+    
+            For CurSortField From 0 To (NumSortFields - 1)
+                Send DeleteNthSortField 0
+            Loop
+    
+    //            If (piIsAscii(Self)=1) Begin
+    ////                Set Output_Destination          to WQL_PRINT_TO_FILE
+    ////                Set ExportFileName              to "c:\DeliveryExcelAscii.csv"
+    ////                Set ExportFormatType            to WQL_CommaSeparatedType
+    ////                Set FieldDelimiter              to ";"
+    ////                Set StringDelimiter             to '"'
+    ////                Set UseReportNumberFormat_State to True
+    ////                Set UseReportDateFormat_State   To True
+    //                Set Output_Device_Mode To WQL_PRINT_TO_WINDOW
+    ////                Set Output_Destination          to WQL_PRINT_TO_WINDOW
+    //                Set Output_Destination          to WQL_PRINT_TO_FILE
+    //                Set ExportFileName              to "c:\DeliveryExcelA.CSV"
+    //                Set ExportFormatType            to WQL_Xls5Type
+    //            End
+    //            Else If (piIsExcel(Self)=0) Begin
+    //                Get DescAsc To SortDirection
+    //                Get Output_Destination To Destination
+    //                If ((Destination Eq WQL_PRINT_TO_FILE) Or (Destination Eq WQL_PRINT_TO_MAPI)) Begin
+    //                    Get WQLFileName      To FileName
+    //                    Get WQLFileType      To FileType
+    //                    Set ExportFileName   To FileName
+    //                    Set ExportFormatType To FileType
+    //                End
+    //            End
+    //            Else If (piIsExcel(Self)=1) Begin
+    //                Set Output_Destination          to WQL_PRINT_TO_FILE
+    //                Set ExportFileName              to "c:\DeliveryExcel.xls"
+    //                Set ExportFormatType            to WQL_Xls5Type
+    //            End
+    
+            Set Output_Device_Mode To WQL_PRINT_TO_WINDOW
+            Set Output_Destination to WQL_PRINT_TO_WINDOW
+    
+            If Destination EQ WQL_PRINT_TO_WINDOW   Set ReportReady To False
+            Else                                    Set ReportReady To True
+    
+        End_procedure // OnStartPrinting
+    
+        Procedure Runpmoves3Report
+            String sRep sDescr
+            Get psRep                           to sRep
+            Get Value Of frmEktypDescr Item 0   to sDescr
+            Move (UpperCase(sRep))              to sRep
+            Move (UpperCase(sDescr))            to sDescr
+    
+            Set piIsExcel Of pmoves3WQLReport to 0
+            Set piIsAscii Of pmoves3WQLReport to 0
+    
+            If (sDescr Contains "EXCEL") Begin
+                Set piIsExcel Of pmoves3WQLReport to 1
+            End
+            Else If (sDescr Contains "ASCII") Begin
+                Set piIsAscii Of pmoves3WQLReport to 1
+            End
+            Else Begin
+                Set piIsExcel Of pmoves3WQLReport to 0
+                Set piIsAscii Of pmoves3WQLReport to 0
+            End
+    
+            Send Cursor_Wait To (Cursor_Control(Current_Object))
+            Set Report_name  to (psrep(self))
+            Send Run_report
+            Send Cursor_Ready To (Cursor_Control(Current_Object))
+    
+    //            If (sDescr Contains "EXCEL") Begin
+    //                Send DoStartDocument 'OPEN' "c:\DeliveryExcel.xls"
+    //            End
+    //            Else If (sDescr Contains "ASCII") Begin
+    //                Send DoStartDocument 'OPEN' "c:\DeliveryExcelA.CSV"
+    //            End
+    
+            Set piIsExcel Of pmoves3WQLReport to 0
+            Set piIsAscii Of pmoves3WQLReport to 0
+    
+        End_procedure // RunCustReport
+    
+    End_object // CustWQLReport
+    
+    Function ReportSort Returns Integer
+        Function_return (ReportSort(SortOrderGroup(Current_object)))
+    End_function // ReportSort
+    
+    Function DescAsc Returns Integer
+        Function_return (DescAsc(SortOrderGroup(Current_object)))
+    End_function // DescAsc
+    
+    Procedure AdjustFileTypeShadow Integer NewState
+        Set Object_Shadow_State Of (FileTypeGroup(Current_Object)) To NewState
+    End_procedure // AdjustFileTypeShadow
+    
+    //Procedure AdjustBoundaryShadow Integer GroupNum
+    //    Set Object_Shadow_State Of (groupSub1(Current_object)) To (GroupNum <> 0)
+    //    Set Object_Shadow_State Of (groupSub3(Current_object))   To (GroupNum = 0)
+    //End_procedure // AdjustBoundaryShadow
+    
+    Function WQLFileName Returns String
+        Function_return (WQLFileName(FileTypeGroup(Current_object)))
+    End_function // WQLFIleName
+    
+    Function WQLFileType Returns Integer
+        Function_return (WQLFileType(FileTypeGroup(Current_object)))
+    End_function // WQLFIleType
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //AB-StoreEnd
+
+End_Object    // DeliveryReport
+
+
+//AB-StoreStart
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+//AB-StoreEnd
+
+//AB/ End_Object    // prj

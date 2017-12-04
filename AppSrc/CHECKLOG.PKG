@@ -1,0 +1,240 @@
+open syscurgl
+open syscurxr
+open gplan
+//open gplanl
+open iteml
+open cn
+open payresp
+open salesmen
+open mhxanik
+open constrct
+open clients
+open wtypkin
+open wax
+Function Check_log Global String slog Returns Integer
+    clear gplan
+    move syscurxr.company_code to gplan.company_code
+    move syscurxr.branch_code  to gplan.branch_code
+    move syscurxr.year_year    to gplan.year_year
+    move slog                  to gplan.gplan_code
+    find eq gplan by index.1
+    if (found=1) function_return 0
+    else         function_return 1
+
+End_Function
+
+Function Check_last Global String slog Returns Integer
+    clear gplan
+    move syscurxr.company_code to gplan.company_code
+    move syscurxr.branch_code  to gplan.branch_code
+    move syscurxr.year_year    to gplan.year_year
+    move slog                  to gplan.gplan_code
+    find eq gplan by index.1
+    if ((found=1) and (Gplan.Gplan_Yn_Last = 1)) Function_Return 0
+    else                                         Function_return 1
+
+End_Function
+
+Function fsgplandescr String slog Returns string
+    clear gplan
+    move syscurgl.company_code to gplan.company_code
+    move syscurgl.branch_code  to gplan.branch_code
+    move syscurgl.year_year    to gplan.year_year
+    move slog                  to gplan.gplan_code
+    find eq gplan by index.1
+    if (found=1) function_return gplan.gplan_descr1
+    else         function_return ''
+
+End_Function
+
+
+
+Function fsclientAFM string code Returns string
+    string name
+    clear clients
+    move code to clients.client_id
+    find eq clients by index.6
+    if (found) move clients.client_afm to name
+    else       move '' to name
+    function_return name
+end_Function
+
+Function fspayrespAFM string code Returns string
+    string name
+    clear payresp
+    move code to payresp.presp_id
+    find eq payresp by index.7
+    if (found) move payresp.presp_AFM to name
+    else       move '' to name
+    function_return name
+end_Function
+
+Function fssalesmenAFM string code Returns string
+    string name
+    clear salesmen
+    move code to salesmen.sls_id
+    find eq salesmen by index.4
+    if (found) move salesmen.sls_AFM to name
+    else       move '' to name
+    function_return name
+end_Function
+
+
+
+//Function fsgplanperi String slog Returns string
+//    string sdescr
+//    clear gplanl
+//    move syscurgl.company_code to  gplanl.company_code
+//    move syscurgl.branch_code  to  gplanl.branch_code
+//    move slog                  to  gplanl.gplan_code
+//    find eq gplanl by index.1
+//    if (found=1) begin
+//        move gplanl.gplan_descr1 to sdescr
+//        function_return sdescr
+//    end
+//    else         function_return ''
+//End_Function
+
+
+
+Function fsclient string code Returns string
+    string name
+    clear clients
+    move code to clients.client_id
+    find eq clients by index.6
+    if (found) move clients.client_name to name
+    else       move '' to name
+    function_return name
+end_Function
+
+Function fspayresp string code Returns string
+    string name
+    clear payresp
+    move code to payresp.presp_id
+    find eq payresp by index.7
+    if (found) move payresp.presp_name to name
+    else       move '' to name
+    function_return name
+end_Function
+
+Function fssalesmen string code Returns string
+    string name
+    clear salesmen
+    move code to salesmen.sls_id
+    find eq salesmen by index.4
+    if (found) move salesmen.sls_name to name
+    else       move '' to name
+    function_return name
+end_Function
+
+Function fsconstrct string code Returns string
+    string name
+    clear constrct
+    move code to constrct.cnt_id
+    find eq constrct by index.5
+    if (found) move constrct.cnt_name to name
+    else       move '' to name
+    function_return name
+end_Function
+
+Function fsmhxanik string code Returns string
+    string name
+    clear mhxanik
+    move code to mhxanik.mhx_id
+    find eq mhxanik by index.4
+    if (found) move mhxanik.mhx_name to name
+    else       move '' to name
+    function_return name
+end_Function
+
+
+Function fsptyppar string code Returns string
+    string sdescr
+    clear ptypparl
+    move syscurxr.company_code to ptypparl.company_code
+    move syscurxr.branch_code  to ptypparl.branch_code
+ //   move syscurxr.year_year    to ptypparl.year_year
+    move code                  to ptypparl.ptyppar_code
+    find eq ptypparl by index.1
+    move ptypparl.ptyppar_descr to sdescr
+    function_return sdescr
+end_Function
+
+Function fsgplan string code Returns string
+    string sdescr
+    clear gplan
+    move syscurxr.company_code to gplan.company_code
+    move syscurxr.branch_code  to gplan.branch_code
+    move syscurxr.year_year    to gplan.year_year
+    move code                  to gplan.gplan_code
+    find eq gplan by index.1
+    move gplan.gplan_descr1    to sdescr
+    function_return sdescr
+end_Function
+
+Function fsitem string scode Returns string
+    clear iteml
+    move scode to iteml.item_code
+    find eq iteml by index.5
+    function_return iteml.item_descr
+end_Function
+
+Function fswax string srecr Returns string
+    clear wax
+    move srecr to wax.wax_recr
+    find eq wax by index.2
+    function_return wax.wax_descr
+end_Function
+
+
+Function fswitemx string code Returns string
+    string name
+    clear witemx
+    move syscurxr.company_code to witemx.company_code
+    move syscurxr.branch_code  to witemx.branch_code
+    move syscurxr.year_year    to witemx.year_year
+    move code to witemx.witemx_code
+    find eq witemx by index.5
+    move witemx.witemx_descr to name
+    function_return name
+end_Function
+
+Function fsCNDescr String asItem Returns String
+    Clear CN
+    move asItem to CN.CN_Code
+    Find Eq CN by Index.5
+    Function_Return CN.CN_Descr
+End_Function
+
+Function fswtypkin String askin Returns String
+    Clear Wtypkin
+    move askin to Wtypkin.wtypkin_code
+    Find Eq wtypkin by Index.1
+    Function_Return Wtypkin.wtypkin_descr
+End_Function
+
+Function FindGtypkinDescr Integer aiCode Returns String
+    String lsDescr
+    Clear Gtypkin
+    Move syscurxr.company_code    to Gtypkin.Company_Code
+    Move syscurxr.Branch_Code     to Gtypkin.Branch_Code
+    Move syscurxr.Year_year       to Gtypkin.Year_Year
+    Move aiCode                   to Gtypkin.Gtypkin_Code
+    Find eq Gtypkin by Index.1
+    [Found] Move Gtypkin.Gtypkin_Descr to lsDescr
+    Function_Return lsDescr
+End_Function // FindGtypkinDescr
+
+Function FindBtypkinDescr Integer aiCode Returns String
+    String lsDescr
+    Clear Btypkin
+    Move syscurxr.company_code    to Btypkin.Company_Code
+    Move syscurxr.Branch_Code     to Btypkin.Branch_Code
+    Move syscurxr.Year_year       to Btypkin.Year_Year
+    Move aiCode                   to Btypkin.btypkin_Code
+    Find eq Btypkin by Index.1
+    [Found] Move Btypkin.Btypkin_Descr to lsDescr
+    Function_Return lsDescr
+End_Function // FindGtypkinDescr
+
+

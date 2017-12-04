@@ -1,0 +1,75 @@
+
+// The Simple Way
+//
+//Use StdAbout.pkg // Standard "About" package
+
+//Procedure Activate_About
+//    Local String sTitle sCopyright sVersion sAuthor  sBitmap
+//    Move "É†ò≠û£†©´†°Ê è®Êö®ò££ò Media98                    " to sTitle
+//    Move "Version 5.0" to sVersion
+//    Move "Copyright 1998, Solution ltd" to sCopyright
+//    Move "Solution Team"  to sAuthor
+//    Move "Diamond.bmp" to sBitmap
+//    Send DoAbout sTitle sVersion sCopyright sAuthor sBitmap
+//End_Procedure
+
+
+
+//Use StdSubAbt.pkg //  Our Standard "About" package
+
+
+//Procedure Activate_About
+//    String sLabel sTitle sCopyright sVersion sAuthor  sBitmap sInfo sinfoPlus sComments sCName sCPlus sPhone sFax sEmail
+//    String sWeb
+//    Integer iClcom iShowComments
+
+//    Move "è¢û®¶≠¶®Âú™" to sLabel
+//    Move "Çú§†°„ ä¶ö†©´†°„ Visual ACC2000" to sTitle
+//    Move "Version 6.0" to sVersion
+//    Move "Copyright 1999, Solution ltd" to sCopyright
+//    Move "Solution ltd"  to sAuthor
+//    Move "Company.bmp" to sBitmap
+//    //Move 1 to iClcom
+//    //Move 'Info' to sInfo
+//    //Move "Plus" to SInfoPlus
+//    Move "Solution ltd" to sCname
+//    Move "This Copy Is Registered." to sComments
+//    Move "HIGH TECHNOLOGY SYSTEMS" to sCPlus
+//    Move "65 17 945" to sPhone
+//    Move "65 36 981" to sFax
+//    Move (CompanyEmailAddress()) to sEmail
+//    Move (CompanyHomePage()) to sWeb
+//    Move 1 to iShowComments
+
+//    Send DoAbout sLabel sTitle sVersion sCopyright sAuthor sBitmap sInfo iClCom sComments sInfoplus sCName sCPlus sPhone sFax sEmail sWeb iShowComments
+//End_Procedure
+
+// More Complicated but more flexible
+//
+Use AboutSC.pkg // (Include SysInfo.pkg)
+
+    Object AccAbout is an AboutDialog
+        Set Label to "è¢û®¶≠¶®Âú™"
+        Set ProductName to "Çú§†°„ ä¶ö†©´†°„ Visual ACC2000"
+        Set Version     to "Version 6.0"
+        Set CopyRight   to "Copyright 1999, Solution ltd."
+        Set Author      to "Solution ltd"
+        Set Logo        to "Company.bmp"
+        Set Clear_Comments to True
+        Set Info To "This Copy Is Licensed to:"
+        set Info_Plus To ""
+        Set Comments to "This Copy Is Registered !"
+        set Company_Name To "Solution ltd"
+        set Company_Plus To "HIGH TECHNOLOGY SYSTEMS"
+        set Company_Phone To "65 17 945"
+        set Company_Fax To "65 36 981"
+        set Company_eMail To (CompanyEmailAddress())
+        set Company_WebHome To (CompanyHomePage())
+        Set piShow_Company To True
+    End_Object
+
+Procedure Activate_About
+    Send Popup to (AccAbout(Self))
+end_procedure
+
+

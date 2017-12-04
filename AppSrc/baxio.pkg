@@ -1,0 +1,80 @@
+// **************************************************************************
+// *Code Style   : Object                                                   *
+// *Name         : Baxio.vts                                                *
+// *Revision     : 1                                                        *
+// *Main File    :                                                          *
+// *Location     : \Home.Win\Easyware\ED\Appsrc                             *
+// *Creation Date: 01/09/99                                                 *
+// *Last Update  :                                                          *
+// *Author       : JA                                                       *
+// *Includes     :                                                          *
+// *Comments     : œ¨ â®œ  æ¢˜ «˜ static validation tables «¦¬             *
+// *             : module «à¤ ˜¥ ¦š¨á­à¤.                                   *
+// *             :                                                          *
+// *             :                                                          *
+// *Returns      :                                                          *
+// *             :                                                          *
+// *‰nown bugs   :                                                          *
+// *             :                                                          *
+// *Improvements :                                                          *
+// *             :                                                          *
+// *             :                                                          *
+// **************************************************************************
+// *                        A N A L Y S I S                                 *
+// **************************************************************************
+// *                                                                        *
+// **************************************************************************
+
+
+//Set Allow_Blank_State To TRUE
+
+//used by: 1. baxiokat.baxiokat_type
+Object Baxiokat_Type_VT  is a DescriptionValidationTable
+       set table_title to "„å›¦ª €¥ ¦š¨á­¦¬"
+       Procedure Fill_List
+                 Forward Send Fill_List
+                 Send Add_Table_Value  "1"  "„ ©§¨˜¡«â¦"
+                 send add_table_value  "2"  "¢¨à«â¦"
+       End_Procedure //fill_list
+End_Object   //Baxiokat_Type_VT
+
+
+//¡˜«˜©«á©œ ª ˜¥ ¦š¨á­à¤
+//used by: 1. bkinkat.baxio_stat_from :¡˜«á©«˜© ˜§æ
+//         2. bkinkat.baxio_stat_to   :¡˜«á©«˜© ©â
+//         3. baxio.baxio_status      :¡˜«á©«˜©
+//â¤˜ ˜¥ æš¨˜­¦ œå¤˜  § Ÿ˜¤æ ¤˜ ™¨œŸœå ©« ª §˜¨˜¡á«à 3 ¡˜«˜©«á©œ ª:
+Object Baxio_Status_VT  is a DescriptionValidationTable
+       set table_title to "‰˜«˜©«á©œ ª €¥ ¦š¨á­à¤"
+       Procedure Fill_List
+                 Forward Send Fill_List
+                 Send Add_Table_Value  "1"  "„¡¡¨œ£âª"
+                 Send Add_Table_Value  "2"  "„¥¦­¢£â¤¦"
+                 Send Add_Table_Value  "3"  "ƒ ˜£˜¨«¬¨£â¤¦"
+                 Send Add_Table_Value  "4"  "’˜£œå¦"
+                 Send Add_Table_Value  "5"  "ƒœ©£œ¬£â¤¦"
+
+       End_Procedure // fill_list
+End_Object   //Baxio_Status_VT1
+
+
+
+//used by: 1. btypkin.btypkin_anti1
+//         2. btypkin.btypkin_anti2
+//         3. baxio.baxio_file_in
+//         4. baxio.baxio_file_out
+//         5. baxio.baxio_lfile
+Object Bfile_VT  is a DescriptionValidationTable
+       set table_title to "‘¬¤˜¢¢˜©æ£œ¤¦ª/˜¨˜¢ã§«ª ˜§æ"
+       Procedure Fill_List
+                 Forward Send Fill_List
+                 Send Add_Table_Value  "-1" "ƒœ¤ “§á¨®œ "
+                 Send Add_Table_Value  "0"  "Data Entry"
+                 Send Add_Table_Value  "1"  "Š¦š˜¨ ˜©£é¤ ‚Š"
+                 send add_table_value  "2"  "”¦¨â˜ª"
+                 Send Add_Table_Value  "3"  "¨¦£Ÿœ¬«é¤"
+                 Send Add_Table_Value  "5"  " ‘¬¤˜¢¢˜©æ£œ¤¦ª"
+                 Send Add_Table_Value  "6"  "’œ¢.˜¨˜¢ã§«ª"
+       End_Procedure // fill_list
+End_Object   // Btypkin_Btypkin_Anti_VT
+

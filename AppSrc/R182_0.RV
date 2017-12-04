@@ -1,0 +1,858 @@
+//AB/ Project r182_0:diakinishs eidon
+//AB/ Object prj is a Report_Project
+//AB/     Set ProjectName to "r182_0:diakinishs eidon"
+//AB/     Set ProjectFileName to "R182_0.RV"
+
+// Project Object Structure
+//   r182_0 is a ReportView
+//     DestRadio is a RadioGroup
+//       WindowRadio is a Radio
+//     ButtonSub1 is a Button
+//     ButtonSub3 is a ButtonSub
+//     prom1WQLReport is a CrystalReportSubsql
+
+// Register all objects
+Register_Object ButtonSub1
+Register_Object ButtonSub3
+Register_Object DestRadio
+Register_Object prom1WQLReport
+Register_Object r182_0
+Register_Object WindowRadio
+
+
+//AB/ Report View
+
+
+//AB-StoreTopStart
+Use dfallrpt
+//AB-StoreTopEnd
+
+//AB-IgnoreStart
+
+Use DFAllEnt.pkg
+Use Button.Sub
+
+//AB-IgnoreEnd
+
+ACTIVATE_VIEW Activate_r182_0 FOR r182_0
+
+Object r182_0 is a ReportView
+
+    //AB-StoreTopStart
+    property string psrecr public ''
+
+    //AB-StoreTopEnd
+
+    Set Label to "Ñ°´Áß‡©û èò®ò©´ò´†°¶Á õ†ò°Â§û©û™"
+    Set Size to 48 191
+    Set Location to 39 53
+
+    //AB-DDOStart
+
+
+    //AB-DDOEnd
+
+    Object DestRadio is a RadioGroup
+
+        //AB-StoreTopStart
+
+        //AB-StoreTopEnd
+
+        Set Label to "Ñ°´Áß‡©û"
+        Set Size to 29 49
+        Set Location to 2 1
+        Object WindowRadio is a Radio
+            Set Size to 13 30
+            Set Location to 12 12
+            Set Bitmap to "screen4.bmp"
+        End_Object    // WindowRadio
+
+
+        //AB-StoreStart
+        set visible_state of (destradio(self)) to false
+        //***
+        //*** Procedure: Notify_Select_state
+        //*** Purpose  : Augemented to setup the output destination of the WinQL
+        //***            report. The procedure is sent when the user changes the
+        //***            selection.
+        //***
+
+        //Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+        //    Forward Send Notify_Select_State  iNewItem  iOldItem
+        //    If iNewItem Eq 0 ;
+                Set Output_Device_Mode To WQL_PRINT_TO_WINDOW
+        //    Else If iNewItem Eq 1;
+        //        Set Output_Device_Mode To WQL_PRINT_TO_PRINTER
+        //    Else If iNewItem Eq 2 ;
+        //        Set Output_Device_Mode To WQL_PRINT_TO_FILE
+
+
+        //    Send AdjustFileTypeShadow (iNewItem < 2)
+        //End_Procedure
+
+
+
+
+        //AB-StoreEnd
+
+    End_Object    // DestRadio
+
+    Object ButtonSub1 is a Button
+
+        //AB-StoreTopStart
+
+        //AB-StoreTopEnd
+
+        Set Bitmap to "RUNPROG.BMP"
+        Set Size to 18 29
+        Set Location to 6 55
+
+        //AB-StoreStart
+
+        Procedure OnClick
+           Send Runprom1report To (prom1WQLReport(Current_Object))
+        End_Procedure
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub1
+
+    Object ButtonSub3 is a ButtonSub
+
+        //AB-StoreTopStart
+
+        //AB-StoreTopEnd
+
+        Set Bitmap to "CANCEL.BMP"
+        Set Size to 18 29
+        Set Location to 6 89
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+        Procedure OnClick
+            Send Request_Cancel
+        End_Procedure
+
+
+
+
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub3
+
+
+    //AB-StoreStart
+    Object prom1WQLReport Is A CrystalReportSubsql
+
+    Property Integer ReportReady Public False
+    set Report_name    To "r182_0.rpt"
+    Set Report_View_id To (Parent(Current_object))
+
+    Procedure OnStartPrinting
+        Local String  Selection FileName lsdate wrecr smodule
+        Local Integer FileType Destination SortOrder NumSortFields
+        Local Integer CurSortField
+        Local Integer SortDirection
+        Move "" To Selection
+        move '09' to smodule
+        get psrecr to wrecr
+
+         Append Selection (If(Selection <> "", " and ", "")) "{witemxtr.recr} = "  '"' (Trim(wrecr)) '"'
+        //*** Setup the selection formula
+         Append Selection (If(Selection <> "", " and ", "")) "{wcmoves.module_from} = "  '"' (Trim(smodule)) '"'
+          Set SelectionFormula To Selection
+          Get NSortFields To NumSortFields
+          For CurSortField From 0 To (NumSortFields - 1)
+          Send DeleteNthSortField 0
+          Loop
+        If Selection Eq "" ;
+            Set Formula "SelTxt" To ('"' + "NONE" + '"')
+        Else ;
+            Set Formula "SelTxt" To ('"' + (Replaces('"', Selection, "")) + '"')
+
+        move WQL_PRINT_TO_WINDOW to destination
+        If Destination EQ WQL_PRINT_TO_WINDOW ;
+            Set ReportReady To False
+        Else ;
+            Set ReportReady To True
+
+
+    End_procedure // OnStartPrinting
+
+
+    Procedure Runprom1Report
+        Send Cursor_Wait To (Cursor_Control(Current_Object))
+        Send Run_report
+        Send Cursor_Ready To (Cursor_Control(Current_Object))
+        If (ReportReady(Current_object)) ;
+            Send Info_box "WinQL report ready."
+    End_procedure // RunCustReport
+
+    End_object // serviceWQLReport
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //AB-StoreEnd
+
+End_Object    // r182_0
+
+
+//AB-StoreStart
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+//AB-StoreEnd
+
+//AB/ End_Object    // prj

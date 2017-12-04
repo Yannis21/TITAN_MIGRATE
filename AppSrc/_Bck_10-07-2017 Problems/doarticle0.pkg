@@ -1,0 +1,512 @@
+        use ctypkin.dd
+        use wtypkin.dd
+        use ptyppar.dd
+        use cities.dd
+        use clients.dd
+        use payresp.dd
+        use nomisma.dd
+        use wapokat.dd
+        use wapomast.dd
+        use wax.dd
+        use units.dd
+        use witemkat.dd
+        use fpa.dd
+        use item.dd
+        use iteml.dd
+        use witemx.dd
+        Use particle.dd
+        use pmoves.dd
+        use pmovesl.dd
+        use pmsdtl.dd
+        use psxetika.dd
+        use tparticl.dd
+        use partlfpa.dd
+        use baxiokat.dd
+        use btnemp.dd
+        Use bpencmvs.dg
+        use areas.dd
+        use country.dd
+        use towns.dd
+        use bttemp.dd
+        open cars
+        open pumps
+        Open Cn
+        Open Branch
+      Object oDoarticle0 is A BusinessProcessSub
+
+        set Status_panel_state to false
+        set Display_Error_state to true
+        property string     particlerecr
+        property string     psdate
+        property string     psclient
+        property string     pscons
+        property string     psBtnL1
+        property string     psvdate
+        property string     pstim
+        property string     psparast
+        property string     psdatefrom
+        property string     psdateto
+        property string     psmodule
+        property integer    piTxtID public 0
+        property integer    piLathos public 0
+        property string     pstxt
+        property integer    piSfalma public 0
+
+        Object bttemp_DD is a bttemp_DataDictionary
+        End_Object    // bttemp_DD
+
+
+        Object Country_DD is a Country_DataDictionary
+        End_Object    // Country_DD
+
+        Object Towns_DD is a Towns_DataDictionary
+           Set DDO_Server to (Country_DD(self))
+        End_Object    // Towns_DD
+
+        Object Cities_DD is a Cities_DataDictionary
+           Set DDO_Server to (Towns_DD(self))
+        End_Object    // Cities_DD
+
+        Object Ctypkin_DD is a Ctypkin_DataDictionary
+        End_Object
+
+        Object Areas_DD is a Areas_DataDictionary
+        End_Object    // Areas_DD
+
+        Object Btnemp_DD is a Btnemp_DataDictionary
+        End_Object    // Btnl2_DD
+
+        Object Wtypkin_DD is a Wtypkin_DataDictionary
+        End_Object
+
+
+        Object Ptyppar_DD is a Ptyppar_DataDictionary
+            Set DDO_Server to (Ctypkin_DD(self))
+            Set DDO_Server to (Wtypkin_DD(self))
+        End_Object
+
+        Object Payresp_DD is a Payresp_DataDictionary
+        End_Object    // Payresp_DD
+
+
+        Object Clients_DD is a Clients_DataDictionary
+            Set DDO_Server to (Cities_DD(self))
+            Set DDO_Server to (payresp_DD(self))
+            Set DDO_Server to (areas_DD(self))
+        End_Object
+
+        Object Nomisma_DD is a Nomisma_DataDictionary
+        End_Object
+
+        Object Wapokat_DD is a Wapokat_DataDictionary
+        End_Object    // Wapokat_DD
+
+        Object Wapomast_DD is a Wapomast_DataDictionary
+            Set DDO_Server to (Wapokat_DD(self))
+        End_Object    // Wapomast_DD
+
+        Object Wax_DD is a Wax_DataDictionary
+            Set DDO_Server to (Wapomast_DD(self))
+        End_Object    // Wax_DD
+
+        Object Units_DD is a Units_DataDictionary
+        End_Object    // Units_DD
+
+        Object Witemkat_DD is a Witemkat_DataDictionary
+        End_Object    // Witemkat_DD
+
+        Object Fpa_DD is a Fpa_DataDictionary
+        End_Object
+
+        Object Item_DD is a Item_DataDictionary
+            Set DDO_Server to (Units_DD(self))
+            Set DDO_Server to (Witemkat_DD(self))
+            Set DDO_Server to (Fpa_DD(self))
+        End_Object    // Item_DD
+
+        Object Iteml_DD is a Iteml_DataDictionary
+        End_Object    // Item_DD
+
+
+        Object Witemx_DD is a Witemx_DataDictionary
+            Set DDO_Server to (Item_DD(self))
+        End_Object    // Witemx_DD
+
+        Object Particle_DD is a Particle_DataDictionary
+            Set DDO_Server to (Clients_DD(self))
+            Set DDO_Server to (Ptyppar_DD(self))
+            Set DDO_Server to (Nomisma_DD(self))
+            set PifromBhma1   to 1
+        End_Object    // Particle_DD
+
+        Object Pmoves_DD is a Pmoves_DataDictionary
+            Set DDO_Server to (Wax_DD(self))
+            Set DDO_Server to (Witemx_DD(self))
+            Set DDO_Server to (Particle_DD(self))
+            Set Constrain_File to Particle.File_Number
+        End_Object
+
+        Object Pmovesl_DD is a Pmovesl_DataDictionary
+            Set DDO_Server to (Wax_DD(self))
+            Set DDO_Server to (Witemx_DD(self))
+            Set DDO_Server to (Particle_DD(self))
+            Set Constrain_File to Particle.File_Number
+        End_Object    // Pmovesl_DD
+
+        Object Psxetika_DD is a Psxetika_DataDictionary
+            Set DDO_Server to (Particle_DD(self))
+            Set Constrain_File to Particle.File_Number
+        End_Object    // Psxetika_DD
+
+        Object Pmsdtl_DD is a Pmsdtl_DataDictionary
+            Set DDO_Server to (Pmoves_DD(self))
+            Set Constrain_File to Pmoves.File_Number
+        End_Object    // Pmsdtl_DD
+
+
+        Object Baxiokat_DD is a Baxiokat_DataDictionary
+        End_Object    // Baxiokat_DD
+
+        Object Tparticl_DD is a Tparticl_DataDictionary
+            Set DDO_Server to (Particle_DD(self))
+            Set DDO_Server to (Baxiokat_DD(self))
+            Set Constrain_File to Particle.File_Number
+        End_Object    // Tparticl_DD
+
+        Object Partlfpa_DD is a Partlfpa_DataDictionary
+            Set DDO_Server to (Particle_DD(self))
+            Set DDO_Server to (Fpa_DD(self))
+            Set Constrain_File to Particle.File_Number
+        End_Object    // Partlfpa_DD
+
+
+PROCEDURE beg_uparticle0 string  lsparast string datefrom string dateto
+    set psparast to lsparast
+    set psdatefrom to datefrom
+    set psdateto to dateto
+    SEND DOPROCESS
+END_PROCEDURE
+
+Procedure uparticle0_rec
+            Integer  ierr licount igroup  irecnum iError_Object_ID  iempor irow
+
+            date    lsdate  apodate lsvdate
+            number  lnqty lntotal lntotprice lntotqty lnkmaf lnhaf lnkmbef lnhourbef;
+                    lnkmn lnhourn lnkm lnhour aarec lnkmbsave lnhbsave lnaxia lnItemVatPCT;
+                    lnpagiam3 qtyreturn
+            string  lscompany lssite lsclient lscons lsprod wrecr lstim lsantlia lssiteemf
+            string  lsparast wapokat wapomast units witemkat warticle particle_recr;
+                        lspmoves_recr cn_recr wda wdan narticle btnemp_recr msgstr;
+                        ekleise wseira wtime Wap lscar sbtnemprecr itemypot szone sseira;
+                        Stexnikh smixer
+//            reread
+//            unlock
+            clear Branch
+            move syscurxr.company_code to branch.company_code
+            move syscurxr.branch_code  to branch.branch_code
+            find eq branch by index.1
+            if (not(found));
+                error 5215 'Éú§ ô®Â©°‡ ´¶ ìß¶°ò´·©´û£ò'
+            move branch.branch_c_coder to iempor
+            get psparast to lsparast
+            move 0 to licount
+            clear bttemp
+            move 0.0001 to bttemp.vunitprice
+            find gt bttemp by index.2
+            While (found)
+
+                Indicate Err False
+                begin_transaction
+                    Move Error_Object_ID to iError_Object_ID
+                move 0 to licount
+                clear btnemp
+                move bttemp.vcompany to btnemp.vcompany
+                move bttemp.vsite    to btnemp.vsiteemf
+                move bttemp.vparast  to btnemp.vvoucher
+                move bttemp.vseries  to btnemp.vseries
+                move bttemp.vsn      to btnemp.vsn
+                find gt btnemp by index.13
+                While ((found) and (bttemp.vcompany eq btnemp.vcompany) and;
+                                   (bttemp.vsite    eq btnemp.vsiteemf) and;
+                                   (bttemp.vparast  eq btnemp.vvoucher) and;
+                                   (bttemp.vseries  eq btnemp.vseries)  and;
+                                   (bttemp.vsn      eq btnemp.vsn))
+                    //////////// Ola ta pedia se metavlhtes ////////////
+                    move btnemp.recnum to irecnum
+                    move btnemp.btnemp_recr     to btnemp_recr
+                    move btnemp.vclientcode     to lsclient
+                    move btnemp.vsiteemf        to lssiteemf
+                    move btnemp.vdate           to lsdate
+                    move btnemp.vconscode       to lscons
+                    move btnemp.vcompany        to lscompany
+                    move btnemp.vsite           to lssite
+                    move btnemp.vprodcode       to lsprod
+                    move btnemp.vqty            to lnqty
+                    move btnemp.vorderprice     to lnaxia
+                    move btnemp.vseries         to wseira
+                    move btnemp.vtime           to wtime
+                    move btnemp.vsn             to wda
+                    move btnemp.ap              to wap
+                    move btnemp.vcarcode        to lscar
+                    move btnemp.vrow            to irow
+                    move btnemp.vpumbid         to lsantlia
+                    move btnemp.item_ypot       to itemypot
+                    move btnemp.qty_return      to qtyreturn
+                    move btnemp.vzone           to szone
+                    move btnemp.vconstructorc   to stexnikh
+                    move btnemp.vsalecode       to smixer
+
+                    ///////
+
+                    if (licount=0) begin
+                    //////////// Gia to proto record mono ftiaxnoume Particle  ////////////
+
+                        send clear to particle_dd
+                        move syscurxr.company_code           to ptyppar.company_code
+                        move syscurxr.branch_code            to ptyppar.branch_code
+                    //    move syscurxr.year_year              to ptyppar.year_year
+                        move lsparast                        to ptyppar.ptyppar_code
+                        send find to ptyppar_dd eq 1
+                        if (not(found)) begin
+                            move "Éú§ ô®‚üû°ú ¶ °‡õ†°Ê™ ßò®ò©´ò´†°¶Á\n ©´¶ ßò®ò©´ò´†°Ê = " to msgstr
+                            append msgstr wda
+                            error 8001 msgstr
+                        end
+
+                        move syscurxr.c_code0 to nomisma.nomisma_code
+                        send find to nomisma_dd eq 1
+                        if (not(found)) error 8002 "Éú§ ô®Â©°‡ §Ê£†©£ò Æ®„©û™"
+
+                        move lsclient to clients.client_id
+                        send find to clients_dd eq 6
+                        if (not(found)) begin
+                            move "Éú§ ô®Â©°‡ ´¶§ ≠¶®‚ò ©´¶ ßò®ò©´ò´†°Ê = " to msgstr
+                            append msgstr wda
+                            error 8003 msgstr
+                        end
+
+                        if (lscons<>'') begin
+                            clear cn
+                            move lsclient                         to cn.client_id
+                            move lscons                           to cn.cn_code
+
+                            find eq cn by index.4
+                            if (found = 0 and wap = '1') begin
+                                move "Éú§ ô®Â©°‡ ´¶ ‚®ö¶ ©´¶ ßò®ò©´ò´†°Ê = " to msgstr
+                                append msgstr wda
+                                error 8004 msgstr
+                            end
+                        end
+                        move cn.cn_recr         to cn_recr
+                        set field_changed_value of particle_dd field particle.pseira_seira      to wseira
+                        set field_changed_value of particle_dd field particle.partl_hmnia       to lsdate
+                        set field_changed_value of particle_dd field particle.cn_recr           to cn_recr
+                        set field_changed_value of particle_dd field particle.cn_code           to lscons
+
+                        set field_changed_value of particle_dd field particle.ora_apostolhs     to wtime
+                        set field_changed_value of particle_dd field particle.partl_no          to wda
+                        set field_changed_value of particle_dd field particle.oxhma_code        to lscar
+                        set field_changed_value of particle_dd field particle.antlia_code       to lsantlia
+                        set field_changed_value of particle_dd field particle.no_print_module   to 1
+                        set field_changed_value of particle_dd field particle.zone_id           to szone
+
+       //                 set field_changed_value of particle_dd   field particle.Partl_Selected  to 1
+
+                        send request_save to particle_dd
+                        Send UpdateWait to (piTxtID(Self))  ('Eöö®ò≠„ Particle Record '+(String(particle.Recnum)))
+                    end // liCount=0
+
+                    ///////// Grafoume Pmoves //////////////
+                    move  btnemp.vprodcode   to lsprod
+                    move  btnemp.vqty        to lnqty
+                    move  btnemp.vorderprice to lnaxia
+                    move  btnemp.wapomast    to wapomast
+                    move  btnemp.vqty2       to lnpagiam3
+
+                    clear iteml
+                    move lsprod to iteml.item_code
+                    find eq iteml by index.5
+                    if (not(found)) error 8017 'Éú§ ô®Â©°‡ ´¶ úÂõ¶™ !!'
+
+                    // 03/07/03 ú¢úöÆ¶™ ´®Ê£ßò™ °ò† ¶Æ„£ò´¶™ ö†ò´Â ¨ß·®Æ¶¨§ °ò† £ú ¢ò´†§†°·
+                    // ö®·££ò´ò °ò† ´©ò°Âù¶¨§ ©´ò Reports
+
+                    if ((trim(lscar)='') and (irow=0)) begin
+                        error 8316 'Éú§ úß†´®‚ßú´ò† °ú§Ê éÆû£ò !!'
+                    end
+                    if (trim(lscar)<>'') begin
+                        clear cars
+                        move (trim(lscar)) to cars.car_id
+                        find eq cars by index.2
+                        if (not(found)) error 8317 'Éú§ ô®Â©°‡ ´¶ éÆû£ò !!'
+                    End
+                    if (trim(lsantlia)<>'') begin
+                        clear Pumps
+                        move (trim(lsantlia)) to Pumps.Pump_id
+                        find eq Pumps by index.3
+                        if (not(found)) error 8318 'Éú§ ô®Â©°‡ ´û§ Ä§´¢Âò !!'
+                    end
+
+                    move iteml.wapokat_code to wapokat
+                    move iteml.units_code   to units
+                    move iteml.witemkat_code to witemkat
+
+                    Send Clear to wax_dd
+                    Send Clear to witemx_dd
+                    send clear to pmoves_dd //?????
+
+                    move syscurxr.company_code           to wax.company_code
+                    move syscurxr.branch_code            to wax.branch_code
+                    move syscurxr.year_year              to wax.year_year
+                    move wapokat  to wax.wapokat_code
+                    move wapomast to wax.wapomast_code
+                    move syscurxr.year_year              to wax.wax_code
+                    ///////////////////////////////////////
+                    send find to wax_dd eq 1
+                    if (not(found)) begin
+                        move "Éú§ ô®Â©°‡ òß¶ü„°û ©´¶ ßò®ò©´ò´†°Ê = " to msgstr
+                        append msgstr wda
+                        error 8005 msgstr
+                    end
+
+
+                    //Showln "+++++++++++++++++++++++"
+                    //SHowln "syscurxr.company_code = " (Trim(syscurxr.company_code   ))
+                    //SHowln "syscurxr.branch_code  = " (Trim(syscurxr.branch_code    ))
+                    //SHowln "syscurxr.year_year    = "       syscurxr.year_year
+                    //SHowln "Units                 = " (Trim(units                   ))
+                    //SHowln "witemkat              = " (Trim(witemkat                ))
+                    //SHowln "lsprod                = " (Trim(lsprod                  ))
+                    //SHowln "syscurxr.company_code = " (Trim(syscurxr.company_code   ))
+                    //Showln "+++++++++++++++++++++++"
+                    move (Trim(syscurxr.company_code))  to witemx.company_code
+                    move (Trim(syscurxr.branch_code ))  to witemx.branch_code
+                    move syscurxr.year_year             to witemx.year_year
+                    move (Trim(units))                  to witemx.units_code
+                    move (Trim(witemkat))               to witemx.witemkat_code
+                    move (Trim(lsprod))                 to witemx.item_code
+                    move (Trim(lsprod))                 to witemx.witemx_code
+
+                    send find to witemx_dd eq 1
+                    if (not(found)) begin
+                        move "Éú§ ô®Â©°‡ ´¶ úÂõ¶™ Æ®„©û™ ©´¶ ßò®ò©´ò´†°Ê = " to msgstr
+                        append msgstr wda
+                        error 8006 msgstr
+                    end
+
+
+                    Get field_Current_value of Item_dd     field Item.Fpa_Pososto      to lnItemVatPCT
+
+                    Integer isCLientZeroFPA
+                    Get Field_Current_Value Of Clients_DD Field Clients.Client_Pelprom to isCLientZeroFPA
+                    //===============================
+                    //===============================
+                    // Yannis 16/06/2016
+                    If (isCLientZeroFPA=1) Move 0 to lnItemVatPCT
+                    //===============================
+                    //===============================
+
+
+                    Get field_Current_value of Item_dd     field Item.group            to igroup
+                    move btnemp.btnemp_recr    to btnemp_recr
+                    if (iempor=1) begin
+                        if (witemkat='03');
+                            set field_changed_value of pmoves_dd   field Pmoves.Pms_status_e  to 1
+                    End
+
+
+                    set field_changed_value of pmoves_dd   field Pmoves.Pms_VatPct     to lnItemVatPCT
+                    set field_changed_value of pmoves_dd   field pmoves.cn_code        to lscons
+                    set field_changed_value of pmoves_dd   field pmoves.pms_qty        to lnqty
+                    set field_changed_value of pmoves_dd   field pmoves.pms_unitprice  to lnaxia
+                    set field_changed_value of pmoves_dd   field pmoves.btnemp_recr    to btnemp_recr
+                    set field_changed_value of pmoves_dd   field pmoves.pump_id        to lsantlia
+                    set field_changed_value of pmoves_dd   field pmoves.car_id         to lscar
+                    set field_changed_value of pmoves_dd   field pmoves.item_ypot      to itemypot
+                    set field_changed_value of pmoves_dd   field pmoves.qty_return     to qtyreturn
+                    set field_changed_value of pmoves_dd   field pmoves.zone           to szone
+                    set field_changed_value of pmoves_dd   field pmoves.btnl2_recr     to stexnikh
+                    set field_changed_value of pmoves_dd   field pmoves.custprom_code  to Smixer
+       //             set field_changed_value of pmoves_dd   field Pmoves.Pms_Selected to 1
+       //             set field_changed_value of pmoves_dd   field pmoves.qty_kinhshs  to lnqty
+
+                    if ((igroup=1) and (lnpagiam3<>0));
+                    set field_changed_value of pmoves_dd   field pmoves.pms_ys2     to lnpagiam3
+                    send request_save to pmoves_dd
+
+
+                    Get field_Current_value of pmoves_dd   field pmoves.pms_recr       to lspmoves_recr
+                    Get field_Current_value of particle_dd field particle.partl_recr   to particle_recr
+                    reread btnemp
+                    move lspmoves_recr to btnemp.pms_recr
+                    move particle_recr to btnemp.particle_recr
+                    saverecord btnemp
+                    unlock
+                    Send UpdateWait to (piTxtID(Self))  ('Eöö®ò≠„ Pmoves Record '+(String(pmoves.Recnum)))
+
+                    move 1 to licount
+
+
+                    find gt btnemp by index.13
+                Loop
+
+                Set piTxtID         Of (bpEnCmvs(Self)) to (piTxtID(Self))
+                Set psTxt           Of (bpEnCmvs(Self)) to (psTxt(Self))
+                Set pifromtim       Of (bpEnCmvs(Self)) to 1
+                Set psParticleRecr  Of (bpEnCmvs(Self)) to particle_recr
+                Set piParticleID    Of (bpEnCmvs(Self)) to (v192(Self))
+                Set psModule        Of (bpEnCmvs(Self)) to (psModule(Self))
+                Send DoProcess                          to (bpEnCmvs(Self))
+                Get piLathos        Of (bpEnCmvs(Self)) to iErr
+                If (iErr) error 8008 'è®Êô¢û£ò °¢ú†õÈ£ò´¶™ úöö®ò≠„™. Ñ¢úöÆ¶™ ßò®ò©´ò´†°È§ !'
+                Set pifromtim       Of (bpEnCmvs(Self)) to 0
+
+                End_Transaction
+
+                    UnLock
+
+                    Move iError_Object_ID to Error_Object_ID
+
+                    Send ChangeAllFileModes DF_Filemode_Default
+
+
+            //  ö†ò °·üú ßò®ò©´ò´†°Ê ß¶¨ ≠´†·Æ§ú† §ò ôöòÂ§ú† òßÊ transaction ////////
+            //////////////////////
+                find gt bttemp by index.2
+            Loop
+
+            if (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+
+
+End_Procedure
+
+Procedure OnProcess
+        Send Rebuild_Constraints to Ptyppar_DD
+        Send Rebuild_Constraints to Wax_DD
+        Send Rebuild_Constraints to Witemx_DD
+        send uparticle0_rec
+End_Procedure
+
+Procedure Start_Process
+         Set piTxtID                         to (Wait(Self))
+         Set Button_State    of (Wait(Self)) to False
+         Set BarVisibleState of (Wait(Self)) to '' False
+         Send Popup                          to (Wait(Self))
+         Set piLathos                        to 0
+         Forward Send Start_Process
+End_Procedure
+
+Procedure OnError integer error_info string errMsg
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+End_Procedure
+
+
+Procedure End_Process
+            Forward Send End_Process
+            If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+End_Procedure
+
+
+End_Object
+
+

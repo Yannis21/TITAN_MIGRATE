@@ -1,0 +1,315 @@
+      Use syscurxr.dd
+      Use pelates.dd
+      Use ypprosf.dd
+      Use yppolhs.dd
+      Use ypYlop.dd
+      Use katergo.dd
+      Use cn.dd
+      Use ypoprosf.dd
+      use ergasies.dd
+      use ergkat.dd
+      use catypes.dd
+      use caitems.dd
+      use catypkin.dd
+      use camoves.dd
+      use camovesa.dd
+      use clorderd.dd
+      use nprosfor.vw
+      use v32a.vw
+
+
+      Object oDoupcamoves is A BusinessProcessSub
+        set Status_panel_state to false
+        set Display_Error_state to true
+        property date       pddate
+        property string     pskin
+        property string     psparast
+        property integer    piypoprosf
+        property string     pstopos
+        property string     psseira
+        property integer    pirec public 0
+        property integer    piTxtID  public  0
+        property integer    pilathos   public 0
+        property integer    pierr public 0
+        property integer    piEnaLathos public 0
+        property string     psmodule public ''
+
+        Open sysrec
+
+
+      Object Pelates_DD is a Pelates_DataDictionary
+      End_Object    // Pelates_DD
+
+      Object Pelates_DD2 is a Pelates_DataDictionary
+      End_Object    // Pelates_DD
+
+      Object Ypprosf_DD is a Ypprosf_DataDictionary
+      End_Object    // Ypprosf_DD
+
+      Object Yppolhs_DD is a Yppolhs_DataDictionary
+      End_Object    // Yppolhs_DD
+
+      Object YpYlop_DD is a YpYlop_DataDictionary
+      End_Object    // YpYlop_DD
+
+      Object Katergo_DD is a Katergo_DataDictionary
+      End_Object    // Katergo_DD
+
+      Object Cn_DD is a Cn_DataDictionary
+        Set DDO_Server to (Pelates_DD(self))
+        Set DDO_Server to (Katergo_DD(self))
+        Set Constrain_File to Pelates.File_Number
+
+      End_Object    // Cn_DD
+
+      Object Ypoprosf_DD is a Ypoprosf_DataDictionary
+        Set DDO_Server to (Ypprosf_DD(self))
+        Set DDO_Server to (Yppolhs_DD(self))
+        Set DDO_Server to (YpYlop_DD(self))
+        Set DDO_Server to (Cn_DD(self))
+        Set Constrain_File to Cn.File_Number
+      End_Object    // Ypoprosf_DD
+
+    Object Ergasies_DD is a Ergasies_DataDictionary
+    End_Object    // Ergasies_DD
+
+    Object Ergkat_DD is a Ergkat_DataDictionary
+        Set DDO_Server to (Ypoprosf_DD(self))
+        Set DDO_Server to (Ergasies_DD(self))
+        Set Constrain_File to Ypoprosf.File_Number
+    End_Object    // Ergkat_DD
+
+    Object Catypes_DD is a Catypes_DataDictionary
+    End_Object    // Catypes_DD
+
+    Object Caitems_DD is a Caitems_DataDictionary
+        Set DDO_Server to (Catypes_DD(self))
+    End_Object    // Caitems_DD
+
+    Object Catypkin_DD is a Catypkin_DataDictionary
+    End_Object    // Catypkin_DD
+
+
+    Object Clorderd_DD is a Clorderd_DataDictionary
+        Set DDO_Server to (Ypoprosf_DD(self))
+    //    Set Constrain_File to Ypoprosf.File_Number
+        begin_constraints
+             integer iypoprosf
+             get piypoprosf  to iypoprosf
+             constrain clorderd.aa_ypoprosf eq iypoprosf
+             constrain clorderd.kinish_posothta gt 0
+        End_Constraints
+    End_object
+
+
+    Object Camoves_DD is a Camoves_DataDictionary
+        Set DDO_Server to (Catypkin_DD(self))
+    End_Object    // Camoves_DD
+
+    Object Camovesa_DD is a Camovesa_DataDictionary
+        Set DDO_Server to (Camoves_DD(self))
+        Set DDO_Server to (Caitems_DD(self))
+        Set Constrain_File to Camoves.File_Number
+    end_object
+
+PROCEDURE beg_upcamoves string lskin date lddate string lsparast integer iypoprosf string lsseira string lstopos
+          set pskin          to lskin
+          set pddate         to lddate
+          set psparast       to lsparast
+          set piypoprosf     to iypoprosf
+          set pstopos        to lstopos
+          set psseira        to lsseira
+          SEND DOPROCESS
+END_PROCEDURE
+
+Procedure upcamoves_rec
+    Integer ierr icount  irec0 iypoprosf ianalysh icamovedd iitemprom iKodErgou iAAErgou iKodPel
+    Date    ddate
+    Number  lnqty lnnet lnposofpa lnpcfpa lnposoextra lnkinish_posothta
+    Number  lnposo lnkinhsh_poso lnposototal lnunitprice lnunitpr
+    Number  lnektel lnepistr lnakyrh lnypol lnqtyy nprom npelates ncn ntimhparoxhs
+    String  lscode lsparast lscatypkin  wname lskin sposa sitem sergasies sdescr smaster
+    String  wdate lscust  lsrecr lsaapar lscaitems_code custdt_recr camoves_recr wrecr sYpoprosfKod
+    String  lsseira lstopos sKodErgLog
+
+        get pskin      to lskin
+        get pddate     to ddate
+        get psparast   to lsparast
+        get piypoprosf to iypoprosf
+        get psseira    to lsseira
+        get pstopos    to lstopos
+        set pierr      to 0
+        set piEnaLathos to 0
+
+        move 0 to ierr
+        move 0 to icount
+        send clear to camoves_Dd
+        send clear to catypkin_dd
+        move lskin to catypkin.catypkin_code
+        send find to catypkin_dd eq 1
+        if (not(found)) begin
+            If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+            Error 3000 "ë≠·¢£ò 3000 - Ä§Áßò®°´û °Â§û©û ©´¶ ò®ÆúÂ¶ °†§„©ú‡§"
+        end
+
+        get field_current_value of catypkin_dd field catypkin.posa to sposa
+
+        send Rebuild_constraints to clorderd_dd
+        Send Find  to clorderd_dd first_record 1
+        get field_current_value of clorderd_dd field clorderd.pelates_kodikos to nprom
+        While (found eq 1 )
+
+           add 1 to icount
+
+           get field_current_value of Ypoprosf_dd field Ypoprosf.Kod_Ergou_log    to sKodErgLog
+           get field_current_value of clorderd_dd field clorderd.camovedd_recnum  to icamovedd
+           get field_current_value of clorderd_dd field clorderd.itemprom_recnum  to iitemprom
+           get field_current_value of clorderd_dd field clorderd.caitems_master   to smaster
+           get field_current_value of clorderd_dd field clorderd.me_analysh       to ianalysh
+           get field_current_value of clorderd_dd field clorderd.pelates_kodikos  to npelates
+           get field_current_value of clorderd_dd field clorderd.rec0             to irec0
+           get field_current_value of clorderd_dd field clorderd.caitems_code     to sitem
+           get field_current_value of clorderd_dd field clorderd.ergasies         to sergasies
+           get field_current_value of clorderd_dd field clorderd.timh_mon_paroxh  to ntimhparoxhs
+           get field_current_value of cn_dd       field cn.AA_ergou               to iAAErgou
+           get field_current_value of cn_dd       field cn.Kodikos_ergou          to iKodErgou
+           get field_current_value of Pelates_dd  field Pelates.Kodikos           to iKodPel
+           get field_current_value of Ypoprosf_dd field Ypoprosf.Kodikos          to sYpoprosfKod
+           if (nprom<>npelates) begin
+                If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+                Error 3001 "ë≠·¢£ò 3001 - Éú§ £ß¶®úÂ™ §ò ßò®ò¢·ôú†™ úÂõû òß¶ õ†ò≠¶®ú´†°Ê ß®¶£ûüú¨´„"
+           end
+
+                       //// °Â§û©û ò°¨®‡´†°„ õú§ ö®·≠ú† camoves
+           if (icount=1) begin
+              if (lskin <> '105') begin
+                 set field_changed_value of camoves_dd field camoves.Kod_Ergou_Log      to sKodErgLog
+                 set field_changed_value of camoves_dd field camoves.pelates_kodikos    to npelates
+                 set field_changed_value of camoves_dd field camoves.parast             to lsparast
+                 set field_changed_value of camoves_dd field camoves.date               to ddate
+                 set field_changed_value of camoves_dd field camoves.aa_ypoprosf        to iypoprosf
+                 set field_changed_value of camoves_dd field camoves.seira              to lsseira
+                 set field_changed_value of camoves_dd field camoves.topos_parad        to lstopos
+                 set field_changed_value of camoves_dd field camoves.kodikos_ergou      to iKodErgou
+                 set field_changed_value of camoves_dd field camoves.AA_ergou           to iAAErgou
+                 set field_changed_value of camoves_dd field camoves.client_Code        to iKodpel
+                 set field_changed_value of camoves_dd field camoves.Ypoprosf_kod       to sYpoprosfKod
+                 set field_changed_value of camoves_dd field camoves.Module             to (psModule(Self))
+                 send request_save to camoves_dd
+                 set pirec to camoves.rec0
+              end
+           end
+
+           if (lskin eq '105') begin
+               get field_current_value of clorderd_dd field clorderd.kinish_posothta to lnqty
+               get field_current_value of clorderd_dd field clorderd.akyrh_qty       to lnakyrh
+               set field_changed_value of clorderd_dd field clorderd.akyrh_qty       to (lnqty+lnakyrh)
+               get field_current_value of clorderd_dd field clorderd.ypol_qty        to lnypol
+               set field_changed_value of clorderd_dd field clorderd.ypol_qty        to (lnypol-lnqty)
+           end
+           Else if (lskin eq '103') begin
+               get field_current_value of clorderd_dd field clorderd.kinish_posothta to lnqty
+               get field_current_value of clorderd_dd field clorderd.epistrofh_qty   to lnepistr
+               set field_changed_value of clorderd_dd field clorderd.epistrofh_qty   to (lnqty+lnepistr)
+               get field_current_value of clorderd_dd field clorderd.ypol_qty        to lnypol
+               set field_changed_value of clorderd_dd field clorderd.ypol_qty        to (lnypol+lnqty)
+           end
+
+           Else if ((lskin eq '100') or (lskin eq '102') or (lskin eq '101')) begin
+               get field_current_value of clorderd_dd field clorderd.kinish_posothta to lnqty
+               get field_current_value of clorderd_dd field clorderd.rial_qty        to lnektel
+               set field_changed_value of clorderd_dd field clorderd.rial_qty        to (lnqty+lnektel)
+               get field_current_value of clorderd_dd field clorderd.ypol_qty        to lnypol
+               set field_changed_value of clorderd_dd field clorderd.ypol_qty        to (lnypol-lnqty)
+           end
+
+           if (lskin ne '105') begin
+               get field_current_value of clorderd_dd field clorderd.kinish_posothta to lnqty
+               get field_current_value of clorderd_dd field clorderd.kinhsh_poso     to lnunitprice
+               get field_current_value of clorderd_dd field clorderd.unitprice       to lnunitpr
+
+              if (lnunitprice=0) move lnunitpr to lnunitprice
+
+              If (lnUnitPrice<>lnUnitPr) Begin
+                    Set piEnaLathos to True
+                    Write  (pad(sItem,21)) (pad(sErgasies,15)) ' ' (pad(String(lnUnitPr),10)) ' ' (pad(String(lnUnitPrice),10))
+                    Writeln
+              End
+
+              if (sposa ne '1') begin
+                  move 0 to lnunitprice
+                  move 0 to lnpcfpa
+                  move 0 to ntimhparoxhs
+              end
+
+              send clear to caitems_dd
+              send clear to camovesa_dd
+              move sitem to caitems.caitems_code
+              send find to caitems_dd eq 1
+              if (not(found)) begin
+                    If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+                    Error 3002 "ë≠·¢£ò 3002 - Éú§ ¨ß·®Æú† ´¶ úÂõ¶™ ©´¶ ò®ÆúÂ¶ ú†õÈ§"
+              end
+
+
+              get field_current_value of caitems_dd  field caitems.caitems_name     to sdescr
+              set field_changed_value of camovesa_dd field camovesa.caitems_code    to sitem
+              set field_changed_value of camovesa_dd field camovesa.me_analysh      to ianalysh
+              set field_changed_value of camovesa_dd field camovesa.caitems_descr   to sdescr
+              set field_changed_value of camovesa_dd field camovesa.clorderd_rec0   to irec0
+              set field_changed_value of camovesa_dd field camovesa.qty             to lnqty
+              set field_changed_value of camovesa_dd field camovesa.unitpr          to lnunitprice
+              set field_changed_value of camovesa_dd field camovesa.caitems_master  to smaster
+              set field_changed_value of camovesa_dd field camovesa.camovedd_recnum to icamovedd
+              set field_changed_value of camovesa_dd field camovesa.itemprom_recnum to iitemprom
+              set field_changed_value of camovesa_dd field camovesa.ergasies        to sergasies
+              set field_changed_value of camovesa_dd field camovesa.unitpr_paroxhs  to ntimhparoxhs
+              send request_save to camovesa_dd
+              Send UpdateWait to (piTxtID(Self))  ('Ñ§û£‚®‡©û ßò®ò©´ò´†°¶Á £ú úÂõ¶™ '+(String(sitem)))
+           end
+        set field_changed_value of clorderd_dd field clorderd.kinish_posothta to 0
+        set field_changed_value of clorderd_dd field clorderd.kinhsh_poso     to 0
+        get field_current_value of clorderd_dd field clorderd.ypol_qty        to lnqty
+        if (lnqty le 0) begin
+            set field_changed_value of clorderd_dd field clorderd.rial_date   to ddate
+        end
+        send request_save to clorderd_dd
+        Send Find  to clorderd_dd next_record 1
+        Loop
+        set pirec0 of (v32a(current_object)) to (pirec(self))
+End_Procedure
+
+Procedure OnProcess
+    send upcamoves_rec
+End_Procedure
+
+Procedure Start_Process
+    Set piTxtID                         to (Wait(Self))
+    Set Button_State    of (Wait(Self)) to False
+    Set BarVisibleState of (Wait(Self)) to '' False
+    Send Popup                          to (Wait(Self))
+    Set piLathos                        to 0
+    Direct_Output 'C:\Changes.log'
+    Write 'ÑÂõ¶™               Ñ®öò©Âò     èò®òööú¢Âò     í†£¶¢Êö†¶'
+    Writeln
+    Write '--------------------------------------------------------'
+    Writeln
+    Writeln
+    Forward Send Start_Process
+End_Procedure
+
+Procedure OnError integer error_info string errMsg
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+End_Procedure
+
+
+Procedure End_Process
+       Forward Send End_Process
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+       Close_Output
+End_Procedure
+
+
+End_Object
+
+

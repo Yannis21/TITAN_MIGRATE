@@ -1,0 +1,231 @@
+//AB/ Project GplanRpt
+//AB/ Object prj is a REPORT_Project
+//AB/     Set ProjectName to "GplanRpt"
+//AB/     Set ProjectFileName to "GplanRpt.RV"
+//AB/     Set GenerateFileName to "NONAME"
+
+// Project Object Structure
+//   GplanRpt is a ReportView
+//     RadioGroupSub1 is a RadioGroupSub
+//       RadioSub1 is a RadioSub
+//       RadioSub2 is a RadioSub
+//     RadioGroupSub2 is a RadioGroupSub
+//       RadioSub3 is a RadioSub
+//       RadioSub4 is a RadioSub
+//     ButtonSub1 is a ButtonSub
+//     ButtonSub2 is a ButtonSub
+//     Gplan_BasicReport is a BasicReport
+
+// Register all objects
+Register_Object ButtonSub1
+Register_Object ButtonSub2
+Register_Object Gplan_BasicReport
+Register_Object GplanRpt
+Register_Object RadioSub1
+Register_Object RadioSub2
+Register_Object RadioSub3
+Register_Object RadioSub4
+Register_Object RadioGroupSub1
+Register_Object RadioGroupSub2
+
+
+//AB/ Report View
+
+
+//AB-StoreTopStart
+Use DFAllRpt.pkg
+Open Gplan
+Use Imagerpt.pkg
+//AB-StoreTopEnd
+
+//AB-IgnoreStart
+
+Use AllentSC
+
+//AB-IgnoreEnd
+
+DEFERRED_VIEW Activate_GplanRpt FOR ;
+;
+Object GplanRpt is a ReportView
+
+    //AB-StoreTopStart
+    Property Integer Sort_Index  Public 1
+    //AB-StoreTopEnd
+
+    Set Label to "GplanRpt"
+    Set Size to 116 259
+    Set Location to 10 21
+
+    //AB-DDOStart
+
+
+    //AB-DDOEnd
+
+    Object RadioGroupSub1 is a RadioGroupSub
+
+        //AB-StoreTopStart
+
+        //AB-StoreTopEnd
+
+        Set Label to "RadioGroupSub1"
+        Set Size to 49 103
+        Set Location to 15 5
+        Set Current_Radio to 0
+        Object RadioSub1 is a RadioSub
+            Set Label to "screen"
+            Set Size to 10 38
+            Set Location to 14 33
+        End_Object    // RadioSub1
+
+        Object RadioSub2 is a RadioSub
+            Set Label to "printer"
+            Set Size to 10 36
+            Set Location to 31 34
+        End_Object    // RadioSub2
+
+
+        //AB-StoreStart
+        Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+            Forward Send Notify_Select_State  iNewItem  iOldItem
+            If iNewItem EQ 0 Set Output_Device_Mode  To PRINT_TO_WINDOW
+            Else             Set Output_Device_Mode  To PRINT_TO_PRINTER
+        End_Procedure
+        //AB-StoreEnd
+
+    End_Object    // RadioGroupSub1
+
+    Object RadioGroupSub2 is a RadioGroupSub
+
+        //AB-StoreTopStart
+
+        //AB-StoreTopEnd
+
+        Set Label to "RadioGroupSub2"
+        Set Size to 47 114
+        Set Location to 17 127
+        Set Current_Radio to 0
+        Object RadioSub3 is a RadioSub
+            Set Label to "Number"
+            Set Size to 10 41
+            Set Location to 15 23
+        End_Object    // RadioSub3
+
+        Object RadioSub4 is a RadioSub
+            Set Label to "Name"
+            Set Size to 10 35
+            Set Location to 33 23
+        End_Object    // RadioSub4
+
+
+        //AB-StoreStart
+        Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+            Forward Send Notify_Select_State  iNewItem  iOldItem
+            Set Sort_Index  To (iNewItem + 1)
+        End_Procedure
+
+        //AB-StoreEnd
+
+    End_Object    // RadioGroupSub2
+
+    Object ButtonSub1 is a ButtonSub
+
+        //AB-StoreTopStart
+
+        //AB-StoreTopEnd
+
+        Set Label to "ButtonSub1"
+        Set Location to 73 117
+
+        //AB-StoreStart
+        Procedure OnClick
+            Send StartReport
+        End_Procedure
+
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub1
+
+    Object ButtonSub2 is a ButtonSub
+
+        //AB-StoreTopStart
+
+        //AB-StoreTopEnd
+
+        Set Label to "ButtonSub2"
+        Set Location to 73 181
+
+        //AB-StoreStart
+        Procedure OnClick
+            Send Request_Cancel
+        End_Procedure
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub2
+
+
+    //AB-StoreStart
+    Procedure StartReport
+        Local Integer iOutputDevice
+        Local String  FileName
+
+        Get Output_Device_Mode To iOutputDevice
+
+        If iOutputDevice EQ PRINT_TO_WINDOW Begin
+           Make_Temp_File "TXT" FileName
+           Move (".\" - FileName)  To FileName
+           Set Output_Device_Name  To FileName
+        End
+        Else ;
+           Set Output_Device_Name  To "WinLst:"
+
+        Send Run_Report
+
+        If iOutputDevice EQ PRINT_TO_WINDOW Begin
+           RunProgram background "NotePad" FileName
+           EraseFile FileName
+        End
+    End_Procedure   // StartReport
+
+
+    Object Gplan_BasicReport is a BasicReport
+
+       Report_Main_File Gplan
+
+       Set Report_Title to "Printing Customer Names"
+
+       Function Starting_Main_Report Returns Integer
+          Local Integer iRetVal
+          Local Integer iIndex
+          Forward Get Starting_Main_Report to iRetval
+          //Get Sort_Index  To iIndex
+          //Report_Index BY iIndex    // set the sort order
+          SysDate4 Footer.1         // set date for report
+       End_Function
+
+       Procedure_Section Page_Top as Header
+          Local Integer iPage
+          Get Page_Count  To iPage
+    //      Print iPage
+          OutPut_PageCheck
+       End_Procedure
+
+       Procedure_Section Body as Body
+         //Send Update_Status (String(Customer.Customer_number)- ":" * Customer.Name )
+         Print (TOANSI(Gplan.Gplan_Code))
+         Print (TOANSI(Gplan.Gplan_Descr1))
+         OutPut_PageCheck
+       End_Procedure
+
+       Procedure_Section Page_Bottom as Footer
+         OutPut_PageCheck
+       End_Procedure
+    End_Object
+    //AB-StoreEnd
+
+
+
+//AB-StoreStart
+
+//AB-StoreEnd
+
+//AB/ End_Object    // prj

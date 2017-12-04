@@ -1,0 +1,554 @@
+    Use COMPANY.DD
+    Use BRANCH.DD
+    Use YEAR.DD
+    Use GTHHMGIO.DD
+    Use GTYPKIN.DD
+    Use GPLAN.DD
+    Use GMHNES.DD
+    Use GHMNIES.DD
+    Use GFLAGKIN.DD
+
+
+Object oDoUpdateHmnies Is A BusinessProcessSub
+
+        set Status_panel_state to false
+        set Display_Error_state to true
+
+        Property Integer piGplan_Rec0
+
+        Property Date    pdHmnia
+        Property Number  pnX2_BFb
+        Property Number  pnP2_BFb
+        Property Number  pnX0_BFb
+        Property Number  pnP0_BFb
+        Property Number  pnX00_BFb
+        Property Number  pnP00_BFb
+        Property Number  pnXR_BFb
+        Property Number  pnPR_BFb
+        Property String  psGplan_Code_Before
+        Property Number  pnX2_AFb
+        Property Number  pnP2_AFb
+        Property Number  pnX0_AFb
+        Property Number  pnP0_AFb
+        Property Number  pnX00_AFb
+        Property Number  pnP00_AFb
+        Property Number  pnXR_AFb
+        Property Number  pnPR_AFb
+        Property String  psGplan_Code_After
+        Property Integer piBackoutBpo
+        Property Integer piUpdateBpo
+        Property Integer piCreatingBpo
+        Property Integer piDeletingBpo
+        Property Integer piMode           //1=create 2=delete
+
+        Property Number  pnGtypkin_Before
+        Property Number  pnGtypkin_After
+        Property Number  pnGthHmgio_PeriodB
+        Property Integer piTheorimenoBpo
+
+
+
+
+    Object Company_DD is a Company_DataDictionary
+    End_Object    // Company_DD
+
+    Object Branch_DD is a Branch_DataDictionary
+        Set DDO_Server to (Company_DD(Current_Object))
+    End_Object    // Branch_DD
+
+    Object Year_DD is a Year_DataDictionary
+        Set DDO_Server to (Branch_DD(Current_Object))
+    End_Object    // Year_DD
+
+    Object Gthhmgio_DD is a Gthhmgio_DataDictionary
+    End_Object    // Gthhmgio_DD
+
+    Object Gtypkin_DD is a Gtypkin_DataDictionary
+        Set DDO_Server to (Year_DD(Current_Object))
+        Set DDO_Server to (Gthhmgio_DD(Current_Object))
+    End_Object    // Gtypkin_DD
+
+    Object Gplan_DD is a Gplan_DataDictionary
+        Set DDO_Server to (Year_DD(Current_Object))
+    End_Object    // Gplan_DD
+
+    Object Gmhnes_DD is a Gmhnes_DataDictionary
+        Set DDO_Server to (Gplan_DD(Current_Object))
+        Begin_Constraints
+          Constrain Gmhnes relates to Gplan
+        End_Constraints
+    End_Object    // Gmhnes_DD
+
+    Object Ghmnies_DD is a Ghmnies_DataDictionary
+        Set DDO_Server to (Gmhnes_DD(Current_Object))
+        Begin_Constraints
+          Constrain GHmnies relates to Gmhnes
+        End_Constraints
+    End_Object    // Ghmnies_DD
+
+    Object Gflagkin_DD is a Gflagkin_DataDictionary
+        Set DDO_Server to (Gtypkin_DD(Current_Object))
+        Begin_Constraints
+          Constrain GflagKin relates to Gtypkin
+        End_Constraints
+    End_Object    // Gflagkin_DD
+
+
+
+PROCEDURE UpdateV1 Date Hm1;
+                Number lnX2_BF1#;
+                Number lnP2_BF1#;
+                Number lnX0_BF1#;
+                Number lnP0_BF1#;
+                Number lnX00_BF1#;
+                Number lnP00_BF1#;
+                Number lnXR_BF1#;
+                Number lnPR_BF1#;
+                String lsCodeBefore1
+
+          Set pdHmnia                      to HM1
+          Set pnX2_BFb                     to lnX2_BF1#
+          Set pnP2_BFb                     to lnP2_BF1#
+          Set pnX0_BFb                     to lnX0_BF1#
+          Set pnP0_BFb                     to lnP0_BF1#
+          Set pnX00_BFb                    to lnX00_BF1#
+          Set pnP00_BFb                    to lnP00_BF1#
+          Set pnXR_BFb                     to lnXR_BF1#
+          Set pnPR_BFb                     to lnPR_BF1#
+          Set psGplan_Code_before          to lsCodeBefore1
+
+END_PROCEDURE //Updatev1
+
+PROCEDURE UpdateV2 Number lnX2_AF1#;
+                   Number lnP2_AF1#;
+                   Number lnX0_AF1#;
+                   Number lnP0_AF1#;
+                   Number lnX00_AF1#;
+                   Number lnP00_AF1#;
+                   Number lnXR_AF1#;
+                   Number lnPR_AF1#;
+                   String lsCodeAfter1
+
+
+          Set pnX2_AFb                     to lnX2_AF1#
+          Set pnP2_AFb                     to lnP2_AF1#
+          Set pnX0_AFb                     to lnX0_AF1#
+          Set pnP0_AFb                     to lnP0_AF1#
+          Set pnX00_AFb                    to lnX00_AF1#
+          Set pnP00_AFb                    to lnP00_AF1#
+          Set pnXR_AFb                     to lnXR_AF1#
+          Set pnPR_AFb                     to lnPR_AF1#
+          Set psGplan_Code_After           to lsCodeAfter1
+
+END_PROCEDURE //UpdateV2
+
+
+
+
+
+PROCEDURE TREXE  Integer Backout1;
+                 Integer Update1;
+                 integer Create1;
+                 integer Delete1;
+                 Number  lnGtypkin_Before;
+                 Number  lnGtypkin_After;
+                 Number  lnGthHmgio_Period;
+                 Integer liTheorimeno
+
+
+          Set piBackoutBpo                 to Backout1     //Back1#
+          Set piUpdateBpo                  to Update1     //Up1#
+          Set piCreatingBpo                to Create1     //Cre1#
+          Set piDeletingBpo                to Delete1     //DEl1#
+          //Set piMode                       to limode##
+          Set pnGtypkin_Before             to lnGtypkin_Before
+          Set pnGtypkin_After              to lnGtypkin_After
+
+          Set pnGthHmgio_PeriodB           to lnGthHmgio_Period
+
+          Set piTheorimenoBpo              to liTheorimeno
+          SEND DOPROCESS
+
+END_PROCEDURE //trexe
+
+
+
+
+Procedure UpdateDateMonths
+    Local Integer liMhnesDDo## Active_Hmnia##  liErr## ;
+                  liCompanyDDo## liBranchDDo## liYearDDo## liGplanDDo##;
+                  liGmhnesDDo## liGHmniesDDo## liGtypkinDDo## liGflagkinDDo##;
+                  liGthhmgioDDo##
+
+    Local String lsGplan_Code## lsSelected_Company_Code## lsSelected_Branch_Code## liSelected_Year##
+
+    Local Date ldGarticle_hmnia##
+
+
+    Local date    ldHmnia##
+    Local number  lnX2_BFBpo##
+    Local number  lnP2_BFBpo##
+    Local number  lnX0_BFBpo##
+    Local number  lnP0_BFBpo##
+    Local number  lnX00_BFBpo##
+    Local number  lnP00_BFBpo##
+    Local number  lnXR_BFBpo##
+    Local number  lnPR_BFBpo##
+    Local string  lsgplan_Code_BeforeBpo##
+    Local number  lnX2_AFBpo##
+    Local number  lnP2_AFBpo##
+    Local number  lnX0_AFBpo##
+    Local number  lnP0_AFBpo##
+    Local number  lnX00_AFBpo##
+    Local number  lnP00_AFBpo##
+    Local number  lnXR_AFBpo##
+    Local number  lnPR_AFBpo##
+    Local string  lsgplan_Code_AfterBpo##
+    Local integer liBackout0##
+    Local integer liUpdate0##
+    Local integer liCreating0##
+    Local integer liDeleting0##
+    Local integer limode##
+
+    Local number  lnGtypkin_BFBpo##
+    Local number  lnGtypkin_AFBpo##
+    Local Number  LnGthHmgio_PeriodBpo##
+    Local Integer liTheorimenoBpo##
+
+
+
+
+    Local integer limhnas##
+    Local integer liYear##
+    Local integer bErr
+    Local number  nOldX1## nOldX2## nOldX0## nOldX00## nOldXR##
+    Local number  nOldP1## nOldP2## nOldP0## nOldP00## nOldPR##
+    Local integer iOldGhmnies_GmNoRec##
+    Local integer iOldGmhnes_GHmNoRec##
+    Local string  sDate##
+
+    //*****************************************
+
+    local number lnOldMyfNo1##;
+                 lnOldMyfAxia1##;
+                 lnOldMyfNo2##;
+                 lnOldMyfAxia2##
+
+    //*****************************************
+
+
+
+
+          Get pdHmnia               to ldHmnia##
+          Get pnX2_BFb              to lnX2_BFBpo##
+          Get pnP2_BFb              to lnP2_BFBpo##
+          Get pnX0_BFb              to lnX0_BFBpo##
+          Get pnP0_BFb              to lnP0_BFBpo##
+          Get pnX00_BFb             to lnX00_BFBpo##
+          Get pnP00_BFb             to lnP00_BFBpo##
+          Get pnXR_BFb              to lnXR_BFBpo##
+          Get pnPR_BFb              to lnPR_BFBpo##
+          Get psGplan_Code_Before   to lsGplan_Code_beforeBpo##
+          Get pnX2_AFb              to lnX2_AFBpo##
+          Get pnP2_AFb              to lnP2_AFBpo##
+          Get pnX0_AFb              to lnX0_AFBpo##
+          Get pnP0_AFb              to lnP0_AFBpo##
+          Get pnX00_AFb             to lnX00_AFBpo##
+          Get pnP00_AFb             to lnP00_AFBpo##
+          Get pnXR_AFb              to lnXR_AFBpo##
+          Get pnPR_AFb              to lnPR_AFBpo##
+          Get psGplan_Code_After    to lsGplan_Code_AfterBpo##
+          Get piBackoutBpo          to liBackout0##
+          Get piUpdateBpo           to liUpdate0##
+          Get piCreatingBpo         to liCreating0##
+          Get piDeletingBpo         to liDeleting0##
+
+          //Get piMode                to limode##
+          Get pnGtypkin_Before      to lnGtypkin_BFBpo##
+          Get pnGtypkin_After       to lnGtypkin_AFBpo##
+          Get pnGthHmgio_PeriodB    to lnGthHmgio_PeriodBpo##
+          Get piTheorimenoBpo       to liTheorimenoBpo##
+
+
+
+
+        Move (Company_DD(self)) to liCompanyDDo##
+        Move (Branch_DD(self))  to liBranchDDo##
+        Move (Year_DD(self))    to liYearDDo##
+        Move (Gplan_DD(self))   to liGplanDDo##
+        Move (Gmhnes_DD(self))  to liGMhnesDDo##
+        Move (Ghmnies_DD(self)) to liGHmniesDDo##
+
+        Move (Gthhmgio_DD(self)) to liGthhmgioDDo##
+        Move (Gtypkin_DD(self))  to liGtypkinDDo##
+        Move (Gflagkin_DD(self)) to liGflagkinDDo##
+
+
+
+
+        Move ldHmnia## to sDate##
+
+        if lnGthHmgio_PeriodBpo## eq 1 Move (Mid(sDate##,2,4)) to limhnas##
+        else Move lnGthHmgio_PeriodBpo## to limhnas##
+
+        Move (Mid(sDate##,4,7)) to liYear##
+
+
+//BACKOUT
+
+if liBackout0## eq 1 begin
+
+    local integer liBathmosBpo1## CounterBack##
+
+    Local Number  lnGtypkin_CodeBpo1##
+    local integer liYn_Myf##
+
+        Send Clear to liGtypkinDDo##                        //GTypkin
+        move  lnGtypkin_BFBpo## to Gtypkin.Gtypkin_Code
+        Send Find to liGTypkinDDo## eq 1
+        if (found eq 1) move Gtypkin.Gtypkin_code to lnGtypkin_CodeBpo1##
+
+
+        Send Clear to liGplanDDo##                        //Gplan
+        move  lsGplan_Code_BeforeBpo## to Gplan.Gplan_Code
+        Send Find to liGplanDDo## eq 1
+
+        Send Find to liGflagKinDDo## First_Record 1
+        While (found)
+            if (Gflagkin.Gflagkin_flag eq 2) begin
+                get field_current_value of liGplanDDo## field Gplan.Gplan_Yn_Myf   to liYn_Myf##
+                if (liYn_Myf## eq 1) begin
+
+                    get field_current_value of liGplanDDo## field Gplan.Gplan_MyfNO1     to lnOldMyfNo1##
+                    get field_current_value of liGplanDDo## field Gplan.Gplan_MyfAxia1   to lnOldMyfAxia1##
+
+                    Set field_changed_value of liGplanDDo## field Gplan.Gplan_MyfNO1     to (lnOldMyfNo1##-1)
+                    //Set field_changed_value of liGplanDDo## field Gplan.Gplan_MyfAxia1   to (Gplan.Gplan_MyfAxia1##-1)
+
+
+                    get field_current_value of liGplanDDo## field Gplan.Gplan_Myf2       to lnOldMyfNO2##
+                    get field_current_value of liGplanDDo## field Gplan.Gplan_MyfAxia2   to lnOldMyfAxia2##
+
+                    Set field_changed_value of liGplanDDo## field Gplan.Gplan_Myf2     to (lnOldMyfNO2##-1)
+                    //Set field_changed_value of liGplanDDo## field Gplan.Gplan_MyfAxia2   to (Gplan.Gplan_MyfAxia2##-1)
+
+                end
+            end
+            if (Gflagkin.Gflagkin_flag eq 3) begin
+            end
+            if (Gflagkin.Gflagkin_flag eq 7) begin
+            end
+            if (Gflagkin.Gflagkin_flag eq 8) begin
+            end
+
+            Send Find to liGflagKinDDo## Next_Record 1
+        Loop
+
+    Send Request_Save to liGplanDDo##
+
+//******************************************************************************
+        Send Clear to liGplanDDo##                        //Gplan
+        move  lsGplan_Code_BeforeBpo## to Gplan.Gplan_Code
+        Send Find to liGplanDDo## eq 1
+        if (found eq 1) move Gplan.Gplan_Bathmos to liBathmosBpo1##
+
+
+    For CounterBack## From 1 to liBathmosBpo1##
+
+        Send Clear to liGmhnesDDo##
+        move  liYear##    to Gmhnes.Gmhnes_YYYY           //Gmhnes
+        move  limhnas##   to Gmhnes.Gmhnes_Mhnas          //Gmhnes
+        Send Find to liGmhnesDDo## eq 1
+        if (found eq 0)  begin
+                     Set Field_Changed_Value of liGmhnesDDo## field Gmhnes.Gmhnes_YYYY    to liYear##
+                     Set Field_Changed_Value of liGmhnesDDo## field Gmhnes.Gmhnes_mhnas   to limhnas##
+        end
+
+        Send Clear to liGhmniesDDo##                      //Ghmnies
+        move  ldHmnia## to Ghmnies.Ghmnies_hmnia
+
+        Send Find to liGhmniesDDo## eq 1
+
+        if (found eq 0) Begin        //[finderr]
+            Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_Hmnia to ldHmnia##
+
+        End
+
+        //-----> VALUES
+    If (liTheorimenoBpo## eq 0) begin
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Sx2   to nOldX2##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Sp2   to nOldP2##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Sx0   to nOldX0##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Sp0   to nOldP0##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Sx00  to nOldX00##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Sp00  to nOldP00##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_SxR   to nOldXR##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_SpR   to nOldPR##
+
+
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_Sx2   to (nOldX2## -lnX2_BFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_sP2   to (nOldP2## -lnP2_BFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_Sx0   to (nOldX0## -lnX0_BFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_sP0   to (nOldP0## -lnP0_BFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_Sx00  to (nOldX00##-lnX00_BFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_sP00  to (nOldP00##-lnP00_BFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_SxR   to (nOldXR## -lnXR_BFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_sPR   to (nOldPR## -lnPR_BFBpo##)
+
+
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Gmnorec   to iOldGhmnies_GmNorec##
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_Gmnorec   to (iOldGhmnies_GmNorec##-1)
+
+
+        send request_savebpo to liGhmniesDDo##
+        send request_deletebpo to liGmhnesDDo##
+    end //THEORIMENO
+    else Begin  //Very Very Carefull At this point !!!!!!!!!!!!!!!
+
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Sx1   to nOldX1##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Sp1   to nOldP1##
+
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_Sx1   to (nOldX1## -lnX0_BFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_sP1   to (nOldP1## -lnP0_BFBpo##)
+        send request_savebpo to liGhmniesDDo##
+
+    End
+        Move (Find_Previous(liGplanDDo##,lsGplan_Code_BeforeBpo##)) to lsGplan_Code_BeforeBpo##
+
+        Send Clear to liGplanDDo##                        //Gplan
+        move  lsGplan_Code_BeforeBpo## to Gplan.Gplan_Code
+        Send Find to liGplanDDo## eq 1
+
+    loop
+end
+
+
+//UPDATE
+if liUpdate0## eq 1 begin
+
+local integer liBathmosBpo## CounterUp##
+
+
+        Local Number  lnGtypkin_CodeBpo11##
+        local integer liYn_Myf1##
+
+
+//local integer liBathmosBpo1## CounterBack##
+
+
+        Send Clear to liGtypkinDDo##                        //GTypkin
+        move  lnGtypkin_AFBpo## to Gtypkin.Gtypkin_Code
+        Send Find to liGTypkinDDo## eq 1
+        if (found eq 1) move Gtypkin.Gtypkin_code to lnGtypkin_CodeBpo11##
+
+
+        Send Clear to liGplanDDo##                        //Gplan
+        move  lsGplan_Code_afterBpo## to Gplan.Gplan_Code
+        Send Find to liGplanDDo## eq 1
+
+        Send Find to liGflagKinDDo## First_Record 1
+        While (found)
+            if (Gflagkin.Gflagkin_flag eq 2) begin
+                get field_current_value of liGplanDDo## field Gplan.Gplan_Yn_Myf   to liYn_Myf1##
+                if (liYn_Myf1## eq 1) begin
+
+                    get field_current_value of liGplanDDo## field Gplan.Gplan_MyfNO1     to lnOldMyfNo1##
+                    get field_current_value of liGplanDDo## field Gplan.Gplan_MyfAxia1   to lnOldMyfAxia1##
+
+                    Set field_changed_value of liGplanDDo## field Gplan.Gplan_MyfNO1     to (lnOldMyfNo1##+1)
+                    //Set field_changed_value of liGplanDDo## field Gplan.Gplan_MyfAxia1   to (Gplan.Gplan_MyfAxia1##+1)
+
+
+                    get field_current_value of liGplanDDo## field Gplan.Gplan_Myf2       to lnOldMyfNO2##
+                    get field_current_value of liGplanDDo## field Gplan.Gplan_MyfAxia2   to lnOldMyfAxia2##
+
+                    Set field_changed_value of liGplanDDo## field Gplan.Gplan_Myf2     to (lnOldMyfNO2##+1)
+                    //Set field_changed_value of liGplanDDo## field Gplan.Gplan_MyfAxia2   to (Gplan.Gplan_MyfAxia2##+1)
+                end
+            end
+            if (Gflagkin.Gflagkin_flag eq 3) begin
+            end
+            if (Gflagkin.Gflagkin_flag eq 7) begin
+            end
+            if (Gflagkin.Gflagkin_flag eq 8) begin
+            end
+            Send Find to liGflagKinDDo## Next_Record 1
+        Loop
+    Send Request_Save to liGplanDDo##
+
+//******************************************************************************
+
+        Send Clear to liGplanDDo##                        //Gplan
+        move  lsGplan_Code_afterBpo## to Gplan.Gplan_Code
+        Send Find to liGplanDDo## eq 1
+        if (found eq 1) move Gplan.Gplan_Bathmos to liBathmosBpo##
+
+
+    For Counterup## From 1 to liBathmosBpo##
+
+        Send Clear to liGmhnesDDo##
+        move  liYear##    to Gmhnes.Gmhnes_YYYY           //Gmhnes
+        move  limhnas##   to Gmhnes.Gmhnes_Mhnas          //Gmhnes
+        Send Find to liGmhnesDDo## eq 1
+        if (found eq 0)  begin
+                     Set Field_Changed_Value of liGmhnesDDo## field Gmhnes.Gmhnes_YYYY    to liYear##
+                     Set Field_Changed_Value of liGmhnesDDo## field Gmhnes.Gmhnes_mhnas   to limhnas##
+                   end
+
+        Send Clear to liGhmniesDDo##                      //Ghmnies
+        move  ldHmnia## to Ghmnies.Ghmnies_hmnia
+        Send Find to liGhmniesDDo## eq 1
+
+        if (found eq 0) Begin        //[finderr]
+            Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_Hmnia to ldHmnia##
+        End
+    If (liTheorimenoBpo## eq 0) begin
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Sx2   to nOldX2##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Sp2   to nOldP2##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Sx0   to nOldX0##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Sp0   to nOldP0##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Sx00  to nOldX00##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Sp00  to nOldP00##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_SxR   to nOldXR##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_SpR   to nOldPR##
+
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_Sx2   to (nOldX2## +lnX2_AFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_sP2   to (nOldP2## +lnP2_AFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_Sx0   to (nOldX0## +lnX0_AFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_sP0   to (nOldP0## +lnP0_AFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_Sx00  to (nOldX00##+lnX00_AFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_sP00  to (nOldP00##+lnP00_AFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_SxR   to (nOldXR## +lnXR_AFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_sPR   to (nOldPR## +lnPR_AFBpo##)
+
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Gmnorec   to iOldGhmnies_GmNorec##
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_Gmnorec   to (iOldGhmnies_GmNorec##+1)
+
+        send request_savebpo to liGhmniesDDo##
+        send request_deletebpo to liGmhnesDDo##
+    end
+    else Begin //ÑåÜãÑêóëÜ áÑóêÜãÑåóå liTheorimeno=1
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Sx1   to nOldX1##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Sp1   to nOldP1##
+
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_Sx1   to (nOldX1## +lnX0_AFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_sP1   to (nOldP1## +lnP0_AFBpo##)
+        send request_savebpo to liGhmniesDDo##
+    end
+
+        Move (Find_Previous(liGplanDDo##,lsGplan_Code_afterBpo##)) to lsGplan_Code_afterBpo##
+
+        Send Clear to liGplanDDo##                        //Gplan
+        move  lsGplan_Code_afterBpo## to Gplan.Gplan_Code
+        Send Find to liGplanDDo## eq 1
+
+
+    Loop
+end
+
+End_Procedure
+
+Procedure OnProcess
+    send UpdateDateMonths
+End_Procedure
+End_Object

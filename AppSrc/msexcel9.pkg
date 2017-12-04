@@ -1,0 +1,751 @@
+//*************************************************************************
+//*
+//*  Class Name:
+//*      cExcel9
+//*
+//*  Version: 0.0.0.4
+//*
+//*  Purpose: This class defines the following simple protocol for using
+//*         Excel spreadsheets using ActiveX Automation similar to the DDE interface:
+//*
+//*             InitializeExcel - this will load Excel, given a pathname.
+//*             LoadSpreadSheet - this loads an Excel spreadsheet
+//*             SaveSpreadSheetAs - this saves an Excel spreadsheet with the
+//*                             name supplied
+//*             DeInitializeExcel - send when done using Excel
+//*             DeleteSpreadSheetAs - this removes a spreadsheet
+//*             Cell - Addressed as a property, this accesses the various
+//*                 elements of the spreadsheet in Row Column format.
+//*                 Numeric values are used instead of the A1 style,
+//*                 because this is the recommended way an external app
+//*                 should address the cells.
+//*             SelectRange - this allows a range of cells to be selected 
+//*                 NOTE:  takes one or two parameters instead of one
+//*
+//*         New messages added:
+//*             NewSpreadsheet - start a new spreadsheet
+//*             PrintSpreadsheet - print a spreadsheet to the default printer
+//*             PreviewSpreadsheet - preview the spreadsheet printout
+//*            *SelectWorksheet - select a worksheet 
+//*             SetColumnWidth - set the width of a column(s)
+//*            *SetRowHeight - set the height of a row(s)
+//*            *MergeCells - Combine cells together 
+//*             SetNumericFormat - set the numeric formatting of range of cells
+//*             SetBold - Set bold status (true/false) of current range
+//*             SetItalic - Set italic status (true/false) of current range
+//*             SetIndent - set indentation for the current range       
+//*            *SetFont - set font for current range
+//*            *SetColor - set text color for current range
+//*            *SetFillColor - set background (fill color) for current range
+//*            *SetFontSize - set the font size for current range
+//*            *SetUnderline - set underline for current range
+//*             SetHorizontalAlignment - set alignment (left/right/center)
+//*
+//*         The following messages from the old DDE interface are not 
+//*         supported (yet)
+//*             CopyData - this moves the selected data into copy buffer
+//*             CreateChart - this makes a new chart using selected data
+//*                 complete with headers and series tags.
+//*             AttachText - Allows tags to be set on the chart (e.g. title)
+//*             GraphChart - Performs graph function, using passed gallery.
+//*             Set Gallery - allows chart type to be changed using the
+//*                 settings in the GalleryPreferences array.
+//*             GraphRange - selects a range, makes a chart and graphs.
+//*
+//*************************************************************************
+
+// use VDF 9.0 generated pkg for Excel 2000 Object Library (version 1.3)
+//  it should be possible to substitute a different pkg generated under another
+//  version of VDF / Excel
+//
+// note that when the VDF IDE imports the automation library, it names the class cComApplication
+//  it seems to do that for everything, so you need to change the class name if you are
+//  going to use multiple com automation classes (e.g. Word and Excel)
+// for Excel, I renamed the class cComExcelApplication; you will need to do this in your
+//  generated package as well
+
+use excel9.pkg
+
+// as much as possible, this class was designed to work like the old DDE interface, so 
+//  it could be dropped in place of the old Excel class with as few code changes as possible.
+//  A few differences to note:
+//
+// by default, the COM Excel interface does not display the Excel window.  You can control
+//  this (and change the default behavior) by setting the pbVisible property
+//  Personally, I like to leave it invisisble while the spreadsheet is created, deinit
+//  Excel COM, and use DoStartDocument/ShellExecute to open the finished spreadsheet.
+//  the reason for this (I think) is that if you don't send deinitialize, Excel is left running
+//  invisibly even after your application ends.  This could probably be worked around if
+//  the class sent deinitialize before it's destroyed, but I haven't tried it yet...
+//
+// Using the DDE interface, I believe Excel opened automatically with a new spreadsheet.  
+//  With ActiveX, you need to call NewSpreadSheet after initializing Excel (or load and existing 
+//  spreadsheet of course) before you can do anything.
+//
+// Where to go from here:
+//
+// Obviously the possibilities are wide open with the COM interface in terms of adding new messages.
+//  For help, consult MSDN for documentation on the Excel COM interface.
+//  You can poke around in the VDF generated excel.pkg to see what calls are available.
+//  I have found recording a macro and then examining that can be helpful to reveal what the 
+//  message is that you want...
+//  Ask another developer!
+//
+// If you are new to OLE Automation and have trouble figuring out what's going on here,
+//  you may want to get the April 04 issue of the Visual Dataflex Developer's Journal which
+//  explains many of the basics
+//
+// One area that could definately be improved is error handling.  
+
+
+class cExcel9 is an array
+    
+    procedure construct_object
+        property handle phoExcelApp public 0
+        property handle phoWorkbooks public 0
+        property handle phoWorkbook public 0
+        property handle phoSheets public 0
+        property handle phoRange public 0
+        property boolean pbVisible public 1             // by default, make Excel visible like DDE interface
+        Property Integer piCurrentRow public 0
+                        
+        forward send construct_object
+    end_procedure
+    
+    function InitializeExcel string sNull returns integer
+        integer hoExcelApp hoWorkbooks hoWorkbook hoRange
+        variant lpWorkbooks
+        
+        // first start Excel    
+        if (phoExcelApp(self)<>0) begin
+            send info_box "Excel Application already started."
+            function_return 1
+        end
+        else begin
+            get create U_cComExcelApplication to hoExcelApp
+            set phoExcelApp to hoExcelApp
+            if (hoExcelApp=0) begin
+                send stop_box "Unable to create Excel Application object."
+                function_return 0
+            end
+        end        
+        // create & connect COM object
+        send CreateComObject to hoExcelApp
+        set ComVisible of hoExcelApp to (pbVisible(self))
+        // now create the workbooks com object
+        if (phoWorkbooks(self)<>0) begin
+            send info_box "Excel Workbooks object already created."
+        end
+        else begin
+            get Create U_cComWorkbooks to hoWorkbooks
+            if (hoWorkbooks=0) begin
+                send stop_box "Unable to create the Workbooks object."
+                function_return 0
+            end
+            // store handle to workbooks object, get a COM workbooks object & connect
+            set phoWorkbooks to hoWorkbooks
+            get ComWorkbooks of hoExcelApp to lpWorkbooks
+            set pvComObject of hoWorkbooks to lpWorkbooks
+        end
+        function_return 1
+    end_procedure
+    
+    procedure DeInitializeExcel
+        integer hoExcelApp hoWorkbooks hoWorkbook hoRange hoSheets
+        
+        get phoRange to hoRange
+        if (hoRange<>0) begin
+            send destroy to hoRange
+            set phoRange to 0
+        end
+        get phoSheets to hoSheets
+        if (hoSheets<>0) begin
+            send destroy to hoSheets
+            set phoSheets to 0
+        end
+        get phoWorkbook to hoWorkbook
+        if (hoWorkbook<>0) begin
+            send ComClose to hoWorkbook FALSE nothing nothing
+            send destroy to hoWorkbook
+            set phoWorkbook to 0
+        end
+        get phoWorkbooks to hoWorkbooks        
+        if (hoWorkbooks<>0) begin
+            send destroy to hoWorkbooks
+            set phoWorkbooks to 0
+        end
+        get phoExcelApp to hoExcelApp
+        if (hoExcelApp<>0) begin
+            set ComVisible of hoExcelApp to false
+            send ComQuit of hoExcelApp
+            send Destroy to hoExcelApp
+            set phoExcelApp to 0
+        end
+    end_procedure
+    
+    procedure DoCreateRange
+        handle hoRange hoFont
+        variant lpFont
+        
+        if (phoRange(self)=0) begin
+            get create U_cComRange to hoRange
+            if (hoRange=0) begin
+                send stop_box "Unable to create Range."
+                procedure_return
+            end
+            set phoRange to hoRange
+        end
+    end_procedure
+
+    // returns false if an error, true if spreadsheet loaded
+    function LoadSpreadsheet string sFilename returns integer
+        handle hoWorkbooks hoWorkbook hoSheets
+        variant lpWorkbook lpSheets
+        
+        get phoWorkbooks to hoWorkbooks
+        indicate err false
+        get ComOpen of hoWorkbooks sFilename nothing nothing nothing ;
+                                    nothing nothing nothing nothing nothing ;
+                                    nothing nothing nothing nothing to lpWorkbook
+        if (err) function_return 0
+        
+        get create U_cComWorkbook to hoWorkbook
+        set phoWorkbook to hoWorkbook
+        set pvComObject of hoWorkbook to lpWorkbook
+        
+        get ComSheets of hoWorkbook to lpSheets
+        get create U_cComSheets to hoSheets
+        set phoSheets to hoSheets
+        set pvComObject of hoSheets to lpSheets
+                
+        send DoCreateRange
+        function_return 1
+    end_function
+    
+    procedure NewSpreadSheet returns integer
+        handle hoWorkbooks hoWorkbook hoSheets
+        variant lpWorkbook lpSheets
+        integer iRetVal
+
+        get phoWorkbooks to hoWorkbooks
+        get ComAdd of hoWorkbooks nothing to lpWorkbook
+        
+        get create U_cComWorkbook to hoWorkbook
+        set phoWorkbook to hoWorkbook
+        set pvComObject of hoWorkbook to lpWorkbook
+
+        get ComSheets of hoWorkbook to lpSheets
+        get create U_cComSheets to hoSheets
+        set phoSheets to hoSheets
+        set pvComObject of hoSheets to lpSheets
+
+        send DoCreateRange
+    end_procedure
+
+    // PrintSpreadSheet:
+    //  sPrinter - optional parameter to specify printer to print to.  using VPE, we can get
+    //  the printer name with VPEGetDevice; using WinPrint 2, DFGetCurrentDevice is probably
+    //  what you would use.
+    //
+    procedure PrintSpreadSheet string sPrinter returns integer
+        handle hoWorkbook
+
+        get phoWorkbook to hoWorkbook
+        // ComPrintOut                  from    to  copies preview activeprinter printotfile collate prtofilename ignoreprintareas
+        if (num_arguments=0) send ComPrintOut to hoWorkbook nothing nothing 1 nothing nothing nothing nothing nothing
+        else send ComPrintOut to hoWorkbook nothing nothing 1 nothing sPrinter nothing nothing nothing                                  
+    end_procedure
+    
+    // PreviewSpreadSheet:
+    //  this is modal; execution will not resume until user closes the preview window
+    //
+    procedure PreviewSpreadSheet returns integer
+        handle hoWorkbook
+
+        get phoWorkbook to hoWorkbook
+        send ComPrintOut to hoWorkbook nothing nothing 1 true nothing nothing nothing nothing                 
+    end_procedure
+    
+    procedure SaveSpreadSheetAs string sFilename variant llFileFormat
+        handle hoWorkbook
+        variant llFormat
+        
+        if (num_arguments=2) move llFileFormat to llFormat
+        else move OLExlWorkbookNormal to llFormat
+        
+        get phoWorkbook to hoWorkbook
+        if (hoWorkbook<>0) begin
+            send ComSaveAs of hoWorkbook sFilename llFormat nothing nothing ;
+                                        FALSE FALSE OLExlExclusive OLExlLocalSessionChanges ;
+                                        FALSE nothing nothing
+        end                                    
+    end_procedure
+    
+    procedure SaveSpreadSheet
+        handle hoWorkbook
+        get phoWorkbook to hoWorkbook
+        send ComSave of hoWorkbook
+    end_procedure
+
+    procedure CloseSpreadSheet
+        handle hoWorkbook
+        get phoWorkbook to hoWorkbook
+        send ComClose of hoWorkbook nothing nothing nothing
+        send destroy to hoWorkbook
+        set phoWorkbook to 0
+    end_procedure
+
+    Procedure DeleteSpreadsheet String SpreadSheetName
+        erasefile SpreadSheetName
+    end_procedure
+
+    // if you have a spreadsheet file that has multiple sheets, use SelectWorksheet
+    //  to choose the active worksheet.  Pass an integer value (frist sheet is #1)
+    //  to indicate which sheet to select, then all cell/range related operations
+    //  will affect that sheet.
+    procedure SelectWorksheet integer iSheet
+        integer hoSheets hoWorksheet 
+        variant lpWorksheet
+        
+        get phoSheets to hoSheets
+        get ComItem of hoSheets iSheet to lpWorksheet
+        get create U_cComWorksheet to hoWorksheet
+        set pvComObject of hoWorksheet to lpWorksheet
+        send ComSelect to hoWorksheet nothing      
+        send destroy to hoWorksheet
+        
+    end_procedure
+    
+    // this function converts a row #, column # cell reference to Excel
+    //  format e.g. 1,1=A1, 2,3=C2, 5,27=AA5, etc.
+    //  this is used internally by the cExcel9 class, but you can also call
+    //  it from your program.  For instance, when reading data if there is a
+    //  problem with the contents of a particular cell, you might display a
+    //  message showing what the problem data is with the cell reference so 
+    //  the user knows where to look in the spreadsheet to correct the problem
+    function CellRef integer iRow integer iColumn returns string
+        string sCol sCell
+        while (iColumn>26)
+            if (sCol='') move "A" to sCol
+            else move (character(ascii(sCol)+1)) to sCol
+            sub 26 to iColumn
+        end
+        move (sCol+character(64+iColumn)) to sCol
+        move (sCol-string(iRow)) to sCell
+        function_return sCell
+    end_function
+    
+    procedure set Cell integer iRow integer iColumn string sValue
+        handle hoRange hoWorkbook hoApp
+        string sCol sCell
+        variant lpRange
+        
+        get phoExcelApp to hoApp
+        get phoWorkbook to hoWorkbook
+        get phoRange to hoRange
+        get CellRef iRow iColumn to sCell    
+        get ComRange of hoApp sCell sCell to lpRange
+        set pvComObject of hoRange to lpRange
+        set ComValue of hoRange to sValue
+    end_procedure
+    
+    function cell integer iRow integer iColumn returns string
+        handle hoRange hoWorkbook hoApp
+        string sCol sCell sValue 
+        variant lpRange lpCol lpRow lpValue
+        
+        get phoExcelApp to hoApp
+        get phoWorkbook to hoWorkbook
+        get phoRange to hoRange
+        get CellRef iRow iColumn to sCell    
+        get ComRange of hoApp sCell sCell to lpRange
+        set pvComObject of hoRange to lpRange
+        move "1" to lpRow
+        move "A" to lpCol
+        get ComValue of hoRange to sValue
+        function_return sValue
+    end_function
+
+    Procedure WriteCell String sValue Integer iColumn Integer iOpts Integer iDec
+        Integer iRow iColor
+        
+        Get piCurrentRow to iRow
+        Set cell iRow iColumn to (rtrim(sValue))
+        If (num_arguments>=3) Begin
+            If (iOpts iand FONT_RIGHT) Send SetHorizontalAlignment OLExlRIGHT
+            Else If (iOpts iand FONT_CENTER) Send SetHorizontalAlignment OLExlCenter
+            Else Send SetHorizontalAlignment OLExlLeft
+            If (iOpts iand FONT_BOLD) Send SetBold True
+            If (iOpts iand FONT_ITALIC) Send SetItalic True
+            If (iOpts iand FONT_UNDER) Send SetUnderline True
+            If (iOpts iand RGB_WHITE) Begin
+                Move (iOpts iand RGB_WHITE) to iColor
+                Move (iColor/256) to iColor
+                Send SetColor iColor
+            End
+        End
+        If (num_arguments>=4) Begin
+            If (iDec=0) Send SetNumericFormat "0"
+            If (iDec=1) Send setNumericFormat "0.0"
+            If (iDec=2) Send setNumericFormat "0.00"
+            If (iDec=3) Send setNumericFormat "0.000"
+            If (iDec=4) Send setNumericFormat "0.0000"
+        End
+    End_Procedure
+    
+    Procedure NewRow
+        Set piCurrentRow to (piCurrentRow(Self)+1)
+    End_Procedure
+    
+    // select a range of cells; takes one or two parameters, examples:
+    //  if you want to select one cell: Send SelectRange "A1"
+    //  if you want to select a range of cells: Send SelectRange "A1" "C5"
+    //  if you want to select columns:  Send SelectRange "B:P"
+    procedure SelectRange string sRange1 string sRange2
+        handle hoRange hoWorkbook hoApp
+        variant lpRange lpCol lpRow lpValue
+        
+        get phoExcelApp to hoApp    
+        get phoRange to hoRange
+        if (num_arguments>1 and sRange2<>'') get ComRange of hoApp sRange1 sRange2 to lpRange
+        else get ComRange of hoApp sRange1 sRange1 to lpRange
+        set pvComObject of hoRange to lpRange
+    end_procedure
+
+    procedure CopyData
+        integer hoRange
+        get phoRange to hoRange
+        send ComCopy to hoRange
+    end_procedure
+    
+    // Merge the specified range of cells
+    //  bAcross: true=merge cells across each row separately, default=false
+    //  iAlignment: set to OLExlCenter, OLExlLeft, OLExlRight
+    //  bAcross and iAlignment are optional
+    procedure MergeCells string sRange1 string sRange2 boolean bAcross integer iAlignment
+        integer hoRange
+        send SelectRange sRange1 sRange2
+        get phoRange to hoRange
+        if (num_arguments>3) Set ComHorizontalAlignment of hoRange to iAlignment
+        if (num_arguments>2) send ComMerge to hoRange bAcross
+        else send ComMerge to hoRange 0
+    end_procedure
+    
+    // this function will set the row height 
+    // To set a single row, pass the row select as "1:1"
+    // for multiple rows, pass a range of row numbers e.g "1:10"
+    // height is measured in points
+    procedure SetRowHeight string sRows number nHeight
+        handle hoRange  hoApp
+        variant lpRange 
+        
+        get phoExcelApp to hoApp
+        get phoRange to hoRange
+        get ComRange of hoApp sRows sRows to lpRange
+        set pvComObject of hoRange to lpRange
+        set ComRowHeight of hoRange to nHeight
+    end_procedure
+    
+    // this function will set the column width, according to the MSDN docs:
+    //  "One unit of column width is equal to the width of one character in the Normal style. 
+    //  For proportional fonts, the width of the character 0 (zero) is used."
+    // pass this function a column range, e.g. "A:A" if you want to set the width of one
+    //  column, or "A:C" if you want to set the width of the first three columns
+    procedure SetColumnWidth string sColumn number nWidth
+        handle hoRange  hoApp
+        variant lpRange 
+        
+        get phoExcelApp to hoApp
+        get phoRange to hoRange
+        get ComRange of hoApp sColumn sColumn to lpRange
+        set pvComObject of hoRange to lpRange
+        set ComColumnWidth of hoRange to nWidth
+    end_procedure
+
+    // set the numeric format for a range of cells.  Range is optional, if it is not
+    //  provided then the current range will be used.  to get valid format strings,
+    //  record a macro in Excel and examine the code that is generated.  for instance,
+    //  two decimal place number is "0.00", two decimal places with commas for 1000
+    //  separator is "#,##0.00"
+    Procedure SetNumericFormat string sFormat string sRange1 string sRange2 
+        handle hoRange hoApp
+        variant lpRange 
+        
+        get phoExcelApp to hoApp
+        get phoRange to hoRange
+        if (num_arguments>1) begin
+            if (num_arguments=3 and sRange1<>'' and sRange2<>'') get ComRange of hoApp sRange1 sRange2 to lpRange
+            else get ComRange of hoApp sRange1 sRange1 to lpRange
+            set pvComObject of hoRange to lpRange
+        end
+        set ComNumberFormat of hoRange to sFormat
+    end_procedure
+            
+    // create a font object for the current range to change font
+    //  settings, this object should be destroyed after use...
+    //  used by SetBold, SetItalic, etc.
+    function DoCreateFontObj returns integer 
+        handle hoRange hoFont
+        variant lpFont
+        
+        get phoRange to hoRange
+        get ComFont of hoRange to lpFont
+        get create U_cComFont to hoFont
+        set pvComObject of hoFont to lpFont
+        function_return hoFont
+    end_procedure
+    
+    // create an interior object for the current range
+    //  used to set the fill color
+    function DoCreateInteriorObj returns integer 
+        handle hoRange hoInterior
+        variant lpInterior
+        
+        get phoRange to hoRange
+        get ComInterior of hoRange to lpInterior
+        get create U_cComInterior to hoInterior
+        set pvComObject of hoInterior to lpInterior
+        function_return hoInterior
+    end_procedure
+    
+    // the following messages work on the currently selected range.
+    //  when adding values to a spreadsheet, the current range is 
+    //  automatically the last cell added, so it is possible to 
+    //  simply do this:
+    //
+    // set cell of oExcel 1 1 to "value"
+    // send SetBold of oExcel to true
+    //
+    // which will bold the contents of cell A1
+    //
+    procedure SetBold boolean bBold
+        handle hoFont
+        get DoCreateFontObj to hoFont        
+        set ComBold of hoFont to bBold
+        send destroy to hoFont
+    end_procedure
+    
+    procedure SetItalic boolean bItalic
+        handle hoFont
+        
+        get DoCreateFontObj to hoFont        
+        set ComItalic of hoFont to bItalic
+        send destroy to hoFont
+    end_procedure
+
+    procedure SetColor integer iColor
+        handle hoFont
+        
+        get DoCreateFontObj to hoFont        
+        set ComColor of hoFont to iColor
+        send destroy to hoFont
+    end_procedure
+
+    procedure SetFillColor integer iColor
+        handle hoInterior
+        
+        get DoCreateInteriorObj to hoInterior
+        set ComColor of hoInterior to iColor
+        send destroy to hoInterior
+    end_procedure
+
+    procedure SetFont string sFont
+        handle hoFont
+        
+        get DoCreateFontObj to hoFont        
+        set ComName of hoFont to sFont
+        send destroy to hoFont
+    end_procedure
+        
+    procedure SetFontSize integer iSize
+        handle hoFont
+        
+        get DoCreateFontObj to hoFont        
+        set ComSize of hoFont to iSize
+        send destroy to hoFont
+    end_procedure
+
+    // set underline to: 
+    //  OLExlUnderlineStyleDouble 
+    //  OLExlUnderlineStyleDoubleAccounting 
+    //  OLExlUnderlineStyleNone 
+    //  OLExlUnderlineStyleSingle 
+    //  OLExlUnderlineStyleSingleAccounting 
+    procedure SetUnderline integer iUnderline
+        handle hoFont
+        
+        get DoCreateFontObj to hoFont        
+        set ComUnderline of hoFont to iUnderline
+        send destroy to hoFont
+    end_procedure
+
+    // set the indentation level for the currently selected range.
+    procedure SetIndent integer iIndent
+        handle hoRange
+        get phoRange to hoRange
+        set ComIndentLevel of hoRange to iIndent
+    end_procedure
+    
+    // set to OLExlCenter, OLExlLeft, OLExlRight
+    procedure SetHorizontalAlignment integer iAlignment
+        handle hoRange
+        get phoRange to hoRange
+        Set ComHorizontalAlignment of hoRange to iAlignment
+    end_procedure
+
+        
+End_class
+
+
+// old code for unimplemented DDE functions
+
+
+////*************************************************************************
+////*
+////*  Procedure: CopyData
+////*
+////*  Purpose:  Commands Excel move selected data into clipboard for
+////*     pasting.
+////*
+////*  Parameters:  None
+////*
+////*************************************************************************
+
+//    Procedure CopyData
+//        local integer commstat
+//        // copies selected range
+//        get COMM_PERFORM of (SPREADSHEET(Current_Object));
+//                "[COPY()]" to CommStat
+//        // the next line cancels the marquee
+//        get COMM_PERFORM of (SPREADSHEET(Current_Object));
+//                "[CANCEL.COPY()]" to CommStat
+//    END_Procedure
+
+////*************************************************************************
+////*
+////*  Procedure: CreateChart
+////*
+////*  Purpose:  Commands Excel to create a chart with clipboard contents.
+////*
+////*  Parameters:  None.
+////*
+////*  Note:  The New(2,0) is used instead of just New() to bring headers
+////*  for columns and rows.
+////*
+////*************************************************************************
+
+//    Procedure CreateChart
+//        local integer commstat
+//        // the next command creates a chart using current selected data.
+//        // the 0 parameter brings across the headers in the rows and cols.
+//        get COMM_PERFORM of (SPREADSHEET(Current_Object)) "[New(2,0)]" to CommStat
+//        get COMM_CONNECT of (CHART(current_object)) "DDE:EXCEL|CHART1" to CommStat
+//        if commstat ne FAILURE;
+//            set sess_timeout_value of (chart(current_object)) to (timeout_value(current_object))
+
+//    END_Procedure
+
+////*************************************************************************
+////*
+////*  Procedure: AttachText
+////*
+////*  Purpose:  Commands Excel to move label into graph.
+////*
+////*  Parameters:  TextNumber - label to address
+////*  two dimensional charts
+////* 1    Chart title
+////* 2    Value (y) axis
+////* 3    Category (x) axis
+////* 4    Series and data point
+////* 5    Secondary value (y) axis
+////* 6    Secondary category (x) axis
+////*  three dimensional charts
+////* 1    Chart title
+////* 2    Value (z) axis
+////* 3    Series (y) axis
+////* 4    Category (x) axis
+////* 5    Series and data point
+////*
+////*
+////*  Note:  The New(2,0) is used instead of just New() to bring headers
+////*  for columns and rows.
+////*
+////*************************************************************************
+
+//#REPLACE CHART_TITLE 1   // this is the title.
+
+//    Procedure AttachText integer TextNumber string graphtag
+//        local integer commstat
+//        get COMM_PERFORM of (CHART(Current_Object)) ("[ATTACH.TEXT("+;
+//            string(TextNumber)+")]") to commstat
+//        get COMM_PERFORM of (CHART(Current_Object)) ('[FORMULA("'+graphtag+;
+//            '")]') to commstat
+//    End_Procedure
+
+////*************************************************************************
+////*
+////*  Procedure: GraphChart
+////*
+////*  Purpose:  Commands Excel to graph data in chart placing title and
+////*           setting gallery (using preferences of array)
+////*
+////*  Parameters:  GraphLabel - the title of the chart
+////*               ChartNumber - gallery setting
+////*
+////*************************************************************************
+
+//    Procedure GraphChart string graphlabel integer chartnumber
+//        local integer commstat
+//        local string chartstyle
+
+//        get COMM_PERFORM of (CHART(current_object)) "[BRING.TO.FRONT()]" to CommStat
+//        get comm_perform of (chart(current_object)) '[FORMAT.FONT(0,1,FALSE,"Helv",18,FALSE,FALSE,FALSE,FALSE)]' to CommStat
+//        get COMM_PERFORM of (CHART(Current_Object)) "[WINDOW.MAXIMIZE]" to CommStat
+//        get COMM_PERFORM of (CHART(Current_Object)) "[ZOOM]" to CommStat
+//        send attachtext CHART_TITLE graphlabel
+//        set gallery to chartnumber
+
+//    END_Procedure
+
+////*************************************************************************
+////*
+////*  Procedure: Set Gallery
+////*
+////*  Purpose:  Commands Excel to change the gallery setting of the chart.
+////*
+////*  Parameters:  ChartNumber - gallery setting
+////*
+////*************************************************************************
+
+//    Procedure Set Gallery integer chartnumber
+//      local integer commstat
+//      local string chartstyle
+
+//      get value of (GalleryPreferences(Current_Object)) item chartnumber to chartstyle
+//      set value of DESKTOP to chartstyle
+//      get COMM_PERFORM of (CHART(current_object));
+//         ("[GALLERY."+ChartStyle+"]") to CommStat
+//    End_procedure
+
+////*************************************************************************
+////*
+////*  Procedure: GraphRange
+////*
+////*  Purpose:  Commands Excel to graph a range of data of a spreadsheet
+////*           in a chart placing title and
+////*           setting gallery (using preferences of array)
+////*
+////*  Parameters:  TheRange - the range to graph
+////*               GraphLabel - the title of the chart
+////*               ChartNumber - gallery setting
+////*
+////*************************************************************************
+
+//    Procedure GraphRange String TheRange string graphLabel integer chartnumber
+//        Send SelectRange to (SPREADSHEET(Current_Object)) TheRange
+//        Send CopyData to (SPREADSHEET(Current_Object))
+//        Send CreateChart to (SpreadSheet(Current_Object))
+//        Send GraphChart to (CHART(Current_Object)) graphLabel chartnumber
+//    End_Procedure
+
+//END_CLASS

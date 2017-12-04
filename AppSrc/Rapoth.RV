@@ -1,0 +1,342 @@
+//AB/ Project Rapoth:synola mm1
+//AB/     Object prj is a Report_Project
+//AB/         Set ProjectName to "Rapoth:synola mm1"
+//AB/         Set ProjectFileName to "Rapoth.RV"
+
+// Project Object Structure
+//   Rapoth is a ReportViewSub
+//     ButtonSub3 is a ButtonSub
+//     ButtonSub4 is a ButtonSub
+//     rapoth_BasicReport is a BasicReport
+//       Tmpapoth_DD is a Tmpapoth_DataDictionary
+
+// Register all objects
+Register_Object ButtonSub3
+Register_Object ButtonSub4
+Register_Object Rapoth
+Register_Object rapoth_BasicReport
+Register_Object Tmpapoth_DD
+
+
+//AB/     Report View
+
+
+    //AB-StoreTopStart
+    Use dfallrpt.pkg
+    use tmpapoth.dd
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use Rptvw.Sub
+    Use Button.Sub
+
+    //AB-IgnoreEnd
+
+    ACTIVATE_VIEW Activate_Rapoth FOR Rapoth
+
+    Object Rapoth is a ReportViewSub
+
+        //AB-StoreTopStart
+        
+        Property Integer Sort_IndexRlog     Public 1
+        property number  pnqty              public 0
+        property integer pino               public 0
+        property string  pscode             public ''
+        property string  psitem             public ''
+        property date    pddate             public ''
+        property string  psbranch           public ''
+        property string  pstype             public ''
+        property string psrecr              public ''
+        //AB-StoreTopEnd
+
+        Set Label to "‘ç¤¦¢˜ MM1"
+        Set Size to 39 186
+        Set Location to 1 23
+        Set Color to 16744448
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object ButtonSub3 is a ButtonSub
+
+            //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                                                
+            //AB-StoreTopEnd
+
+            Set Bitmap to "RUNPROG.BMP"
+            Set Size to 18 27
+            Set Location to 3 119
+            Set Border_Style to Border_StaticEdge
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                                                                                                                                                                                                                                                                                                
+            Procedure OnClick
+            
+            End_Procedure
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub3
+
+        Object ButtonSub4 is a ButtonSub
+
+            //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                                                
+            //AB-StoreTopEnd
+
+            Set Bitmap to "CANCEL.BMP"
+            Set Size to 18 27
+            Set Location to 3 153
+            Set Border_Style to Border_StaticEdge
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            Procedure OnClick
+                Send Request_Cancel
+            End_Procedure
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub4
+
+
+        //AB-StoreStart
+        set output_device_name to none
+        Procedure StartReport
+            Local Integer iOutputDevice
+            Local String  FileName
+            SEND RUN_REPORT
+        End_Procedure   // StartReport
+        
+        
+        Object rapoth_BasicReport is a BasicReport
+        
+            Set Report_Title to "„¤ž£â¨à©ž MM1 ‘ç¤¦¢˜                   "
+            Set Report_Caption to "„¤ž£â¨à©ž MM1 ‘ç¤¦¢˜ "
+        
+            Set Status_Panel_State  to true
+            Set Display_Error_State to True
+        
+        
+        
+        
+            Object Tmpapoth_DD is a Tmpapoth_DataDictionary
+                 begin_constraints
+                    constrain tmpapoth.typos eq '01'
+                 end_constraints
+            End_Object    // tmpapoth
+        
+            Set Server To (tmpapoth_dd(Self))
+        
+            //Breaks and Index for the report
+            Report_Index By Index.3
+            Report_breaks tmpapoth.egkatastash tmpapoth.hmnia tmpapoth.type tmpapoth.item
+        
+            Function Starting_Main_Report Returns Integer
+              Integer iIndexRlog
+              Local Integer iRetVal
+              Forward Get Starting_Main_Report to iRetval
+              send rebuild_constraints to tmpapoth_dd
+              Send Find to (tmpapoth_dd(self)) First_Record 3
+            End_Function
+        
+        
+        
+            Procedure_Section subheader1
+                set psbranch to tmpapoth.egkatastash
+                set pnqty to 0
+            End_Procedure
+        
+            Procedure_Section subheader2
+                set pddate to tmpapoth.hmnia
+                set pnqty to 0
+            End_Procedure
+        
+            Procedure_Section subheader3
+                set pstype to tmpapoth.type
+                set pnqty to 0
+            End_Procedure
+        
+        
+        
+            Procedure_Section subheader4
+                set psitem to tmpapoth.item
+                set pnqty to 0
+            End_Procedure
+        
+            Procedure_Section  Body
+                number nqty
+                set pnqty to (pnqty(self)+Tmpapoth.qty)
+                send update_status ('Ešš¨˜­ã ' + string(Tmpapoth.item))
+            End_Procedure
+            Procedure_Section subtotal4
+                string sbranch sitem stype smm
+                number nqty
+                date ddate
+                move tmpapoth.monada to smm
+                get psbranch to sbranch
+                get psitem to sitem
+                get pnqty to nqty
+                get pddate to ddate
+                get pstype to stype
+                clear tmpapoth
+                move 'MM1'                              to tmpapoth.onoma
+                move '91'                               to Tmpapoth.typos
+                move '9999999999'                       to Tmpapoth.arithmos
+                move stype                              to tmpapoth.type
+                move nqty                               to Tmpapoth.qty
+                move ''                                 to Tmpapoth.code
+                move ddate                              to tmpapoth.hmnia
+                move sitem                              to Tmpapoth.item
+                move sbranch                            to Tmpapoth.egkatastash
+                move smm                                to Tmpapoth.monada
+                move ''                                 to Tmpapoth.paralabh
+                saverecord tmpapoth
+                set pnqty to 0
+            End_Procedure
+        
+            Procedure_Section subtotal3
+        //        string sbranch sitem stype smm
+        //        date ddate
+        //        number nqty
+        //        move tmpapoth.monada to smm
+        //        get psbranch to sbranch
+        //        get psitem to sitem
+        //        get pnqty to nqty
+        //        get pddate to ddate
+        //        get pstype to stype
+        //        clear tmpapoth
+        //        move '91'                               to Tmpapoth.typos
+        //        move '9999999999'                       to Tmpapoth.arithmos
+        //        move stype                              to tmpapoth.type
+        //        move nqty                               to Tmpapoth.qty
+        //        move ''                                 to Tmpapoth.code
+        //        move ddate                              to tmpapoth.hmnia
+        //        move sitem                              to Tmpapoth.item
+        //        move sbranch                            to Tmpapoth.egkatastash
+        //        move smm                                to Tmpapoth.monada
+        //        move ''                                 to Tmpapoth.paralabh
+        //        saverecord tmpapoth
+        //        set pnqty to 0
+        
+        
+            End_Procedure
+        
+            Procedure_Section subtotal2
+         //       string sbranch sitem stype smm
+         //       date ddate
+         //       number nqty
+         //       move tmpapoth.monada to smm
+         //       get psbranch to sbranch
+         //       get psitem to sitem
+         //       get pnqty to nqty
+         //       get pddate to ddate
+         //       get pstype to stype
+         //       clear tmpapoth
+         //       move '91'                               to Tmpapoth.typos
+         //       move '9999999999'                       to Tmpapoth.arithmos
+         //       move stype                              to tmpapoth.type
+         //       move nqty                               to Tmpapoth.qty
+         //       move ''                                 to Tmpapoth.code
+         //       move ddate                              to tmpapoth.hmnia
+         //       move sitem                              to Tmpapoth.item
+         //       move sbranch                            to Tmpapoth.egkatastash
+         //       move smm                                to Tmpapoth.monada
+         //       move ''                                 to Tmpapoth.paralabh
+         //       saverecord tmpapoth
+         //       set pnqty to 0
+        
+            End_Procedure
+        
+            Procedure_Section subtotal1
+        //        string sbranch sitem stype smm
+        //        date ddate
+        //        number nqty
+        //        move tmpapoth.monada to smm
+        //        get psbranch to sbranch
+        //        get psitem to sitem
+        //        get pddate to ddate
+        //        get pnqty to nqty
+        //        get pstype to stype
+        //        clear tmpapoth
+        //        move '91'                               to Tmpapoth.typos
+        //        move '9999999999'                       to Tmpapoth.arithmos
+        //        move stype                              to tmpapoth.type
+        //        move nqty                               to Tmpapoth.qty
+        //        move ''                                 to Tmpapoth.code
+        //        move ddate                              to tmpapoth.hmnia
+        //        move sitem                              to Tmpapoth.item
+        //        move sbranch                            to Tmpapoth.egkatastash
+        //        move smm                                to Tmpapoth.monada
+        //        move ''                                 to Tmpapoth.paralabh
+        //        saverecord tmpapoth
+        //        set pnqty to 0
+        
+        End_Procedure
+        
+        
+        
+        Procedure Ending_Report
+            set psbranch    to ''
+            set psitem      to ''
+            set pddate      to ''
+            set pnqty       to 0
+            set pstype      to ''
+        End_Procedure
+        
+        End_Object
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // Rapoth
+
+
+    //AB-StoreStart
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

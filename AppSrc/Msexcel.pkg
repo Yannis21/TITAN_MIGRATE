@@ -1,0 +1,494 @@
+//*************************************************************************
+//*                                                                       *
+//*  Copyright (c) 1986-1997 Data Access Corporation, Miami Florida,      *
+//*  All rights reserved.                                                 *
+//*  DataFlex is a registered trademark of Data Access Corporation.       *
+//*                                                                       *
+//*************************************************************************
+//*                                                                       *
+//*  Module Name:                                                         *
+//*      msexcel.pkg                                                      *
+//*      1.0                                                              *
+//*                                                                       *
+//*  Creator:                                                             *
+//*      Michael Gouker                                                   *
+//*      July 20, 1994                                                    *
+//*                                                                       *
+//*  Purpose: Defines a high-level class to describe excel interface.     *
+//*           Excel is an extremely powerful tool.  This class uses 1%    *
+//*         of its capabilities.  Use it as a guide to building your      *
+//*         own interface that addresses your needs.                      *
+//*                                                                       *
+//*  Revision history:                                                    *
+//*                                                                       *
+//*************************************************************************
+
+USE WINDOWS
+USE COMM
+USE XPORT
+USE DDE
+USE DFERROR
+
+//*************************************************************************
+//*
+//*  Class Name:
+//*      MSExcel
+//*
+//*  Purpose: This class defines the following simple protocol for using
+//*         Excel spreadsheets:
+//*
+//*             InitializeExcel - this will load Excel, given a pathname.
+//*             LoadSpreadSheet - this loads an Excel spreadsheet
+//*             SaveSpreadSheetAs - this saves an Excel spreadsheet with the
+//*                             name supplied
+//*             DeleteSpreadSheetAs - this removes a spreadsheet
+//*             LoadSpreadSheet - this loads an Excel spreadsheet
+//*             Cell - Addressed as a property, this accesses the various
+//*                 elements of the spreadsheet in Row Column format.
+//*                 Numeric values are used instead of the A1 style,
+//*                 because this is the recommended way an external app
+//*                 should address the cells.
+//*             SelectRange - this allows a range of cells to be selected
+//*             CopyData - this moves the selected data into copy buffer
+//*             CreateChart - this makes a new chart using selected data
+//*                 complete with headers and series tags.
+//*             AttachText - Allows tags to be set on the chart (e.g. title)
+//*             GraphChart - Performs graph function, using passed gallery.
+//*             Set Gallery - allows chart type to be changed using the
+//*                 settings in the GalleryPreferences array.
+//*             GraphRange - selects a range, makes a chart and graphs.
+//*
+//*         Implementation:  We use an array, GalleryPreferences, to store
+//*                         the choices for graphing.  Please refer to
+//*                         EXCEL manual for other choices - the defaults
+//*                         are personal choices selected more for diversity
+//*                         than aesthetics.
+//*                          We use three comm objects to speak to EXCEL.
+//*                         This is done both to show how comm objects can
+//*                         be used to set up multi-pathed communication
+//*                         and because older versions of EXCEL did not
+//*                         support advanced commands like ChartWizard that
+//*                         make all this obsolete.  This implementation
+//*                         should work no matter what version of EXCEL
+//*                         is running.
+//*
+//*************************************************************************
+
+//  Gallery Settings - if you change the array values, change these as well.
+
+#REPLACE  CHART_PIE1            0
+#REPLACE  CHART_PIE2            1
+#REPLACE  CHART_PIE3            2
+#REPLACE  CHART_AREA1           3
+#REPLACE  CHART_COLUMN1         4
+#REPLACE  CHART_COLUMN6         5
+#REPLACE  CHART_LINE4           6
+#REPLACE  CHART_LINE1           7
+#REPLACE  CHART_PIE4            8
+#REPLACE  CHART_DOUGHNUT1       9
+#REPLACE  CHART_3D_PIE1        10
+#REPLACE  CHART_3D_AREA1       11
+#REPLACE  CHART_3D_AREA6       12
+#REPLACE  CHART_3D_AREA7       13
+#REPLACE  CHART_3D_COLUMN1     14
+
+#REPLACE  CHART_3D_COLUMN6     15
+#REPLACE  CHART_3D_LINE4       16
+#REPLACE  CHART_3D_LINE1       17
+#REPLACE  CHART_3D_PIE4        18
+
+CLASS EXCEL is a DFOBJECT
+
+    PROCEDURE Construct_Object
+
+        Property string SelectedRange
+        Property integer Timeout_Value public 1000
+
+        forward send construct_object
+
+        SET VISIBLE_STATE to FALSE
+
+        object GalleryPreferences is an Array
+            set value Item 0 to "PIE(1)"
+            set value Item 1 to "PIE(2)"
+            set value Item 2 to "PIE(3)"
+            set value Item 3 to "AREA(1)"
+            set value Item 4 to "COLUMN(1)"
+            set value Item 5 to "COLUMN(6)"
+            set value Item 6 to "LINE(4)"
+            set value Item 7 to "LINE(1)"
+            set value Item 8 to "PIE(4)"
+            set value Item 9 to "DOUGHNUT(1)"
+            set value Item 10 to "3D.PIE(1)"
+            set value Item 11 to "3D.AREA(1)"
+            set value Item 12 to "3D.AREA(6)"
+            set value Item 13 to "3D.AREA(7)"
+            set value Item 14 to "3D.COLUMN(1)"
+            set value Item 15 to "3D.COLUMN(6)"
+            set value Item 16 to "3D.LINE(4)"
+            set value Item 17 to "3D.LINE(1)"
+            set value Item 18 to "3D.PIE(4)"
+        end_object
+
+        object EXCELSYSTEM IS A DDECOMM no_image "EXCELSYSTEM"
+        end_object
+
+        object SPREADSHEET IS A DDECOMM no_image "SPREADSHEET"
+        end_object
+
+        object CHART is a DDECOMM no_image "chart"
+        END_OBJECT
+    END_PROCEDURE
+
+//*************************************************************************
+//*
+//*  Function:  InitializeExcel
+//*
+//*  Purpose:  Loads EXCEL if not already loaded
+//*
+//*  Parameters:
+//*         PathNameToExcel - May be simply "EXCEL" if it is in the path
+//*                         if not you might use an INI setting.
+//*
+//*************************************************************************
+
+    Function InitializeExcel String PathNameToExcel returns Integer
+
+        local string commandToRun
+        local string connectString
+        local integer commstat
+
+
+        if PathNameToExcel eq "";
+            Get_Profile_String "Application_Links" "ExcelPath" to PathNameToExcel
+
+        if PathNameToExcel eq "" begin
+            Error 501 "ExcelPath of DFWIN.INI is not set."
+            Function_Return FAILURE
+        end
+
+        move ("~" + PathNameToExcel) to CommandToRun
+        move "DDE:EXCEL|SYSTEM" to connectString
+
+        get COMM_CONNECT of (EXCELSYSTEM(Current_object));
+                connectString to commstat
+
+
+        If commstat eq FAILURE begin
+            RUNPROGRAM WAIT CommandToRun
+            sleep 5
+            get COMM_CONNECT of (EXCELSYSTEM(current_object));
+                    connectString to CommStat
+        End
+
+        if commstat ne FAILURE;
+           set sess_timeout_value of (excelsystem(current_object)) to (timeout_value(current_object))
+
+        Function_Return CommStat
+
+    END_FUNCTION
+
+//*************************************************************************
+//*
+//*  Procedure:  DeInitializeExcel
+//*
+//*  Purpose:  Terminates comm connections to EXCEL.
+//*
+//*  Parameters:  (void)
+//*
+//*************************************************************************
+
+    Procedure DeinitializeExcel
+        local integer commstat
+        GET COMM_DISCONNECT of (CHART(Current_object)) to commstat
+        GET COMM_DISCONNECT of (SPREADSHEET(Current_object)) to commstat
+        GET COMM_DISCONNECT of (EXCELSYSTEM(Current_object)) to commstat
+    End_Procedure
+
+//*************************************************************************
+//*
+//*  Function: LoadSpreadSheet
+//*
+//*  Purpose:  Commands Excel "SYSTEM" topic to load the spreadsheet
+//*         passed in SpreadSheetName.
+//*
+//*  Parameters:  SpreadSheetName - the name of the spreadsheet to load.
+//*             If it does not exist, EXCEL will complain.  You can trap
+//*             the error and let the user respond to Excel.  If you send
+//*             subsequent commands to the spreadsheet without reconnecting
+//*             after an error, they will be ignored.
+//*
+//*************************************************************************
+
+    FUNCTION LoadSpreadsheet String SpreadSheetName returns Integer
+
+        local integer commstat
+        local string CommandToPerform
+
+        move ('[OPEN("' + SpreadSheetName + '")]' ) to CommandToPerform
+
+        get COMM_PERFORM of (EXCELSYSTEM(current_object)) ;
+                    CommandToPerform to CommStat
+
+        move ('DDE:EXCEL|' + SpreadSheetName) to CommandToPerform
+        get COMM_CONNECT of (SPREADSHEET(current_object)) ;
+                    CommandToPerform to CommStat
+
+        if commstat ne FAILURE;
+            set sess_timeout_value of (spreadsheet(current_object)) to (timeout_value(current_object))
+
+        Function_Return CommStat
+
+
+    END_FUNCTION
+
+
+//*************************************************************************
+//*
+//*  Procedure:  SaveSpreadSheetAs string SpreadSheetName
+//*
+//*  Purpose:   Commands excel to save a spreadsheet with the name passed
+//*             in SpreadSheetName.  No connection is established automatically.
+//*
+//*************************************************************************
+
+    Procedure SaveSpreadsheetAs String SpreadSheetName
+
+        local integer commstat
+        local string CommandToPerform
+
+        move ('[SAVE.AS("' + SpreadSheetName + '")]' ) to CommandToPerform
+
+        get COMM_PERFORM of (EXCELSYSTEM(current_object)) ;
+                    CommandToPerform to CommStat
+
+        Procedure_Return CommStat
+
+    END_Procedure
+
+//*************************************************************************
+//*
+//*  Procedure:  DeleteSpreadSheet string SpreadSheetName
+//*
+//*  Purpose:   Commands excel to delete a spreadsheet with the name passed
+//*             in SpreadSheetName.
+//*
+//*  Note: assumption is that spreadsheet is in the DFPATH
+//*
+//*************************************************************************
+
+    Procedure DeleteSpreadsheet String SpreadSheetName
+
+        local integer commstat
+        local string CommandToPerform
+
+        ERASEFILE SpreadSheetName
+
+    END_PROCEDURE
+
+
+//*************************************************************************
+//*
+//*  Fake Property:  Cell
+//*
+//*  Purpose:  Represents the data of the spreadsheet.
+//*
+//*  Parameters:  CellRow - the number of the row.
+//*               CellColumn - the number of the row.
+//*               CellValue - what to set it to.
+//*
+//*************************************************************************
+
+    Procedure Set Cell integer CellRow integer CellColumn String CellValue
+
+        local string cellname
+        local integer commstat
+
+        move ("R"+string(CellRow)+"C"+string(CellColumn)) to cellname
+
+        get COMM_WRITEDATA of (SPREADSHEET(Current_object));
+                CellName CELLVALUE to CommStat
+
+    END_Procedure
+
+    FUNCTION Cell integer CellRow integer CellColumn returns string
+
+        local string cellname
+        local string cellvalue
+        local integer commstat
+
+        move ("R"+string(CellRow)+"C"+string(CellColumn)) to cellname
+
+        get COMM_READDATA of (SPREADSHEET(Current_object));
+                CellName TO CELLVALUE
+
+        Function_Return CELLVALUE
+
+    END_FUNCTION
+
+//*************************************************************************
+//*
+//*  Procedure: SelectRange
+//*
+//*  Purpose:  Commands Excel to select a range of the spreadsheet for
+//*     copying, graphing or whatever.
+//*
+//*  Parameters:  TheRange - the range to select (R1C5:R20C40 for ex)
+//*
+//*************************************************************************
+
+    Procedure SelectRange String TheRange
+        local integer commstat
+        get COMM_PERFORM of (SPREADSHEET(Current_Object));
+                ('[SELECT("'+TheRange+'")]') to CommStat
+    END_Procedure
+
+//*************************************************************************
+//*
+//*  Procedure: CopyData
+//*
+//*  Purpose:  Commands Excel move selected data into clipboard for
+//*     pasting.
+//*
+//*  Parameters:  None
+//*
+//*************************************************************************
+
+    Procedure CopyData
+        local integer commstat
+        // copies selected range
+        get COMM_PERFORM of (SPREADSHEET(Current_Object));
+                "[COPY()]" to CommStat
+        // the next line cancels the marquee
+        get COMM_PERFORM of (SPREADSHEET(Current_Object));
+                "[CANCEL.COPY()]" to CommStat
+    END_Procedure
+
+//*************************************************************************
+//*
+//*  Procedure: CreateChart
+//*
+//*  Purpose:  Commands Excel to create a chart with clipboard contents.
+//*
+//*  Parameters:  None.
+//*
+//*  Note:  The New(2,0) is used instead of just New() to bring headers
+//*  for columns and rows.
+//*
+//*************************************************************************
+
+    Procedure CreateChart
+        local integer commstat
+        // the next command creates a chart using current selected data.
+        // the 0 parameter brings across the headers in the rows and cols.
+        get COMM_PERFORM of (SPREADSHEET(Current_Object)) "[New(2,0)]" to CommStat
+        get COMM_CONNECT of (CHART(current_object)) "DDE:EXCEL|CHART1" to CommStat
+        if commstat ne FAILURE;
+            set sess_timeout_value of (chart(current_object)) to (timeout_value(current_object))
+
+    END_Procedure
+
+//*************************************************************************
+//*
+//*  Procedure: AttachText
+//*
+//*  Purpose:  Commands Excel to move label into graph.
+//*
+//*  Parameters:  TextNumber - label to address
+//*  two dimensional charts
+//* 1    Chart title
+//* 2    Value (y) axis
+//* 3    Category (x) axis
+//* 4    Series and data point
+//* 5    Secondary value (y) axis
+//* 6    Secondary category (x) axis
+//*  three dimensional charts
+//* 1    Chart title
+//* 2    Value (z) axis
+//* 3    Series (y) axis
+//* 4    Category (x) axis
+//* 5    Series and data point
+//*
+//*
+//*  Note:  The New(2,0) is used instead of just New() to bring headers
+//*  for columns and rows.
+//*
+//*************************************************************************
+
+#REPLACE CHART_TITLE 1   // this is the title.
+
+    Procedure AttachText integer TextNumber string graphtag
+        local integer commstat
+        get COMM_PERFORM of (CHART(Current_Object)) ("[ATTACH.TEXT("+;
+            string(TextNumber)+")]") to commstat
+        get COMM_PERFORM of (CHART(Current_Object)) ('[FORMULA("'+graphtag+;
+            '")]') to commstat
+    End_Procedure
+
+//*************************************************************************
+//*
+//*  Procedure: GraphChart
+//*
+//*  Purpose:  Commands Excel to graph data in chart placing title and
+//*           setting gallery (using preferences of array)
+//*
+//*  Parameters:  GraphLabel - the title of the chart
+//*               ChartNumber - gallery setting
+//*
+//*************************************************************************
+
+    Procedure GraphChart string graphlabel integer chartnumber
+        local integer commstat
+        local string chartstyle
+
+        get COMM_PERFORM of (CHART(current_object)) "[BRING.TO.FRONT()]" to CommStat
+        get comm_perform of (chart(current_object)) '[FORMAT.FONT(0,1,FALSE,"Helv",18,FALSE,FALSE,FALSE,FALSE)]' to CommStat
+        get COMM_PERFORM of (CHART(Current_Object)) "[WINDOW.MAXIMIZE]" to CommStat
+        get COMM_PERFORM of (CHART(Current_Object)) "[ZOOM]" to CommStat
+        send attachtext CHART_TITLE graphlabel
+        set gallery to chartnumber
+
+    END_Procedure
+
+//*************************************************************************
+//*
+//*  Procedure: Set Gallery
+//*
+//*  Purpose:  Commands Excel to change the gallery setting of the chart.
+//*
+//*  Parameters:  ChartNumber - gallery setting
+//*
+//*************************************************************************
+
+    Procedure Set Gallery integer chartnumber
+      local integer commstat
+      local string chartstyle
+
+      get value of (GalleryPreferences(Current_Object)) item chartnumber to chartstyle
+      set value of DESKTOP to chartstyle
+      get COMM_PERFORM of (CHART(current_object));
+         ("[GALLERY."+ChartStyle+"]") to CommStat
+    End_procedure
+
+//*************************************************************************
+//*
+//*  Procedure: GraphRange
+//*
+//*  Purpose:  Commands Excel to graph a range of data of a spreadsheet
+//*           in a chart placing title and
+//*           setting gallery (using preferences of array)
+//*
+//*  Parameters:  TheRange - the range to graph
+//*               GraphLabel - the title of the chart
+//*               ChartNumber - gallery setting
+//*
+//*************************************************************************
+
+    Procedure GraphRange String TheRange string graphLabel integer chartnumber
+        Send SelectRange to (SPREADSHEET(Current_Object)) TheRange
+        Send CopyData to (SPREADSHEET(Current_Object))
+        Send CreateChart to (SpreadSheet(Current_Object))
+        Send GraphChart to (CHART(Current_Object)) graphLabel chartnumber
+    End_Procedure
+
+END_CLASS

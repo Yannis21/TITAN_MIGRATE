@@ -1,0 +1,331 @@
+//AB/ Project rtehn:enhmerosh texn.prodiagrafon
+//AB/     Object prj is a Report_Project
+//AB/         Set ProjectName to "rtehn:enhmerosh texn.prodiagrafon"
+//AB/         Set ProjectFileName to "rtehn.RV"
+
+// Project Object Structure
+//   rtehn is a ReportViewSub
+//     ButtonSub3 is a ButtonSub
+//     ButtonSub4 is a ButtonSub
+//     rtehn_BasicReport is a BasicReport
+//       antech_DD is a antech_DataDictionary
+
+// Register all objects
+Register_Object antech_DD
+Register_Object ButtonSub3
+Register_Object ButtonSub4
+Register_Object rtehn
+Register_Object rtehn_BasicReport
+
+
+//AB/     Report View
+
+
+    //AB-StoreTopStart
+    Use dfallrpt.pkg
+    use antech.dd
+    open item
+    open itemtehn
+    open itemd
+    Open Syscurxr
+    open sysfile
+    open sysrecw
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use Rptvw.Sub
+    Use Button.Sub
+
+    //AB-IgnoreEnd
+
+    ACTIVATE_VIEW Activate_rtehn FOR rtehn
+
+    Object rtehn is a ReportViewSub
+
+        //AB-StoreTopStart
+        
+        Property Integer Sort_IndexRlog     Public 1
+        property number  pnqty              public 0
+        property string  pscode             public ''
+        property string  psitem             public ''
+        property date    pddate             public ''
+        property string  psbranch           public ''
+        property string psrecr              public ''
+        //AB-StoreTopEnd
+
+        Set Label to "Ñ§û£‚®‡©û íúÆ§.è®¶õ†òö®ò≠È§"
+        Set Size to 39 186
+        Set Location to 1 22
+        Set Color to 16744448
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object ButtonSub3 is a ButtonSub
+
+            //AB-StoreTopStart
+                                                                            
+            //AB-StoreTopEnd
+
+            Set Bitmap to "RUNPROG.BMP"
+            Set Size to 18 27
+            Set Location to 3 119
+            Set Border_Style to Border_StaticEdge
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                                            
+            Procedure OnClick
+                begin_transaction
+                    Send StartReport
+                end_transaction
+            End_Procedure
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub3
+
+        Object ButtonSub4 is a ButtonSub
+
+            //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                                                            
+            //AB-StoreTopEnd
+
+            Set Bitmap to "CANCEL.BMP"
+            Set Size to 18 27
+            Set Location to 3 153
+            Set Border_Style to Border_StaticEdge
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            Procedure OnClick
+                Send Request_Cancel
+            End_Procedure
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub4
+
+
+        //AB-StoreStart
+        set output_device_name to none
+        Procedure StartReport
+            date ddate
+            Local Integer iOutputDevice
+            Local String  FileName
+            SEND RUN_REPORT
+        End_Procedure   // StartReport
+        
+        
+        Object rtehn_BasicReport is a BasicReport
+        
+            Set Report_Title to "Ñ§û£‚®‡©û íúÆ§.è®¶õ†òö®ò≠È§                   "
+            Set Report_Caption to "Ñ§û£‚®‡©û íúÆ§.è®¶õ†òö®ò≠È§ "
+        
+            Set Status_Panel_State  to true
+            Set Display_Error_State to True
+        
+        
+        
+        
+            Object antech_DD is a antech_DataDictionary
+        
+            End_Object    // antech_DD
+        
+            Set Server To (antech_dd(Self))
+        
+            //Breaks and Index for the report
+            Report_Index By Index.1
+            Report_breaks antech.antech_branch antech.antech_chnum antech.antech_item
+        
+            Function Starting_Main_Report Returns Integer
+              Integer iIndexRlog
+              Local Integer iRetVal
+              Forward Get Starting_Main_Report to iRetval
+              Send Find to (antech_dd(self)) First_Record 1
+            End_Function
+        
+            Procedure_Section subheader1
+                string sbranch
+                left antech.antech_branch to sbranch 2
+                set psbranch to sbranch
+        
+            End_Procedure
+        
+            Procedure_Section subheader2
+        
+            End_Procedure
+        
+            Procedure_Section subheader3
+                string sbranch scode
+                clear itemtehn
+                get psbranch to sbranch
+                move syscurxr.company_code to itemtehn.company
+                move sbranch to itemtehn.branch
+                move antech.antech_chnum to itemtehn.code
+                left itemtehn.code to scode 8
+                insert '/' in scode at 3
+                insert '/' in scode at 6
+                move scode to itemtehn.hmnia
+                move antech.antech_item  to itemtehn.item_code
+                find eq itemtehn by index.3
+                if (found) begin
+                    set pscode to itemtehn.code
+                    set psrecr to itemtehn.recr
+                end
+                else begin
+                    move (sysrecw.itemtehn_rec0+1) to sysrecw.itemtehn_rec0
+                    saverecord sysrecw
+                    move sysrecw.itemtehn_rec0 to itemtehn.rec0
+                    Move (Append('',((Trim(antech.antech_branch))+;
+                                 (Trim(String(Itemtehn.Rec0)))))) to Itemtehn.Recr
+                    saverecord itemtehn
+                    set psrecr to itemtehn.recr
+                    set pscode to itemtehn.code
+                end
+                set psitem to antech.antech_item
+            End_Procedure
+        
+            Procedure_Section  Body
+                string sbranch scode sitem  srecr
+                get psbranch to sbranch
+                get pscode   to scode
+                get psitem   to sitem
+                get psrecr   to srecr
+                clear itemd
+                move syscurxr.company_code  to itemd.company
+                move sbranch                to itemd.branch
+                move sitem                  to itemd.item_code
+                move antech.antech_itemd    to itemd.itemd_code
+                move antech.antech_qty      to itemd.itemd_qty
+                move scode                  to itemd.itemtehn_code
+                move srecr                  to itemd.itemtehn_recr
+                move antech.antech_sapaa    to itemd.sap_aa
+                move antech.antech_sapcc    to itemd.sap_cc
+                move (sysrecw.itemd_rec0+1) to sysrecw.itemd_rec0
+                saverecord sysrecw
+                move sysrecw.itemd_rec0 to itemd.itemd_rec0
+                Move (Append('',((Trim(antech.antech_branch))+;
+                                  (Trim(String(Itemd.Itemd_Rec0)))))) to Itemd.Itemd_Recr
+                find eq itemd by index.1
+                if (not(found));
+                    saverecord itemd
+                send update_status ('Eöö®ò≠„ ' + string(sitem))
+            End_Procedure
+        
+            Procedure_Section subtotal3
+            End_Procedure
+        
+            Procedure_Section subtotal2
+            End_Procedure
+        
+            Procedure_Section subtotal1
+            End_Procedure
+        
+           Procedure Ending_Report
+                set pddate to ''
+                clear antech
+                find gt antech.recnum
+                while   (found)
+                    delete antech
+                    find gt antech.recnum
+                Loop
+           End_Procedure
+        
+        End_Object
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // rtehn
+
+
+    //AB-StoreStart
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

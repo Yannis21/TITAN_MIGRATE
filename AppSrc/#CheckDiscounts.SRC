@@ -1,0 +1,353 @@
+Use AllEntSc
+
+#REPLACE CURRENT$WORKSPACE   "Empor"
+Register_Object Client_Area
+
+//AB-StoreTopStart
+Use Workspc.pkg
+
+//  Set date attributes as needed
+Set_Date_Attribute sysdate4_State to (TRUE)
+Set_Date_Attribute Date4_State    to (TRUE)
+Set_Date_Attribute epoch_value    to 30
+
+Object ProgramWorkspace is a WorkspaceSub
+    Set WorkspaceName to CURRENT$WORKSPACE
+    Set kEnter_Next_State to True
+//    Set ModuleName    to 'ProgramName' // Special module name.
+//    Set HelpName      to 'HelpName.hlp'// Please provide the name of your Windows help file.
+End_Object
+
+Use Help_Ids.inc // Developer should provide this file of help context links.
+Use Std_Help.pkg
+
+Use WinQlSQL.Sub
+Integer giWait_Obj
+string sXrhs sKodi sDeCryptoPassw
+String gsMyStr
+//-----
+
+Open Sysrec
+Open Users
+
+// General Functions-Procedures and Variables
+Use Globals.Inc
+Use Calendar.sl
+Use Dates.Utl
+Use Roundfn.Fnc
+
+use checkafm.pkg
+use checklog.pkg
+
+Use Menu_Sec.Sub
+Use DD_Sec.Sub
+
+Function GetTheWorkSpace returns String
+    String lsWorkSpace
+    get_profile_string "WorkSpaces" "CurrentWorkspace" to lsWorkSpace
+    If lsWorkSpace eq "" Get WorkspaceName of (ProgramWorkspace(Self)) to lsWorkSpace
+    insert "WorkSpaces\" in lsWorkSpace at 1
+    Function_Return lsWorkSpace
+End_Function
+
+Function GetTheAppPath Returns String
+   String lsWorkSpace lsModule lsTheAppPath
+   Move (GetTheWorkSpace(Self)) to lsWorkSpace
+   Move (Module_Name(Self)) to lsModule
+   Move (lsWorkSpace + "\" + lsModule) to lsTheAppPath
+   Function_Return lsTheAppPath
+End_Function
+
+
+
+//===========================================================
+//===========================================================
+Integer iMetrhthsProsp iHasAPassword
+Integer iMax00 iApotel iCountRemain iMustResetPass iAnenergos
+//--
+
+Open Sysrec
+Open Users
+
+Register_Procedure ChangeMyPassword
+
+//--
+Use PasswVerif.pkg
+//--
+
+Use Connect.dg
+//use checkafm.pkg
+//use checklog.pkg
+
+Reread Sysrec
+Unlock
+Move Sysrec.TIKANEI_CODE    to iMax00
+Move 1                      to iMetrhthsProsp
+
+Use PASSDLG2.DG
+
+Procedure ChangeMyPassword
+    Integer iResult
+    Get ConfirmNewCustomPass of oNewPassDlg to iResult
+         If (iResult=0) Send Info_Box "é °‡õ†°Ê™ ©ò™ ´®¶ß¶ß¶†„üû°ú úß†´¨ÆÈ™"    "è¢û®¶≠¶®Âò"
+    Else If (iResult=1) Send Info_Box "é °‡õ†°Ê™ ©ò™ ÉÑå ‚ö†§ú õú°´Ê™"         "Ä°¨®Èüû°ú òß¶ ´¶§ Æ®„©´û"
+    Else If (iResult=2) Send Info_Box "é °‡õ†°Ê™ ©ò™ ÉÑå ‚ö†§ú õú°´Ê™"         "é §‚¶™ °‡õ†°Ê™ úÂ§ò† Âõ†¶™ £ú ´¶§ ßò¢†Ê"
+    Else If (iResult=3) Send Info_Box "é °‡õ†°Ê™ ©ò™ ÉÑå ‚ö†§ú õú°´Ê™"         "é °‡õ†°Ê™ ú†©Êõ¶¨ úÂò§† ¢·ü¶™"
+    Else If (iResult=4) Send Info_Box "é °‡õ†°Ê™ ©ò™ ÉÑå ‚ö†§ú õú°´Ê™"         "é °‡õ†°Ê™ úß†ôúôòÂ‡©û™ õ†ò≠‚®ú† òß¶ ´¶§ °‡õ†°Ê ú†©Êõ¶¨"
+    Else If (iResult=5) Send Info_Box "é °‡õ†°Ê™ ©ò™ ÉÑå ‚ö†§ú õú°´Ê™"         "é °‡õ†°Ê™ úÂ§ò† °ú§Ê™"
+    Else If (iResult=6) Send Info_Box "é °‡õ†°Ê™ ©ò™ ÉÑå ‚ö†§ú õú°´Ê™"         "é ßò¢†Ê™ °‡õ†°Ê™ úÂò§† ¢·ü¶™"
+    Else If (iResult=7) Send Info_Box "é °‡õ†°Ê™ ©ò™ ÉÑå ‚ö†§ú õú°´Ê™"         "é °‡õ†°Ê™ ‚Æú† „õû •ò§òÆ®û©†£¶ß¶†ûüúÂ £ú´ò•Á ´‡§ 5 ´ú¢ú¨´òÂ‡§ ò¢¢òöÈ§"
+    Else                Send Info_Box "é °‡õ†°Ê™ ©ò™ ÉÑå ‚ö†§ú õú°´Ê™"         "Íö§‡©´¶ ë≠·¢£ò"
+    Move iResult to iApotel
+End_Procedure
+
+
+Move 0 to iMetrhthsProsp
+
+//=======================
+Start_Entry_Validation:
+//-----------------------
+Move 0 to iMustResetPass
+Move 0 to iAnenergos
+Move 0 to iApotel
+Move (iMax00-iMetrhthsProsp+1)  to iCountRemain
+If (iMetrhthsProsp>iMax00)      Send Exit_Application
+Send Login
+If (iHasAPassword=0) Send ChangeMyPassword
+If (iAnenergos   =1) Goto Start_Entry_Validation
+If (iApotel      >0) Goto Start_Entry_Validation
+
+Move 0 to iApotel
+Move 0 to iMetrhthsProsp
+Move 0 to iAnenergos
+Move 0 to iMustResetPass
+//=======================
+
+Use Xrhsh.pkg
+
+//AB-StoreTopEnd
+
+
+Object Main is a Panelsub
+
+    //AB-PanelStoreTopStart
+    
+    
+    //AB-PanelStoreTopEnd
+
+    Set Label To "#CheckDiscounts"
+    Use Check_Discounts.mn //  Menu package.
+    
+    Use DFStdBtn.pkg //  Tool-Bar object.
+    
+    Object Client_Area is a AppClientAreasub
+
+        //AB-ClientStoreTopStart
+        //==========================================
+        On_Key Key_Ctrl+Key_W Send ChangeMyPassword
+        //==========================================
+        
+        // èêéëéïÜ ÇÑåàâÑë ãÑíÄÅäÜíÑë //
+        String Plhktro_BIP  Plhktro_Esc  Plhktro_N11  Plhktro_N00  Plhktro_FS  Plhktro_AAA  Plhktro_DSI
+        String Plhktro_SO   Plhktro_DC4     //expanded for 1 line
+        String Plhktro_SI   Plhktro_DC2     //condesed
+        String Plhktro_PAV                  //underline
+        String Plhktro_EEE  Plhktro_FFF     //emphasized
+        String Plhktro_GGG  Plhktro_HHH     //double strike
+        String Plhktro_WWW                  //expanded
+        string Plhktro_Q Plhktro_160
+        Integer giViewID
+        String  gsViewName
+        // èêéëéïÜ ÇÑåàâÑë ãÑíÄÅäÜíÑë //
+        
+        Open Sysfile
+        Open Sysrec
+        
+        //Use dbViews.Sub
+        //Use dbForms.Sub
+        
+        //Use GrpPed00.vw
+        //Use GrpPedia.vw
+        //Use GrpView0.vw
+        //Use GrpViews.vw
+        //Use GrpOth0.vw
+        //Use GrpOth.vw
+        //Use Users.vw
+        //Use UserGrps.vw
+        //Use Departm.vw
+        //Use Othon.vw
+        //Use Views.vw
+        //Use Arxeia.vw
+        //Use Pedia.vw
+        //Use Viewflds.vw
+        
+        //Use Cflagkin.vw
+        //Use Wflagkin.vw
+        
+        //Use Listes
+        
+        //Use bpMakeSx.dg
+        
+        Use dbViews.Sub
+        
+        Open Nomisma
+        Open Isotimia
+        
+        Function fngConvertPoso Global String asNomismaCodeApo Number anPoso ;
+                                       String asNomismaCodeSe  Date   adHmnia;
+                                       Number nIsotimia  Returns Number
+        
+            Number rVal nApo_Euro_Isot nSe_Euro_Isot
+            Integer iApo_Einai_Euro_Zone iApo_Einai_DRX iApo_Einai_Euro iDekadika_Apo
+            Integer iSe_Einai_Euro_Zone  iSe_Einai_DRX  iSe_Einai_Euro  iDekadika_Se
+            String  sCode
+        
+            If (asNomismaCodeApo=asNomismaCodeSe) Function_Return anPoso
+        
+            Clear Nomisma
+            Move (Trim(asNomismaCodeApo)) to Nomisma.Nomisma_Code
+            Find eq Nomisma By Index.1 // Nomisma:Index.1:Nomisma_Code
+            Move Nomisma.Euro_Zone      to iApo_Einai_Euro_Zone
+            Move Nomisma.Einai_DRX      to iApo_Einai_DRX
+            Move Nomisma.Einai_EURO     to iApo_Einai_Euro
+            Move Nomisma.KL_ISOT_EURO   to nApo_Euro_Isot
+            Move Nomisma.Dekadika       to iDekadika_Apo
+            // 1. An to nomisma APO den einai ths zonhs euro prepei na vrethei h isotimia tou
+            If ((NOT(iApo_Einai_Euro_Zone)) And (nApo_Euro_Isot=0))  Begin
+                If (adHmnia='') Sysdate            adHmnia
+                Move (Trim(asNomismaCodeApo))   to sCode
+                Clear Isotimia
+                Move sCode                      to Isotimia.Nomisma_Code
+                Move (adHmnia+1)                to Isotimia.Isotimia_Hmnia
+                Find lt Isotimia by Index.1 // Isotimia:Index.1:Nomisma_Code+Isotimia_Hmnia
+                Move Isotimia.Isotimia_Euro     to nApo_Euro_Isot
+            End
+        
+            Clear Nomisma
+            Move (Trim(asNomismaCodeSe)) to Nomisma.Nomisma_Code
+            Find eq Nomisma By Index.1 // Nomisma:Index.1:Nomisma_Code
+            Move Nomisma.Euro_Zone      to iSe_Einai_Euro_Zone
+            Move Nomisma.Einai_DRX      to iSe_Einai_DRX
+            Move Nomisma.Einai_EURO     to iSe_Einai_Euro
+            Move Nomisma.KL_ISOT_EURO   to nSe_Euro_Isot
+            Move Nomisma.Dekadika       to iDekadika_Se
+            // 2. An to nomisma SE den einai ths zonhs euro prepei na vrethei h isotimia tou
+            If ((NOT(iSe_Einai_Euro_Zone)) And (nSe_Euro_Isot=0)) Begin
+                If (adHmnia='') Sysdate            adHmnia
+                Move (Trim(asNomismaCodeSe))    to sCode
+                Clear Isotimia
+                Move sCode                      to Isotimia.Nomisma_Code
+                Move (adHmnia+1)                to Isotimia.Isotimia_Hmnia
+                Find lt Isotimia by Index.1 // Isotimia:Index.1:Nomisma_Code+Isotimia_Hmnia
+                Move Isotimia.Isotimia_Euro     to nSe_Euro_Isot
+            End
+        
+            Calc (anPoso/nApo_Euro_Isot) to rVal
+            Move (Round_Number(rVal,6)) to rVal
+            Calc (rVal*nSe_Euro_Isot) to rVal
+            Move (Round_Number(rVal,iDekadika_Se)) to rVal
+        
+            Function_Return rVal
+        End_Function
+        
+        
+        //AB-ClientStoreTopEnd
+
+        //  Include all views
+
+        //  Include all reports
+        Use ProypTzirou.RV                                                                  
+
+        //AB-ClientStoreStart
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-ClientStoreEnd
+
+
+    End_Object  // Client_Area
+    
+    Use DFStdSbr.pkg //  Status-Bar object.
+
+    //AB-PanelStoreStart
+    
+    
+    Use StdAbout.pkg // Standard "About" package.
+    
+    Use Tooltip.Inc
+    
+    
+    
+    
+    
+    
+    //AB-PanelStoreEnd
+
+
+End_Object
+
+
+//AB-StoreStart
+
+Start_UI
+
+
+
+
+
+//AB-StoreEnd
+

@@ -1,0 +1,205 @@
+
+// Register all objects
+Register_Object garticl_dd
+Register_Object gmove_dd
+Register_Object doenhmgl
+Register_Object gplan_DD
+Register_Object gtypkin_DD
+Register_Object gbridgeh_DD
+Register_Object gbridged_DD
+Register_Object gthhmgio_DD
+Register_Object syscurxr_dd
+
+//AB-IgnoreStart
+
+Use Bproces.Sub
+Use DFAllEnt.pkg
+use syscurxr.dd
+use gthhmgio.DD
+Use garticl.DD
+use gmove.dd
+Use gplan.DD
+Use gtypkin.DD
+Use gbridgeh.DD
+Use gbridged.DD
+Use vgl.vw
+//AB-IgnoreEnd
+
+Object Doenhmgl is a BusinessProcessSub
+
+
+    //AB-StoreTopStart
+
+    Property    Date    pddate        Public ''
+    property    integer piTxtID       public  0
+    property    integer piLathos      public  0
+    property    string  psrecr        public ''
+
+    Set Status_Panel_State to False
+    Set Display_Error_State to True
+
+    //AB-StoreTopEnd
+
+    Set Size to 82 140
+    Set Location to 72 182
+
+    //AB-DDOStart
+
+    Object syscurxr_DD is a  syscurxr_DataDictionary
+    End_Object    //  syscurxr_DD
+
+
+    Object Gthhmgio_DD is a Gthhmgio_DataDictionary
+    End_Object    // Gthhmgio_DD
+
+    Object Gtypkin_DD is a Gtypkin_DataDictionary
+        Set DDO_Server to (Gthhmgio_DD(self))
+    End_Object    // Gtypkin_DD
+
+    Object Gplan_DD is a Gplan_DataDictionary
+    End_Object    // Gplan_DD
+
+    Object Garticl_DD is a Garticl_DataDictionary
+        Set DDO_Server to (Gtypkin_DD(self))
+        Set piMode              to 0
+        Set piDoNotValidateMe   to 1
+    End_Object    // Garticl_DD
+
+    Object Gmove_DD is a Gmove_DataDictionary
+        Set DDO_Server to (Garticl_DD(self))
+        Set DDO_Server to (Gplan_DD(self))
+        Set Constrain_File to Garticl.File_Number
+    End_Object    // Gmove_DD
+
+    Object Gbridgeh_DD is a Gbridgeh_DataDictionary
+        begin_constraints
+            constrain Gbridgeh.company_code     eq syscurxr.company_code
+            constrain Gbridgeh.branch_code      eq syscurxr.branch_code
+            constrain Gbridgeh.year_year        eq syscurxr.year_year
+            constrain Gbridgeh.Gbridgeh_flag    ne '1'
+        End_constraints
+    End_Object    // Gbridgeh_DD
+
+    Object Gbridged_DD is a Gbridged_DataDictionary
+        Set DDO_Server to (Gbridgeh_DD(self))
+        Set Constrain_File to Gbridgeh.File_Number
+        begin_constraints
+            constrain Gbridged.gbridgeh_recr    eq (psrecr(self))
+        End_constraints
+    End_Object    // Gbridged_DD
+    //AB-DDOEnd
+
+
+    //AB-StoreStart
+
+    Procedure Start_Processing
+        Number  nPrice grate0 grate00 grater gmovex2 gmovep2
+        Date    ddate gdate
+        integer gno
+        string  serr gaitiol gcode2 garticlrecr gplancode gmoverecr sgtypkinrecr srecr;
+                wgtypkinrecr smodule  msgstr
+
+
+        set pierr of (vgl(self))   to 0
+        get pddate                 to ddate
+        send Clear                 to gbridgeh_DD
+        Send rebuild_constraints   to gbridgeh_DD
+        Send Find                  to gbridgeh_dd FIRST_Record 5 // gbridgeh.gtypkin_recr + gbridgeh_recr
+        If (not(found)) error 4012 'ƒœ¤ ™¨âŸž¡˜¤ œšš¨˜­âª §¨æª œ§œ¥œ¨š˜©å˜'
+        While (found = 1)
+            Get Field_Current_Value Of gbridgeh_DD Field gbridgeh.gtypkin_recr to sgtypkinrecr
+            Send Clear          to Gtypkin_dd
+            send clear          to garticl_dd
+            send clear          to gmove_dd
+            Move sGtypkinRecr   to Gtypkin.Gtypkin_Recr
+            Send Find           to Gtypkin_dd Eq 2 //gtypkin_recr
+            If (not(Found)) error 4011 'ƒœ¤ ™¨âŸž¡œ ¦ ¡à› ¡æª ¡å¤ž©žª ©«ž¤ ‚.Š'
+            get Field_Current_Value of gbridgeh_dd Field gbridgeh.Garticl_Hmnia   to gdate
+            get Field_Current_Value of gbridgeh_dd Field gbridgeh.Garticl_Aitiol  to gaitiol
+            get Field_Current_Value of gbridgeh_dd Field gbridgeh.Garticl_C_Code2 to gcode2
+            get Field_Current_Value of gbridgeh_dd Field gbridgeh.Garticl_Rate0   to grate0
+            get Field_Current_Value of gbridgeh_dd Field gbridgeh.Garticl_Rate00  to grate00
+            get Field_Current_Value of gbridgeh_dd Field gbridgeh.Garticl_Rater   to grater
+            get Field_Current_Value of gbridgeh_dd Field gbridgeh.module_from     to smodule
+            if (ddate<>'') move ddate                                             to gdate
+            Set Field_Changed_Value of Garticl_dd Field Garticl.Garticl_Hmnia     to gdate
+            Set Field_Changed_Value of Garticl_dd Field Garticl.Garticl_Aitiol    to gaitiol
+            Set Field_Changed_Value of Garticl_dd Field Garticl.Garticl_C_Code2   to gcode2
+            Set Field_Changed_Value of Garticl_dd Field Garticl.Garticl_Rate0     to grate0
+            Set Field_Changed_Value of Garticl_dd Field Garticl.Garticl_Rate00    to grate00
+            Set Field_Changed_Value of Garticl_dd Field Garticl.Garticl_Rater     to grater
+            Set Field_Changed_Value of Garticl_dd Field Garticl.Garticl_m_code    to smodule
+            Set Field_Changed_Value of Garticl_dd Field Garticl.apo_gbridge       to 1
+            Send Request_Save to Garticl_dd
+            get Field_Current_Value of garticl_dd Field garticl.garticl_no        to gno
+            Send UpdateWait to (piTxtID(Self))  ('„¤ž£â¨à©ž ‚.Š '+(String(Trim(gno))))
+            Get Field_Current_Value of Garticl_dd  Field Garticl.Garticl_Recr     to garticlRecr
+            Set Field_Changed_Value of Gbridgeh_dd Field Gbridgeh.Gbridgeh_flag   to 1
+            Set Field_Changed_Value of Gbridgeh_dd Field Gbridgeh.Garticl_recr    to garticlrecr
+            Send request_save to gbridgeh_dd
+            Get Field_Current_Value of Gbridgeh_dd  Field Gbridgeh.gbridgeh_recr to srecr
+            set psrecr to srecr
+            Send rebuild_constraints to gbridged_DD
+            Send Find  to gbridged_dd FIRST_Record 1 // gbridgeh_recr + gplan_code
+            While (found=1)
+                Get Field_Current_Value of gbridged_dd Field gbridged.ext_gplan_code to gplancode
+                Send Clear      to Gmove_DD
+                Send Clear      to gplan_dd
+                Move syscurxr.company_code to gplan.company_code
+                Move syscurxr.branch_code  to gplan.branch_code
+                Move gplancode  to Gplan.Gplan_code
+                Send Find       to Gplan_dd Eq 1 //gplan_code
+                If (not(Found)) begin
+                    move 'ƒœ¤ ™¨âŸž¡œ ¦ Š¦š/©£æª ©«ž¤ ‚.Š Š¦š=' to msgstr
+                    append msgstr gplancode
+                    error 4012 msgstr
+                end
+                get Field_Current_Value of Gbridged_dd Field Gbridged.gmove_x2     to gmovex2
+                get Field_Current_Value of Gbridged_dd Field Gbridged.gmove_p2     to gmovep2
+                get Field_Current_Value of Gbridged_dd Field Gbridged.gmove_aitiol to gaitiol
+                Set Field_Changed_Value of Gmove_dd    Field Gmove.Gmove_X2        to gmovex2
+                Set Field_Changed_Value of Gmove_dd    Field Gmove.Gmove_P2        to gmoveP2
+                Set Field_Changed_Value of Gmove_dd    Field Gmove.Gmove_Aitiol    to gaitiol
+                Send Request_Save       to Gmove_dd
+                Send UpdateWait to (piTxtID(Self))  ('„¤ž£â¨à©ž ‚.Š £œ ¡å¤ž©ž '+(String(gaitiol)))
+                Get Field_Current_Value of Gmove_dd Field Gmove.Gmove_Recr to gmoverecr
+                Set Field_Changed_Value of gbridged_dd Field gbridged.Gmove_recr   to gmoverecr
+                Send request_save to gbridged_dd
+                Send Find  to gbridged_dd next_Record 1 // gbridged_recr
+            Loop
+
+            Send Find  to gbridgeh_dd next_Record 5 // gbridge gbridgeh.gtypkin_recr + gbridgeh_recrh_recr
+        loop
+        If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+    Procedure OnProcess
+        Send Start_Processing
+    End_Procedure
+
+    Procedure Start_Process
+         Set piTxtID                         to (Wait(Self))
+         Set Button_State    of (Wait(Self)) to False
+         Set BarVisibleState of (Wait(Self)) to '' False
+         Send Popup                          to (Wait(Self))
+         Set piLathos                        to 0
+         Forward Send Start_Process
+    End_Procedure
+
+    Procedure OnError integer error_info string errMsg
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+    Procedure End_Process
+       Forward Send End_Process
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+    //AB-StoreEnd
+
+End_Object    // DoUpTim0
+
+//AB/ End_Object    // prj

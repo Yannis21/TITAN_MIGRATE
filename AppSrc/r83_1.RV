@@ -1,0 +1,1361 @@
+//AB/ Project r83_1:dhmioyrgia kiniseon pagion
+//AB/ Object prj is a Report_Project
+//AB/     Set ProjectName to "r83_1:dhmioyrgia kiniseon pagion"
+//AB/     Set ProjectFileName to "r83_1.RV"
+
+// Project Object Structure
+//   r83_1 is a ReportView
+//     GroupSub1 is a GroupSub
+//       F_kat_apo is a FormSub
+//       F_CODE_APO is a FormSub
+//       F_CODE_EOS is a FormSub
+//       TextBoxSub1 is a TextBoxSub
+//       TextBoxSub2 is a TextBoxSub
+//       FormSub4 is a FormSub
+//       FormSub5 is a FormSub
+//       TextBoxSub33 is a TextBoxSub
+//       FormSub7 is a FormSub
+//     GroupSub4 is a GroupSub
+//       F_kin_APO is a FormSub
+//       F_HME_APO is a FormSub
+//       Textbox3 is a Textbox
+//       TextBoxSub32 is a TextBoxSub
+//       f_poso_apo is a FormSub
+//       poso_pol is a FormSub
+//       par_pol is a FormSub
+//       Textbox5 is a Textbox
+//       f_tropos is a CheckBoxSub
+//       Textbox6 is a Textbox
+//       f_pososto is a CheckBoxSub
+//       Textbox7 is a Textbox
+//       TextBoxSub34 is a TextBoxSub
+//       TextBoxSub35 is a TextBoxSub
+//     ButtonSub2 is a ButtonSub
+//     FormSub8 is a FormSub
+//     BitmapFlatButtonSub1 is a BitmapFlatButtonSub
+
+// Register all objects
+Register_Object BitmapFlatButtonSub1
+Register_Object ButtonSub2
+Register_Object F_CODE_APO
+Register_Object F_CODE_EOS
+Register_Object F_HME_APO
+Register_Object F_kat_apo
+Register_Object F_kin_APO
+Register_Object FormSub4
+Register_Object FormSub5
+Register_Object FormSub7
+Register_Object FormSub8
+Register_Object f_poso_apo
+Register_Object f_pososto
+Register_Object f_tropos
+Register_Object GroupSub1
+Register_Object GroupSub4
+Register_Object par_pol
+Register_Object poso_pol
+Register_Object r83_1
+Register_Object TextBoxSub1
+Register_Object TextBoxSub2
+Register_Object TextBoxSub32
+Register_Object TextBoxSub33
+Register_Object TextBoxSub34
+Register_Object TextBoxSub35
+Register_Object Textbox3
+Register_Object Textbox5
+Register_Object Textbox6
+Register_Object Textbox7
+
+
+//AB/ Report View
+
+
+//AB-StoreTopStart
+Use dfallrpt
+Use pagia.dd
+use pagkat.dd
+use SL80.sl
+use sl83.sl
+use dopagia.dg
+use v83.vw
+//AB-StoreTopEnd
+
+//AB-IgnoreStart
+
+Use DFAllEnt.pkg
+Use Group.Sub
+Use Form.Sub
+Use Txtbox.Sub
+Use Chkbox.Sub
+Use Button.Sub
+Use Flatbtn.Sub
+
+//AB-IgnoreEnd
+
+ACTIVATE_VIEW Activate_r83_1 FOR r83_1
+
+Object r83_1 is a ReportView
+
+    //AB-StoreTopStart
+
+    property string psrecr  public ''
+    property string pskat   public ''
+    property string pscode  public ''
+    //AB-StoreTopEnd
+
+    Set Label to "Éû£†¶¨®öÂò â†§„©ú‡§ èòöÂ‡§"
+    Set Size to 234 288
+    Set Location to 9 76
+
+    //AB-DDOStart
+
+
+    //AB-DDOEnd
+
+    Object GroupSub1 is a GroupSub
+        Set Label to "Ñß†¢¶ö„ èòöÂ‡§"
+        Set Size to 63 283
+        Set Location to -1 -1
+        Object F_kat_apo is a FormSub
+            Set Size to 13 59
+            Set Location to 15 63
+            Set Label_Col_Offset to 2
+            Set Prompt_Button_Mode to pb_PromptOn
+
+            //AB-StoreStart
+            Set Prompt_Object to (SL80(Current_object))
+            Procedure Prompt_Callback integer hPrompt
+                set Export_Column of hPrompt to 0
+                Set Initial_Column of hPrompt to 0
+            end_procedure
+
+            procedure onchange
+                get value of (f_kat_apo(self)) to pagkat.pagkat_code
+                find eq pagkat by index.1
+                if (found);
+                    set value of (formsub7(self)) to pagkat.pagkat_descr
+                else;
+                    set value of (formsub7(self)) to ''
+            end_procedure
+
+
+            //AB-StoreEnd
+
+        End_Object    // F_kat_apo
+
+        Object F_CODE_APO is a FormSub
+
+            //AB-StoreTopStart
+
+            //AB-StoreTopEnd
+
+            Set Size to 13 58
+            Set Location to 32 63
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Prompt_Button_Mode to pb_PromptOn
+
+            //AB-StoreStart
+
+            Set Prompt_Object to (SL83(Current_object))
+            Procedure Prompt_Callback integer hPrompt
+                set Export_Column of hPrompt to 0
+                Set Initial_Column of hPrompt to 0
+            end_procedure
+
+            procedure onchange
+                get value of (f_code_apo(self)) to pagia.pagia_code
+                find eq pagia by index.4
+                if (found);
+                    set value of (formsub4(self)) to pagia.pagia_descr
+                else;
+                    set value of (formsub4(self)) to ''
+            end_procedure
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // F_CODE_APO
+
+        Object F_CODE_EOS is a FormSub
+
+            //AB-StoreTopStart
+
+            //AB-StoreTopEnd
+
+            Set Size to 13 58
+            Set Location to 48 63
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Prompt_Button_Mode to pb_PromptOn
+
+            //AB-StoreStart
+
+            Set Prompt_Object to (SL83(Current_object))
+            Procedure Prompt_Callback integer hPrompt
+                set Export_Column of hPrompt to 0
+                Set Initial_Column of hPrompt to 0
+            end_procedure
+
+            procedure onchange
+                get value of (f_code_eos(self)) to pagia.pagia_code
+                find eq pagia by index.4
+                if (found);
+                    set value of (formsub5(self)) to pagia.pagia_descr
+                else;
+                    set value of (formsub5(self)) to ''
+            end_procedure
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // F_CODE_EOS
+
+        Object TextBoxSub1 is a TextBoxSub
+            Set Label to "ÄßÊ â‡õ†°Ê"
+            Set Auto_Size_State to FALSE
+            Set FontSize to 4 0
+            Set Location to 33 5
+            Set Size to 10 44
+            Set Enabled_State to TRUE
+        End_Object    // TextBoxSub1
+
+        Object TextBoxSub2 is a TextBoxSub
+            Set Label to "ÑÈ™ â‡õ†°Ê"
+            Set Auto_Size_State to FALSE
+            Set FontSize to 4 0
+            Set Location to 48 5
+            Set Size to 13 47
+            Set Enabled_State to TRUE
+        End_Object    // TextBoxSub2
+
+        Object FormSub4 is a FormSub
+            Set Size to 13 149
+            Set Location to 32 123
+            Set Color to clBtnFace
+            Set Label_Col_Offset to 2
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+        End_Object    // FormSub4
+
+        Object FormSub5 is a FormSub
+            Set Size to 13 149
+            Set Location to 49 123
+            Set Color to clBtnFace
+            Set Label_Col_Offset to 2
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+        End_Object    // FormSub5
+
+        Object TextBoxSub33 is a TextBoxSub
+            Set Label to "âò´ûö¶®Âò"
+            Set Auto_Size_State to FALSE
+            Set FontSize to 4 0
+            Set Location to 16 4
+            Set Size to 10 44
+            Set Enabled_State to TRUE
+        End_Object    // TextBoxSub33
+
+        Object FormSub7 is a FormSub
+            Set Size to 13 149
+            Set Location to 17 123
+            Set Color to clBtnFace
+            Set Label_Col_Offset to 2
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+        End_Object    // FormSub7
+
+
+        //AB-StoreStart
+        Function StartNumber Returns string
+            Function_return (Value(f_code_apo(Current_object), 0))
+        End_function
+
+        Function EndNumber Returns string
+            Function_return (Value(f_code_eos(Current_object), 0))
+        End_function
+
+        Function Startkat Returns string
+            Function_return (Value(f_kat_apo(Current_object), 0))
+        End_function
+
+
+
+
+
+
+
+
+
+        //AB-StoreEnd
+
+    End_Object    // GroupSub1
+
+    Object GroupSub4 is a GroupSub
+        Set Label to "â®†´„®†ò"
+        Set Size to 122 283
+        Set Location to 66 1
+        Object F_kin_APO is a FormSub
+            Set Size to 13 72
+            Set Location to 7 167
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Prompt_Button_Mode to pb_PromptOn
+
+            //AB-StoreStart
+            Set Prompt_Object to (SL81(Current_object))
+            Procedure Prompt_Callback integer hPrompt
+                set Export_Column of hPrompt to 0
+                Set Initial_Column of hPrompt to 0
+            end_procedure
+
+            procedure onchange
+                string skin
+                get value of (f_kin_apo(self)) to pagkin.pagkin_code
+                find eq pagkin by index.1
+                if (found);
+                    set value of (formsub8(self)) to pagkin.pagkin_descr
+                else;
+                    set value of (formsub8(self)) to ''
+                get value of (f_kin_apo(self)) to skin
+                if (skin = '104') begin
+                    set visible_state of (poso_pol(groupsub4(self))) to true
+                    set visible_state of (par_pol(groupsub4(self))) to true
+                    set visible_state of (textboxsub34(groupsub4(self))) to true
+                    set visible_state of (textboxsub35(groupsub4(self))) to true
+                end
+                else begin
+                    set visible_state of (poso_pol(groupsub4(self))) to false
+                    set visible_state of (par_pol(groupsub4(self))) to false
+                    set visible_state of (textboxsub34(groupsub4(self))) to false
+                    set visible_state of (textboxsub35(groupsub4(self))) to false
+                end
+            end_procedure
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // F_kin_APO
+
+        Object F_HME_APO is a FormSub
+            Set Size to 13 72
+            Set Location to 22 167
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Form_Datatype Item 0 to Mask_Date_Window
+            Set Prompt_Button_Mode to pb_PromptOn
+            Set Form_Mask Item 0 to "d/M/yyyy"
+
+            //AB-StoreStart
+            set prompt_object to (ocalendar(self))
+
+
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // F_HME_APO
+
+        Object Textbox3 is a Textbox
+            Set Label to "Ü£/§Âò â†§„©ú‡§"
+            Set Location to 25 6
+            Set Size to 10 65
+        End_Object    // Textbox3
+
+        Object TextBoxSub32 is a TextBoxSub
+            Set Label to "è¢„®û™ ÄßÊ©ôú©û Ç†· è¶©·  <"
+            Set Location to 38 7
+            Set Size to 10 116
+        End_Object    // TextBoxSub32
+
+        Object f_poso_apo is a FormSub
+            Set Size to 13 73
+            Set Location to 36 167
+            Set Label_Col_Offset to 2
+            Set Form_Datatype Item 0 to Mask_Numeric_Window
+
+            //AB-StoreStart
+            Procedure End_Construct_Object
+                Integer iDecimals
+                Forward Send End_Construct_Object
+                Get fiDekadika_Nomismatos SysCurXr.C_Code0  to    iDecimals
+                Set Numeric_Mask Item 0 to 14 iDecimals " ,*"
+            End_Procedure
+
+
+            //AB-StoreEnd
+
+        End_Object    // f_poso_apo
+
+        Object poso_pol is a FormSub
+            Set Size to 13 74
+            Set Location to 50 166
+            Set Label_Col_Offset to 2
+            Set Form_Datatype Item 0 to Mask_Numeric_Window
+
+            //AB-StoreStart
+            Procedure End_Construct_Object
+                Integer iDecimals
+                Forward Send End_Construct_Object
+                Get fiDekadika_Nomismatos SysCurXr.C_Code0  to    iDecimals
+                Set Numeric_Mask Item 0 to 14 iDecimals " ,*"
+            End_Procedure
+            //AB-StoreEnd
+
+        End_Object    // poso_pol
+
+        Object par_pol is a FormSub
+            Set Size to 13 181
+            Set Location to 66 60
+            Set Label_Col_Offset to 2
+        End_Object    // par_pol
+
+        Object Textbox5 is a Textbox
+            Set Label to "Ä' í®Êß¶™ ÄßÊ©ôú©û™ ÑßÂ è¶©¶©´¶Á èòöÂ‡§"
+            Set Location to 88 6
+            Set Size to 12 153
+        End_Object    // Textbox5
+
+        Object f_tropos is a CheckBoxSub
+            Set Size to 13 11
+            Set Location to 88 167
+
+            //AB-StoreStart
+            set checked_state to true
+
+            //AB-StoreEnd
+
+        End_Object    // f_tropos
+
+        Object Textbox6 is a Textbox
+            Set Label to "ÄßÊ©ôú©û Å·©û è¶©¶©´¶Á âò´ûö¶®Âò™ èòöÂ‡§"
+            Set Location to 104 6
+            Set Size to 12 159
+        End_Object    // Textbox6
+
+        Object f_pososto is a CheckBoxSub
+            Set Size to 13 11
+            Set Location to 103 167
+        End_Object    // f_pososto
+
+        Object Textbox7 is a Textbox
+            Set Label to "âÂ§û©û"
+            Set Location to 12 7
+            Set Size to 10 33
+        End_Object    // Textbox7
+
+        Object TextBoxSub34 is a TextBoxSub
+            Set Label to "è¶©Ê èÈ¢û©û™"
+            Set Location to 53 6
+            Set Size to 10 55
+        End_Object    // TextBoxSub34
+
+        Object TextBoxSub35 is a TextBoxSub
+            Set Label to "èò®ò©´ò´†°Ê"
+            Set Location to 66 6
+            Set Size to 12 48
+        End_Object    // TextBoxSub35
+
+
+        //AB-StoreStart
+        Function Starthme Returns string
+            Function_return (Value(f_hme_apo(Current_object), 0))
+        End_function
+
+        Function startposo Returns number
+            Function_return (Value(f_poso_apo(Current_object), 0))
+        End_function
+
+        Function ftropos Returns integer
+            Function_return (Select_state(f_tropos(Current_object), 0))
+        End_function
+        Function fpososto Returns integer
+            Function_return (Select_state(f_pososto(Current_object), 0))
+        End_function
+
+        Function Startkin Returns string
+            Function_return (Value(f_kin_apo(Current_object), 0))
+        End_function
+
+        Function posopol Returns number
+            Function_return (Value(poso_pol(Current_object), 0))
+        End_function
+
+        Function parpol Returns string
+            Function_return (Value(par_pol(Current_object), 0))
+        End_function
+
+
+
+
+
+
+
+
+        //AB-StoreEnd
+
+    End_Object    // GroupSub4
+
+    Object ButtonSub2 is a ButtonSub
+
+        //AB-StoreTopStart
+
+        //AB-StoreTopEnd
+
+        Set Bitmap to "CANCEL.BMP"
+        Set Size to 22 25
+        Set Location to 193 251
+
+        //AB-StoreStart
+        Procedure OnClick
+            Send Request_Cancel
+        End_Procedure
+
+
+
+
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub2
+
+    Object FormSub8 is a FormSub
+        Set Size to 13 175
+        Set Location to 202 1
+        Set TextColor to clBlue
+        Set Label_Col_Offset to 2
+        Set Form_FontWeight Item 0 to 800
+
+        //AB-StoreStart
+        set enabled_state to false
+        //AB-StoreEnd
+
+    End_Object    // FormSub8
+
+    Object BitmapFlatButtonSub1 is a BitmapFlatButtonSub
+        Set Size to 22 25
+        Set Location to 193 205
+        Set Bitmap to "open1.bmp"
+
+        //AB-StoreStart
+        Set TooltipValue to "Éû£†¶¨®öÂò °†§„©ú‡§ ô·©û úß†¢úö£‚§‡§ â®†´û®Â‡§ "
+
+        Procedure OnClick
+            Local string  Startpagia endpagia startkatn startkinn posopolhsh parpolhsh
+            Local integer Starthmen starttroposn startpososton ibpoid ierr
+            local number  startposon
+            move 0 to ierr
+            get startnumber             to startpagia
+            get endnumber               to endpagia
+            get startkat                to startkatn
+            get starthme                to starthmen
+            get startposo               to startposon
+            get ftropos                 to starttroposn
+            get fpososto                to startpososton
+            get startkin                to startkinn
+            get posopol                 to posopolhsh
+            get parpol                  to parpolhsh
+            if  ((startkinn = '104') and (posopolhsh = 0)) move 3 to ierr
+            if  (startkinn = '') move 1 to ierr
+            if  (startkinn = '101') move 5 to ierr
+            if  ((parpolhsh = '')and(startkinn ='104')) move 4 to ierr
+            Move (Dopagia(Self))        to ibpoid
+            Set pddate       of ibpoid  to starthmen
+            Set pspagiafrom  Of ibpoid  to startpagia
+            set pspagiato    of ibpoid  to endpagia
+            Set pskat        of ibpoid  to startkatn
+            Set pnposo       Of ibpoid  to startposon
+            set pitropos     of ibpoid  to starttroposn
+            set pipososto    of ibpoid  to startpososton
+            set pskin        of ibpoid  to startkinn
+            set pnposopol    of ibpoid  to posopolhsh
+            set psparpolhsh  of ibpoid  to parpolhsh
+            if ((starttroposn = 0 and startpososton = 0) or (starttroposn =1 and startpososton = 1));
+               move 2 to ierr
+            if (ierr = 1) send info_box 'Ñß†¢‚•´ú £†ò âÂ§û©û !!' 'è¢û®¶≠¶®Âò'
+            else if (ierr = 2) send info_box 'Ñß†¢‚•´ú ú§ò è¶©¶©´Ê ÄßÊ©ôú©û™ !!' 'è¢û®¶≠¶®Âò'
+            else if (ierr = 3) send info_box 'âÂ§û©û èÈ¢û©û™ èòöÂ¶¨ £ú ß¶©Ê èÈ¢û©û™ = 0 !!' 'è¢û®¶≠¶®Âò'
+            else if (ierr = 4) send info_box 'âÂ§û©û èÈ¢û©û™ èòöÂ¶¨ £ú °ú§Ê èò®ò©´ò´†°Ê !!' 'è¢û®¶≠¶®Âò'
+            else if (ierr = 5) send info_box 'âÂ§û©û Äö¶®·™ èòöÂ¶¨ õú§ úß†´®‚ßú´ò† !!' 'è¢û®¶≠¶®Âò'
+            else begin
+               Send DoProcess           to ibpoid
+               send info_box 'Éû£†¶¨®ö„üû°ò§ â†§„©ú†™ èòöÂ‡§ !!' 'è¢û®¶≠¶®Âò'
+            end
+        End_Procedure
+
+
+
+
+
+
+
+
+
+        //AB-StoreEnd
+
+    End_Object    // BitmapFlatButtonSub1
+
+
+    //AB-StoreStart
+
+    Procedure Popup
+        date ddate
+        sysdate4 ddate
+        set value of (f_hme_apo(groupsub4(current_object))) to ddate
+        set value of (f_kat_apo(groupsub1(self)))  to (pskat(self))
+        set value of (f_code_apo(groupsub1(self))) to (pscode(self))
+        set value of (f_code_eos(groupsub1(self))) to (pscode(self))
+        set visible_state of (par_pol(groupsub4(self))) to false
+        set visible_state of (poso_pol(groupsub4(self))) to false
+        set visible_state of (textboxsub34(groupsub4(self))) to false
+        set visible_state of (textboxsub35(groupsub4(self))) to false
+        Forward Send Popup
+    End_Procedure
+
+
+
+
+    Function StartNumber Returns string
+        Function_return (StartNumber(groupSub1(Current_object)))
+    End_function // StartNumber
+
+    Function EndNumber Returns string
+            Function_return (EndNumber(groupSub1(Current_object)))
+    End_function // StartNumber
+
+    Function Startkat Returns string
+        Function_return (startkat(groupsub1(Current_object)))
+    End_function
+
+    Function Startkin Returns string
+        Function_return (startkin(groupsub4(Current_object)))
+    End_function
+
+    Function Starthme Returns integer
+        Function_return (Starthme(groupSub4(Current_object)))
+    End_function // StartNumber
+
+    Function Endhme Returns integer
+        Function_return (Endhme(groupSub4(Current_object)))
+    End_function // StartNumber
+
+    Function startposo Returns number
+        Function_return (startposo(groupsub4(Current_object)))
+    End_function
+
+    Function ftropos Returns integer
+        Function_return (ftropos(groupsub4(Current_object)))
+    End_function
+
+    Function fpososto Returns integer
+        Function_return (fpososto(groupsub4(Current_object)))
+    End_function
+
+    Function posopol Returns number
+        Function_return (posopol(groupsub4(Current_object)))
+    End_function
+
+    Function parpol Returns string
+        Function_return (parpol(groupsub4(Current_object)))
+    End_function
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //AB-StoreEnd
+
+End_Object    // r83_1
+
+
+//AB-StoreStart
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//AB-StoreEnd
+
+//AB/ End_Object    // prj

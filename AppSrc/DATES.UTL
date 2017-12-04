@@ -1,0 +1,1745 @@
+// **********************************************************************
+// Use Dates.utl    // Date manipulation for VDF and DF3.1
+//
+// by Sture Andersen (sa1@vd.dk)
+//
+// The file contains a number of global functions for manipulating
+// dates. The package may be used with DataFlex 3.1 and Visual DataFlex.
+// This package is public domain.
+//
+// The package file is accompanied by a Word document (dfutil.doc)
+// listing the functions and their use.
+//
+//
+// Create: Fri  06-06-1997 - Merger of s_utl020, 021, 022, 023, 024, 025.
+// Update: Thu  26-06-1997 - Fixes for strange behavior when date4_state is set.
+//                         - Addition of popup_calendar to VDF.
+//         Sun  29-06-1997 - Character mode popup calender.
+//         Fri  04-07-1997 - Function WeekToDate added.
+//         Thu  10-07-1997 - Fixes.
+//         Mon  11-08-1997 - WeekToDate fixed.
+//         Sun  24-08-1997 - Character mode popup calender finished.
+//         Mon  15-12-1997 - Procedure Request_Popup_Calendar added.
+//         Mon  29-12-1997 - Procedures ItemYear2to4, ItemDate2to4 and
+//                           ItemSysdate added.
+//         Mon  29-12-1997 - Procedures FieldYear2to4, FieldDate2to4 and
+//                           FieldSysdate added.
+//         Sun  01-02-1998 - Functions Module_Compile_Date and
+//                           Module_Compile_Time added.
+//         Wed  25-02-1998 - Request_Popup in calendar object now only
+//                           responds if entry_state of the calling object
+//                           is true (VDF version). (No apparent effect)
+//         Sat  28-03-1998 - Added the following functions:
+//                             TS_SysTime      TS_ExtractDate
+//                             TS_ExtractTime  TS_ConvertToString
+//         Tue  26-05-1998 - Procedure TS_UI_Update added
+//         Sat  01-08-1998 - mask_date_window taken into account
+//         Mon  10-08-1998 - Functions Module_Start_Date and
+//                           Module_Start_Time added.
+//         Wed  02-09-1998 - Parameter for Module_Start_Date removed
+//         Mon  12-10-1998 - Portuguese added
+//         Wed  04-11-1998 - TS_TimeEstimator class added
+//         Tue  29-12-1998 - Function DateAsString added
+//         Wed  13-01-1999 - Function DateWeekNumber changed according to
+//                           Kjetil Johanson
+//         Mon  18-01-1999 - Function DateWeekNumber changed according to
+//                           Kjetil Johanson (again)
+//         Tue  19-01-1999 - Changed procedure names in TS_TimeEstimator
+//                           class (Continue->TS_Continue and Pause->
+//                           TS_Pause)
+//         Thu  21-01-1999 - Procedures DateFormatAsString and DateFormatName
+//                           added.
+//                         - Procedures DateCurrentSeparator and
+//                           DateCurrentFormat added.
+//         Tue  13-04-1999 - Julian constants added: Jan1st1900, Jan1st2000
+//                           Jan1st1000 and Jan1st100
+//         Mon  26-04-1999 - Changed procedure FieldYear2to4 and ItemYear2to4
+//                           to trap 3 digit years.
+//         Wed  27-04-1999 - Changed Dutch abbriviated day names (to 2 characters)
+//         Sun  02-05-1999 - Added function TS_Compose2
+//                         - Fixed error in TS_ConvertToString
+//         Tue  01-06-1999 - Added procedure popup_no_export to calendar.
+//         Thu  15-06-1999 - Fixed Date4to2 function and exporting dates
+//                           from the calendar to forms with no form_margin.
+//         Tue  07-09-1999 - Added function DateAsText
+//         Wed  27-10-1999 - Temporary fix for Module_Compile_Date function
+//                           in combination with y2k.
+//         Wed  19-12-1999 - Function StringToDate added.
+//                         - Existing function DateAsString renamed to
+//                           DateToString.
+//         Mon  03-01-2000 - Fix for VDF4. Popup calendar on empty date field
+//                           would result in seeding the calendar on year 100.
+//                           This error was caused by the fact that VDF 4
+//                           ignores SYSDATE4_STATE such that the sysdate
+//                           command returns 03-01-100
+//         Wed  01-02-2000 - Define instead of #REPLACE
+//         Wed  23-08-2000 - Function TS_Module_Compile_Time added
+//
+// NOTE:  There is language dependent string constants in this file.
+//        Currently there are sections for dutch, english, danish, swedish,
+//        norwegian, spanish, german and portuguese
+//
+//        These sections may be identified by searching the symbol LNG_DEFAULT
+//
+// ***********************************************************************
+
+Use ui
+Use Language    // Set default languange if not set by compiler command line
+Use Seq_Chnl    // Defines global sequential device management operations (DAC)
+Use Macros.utl  // Various macros (DESKTOP_SECTION)
+
+// Switches
+
+define DATES_INCLUDE_POPUP for 1   // If set to 0 the popup calendar will not be included
+define DATES_DF31B_EPOCH   for 40  // DF3.1b didn't have an epoch setting. Therefore this symbol defines the epoch value for that version.
+
+#IF lng_default=LNG_DUTCH
+ define t.calendar.year           for "Jaar"
+ define t.calendar.month          for "Maand"
+ define t.calendar.day            for "Dag"
+ define t.calendar.week           for "Wk."
+ define t.calendar.calendar_popup for "Kalender Popup"
+ define t.calendar.Monday         for "Maandag"
+ define t.calendar.Tuesday        for "Dinsdag"
+ define t.calendar.Wednesday      for "Woensdag"
+ define t.calendar.Thursday       for "Donderdag"
+ define t.calendar.Friday         for "Vrijdag"
+ define t.calendar.Saturday       for "Zaterdag"
+ define t.calendar.Sunday         for "Zondag"
+ define t.calendar.January        for "Januari"
+ define t.calendar.February       for "Februari"
+ define t.calendar.March          for "Maart"
+ define t.calendar.April          for "April"
+ define t.calendar.May            for "Mei"
+ define t.calendar.June           for "Juni"
+ define t.calendar.July           for "Juli"
+ define t.calendar.August         for "Augustus"
+ define t.calendar.September      for "September"
+ define t.calendar.October        for "Oktober"
+ define t.calendar.November       for "November"
+ define t.calendar.December       for "December"
+ define t.calendar.ok             for "OK"
+ define t.calendar.Cancel         for "Annuleren"
+ define t.calendar.Activate       for "Activeer popup kalender (Ctrl+D)"
+#ENDIF
+#IF lng_default=LNG_SPANISH
+ define t.calendar.year           for "A§o"
+ define t.calendar.month          for "Mes"
+ define t.calendar.day            for "Day"
+ define t.calendar.week           for "Sem"
+ define t.calendar.calendar_popup for "Popup del calendario"
+ define t.calendar.Monday         for "Lunes"
+ define t.calendar.Tuesday        for "Martes"
+ define t.calendar.Wednesday      for "MiÇrcoles"
+ define t.calendar.Thursday       for "Jueves"
+ define t.calendar.Friday         for "Viernes"
+ define t.calendar.Saturday       for "S†bado"
+ define t.calendar.Sunday         for "Domingo"
+ define t.calendar.January        for "Enero"
+ define t.calendar.February       for "Febrero"
+ define t.calendar.March          for "Marzo"
+ define t.calendar.April          for "Abril"
+ define t.calendar.May            for "Mayo"
+ define t.calendar.June           for "Junio"
+ define t.calendar.July           for "Julio"
+ define t.calendar.August         for "Agosto"
+ define t.calendar.September      for "Septiembre"
+ define t.calendar.October        for "Octubre"
+ define t.calendar.November       for "Noviembre"
+ define t.calendar.December       for "Diciembre"
+ define t.calendar.ok             for "Aceptar"
+ define t.calendar.Cancel         for "Cancelar"
+ define t.calendar.Activate       for "Active el calendario del popup (Ctrl+D)"
+#ENDIF
+#IF lng_default=LNG_ENGLISH
+ define t.calendar.year           for "Year"
+ define t.calendar.month          for "Month"
+ define t.calendar.day            for "Day"
+ define t.calendar.week           for "Wk."
+ define t.calendar.calendar_popup for "Calendar Popup"
+ define t.calendar.Monday         for "Monday"
+ define t.calendar.Tuesday        for "Tuesday"
+ define t.calendar.Wednesday      for "Wednesday"
+ define t.calendar.Thursday       for "Thursday"
+ define t.calendar.Friday         for "Friday"
+ define t.calendar.Saturday       for "Saturday"
+ define t.calendar.Sunday         for "Sunday"
+ define t.calendar.January        for "January"
+ define t.calendar.February       for "February"
+ define t.calendar.March          for "March"
+ define t.calendar.April          for "April"
+ define t.calendar.May            for "May"
+ define t.calendar.June           for "June"
+ define t.calendar.July           for "July"
+ define t.calendar.August         for "August"
+ define t.calendar.September      for "September"
+ define t.calendar.October        for "October"
+ define t.calendar.November       for "November"
+ define t.calendar.December       for "December"
+ define t.calendar.ok             for "OK"
+ define t.calendar.Cancel         for "Cancel"
+ define t.calendar.Activate       for "Activate popup calendar (Ctrl+D)"
+#ENDIF
+#IF lng_default=LNG_DANISH
+ define t.calendar.year           for "èr"
+ define t.calendar.month          for "MÜned"
+ define t.calendar.day            for "Dag"
+ define t.calendar.week           for "Uge"
+ define t.calendar.calendar_popup for "Kalender"
+ define t.calendar.Monday         for "Mandag"
+ define t.calendar.Tuesday        for "Tirsdag"
+ define t.calendar.Wednesday      for "Onsdag"
+ define t.calendar.Thursday       for "Torsdag"
+ define t.calendar.Friday         for "Fredag"
+ define t.calendar.Saturday       for "Lõrdag"
+ define t.calendar.Sunday         for "Sõndag"
+ define t.calendar.January        for "Januar"
+ define t.calendar.February       for "Februar"
+ define t.calendar.March          for "Marts"
+ define t.calendar.April          for "April"
+ define t.calendar.May            for "Maj"
+ define t.calendar.June           for "Juni"
+ define t.calendar.July           for "Juli"
+ define t.calendar.August         for "August"
+ define t.calendar.September      for "September"
+ define t.calendar.October        for "Oktober"
+ define t.calendar.November       for "November"
+ define t.calendar.December       for "December"
+ define t.calendar.ok             for "OK"
+ define t.calendar.Cancel         for "Annuller"
+ define t.calendar.Activate       for "Aktiver popup kalender (Ctrl+D)"
+#ENDIF
+#IF lng_default=LNG_SWEDISH
+ define t.calendar.year           for "èr"
+ define t.calendar.month          for "MÜnad"
+ define t.calendar.day            for "Dag"
+ define t.calendar.week           for "Vck"
+ define t.calendar.calendar_popup for "Kalender"
+ define t.calendar.Monday         for "MÜndag"
+ define t.calendar.Tuesday        for "Tisdag"
+ define t.calendar.Wednesday      for "Onsdag"
+ define t.calendar.Thursday       for "Torsdag"
+ define t.calendar.Friday         for "Fredag"
+ define t.calendar.Saturday       for "Lîrdag"
+ define t.calendar.Sunday         for "Sîndag"
+ define t.calendar.January        for "Januari"
+ define t.calendar.February       for "Februari"
+ define t.calendar.March          for "Mars"
+ define t.calendar.April          for "April"
+ define t.calendar.May            for "Maj"
+ define t.calendar.June           for "Juni"
+ define t.calendar.July           for "Juli"
+ define t.calendar.August         for "Augusti"
+ define t.calendar.September      for "September"
+ define t.calendar.October        for "Oktober"
+ define t.calendar.November       for "November"
+ define t.calendar.December       for "December"
+ define t.calendar.ok             for "OK"
+ define t.calendar.Cancel         for "Avbryt"
+ define t.calendar.Activate       for "Aktivera popup kalendar (Ctrl+D)"
+#ENDIF
+#IF lng_default=LNG_NORWEGIAN   // 22.04.1999 torkild.resheim@emmaedb.no (noen mindre endringer)
+ define t.calendar.year           for "èr"
+ define t.calendar.month          for "MÜned"
+ define t.calendar.day            for "Dag"
+ define t.calendar.week           for "Uke"
+ define t.calendar.calendar_popup for "Kalender"
+ define t.calendar.Monday         for "Mandag"
+ define t.calendar.Tuesday        for "Tirsdag"
+ define t.calendar.Wednesday      for "Onsdag"
+ define t.calendar.Thursday       for "Torsdag"
+ define t.calendar.Friday         for "Fredag"
+ define t.calendar.Saturday       for "Lõrdag"
+ define t.calendar.Sunday         for "Sõndag"
+ define t.calendar.January        for "Januar"
+ define t.calendar.February       for "Februar"
+ define t.calendar.March          for "Mars"
+ define t.calendar.April          for "April"
+ define t.calendar.May            for "Mai"
+ define t.calendar.June           for "Juni"
+ define t.calendar.July           for "Juli"
+ define t.calendar.August         for "August"
+ define t.calendar.September      for "September"
+ define t.calendar.October        for "Oktober"
+ define t.calendar.November       for "November"
+ define t.calendar.December       for "Desember"
+ define t.calendar.ok             for "OK"
+ define t.calendar.Cancel         for "Annuller"
+ define t.calendar.Activate       for "Aktiver kalender (Ctrl+D)"
+#ENDIF
+#IF lng_default=LNG_GERMAN
+ define t.calendar.year           for "Jahr"
+ define t.calendar.month          for "Monat"
+ define t.calendar.day            for "Tag"
+ define t.calendar.week           for "Wo."
+ define t.calendar.calendar_popup for "Kalender"
+ define t.calendar.Monday         for "Montag"
+ define t.calendar.Tuesday        for "Dienstag"
+ define t.calendar.Wednesday      for "Mittwoch"
+ define t.calendar.Thursday       for "Donnerstag"
+ define t.calendar.Friday         for "Freitag"
+ define t.calendar.Saturday       for "Samstag"
+ define t.calendar.Sunday         for "Sonntag"
+ define t.calendar.January        for "Januar"
+ define t.calendar.February       for "Februar"
+ define t.calendar.March          for "MÑrz"
+ define t.calendar.April          for "April"
+ define t.calendar.May            for "Mai"
+ define t.calendar.June           for "Juni"
+ define t.calendar.July           for "Juli"
+ define t.calendar.August         for "August"
+ define t.calendar.September      for "September"
+ define t.calendar.October        for "Oktober"
+ define t.calendar.November       for "November"
+ define t.calendar.December       for "Dezember"
+ define t.calendar.ok             for "OK"
+ define t.calendar.Cancel         for "Abbrechen"
+ define t.calendar.Activate       for "Popupkalender aktivieren (Ctrl+D)"
+#ENDIF
+#IF lng_default=LNG_PORTUGUESE
+ define t.calendar.year           for "Ano"
+ define t.calendar.month          for "Màs"
+ define t.calendar.day            for "Day"
+ define t.calendar.week           for "Sem."
+ define t.calendar.calendar_popup for "Calend†rio suspenso"
+ define t.calendar.Monday         for "Segunda"
+ define t.calendar.Tuesday        for "Teráa"
+ define t.calendar.Wednesday      for "Quarta"
+ define t.calendar.Thursday       for "Quinta"
+ define t.calendar.Friday         for "Sexta"
+ define t.calendar.Saturday       for "S†bado"
+ define t.calendar.Sunday         for "Domingo"
+ define t.calendar.January        for "Janeiro"
+ define t.calendar.February       for "Fevereiro"
+ define t.calendar.March          for "Maráo"
+ define t.calendar.April          for "Abril"
+ define t.calendar.May            for "Maio"
+ define t.calendar.June           for "Junho"
+ define t.calendar.July           for "Julho"
+ define t.calendar.August         for "Agosto"
+ define t.calendar.September      for "Setembro"
+ define t.calendar.October        for "Outubro"
+ define t.calendar.November       for "Novembro"
+ define t.calendar.December       for "Dezembro"
+ define t.calendar.ok             for "OK"
+ define t.calendar.Cancel         for "Cancelar"
+ define t.calendar.Activate       for "Ativar calend†rio suspenso (Ctrl+D)"
+#ENDIF
+
+define LargestPossibleDate for 913490 // December 31st 2500
+define Jan1st1900          for 693975
+define Jan1st2000          for 730500
+define Jan1st1000          for 365250
+define Jan1st105           for 38352
+define Jan1st100           for 36525
+
+enumeration_list // Date Segments
+  define DS_DAY
+  define DS_WEEK
+  define DS_MONTH
+  define DS_YEAR
+end_enumeration_list
+
+integer Dates$Year Dates$Month Dates$Day // internal use
+
+procedure DateDecompose global date date# //very internal!!
+  local integer pos1# pos2# format#
+  local string str# sep#
+  get_attribute DF_DATE_FORMAT to format#
+  get_attribute DF_DATE_SEPARATOR to pos1# // overload
+  character pos1# to sep#                  // end overload
+  move date# to str#
+  replace sep# in str# with "$"
+  move strmark to pos1#
+  if [found] begin
+    replace sep# in str# with "$"
+    move strmark to pos2#
+  end
+  else begin
+    move 0 to Dates$Year
+    move 0 to Dates$Month
+    move 0 to Dates$Day
+  end
+  [ found] begin
+    if format# eq DF_DATE_EUROPEAN ;
+          left str# to Dates$Day    (pos1#-1)
+    if format# eq DF_DATE_USA begin
+          mid  str# to Dates$Day    (pos2#-pos1#-1) (pos1#+1)
+          left str# to Dates$Month  (pos1#-1)
+    end
+    else  mid  str# to Dates$Month  (pos2#-pos1#-1) (pos1#+1)
+
+    if format# eq DF_DATE_MILITARY begin
+          mid  str# to Dates$Day  2 (pos2#+1)
+          left str# to Dates$Year   (pos1#-1)
+    end
+    else  mid  str# to Dates$Year 4 (pos2#+1)
+  end
+end_procedure
+
+function DateCompose global integer day# integer month# integer year# returns date
+  local integer format#
+  local date date#
+  local string sep#
+  ifnot (day#*month#*year#) function_return 0
+  get_attribute DF_DATE_SEPARATOR to format# // overload
+  character format# to sep#                  // end overload
+  get_attribute DF_DATE_FORMAT to format#
+  if day# gt 28 begin
+    if format# eq DF_DATE_EUROPEAN move (date(string(day#)+sep#+string(month#)+sep#+string(year#))) to date# // DMY
+    if format# eq DF_DATE_USA      move (date(string(month#)+sep#+string(day#)+sep#+string(year#))) to date# // MDY
+    if format# eq DF_DATE_MILITARY move (date(string(year#)+sep#+string(month#)+sep#+string(day#))) to date# // YMD
+    send DateDecompose date#
+    if Dates$Month ne month# move (day#-Dates$Day) to day#
+  end
+  if format# eq DF_DATE_EUROPEAN function_return (date(string(day#)+sep#+string(month#)+sep#+string(year#))) // DMY
+  if format# eq DF_DATE_USA function_return (date(string(month#)+sep#+string(day#)+sep#+string(year#))) // MDY
+  function_return (date(string(year#)+sep#+string(month#)+sep#+string(day#))) // YMD
+end_function
+
+function DateFormatName global integer format# returns string
+  if format# eq DF_DATE_EUROPEAN function_return "European"
+  if format# eq DF_DATE_USA      function_return "United States"
+  if format# eq DF_DATE_MILITARY function_return "Military"
+end_function
+
+function DateCurrentSeparator global returns string
+  local integer rval#
+  get_attribute DF_DATE_SEPARATOR to rval#
+  function_return (character(rval#))
+end_function
+
+function DateCurrentFormat global returns integer
+  local integer rval#
+  get_attribute DF_DATE_FORMAT to rval#
+  function_return rval#
+end_function
+
+function DateFormatAsString global integer format# integer long# string sep# returns string
+  local string rval# letter#
+  if format# eq DF_DATE_EUROPEAN move "3342241111" to rval#
+  if format# eq DF_DATE_USA      move "2243341111" to rval#
+  if format# eq DF_DATE_MILITARY move "1111422433" to rval#
+  left t.calendar.year to letter# 1
+  replace "1" in rval# with letter#
+  replace "1" in rval# with letter#
+  ifnot long# move "" to letter#
+  move (replaces("1",rval#,letter#)) to rval#
+  move (replaces("2",rval#,left(t.calendar.month,1))) to rval#
+  move (replaces("3",rval#,left(t.calendar.day,1))) to rval#
+  if sep# eq "" begin
+    get_attribute DF_DATE_SEPARATOR to format#
+    character format# to sep#
+  end
+  move (replaces("4",rval#,sep#)) to rval#
+  function_return rval#
+end_function
+
+function StringToDate global string date# integer format# integer four_digit_year# string sep# returns date
+  local integer sep_len# day# month# year#
+  move (length(sep#)) to sep_len#
+  if four_digit_year# move 4 to four_digit_year#
+  else move 2 to four_digit_year#
+  if format# eq DF_DATE_EUROPEAN begin // DMY
+    move (mid(date#,2,1)) to day#
+    move (mid(date#,2,3+sep_len#)) to month#
+    move (mid(date#,four_digit_year#,5+sep_len#+sep_len#)) to year#
+  end
+  if format# eq DF_DATE_USA begin // MDY
+    move (mid(date#,2,1)) to month#
+    move (mid(date#,2,3+sep_len#)) to year#
+    move (mid(date#,four_digit_year#,5+sep_len#+sep_len#)) to year#
+  end
+  if format# eq DF_DATE_MILITARY begin // YMD
+    move (mid(date#,four_digit_year#,1)) to year#
+    move (mid(date#,2,1+four_digit_year#+sep_len#)) to month#
+    move (mid(date#,2,3+four_digit_year#+sep_len#+sep_len#)) to day#
+  end
+  function_return (DateCompose(day#,month#,year#))
+end_function
+
+function DateToString global date date# integer format# integer four_digit_year# string sep# returns string
+  local string rval# day# month# year#
+  get Date2to4 date# to date#
+  if (integer(date#)) begin
+    send DateDecompose date#
+    move Dates$Day to day#
+    if Dates$Day lt 10 insert "0" in day# at 1
+    move Dates$Month to month#
+    if Dates$Month lt 10 insert "0" in month# at 1
+    move Dates$Year to year#
+    ifnot four_digit_year# move (right(year#,2)) to year#
+    if format# eq DF_DATE_EUROPEAN move (day#+sep#+month#+sep#+year#) to rval# // DMY
+    if format# eq DF_DATE_USA      move (month#+sep#+day#+sep#+year#) to rval# // MDY
+    if format# eq DF_DATE_MILITARY move (year#+sep#+month#+sep#+day#) to rval# // YMD
+  end
+  function_return rval#
+end_function
+
+// Function DateAsString is only here for compatibility with earlier versions.
+// Use function DateToString instead.
+function DateAsString global date date# integer format# integer four_digit_year# string sep# returns string
+  function_return (DateToString(date#,format#,four_digit_year#,sep#))
+end_function
+
+function DateIncrement global date date# integer segment# integer amount# returns date
+  if (date#=0) function_return 0
+  if segment# eq DS_WEEK function_return (date#+(amount#*7)) //weeks
+  if (segment#<>DS_DAY) begin // months or years
+    send DateDecompose date#
+    if segment# eq DS_MONTH begin //months
+      move (Dates$Month+amount#) to Dates$Month
+      if amount# ge 0 function_return (DateCompose(Dates$Day,Dates$Month-(((Dates$Month-1)/12)*12),Dates$Year+((Dates$Month-1)/12)))
+      function_return (DateCompose(Dates$Day,Dates$Month-(((Dates$Month-12)/12)*12),Dates$Year+((Dates$Month-12)/12)))
+    end //years:
+    if segment# eq DS_YEAR function_return (DateCompose(Dates$Day,Dates$Month,Dates$Year+amount#))
+  end
+  else function_return (date#+amount#) //days
+end_function
+
+function DateSegment global date date# integer segment# returns integer
+  send DateDecompose date#
+  if segment# eq DS_DAY   function_return Dates$Day
+  if segment# eq DS_MONTH function_return Dates$Month
+  if segment# eq DS_YEAR  function_return Dates$Year
+end_function
+
+function DateToInteger global date date# returns integer
+  send DateDecompose date#
+  function_return (Dates$Year*100+Dates$Month*100+Dates$Day)
+end_function
+
+function FirstDayInMonth global date date# returns date
+  local integer month# year#
+  move (DateSegment(date#,DS_MONTH)) to month#
+  move (DateSegment(date#,DS_YEAR)) to year#
+  function_return (DateCompose(1,month#,year#))
+end_function
+
+function LastDayInMonth global date date# returns date
+  move (DateIncrement(date#,DS_MONTH,1)) to date#
+  function_return (FirstDayInMonth(date#)-1)
+end_function
+
+function FirstDayInYear global date date# returns date
+  local integer year#
+  move (DateSegment(date#,DS_YEAR)) to year#
+  function_return (DateCompose(1,1,year#))
+end_function
+
+function LastDayInYear global date date# returns date
+  move (DateIncrement(date#,DS_YEAR,1)) to date#
+  function_return (FirstDayInYear(date#)-1)
+end_function
+
+// Prior to 18/1-99 version of DateWeekNumber
+//function DateWeekNumber global date date# returns integer
+//  local integer week# first_wd# day_of_year# year#
+//  if (date#=0) function_return 0
+//  get Date2to4 date# to date#
+//  move (DateSegment(date#,DS_YEAR)) to year#
+//  get DateDayNumber (FirstDayInYear(date#)) to first_wd#
+//  move (date#-FirstDayInYear(date#)) to day_of_year#
+//  move (day_of_year#-1-7+first_wd#) to day_of_year#
+//  if (day_of_year#/7.0) ge 0 move (day_of_year#/7+1) to week#
+//  else move 0 to week#
+//  if first_wd# le 4 increment week#
+//  if week# gt 52 begin
+//    move 1 to week#
+//    if first_wd# eq 4 move 53 to week#
+//    if first_wd# eq 3 if ((year#/4)*4) eq year# ifnot ((year#/100)*100) eq year# move 53 to week#
+//  end
+//  if week# eq 0 begin
+//    //get DateWeekNumber (DateIncrement(date#,DS_YEAR,-1)) to first_wd# // Original line
+//    get DateDayNumber  (DateIncrement(FirstDayInYear(date#),DS_YEAR,-1)) to first_wd#ˇ // changed line
+//    move 52 to week#
+//    if first_wd# eq 4 move 53 to week#
+//    if first_wd# eq 3 if ((year#/4)*4) eq Year# ifnot ((Year#/100)*100) eq Year# move 53 to week#
+//  end
+//  function_return week#
+//end_function
+
+function DateWeekNumber global date date# returns integer
+  local integer week# first_wd# day_of_year# year# wd#
+  if (date#=0) function_return 0
+  get Date2to4 date# to date#
+  // Leap-year test for actual or previous year
+  // Year# only used for selection between 52 and
+  // Therefore get year# from the first day of actual week
+  get DateDayNumber date# to wd#
+  move (DateSegment(date#-wd#+1,DS_YEAR)) to year#
+
+  get DateDayNumber (FirstDayInYear(date#)) to first_wd#
+  move (date#-FirstDayInYear(date#)) to day_of_year#
+  move (day_of_year#-1-7+first_wd#) to day_of_year#
+  if (day_of_year#/7.0) ge 0 move (day_of_year#/7+1) to week#
+  else move 0 to week#
+  if first_wd# le 4 increment week#
+  if week# gt 52 begin
+    move 1 to week#
+    if first_wd# eq 4 move 53 to week#
+    if first_wd# eq 3 if ((year#/4)*4) eq year# ifnot ((year#/100)*100) eq year# move 53 to week#
+  end
+  if week# eq 0 begin
+    // Week 52 or 53
+    get DateDayNumber (DateIncrement(FirstDayInYear(date#),DS_YEAR,-1)) to first_wd#
+    move 52 to week#
+    if first_wd# eq 4 move 53 to week#
+    if first_wd# eq 3 if ((year#/4)*4) eq Year# ifnot ((Year#/100)*100) eq Year# move 53 to week#
+  end
+  function_return week#
+end_function
+
+function DayName global integer int# returns string
+  if int# eq 1 function_return t.calendar.Monday
+  if int# eq 2 function_return t.calendar.Tuesday
+  if int# eq 3 function_return t.calendar.Wednesday
+  if int# eq 4 function_return t.calendar.Thursday
+  if int# eq 5 function_return t.calendar.Friday
+  if int# eq 6 function_return t.calendar.Saturday
+  if int# eq 7 function_return t.calendar.Sunday
+  function_return ""
+end_function
+
+function DateDayNumber global date date# returns integer
+  local integer rval# // 1=Monday, ... , 7=Sunday
+  get Date2to4 date# to date#
+  move date# to rval#
+  if rval# begin
+    if rval# gt 693975 move (rval#-2) to rval#
+    move (rval#-((rval#/7)*7)) to rval#
+    if rval# eq 0 move 7 to rval#
+  end
+  function_return rval#
+end_function
+
+function DateDayName global date date# returns string
+  function_return (DayName(DateDayNumber(date#)))
+end_function
+
+function YearMaxWeek global integer year# returns integer
+  local integer wk1# wk2#
+  get DateWeekNumber (DateCompose(31,12,year#)) to wk1#
+  get DateWeekNumber (DateCompose(24,12,year#)) to wk2#
+  function_return (wk1# max wk2#)
+end_function
+
+function WeekToDate global integer year# integer week# returns date
+  local date date#
+  move (DateCompose(1,1,year#)) to date#
+  if (DateWeekNumber(date#)) ne 1 move (date#+7) to date# // week 52 or 53
+  move (date#-DateDayNumber(date#)+1) to date# // Now it's a Monday
+  function_return (week#-1*7+date#)
+end_function
+
+function MonthName global integer int# returns string
+  if int# eq  1 function_return t.calendar.January
+  if int# eq  2 function_return t.calendar.February
+  if int# eq  3 function_return t.calendar.March
+  if int# eq  4 function_return t.calendar.April
+  if int# eq  5 function_return t.calendar.May
+  if int# eq  6 function_return t.calendar.June
+  if int# eq  7 function_return t.calendar.July
+  if int# eq  8 function_return t.calendar.August
+  if int# eq  9 function_return t.calendar.September
+  if int# eq 10 function_return t.calendar.October
+  if int# eq 11 function_return t.calendar.November
+  if int# eq 12 function_return t.calendar.December
+  function_return ""
+end_function
+
+function DateMonthName global date date# returns string
+  function_return (MonthName(DateSegment(date#,DS_MONTH)))
+end_function
+
+function DateAsText global date date# string format# returns string
+  if date# eq 0 function_return ""
+  move (replace("#DN",format#,DateDayName(date#)))                  to format#
+  move (replace("#MN",format#,DateMonthName(date#)))                to format#
+  move (replace("#D" ,format#,string(DateSegment(date#,DS_DAY))))   to format#
+  move (replace("#Y" ,format#,string(DateSegment(date#,DS_YEAR))))  to format#
+  move (replace("#M" ,format#,string(DateSegment(date#,DS_MONTH)))) to format#
+  function_return format#
+end_function
+
+function Year2to4 global integer year# returns integer
+  local integer epoch_value#
+  #IFDEF EPOCH_VALUE // Temporary fix for 3.1b
+   get_date_attribute EPOCH_VALUE to epoch_value#
+  #ELSE
+   move DATES_DF31B_EPOCH to epoch_value#
+  #ENDIF
+  if year# lt 100 begin
+    if year# gt epoch_value# function_return (year#+1900)
+    function_return (year#+2000)
+  end
+  function_return year# // No conversion done!
+end_function
+
+function Date2to4 global date date# returns date
+  local integer epoch_value#
+  #IFDEF EPOCH_VALUE // Temporary fix for 3.1b
+   get_date_attribute EPOCH_VALUE to epoch_value#
+  #ELSE
+   move DATES_DF31B_EPOCH to epoch_value#
+  #ENDIF
+  if date# gt 0 begin // Only if there is a date to convert
+    if (DateSegment(date#,DS_YEAR)) lt 105 begin
+      if Dates$Year gt epoch_value# function_return (DateIncrement(date#,DS_YEAR,1900))
+      function_return (DateIncrement(date#,DS_YEAR,2000))
+    end
+    function_return date# // No conversion done!
+  end
+end_function
+
+function Date4to2 global date date# returns date
+  local integer epoch_value# year#
+  #IFDEF EPOCH_VALUE // Temporary fix for 3.1b
+   get_date_attribute EPOCH_VALUE to epoch_value#
+  #ELSE
+   move DATES_DF31B_EPOCH to epoch_value#
+  #ENDIF
+  if date# gt 0 begin // Only if there is a date to convert
+    move (DateSegment(date#,DS_YEAR)) to year#
+    if year# ge 100 begin // Only then conversion is needed!
+      if (year#>=(1900+epoch_value#) and year#<(2000+epoch_value#)) begin
+        if year# lt 2000 function_return (DateIncrement(date#,DS_YEAR,-1900))
+        else             function_return (DateIncrement(date#,DS_YEAR,-2000))
+      end
+      else error 301 "Date is out of epoch range"
+    end
+  end
+  function_return date# // No conversion done!
+end_function
+
+function dSysDate global returns date
+  local date date#
+  sysdate4 date#
+  function_return date#
+end_function
+
+function iSysYear global returns integer
+  local date date#
+  sysdate4 date#
+  function_return (DateSegment(date#,DS_YEAR))
+end_function
+
+procedure ItemSysdate for desktop integer itm#
+  local date date#
+  get value item itm# to date#
+  if date# eq 0 begin
+    sysdate4 date#
+    set changed_value item itm# to date#
+  end
+end_procedure
+
+procedure ItemDate2to4 for desktop integer itm#
+  local integer year#
+  local date date# new_date#
+  get value item itm# to date#
+
+  move (DateSegment(date#,DS_YEAR)) to year#
+  if (year#=0 and date#<>0) move (DateIncrement(date#,3,iSysYear())) to new_date#
+  else move date# to new_date#
+
+  move (Date2to4(new_date#)) to new_date#
+  move (DateSegment(new_date#,3)) to year#
+  if (year#>99 and year#<1000) begin
+    error 15 // Illegal entry in this window
+    procedure_return 1
+  end
+  if new_date# ne date# set value item itm# to new_date#
+end_procedure
+
+procedure ItemYear2to4 for desktop integer itm#
+  local integer year# new_year#
+  get value item itm# to year#
+  if (year#>99 and year#<1000) begin
+    error 15 // Illegal entry in this window
+    procedure_return 1
+  end
+  move (Year2to4(year#)) to new_year#
+  if new_year# ne year# set value item itm# to new_year#
+end_procedure
+
+#IFDEF U_DataDictionary
+ procedure FieldSysdate for DataDictionary integer fld#
+   local date date#
+   get field_current_value fld# to date#
+   if date# eq 0 begin
+     sysdate4 date#
+     set field_changed_value fld# to date#
+   end
+ end_procedure
+
+ procedure FieldDate2to4 for DataDictionary integer fld#
+   local integer year#
+   local date date# new_date#
+   get field_current_value fld# to date#
+
+   move (DateSegment(date#,DS_YEAR)) to year#
+   if (year#=0 and date#<>0) move (DateIncrement(date#,3,iSysYear())) to new_date#
+   else move date# to new_date#
+
+   move (Date2to4(new_date#)) to new_date#
+   move (DateSegment(new_date#,3)) to year#
+   if (year#>99 and year# <=999) begin
+     error 15 // Illegal entry in this window
+     procedure_return 1
+   end
+   if new_date# ne date# set field_changed_value fld# to new_date#
+ end_procedure
+
+ procedure FieldYear2to4 for DataDictionary integer fld#
+   local integer year# new_year# changed#
+   get field_current_value fld# to year#
+   get field_changed_state fld# to changed#
+   if changed# begin
+     if (year#>99 and year#<1000) begin
+       error 15 // Illegal entry in this window
+       procedure_return 1
+     end
+     move (Year2to4(year#)) to new_year#
+     if new_year# ne year# set field_changed_value fld# to new_year#
+   end
+ end_procedure
+#ENDIF
+
+#IFDEF get_SysDate
+#ELSE
+ function SysDate global returns date
+   function_return (dSysDate())
+ end_function
+#ENDIF
+
+function sSysTime global returns string
+  local integer h# m# s#
+  sysdate4 h# h# m# s#
+  function_return (if(h#<10,"0","")+string(h#)+":"+if(m#<10,"0","")+string(m#)+":"+if(s#<10,"0","")+string(s#))
+end_function
+
+function TS_SysTime global returns number
+  local integer d# h# m# s#
+  sysdate4 d# h# m# s#
+  function_return (d#*24.0+h#*60+m#*60+s#)
+end_function
+
+//> This function returns a TS value composed from the date and time
+//> passed to it. Note that the time variable must be of the format
+//> "hh:mm:ss".
+function TS_Compose global date date# string time# returns number
+  local integer h# m# s#
+  left time# to h# 2
+  mid time# to m# 2 4
+  mid time# to s# 2 7
+  function_return (integer(date#)*24.0+h#*60+m#*60+s#)
+end_function
+
+function TS_Compose2 global date date# integer h# integer m# integer s# returns number
+  function_return (integer(date#)*24.0+h#*60+m#*60+s#)
+end_function
+
+function TS_ExtractDate global number time# returns date
+  function_return (time#/86400) // 86400=24*60*60
+end_function
+
+function TS_ExtractTime global number time# returns string
+  local integer h# m# s#
+  move (time#-(86400.0*integer(TS_ExtractDate(time#)))) to s#
+  move (s#/3600) to h#
+  move (s#-(h#*3600)) to s#
+  move (s#/60) to m#
+  move (s#-(m#*60)) to s#
+  function_return (if(h#<10,"0","")+string(h#)+":"+if(m#<10,"0","")+string(m#)+":"+if(s#<10,"0","")+string(s#))
+end_function
+
+function TS_ConvertToString global number time# returns string
+  local date d#
+  move (TS_ExtractDate(time#)) to d#
+  if (integer(d#)) function_return (string(d#)+" "+TS_ExtractTime(time#))
+  else function_return (TS_ExtractTime(time#))
+end_function
+
+function TS_ConvertToStringNoDate global number ts# returns string
+  local integer h# m#
+  move (ts#/3600) to h#
+  move (ts#-(h#*3600)) to ts#
+  move (ts#/60) to m#
+  move (ts#-(m#*60)) to ts#
+  function_return (if(h#<10,"0","")+string(h#)+":"+if(m#<10,"0","")+string(m#)+":"+if(ts#<10,"0","")+string(ts#))
+end_function
+
+// This procedure is used when a TS-variable must be displayed on screen.
+procedure TS_UI_Update global number TS# integer obj1# integer itm1# integer tmp_obj2# integer tmp_itm2#
+  local integer obj2# itm2#
+  if num_arguments gt 3 begin
+    move tmp_obj2# to obj2#
+    move tmp_itm2# to itm2#
+  end
+  else begin
+    move obj1# to obj2#
+    move (itm1#+1) to itm2#
+  end
+  set value of obj1# item itm1# to (TS_ExtractDate(TS#))
+  set value of obj2# item itm2# to (TS_ExtractTime(TS#))
+end_procedure
+
+class TS_TimeEstimator is an array
+  procedure construct_object
+    forward send construct_object
+    set delegation_mode to delegate_to_parent
+    property number  pnTotal   public 0 // Seconds needed to run the loop.
+    property number  pnElapsed public 0 // Seconds elapsed so far.
+    property number  pnLeft    public 0 // Number of seconds left
+    property number  pnStart   public 0
+    property number  pnPause   public 0
+    property number  pnPercent public 0
+    property integer piMin     public 0
+    property integer piMax     public 0
+  end_procedure
+
+  procedure TS_Start integer min# integer max#
+    set piMin to min#
+    set piMax to max#
+    set pnStart to (TS_SysTime())
+    set pnElapsed to 0
+    set pnPercent to 0
+  end_procedure
+
+  procedure TS_Calculate integer pos#
+    local integer min# max#
+    get piMin to min#
+    get piMax to max#
+    set pnElapsed to (TS_SysTime()-pnStart(current_object))
+    set pnTotal   to (pnElapsed(current_object)*(max#-min#)/number(pos#-min#))
+    set pnLeft    to (pnTotal(current_object)-pnElapsed(current_object))
+    set pnPercent to (100.0*(pos#-min#)/(max#-min#))
+  end_procedure
+
+  procedure TS_Pause
+    set pnPause to (TS_SysTime())
+  end_procedure
+
+  procedure TS_Continue
+    set pnStart to (pnStart(current_object)+TS_SysTime()-pnPause(current_object))
+  end_procedure
+end_class
+
+function TS_Module_Compile_Time global string path# returns number
+  local integer pos# day# month# year# seqeof# ch#
+  local string date# str# time#
+  move path# to str#
+  if str# ne "" begin
+    get Seq_New_Channel to ch#   // This method and Seq_Release_Channel are
+    send Seq_Release_Channel ch# // We only need it for a second
+    #IFDEF IS$WINDOWS
+     #IFDEF DF_FLEX_ALL_RIGHTS
+      direct_input channel ch# (trim(str#)+".vd6") // VDF 6
+      [seqeof] direct_input channel ch# (trim(str#)+".vd5") // VDF 5
+     #ELSE
+      direct_input channel ch# (trim(str#)+".vdf") // VDF 4
+     #ENDIF
+    #ELSE
+     direct_input channel ch# (trim(str#)+".flx") // Character mode
+    #ENDIF
+    [ seqeof] move 1 to seqeof#
+    [~seqeof] move 0 to seqeof#
+    [~seqeof] readln str#
+    close_input channel ch#
+  end
+  if seqeof# function_return 0
+  pos "," in str# to pos#
+  move (mid(str#,18,pos#+2)) to str#
+  move (integer(mid(str#,2,4))) to day#
+  move (integer(mid(str#,2,1))) to month#
+  move (integer(mid(str#,2,7))) to year#
+  if year# eq 10 begin
+    move (integer(mid(str#,3,7))+1900) to year#
+    move (mid(str#,8,11)) to str#
+  end
+  else move (mid(str#,8,10)) to str#
+  move (DateCompose(day#,month#,year#)) to date#
+  move (Date2to4(date#)) to date#
+  pos ":" in str# to pos#
+  function_return (TS_Compose(date#,mid(str#,8,pos#-2)))
+end_function
+
+string Dates$Module_Compile_Time
+move "" to Dates$Module_Compile_Time
+
+function Module_Compile_Date global returns date
+  local number ts#
+  local string str#
+  get module_name to str# // 'module_name' is most likely the name of the .flx file.
+  get TS_Module_Compile_Time str# to ts#
+  move (TS_ExtractTime(ts#)) to Dates$Module_Compile_Time
+  function_return (TS_ExtractDate(ts#))
+end_function
+
+function Module_Compile_Time global returns string
+  local date grb#
+  // Module_Compile_Date must be called before this one!
+  if Dates$Module_Compile_Time eq "" move (Module_Compile_Date()) to grb#
+  function_return Dates$Module_Compile_Time
+end_function
+
+date   Dates$ModuleStartDate
+string Dates$ModuleStartTime 8
+move (dSysDate()) to Dates$ModuleStartDate
+move (sSysTime()) to Dates$ModuleStartTime
+
+function Module_Start_Date global returns date
+  function_return Dates$ModuleStartDate
+end_function
+
+function Module_Start_Time global returns string
+  function_return Dates$ModuleStartTime
+end_function
+
+#IF DATES_INCLUDE_POPUP
+ register_procedure NotifyPopupCalendarChange date date#
+ register_procedure NotifyPopupCalendarSelect date date#
+ #IFDEF IS$WINDOWS
+  use dfAllent
+  class calendar.textbox is a textbox
+    procedure construct_object
+      forward send construct_object
+      Set Auto_Size_State To False
+      Set Justification_Mode To (jMode_vCenter+jMode_Center)
+    end_procedure
+  end_class
+
+  register_object btn1
+  register_object btn6
+
+  class calendar.button is a button
+
+    procedure construct_object
+      forward send construct_object
+      set size to 15 18
+      on_key kleftarrow   send prev_day
+      on_key krightarrow  send next_day
+      on_key kuparrow     send prev_week
+      on_key kdownarrow   send next_week
+      property date p_assigned_date public 0
+    end_procedure
+
+    procedure switch // This makes all 42 buttons act as if they are one focus
+      send activate to (btn1(current_object))
+    end_procedure
+    procedure switch_back
+      send activate to (btn6(current_object))
+    end_procedure
+
+    procedure mouse_down
+      local integer current_object#
+      forward send mouse_down
+      move current_object to current_object#
+      delegate set p_current_date to (p_assigned_date(current_object#))
+    end_procedure
+  end_class
+
+  desktop_section
+    object popup_calendar is a ModalPanel
+      set size to 160 250
+      property date    p_current_date  public 0
+      property integer p_current_year  public -1
+      property integer p_current_month public -1
+      property integer pExportState    public 1
+
+      on_key key_ctrl+key_pgup send prev_year
+      on_key key_ctrl+key_pgdn send next_year
+      on_key          key_pgup send prev_month
+      on_key          key_pgdn send next_month
+      on_key key_ctrl+key_d    send go_today
+      on_key kcancel           send cancel
+
+      object cont3d is a container3d
+        set location to 5 5
+        set size to 120 237
+        object textbox_year is a calendar.textbox
+          set location to 5 5
+          set size to 15 30
+          set border_style to border_staticedge
+          procedure display
+            set value to (p_current_year(current_object))
+          end_procedure
+        end_object
+        object dayname_header is a container3d
+          set location to 5 39
+          set size to 15 126
+          set border_style to border_staticedge
+          procedure initialize
+            local integer itm#
+            for itm# from 0 to 6
+              #PUSH !Zb   // Compiler trick (non static number of objects)
+              #SET ZB$ -1
+              object txt is a calendar.textbox
+                set size to 12 17
+                set location to 0 (itm#*17.6+1)
+                #IF lng_default=LNG_DUTCH // The dutch only wants the first 2 letters of the weekday
+                 set value to (left(DayName(itm#+1),2))
+                #ELSE
+                 set value to (left(DayName(itm#+1),3))
+                #ENDIF
+              end_object
+              #POP ZB$    // End trick
+            loop
+          end_procedure
+          send initialize
+        end_object
+        object weeknumber_header is a container3d
+          set location to 24 5
+          set size     to 89 30
+          set border_style to border_staticedge
+          object obj_id_array is an array
+          end_object
+          procedure initialize
+            local integer itm# obj#
+            move (obj_id_array(current_object)) to obj#
+            for itm# from 0 to 5
+              #PUSH !Zb    // Compiler trick. Non static number
+              #SET ZB$ -1  // of child objects.
+              object txt is a textbox
+                set size to 15 30
+                set location to (itm#*15+1) 1
+                set value of obj# item (item_count(obj#)) to current_object
+              end_object
+              #POP ZB$     // End trick
+            loop
+          end_procedure
+          procedure display
+            local integer itm# obj#
+            local date date# last_date#
+            move (obj_id_array(current_object)) to obj#
+            get p_current_date to date#
+            move (FirstDayInMonth(date#)) to date#
+            move (LastDayInMonth(date#)) to last_date#
+            move (date#-DateDayNumber(date#)+1) to date#
+            for itm# from 0 to 5
+              if (itm#*7+date#) le last_date# ;
+                set value of (integer(value(obj#,itm#))) to (t.calendar.week*string(DateWeekNumber(itm#*7+date#)))
+              else set value of (integer(value(obj#,itm#))) to ""
+            loop
+          end_procedure
+          send initialize
+        end_object
+        object days_grid is a container3d
+          set location to 23 39
+          set size     to 100 127
+          set border_style to border_none
+          object btn_array is an array
+          end_object
+          procedure initialize
+            local integer row# col# button_array#
+            move (btn_array(current_object)) to button_array#
+            for row# from 0 to 5
+              for col# from 0 to 6
+                #PUSH !Zb
+                #SET ZB$ -1
+                object btn is a calendar.button
+                  set location to (row#*15) (col#*18)
+                  set value of button_array# item (item_count(button_array#)) to current_object
+                  on_item "" send move_value_out_ok
+                end_object
+                #POP ZB$
+              loop
+            loop
+          end_procedure
+          send initialize
+
+          procedure display.iii integer itm# integer day# integer activate#
+            local integer obj# current_day#
+            move (integer(value(btn_array(current_object),itm#))) to obj#
+            move (DateSegment(p_current_date(current_object),DS_DAY)) to current_day#
+            if activate# begin
+              if day# eq current_day# send activate to obj#
+            end
+            else begin
+              if day# begin
+                set value of obj# to day#
+                set visible_state of obj# to true
+                set p_assigned_date of obj# to (DateCompose(day#,p_current_month(current_object),p_current_year(current_object)))
+              end
+              else set visible_state of obj# to false
+            end
+          end_procedure
+
+          procedure display integer activate#
+            local integer first_item# last_item# itm# day# date#
+            get p_current_date to date#
+            move (FirstDayInMonth(date#)) to date#
+            move (DateDayNumber(date#)-1) to first_item#
+            move (LastDayInMonth(date#)-date#+first_item#) to last_item#
+            ifnot activate# begin
+              for itm# from 0 to (first_item#-1)
+                send display.iii itm# 0 0
+              loop
+            end
+            move 1 to day#
+            for itm# from first_item# to last_item#
+              send display.iii itm# day# activate#
+              increment day#
+            loop
+            ifnot activate# begin
+              for itm# from (last_item#+1) to 41
+                send display.iii itm# 0 0
+              loop
+            end
+          end_procedure
+        end_object
+        object txt_month is a calendar.textbox
+          set size to 12 27
+          set location to 25 185
+          set value to t.calendar.month
+        end_object
+        object btn1 is a button
+          set size to 12 12
+          set location to 40 185
+          on_item "" send prev_month
+          set bitmap to "prev.bmp"
+          procedure switch_back
+            send display_main
+          end_procedure
+        end_object
+        object btn2 is a button
+          set size to 12 12
+          set location to 40 200
+          on_item "" send next_month
+          set bitmap to "next.bmp"
+        end_object
+        object txt_year is a calendar.textbox
+          set size to 12 27
+          set location to 70 185
+          set value to t.calendar.year
+        end_object
+        object btn3 is a button
+          set size to 12 12
+          set location to 85 185
+          on_item "" send prev_year
+          set bitmap to "prev.bmp"
+        end_object
+        object btn4 is a button
+          set size to 12 12
+          set location to 85 200
+          on_item "" send next_year
+          set bitmap to "next.bmp"
+        end_object
+      end_object
+      object btn5 is a button
+        set size to 14 60
+        set location to 129 115
+        on_item t.calendar.ok send move_value_out_ok
+      end_object
+      object btn6 is a button
+        set size to 14 60
+        set location to 129 182
+        on_item t.calendar.cancel send cancel
+        procedure switch
+          send display_main
+        end_procedure
+      end_object
+      procedure next_year
+        set p_current_date to (DateIncrement(p_current_date(current_object),DS_YEAR,1))
+        send display_main
+      end_procedure
+      procedure prev_year
+        set p_current_date to (DateIncrement(p_current_date(current_object),DS_YEAR,-1))
+        send display_main
+      end_procedure
+      procedure next_month
+        set p_current_date to (DateIncrement(p_current_date(current_object),DS_MONTH,1))
+        send display_main
+      end_procedure
+      procedure prev_month
+        set p_current_date to (DateIncrement(p_current_date(current_object),DS_MONTH,-1))
+        send display_main
+      end_procedure
+      procedure next_week
+        set p_current_date to (DateIncrement(p_current_date(current_object),DS_WEEK,1))
+        send display_main
+      end_procedure
+      procedure prev_week
+        set p_current_date to (DateIncrement(p_current_date(current_object),DS_WEEK,-1))
+        send display_main
+      end_procedure
+      procedure next_day
+        set p_current_date to (DateIncrement(p_current_date(current_object),DS_DAY,1))
+        send display_main
+      end_procedure
+      procedure prev_day
+        set p_current_date to (DateIncrement(p_current_date(current_object),DS_DAY,-1))
+        send display_main
+      end_procedure
+      procedure go_today
+        local date date#
+        sysdate4 date#
+        set p_current_date to date#
+        send display_main
+      end_procedure
+      property integer invoking_object_id public 0
+      procedure OnChange date date#
+        local integer focus# dm#
+        get invoking_object_id to focus#
+        if focus# gt desktop begin
+          get delegation_mode of focus# to dm#
+          set delegation_mode of focus# to no_delegate_or_error
+          send NotifyPopupCalendarChange to focus# date#
+          set delegation_mode of focus# to dm#
+        end
+      end_procedure
+      procedure display
+        local integer date# month# year#
+        get p_current_date to date#
+        send OnChange date#
+        move (DateSegment(date#,DS_YEAR)) to year#
+        move (DateSegment(date#,DS_MONTH)) to month#
+        if (p_current_year(current_object)<>year# or p_current_month(current_object)<>month#) begin
+          set p_current_year to year#
+          set p_current_month to month#
+          set value to (t.calendar.calendar_popup+", "+MonthName(month#))
+          send display to (textbox_year(cont3d(current_object)))
+          send display to (weeknumber_header(cont3d(current_object)))
+          send display to (days_grid(cont3d(current_object))) 0
+        end
+      end_procedure
+      procedure display_main
+        send display
+        send display to (days_grid(cont3d(current_object))) 1
+      end_procedure
+      procedure popup_no_export
+        set pExportState to false
+        send popup
+        set pExportState to true
+      end_procedure
+
+      procedure popup_group
+        local integer focus#
+        local date date#
+        move (focus(desktop)) to focus#
+        set invoking_object_id to focus#
+        get value of focus# item current to date#
+        ifnot (integer(date#)) move (dSysdate()) to date#
+        move (Date2to4(date#)) to date#
+        set p_current_date to date#
+        send display
+        forward send popup_group
+        send display to (days_grid(cont3d(current_object))) 1
+      end_procedure
+
+      procedure move_value_out
+        local integer focus# dm# margin# datatype#
+        if (pExportState(current_object)) begin
+          get invoking_object_id to focus#
+          if focus# gt desktop begin
+            get delegation_mode of focus# to dm#
+            set delegation_mode of focus# to no_delegate_or_error
+            send NotifyPopupCalendarSelect to focus# (p_current_date(current_object))
+            get form_margin of focus# item current to margin#
+            get form_datatype of focus# item current to datatype#
+            set delegation_mode of focus# to dm#
+            if (margin#>=10 or datatype#=mask_date_window or datatype#=date_window) set value of focus# item current to (p_current_date(current_object))
+            else             set value of focus# item current to (Date4to2(p_current_date(current_object)))
+            set item_changed_state of focus# item current to true
+          end
+        end
+      end_procedure
+
+      procedure move_value_out_ok
+        send move_value_out
+        send deactivate
+      end_procedure
+
+      procedure request_popup
+        local integer focus# type# dm#
+        move (focus(desktop)) to focus#
+        if focus# gt desktop begin
+          get delegation_mode of focus# to dm#
+          set delegation_mode of focus# to no_delegate_or_error
+          get form_datatype of focus# item current to type#
+          if (type#=date_window or type#=mask_date_window) send popup
+          set delegation_mode of focus# to dm#
+        end
+      end_procedure
+    end_object
+  end_desktop_section
+  // If the procedure below was not defined "for BaseClass" its symbolic
+  // substitute would become negative (because located on the desktop). This
+  // would result in the toolbar object not being able to handle it. Therefore:
+  procedure request_popup_calendar for BaseClass
+    send request_popup to (popup_calendar(current_object))
+  end_procedure
+  procedure popup_calendar_no_export
+    send popup_no_export to (popup_calendar(current_object))
+  end_procedure
+  register_procedure Add_Toolbar_Button_Bitmap string bmp# string Tip# string StHlp# integer msg# integer obj#
+  procedure Add_Calendar_tbButton integer oTb#
+    send Add_Toolbar_Button_Bitmap to oTb# "DfCalend.bmp" t.calendar.calendar_popup t.calendar.Activate msg_request_popup_calendar
+  end_procedure
+ #ELSE // Character mode
+  define color.button           for 112 // Black on grey
+  define color.button_highlight for 122 // Green on grey
+/popup_calendar.hdr
+…ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕª
+/popup_calendar.btn1
+∫   _ ____ _   _ ___________ _    ∫
+/popup_calendar.wkday
+∫ƒƒƒƒ¬ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ∫
+∫____≥___ ___ ___ ___ ___ ___ ___ ∫
+/popup_calendar.wknumber
+∫ _. ≥
+∫ _. ≥
+∫ _. ≥
+∫ _. ≥
+∫ _. ≥
+∫ _. ≥
+/popup_calendar.days
+ _.  _.  _.  _.  _.  _.  _. ∫
+ _.  _.  _.  _.  _.  _.  _. ∫
+ _.  _.  _.  _.  _.  _.  _. ∫
+ _.  _.  _.  _.  _.  _.  _. ∫
+ _.  _.  _.  _.  _.  _.  _. ∫
+ _.  _.  _.  _.  _.  _.  _. ∫
+/popup_calendar.btn2
+∫                                 ∫
+∫       ____________ ____________ ∫
+»ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕº
+/*
+  use Allentry
+  class MovableClient is a client
+    procedure construct_object integer img#
+      forward send construct_object img#
+      send Define_Movable_Client_Support
+      send Define_Auto_Locate
+      set auto_locate_state to true
+      set allow_move_state to true
+    end_procedure
+    import_class_protocol Movable_Client_Mixin
+    import_class_protocol Auto_Locate_Mixin
+  end_class
+
+  object popup_calendar is a MovableClient popup_calendar.hdr
+    set popup_state to true
+    set scope_state to true
+    set block_mouse_state to true
+    property date    p_current_date  public 0
+    property integer p_current_year  public -1
+    property integer p_current_month public -1
+    property integer pExportState    public 1
+
+    on_key key_ctrl+key_pgup send prev_year
+    on_key key_ctrl+key_pgdn send next_year
+    on_key          key_pgup send prev_month
+    on_key          key_pgdn send next_month
+    on_key key_ctrl+key_d    send go_today
+    on_key kcancel           send close_calendar
+    on_key ksave_record      send move_value_out_ok
+    object btn1 is a button popup_calendar.btn1
+      set location to 1 0 relative
+      set focus_mode to pointer_only
+      item_list
+        on_item "" send prev_year
+        on_item ""  send none
+        on_item "" send next_year
+        on_item "" send prev_month
+        on_item ""  send none
+        on_item "" send next_month
+      end_item_list
+      set center_state item 1 to true
+      set center_state item 4 to true
+      set shadow_state item 1 to true
+      set shadow_state item 4 to true
+      procedure display_date
+        local date date#
+        get p_current_date to date#
+        set value item 1 to (DateSegment(date#,DS_YEAR))
+        set value item 4 to (MonthName(DateSegment(date#,DS_MONTH)))
+      end_procedure
+    end_object
+    object wkday is a button popup_calendar.wkday
+      set location to 2 0 relative
+      set focus_mode to pointer_only
+      item_list
+        repeat_item 8 times "" send none
+      end_item_list
+      procedure initialize
+        local integer day#
+        set value item 0 to t.calendar.week
+        set shadow_state item 0 to true
+        for day# from 1 to 7
+          set value item day# to (DayName(day#))
+          set shadow_state item day# to true
+        loop
+      end_procedure
+      send initialize
+    end_object
+    object wknumber is a button popup_calendar.wknumber
+      set location to 4 0 relative
+      set focus_mode to pointer_only
+      item_list
+        repeat_item 6 times "" send none
+      end_item_list
+      procedure display_date
+        local integer itm#
+        local date date# last_date#
+        get p_current_date to date#
+        move (FirstDayInMonth(date#)) to date#
+        move (LastDayInMonth(date#)) to last_date#
+        move (date#-DateDayNumber(date#)+1) to date#
+        for itm# from 0 to 5
+          if (itm#*7+date#) le last_date# ;
+            set value item itm# to (DateWeekNumber(itm#*7+date#))
+          else set value item itm# to ""
+          set shadow_state item itm# to true
+        loop
+      end_procedure
+    end_object
+    object days is a button popup_calendar.days
+      set auto_top_item_state to false
+      set location to 4 6 relative
+      on_key knext_item send switch
+      on_key kprevious_item send switch_back
+      on_key kuparrow send prev_week
+      on_key kdownarrow send next_week
+      on_key kleftarrow send prev_day
+      on_key krightarrow send next_day
+      on_key kenter send move_value_out_ok
+      procedure set item
+      end_procedure
+      item_list
+        repeat_item 42 times "" send none
+      end_item_list
+      procedure fill_list
+        local integer itm# weekday# first_itm# last_itm#
+        local date date# aux_date#
+        get p_current_date to date#
+        move (FirstDayInMonth(date#)) to aux_date#
+        move (DateDayNumber(aux_date#)) to weekday#
+        move (weekday#-1) to first_itm#
+        move (LastDayInMonth(date#)-aux_date#+first_itm#) to last_itm#
+        for itm# from 0 to 41
+          if (itm#<first_itm# or itm#>last_itm#) set value item itm# to ""
+          else set value item itm# to (itm#-first_itm#+1)
+        loop
+      end_procedure
+      procedure display_date
+        local integer weekday#
+        local date date# first_date#
+        get p_current_date to date#
+        move (FirstDayInMonth(date#)) to first_date#
+        move (DateDayNumber(first_date#)) to weekday#
+        set current_item to (date#-first_date#+weekday#-1)
+      end_procedure
+      // Prevent navigation to non existing dates:
+      procedure item_change integer from# integer to# returns integer
+        local integer day#
+        get value item to# to day#
+        if day# eq 0 procedure_return from#
+        set p_current_date to (DateCompose(day#,p_current_month(current_object),p_current_year(current_object)))
+        set window_color item from# to 1
+        procedure_return to#
+      end_function
+      procedure set highlight_state integer select_cursor_on#
+        local integer itm#
+        forward set highlight_state to select_cursor_on#
+        get current_item to itm#
+        set window_color item itm# to (if(select_cursor_on#,color.button_highlight,1))
+      end_procedure
+      procedure exiting
+        set window_color item (current_item(current_object)) to color.button
+      end_procedure
+    end_object
+    object btn2 is a button popup_calendar.btn2
+      set location to 10 0 relative
+      item_list
+        on_item t.calendar.ok send move_value_out_ok
+        on_item t.calendar.cancel send close_calendar
+      end_item_list
+      set center_state item 0 to true
+      set center_state item 1 to true
+      set window_color item 0 to color.button
+      set window_color item 1 to color.button
+      procedure set highlight_state integer select_cursor_on#
+        local integer curitem#
+        forward set highlight_state to select_cursor_on#
+        get current_item to curitem#
+        set window_color item curitem# to (if(select_cursor_on#,color.button_highlight,color.button))
+      end_procedure
+    end_object
+    procedure display_main
+      local integer date# month# year# focus# dm#
+      get p_current_date to date#
+      move (DateSegment(date#,DS_YEAR)) to year#
+      move (DateSegment(date#,DS_MONTH)) to month#
+      if (p_current_year(current_object)<>year# or p_current_month(current_object)<>month#) begin
+        set p_current_year to year#
+        set p_current_month to month#
+        send fill_list to (days(current_object))
+      end
+      send display_date to (btn1(current_object))
+      send display_date to (wknumber(current_object))
+      send display_date to (days(current_object))
+
+      get invoking_object_id to focus#
+      if focus# gt desktop begin
+        get delegation_mode of focus# to dm#
+        set delegation_mode of focus# to no_delegate_or_error
+        send NotifyPopupCalendarChange to focus# date#
+        set delegation_mode of focus# to dm#
+      end
+    end_procedure
+    procedure next_year
+      set p_current_date to (DateIncrement(p_current_date(current_object),DS_YEAR,1))
+      send display_main
+    end_procedure
+    procedure prev_year
+      set p_current_date to (DateIncrement(p_current_date(current_object),DS_YEAR,-1))
+      send display_main
+    end_procedure
+    procedure next_month
+      set p_current_date to (DateIncrement(p_current_date(current_object),DS_MONTH,1))
+      send display_main
+    end_procedure
+    procedure prev_month
+      set p_current_date to (DateIncrement(p_current_date(current_object),DS_MONTH,-1))
+      send display_main
+    end_procedure
+    procedure next_week
+      set p_current_date to (DateIncrement(p_current_date(current_object),DS_WEEK,1))
+      send display_main
+    end_procedure
+    procedure prev_week
+      set p_current_date to (DateIncrement(p_current_date(current_object),DS_WEEK,-1))
+      send display_main
+    end_procedure
+    procedure next_day
+      set p_current_date to (DateIncrement(p_current_date(current_object),DS_DAY,1))
+      send display_main
+    end_procedure
+    procedure prev_day
+      set p_current_date to (DateIncrement(p_current_date(current_object),DS_DAY,-1))
+      send display_main
+    end_procedure
+    procedure go_today
+      local date date#
+      sysdate4 date#
+      set p_current_date to date#
+      send display_main
+    end_procedure
+
+    property integer invoking_object_id public 0
+    procedure move_value_out
+      local integer focus# dm#
+      if (pExportState(current_object)) begin
+        get invoking_object_id to focus#
+        if focus# gt desktop begin
+          get delegation_mode of focus# to dm#
+          set delegation_mode of focus# to no_delegate_or_error
+          send NotifyPopupCalendarSelect to focus# (p_current_date(current_object))
+          set delegation_mode of focus# to dm#
+          set value of focus# item current to (p_current_date(current_object))
+          set item_changed_state of focus# item current to true
+        end
+      end
+    end_procedure
+
+    procedure move_value_out_ok
+      send move_value_out
+      send deactivate
+    end_procedure
+
+    procedure popup_no_export
+      set pExportState to false
+      send popup
+      set pExportState to true
+    end_procedure
+
+    procedure popup
+      local integer focus#
+      local date date#
+      move (focus(desktop)) to focus#
+      send Auto_Locate focus#
+      set invoking_object_id to focus#
+      get value of focus# item current to date#
+      ifnot (integer(date#)) move (dSysdate()) to date#
+      set p_current_date to date#
+      send display_main
+      forward send popup
+    end_procedure
+
+    procedure request_popup
+      local integer focus# type# dm# file# field# itm# entry_state#
+      move (focus(desktop)) to focus#
+      if focus# gt desktop begin
+        get delegation_mode of focus# to dm#
+        set delegation_mode of focus# to no_delegate_or_error
+        get current_item of focus# to itm#
+        get data_file of focus# item itm# to file#
+        get data_field of focus# item itm# to field#
+        get entry_state of focus# item itm# to entry_state# // Does not work!
+        set delegation_mode of focus# to dm#
+        if (file# and field# and entry_state#) begin
+          get_attribute df_field_type of file# field# to type#
+          if type# eq df_date send popup
+        end
+      end
+    end_procedure
+
+    procedure close_calendar
+      send deactivate
+    end_procedure
+  end_object
+
+  procedure request_popup_calendar
+    send request_popup to (popup_calendar(current_object))
+  end_procedure
+  procedure popup_calendar_no_export
+    send popup_no_export to (popup_calendar(current_object))
+  end_procedure
+ #ENDIF // Character-mode
+ function s.calendar returns integer // Backwards compatible!!
+   function_return (popup_calendar(current_object))
+ end_function
+#ENDIF // DATES_INCLUDE_POPUP
+
+// Karl,
+// Structure is as follows,
+//
+// //put this code in the top portion of the view code or in the program
+// code.
+//
+// Type SystemTime
+//   field SystemTime.iYear As Word
+//   field SystemTime.iMonth As Word
+//   field SystemTime.iDayOfWeek As Word
+//   field SystemTime.iDay As Word
+//   field SystemTime.iHour As Word
+//   field SystemTime.iMinute As Word
+//   field SystemTime.iSecond As Word
+//   field SystemTime.iMilliseconds As Word
+// End_Type
+//
+// external_function GetSystemTime "GetSystemTime" kernel32.dll Pointer lpGST Returns VOID_TYPE
+//
+// //put this code in an onClick or wherever
+// procedure onclick
+//   local integer iRetVal
+//   local string TimeData
+//   local pointer GST
+//
+//   ZeroType SystemTime to TimeData
+//   getAddress from TimeData to GST
+//
+//   move (GetSystemTime(GST)) to iRetVal
+// end_procedure
+//
+// To extract the data from the Structure after calling the function use
+// the getbuff command as follows:
+//
+// getbuff from TimeData as SystemTime.IVAL to var
+//
+// where IVAL is one of the vars such as iYear or iDay, etc.
+//
+// OLIVER NELSON
+//
+//

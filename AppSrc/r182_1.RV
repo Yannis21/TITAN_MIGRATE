@@ -1,0 +1,319 @@
+//AB/ Project r182_1: diakinishs eidon
+//AB/     Object prj is a Report_Project
+//AB/         Set ProjectName to "r182_1: diakinishs eidon"
+//AB/         Set ProjectFileName to "r182_1.RV"
+
+// Project Object Structure
+//   r182_1 is a ReportView
+//     DestRadio is a RadioGroup
+//       WindowRadio is a Radio
+//     ButtonSub1 is a Button
+//     ButtonSub3 is a ButtonSub
+//     prom1WQLReport is a CrystalReportSubsql
+
+// Register all objects
+Register_Object ButtonSub1
+Register_Object ButtonSub3
+Register_Object DestRadio
+Register_Object prom1WQLReport
+Register_Object r182_1
+Register_Object WindowRadio
+
+
+//AB/     Report View
+
+
+    //AB-StoreTopStart
+    
+    Use dfallrpt
+    OPEN COMPANY
+    open codemast
+    
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use DFAllEnt.pkg
+    Use Button.Sub
+
+    //AB-IgnoreEnd
+
+    ACTIVATE_VIEW Activate_r182_1 FOR r182_1
+
+    Object r182_1 is a ReportView
+
+        //AB-StoreTopStart
+        
+        property string     psrecr      public ''
+        Property Integer    piVgalePDF  Public 0
+        Property String     psFilename  Public ""
+        Property String     psPath      Public ""
+        
+        
+        //AB-StoreTopEnd
+
+        Set Label to "Ñ°´Áß‡©û èò®ò©´ò´†°¶Á õ†ò°Â§û©û™"
+        Set Size to 48 191
+        Set Location to 12 28
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object DestRadio is a RadioGroup
+
+            //AB-StoreTopStart
+            
+            //AB-StoreTopEnd
+
+            Set Label to "Ñ°´Áß‡©û"
+            Set Size to 29 49
+            Set Location to 2 1
+            Object WindowRadio is a Radio
+                Set Size to 13 30
+                Set Location to 12 12
+                Set Bitmap to "screen4.bmp"
+            End_Object    // WindowRadio
+
+
+            //AB-StoreStart
+            set visible_state of (destradio(self)) to false
+            //***
+            //*** Procedure: Notify_Select_state
+            //*** Purpose  : Augemented to setup the output destination of the WinQL
+            //***            report. The procedure is sent when the user changes the
+            //***            selection.
+            //***
+            
+            //Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+            //    Forward Send Notify_Select_State  iNewItem  iOldItem
+            //    If iNewItem Eq 0 ;
+                    Set Output_Device_Mode To WQL_PRINT_TO_WINDOW
+            //    Else If iNewItem Eq 1;
+            //        Set Output_Device_Mode To WQL_PRINT_TO_PRINTER
+            //    Else If iNewItem Eq 2 ;
+            //        Set Output_Device_Mode To WQL_PRINT_TO_FILE
+            
+            
+            //    Send AdjustFileTypeShadow (iNewItem < 2)
+            //End_Procedure
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // DestRadio
+
+        Object ButtonSub1 is a Button
+
+            //AB-StoreTopStart
+            
+            //AB-StoreTopEnd
+
+            Set Bitmap to "RUNPROG.BMP"
+            Set Size to 18 29
+            Set Location to 6 55
+
+            //AB-StoreStart
+            
+            Procedure OnClick
+                Integer iPDF iExist
+                String  sFilename sPath sFullPathName sParams sFinal
+            
+                Get piVgalePDF to iPDF
+            
+                If (iPDF=0) Begin
+                    set Report_name         Of prom1WQLReport   To "r182_1.rpt"
+                    Set Output_Device_Mode  Of prom1WQLReport   to PRINT_TO_WINDOW
+                    Set Output_Destination  Of prom1WQLReport   to WQL_PRINT_TO_WINDOW
+                    Send Runprom1report     Of prom1WQLReport
+                End
+                Else Begin
+                    Get psPath                                              to sPath
+                    get psFileName                                          to sFilename
+                    Move (Trim(sPath)+Trim(sFileName)+".rtf")               to sFullPathName
+                    Move (" "+Trim(sPath)+Trim(sFileName)+".PDF -c PDF")    to sParams
+                    Move (Trim(sFullPathName)+sParams)                      to sFinal
+            
+                    Set Output_Device_Mode  Of prom1WQLReport   to PRINT_TO_FILE
+                    Set Output_Destination  Of prom1WQLReport   to WQL_PRINT_TO_FILE
+                    Set Report_name         Of prom1WQLReport   To "r182_1PDF.rpt"
+                    Set ExportFileName      Of prom1WQLReport   to sFullPathName
+                    Set ExportFormatType    Of prom1WQLReport   To WQL_RichTextFormatType //WQL_Xls5Type //WQL_WordWinType
+            
+                    String sProgramToRun
+                    Integer iFileExist
+                    Get Get_File_Exists 'C:\Program Files\TotalDocConverter\DocConverter.exe' to iFileExist
+                    If (iFileExist) Move (Trim('C:\Program Files\TotalDocConverter\DocConverter.exe'))  to sProgramToRun
+                    Else            Move (Trim("C:\TotalDocConverter\DocConverter.exe"))                to sProgramToRun
+            
+                    Send Runprom1report     Of prom1WQLReport
+                    RunProgram Wait sProgramToRun sFinal
+            
+                    File_Exist sFullPathName iExist
+                    If (iExist) EraseFile sFullPathName
+                End
+            
+                //Set piVgalePDF  to 0
+                Set piVgalePDF  to 0
+            
+            End_Procedure
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub1
+
+        Object ButtonSub3 is a ButtonSub
+
+            //AB-StoreTopStart
+                                                                                                                                                                            
+            //AB-StoreTopEnd
+
+            Set Bitmap to "CANCEL.BMP"
+            Set Size to 18 29
+            Set Location to 6 89
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            Procedure OnClick
+                Send Request_Cancel
+            End_Procedure
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub3
+
+
+        //AB-StoreStart
+                
+                
+        Object prom1WQLReport Is A CrystalReportSubsql
+        
+        
+            Property Integer ReportReady Public False
+        
+            Set Report_View_id To (Parent(Current_object))
+        
+        //    set Report_name    To "r182_1.rpt"
+        
+        
+            Procedure OnStartPrinting
+                Local String  Selection FileName lsdate wrecr smodule safm sdoy saddr scompany
+                Local Integer FileType Destination SortOrder NumSortFields
+                Local Integer CurSortField
+                Local Integer SortDirection
+                Move "" To Selection
+                move '09' to smodule
+                get psrecr to wrecr
+        
+                 Append Selection (If(Selection <> "", " and ", "")) "{TMPANAL.PRODUCT} = "  '"' (Trim(wrecr)) '"'
+                //*** Setup the selection formula
+               //  Append Selection (If(Selection <> "", " and ", "")) "{wcmoves.module_from} = "  '"' (Trim(smodule)) '"'
+                  Set SelectionFormula To Selection
+                  Get NSortFields To NumSortFields
+        
+                  For CurSortField From 0 To (NumSortFields - 1)
+                    Send DeleteNthSortField 0
+                  Loop
+        
+                  CLEAR company
+                  move syscurxr.company_code to company.company_code
+                  find eq company by index.1
+                  move (trim(company.company_name))  to scompany
+                  move (trim(company.company_afm))   to safm
+                  move (trim(company.company_addr))  to saddr
+        
+                  clear codemast
+                  move 'DOY' to codemast.type
+                  move (trim(company.company_doy))   to codemast.code
+                  find eq codemast by index.1
+                  move (trim(codemast.description))   to sdoy
+        
+        
+                  Set Formula "fcompany"    to (winql_string(scompany))
+                  Set Formula "fafm"        to (winql_string(safm))
+                  Set Formula "fdoy"        to (winql_string(sdoy))
+                  Set Formula "faddr"       to (winql_string(saddr))
+        
+        
+                If Selection Eq "" ;
+                    Set Formula "SelTxt" To ('"' + "NONE" + '"')
+                Else ;
+                    Set Formula "SelTxt" To ('"' + (Replaces('"', Selection, "")) + '"')
+        
+                /////move WQL_PRINT_TO_WINDOW to destination
+        
+                If Destination EQ WQL_PRINT_TO_WINDOW ;
+                    Set ReportReady To False
+                Else ;
+                    Set ReportReady To True
+        
+        
+            End_procedure // OnStartPrinting
+        
+        
+            Procedure Runprom1Report
+                Send Cursor_Wait To (Cursor_Control(Current_Object))
+                Send Run_report
+                Send Cursor_Ready To (Cursor_Control(Current_Object))
+                If (ReportReady(Current_object)) ;
+                    Send Info_box "WinQL report ready."
+            End_procedure // RunCustReport
+        
+        End_object // serviceWQLReport
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // r182_1
+
+
+    //AB-StoreStart
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

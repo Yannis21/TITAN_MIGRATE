@@ -1,0 +1,284 @@
+
+// Register all objects
+Register_Object Btnordd_DD
+Register_Object Dofind
+Register_Object Fpa_DD
+Register_Object Item_DD
+Register_Object Units_DD
+Register_Object Witemkat_DD
+Register_Object Witemx_DD
+Register_Object Witemxt_DD
+Register_Object bttemp_DD
+
+//AB-IgnoreStart
+
+Use Bproces.Sub
+Use DFAllEnt.pkg
+use syscurxr.dd
+Use UNITS.DD
+Use WITEMKAT.DD
+Use FPA.DD
+Use ITEM.DD
+Use WITEMX.DD
+Use WITEMXT.DD
+Use Btnemp.dd
+Use BTNORDD.DD
+use v192.vw
+use bttemp.dd
+
+//AB-IgnoreEnd
+
+Object Dofind is a BusinessProcessSub
+
+    //AB-StoreTopStart
+
+    Property    Integer piError     Public  0
+    property    integer piTxtID     public  0
+    property    integer piLathos    public  0
+
+    Property    Date    pdHmnia     Public ''
+
+    Property    String  psClient    Public ''
+    Property    String  psErgo      Public ''
+    property    string  dateapo     public ''
+    property    string  dateeos     public ''
+    property    string  pspar       public ''
+    property    string  psmodule    public ''
+    Open SysCurXr
+
+    Set Status_Panel_State  to False
+    Set Display_Error_State to True
+
+    //AB-StoreTopEnd
+
+    Set Size to 82 140
+    Set Location to 72 182
+
+    //AB-DDOStart
+
+    object bttemp_DD is a bttemp_DataDictionary
+    End_Object    // bttemp_DD
+
+
+    object Units_DD is a Units_DataDictionary
+       Set read_only_state to true
+    End_Object    // Units_DD
+
+    Object Witemkat_DD is a Witemkat_DataDictionary
+      Set read_only_state to true
+    End_Object    // Witemkat_DD
+
+    Object Fpa_DD is a Fpa_DataDictionary
+      Set read_only_state to true
+    End_Object    // Fpa_DD
+
+    Object Item_DD is a Item_DataDictionary
+        Set DDO_Server to (Units_DD(self))
+        Set DDO_Server to (Witemkat_DD(self))
+        Set DDO_Server to (Fpa_DD(self))
+        Set read_only_state to true
+    End_Object    // Item_DD
+
+    Object Witemx_DD is a Witemx_DataDictionary
+        Set DDO_Server to (Item_DD(self))
+        Set read_only_state to true
+    End_Object    // Witemx_DD
+
+    Object Witemxt_DD is a Witemxt_DataDictionary
+        Set DDO_Server to (Witemx_DD(self))
+        Set read_only_state to true
+        Set Constrain_File to Witemx.File_Number
+    End_Object    // Witemxt_DD
+
+
+    Object Btnemp_DD is a Btnemp_DataDictionary
+        begin_constraints
+           string datefrom# dateto# spar  smodule
+           get dateapo  to datefrom#
+           get dateeos  to dateto#
+           get pspar    to spar
+           get psmodule to smodule
+           constrain btnemp.vcompany   eq syscurxr.company_code
+           constrain btnemp.vsiteemf   eq syscurxr.branch_site
+           If (smodule='01') constrain btnemp.ap eq '1' //Polhseis
+           Else If (sModule='02') constrain btnemp.ap eq '2' //agores
+
+           if (datefrom# <> '') begin
+              constrain btnemp.vdate      ge datefrom#
+           end
+
+           if (dateto# <> '') begin
+              constrain btnemp.vdate      le dateto#
+           end
+
+           constrain btnemp.pms_recr   eq "0"
+
+           if (spar <> '') constrain btnemp.vvoucher eq spar
+        end_constraints
+    End_Object
+
+    Object Btnordd_DD is a Btnordd_DataDictionary
+      Set read_only_state to true
+    End_Object    // Btnordd_DD
+
+
+    //AB-DDOEnd
+
+
+    //AB-StoreStart
+
+    Procedure Start_Processing
+     String  sBtnl1Recr sVitem sVorderBt sUnitsCode sWitemkatCode sItemCode sWitemxCode svclient svcn
+     String  sseries sel sergo spar
+     Number  nPrice nqty nelqty neltimhmon nsn nrow
+     Date    dHmnia darxh ddate
+     integer ierr irecnum imustchekeleiph ifirst ivsn
+     reread sysfile
+     unlock
+
+     Send Clear to Btnemp_DD
+     Send rebuild_constraints to (btnemp_DD(Current_Object))
+     Send Find  to (btnemp_dd(current_object)) FIRST_Record 10
+     While (found = 1)
+            move 0 to nprice
+            Get Field_Current_Value Of Btnemp_DD Field Btnemp.vclientcode to svclient
+            Get Field_Current_Value Of Btnemp_dd Field Btnemp.vprodcode   to sVitem
+            Get Field_Current_Value Of Btnemp_DD Field Btnemp.vconscode   to svcn
+            Get Field_Current_Value Of Btnemp_DD Field Btnemp.vdate       to darxh
+            Get Field_Current_Value Of Btnemp_DD Field Btnemp.vseries     to sseries
+            Get Field_Current_Value Of Btnemp_DD Field Btnemp.vsn         to ivsn
+            move (trim(svclient))   to svclient
+            move (trim(svcn))       to svcn
+            move (trim(svitem))     to svitem
+
+            clear btnordd
+            move svclient   to btnordd.vclient_id
+            move svcn       to btnordd.vcn_code
+            move svitem     to btnordd.vitem
+            move 0          to btnordd.vactive
+            move darxh      to btnordd.arxh_date
+            find le btnordd by index.4//client_id+cn_code+item+arxh_date
+            if ((found=1) and (svitem=btnordd.vitem) and (darxh ge btnordd.arxh_date) and (darxh le btnordd.deop_date) and (btnordd.vactive=0) and (svcn=btnordd.vcn_code)) begin
+               move btnordd.vprice to nprice
+               if (nprice) begin
+                   reread btnemp
+                   Move nPrice to Btnemp.vorderprice
+                   Move btnordd.vorderbt to btnemp.offer_id
+                   saverecord Btnemp
+                   Send UpdateWait to (piTxtID(Self))  ('Ñ§û£‚®‡©û í†£„™ AßÊ ÉÑéè '+(String(Btnemp.Recnum)))
+                   unlock
+                   move 1 to ierr
+               End
+               clear item
+               move svitem to item.item_code
+               find eq item by index.5
+               if ((found=1) and (item.group=1)) begin
+                  if (btnemp.nopagio<>1) begin
+                    reread btnemp
+                    move btnordd.vpagiaxrm3 to btnemp.vqty2
+                    saverecord btnemp
+                    unlock
+                  end
+                  else begin
+                    reread btnemp
+                    move 0 to btnemp.vqty2
+                    saverecord btnemp
+                    unlock
+                  end
+               end
+            End
+            else begin
+               reread btnemp
+               move 0 to btnemp.vorderprice
+               saverecord btnemp
+               unlock
+            end
+
+            if (sysfile.enhm_witemxt=1) begin
+                if (found = 0 or nprice = 0) Begin
+                    if (ierr <> 1) begin
+                        Get Field_Current_Value Of Btnemp_DD Field Btnemp.vprodcode   to sWitemxCode
+                        Send Clear to Witemx_DD
+                        Move SysCurXr.Company_Code      to Witemx.Company_Code
+                        Move SysCurXr.Branch_Code       to Witemx.Branch_code
+                        Move SysCurXr.Year_Year         to Witemx.Year_Year
+                        Move (Trim(sWitemxCode  ))      to Witemx.Witemx_Code
+                        Send Find To Witemx_DD eq 5 // C+B+Y+WITEMX_CODE
+                        If (Found=1) Begin
+                            Send Find To Witemxt_DD First_Record 4
+                            If (Not(Found)) Set piError to 50005
+                            While ((Found=1) And (piError(Self)=0))
+                                Get Field_Current_Value Of Witemxt_DD Field Witemxt.Value_Date  to dHmnia
+                                Get Field_Current_Value Of Witemxt_DD Field Witemxt.Axia0       to nPrice
+                                If ((dHmnia>=(pdHmnia(Self))) And (nPrice<>0)) Begin
+                                    reread btnemp
+                                    Move nPrice to Btnemp.vorderprice
+                                    Saverecord Btnemp
+                                    unlock
+                                    Send UpdateWait to (piTxtID(Self))  ('Ñ§û£‚®‡©û í†£„™ AßÊ í†£¶°ò´·¢¶ö¶ Btnemp Record '+(String(Btnemp.Recnum)))
+                                End
+                                Send Find To Witemxt_DD Next_Record 4 // Witemxt:Index.4:witemx_recr+witemxt_rec0
+                            Loop
+                        End
+                        Else Set piError to 50004 // 1)
+                    end
+                    move 0 to ierr
+                    set pierror to 0
+                End
+            end
+            clear bttemp
+            move sseries to bttemp.vseries
+            move ivsn to bttemp.vsn
+            find eq bttemp by index.1
+            if (not(found)) begin
+               move syscurxr.company_code to bttemp.vcompany
+               move syscurxr.branch_site  to bttemp.vsite
+               move (pspar(self))         to bttemp.vparast
+               move sseries to bttemp.vseries
+               move ivsn to bttemp.vsn
+               move nprice to bttemp.vunitprice
+               saverecord bttemp
+            end
+            else begin
+               if (nprice=0) begin
+                  reread bttemp
+                  move nprice to bttemp.vunitprice
+                  saverecord bttemp
+                  unlock
+               end
+            end
+            send Find to Btnemp_DD next_record 10
+     Loop
+     if (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+    Procedure OnProcess
+        Send Start_Processing
+    End_Procedure
+
+    Procedure Start_Process
+         Set piTxtID                         to (Wait(Self))
+         Set Button_State    of (Wait(Self)) to False
+         Set BarVisibleState of (Wait(Self)) to '' False
+         Send Popup                          to (Wait(Self))
+         Set piLathos                        to 0
+         Forward Send Start_Process
+    End_Procedure
+
+    Procedure OnError integer error_info string errMsg
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+    Procedure End_Process
+       Forward Send End_Process
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+    //AB-StoreEnd
+
+End_Object    // DoUpTim0
+
+//AB/ End_Object    // prj

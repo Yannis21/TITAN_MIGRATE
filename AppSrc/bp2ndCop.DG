@@ -1,0 +1,229 @@
+//AB/ Project bp2ndCop
+//AB/     Object prj is a Dialog_Project
+//AB/         Set ProjectName to "bp2ndCop"
+//AB/         Set ProjectFileName to "bp2ndCop.DG"
+//AB/         Set GenerateFileName to "NONAME"
+
+// Project Object Structure
+//   bp2ndCop is a BusinessProcessSub
+//     Ctypkin_DD is a DataDictionary
+//     Country_DD is a DataDictionary
+//     Towns_DD is a DataDictionary
+//     Cities_DD is a DataDictionary
+//     Areas_DD is a DataDictionary
+//     Payresp_DD is a DataDictionary
+//     Clients_DD is a DataDictionary
+//     Cmoves_DD is a DataDictionary
+//     Cmovesa_DD is a DataDictionary
+//     Copen_DD is a DataDictionary
+
+// Register all objects
+Register_Object Areas_DD
+Register_Object bp2ndCop
+Register_Object Cities_DD
+Register_Object Clients_DD
+Register_Object Cmoves_DD
+Register_Object Cmovesa_DD
+Register_Object Copen_DD
+Register_Object Country_DD
+Register_Object Ctypkin_DD
+Register_Object Payresp_DD
+Register_Object Towns_DD
+
+
+    //AB-StoreTopStart
+
+
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use Bproces.Sub
+    Use DFAllEnt.pkg
+
+
+    Use CTYPKIN.DD
+    Use COUNTRY.DD
+    Use TOWNS.DD
+    Use CITIES.DD
+    Use AREAS.DD
+    Use PAYRESP.DD
+    Use CLIENTS.DD
+    Use CMOVES.DD
+    Use CMOVESA.DD
+    Use COPEN.DD
+
+    //AB-IgnoreEnd
+
+    Object bp2ndCop is a BusinessProcessSub
+
+        //AB-StoreTopStart
+
+        Set Status_Panel_State to False
+        //Set Allow_Cancel_State  to True
+        Set Display_Error_State to True
+        //Set Process_Title to "               "
+        //Set Status_Log_id to (status_log(Self)) //Use statlog.pkg
+        //Set Status_log_state to True
+
+        Property String psCopenRecr         Public ''
+        Property String psCmovesRecr        Public ''
+        Property String psCmovesARecr       Public ''
+        Property String psClientRecr        Public ''
+        Property String psMasterCtypkinRecr Public  0
+        Property String psAliasCtypkinRecr  Public  0
+        Property Number pnAxia              Public  0
+        Property Number pnX0                Public  0
+        Property Number pnP0                Public  0
+        Property Integer piLathos           Public  0
+        Property String psModule            Public ''
+
+
+        //AB-StoreTopEnd
+
+        Set Size to 60 100
+        Set Location to 9 16
+
+        //AB-DDOStart
+
+        Object Ctypkin_DD is a Ctypkin_DataDictionary
+        End_Object    // Ctypkin_DD
+
+        Object Country_DD is a Country_DataDictionary
+        End_Object    // Country_DD
+
+        Object Towns_DD is a Towns_DataDictionary
+            Set DDO_Server to (Country_DD(self))
+        End_Object    // Towns_DD
+
+        Object Cities_DD is a Cities_DataDictionary
+            Set DDO_Server to (Towns_DD(self))
+        End_Object    // Cities_DD
+
+        Object Areas_DD is a Areas_DataDictionary
+        End_Object    // Areas_DD
+
+        Object Payresp_DD is a Payresp_DataDictionary
+        End_Object    // Payresp_DD
+
+        Object Clients_DD is a Clients_DataDictionary
+            Set DDO_Server to (Cities_DD(self))
+            Set DDO_Server to (Areas_DD(self))
+            Set DDO_Server to (Payresp_DD(self))
+        End_Object    // Clients_DD
+
+        Object Cmoves_DD is a Cmoves_DataDictionary
+            Set DDO_Server to (Ctypkin_DD(self))
+            Set DDO_Server to (Clients_DD(self))
+            //Set Constrain_File to Clients.File_Number
+            Set piFromBP            to 1
+            Set piNotMoveSyscurXr   to 1
+            Set piFromSysxet        to 1
+            Set piNotMoveSyscurXr   to 1
+        End_Object    // Cmoves_DD
+
+        Object Cmovesa_DD is a Cmovesa_DataDictionary
+            Set DDO_Server to (Ctypkin_DD(self))
+            Set DDO_Server to (Clients_DD(self))
+            //Set Constrain_File to Clients.File_Number
+        End_Object    // Cmovesa_DD
+
+        Object Copen_DD is a Copen_DataDictionary
+            Set DDO_Server          to (Cmoves_DD(self))
+            Set DDO_Server          to (Cmovesa_DD(self))
+            Set Constrain_File      to Cmoves.File_Number
+            Set piFromBP            to 1
+            //Set piNotMoveSyscurXr   to 1
+        End_Object    // Copen_DD
+
+
+        //AB-DDOEnd
+
+
+        //AB-StoreStart
+
+        Procedure Proc_Make_Second_Record
+            String  sCopenRecr sCmovesRecr sCmovesARecr sMasterCtypkinRecr sAliasCtypkinRecr
+            String  sMasterRecr sAliasRecr sClientID sCtypkinCode sClientRecr
+            Number  nX0 nP0 nAxia0
+            Integer iRecnum iCopenRec0 iErr
+
+            Indicate Err False
+            Set piLathos to 0
+
+            Set piFromBP Of Cmoves_DD   to True
+
+            Get psCopenRecr         to sCopenRecr
+            Get psCmovesRecr        to sCmovesRecr
+            Get psCmovesARecr       to sCmovesARecr
+
+            Get psClientRecr        to sClientRecr
+            Get psMasterCtypkinRecr to sMasterCtypkinRecr
+            Get psAliasCtypkinRecr  to sAliasCtypkinRecr
+
+            Get pnAxia              to nAxia0
+            Get pnX0                to nX0
+            Get pnP0                to nP0
+
+            Set piLathos to 0
+
+            If ((Trim(sCopenRecr  )='') Or ;
+                (Trim(sClientRecr )='') Or ;
+                (Trim(sCmovesRecr )='') Or ;
+                (nAxia0=0)              Or ;
+                (Trim(sCmovesARecr)='')) Begin
+                error 60001 'Šœå§¦¬¤ §˜¨á£œ«¨¦  ©«ž¤ bp2ndCop'
+            End
+
+
+            Send Clear to Cmoves_DD
+            Send Clear to CmovesA_DD
+            Send Clear to Copen_DD
+
+
+            // Antistrofh ths arxikhs eggrafhs apo to view tou Copen
+            // Apo Cmoves Recr Header kai CmovesA recr sto detail,
+            // prepei tora to Header na einai to CmovesA recr kai detail to Cmoves
+            Move sCmovesARecr to Cmoves.Cmoves_Recr
+            Send Find to Cmoves_DD Eq 2
+            If (NOT(Found)) error 60003 'ƒœ¤ ™¨å©¡à «ž¤ œšš¨˜­ã Cmoves'
+            // Vriskoume sthn synexeia to 2o mpampa tou Copen dhladh to CmovesA
+            Move sCmovesRecr to CmovesA.Cmoves_Recr
+            Send Find to CmovesA_DD Eq 2
+            If (NOT(Found)) error 60004 'ƒœ¤ ™¨å©¡à «ž¤ œšš¨˜­ã Cmovesa'
+
+            Move sCmovesARecr   to Copen.Cmoves_Recr
+            Move sCmovesRecr    to Copen.CmovesA_Recr
+            Send Find to Copen_DD Eq 5
+
+            Set Field_Changed_Value Of Copen_DD Field Copen.Copen_X0       to nP0
+            Set Field_Changed_Value Of Copen_DD Field Copen.Copen_P0       to nX0
+            Set Field_Changed_Value Of Copen_DD Field Copen.Copen_Axia0    to nAxia0
+            Set Field_Changed_Value Of Copen_DD Field Copen.Copen_M_Code   to (Trim(psModule(Self)))
+
+            Send Request_Save to Copen_DD
+
+        End_Procedure
+
+
+        Procedure OnProcess
+            Send Proc_Make_Second_Record
+        End_Procedure
+
+        Procedure OnError integer error_info string errMsg
+        End_Procedure
+
+        Procedure Start_Process
+            Forward Send Start_Process
+        End_Procedure
+
+        Procedure End_Process
+            Forward Send End_Process
+        End_Procedure
+
+
+        //AB-StoreEnd
+
+    End_Object    // bp2ndCop
+
+//AB/     End_Object    // prj

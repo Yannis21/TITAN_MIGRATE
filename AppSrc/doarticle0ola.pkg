@@ -1,0 +1,588 @@
+
+        use ctypkin.dd
+        use wtypkin.dd
+        use ptyppar.dd
+        use payresp.dd
+        use ptypmet.dd
+        use areas.dd
+        use country.dd
+        use towns.dd
+        use cities.dd
+        use clients.dd
+        use nomisma.dd
+        use wapokat.dd
+        use wapomast.dd
+        use wax.dd
+        use units.dd
+        use witemkat.dd
+        use fpa.dd
+        use item.dd
+        use iteml.dd
+        use witemx.dd
+        Use particle.dd
+        use pmoves.dd
+        open cn
+        use psxetika.dd
+        use syscurxr.dd
+        use pmovesl.dd
+        use v014.vw
+        use particll.dd
+//        use pmssxet.dd
+
+      Object oDoarticle0ola is A BusinessProcessSub
+        set Status_panel_state to false
+        set Display_Error_state to true
+        property string    precr         public ''
+        property string    psdate        public ''
+        property string    psclient      public ''
+        property string    pscons        public ''
+        property string    psvdate       public ''
+        property string    pstim         public ''
+        property string    psparast      public ''
+        property string    psseira       public ''
+        property integer   pino          public 0
+        property string    psmodule      public ''
+        property string    psnomisma     public ''
+        property integer   piTxtID       public 0
+        property integer   piLathos      public 0
+        Property Integer   piNoSysxet    public 0
+        property integer   pianal        public 0
+        property string    psoparast     public ''
+        property integer   piola         public 0
+        property string    pstxt         public ''
+        property integer   piflag        public 0
+        property integer   pione         public 0
+
+        Object pmovesl is a pmovesl_DataDictionary
+        End_Object    // pmovesl
+
+        Object Country_DD is a Country_DataDictionary
+        End_Object    // Country_DD
+
+        Object Towns_DD is a Towns_DataDictionary
+           Set DDO_Server to (Country_DD(self))
+        End_Object    // Towns_DD
+
+        Object Cities_DD is a Cities_DataDictionary
+           Set DDO_Server to (Towns_DD(self))
+        End_Object    // Cities_DD
+
+
+        Object Areas_DD is a Areas_DataDictionary
+        End_Object    // Areas_DD
+
+
+        Object syscurxr_DD is a syscurxr_DataDictionary
+        End_Object
+
+
+        Object Ctypkin_DD is a Ctypkin_DataDictionary
+        End_Object
+
+
+        Object Wtypkin_DD is a Wtypkin_DataDictionary
+        End_Object
+
+        Object Ptyppar_DD is a Ptyppar_DataDictionary
+          Set DDO_Server to (Ctypkin_DD(self))
+          Set DDO_Server to (Wtypkin_DD(self))
+          Set piMustNotConstrain to 1
+        End_Object
+
+        Object Ptypmet_DD is a Ptypmet_DataDictionary
+        end_object
+
+        Object Payresp_DD is a Payresp_DataDictionary
+        End_Object
+
+        Object Clients_DD is a Clients_DataDictionary
+          Set DDO_Server to (Cities_DD(self))
+          Set DDO_Server to (payresp_DD(self))
+          Set DDO_Server to (Areas_DD(self))
+        End_Object
+
+        Object Nomisma_DD is a Nomisma_DataDictionary
+        End_Object
+
+        Object Wapokat_DD is a Wapokat_DataDictionary
+        End_Object    // Wapokat_DD
+
+        Object Wapomast_DD is a Wapomast_DataDictionary
+           Set DDO_Server to (Wapokat_DD(self))
+        End_Object    // Wapomast_DD
+
+        Object Wax_DD is a Wax_DataDictionary
+           Set DDO_Server to (Wapomast_DD(self))
+        End_Object    // Wax_DD
+
+        Object Units_DD is a Units_DataDictionary
+        End_Object    // Units_DD
+
+        Object Witemkat_DD is a Witemkat_DataDictionary
+        End_Object    // Witemkat_DD
+
+        Object Fpa_DD is a Fpa_DataDictionary
+        End_Object
+
+        Object iteml_DD is a iteml_DataDictionary
+        End_Object
+
+
+        Object Item_DD is a Item_DataDictionary
+          Set DDO_Server to (Units_DD(self))
+          Set DDO_Server to (Witemkat_DD(self))
+          Set DDO_Server to (Fpa_DD(self))
+        End_Object    // Item_DD
+
+        Object Witemx_DD is a Witemx_DataDictionary
+          Set DDO_Server to (Item_DD(self))
+        End_Object    // Witemx_DD
+
+        Object Particle_DD is a Particle_DataDictionary
+          Set DDO_Server to (Clients_DD(self))
+          Set DDO_Server to (Ptyppar_DD(self))
+          Set DDO_Server to (Nomisma_DD(self))
+        End_Object    // Particle_DD
+
+        Object Particll_DD is a Particll_DataDictionary
+        End_Object    // Particll_DD
+
+
+        Object Pmoves_DD is a Pmoves_DataDictionary
+          Set DDO_Server to (Wax_DD(self))
+          Set DDO_Server to (Witemx_DD(self))
+          Set DDO_Server to (Particle_DD(self))
+          Set Constrain_File to Particle.File_Number
+        End_Object
+
+
+
+        Object Psxetika_DD is a Psxetika_DataDictionary
+          Set DDO_Server to (Particle_DD(self))
+          Set Constrain_File to Particle.File_Number
+        End_Object    // Psxetika_DD
+
+
+PROCEDURE beg_uparticle00 string lsclient string lscons string lsparast string lsvdate string lsoparast
+          set psdate    to lsvdate
+          set psclient  to lsclient
+          set pscons    to lscons
+          set psparast  to lsparast
+          set psoparast to lsoparast
+          SEND DOPROCESS
+END_PROCEDURE
+
+Procedure uparticle00_rec
+    Local Integer  listatus vsn ierror iNoSysxet lathos icount ianal sxpartlno iflag  ILOGIN
+    date    lsdate  apodat lsvdate ddate sxdate
+    local number  lnqty lntotal ino lnaxia lnItemVatPCT  nParakratPct nParakratPoso iqty nhour nmin
+    local number  ntotal sxqty nPosothta lnpagiam3 lncpagiam3 lnqty2 qtypag qtyitem
+    local string  lssite lsclient lscons lsprod wrecr lstim lsparast particlerecr partlrecr
+    local string  pmovesrecr lsmodule lsseira snomisma  ptypparrecr switemx owitemx oparast
+    local string  swax owax arxrecr sxclient sxparast sxseira partllrecr slogin lspclient
+    local string  sptyppar sseira msgstr szone scar spump soldptyppar
+    local integer igroup iind igrp ierr ione ipartlno IstatusE
+
+        // js 19/07/2002
+        // Dhmioyrgia sxetikon eggrafon (Psxetika) kato apo proypotheseis
+        // exei prostethei ena checkbox epiloghs sto view tou metasxhmatismou (v014.vw)
+        // oste na dothei h dynatothta 'aplhs' antigrafhs parastatikon kai oxi
+        // ypoxreotikhs sysxetishs, an tsekaristei to sygkekrimeno checkbox.
+    Get piNoSysxet      to iNoSysxet
+    get pianal          to ianal
+    get pione           to ione
+    send clear          to particle_dd
+    send clear          to pmoves_dd
+//    send clear          to pmssxet_dd
+    move 0              to listatus
+
+    get psdate          to lsdate
+    get psclient        to lsclient
+    get pscons          to lscons
+    get psparast        to lsparast
+    get psseira         to lsseira
+    get pino            to ino
+
+    get psmodule        to lsmodule
+    get psoparast       to oparast
+    get piflag          to iflag
+    move 0 to lathos
+ /////////////////////////////////////////////////
+    Set piFromMetasx Of Pmoves_DD to True
+
+//    reread
+//    unlock
+    send clear to ptyppar_dd
+    move syscurxr.company_code           to ptyppar.company_code
+    move syscurxr.branch_code            to ptyppar.branch_code
+ //   move syscurxr.year_year              to ptyppar.year_year
+
+    move oparast                         to ptyppar.ptyppar_code
+    send find to ptyppar_dd eq 1
+    if (not(found)) error 9012 "ƒœ¤ ™¨âŸ¡œ «¦ §˜¨˜©«˜« ¡æ"
+    get field_current_value of ptyppar_dd field ptyppar.ptyppar_recr to  soldptyppar
+    send clear to nomisma_dd
+    move syscurxr.c_code0 to nomisma.nomisma_code
+    send find to nomisma_dd eq 1
+    if (not(found))  error 9013 "ƒœ¤ ™¨âŸ¡œ «¦ ¤æ£ ©£˜"
+
+    move lsclient  to clients.client_id
+    send find to clients_dd eq 6
+    if (not(found)) error 9014 "ƒœ¤ ™¨âŸ¡œ ¦ ­¦¨â˜ª"
+    get field_current_value of clients_dd field clients.client_ptyppar to sptyppar
+    get field_current_value of clients_dd field clients.client_seira   to sseira
+    if (ione=1)  begin
+        move lsparast                     to sptyppar
+        move lsseira                      to sseira
+    end
+    send clear to ptyppar_dd
+    move syscurxr.company_code           to ptyppar.company_code
+    move syscurxr.branch_code            to ptyppar.branch_code
+    move syscurxr.year_year              to ptyppar.year_year
+    move sptyppar                        to ptyppar.ptyppar_code
+    send find to ptyppar_dd eq 1
+    if (not(found)) begin
+        if (ione=1)  move  "€¤ç§˜¨¡«¦ §˜¨˜©«˜« ¡æ" to msgstr
+        else begin
+            move  "€¤ç§˜¨¡«¦ §˜¨˜©«˜« ¡æ ©«¦¤ §œ¢á« = " to msgstr
+            append msgstr lsclient
+        end
+        error 6213 msgstr
+    end
+
+    /// gts 02/04/07 ¢¦šà §¦¢¢é¤ §¨¦™¢£á«à¤ £œ «¦¬ª £œ«˜©®£˜« ©£¦çª œ¤œ¨š¦§¦ ¦ç£œ «¦ PTYPMET
+    ///  ©œ «  £§¦¨œå ¤˜ £œ«˜©®£˜« ©Ÿœå!!!!
+    // ¨¦©Ÿ¡ Yannis 25/04/2007 §˜¨˜£œ«¨ ¡˜ ˜§¦ sysfile. „®œ  £§œ  ¡˜  ©«¦ view «¦¬ Sysfile
+    // œ¤˜ checkbox "„¢œš®¦ª ©«¦¬ª £œ«˜©®£˜« ©£¦çª".
+    If (Trim(Sysfile.Check_Article)='1') Begin
+        clear ptypmet
+        move soldptyppar to ptypmet.ptyppar_recr
+        find ge ptypmet by index.1
+        While ((found)  and (ptypmet.ptyppar_recr=soldptyppar))
+            if (ptypmet.se_ptyppar_code eq sptyppar) move 1 to lathos
+            find gt ptypmet by index.1
+        loop
+        if (lathos=0) error 9003 "ƒœ¤ â®œ  ¦¨ ©«œå §àª ¦ ˜¨® ¡á œ§ ¢œš£â¤¦ª «ç§¦ª §˜¨˜©«˜« ¡¦ç\n£§¦¨œå ¤˜ £œ«˜©®£˜« ©«œå ©œ ˜¬«æ¤ §¦¬ œ§ ¢â¥˜«œ"
+    End
+
+
+
+    // js 01/04/2003
+    String ssCode ssRecr
+
+    if (lscons ne "") begin
+        Clear  Cn
+        move lsclient  to cn.client_id
+        move lscons    to cn.cn_code
+        find eq Cn by index.4
+        if (not(found))  error 9015 "ƒœ¤ ™¨âŸ¡œ «¦ â¨š¦"
+        move Cn.Cn_Code to ssCode
+        move Cn.Cn_Recr to ssRecr
+        set field_changed_value of particle_dd field particle.cn_code to ssCode
+        set field_changed_value of particle_dd field particle.cn_recr to ssRecr
+    end
+
+
+    if (sseira='') begin
+        move 'ƒœ¤ ™¨âŸ¡œ ©œ ¨á ©«æ¤ §œ¢á« = ' to msgstr
+        append msgstr lsclient
+        error 6214 msgstr
+    end
+       clear pseira
+       move syscurxr.company_code           to pseira.company_code
+       move syscurxr.branch_code            to pseira.branch_code
+       move sptyppar                        to pseira.ptyppar_code
+       move sseira                          to pseira.pseira_seira
+       find eq pseira by index.1
+       if (found) begin
+          if (pseira.pseira_form <> '') begin
+             move pseira.pseira_form to sseira
+             set field_changed_value of particle_dd field particle.pseira_seira to sseira
+          end
+          else set field_changed_value of particle_dd field particle.pseira_seira to sseira
+       end
+       else set field_changed_value of particle_dd field particle.pseira_seira to sseira
+
+
+
+//    else set field_changed_value of particle_dd field particle.pseira_seira to sseira
+    set field_changed_value of particle_dd field particle.partl_no     to ino
+    set field_changed_value of particle_dd field particle.partl_hmnia  to lsdate
+    SysDate4 dDate nHour nMin
+    Move (nHour+(nMin/100)) to nTotal
+    Set Field_changed_Value of particle_dd field particle.ora_apostolhs to (fsConvert_Time_Number_To_String_With_Zeroes(nTotal))
+
+    if (iflag=1) set field_changed_value of particle_dd field particle.partl_lastno to iflag
+
+    ///////////////////////////////////////
+    // js 19/07/2002
+    // Dhmioyrgia sxetikon eggrafon (Psxetika) kato apo proypotheseis
+    // exei prostethei ena checkbox epiloghs sto view tou metasxhmatismou (v014.vw)
+    // oste na dothei h dynatothta 'aplhs' antigrafhs parastatikon kai oxi
+    // ypoxreotikhs sysxetishs, an tsekaristei to sygkekrimeno checkbox.
+    // 12/06/2002 js gia enhmerosh oti ayto to particle pou dhmiourgeitai
+    // proerxetai apo metasxhmatismo (xoris na xreiazetai na psaxnoume ta psxetika)
+    If (Not(iNoSysxet)) set field_changed_value of particle_dd field particle.partl_Vsn to 1
+    //set field_changed_value of liparticleddo## field particle.partl_Vsn    to 1
+    // js 19/07/2002
+    ///////////////////////////////////////
+    send request_save to particle_dd
+
+
+    move 0 to ione
+
+    Send UpdateWait to (piTxtID(Self))  ('ƒ£ ¦¬¨šå˜ Record Particle'+(String(particle.Recnum)))
+    get field_current_value of particle_dd field particle.partl_recr to particlerecr
+    set precr to particlerecr
+    move 0 to iind
+
+
+    Integer iPms iPartl
+    clear pmovesl
+    move 1 to pmovesl.pms_selected
+    find gt pmovesl by index.11
+    if (NOT(FOUND)) error 9001 "ƒœ¤ ™¨âŸ¡˜¤ §˜¨˜©«˜« ¡á œ¤«æª «à¤ ¦¨ ©£â¤à¤ £/¤ é¤\n ¦ ©¬¤˜¢¢˜©æ£œ¤¦ª ›œ¤ œå¤˜  ©¬£§¢¨à£â¤¦ª"
+
+    If (pmovesl.pms_selected=0) error 9001 "ƒœ¤ ™¨âŸ¡˜¤ §˜¨˜©«˜« ¡á œ¤«æª «à¤ ¦¨ ©£â¤à¤ £/¤ é¤\n ¦ ©¬¤˜¢¢˜©æ£œ¤¦ª ›œ¤ œå¤˜  ©¬£§¢¨à£â¤¦ª"
+    Move (fsLoginUserID())   to sLogin
+
+
+    While ((found=1) and (pmovesl.pms_selected=1))
+          if (lsclient ne pmovesl.client_id) error 9010 "ƒ ˜­¦¨œ« ¡æª ­¦¨â˜ª ©«˜ œå› §¨¦ª £œ«˜©®£˜« ©£æ"
+          if (pmovesl.qty_kinhshs>0) begin
+                move pmovesl.witemx_recr to switemx
+                move pmovesl.wax_recr    to swax
+                move pmovesl.partl_recr  to arxrecr
+                move pmovesl.zone        to szone
+                move pmovesl.pms_status_e to IstatusE
+                Move pmovesl.recnum     To iPms
+                clear particll
+                move arxrecr             to particll.partl_recr
+                find eq particll by index.2
+                if (not(found)) error 9004 "ƒœ¤ ™¨âŸ¡œ «¦ ˜¨® ¡æ §˜¨˜©«˜« ¡æ. ¨æ™¢£˜ ©«˜ §˜¨˜©«˜« ¡á"
+                if (particll.partl_no le 0) error 9104 "ƒœ¤ £œ«˜©®£˜«åœ«œ §˜¨˜©«˜« ¡æ £œ ˜¨ Ÿ.<= 0"
+                Move particll.recnum To iPartl
+                move 0 to ilogin
+                if (slogin=particll.partl_toposf) begin
+                    move 1 to ilogin
+                    if (((switemx<>owitemx) or (swax<>owax) or (ianal=1))) begin
+                        if (switemx=owitemx and swax=owax and ianal=1 and iind=1) begin
+                        clear iteml
+                        move pmovesl.item_code to iteml.item_code
+                        find eq iteml by index.5
+                      //  move iteml.group to igrp
+                        move 0 to igrp
+                        if (igrp=1) begin
+                            get field_current_value of pmoves_dd field pmoves.pms_qty to lnqty
+                            get field_current_value of pmoves_dd field pmoves.pms_ys2 to lnqty2
+                        //   if (igrp=1 and lnqty2<>0) begin
+                            if (igrp=1) begin
+                                set field_changed_value of pmoves_dd field pmoves.pms_ys2 to (lnqty2+pmovesl.qty_kinhshs)
+                                get field_current_value of pmoves_dd field pmoves.pms_ys2 to lnqty2
+                                if (lnqty <  lnqty2);
+                                set field_changed_value of pmoves_dd field pmoves.pms_qty to lnqty2
+                                goto todo0ola
+                            end
+                        end
+                        end
+                        else move 0 to iind
+                        Send Clear to wax_dd
+                        Send Clear to witemx_dd
+                        send clear to pmoves_dd
+                        move pmovesl.wax_recr to wax.wax_recr
+                        send find to wax_dd eq 2
+
+                        if (not(found)) error 9016 "ƒœ¤ ™¨âŸ¡œ ¦ ˜§¦Ÿ¡œ¬« ¡æª ®é¨¦ª ®¨ã©ª"
+                        move pmovesl.witemx_recr to witemx.witemx_recr
+                        send find to witemx_dd eq 2
+                        if (not(found)) error 9017 "ƒœ¤ ™¨âŸ¡œ «¦ œå›¦ª ©«ã¤ «¨â®¦¬©˜ ®¨ã©"
+                        move switemx to owitemx
+                        move swax    to owax
+                        move pmovesl.pms_ys2 to lnpagiam3
+                        Get field_Current_value of item_dd    field Item.group             to igroup
+
+                        Get field_Current_value of item_dd    field Item.Fpa_Pososto       to lnItemVatPCT
+
+                        Integer isCLientZeroFPA
+                        Get Field_Current_Value Of Clients_DD Field Clients.Client_Pelprom to isCLientZeroFPA
+                        //===============================
+                        //===============================
+                        // Yannis 16/06/2016
+                        If (isCLientZeroFPA=1) Move 0 to lnItemVatPCT
+                        //===============================
+                        //===============================
+
+                        set field_changed_value of pmoves_dd  field Pmoves.Pms_VatPct      to lnItemVatPCT
+                        set field_changed_value of pmoves_dd  field pmoves.cn_code         to lscons
+                        set field_changed_value of pmoves_dd  field pmoves.pms_qty         to pmovesl.qty_kinhshs
+                        set field_changed_value of pmoves_dd  field pmoves.pms_unitprice   to pmovesl.pms_unitprice
+                        set field_changed_value of pmoves_dd  field pmoves.pms_status_e    to Istatuse
+
+
+                        set field_changed_value of pmoves_dd field pmoves.sx_parast      to pmovesl.ptyppar_descr
+                        set field_changed_value of pmoves_dd field pmoves.sx_hmnia       to pmovesl.partl_hmnia
+                        set field_changed_value of pmoves_dd field pmoves.sx_arithmos    to pmovesl.partl_no
+                        set field_changed_value of pmoves_dd field pmoves.sx_seira       to pmovesl.pseira_seira
+                        set field_changed_value of pmoves_dd  field pmoves.pump_id       to pmovesl.pump_id
+                        set field_changed_value of pmoves_dd  field pmoves.car_id        to pmovesl.car_id
+                        set field_changed_value of pmoves_dd  field pmoves.cn_code       to pmovesl.cn_code
+
+
+
+                            ///////////
+                    //   if (igroup=1 and lnpagiam3<>0) begin
+                        if (igroup=1) begin
+                            set field_changed_value of pmoves_dd field pmoves.pms_ys2 to pmovesl.qty_kinhshs
+                            set field_changed_value of pmoves_dd field pmoves.pms_qty to lnpagiam3
+                            move 1 to iind
+                            if (lnpagiam3 < pmovesl.qty_kinhshs);
+                            set field_changed_value of pmoves_dd field pmoves.pms_qty to pmovesl.qty_kinhshs
+                        end
+
+                    /////////////
+                    end
+                    else begin
+                        get field_current_value of pmoves_dd field pmoves.pms_qty to lnqty
+                        get field_current_value of pmoves_dd field pmoves.pms_ys2 to lnqty2
+
+                    //   if (igroup=1 and lnqty2<>0) begin
+                        if (igroup=1) begin
+                            set field_changed_value of pmoves_dd field pmoves.pms_ys2 to (lnqty2+pmovesl.qty_kinhshs)
+                            get field_current_value of pmoves_dd field pmoves.pms_ys2 to lnqty2
+                            if (lnqty <  lnqty2);
+                                set field_changed_value of pmoves_dd field pmoves.pms_qty to lnqty2
+                        end
+                        else    set field_changed_value of pmoves_dd field pmoves.pms_qty to (lnqty+pmovesl.qty_kinhshs)
+                    end
+                    todo0ola:
+                    set field_changed_value of pmoves_dd  field pmoves.qty_ypol         to 1
+                    set field_changed_value of pmoves_dd  field pmoves.zone             to szone
+
+
+                    send request_save to pmoves_dd
+
+                    Send UpdateWait to (piTxtID(Self))  ('Ešš¨˜­ã ˜¨˜©«˜« ¡¦ç'+(String(pmovesl.partl_no)))
+                        ///////////////////////////////////////
+
+                    // GTS 08-06-06 PROSPATEIA NA KATARGHSOYME TA PMSSXET
+                    Send Clear To psxetika_dd
+                    Move particlerecr To psxetika.partl_recr
+                    Move arxrecr      To psxetika.psx_partl_recr
+                    Send Find To psxetika_dd eq 4
+                    If (not(Found)) Begin
+                        Set field_changed_value Of psxetika_dd Field psxetika.psx_partl_recr  To arxrecr
+                        Set field_changed_value Of psxetika_dd Field psxetika.sx_company_code To particll.company_code
+                        Set field_changed_value Of psxetika_dd Field psxetika.sx_branch_code  To particll.branch_code
+                        Set field_changed_value Of psxetika_dd Field psxetika.sx_year_year    To particll.year_year
+                        Set field_changed_value Of psxetika_dd Field psxetika.sx_pseira_seira To particll.pseira_seira
+                        Set field_changed_value Of psxetika_dd Field psxetika.sx_partl_no     To particll.partl_no
+                        Set field_changed_value Of psxetika_dd Field psxetika.sx_partl_hmnia  To particll.partl_hmnia
+                        Set field_changed_value Of psxetika_dd Field psxetika.sx_client_id    To particll.client_id
+                        Set field_changed_value Of psxetika_dd Field psxetika.sx_ptyppar_code To particll.ptyppar_code
+                        Set field_changed_value Of psxetika_dd Field psxetika.sx_ptyppar_desc To pmovesl.ptyppar_descr
+                        Set field_changed_value Of psxetika_dd Field psxetika.CUSTPROM_CODE   To particll.cn_code
+                        Send request_save To psxetika_dd
+                        Send UpdateWait To (piTxtID(Self))  ('Ešš¨˜­ã Record Psxetika '+(String(psxetika.Recnum)))
+                        Send Clear To psxetika_dd
+
+                    End
+                End
+                if (ilogin=1) begin
+                    move 0 to pmovesl.qty_kinhshs
+                    move 0 to pmovesl.pms_selected
+                    saverecord pmovesl
+                    Move (Err) to iErr
+                    If (iErr) Error 7778 'Cannot Save PmovesL'
+                    clear pmovesl
+                    move 1 to pmovesl.pms_selected
+                end
+          end
+          find gt pmovesl by index.11
+    Loop
+    Clear psxetika
+    Move particlerecr To psxetika.partl_recr
+    Find gt psxetika by Index.4
+    While ((Found=1) and (particlerecr=psxetika.partl_recr))
+        Clear Particle
+        Move Psxetika.Psx_Partl_Recr To Particle.Partl_Recr
+        Find eq Particle by Index.2
+        If (Found) Begin
+            If (Particle.Client_ID<>lsclient) Error 2030 '’¦ ©®œ« ¡æ §˜¨˜©«˜« ¡æ ˜¤˜­â¨œ«˜  ©œ á¢¢¦ œ¢á« '
+            Move  1 To particle.partl_timol
+            Move '' To Particle.Partl_Toposf
+            Move  0 To Particle.Partl_Selected
+            Saverecord particle
+            Move (Err) To iErr
+            If (iErr) Error 7777 'ƒœ¤ ¥œ£˜¨¡á¨¦¤«˜  «˜ ©®œ« ¡á §˜¨˜©«˜« ¡á '
+        End
+        Else Error 2020 ('ƒœ¤ ™¨âŸ¡œ «¦ §˜¨˜©«˜« ¡æ '+Trim(Psxetika.Psx_Partl_Recr)+" - "+psxetika.partl_recr)
+        Find gt psxetika by Index.4
+    Loop
+    // An to neo particle einai akyrotiko
+    If (piflag(Self)=1) Begin
+        Clear psxetika
+        Move arxrecr To psxetika.partl_recr
+        Find gt psxetika by Index.4
+        While ((Found=1) and (arxrecr=psxetika.partl_recr))
+            Clear Particle
+            Move Psxetika.Psx_Partl_Recr To Particle.Partl_Recr
+            Find eq Particle by Index.2
+            If (Found) Begin
+                If (Particle.Client_ID<>lsclient) Error 2031 '’¦ ©®œ« ¡æ §˜¨˜©«˜« ¡æ ˜¤˜­â¨œ«˜  ©œ á¢¢¦ œ¢á« '
+                Move '0' To Particle.Partl_Timol
+                Saverecord Particle
+                Move (Err) To iErr
+                If (iErr) Error 7887 'ƒœ¤ ¥œ£˜¨¡á¨¦¤«˜  «˜ ƒ€'
+            End
+            Else Error 2021 ('ƒœ¤ ™¨âŸ¡œ «¦ §˜¨˜©«˜« ¡æ '+Trim(Psxetika.Psx_Partl_Recr)+" - "+psxetika.partl_recr)
+            Find gt psxetika by Index.4
+        Loop
+    End
+    //////////////////////////
+    // gia thn periptosh poy einai parastatiko paroxhs na metaferetai kai pososto parakrathshs
+    //////////////////////////
+    Clear Particle
+    Move arxrecr to Particle.Partl_Recr
+    Find Eq Particle By Index.2
+    If (Found) Begin
+       Move Particle.Parakrat_Pct    to nParakratPct
+       Move Particle.Parakrat_Poso   to nParakratPoso
+       Clear Particle
+       Move particlerecr             to Particle.Partl_Recr
+       Find Eq Particle By Index.2
+       If (Found) Begin
+          Move nParakratPct          to Particle.Parakrat_Pct
+          Move nParakratPoso         to Particle.Parakrat_Poso
+          Saverecord Particle
+       End
+    End
+    Set piFromMetasx Of Pmoves_DD to False
+
+    if (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+End_Procedure
+
+
+Procedure Start_Process
+         Set piTxtID                         to (Wait(Self))
+         Set Button_State    of (Wait(Self)) to False
+         Set BarVisibleState of (Wait(Self)) to '' False
+         Send Popup                          to (Wait(Self))
+         Set piLathos                        to 0
+         Forward Send Start_Process
+End_Procedure
+
+
+Procedure OnProcess
+       send uparticle00_rec
+End_Procedure
+
+Procedure OnError integer error_info string errMsg
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+End_Procedure
+
+Procedure End_Process
+       Forward Send End_Process
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+End_Procedure
+
+End_Object

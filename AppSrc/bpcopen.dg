@@ -1,0 +1,176 @@
+//AB/ Project bpCopen : BP for 2nd record Copen
+//AB/ Object prj is a Dialog_Project
+//AB/     Set ProjectName to "bpCopen : BP for 2nd record Copen"
+//AB/     Set ProjectFileName to "bpCopen.DG"
+//AB/     Set GenerateFileName to "NONAME"
+
+// Project Object Structure
+//   bpCopen is a BusinessProcessSub
+//     Ctypkin_DD is a DataDictionary
+//     Cities_DD is a DataDictionary
+//     Clients_DD is a DataDictionary
+//     Cmoves_DD is a DataDictionary
+//     Cmovesa_DD is a DataDictionary
+//     Copen_DD is a DataDictionary
+
+// Register all objects
+Register_Object bpCopen
+Register_Object Cities_DD
+Register_Object Clients_DD
+Register_Object Cmoves_DD
+Register_Object Cmovesa_DD
+Register_Object Copen_DD
+Register_Object Ctypkin_DD
+
+
+//AB-IgnoreStart
+
+Use Bproces.Sub
+Use DFAllEnt.pkg
+
+
+Use CTYPKIN.DD
+Use CITIES.DD
+Use CLIENTS.DD
+Use CMOVES.DD
+Use CMOVESA.DD
+Use COPEN.DD
+
+//AB-IgnoreEnd
+
+Object bpCopen is a BusinessProcessSub
+
+    //AB-StoreTopStart
+    Property String  psMaster   Public ''
+    Property String  psAlias    Public ''
+    Property Number  pnPoso     Public  0
+    Property Integer piLathos   Public  0
+
+    Set Status_Panel_State to True
+    Set Allow_Cancel_State  to True
+    Set Display_Error_State to True
+    //Set Process_Title to "               "
+    //Set Status_Log_id to (status_log(Self)) //Use statlog.pkg
+    //Set Status_log_state to True
+
+    //AB-StoreTopEnd
+
+    Set Size to 60 100
+    Set Location to 2 4
+
+    //AB-DDOStart
+
+    Object Ctypkin_DD is a Ctypkin_DataDictionary
+    End_Object    // Ctypkin_DD
+
+    Object Cities_DD is a Cities_DataDictionary
+    End_Object    // Cities_DD
+
+    Object Clients_DD is a Clients_DataDictionary
+        Set DDO_Server to (Cities_DD(self))
+    End_Object    // Clients_DD
+
+    Object Cmoves_DD is a Cmoves_DataDictionary
+        Set DDO_Server to (Ctypkin_DD(self))
+        Set DDO_Server to (Clients_DD(self))
+    End_Object    // Cmoves_DD
+
+    Object Cmovesa_DD is a Cmovesa_DataDictionary
+    End_Object    // Cmovesa_DD
+
+    Object Copen_DD is a Copen_DataDictionary
+        Set DDO_Server to (Cmoves_DD(self))
+        Set DDO_Server to (Cmovesa_DD(self))
+    End_Object    // Copen_DD
+
+    Set Main_DD to (Copen_DD(self))
+    Set Server to (Copen_DD(self))
+
+    //AB-DDOEnd
+
+
+    //AB-StoreStart
+
+    Procedure Make_Second_Record String asMaster String asAlias Number anPoso
+        Integer iErr
+
+
+        Indicate Err False
+
+        Send Clear      to Copen_DD
+        Send Clear      to Cmoves_DD
+        Send Clear      to Cmovesa_DD
+
+        Move asMaster   to Copen.Cmoves_recr
+        Move asAlias    to Copen.Cmovesa_recr
+        Send Find       to Copen_DD Eq 5
+        If (Found) Begin
+            Set Field_Changed_Value Of Copen_DD Field Copen.Copen_Axia0 to anPoso
+            Send Request_Save to Copen_DD
+            Move (Err) to iErr
+            If (iErr) Begin
+                Set piLathos to 7007 // Error While Saving Copen
+                Procedure_Return
+            End
+        End
+        Else Begin
+            Move asMaster   to Cmoves.Cmoves_Recr
+            Send Find to Cmoves_DD Eq 2
+            If (Found=1) Begin
+                Move asAlias to Cmovesa.Cmoves_Recr
+                Send Find to Cmovesa_DD Eq 2
+                If (Found=1) Begin
+                    Set Field_Changed_Value Of Copen_DD Field Copen.Copen_Axia0 to anPoso
+                    Send Request_Save to Copen_DD
+                    Move (Err) to iErr
+                    If (iErr) Begin
+                        Set piLathos to 7006 // Error While Saving Copen
+                        Procedure_Return
+                    End
+                End
+                Else Begin
+                    Set piLathos to 7005 // Alias Cmovesa Not Found
+                    Procedure_Return
+                End
+             End
+            Else Begin
+                Set piLathos to 7004 // Master Cmoves Not Found
+                Procedure_Return
+            End
+        End
+    End_Procedure
+
+    Procedure OnProcess
+        String  sMaster sAlias
+        Number  nPoso
+        Get psMaster            to sMaster
+        Get psAlias             to sAlias
+        Get pnPoso              to nPoso
+        Move (Trim(sMaster))    to sMaster
+        Move (Trim(sAlias))     to sAlias
+        If ((sMaster='')     Or (sAlias='') Or (nPoso=0)) Begin
+                 If (sMaster     ='') Set piLathos to 7001 // No Master Recr    Passed
+            Else If (sAlias      ='') Set piLathos to 7002 // No Alias  Recr    Passed
+            Else If (nPoso       = 0) Set piLathos to 7003 // No Amount         Passed
+            Procedure_Return
+        End
+        Send Make_Second_Record sMaster sAlias nPoso
+    End_Procedure
+
+    Procedure OnError integer error_info string errMsg
+    End_Procedure
+
+    Procedure Start_Process
+        Forward Send Start_Process
+    End_Procedure
+
+    Procedure End_Process
+        Forward Send End_Process
+    End_Procedure
+
+
+    //AB-StoreEnd
+
+End_Object    // bpCopen
+
+//AB/ End_Object    // prj

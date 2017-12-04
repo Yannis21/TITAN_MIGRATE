@@ -1,0 +1,1214 @@
+//AB/ Project RMHTRAXIO:EKTYP-AXIO
+//AB/ Object prj is a Report_Project
+//AB/     Set ProjectName to "RMHTRAXIO:EKTYP-AXIO"
+//AB/     Set ProjectFileName to "RMHTRAXIO.RV"
+
+// Project Object Structure
+//   RMHTRAXIO is a ReportView
+//     GroupSub1 is a GroupSub
+//       TextBoxSub3 is a TextBoxSub
+//       F_HME_APO is a FormSub
+//     RadioGroup3 is a RadioGroup
+//       f_nees is a Radio
+//       f_close is a Radio
+//     DestRadio is a RadioGroup
+//       WindowRadio is a Radio
+//       PrinterRadio is a Radio
+//     ButtonSub3 is a ButtonSub
+//     ButtonSub4 is a ButtonSub
+//     axio_BasicReport is a BasicReport
+//       Btypkin_DD is a Btypkin_DataDictionary
+//       Baxiokat_DD is a Baxiokat_DataDictionary
+//       Barticl_DD is a Barticl_DataDictionary
+//       Bsum_DD is a Bsum_DataDictionary
+//       Baxio_DD is a Baxio_DataDictionary
+//       Syscurxr_DD is a Syscurxr_DataDictionary
+//       Clients_DD is a Clients_DataDictionary
+//       Bmove_DD is a Bmove_DataDictionary
+
+// Register all objects
+Register_Object axio_BasicReport
+Register_Object Barticl_DD
+Register_Object Baxio_DD
+Register_Object Baxiokat_DD
+Register_Object Bmove_DD
+Register_Object Bsum_DD
+Register_Object Btypkin_DD
+Register_Object ButtonSub3
+Register_Object ButtonSub4
+Register_Object Clients_DD
+Register_Object DestRadio
+Register_Object F_HME_APO
+Register_Object f_close
+Register_Object f_nees
+Register_Object GroupSub1
+Register_Object PrinterRadio
+Register_Object RadioGroup3
+Register_Object RMHTRAXIO
+Register_Object Syscurxr_DD
+Register_Object TextBoxSub3
+Register_Object WindowRadio
+
+
+//AB/ Report View
+
+
+//AB-StoreTopStart
+Use dfallrpt.pkg
+use btypkin.dd
+use baxiokat.dd
+Use barticl.dd
+use bsum.dd
+use baxio.dd
+use syscurxr.dd
+use clients.dd
+use bmove.dd
+open codemast
+open company
+use rviaxio.pkg
+open cn
+//AB-StoreTopEnd
+
+//AB-IgnoreStart
+
+Use DFAllEnt.pkg
+Use Group.Sub
+Use Txtbox.Sub
+Use Form.Sub
+Use Button.Sub
+
+//AB-IgnoreEnd
+
+ACTIVATE_VIEW Activate_RMHTRAXIO FOR RMHTRAXIO
+
+Object RMHTRAXIO is a ReportView
+
+    //AB-StoreTopStart
+    Register_Procedure  StartReport
+    Property integer    piprinter public 0
+    property integer    new_state
+    property integer    picount  public 0
+    property integer    pipage public 0
+    property string     psrecr public ''
+    
+    //AB-StoreTopEnd
+
+    Set Label to "Ñ°´Áß‡©û Ä•†¶ö®·≠‡§"
+    Set Size to 105 181
+    Set Location to 4 143
+
+    //AB-DDOStart
+
+
+    //AB-DDOEnd
+
+    Object GroupSub1 is a GroupSub
+        Set Size to 29 169
+        Set Location to 2 3
+        Object TextBoxSub3 is a TextBoxSub
+            Set Label to "Ü£/§Âò Ñ°´Áß‡©û™"
+            Set Auto_Size_State to FALSE
+            Set FontSize to 4 0
+            Set Location to 12 5
+            Set Size to 10 74
+            Set TypeFace to "MS Sans Serif"
+            Set Enabled_State to TRUE
+        End_Object    // TextBoxSub3
+
+        Object F_HME_APO is a FormSub
+
+            //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+            //AB-StoreTopEnd
+
+            Set Size to 13 61
+            Set Location to 10 82
+            Set Form_Border Item 0 to Border_Normal
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Form_Datatype Item 0 to Mask_Date_Window
+            Set Form_Mask Item 0 to "d/M/yyyy"
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+            //AB-StoreEnd
+
+        End_Object    // F_HME_APO
+
+    End_Object    // GroupSub1
+
+    Object RadioGroup3 is a RadioGroup
+        Set Label to "Ñß†¢¶ö„ Öû£†È§"
+        Set Size to 43 77
+        Set Location to 33 3
+        Object f_nees is a Radio
+            Set Label to "å‚ú™"
+            Set Size to 10 34
+            Set Location to 10 5
+        End_Object    // f_nees
+
+        Object f_close is a Radio
+            Set Label to "èú®ò†‡üúÂ©ú™"
+            Set Size to 10 66
+            Set Location to 29 5
+        End_Object    // f_close
+
+
+        //AB-StoreStart
+        Procedure Notify_Select_State integer iToItem integer iFromItem
+            //for augmentation
+            Forward Send Notify_Select_State  itoitem ifromitem
+            If itoItem EQ 1 Set new_state to 0
+            Else            Set new_state to 1
+        
+        End_Procedure
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // RadioGroup3
+
+    Object DestRadio is a RadioGroup
+
+        //AB-StoreTopStart
+        
+        //AB-StoreTopEnd
+
+        Set Label to "Ñ°´Á&ß‡©û"
+        Set Size to 44 49
+        Set Location to 30 85
+        Object WindowRadio is a Radio
+            Set Size to 13 30
+            Set Location to 12 12
+            Set Bitmap to "screen4.bmp"
+        End_Object    // WindowRadio
+
+        Object PrinterRadio is a Radio
+            Set Size to 10 31
+            Set Location to 30 12
+            Set Bitmap to "PRINT_M1.BMP"
+        End_Object    // PrinterRadio
+
+
+        //AB-StoreStart
+        
+        Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+            Forward Send Notify_Select_State  iNewItem  iOldItem
+        //    If iNewItem EQ 0 Set Output_Device_Mode  To PRINT_TO_window
+        //    Else             Set Output_Device_Mode  To PRINT_TO_PRINTER
+        End_Procedure
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // DestRadio
+
+    Object ButtonSub3 is a ButtonSub
+
+        //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                                                    
+        //AB-StoreTopEnd
+
+        Set Bitmap to "RUNPROG.BMP"
+        Set Size to 18 27
+        Set Location to 36 145
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+        Procedure OnClick
+           Send StartReport
+        End_Procedure
+        
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub3
+
+    Object ButtonSub4 is a ButtonSub
+
+        //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                                                    
+        //AB-StoreTopEnd
+
+        Set Bitmap to "CANCEL.BMP"
+        Set Size to 18 27
+        Set Location to 58 145
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+        Procedure OnClick
+            Send Request_Cancel
+        End_Procedure
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub4
+
+
+    //AB-StoreStart
+    //Set Verify_Exit_Msg To Get_No_Confirmation
+    
+    //HELP-VARIABLES
+    
+    Procedure StartReport
+           string FileName
+           Make_Temp_File "TXT" FileName
+           Move (".\" - FileName)  To FileName
+           Set Output_Device_Name  To FileName
+    
+       Send Run_Report
+    
+       //  send doruneditor filename
+           RunProgram background "notepad" FileName
+           EraseFile FileName
+    
+    
+    
+    
+    
+    end_procedure
+    
+    
+    Object axio_BasicReport is a BasicReport
+    
+       Set Report_Title to "ÇÂ§ú´ò† Ñ°´Áß‡©û èò®ò©´ò´†°¶Á                  "
+    
+       Object Btypkin_DD is a Btypkin_DataDictionary
+       End_Object    // Btypkin_DD
+    
+       Object Baxiokat_DD is a Baxiokat_DataDictionary
+       End_Object    // Baxiokat_DD
+    
+       Object Barticl_DD is a Barticl_DataDictionary
+          Set DDO_Server to (Btypkin_DD(self))
+       End_Object    // Barticl_DD
+    
+       Object Bsum_DD is a Bsum_DataDictionary
+          Set DDO_Server to (Barticl_DD(self))
+          Set Constrain_File to Barticl.File_Number
+       End_Object    // Bsum_DD
+    
+       Object Baxio_DD is a Baxio_DataDictionary
+          Set DDO_Server to (Baxiokat_DD(self))
+       End_Object    // Baxio_DD
+    
+       Object Syscurxr_DD is a Syscurxr_DataDictionary
+       End_Object    // Syscurxr_DD
+    
+       Object Clients_DD is a Clients_DataDictionary
+    
+       End_Object    // Clients_DD
+    
+    
+       Object Bmove_DD is a Bmove_DataDictionary
+            Set DDO_Server to (Barticl_DD(self))
+            Set DDO_Server to (Baxio_DD(self))
+            begin_constraints
+                string srecr
+                get psrecr to srecr
+                constrain bmove.barticl_recr eq srecr
+            end_constraints
+       End_Object    // Bmove_DD
+    
+       Set Server To (bmove_dd(Current_Object))
+       Report_Index By Index.1
+    
+       Function Starting_Main_Report Returns Integer
+          Local Integer iRetVal
+          set page_feed to 70
+          set page_end to 70
+          Forward Get Starting_Main_Report to iRetval
+          send rebuild_constraints to bmove_dd
+          Send Find to (bmove_dd(self)) First_Record 1
+       End_Function
+    
+    
+       Procedure_Section Page_Top as HeaderR141
+          Local Integer iPage  icount
+          string sdoy  mast srecr stext sclient
+          move 1                                to ipage
+          move ipage                            to headerR141.1
+          move (trim(btypkin.btypkin_descr))    to headerR141.2
+    
+          //-----------------------------------------------------------------------------------
+          // js 11/03/2008 Allagh arithmishs logo oristikopoihshs exiografon
+          // tora to Barticl_No exei ennoia esoterikhs dikhs mas arithmishs (prosorinhs)
+          // afou h arithmish dinetai tora apo to kykloma oristikopoihshs axiografon
+          // to opoio enhmeronei ena neo seiriako pedio Barticl.Arith_Orist
+    
+          // move barticl.barticl_no               to headerR141.3
+          move barticl.barticl_no               to headerR141.3
+          // js 11/03/2008 Allagh arithmishs logo oristikopoihshs exiografon
+          //-----------------------------------------------------------------------------------
+    
+          move (trim(barticl.barticl_hmnia))    to headerR141.4
+          move (trim(baxio.baxio_code_in))      to headerR141.5
+          move (trim(baxio.baxio_epon_in))      to headerR141.6
+          move (trim(baxio.baxio_code_in))      to sclient
+          clear clients
+          move  sclient     to clients.client_id
+          find eq clients by index.6
+          move (trim(clients.client_address))   to headerR141.7
+          move ''                               to stext
+          clear cities
+          move clients.client_city_id         to cities.city_id
+          find eq cities by index.1
+          if (found=1) append stext  (trim(cities.city_descr))
+          append stext ' ' (trim(clients.client_zipcode))
+          clear areas
+          move clients.client_area            to areas.area_id
+          find eq areas by index.1
+          if (found=1) append stext ' ' (trim(areas.area_descr))
+          move (trim(stext))                  to headerR141.8
+    
+    
+          clear codemast
+          move 'JOB'                          to codemast.type
+          move clients.client_job             to codemast.code
+          find eq codemast by index.1
+          move (trim(codemast.description))   to headerR141.9
+          move (trim(clients.client_afm))     to headerR141.10
+          move (trim(clients.client_doy))     to sdoy
+          move "DOY"                          to mast
+          move (gsfcode_mast(mast,sdoy))      to sdoy
+          move (trim(sdoy))                   to headerR141.11
+          move (trim(barticl.cn_code))        to headerR141.12
+    
+          clear cn
+          move barticl.cn_code                to cn.cn_code
+          find eq cn by index.5
+          move (trim(cn.cn_address))  to headerR141.13
+          move '' to stext
+    
+          clear cities
+          move cn.cn_city                     to cities.city_id
+          find eq cities by index.1
+          if (found=1) append stext (trim(cities.city_descr))
+          if (cn.cn_zipcode<>'') append stext ' ' (trim(cn.cn_zipcode))
+          clear areas
+          move cn.cn_area             to areas.area_id
+          find eq areas by index.1
+          if (found=1) append stext ' ' (trim(areas.area_descr))
+          move (trim(stext)) to headerR141.14
+          OutPut_pagecheck
+          set pipage to ipage
+       End_Procedure
+    
+       Procedure_Section  Body as BodyR141
+        string  wrecr stext sdate hdate
+        integer licount liVrow pcfpa pcdisc ipage icountpmsdtl
+        number  nqty nfpa ndisc naxia ntotal naxiaaf
+        number nnunit nnqty nnpcdisc nnaxia nnnet nntotal
+        get picount to licount
+        get pipage to ipage
+    
+    //    if (licount > 21) begin
+    //        blankform bodyR141.1 thru bodyR141.2
+    //        print '                      ë‚ £ú´ò≠¶®· ' to bodyR141.1
+    //        output bodyR141
+    //        formfeed
+    //        add 1                       to ipage
+    //        move ipage                  to headerR141.1
+    //        set pipage to ipage
+    //        output headerR141
+    //        blankform bodyR141.1 thru bodyR141.2
+    //        print '                      ÄßÊ £ú´ò≠¶®· ' to bodyR141.1
+    //        output_pagecheck
+    //        blankform bodyR141.2
+    //        move 1 to licount
+    //    end
+    
+      //  print licount to  bodyr141.1
+        print (trim(baxiokat.baxiokat_descr)) to bodyr141.1
+        print baxio.baxio_v2        to bodyr141.2
+        add bodyr141.2              to totalr141.1
+        add 1 to licount
+        set picount to licount
+        output_pagecheck
+      //  output bodyR141
+      End_Procedure
+    
+    
+    
+       Procedure_Section  total as totalR141
+        integer licount iint
+        string stext
+    
+        get picount to licount
+    
+        for iInt from licount to 21
+        //    print iInt to bodyR141.1
+            blankform bodyR141.1 thru bodyR141.2
+            output bodyR141
+        loop
+    
+    
+        print totalr141.1               to totalr141.1
+    //    print (trim(barticl.sxolia1))   to totalr141.2
+    //    print (trim(barticl.sxolia2))   to totalr141.3
+        output_pagecheck
+    
+      end_Procedure
+    
+       Procedure Ending_Report
+          //  blankform totalR141.1 thru totalR141.3
+            set picount                 to 0
+       End_Procedure
+    
+    END_OBJECT
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //AB-StoreEnd
+
+End_Object    // RMHTRAXIO
+
+
+//AB-StoreStart
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+//AB-StoreEnd
+
+//AB/ End_Object    // prj

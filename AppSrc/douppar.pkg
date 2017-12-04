@@ -1,0 +1,224 @@
+        Use sysrecc.dd
+        use areas.dd
+        use country.dd
+        use towns.dd
+        use cities.dd
+        use payresp.dd
+        Use clients.dd
+        Use order1.dd
+        Use ordersd.dd
+        Use clorder.dd
+        Use clorderd.dd
+        use v94.vw
+      Object oDouppar is A BusinessProcessSub
+        set Status_panel_state to false
+        set Display_Error_state to true
+
+        property string psrecr
+        property integer piTxtID public 0
+        property integer piLathos public 0
+
+
+        Object Areas_DD is a Areas_DataDictionary
+        End_Object    // Areas_DD
+
+
+        Object Country_DD is a Country_DataDictionary
+        End_Object    // Country_DD
+
+        Object Towns_DD is a Towns_DataDictionary
+           Set DDO_Server to (Country_DD(self))
+        End_Object    // Towns_DD
+
+        Object Cities_DD is a Cities_DataDictionary
+           Set DDO_Server to (Towns_DD(self))
+        End_Object    // Cities_DD
+
+        Object Payresp_DD is a Payresp_DataDictionary
+        End_Object    // Payresp_DD
+
+
+        Object sysrecc_DD is a sysrecc_DataDictionary
+        End_Object
+
+        Object Clients_DD is a Clients_DataDictionary
+            Set DDO_Server to (Cities_DD(self))
+            Set DDO_Server to (payresp_DD(self))
+            Set DDO_Server to (areas_DD(self))
+        End_Object
+
+
+        Object order1_DD is a order1_DataDictionary
+
+        End_Object
+
+       Object ordersd_DD is a ordersd_DataDictionary
+        Set DDO_Server to (order1_DD(self))
+        Set Constrain_File to order1.File_Number
+        begin_constraints
+             string wrecr
+             get psrecr to wrecr
+             Constrain ordersd.orders_recr eq wrecr
+        End_Constraints
+
+
+      End_Object
+
+
+       Object Clorder_DD is a Clorder_DataDictionary
+          Set DDO_Server to (Clients_DD(self))
+       End_Object
+
+       Object Clorderd_DD is a Clorderd_DataDictionary
+        Set DDO_Server to (Clorder_DD(self))
+        Set Constrain_File to Clorder.File_Number
+       End_Object
+
+
+
+
+PROCEDURE beg_uppar string wrecr
+          set psrecr to wrecr
+          SEND DOPROCESS
+END_PROCEDURE
+
+Procedure uppar_rec
+    Local Integer liclientsddo## liorder1ddo## liordersdddo## listatus## licount## liclorderddo## liqty##;
+                  liclorderdddo## liyear##
+    date          lsdate## lsourdate## lsrialdate##
+    local number  lntotqty## lntotfpa## lnpcdisc## lntotdisc## lntotextra## lntotpay## lnunitprice##;
+                  lnposofpa## lnposonet## lnkm## lnhour## aarec## lnkmbsave## lnhbsave##
+
+    local string  lscompany## lsbranch## lsaapar## lsarmod##  promcode## caitemscode##;
+                  promitem## wrecr## recr##  lscust## wcust##  aapar## lsrecr## orecr##;
+                  nrecr##  lsnomisma## srecr##
+
+        Move (clients_DD(self))      to liClientsDDo##
+        Move (order1_DD(self))       to liorder1DDo##
+        Move (ordersd_DD(self))      to liordersdDDo##
+        Move (clorder_DD(self))      to liclorderDDo##
+        move (clorderd_dd(self))     to liclorderdddo##
+
+        send clear to liclientsddo##
+        send clear to liorder1ddo##
+        send clear to liordersdDDo##
+        send clear to liclorderddo##
+        send clear to liclorderdddo##
+        get  psrecr to wrecr##
+        move 0 to licount##
+        move wrecr## to order1.recr
+        Send Find  to liorder1DDo## ge  2
+        get field_current_value of liorder1ddo## field order1.recr to lsrecr##
+        if (found = 1 and lsrecr## eq wrecr## ) begin
+           get field_current_value of liorder1ddo## field order1.company_code to lscompany##
+           get field_current_value of liorder1ddo## field order1.branch_code to lsbranch##
+           get field_current_value of liorder1ddo## field order1.year_year to liyear##
+           get field_current_value of liorder1ddo## field order1.recr to recr##
+           get field_current_value of liorder1ddo## field order1.date to lsdate##
+           get field_current_value of liorder1ddo## field order1.ourdate to lsourdate##
+           get field_current_value of liorder1ddo## field order1.resp to lsarmod##
+           get field_current_value of liorder1ddo## field order1.nomisma to lsnomisma##
+           set field_changed_value of liorder1ddo## field order1.metasx to 1
+           set field_changed_value of liorder1ddo## field order1.eggrish to 1
+           set field_changed_value of liorder1ddo## field order1.okey to 1
+           set field_changed_value of liorder1ddo## field order1.finish to 1
+           send request_save to liorder1ddo##
+           send Rebuild_constraints to liordersdDDo##
+           Send Find  to liordersdDDo## first_record 3 // js Xreiazetai neos index sto clordersd me 1o pedio clorder
+           While (found eq 1)
+            get field_current_value of liordersdddo## field ordersd.clients_code to lscust##
+            get field_current_value of liordersdddo## field ordersd.item_code to caitemscode##
+            get field_current_value of liordersdddo## field ordersd.clients_item to promitem##
+            get field_current_value of liordersdddo## field ordersd.qty to lntotqty##
+            get field_current_value of liordersdddo## field ordersd.pcfpa to lntotfpa##
+            get field_current_value of liordersdddo## field ordersd.pcdisc to lnpcdisc##
+            get field_current_value of liordersdddo## field ordersd.posodisc to lntotdisc##
+            get field_current_value of liordersdddo## field ordersd.extra to lntotextra##
+            get field_current_value of liordersdddo## field ordersd.total to lntotpay##
+            get field_current_value of liordersdddo## field ordersd.unitprice to lnunitprice##
+            get field_current_value of liordersdddo## field ordersd.posofpa to lnposofpa##
+            get field_current_value of liordersdddo## field ordersd.net to lnposonet##
+            move lscust## to clients.client_id
+            Send Find  to liclientsDDo## eq 6
+            if (found = 0) error 7000 'Éú§ ô®Â©°‡ ≠¶®‚ò'
+            if (lscust## ne wcust##) begin
+              move lscust## to wcust##
+              set field_changed_value of liclorderddo## field clorder.company_code to lscompany##
+              set field_changed_value of liclorderddo## field clorder.branch_code to lsbranch##
+              set field_changed_value of liclorderddo## field clorder.year_year to liyear##
+              set field_changed_value of liclorderddo## field clorder.aapar to lsaapar##
+              set field_changed_value of liclorderddo## field clorder.armod to lsarmod##
+              set field_changed_value of liclorderddo## field clorder.date to lsdate##
+              set field_changed_value of liclorderddo## field clorder.our_date to lsourdate##
+              set field_changed_value of liclorderddo## field clorder.rial_date to lsrialdate##
+              set field_changed_value of liclorderddo## field clorder.order1_recr to recr##
+              set field_changed_value of liclorderddo## field clorder.nomisma to lsnomisma##
+              set field_changed_value of liclorderddo## field clorder.module to '02'
+              send request_save to liclorderddo##
+              get field_current_value of liclorderddo## field clorder.recr to orecr##
+              Send UpdateWait to (piTxtID(Self))  ('Ñ§û£‚®‡©û èò®òööú¢Âò™ î¶®‚ò '+(String(orecr##)))
+
+           end
+           else begin
+            move orecr## to clorder.recr
+            send find to liclorderddo## eq 2
+           end
+           set field_changed_value of liclorderdddo## field clorderd.ourdate to lsourdate##
+           set field_changed_value of liclorderdddo## field clorderd.rial_date to lsrialdate##
+           set field_changed_value of liclorderdddo## field clorderd.client_item to promitem##
+           set field_changed_value of liclorderdddo## field clorderd.item_code to caitemscode##
+           set field_changed_value of liclorderdddo## field clorderd.qty to lntotqty##
+           set field_changed_value of liclorderdddo## field clorderd.ypol_qty to lntotqty##
+           set field_changed_value of liclorderdddo## field clorderd.net to lnposonet##
+           set field_changed_value of liclorderdddo## field clorderd.pcdisc to lnpcdisc##
+           set field_changed_value of liclorderdddo## field clorderd.pcfpa to lntotfpa##
+           set field_changed_value of liclorderdddo## field clorderd.posodisc to lntotdisc##
+           set field_changed_value of liclorderdddo## field clorderd.posofpa to lnposofpa##
+           set field_changed_value of liclorderdddo## field clorderd.posoextra to lntotextra##
+           set field_changed_value of liclorderdddo## field clorderd.posototal to lntotpay##
+           set field_changed_value of liclorderdddo## field clorderd.unitprice to lnunitprice##
+           send request_save to liclorderdddo##
+           get field_current_value of liclorderdddo## field clorderd.recr to srecr##
+           Send UpdateWait to (piTxtID(Self))  ('Ñ§û£‚®‡©û èò®òööú¢Âò™ î¶®‚ò '+(String(srecr##)))
+
+           send clear to liclorderddo##
+           send clear to liclorderdddo##
+
+        Send Find  to liordersdddo## next_record 3
+        Loop
+     end
+     if (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+End_Procedure
+
+Procedure OnProcess
+       send uppar_rec
+End_Procedure
+
+
+ Procedure Start_Process
+         Set piTxtID                         to (Wait(Self))
+         Set Button_State    of (Wait(Self)) to False
+         Set BarVisibleState of (Wait(Self)) to '' False
+         Send Popup                          to (Wait(Self))
+         Set piLathos                        to 0
+         Forward Send Start_Process
+ End_Procedure
+
+    Procedure OnError integer error_info string errMsg
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+    Procedure End_Process
+       Forward Send End_Process
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+
+
+
+
+End_Object
+
+

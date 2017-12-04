@@ -1,0 +1,290 @@
+Dim lsExportPath As String
+Dim lsPathSend As String
+Dim lsPathSendOk As String
+Dim lsLoginName As String
+Dim lsLoginPass As String
+Dim lsPhone As String
+Dim lsFtpServer As String
+Dim lsFTPString As String
+
+
+Dim liFileSend As Integer
+Dim liTotalFiles As Integer
+Dim lsTelephone As String
+Dim WaitForSiteAns As Boolean
+Dim RetriesCount As Integer
+Dim lbVinter As Boolean
+
+Dim mfsysobject As New Scripting.FileSystemObject
+
+
+Private Sub Command1_Click()
+   ' Shell ("C:\delftp.bat")
+
+    mfsysobject.CopyFile "C:\ZSOK.TXT", "A:\ZSOK.TXT", True
+    flstFiles.Path = lsExportPath
+    flstFiles.Refresh
+
+
+    mRas1.PhoneNumber = lsPhone 'lsTelephone
+
+    mRas1.LogonName = Trim(lsLoginName)
+    mRas1.LogonPassword = Trim(lsLoginPass)
+    mRas1.Domain = ""
+    'mRas1.PhoneBook = "INTERBETON"
+    mRas1.Connect
+
+
+    'Must be removed
+
+    liTotalFiles = flstFiles.ListCount
+    liFileSend = 0
+    Bar1.Max = liTotalFiles
+    Bar1.Value = liFileSend
+    imgDis.Visible = False
+    imgCon.Visible = True
+
+
+    If Trim(lsLoginName) <> "" Then
+        lsFTPString = "ftp://" + Trim(lsLoginName) + "@" + Trim(lsFtpServer) + "/"
+        If Trim(lsLoginPass) <> "" Then
+            lsFTPString = "ftp://" + Trim(lsLoginName) + ":" + Trim(lsLoginPass) + "@" + Trim(lsFtpServer) + "/"
+        End If
+    Else
+        lsFTPString = "ftp://" + Trim(lsFtpServer) + "/"
+    End If
+    'Inet1.Execute "ftp://TOLHS3@idy-mandra/", "Get Welcome.txt c:\Welcome.txt"
+
+
+
+End Sub
+
+Private Sub Command2_Click()
+        lbVinter = True
+        Inet1.Execute lsFTPString, "Get " & lsPathSend & "VINTER.TXT" & " A:\VINTER.TXT"
+
+End Sub
+
+Private Sub Command3_Click()
+
+    mRas1.Disconnect
+End Sub
+
+Private Sub Form_Activate()
+
+    txtMessage.Text = ""
+
+    'lsExportPath = "c:\0" '''txtPath.Text
+    'lsPathSend = txtPathSiteSend.Text
+    'lsPathSendOk = txtPathSiteOk.Text
+
+
+    'lsTelephone = txtTelephone.Text
+    flstFiles.Path = lsExportPath
+
+    flstFiles.Refresh
+
+    WaitForSiteAns = False
+
+    BarRetries.Max = 11
+    BarRetries.Value = 0
+End Sub
+
+Private Sub Form_Load()
+    Height = 5535  '7020 '6555
+    Width = 6210 '10935
+    Top = 0
+    Left = (Screen.Width - Width) / 2
+    imgDis.Visible = True
+    imgCon.Visible = False
+
+    Timer1.Enabled = False
+
+    Open "c:\FTPIni.txt" For Input As #1
+        Line Input #1, lsExportPath
+        Line Input #1, lsPathSend
+        Line Input #1, lsPathSendOk
+        Line Input #1, lsPhone
+        Line Input #1, lsLoginName
+        Line Input #1, lsLoginPass
+        Line Input #1, lsFtpServer
+    Close #1
+End Sub
+
+Private Sub Inet1_StateChanged(ByVal State As Integer)
+    ' Retrieve server response using the GetChunk
+    ' method when State = 12. This example assumes the
+    ' data is text.
+
+    Select Case State
+
+    Case 1
+
+    Case 2
+        Debug.Print "Resolved"
+    Case 3
+        Debug.Print "icConnecting    "
+    Case 4
+        Debug.Print "icConnected"
+    Case 5
+        Debug.Print "icRequesting"
+    Case 6
+        Debug.Print "icRequestSent   "
+    Case 7
+        Debug.Print "icReceivingResponse "
+    Case 8
+        Debug.Print "icResponseReceived  "
+    Case 9
+        Debug.Print "icDisconnecting "
+    Case 10
+        Debug.Print "icDisconnected  "
+    Case 11
+        Debug.Print "icError"
+
+    Case 12 'Completed
+        If Not WaitForSiteAns Then
+
+            If FileLen("C:\Welcome.TXT") > 2 And Len(txtMessage.Text) = 0 Then
+
+                    Open "C:\Welcome.TXT" For Input Access Read Shared As #3
+                        Dim RecN As Integer
+                        Dim III As Integer 'local counter
+                        RecN = LOF(3)
+                        For III = 1 To RecN
+                            Seek #3, III
+                            txtMessage.Text = txtMessage.Text + Input(1, #3)
+                        Next III
+                    Close #3
+
+            End If
+
+            If liFileSend < liTotalFiles Then
+                Call SendFtpFiles
+            Else
+                'All files Send
+                liFileSend = 1
+
+                'Activate Get Ok routing
+                WaitForSiteAns = True
+                RetriesCount = 0
+                Timer1.Enabled = True
+
+
+
+            End If
+        Else 'waiting for ok
+            If Not lbVinter Then
+                If FileLen("C:\ZROK.TXT") > 2 Then
+
+                    'Shell ("C:\delftp.bat")
+
+                    mfsysobject.DeleteFile "C:\Welcome.txt", True
+                    mfsysobject.DeleteFile "C:\zrok.txt", True
+
+                    'Call mdExportTbl.UpdateSchedulesSendOk(txtSiteW.Text, txtDateSelected.Text)
+                    'txtSiteW.Text = ""
+                    'txtDateSelected.Text = ""
+
+                    MsgBox "Transfer Completed"
+                    Timer1.Enabled = False
+                    lbVinter = False
+                    'With frmScheduleProduction
+                    '    .dtaQSchedules.Refresh
+                    '    .TDBGrid1.Refresh
+                    'End With
+                    'Unload Me
+                End If
+          Else
+                MsgBox "Transfer Completed"
+          End If
+        End If
+    Case 8
+
+        Debug.Print strData
+    Case Else
+        Debug.Print "State" & State
+
+    End Select
+
+End Sub
+
+Private Function GetFtpFilesOk()
+    'Debug.Print "ftp://TOLHS3@idy-mandra/", "Get " & lsPathSendOk & "ZROK.txt" & " c:\ZROK.txt"
+    'Inet1.Execute "ftp://TOLHS3@idy-mandra/", "Get ZROK.txt" & " c:\ZROK.txt"
+
+    Inet1.Execute lsFTPString, "Get " & lsPathSendOk & "ZROK.TXT" & " c:\ZROK.TXT"
+    'Inet1.Execute lsFTPString, "Get " & "Contomeas/" & "ZROK.TXT" & " c:\ZROK.TXT"
+
+End Function
+
+
+Private Function SendFtpFiles()
+
+    liFileSend = liFileSend + 1
+    Bar1.Value = liFileSend
+    flstFiles.ListIndex = liFileSend - 1
+
+    If flstFiles.FileName = "ZSOK.TXT" Then
+    'Ia aeea?ea? ia iaoaaeco'c a'aoc site "ftp://TOLHS3@idy-mandra/"
+        Inet1.Execute lsFTPString, "SEND " & lsExportPath & "\" & flstFiles.FileName & " " & lsPathSendOk & flstFiles.FileName
+    Else
+        Inet1.Execute lsFTPString, "SEND " & lsExportPath & "\" & flstFiles.FileName & " " & lsPathSend & flstFiles.FileName
+    End If
+
+End Function
+
+Private Sub Label1_Click()
+
+End Sub
+
+Private Sub Timer1_Timer()
+    Call GetFtpFilesOk
+
+    RetriesCount = RetriesCount + 1
+    BarRetries.Value = RetriesCount
+    If RetriesCount > 10 Then
+        Shell ("C:\delftp.bat")
+        mRas1.Disconnect
+        MsgBox "Problem"
+        Unload Me
+
+    End If
+End Sub
+
+Private Sub mRas1_Done(ByVal LastMethod As RasXComponent.MethodsEnum, ByVal ErrorCode As Integer, ByVal ErrorString As String)
+    If (ErrorCode <> 0) Then
+        lstConnectState.AddItem "Error: " & ErrorString
+        lstConnectState.ListIndex = lstConnectState.ListCount - 1
+    End If
+    Debug.Print " mRas1.State " & mRas1.State
+   ' Done with connection?
+   If mRas1.State = 8192 Then
+      ' Connected
+
+        liTotalFiles = flstFiles.ListCount
+        liFileSend = 0
+        Bar1.Max = liTotalFiles
+        Bar1.Value = liFileSend
+        imgDis.Visible = False
+        imgCon.Visible = True
+
+        Inet1.Execute lsFTPString, "Get Welcome.txt c:\Welcome.txt"
+
+
+   ElseIf mRas1.State = 8193 Then
+      ' Not connected
+        imgDis.Visible = True
+        imgCon.Visible = False
+
+   End If
+
+
+
+End Sub
+
+Private Sub mRas1_StateChanged(ByVal NewState As Integer, ByVal OldState As Integer)
+   lstConnectState.AddItem NewState & " " & mRas1.StateString
+   lstConnectState.ListIndex = lstConnectState.ListCount - 1
+
+End Sub
+

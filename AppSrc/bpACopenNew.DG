@@ -1,0 +1,301 @@
+//AB/ Project bpACopen
+//AB/     Object prj is a Dialog_Project
+//AB/         Set ProjectName to "bpACopen"
+//AB/         Set ProjectFileName to "bpACopen.DG"
+//AB/         Set GenerateFileName to "NONAME"
+
+// Project Object Structure
+//   bpACopen is a BusinessProcessSub
+//     Ctypkin_DD is a DataDictionary
+//     Country_DD is a DataDictionary
+//     Towns_DD is a DataDictionary
+//     Cities_DD is a DataDictionary
+//     Areas_DD is a DataDictionary
+//     Payresp_DD is a DataDictionary
+//     Clients_DD is a DataDictionary
+//     Cmoves_DD is a DataDictionary
+//     Cmovesa_DD is a DataDictionary
+//     Copen_DD is a DataDictionary
+
+// Register all objects
+Register_Object Areas_DD
+Register_Object bpACopen
+Register_Object Cities_DD
+Register_Object Clients_DD
+Register_Object Cmoves_DD
+Register_Object Cmovesa_DD
+Register_Object Copen_DD
+Register_Object Country_DD
+Register_Object Ctypkin_DD
+Register_Object Payresp_DD
+Register_Object Towns_DD
+
+
+
+    //AB-StoreTopStart
+    Use bp2ndCop.dg
+
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use Bproces.Sub
+    Use DFAllEnt.pkg
+
+
+    Use CTYPKIN.DD
+    Use COUNTRY.DD
+    Use TOWNS.DD
+    Use CITIES.DD
+    Use AREAS.DD
+    Use PAYRESP.DD
+    Use CLIENTS.DD
+    Use CMOVES.DD
+    Use CMOVESA.DD
+    Use COPEN.DD
+
+    //AB-IgnoreEnd
+
+    Object bpACopen is a BusinessProcessSub
+
+        //AB-StoreTopStart
+
+        Property String     psCmovesRecr    Public ''
+        Property Integer    piLathos        Public  0
+        Property Integer    piXr_or_Pi      Public  0
+        Property String     psClientID      Public ''
+        Property Date       pdHmniaEos      Public ''
+        Property String     psModule        Public ''
+        Property Integer    piBtnID         Public  0
+
+
+        Set Status_Panel_State to False
+        //Set Allow_Cancel_State  to True
+        Set Display_Error_State to True
+
+        //Set Process_Title to "               "
+        //Set Status_Log_id to (status_log(Self)) //Use statlog.pkg
+        //Set Status_log_state to True
+
+        //AB-StoreTopEnd
+
+        Set Size to 60 100
+        Set Location to 6 7
+
+        //AB-DDOStart
+
+        Object Ctypkin_DD is a Ctypkin_DataDictionary
+        End_Object    // Ctypkin_DD
+
+        Object Country_DD is a Country_DataDictionary
+        End_Object    // Country_DD
+
+        Object Towns_DD is a Towns_DataDictionary
+            Set DDO_Server to (Country_DD(self))
+        End_Object    // Towns_DD
+
+        Object Cities_DD is a Cities_DataDictionary
+            Set DDO_Server to (Towns_DD(self))
+        End_Object    // Cities_DD
+
+        Object Areas_DD is a Areas_DataDictionary
+        End_Object    // Areas_DD
+
+        Object Payresp_DD is a Payresp_DataDictionary
+        End_Object    // Payresp_DD
+
+        Object Clients_DD is a Clients_DataDictionary
+            Set DDO_Server to (Cities_DD(self))
+            Set DDO_Server to (Areas_DD(self))
+            Set DDO_Server to (Payresp_DD(self))
+        End_Object    // Clients_DD
+
+        Object Cmoves_DD is a Cmoves_DataDictionary
+            Set DDO_Server to (Ctypkin_DD(self))
+            Set DDO_Server to (Clients_DD(self))
+
+            //AB-StoreStart
+
+            Set piFromBP            to 1
+            Set piNotMoveSyscurXr   to 1
+
+            //AB-StoreEnd
+
+        End_Object    // Cmoves_DD
+
+        Object Cmovesa_DD is a Cmovesa_DataDictionary
+
+            //AB-StoreStart
+
+            Begin_Constraints
+                Set ordering to 15
+                Constrain CmovesA.Company_Code  Eq Syscurxr.Company_Code
+                Constrain Cmovesa.Flag_Ypol     Eq  1
+                Constrain CmovesA.Flag_Copen    Eq  (3-(piXr_or_Pi(Self)))
+                Constrain CmovesA.Module_From   Eq (psModule(Self))
+                Constrain CmovesA.Client_ID     Eq (psClientID(Self))
+                Constrain CmovesA.Cmoves_Hmnia  Le (pdHmniaEos(Self))
+            End_Constraints
+
+            //AB-StoreEnd
+
+        End_Object    // Cmovesa_DD
+
+        Object Copen_DD is a Copen_DataDictionary
+            Set DDO_Server to (Cmoves_DD(self))
+            Set DDO_Server to (Cmovesa_DD(self))
+            Set Constrain_File to Cmoves.File_Number
+
+            //AB-StoreStart
+
+            Set piFromBP to 1
+
+            Procedure Request_Save
+                Integer iRetval iRecnum iLathos isClosed iOpenRecnum iCopenRecnum iErr
+                String  sCopen_Recr sCMoves_Recr sCMovesA_Recr sMessage
+                String  sAliasCtypkinRecr sMasterCtypkinRecr sClient_Recr sCopenDD2Recr
+                Number nMeion nAxia nXr nPi nAfairese
+                Forward Send Request_Save
+
+                Move 0 to nMeion
+                Move 0 to iLathos
+                Get Field_Current_Value Of Clients_DD   Field Clients.Client_Recr   to sClient_Recr
+                Get Field_Current_Value Of CMoves_DD    Field CMoves.Recnum         to iRecnum
+                Get Field_Current_Value Of CMoves_DD    Field Cmoves.Ctypkin_Recr   to sMasterCtypkinRecr
+                Get Field_Current_Value Of CMoves_DD    Field CMoves.Is_Closed      to isClosed
+                Get Field_Current_Value Of Copen_DD     Field Copen.Recnum          to iCopenRecnum
+                Get Field_Current_Value Of Copen_DD     Field Copen.Copen_Recr      to sCopen_Recr
+                Get Field_Current_Value Of CMoves_DD    Field CMoves.CMoves_Recr    to sCMoves_Recr
+                Get Field_Current_Value Of CMovesA_DD   Field CMovesA.CMoves_Recr   to sCMovesA_Recr
+                Get Field_Current_Value Of CMovesA_DD   Field CmovesA.Ctypkin_Recr  to sAliasCtypkinRecr
+                Get Field_Current_Value Of Copen_DD     Field Copen.Copen_Axia0     to nMeion
+                Get Field_Current_Value Of Copen_DD     Field Copen.Copen_X0        to nXr
+                Get Field_Current_Value Of Copen_DD     Field Copen.Copen_P0        to nPi
+
+                If ((Trim(sCMoves_Recr)     <>'') And ;
+                    (Trim(sCMovesA_Recr)    <>'') And ;
+                    (Trim(sAliasCtypkinRecr)<>''))      Begin
+                    Set piLathos            Of bp2ndCop to False
+                    Set psCopenRecr         Of bp2ndCop to (Trim(sCopen_Recr))
+                    Set psCmovesRecr        Of bp2ndCop to (Trim(sCmoves_Recr))
+                    Set psCmovesARecr       Of bp2ndCop to (Trim(sCmovesA_Recr))
+                    Set psClientRecr        Of bp2ndCop to (Trim(sClient_Recr))
+                    Set psMasterCtypkinRecr Of bp2ndCop to (Trim(sMasterCtypkinRecr))
+                    Set psAliasCtypkinRecr  Of bp2ndCop to (Trim(sAliasCtypkinRecr))
+                    Set psModule            Of bp2ndCop to (Trim(psModule(Self)))
+                    Set pnAxia              Of bp2ndCop to nMeion
+                    Set pnX0                Of bp2ndCop to nXr
+                    Set pnP0                Of bp2ndCop to nPi
+                    Send DoProcess                      to bp2ndCop
+                End
+                Else error 60000 'Šœå§¦¬¤ §˜¨á£œ«¨¦  š ˜ «ž¤ ¡¢ã©ž bp2ndCop'
+             End_Procedure
+
+            //AB-StoreEnd
+
+        End_Object    // Copen_DD
+
+
+        //AB-DDOEnd
+
+
+        //AB-StoreStart
+
+        Procedure Ftiaxe_ta_Copen
+            String  sCmovesRecr sClientID sCmovesARecr sModule sCmovesARecr2
+            Integer iXP iErr iXPa
+            Number  nPoso nPosoA
+            Date    dHmnia
+
+            Get pdHmniaEos              to dHmnia
+            Set piLathos                to 0
+            Get psCmovesRecr            to sCmovesRecr
+            Move (Trim(sCmovesRecr))    to sCmovesRecr
+
+            If (sCmovesRecr<>'') Begin
+                Clear Cmoves
+                Move sCmovesRecr to Cmoves.Cmoves_Recr
+                Find Eq Cmoves by Index.2
+                If (Not(Found)) error 20002 'ƒœ¤ ™¨âŸž¡œ «¦ Cmoves'
+                Send Find to Cmoves_DD Eq 2
+                If (Not(Found)) error 50002 'ƒœ¤ ™¨âŸž¡œ «¦ Cmoves'
+
+                Get Field_Current_Value Of (Cmoves_DD(Self))    Field Cmoves.Flag_Copen     to iXP
+                Get Field_Current_Value Of (Cmoves_DD(Self))    Field Cmoves.Axia_ypol_sysx to nPoso
+                Get Field_Current_Value Of (Clients_DD(Self))   Field Clients.Client_ID     to sClientID
+
+                Set piXr_or_Pi          to iXP
+
+                     If (iXP=1) Move 2  to iXPa
+                Else If (iXP=2) Move 1  to iXPa
+
+                Set psClientID              to (Trim(sClientID))
+                Send Rebuild_Constraints    to CmovesA_DD
+                // Ta Constrain filtraroun Pelath,Xr/Pi,hmnia
+                Send Find                   to CmovesA_DD First_Record 12 // CmovesA:index.12:Client_ID+Flag_Copen+Flag_Ypol+Cmoves_Hmnia+Cmoves_Recr
+
+                While ((Found) And (nPoso>0))
+
+                    Set Label Of (piBtnID(Self)) to (Trim(CmovesA.Client_ID)+'  '+String(CmovesA.Cmoves_Hmnia))
+
+
+                    Get Field_Current_Value Of (CmovesA_DD(Self))    Field CmovesA.Cmoves_Recr      to sCmovesARecr
+                    Get Field_Current_Value Of (CmovesA_DD(Self))    Field CmovesA.Axia_ypol_sysx   to nPosoA
+
+                    Send Clear to Copen_DD
+                    Clear CmovesA
+                    Move sCmovesARecr to CmovesA.Cmoves_Recr
+                    Find Eq CmovesA By Index.2
+                    Send Find to CmovesA_DD Eq 2
+                    If (Not(Found)) error 20003 'ƒœ¤ ™¨âŸž¡œ Cmoves alias'
+                    If (nPoso<=nPosoA)  Set Field_Changed_Value Of Copen_DD Field Copen.Copen_Axia0 to nPoso
+                    Else                Set Field_Changed_Value Of Copen_DD Field Copen.Copen_Axia0 to nPosoA
+
+                    Set Field_Changed_Value Of Copen_DD Field Copen.Copen_M_Code        to (Trim(psModule(Self)))
+
+                    Send Request_Save to Copen_DD
+
+                    Clear Cmoves
+                    Move sCmovesRecr to Cmoves.Cmoves_Recr
+                    Find Eq Cmoves by Index.2
+                    If (Not(Found)) error 20002 'ƒœ¤ ™¨âŸž¡œ «¦ Cmoves'
+                    Send Find to Cmoves_DD Eq 2
+                    If (Not(Found)) error 50002 'ƒœ¤ ™¨âŸž¡œ «¦ Cmoves'
+
+                    Get Field_Current_Value Of (Cmoves_DD(Self)) Field Cmoves.Axia_ypol_sysx to nPoso
+
+                    Send Clear to Copen_DD
+
+                    Send Clear                  to CmovesA_DD
+                    Send Rebuild_Constraints    to CmovesA_DD
+                    Send Find                   to CmovesA_DD First_Record 12 // CmovesA:index.12:Client_ID+Flag_Copen+Flag_Ypol+Cmoves_Hmnia+Cmoves_Recr
+                Loop
+            End
+            Else error 20001 '‘­á¢£˜ ©«ž¤ Bpacopen'
+        End_procedure
+
+        Procedure OnProcess
+            Send Ftiaxe_ta_Copen
+        End_Procedure
+
+        Procedure OnError integer error_info string errMsg
+        End_Procedure
+
+        Procedure Start_Process
+            Forward Send Start_Process
+        End_Procedure
+
+        Procedure End_Process
+            Forward Send End_Process
+        End_Procedure
+
+        //AB-StoreEnd
+
+    End_Object    // bpACopen
+
+
+    //AB-StoreStart
+
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

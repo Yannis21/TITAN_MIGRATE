@@ -1,0 +1,299 @@
+//AB/ Project ranal:analoseon
+//AB/     Object prj is a Report_Project
+//AB/         Set ProjectName to "ranal:analoseon"
+//AB/         Set ProjectFileName to "ranal.RV"
+
+// Project Object Structure
+//   ranal is a ReportViewSub
+//     ButtonSub3 is a ButtonSub
+//     ButtonSub4 is a ButtonSub
+//     rtehn_BasicReport is a BasicReport
+//       Tmpanal_DD is a Tmpanal_DataDictionary
+
+// Register all objects
+Register_Object ButtonSub3
+Register_Object ButtonSub4
+Register_Object ranal
+Register_Object rtehn_BasicReport
+Register_Object Tmpanal_DD
+
+
+//AB/     Report View
+
+
+    //AB-StoreTopStart
+    Use dfallrpt.pkg
+    use tmpanal.dd
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use Rptvw.Sub
+    Use Button.Sub
+
+    //AB-IgnoreEnd
+
+    ACTIVATE_VIEW Activate_ranal FOR ranal
+
+    Object ranal is a ReportViewSub
+
+        //AB-StoreTopStart
+        
+        Property Integer Sort_IndexRlog     Public 1
+        property number  pnqty              public 0
+        property integer pino               public 0
+        property string  pscode             public ''
+        property string  psitem             public ''
+        property date    pddate             public ''
+        property string  psbranch           public ''
+        property string psrecr              public ''
+        //AB-StoreTopEnd
+
+        Set Label to "€¤˜¢é©œ ª"
+        Set Size to 39 186
+        Set Location to 1 23
+        Set Color to 16744448
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object ButtonSub3 is a ButtonSub
+
+            //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                                            
+            //AB-StoreTopEnd
+
+            Set Bitmap to "RUNPROG.BMP"
+            Set Size to 18 27
+            Set Location to 3 119
+            Set Border_Style to Border_StaticEdge
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                                                                                                                                                                                                                                                                                            
+            Procedure OnClick
+            
+            End_Procedure
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub3
+
+        Object ButtonSub4 is a ButtonSub
+
+            //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                                            
+            //AB-StoreTopEnd
+
+            Set Bitmap to "CANCEL.BMP"
+            Set Size to 18 27
+            Set Location to 3 153
+            Set Border_Style to Border_StaticEdge
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            Procedure OnClick
+                Send Request_Cancel
+            End_Procedure
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub4
+
+
+        //AB-StoreStart
+        set output_device_name to none
+        Procedure StartReport
+            Local Integer iOutputDevice
+            Local String  FileName
+            SEND RUN_REPORT
+        End_Procedure   // StartReport
+        
+        
+        Object rtehn_BasicReport is a BasicReport
+        
+            Set Report_Title to "„¤ž£â¨à©ž €¤˜¢é©œà¤ ‘ç¤¦¢˜                   "
+            Set Report_Caption to "„¤ž£â¨à©ž €¤˜¢é©œà¤ ‘ç¤¦¢˜ "
+        
+            Set Status_Panel_State  to true
+            Set Display_Error_State to True
+        
+        
+        
+        
+            Object Tmpanal_DD is a Tmpanal_DataDictionary
+                 begin_constraints
+                    constrain tmpanal.typos eq '09'
+                 end_constraints
+            End_Object    // tmpanal
+        
+            Set Server To (tmpanal_dd(Self))
+        
+            //Breaks and Index for the report
+            Report_Index By Index.4
+            Report_breaks tmpanal.hmnia tmpanal.egkatastash tmpanal.itemd
+        
+            Function Starting_Main_Report Returns Integer
+              Integer iIndexRlog
+              Local Integer iRetVal
+              Forward Get Starting_Main_Report to iRetval
+              send rebuild_constraints to tmpanal_dd
+              Send Find to (tmpanal_dd(self)) First_Record 4
+            End_Function
+        
+            Procedure_Section subheader1
+                set pddate to tmpanal.hmnia
+                set pnqty to 0
+        
+            End_Procedure
+        
+            Procedure_Section subheader2
+                set psbranch to tmpanal.egkatastash
+                set pnqty to 0
+            End_Procedure
+        
+            Procedure_Section subheader3
+                set psitem to tmpanal.itemd
+            End_Procedure
+        
+            Procedure_Section  Body
+                integer ino
+                number nqty
+                set pino  to (pino(self)+1)
+                set pnqty to (pnqty(self)+Tmpanal.posoths)
+                send update_status ('Ešš¨˜­ã ' + string(Tmpanal.itemd))
+            End_Procedure
+            Procedure_Section subtotal3
+                string sbranch sitem
+                number nqty
+                date ddate
+                get psbranch to sbranch
+                get psitem to sitem
+                get pnqty to nqty
+                get pddate to ddate
+                clear tmpanal
+                move 'PP2'                              to Tmpanal.onoma
+                move '91'                               to Tmpanal.typos
+                move sbranch                            to Tmpanal.egkatastash
+                move nqty                               to tmpanal.posoths
+                move sitem                              to Tmpanal.itemd
+                move ddate                              to Tmpanal.hmnia
+                set pnqty to 0
+                saverecord tmpanal
+                set pnqty to 0
+            End_Procedure
+        
+            Procedure_Section subtotal2
+            End_Procedure
+        
+            Procedure_Section subtotal1
+        
+            End_Procedure
+        
+           Procedure Ending_Report
+                integer ino
+        
+                date ddate
+                get pddate to ddate
+        
+                get pino to ino
+                clear tmpanal
+                move 'PP2'                              to Tmpanal.onoma
+                move '92'                               to Tmpanal.typos
+                move 'ZZZZ'                             to tmpanal.egkatastash
+                move ddate                              to Tmpanal.hmnia
+                move ino                                to tmpanal.qty
+                saverecord tmpanal
+                SET pINO TO 0
+           End_Procedure
+        
+        End_Object
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // ranal
+
+
+    //AB-StoreStart
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

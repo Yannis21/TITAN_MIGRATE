@@ -1,0 +1,790 @@
+Open Sysfile     
+Open Sysrec
+Open Users
+Open UserGrps           
+Open Pedia
+Open Views        
+Open GrpViews   
+Open GrpView0
+Open Arxeia
+Open GrpArx
+Open GrpArx0
+Open GrpOth
+Open GrpOth0
+Open Oth          
+                                        
+
+Register_Procedure Check_Sap
+
+
+//TITAN MENU 14012003
+DFCreate_Menu Main_Menu         
+
+  Property String psMenuModule Public ''
+    //Use FindRelatedFiles.VW
+  //#INCLUDE File_pm.inc
+//*********************************************************************************
+//================================================================
+    Function Find_User_Rights_In_Menu String asView Returns Integer  
+        String  lsView lsLogin
+        Integer liUser  liViews iGroup
+        Move (fsLoginUserID())  to lsLogin
+        Move (Trim(ToOEM(asView))) to lsView     
+        //////  /////////////////////////////////////
+        Clear Users
+        Move lsLogin    to Users.Login_ID
+        Find eq Users by Index.1 // Users:Index.1:Users.Login_ID
+        If (Found=1)  Begin
+            Move Users.User_ID  to liUser
+            Move Users.Grp_ID   to iGroup
+        End
+        Else Function_Return 0
+        
+        Clear Views
+        Move (Trim(lsView)) to Views.Menu_Name
+        Find eq Views by Index.2 // Views:Index.2:Views.Menu_Name
+        If (Found=1) Begin
+            Move Views.View_ID to liViews
+            Clear GrpViews
+            Move liUser    to GrpViews.User_ID
+            Move liViews   to GrpViews.View_ID
+            Find Eq GrpViews by Index.1 // GrpViews:Index.1:GrpViews.User_ID+GrpViews.View_ID
+            If (Found=1) Begin // And (liUser=GrpViews.User_ID) And (liViews=GrpViews.View_ID)) Begin
+                Function_Return (GrpViews.Allow_Read<>'1')
+            End
+            Else Begin
+                Clear GrpView0
+                Move iGroup    to GrpView0.Group_ID
+                Move liViews   to GrpView0.View_ID
+                Find eq GrpView0 by Index.1 // GrpView0:Index.1:Group_ID+View_ID
+                If (Found=1) Begin
+                    Function_Return (GrpView0.Allow_Read<>'1')
+                End
+                Else Function_Return 0
+            End
+        End
+        Else Function_Return 0
+    
+    End_Function
+
+  dfcreate_menu "œ¢á«œª" cust_popupmenu is a ViewPopupMenu_Sec
+  on_item "‹«¨é¦ œ¢˜«é¤ "                               send activate_vwclients
+  //on_item "‹«¨é¦ “§¦¯ã­ à¤ œ¢˜«é¤ - ¨¦©­¦¨é¤"         send activate_v91
+  //on_item "’ £¦¡˜«á¢¦š¦  œ¢˜«é¤"                        send activate_Vwtimol
+  dfcreate_menu "ë¨š˜ " helpcn_popupmenu is a ViewPopupMenu_Sec
+    on_item "‹«¨é¦ ë¨šà¤"                                 send activate_v041
+    on_item "€¨®œå¦ ë¨šà¤ - œ¢˜«é¤"                       send activate_cn
+ //   on_item "’ £¦¡˜«á¢¦š¦  œ¢˜«é¤ - ë¨šà¤"                send activate_vtimolc
+    On_Item ""                                             Send NONE
+    On_Item "„¡«ç§à© ë¨šà¤ ™á© ‰¨ «¨åà¤ "               Send Activate_r41
+    On_Item "„¡«ç§à© ë¨šà¤ ˜¤á œ¢á« "                    Send Activate_r41_0
+    On_Item ""                                             Send NONE
+    on_item "‰˜¨«â¢œª œ¢˜«é¤ - ë¨šà¤"     send activate_r100_3
+    On_Item ""                                             Send NONE
+    On_Item "„¡«ç§à© ¨¦¬§¦¢¦š ©« ¡é¤ à¢ã©œà¤ „¨šà¤"  Send activate_r108_10
+    on_item "„¡«ç§à© €§¦Ÿœ£˜« ¡¦ç „¨šà¤ €¤˜¢¬« ¡ã"      send activate_r100_a
+    on_item "„¡«ç§à© €§¦Ÿœ£˜« ¡¦ç „¨šà¤ ‘¬š¡œ¤«¨à« ¡ã " send activate_r100_ab
+    on_item "„¡«ç§à© ˆ©¦¬šå¦¬ „¨šà¤  "                send activate_r41_2
+    on_item "„¡«ç§à© ‰ ¤ã©œà¤ ˜¤˜ „å›¦ª „¨šà¤  "       send activate_r041cn
+    On_Item ""                                             Send NONE
+    on_item "¨¦è§¦¢¦š ©£æª ’å¨¦¬ ë¨šà¤ " send activate_ProypTzirou
+    //on_item "„¡«ç§à© €§¦«œ¢â©£˜«˜ „¨šà¤  "            send activate_rvApotEr
+  END_PULL_DOWN
+  dfcreate_menu "“§œçŸ¬¤¦  ‘¬¤˜¢¢˜šé¤ " helppayresp_popupmenu is a ViewPopupMenu_Sec
+     on_item "‹«¨é¦ “§œçŸ¬¤à¤ ‘¬¤˜¢¢˜šé¤"               send activate_v111
+     On_Item ""                                          Send NONE
+     on_item "„¡«ç§à© “§œçŸ¬¤à¤ ‘¬¤˜¢¢˜šé¤ "             send activate_r111_0
+     On_Item ""                                           Send NONE
+     On_Item "„¡«ç§à© ‰ ¤ã©œà¤ ˜¤˜ “§œçŸ¬¤¦ ¢¨à£é¤ "   Send Activate_r111_1
+     On_Item "‰˜¨«â¢œª “§œçŸ¬¤à¤ ¢¨à£é¤ - ë¨šà¤  "      Send Activate_r111_4
+     on_item "à¢ã©œ ª “§œçŸ¬¤à¤ ¢¨à£é¤ - ë¨šà¤ "       send activate_r111_5
+     on_item "‰˜«á©«˜© à¢ã©œà¤ F.O.T. "                 send activate_r41_1
+     On_Item ""                                           Send NONE
+     On_Item "„¡«ç§à© ë¨šà¤ ˜¤˜ “§œçŸ¬¤¦ ¢¨à£é¤ "      Send Activate_r111_2
+     On_Item "„¡«ç§à© œ¢˜«é¤ ˜¤á “§œçŸ¬¤¦ ¢¨à£é¤ "    Send Activate_r111_3 
+     On_Item "„¡«ç§à© œ¢˜«é¤ ˜¤á “§œçŸ¬¤¦ ¢¨à£é¤/à¢«ã "    Send Activate_r111_6
+
+     On_Item "„¡«ç§à© „§ ©«¦¢é¤ “§œçŸ¬¤à¤ ¢¨à£é¤ & œ¢˜«é¤"  Send Activate_r111_ep
+//     On_Item ""                                             Send NONE
+    On_Item "„¡«ç§à© €¤á¢¬©ª €¤. Š¦š/£¦ç ¡˜  ‘¬¤. ­œ ¢ãª "   Send activate_HpalPr
+  END_PULL_DOWN
+  On_Item ""                                                    Send NONE
+  on_item "‰ ¤ã©œ ª œ¢˜«é¤        "                            send activate_vwcmoves
+  On_Item ""                                                    Send NONE
+  on_item "‰˜¨«â¢¢˜ œ¢˜«é¤"                                    send activate_vwkartel
+  On_Item ""                                                    Send NONE
+  dfcreate_menu "Credit Control Aging " helpaging_popupmenu is a ViewPopupMenu_Sec
+    On_Item "„¤£â¨à© “§¦¢¦å§à¤ œ¢˜«é¤ (Batch) "              Send activate_tOpItem
+    On_Item "€¡ç¨à© “§¦¢¦å§à¤ œ¢˜«é¤ (Batch) "                Send activate_tOpItDel
+//    On_Item "€¡ç¨à© ‘¬©®œ«å©œà¤ •¨ã©ª (Batch) "               Send activate_tOpDMetX
+    On_Item ""                                                  Send NONE
+    On_Item "„¡«ç§à© „¤¢ ¡åà©ª “§¦¢¦å§à¤ œ¢˜«é¤ "           Send activate_r6_5
+    On_Item "„¡«ç§à© €¤á¢¬©ª €¤. Š¦š/£¦ç ¡˜  ‘¬¤. ­œ ¢ãª "   Send activate_Hpal
+    On_Item "‹¤ ˜å˜ ‘«¦ ®œå˜ „£§¦¨å˜ª"                         Send activate_StoixEmp2
+    On_Item ""                                                  Send NONE
+    On_Item "„¤£â¨à© ƒ §¢æœ£­˜¤ æ£œ¤à¤ œ¢˜«é¤ œ¡«ç§à©ª Aging"           Send activate_tOpFix
+//    On_Item "‹¤ ˜å˜ ‘«¦ ®œå˜ „£§¦¨å˜ª V2"                      Send activate_StoixEmp2
+  END_PULL_DOWN
+  On_Item ""                                             Send NONE
+  
+  dfcreate_menu "„¡«¬§é©œ ª œ¢˜«é¤" printcust_popupmenu is a ViewPopupMenu_Sec
+   dfcreate_menu "¦Ÿ« ¡âª „¡«¬§é©œ ª œ¢˜«é¤" printcustt_popupmenu is a ViewPopupMenu_Sec
+    On_Item "„¡«ç§à© €¨®œå¦¬ œ¢˜«é¤ "           Send activate_r100_0
+    on_item "„¡«ç§à© œ¢˜«é¤ •à¨åª „šš¬« ¡ã "   send activate_r100_e
+    on_item "‰˜¨«â¢œª œ¢˜«é¤    "                send activate_r6_1hm
+    On_Item ""                                           Send NONE
+    on_item "à¢ã©œ ª ‰˜«á œ¢á«     "           send activate_r18_3
+    on_item "‘¬š¡œ¤«¨à« ¡âª ‰˜«˜©«á©œ ª à¢ã©œà¤ ‰˜«á œ¢á« " send activate_r18_4
+    on_item "à¢ã©œ ª ‰˜«á œ¢á« (‹œ œ§ ¢¦šã ‰ ¤ã©œà¤)" send activate_r18_5
+    on_item "à¢ã©œ ª ‰˜«á œ¢á« (Basic)"               send activate_r18_3b
+    On_Item ""                                           Send NONE
+    on_item "à¢ã©œ ª „ ›é¤ / „å›¦ª   "           send activate_r18_1
+    on_item "‘¬š¡œ¤«¨à« ¡âª à¢ã©œ ª „ ›é¤ / ‰˜«á ‹ã¤˜ "  send activate_r18_2
+    On_Item ""                                           Send NONE
+    //On_Item "‰¬¡¢¦­¦¨ ˜¡ã ’˜®ç««˜ œ¢˜«é¤"              Send activate_r100_1
+
+    On_Item "‰˜«á©«˜© œ¢˜«é¤ £œ “§â¨™˜© ¢˜­æ¤"       Send activate_r100_2
+    On_Item ""                                           Send NONE
+    On_Item "•¨¦¤¦› áš¨˜££˜ „ ©§¨á¥œà¤ "                 Send activate_r70_0
+    On_Item "‘¬š¡¨ « ¡ã ¡˜«á©«˜© à¢ã©œà¤ "             Send activate_r100s
+    On_Item "‰˜«á©«˜© ˜¨˜¢˜™é¤ œ¢˜«é¤ "               Send activate_r100_34
+    On_Item ""                                           Send NONE
+    //On_Item "˜¨˜›æ©œ ª ‘¡¬¨¦›â£˜«¦ª / Delivery Of Concrete" Send activate_DeliveryReport
+    On_Item "˜¨˜›æ©œ ª ‘¡¬¨¦›â£˜«¦ª / Delivery Of Concrete  "  Send activate_DeliveryReportNew
+    On_Item "‘«˜« ©« ¡á ê¤«¢©ª "                              Send activate_AntlisiReport
+
+    On_Item ""                                           Send NONE
+    On_Item ""                                           Send NONE
+    On_Item "„¡«ç§à© ‰¬™ ¡é¤ ˜¤á œ¢á«/ë¨š¦/¦ æ««˜  "   Send Activate_r41_00
+    On_Item "„¡«ç§à© ‰¬™ ¡é¤ ˜¤á ‰˜«š¦¨å˜ œ¢á«  "       Send Activate_r26_6_KatPel
+    On_Item ""                                           Send NONE
+    end_pull_down
+    
+    dfcreate_menu "Š¦š ©« ¡âª „¡«¬§é©œ ª œ¢˜«é¤" printpel2_popupmenu is a ViewPopupMenu_Sec
+      on_item "†£œ¨¦¢¦š ˜¡âª ‰ ¤ã©œ ª œ¢˜«é¤ (H)"       send activate_r6_4g
+      On_Item ""                                         Send NONE
+      on_item "ˆ©¦çš ¦ œ¢˜«é¤  "                       send activate_r6_2
+      on_item "ˆ©¦çš ¦ œ¢˜«é¤ (‡œà¨£â¤¦)"             send activate_r6_2b
+      On_Item ""                                         Send NONE
+      on_item "‰˜¨«â¢¢œª œ¢˜«é¤ (H)"                    send activate_r6_1c
+      On_Item ""                                         Send NONE
+      On_Item "“§æ¢¦ §˜ œ¢˜«é¤ ˜¤˜ ‹ã¤˜"                Send activate_r6_3
+      On_Item "‘¬š¡œ¤«¨à« ¡á “§æ¢¦ §˜ œ¢˜«é¤ £œ œ§ ¢¦šâª" Send activate_r6_3a
+    END_PULL_DOWN
+ END_PULL_DOWN
+ DFCreate_Menu "" HelpCust1_PopupMenu is a ViewPopupMenu_Sec
+   On_Item ""                                            Send NONE
+ END_PULL_DOWN
+
+ dfcreate_menu "¦Ÿ« ¡á à¢ã©œà¤ " helpcust_popupmenu is a ViewPopupMenu_Sec
+   on_item "‰ ¤ã©œ ª ¡˜  ˜¨á£œ«¨¦  ‰ ¤ã©œà¤ à¢ã©œà¤"   send activate_cflagkin
+   on_item "„¡«ç§à© ˜¨˜£â«¨à¤ ‰ ¤ã©œà¤ à¢ã©œà¤"       send activate_r7_0
+   On_Item ""                                            Send NONE
+   on_item "˜¨˜©«˜« ¡á à¢ã©œà¤"                        send activate_ptyppar
+   on_item "‰˜Ÿ¦¨ ©£æª ‹œ«˜©®.˜¨˜©«˜« ¡é¤ à¢ã©œà¤ ©œ"  send activate_ptypmet
+//   on_item "‘œ ¨âª à¢ã©œà¤"                             send activate_pseira
+   On_Item ""                                            Send NONE
+   on_item "¨ ©£æª †£œ¨¦¢¦šåà¤ à¢ã©œà¤"                send activate_hmgio
+   On_Item ""                                            Send NONE
+   On_Item "‹œ«˜­¦¨á “§¦¢¦å§à¤ œ¢˜«é¤-„¨šà¤"            Send activate_rmetafyp
+//   On_Item "‹œ«˜­¦¨á “§¦¢¦å§à¤ œ¢˜«é¤"                  Send activate_rmetafyp231204
+   On_Item "‹œ«˜­¦¨á “§¦¢¦å§à¤ “§¦¡˜«˜©«ã£˜«¦ª"          Send activate_rmetafth
+   On_Item "„ ©˜šàšã ‰ ¤ã©œà¤ €§¦š¨˜­ãª œ¢˜«é¤"         Send activate_gefyres
+//   On_Item "„ ©˜šàšã ‰ ¤ã©œà¤ 01-06-2008 / 23-11-2008 Ermhs XRE+PIST"         Send activate_gefyres2
+//   On_Item "„ ©˜šàšã ‰ ¤ã©œà¤ 01-01-2008 / 31-05-2008 Ermhs APOGRAFIKA"         Send activate_gefyres3
+//   from gts
+//   On_Item "¨ ©£æª ¡ ¤ã©œà¤ ˜¨˜©«˜« ¡é¤ à¢ã©œà¤ ©œ ‚.Š" Send activate_V21
+//   On_Item ""                                           Send NONE
+ END_PULL_DOWN
+
+ Procedure OnInitMenu
+    Forward Send OnInitMenu
+    Set psMenuModule    to '01'
+    Move '01'           to gs_Module_Code
+ End_Procedure
+
+ END_PULL_DOWN   //end  of pelates menu
+
+//================================================================
+ dfcreate_menu " — Š † ‘ „ ˆ ‘" sales_popupmenu is a ViewPopupMenu_Sec
+   on_item "ƒ ˜®œå¨ © ˜¨˜©«˜« ¡é¤ é¢©ª"             send activate_particle
+   on_item "ƒ ˜®œå¨ © E¡¡¨œ£é¤ ˜¨˜©«˜« ¡é¤ é¢©ª"    send activate_v14_1
+ //  on_item "‹˜ ¡ã €¢¢˜šã ©«¦ ®œåà¤ ƒ.€§¦©«¦¢ãª"         send activate_vallagh
+   on_item "ƒ£ ¦¬¨šå˜ Batch «¨æ§à¤ §¢¨à£ãª ˜¨˜©«˜« ¡é¤ " send activate_rtropoi
+
+
+   On_Item ""                                            Send NONE
+   on_item "ƒ ˜®œå¨ © „¡¡¨œ£é¤ ˜¨˜©«˜« ¡é¤ ˜§æ Betolink      (1) "  send activate_v192
+   on_item "‹œ«˜©®£˜« ©£æª ˜¨˜©«˜« ¡é¤ à¢ã©œà¤              (2) "  send activate_v014
+   on_item "‹˜ ¡æª â¢œš®¦ª ¡˜å ¦¨ ©« ¡ã œ¡«ç§à© §˜¨˜©«˜« ¡é¤ (3) "  send activate_v14a
+   On_Item ""                                            Send NONE
+   On_Item "Šã¯ ›œ›¦£â¤à¤ ˜§æ œ¨š¦©«á© ¦"               send activate_ftpview
+   On_Item "„ ©˜šàšã §˜¨˜©«˜« ¡é¤ ˜§æ › ©¡â«˜"           send activate_ftprdisk
+   On_Item ""                                            Send NONE
+   on_item "‘¬š¡œ¤«¨à« ¡æª ‹œ«˜©®£˜« ©£æª ˜¨˜©«˜« ¡é¤ à¢ã©œà¤ "     send activate_v014ola
+   on_item "¨ ©« ¡ã „¡«ç§à© ˜¨˜©«˜« ¡é¤ ‘¬š¡œ¤«¨à« ¡¦ç ‹œ«˜©®£˜« ©£¦ç (B3) "  send activate_v14Aola
+   On_Item ""                                            Send NONE   
+   On_Item "„¥˜šàšã ASCII Metro"                        send activate_vwParAsc
+
+     dfcreate_menu "„¡«¬§é©œ ª" sales222_popupmenu is a ViewPopupMenu_Sec
+       on_item "„¢œš®¦ª ˜¨˜©«˜« ¡é¤"             send activate_r144
+     END_PULL_DOWN // Polhseis
+
+     Procedure OnInitMenu
+        Forward Send OnInitMenu
+        Set psMenuModule    to '01'
+        Move '01'           to gs_Module_Code
+     End_Procedure
+
+
+ END_PULL_DOWN // Polhseis     
+
+//================================================================
+
+ dfcreate_menu "˜¨˜ššœ¢åœª/ƒ.„.." parag_Deop_popupmenu is a ViewPopupMenu_Sec
+    on_item "ƒ.„..  œ¢˜«é¤ - ë¨šà¤"      send activate_v193
+    on_item "€¤˜§¨¦©˜¨£¦šã « £é¤ ƒ.„.."   send activate_v193c
+    on_item "€¢¢˜šã ¡˜«á©«˜©ª ƒ.„.."     send activate_v193d
+    On_Item ''                              send None
+    on_item "†£œ¨ã© ˜ ›œ¢«å˜ §˜¨˜ššœ¢ é¤"   send activate_vw051
+    on_item "¨¦š¨˜££˜« ©£æª"               send activate_vw062
+    On_Item ""                              Send NONE
+    on_item "„¥˜šàšã ©«¦ ®œåà¤ ƒ„ ©œ EXCEL"   send activate_rvbtnordh
+   dfcreate_menu "„¡«¬§é©œ ª" Parag_Deop_Prn_popupmenu is a ViewPopupMenu_Sec
+       on_item "’ £¦¡˜«á¢¦š¦ª „¨šà¤"            send activate_r193
+       on_item "‰˜«á©«˜© ƒ.„.. §¨¦ª ˜¤˜§¨¦©˜¨£¦šã ™á© ¡¨ «¨åà¤  " send activate_r193a
+       on_item "„¡«ç§à© ƒ.„.. §¦¬ ˜¤˜§¨¦©˜¨£æ©«¡˜¤" send activate_r193_p
+       on_item "‰˜«á©«˜© ˜¨˜ššœ¢ é¤"          send Activate_rvDorder
+       on_item "˜¨˜ššœ¢åœª ®à¨åª ƒ.„.."      send Activate_rNoDeop
+       on_item "„¡«ç§à© §¨¦š¨˜££˜« ©£¦ç"       send Activate_rvHmProg
+   end_pull_down
+    On_Item ""                              Send NONE
+    on_item "„¡«ç§à© „¢âš®¦¬ î¨à¤ ¢¨à£ãª"   send activate_CompareTP
+
+     Procedure OnInitMenu
+        Forward Send OnInitMenu
+        Set psMenuModule    to '01'
+        Move '01'           to gs_Module_Code
+     End_Procedure
+
+ END_PULL_DOWN // Polhseis
+
+// //remove Agore
+//  dfcreate_menu "¨¦£Ÿœ¬«âª" prom_popupmenu is a ViewPopupMenu_Sec
+//   on_item "‹«¨é¦ ¨¦£Ÿœ¬«é¤"                          send activate_vwclients
+//   On_Item ""                                            Send NONE
+//   on_item "‰ ¤ã©œ ª ¨¦£Ÿœ¬«é¤    "                    send activate_vwcmoves
+//   on_item "’ £¦¡˜«á¢¦š¦  ¨¦£Ÿœ¬«é¤"                   send activate_Vwtimol
+//   On_Item ""                                            Send NONE
+//   on_item "‰˜¨«â¢¢˜ ¨¦£Ÿœ¬«é¤"                        send activate_vwkartel
+//   On_Item ""                                            Send NONE
+
+//   dfcreate_menu "„¡«¬§é©œ ª ¨¦£Ÿœ¬«é¤" printprom_popupmenu is a ViewPopupMenu_Sec
+//    dfcreate_menu "¦Ÿ« ¡âª „¡«¬§é©œ ª ¨¦£Ÿœ¬«é¤" printpromm_popupmenu is a ViewPopupMenu_Sec
+//     On_Item "„¡«ç§à© €¨®œå¦¬ ¨¦£Ÿœ¬«é¤"              Send activate_r100_0
+//     on_item "‰ ¤ã©œ ª ¨¦£Ÿœ¬«é¤ "                  send activate_r6_1
+//     on_item "€š¦¨âª „ ›é¤ / „å›¦ª"                      send activate_r18_1
+////  //   on_item "€š¦¨âª „ ›é¤ / „å›¦ª (Basic)"              send activate_r18_1b
+//     on_item "€š¦¨âª ˜¤á ¨¦£Ÿœ¬«ã"                    send activate_r18_3
+//     on_item "€š¦¨âª ˜¤á ¨¦£Ÿœ¬«ã (£œ „§ ¢¦šã ‰ ¤ã©œà¤)" send activate_r18_5
+//     on_item "€š¦¨âª ˜¤á ¨¦£Ÿœ¬«ã (Basic)"            send activate_r18_3b
+//     On_Item "‘¬š¡œ¤«¨à« ¡âª €š¦¨âª / ¨¦£Ÿœ¬«ã-‹ã¤˜"   Send activate_r18_4
+//     on_item "‘¬š¡œ¤«¨à« ¡âª €š¦¨âª „ ›é¤ ˜¤á ‹ã¤˜"     send activate_r18_2
+//     On_Item ""                                          Send NONE
+//     On_Item "„¤¢ ¡åà© “§¦¢¦å§à¤ ¨¦£Ÿœ¬«é¤"          Send activate_r6_5
+//     On_Item "‰¬¡¢¦­¦¨ ˜¡ã ’˜®ç««˜ ¨¦£Ÿœ¬«é¤"         Send activate_r100_1
+//     On_Item "‘¬©®â« © „ ›é¤ / ¨¦£Ÿœ¬«ã (Rpt36)"      Send activate_r186_0
+//     On_Item "‘¬©®â« © „ ›é¤ ˜¤á „å›¦ª/¨¦£Ÿœ¬«ã  (Rpt37)" Send activate_r186_1
+//     On_Item ""                                          Send NONE
+//     On_Item "•¨¦¤¦› áš¨˜££˜ ¢¨à£é¤"                   Send activate_r70_0
+//     end_pull_down
+//     dfcreate_menu "Š¦š ©« ¡âª „¡«¬§é©œ ª ¨¦£Ÿœ¬«é¤" printprom2_popupmenu is a ViewPopupMenu_Sec
+//       on_item "ˆ©¦çš ¦ ¨¦£Ÿœ¬«é¤ "                  send activate_r6_2
+//       on_item "ˆ©¦çš ¦ ¨¦£Ÿœ¬«é¤ (‡œà¨£â¤¦)"       send activate_r6_2b
+//      // on_item "‰ ¤ã©œ ª ¨¦£Ÿœ¬«é¤ (Basic)"         send activate_r6_1b
+//       on_item "‰˜¨«â¢¢œª ¨¦£Ÿœ¬«é¤ (H)"               send activate_r6_1c
+//       On_Item "“§æ¢¦ §˜ ¨¦£Ÿœ¬«é¤ ˜¤á ‹ã¤˜"           Send activate_r6_3
+//       On_Item "‘¬š¡œ¤«¨à« ¡á “§æ¢¦ §˜ ¨¦£Ÿœ¬«é¤ £œ œ§ ¢¦šâª" Send activate_r6_3a
+//       on_item "†£œ¨¦¢¦š ˜¡âª ‰ ¤ã©œ ª ¨¦£Ÿœ¬«é¤ (H)"  send activate_r6_4g
+//     END_PULL_DOWN
+//   END_PULL_DOWN
+//   dfcreate_menu "¦Ÿ« ¡á  €š¦¨é¤" helpprom_popupmenu is a ViewPopupMenu_Sec
+//     on_item "‰ ¤ã©œ ª ¡˜  ˜¨á£œ«¨¦  ‰ ¤ã©œà¤ €š¦¨é¤"   send activate_cflagkin
+//     On_Item ""                                          Send NONE
+//     on_item "˜¨˜©«˜« ¡á €š¦¨é¤"                        send activate_ptyppar
+//     on_item "‰˜Ÿ¦¨ ©£æª ‹œ«˜©®.˜¨˜©«˜« ¡é¤  €š¦¨é¤ ©œ" send activate_ptypmet
+//     on_item "‘œ ¨âª €š¦¨é¤"                             send activate_pseira
+//     On_Item ""                                          Send NONE
+//     on_item "¨ ©£æª †£œ¨¦¢¦šåà¤ €š¦¨é¤"                send activate_hmgio
+//     On_Item ""                                          Send NONE
+//     On_Item "‹œ«˜­¦¨á “§¦¢¦å§à¤ ¨¦£Ÿœ¬«é¤"            Send activate_rmetafyp
+//     On_Item "¨ ©£æª ¡ ¤ã©œà¤ ˜¨˜©«˜« ¡é¤ €š¦¨é¤ ©œ ‚.Š" Send activate_V21
+//   END_PULL_DOWN
+//   Procedure OnInitMenu
+//      Forward Send OnInitMenu
+//      Set psMenuModule to '02'
+//      Move '02' to gs_Module_Code
+//   End_Procedure
+// END_PULL_DOWN
+
+// dfcreate_menu "€š¦¨âª" purchase_popupmenu is a ViewPopupMenu_Sec
+//   on_item "ƒ ˜®œå¨ © ˜¨˜©«˜« ¡é¤ €š¦¨é¤"              send activate_particle
+//   on_item "ƒ ˜®œå¨ © E¡¡¨œ£é¤ ˜¨˜©«˜« ¡é¤ €š¦¨é¤"     send activate_v14_1
+//   On_Item ""                                            Send NONE
+//   on_item "ƒ ˜®œå¨ © „¡¡¨œ£é¤ ƒ.€.  €š¦¨é¤ ˜§æ Betolink  " send activate_v192
+//   on_item "‹œ«˜©®£˜« ©£æª ˜¨˜©«˜« ¡é¤ €š¦¨é¤"         send activate_v014
+//   On_Item ""                                            Send NONE
+//    dfcreate_menu "ƒ ˜®œå¨ © ˜¨˜ššœ¢ é¤ ˜§æ ¨¦£Ÿœ¬«âª" orders1_popupmenu is a ViewPopupMenu_Sec
+//       On_Item "ƒ ˜®œå¨ © ‚œ¤ ¡ãª ˜¨˜ššœ¢å˜ª ¨¦£Ÿœ¬«é¤"           Send Activate_v94
+//       on_item "ƒ ˜®œå¨ © ˜¨˜ššœ¢ é¤ ˜¤á ¨¦£Ÿœ¬«ã"    send activate_v94_1
+//       on_item "„¡«ç§à© ‰˜«á©«˜©ª ˜¨˜ššœ¢ é¤ ˜¤á ¨¦£Ÿœ¬«ã (Rpt35)"    send activate_r94_3
+//    end_pull_down
+
+//    // jsjsjs
+//    Procedure OnInitMenu
+//        Forward Send OnInitMenu
+//        Set psMenuModule to '02'
+//        Move '02' to gs_Module_Code
+//    End_Procedure
+
+// END_PULL_DOWN
+// //END OF rEMOVE
+// //****   
+
+ dfcreate_menu "€§¦Ÿã¡œª" stores_popupmenu is a ViewPopupMenu_Sec
+   on_item "‰˜«˜®é¨© „ ›é¤"                            send activate_item
+   On_Item "‰˜¨«â¢œª „ ›é¤"                              Send Activate_v17x
+   On_Item ""                                            Send NONE
+   on_item "‰ ¤ã©œ ª  „ ›é¤"                             send activate_KinApoth
+   on_item "ƒ ˜¡ ¤ã©œ ª „ ›é¤"                           send activate_v182s
+
+   dfcreate_menu "„¡«¬§é©œ ª €§¦Ÿã¡ª" printapoth_popupmenu is a ViewPopupMenu_Sec
+     on_item "„¡«ç§à© €¨®œå¦¬ „ ›é¤"                    send activate_r26_3
+     On_Item ""                                          Send NONE
+     on_item "„¡«ç§à© ‰ ¤ã©œà¤ „ ›é¤ "                  send activate_r26_6
+     on_item "„¡«ç§à© ˆ©¦¬šå¦¬ €§¦Ÿã¡ª"               send activate_r26_1
+     On_Item ""                                          Send NONE
+     on_item "„¡«¬§é©œ ª †£œ¨¦¢¦šåà¤"                    send activate_r22_1
+     on_item "„¡«ç§à© ˆ©¦¬šå¦¬ €§¦Ÿã¡ª (‡œà¨£â¤¦)"   send activate_r26_1b
+     On_Item ""                                          Send NONE
+     on_item "„¡«¬§é© ‰˜¨«â¢˜ª „å›¦¬ª"                  send activate_r17_2
+     On_Item ""                                          Send NONE
+     on_item "à¢ã©œ ª „ › ¡é¤ ¨¦äæ¤«à¤ "               send activate_PolEidikon2
+     on_item "¦©¦©«á ‘¬££œ«¦®ãª ¨¦äæ¤«à¤ ©«˜ ƒ„"     send activate_PosostaDeop
+   END_PULL_DOWN
+
+   
+   
+   dfcreate_menu "¦Ÿ« ¡á €§¦Ÿã¡ª" helpapoth_popupmenu is a ViewPopupMenu_Sec
+     on_item "ƒ ˜®œå¨ © €§¦Ÿ¡é¤"                       send activate_wax
+     On_Item ""                                          Send NONE
+     on_item "‹¦¤á›œª ‹â«¨©ª"                          send activate_units
+     on_item "‰˜«š¦¨åœª ”..€"                          send activate_fpa
+     on_item "‰˜«š¦¨åœª „ ›é¤"                          send activate_witemkat
+     On_Item ""                                          Send NONE
+     on_item "‰ ¤ã©œ ª ¡˜  ˜¨á£œ«¨¦  ‰ ¤ã©œà¤"          send activate_wflagkin
+     on_item "„¡«ç§à© ˜¨˜£â«¨à¤ ‰ ¤ã©œà¤"              send activate_r29_0
+     On_Item ""                                          Send NONE
+     on_item "‰ ¤ã©œ ª €§¦š¨˜­ãª ˜§¦Ÿã¡ª"               send activate_r17_1
+     On_Item ""                                          Send NONE
+     on_item "¨ ©£æª †£œ¨¦¢¦šåà¤ €§¦Ÿã¡ª"              send activate_hmgiow
+
+   END_PULL_DOWN
+
+   Procedure OnInitMenu
+      Forward Send OnInitMenu
+      Set psMenuModule to '03'
+      Move '03' to gs_Module_Code
+   End_Procedure
+
+ END_PULL_DOWN // Apothikes
+
+
+ dfcreate_menu "¦Ÿ« ¡á " constr_popupmenu is a ViewPopupMenu_Sec
+
+   dfcreate_menu "„¨š¦¢á™¦  " helpconstr_popupmenu is a ViewPopupMenu_Sec
+     on_item "‹«¨é¦ „¨š¦¢á™à¤"                          send activate_v109
+     On_Item ""                                          Send NONE
+     on_item "„¡«ç§à© „¨š¦¢á™à¤ "                send activate_r109_0
+     On_Item "„¡«ç§à© ‰ ¤ã©œà¤ ˜¤˜ „¨š¦¢á™¦ "    Send Activate_r109_1
+     On_Item "‰˜¨«â¢¢œª „¨š¦¢á™à¤ / „¨šà¤ "       Send Activate_r109_2
+     on_item "‰˜¨«â¢œª „¨š¦¢á™à¤ - ë¨šà¤ "send activate_r109_3
+     on_item "à¢ã©œ ª „¨š¦¢á™à¤/ë¨š¦ "   send activate_r109_4
+   END_PULL_DOWN
+
+   dfcreate_menu "à¢«âª" helpsales_popupmenu is a ViewPopupMenu_Sec
+     on_item "‹«¨é¦ à¢«é¤ "                            send activate_v108
+     On_Item ""                                           Send NONE
+     on_item "„¡«ç§à© à¢«é¤ "                          send activate_r108_0
+     On_Item "‰˜¨«â¢œª à¢«é¤ - „¨šà¤  "                 Send Activate_r108_2
+     On_Item "„¡«ç§à© ‰ ¤ã©œà¤-ˆ©¦¬šå¦¬ ˜¤˜ à¢«ã "    Send Activate_r108_1
+     On_Item "„¡«¬§é©œ ª à¢ã©œà¤ ˜¤˜ à¢«ã "            Send Activate_r108_4
+     //* Removed To-be-Checked // On_Item "„¡«ç§à© ‰ ¤ã©œà¤ ˜¤á à¢«ã/œ¢á« "  Send Activate_r108_5
+     On_Item ""                                           Send NONE
+     on_item "„¡«ç§à© Œâà¤ œ¢˜«é¤ ˜¤á à¢«ã "          send activate_r108_3
+     On_Item ""                                           Send NONE
+     On_Item "„¡«ç§à© ¨¦¬§¦¢¦š ©« ¡é¤ à¢ã©œà¤ "        Send activate_r108_6
+
+   END_PULL_DOWN
+
+   dfcreate_menu "‹®˜¤ ¡¦å" helpmhxa_popupmenu is a ViewPopupMenu_Sec
+     on_item "‹«¨é¦ ‹®˜¤ ¡é¤"                          send activate_v055
+     On_Item ""                                          Send NONE
+     On_Item "„¡«ç§à© ‹®˜¤ ¡é¤ "                Send activate_r55_0
+     On_Item "„¡«ç§à© ‰ ¤ã©œà¤ ˜¤á ‹®˜¤ ¡æ"    Send Activate_r55_1
+     On_Item "„¡«ç§à© ë¨šà¤ ˜¤á ‹®˜¤ ¡æ "       Send Activate_r55_2
+   END_PULL_DOWN
+
+   On_Item ""                                            Send NONE
+   On_Item "€¨®œå¦ •à¨é¤"                                Send Activate_v058
+   On_Item "€¨®œå¦ œ¨ ¦®é¤"                             Send Activate_v197
+   On_Item "€¨®œå¦ Œ¦£é¤"                                Send Activate_v057
+   On_Item "€¨®œå¦ æ¢œà¤"                               Send Activate_v198  
+   dfcreate_menu "…é¤œª" zones_popupmenu is a ViewPopupMenu_Sec 
+        On_Item "€¨®œå¦ …à¤é¤"                           Send Activate_v064    
+        On_Item "„¡«ç§à© ‰ ¤ã©œà¤ / …é¤"              Send Activate_r65_1
+   END_PULL_DOWN
+   On_Item "“§¦¡˜«˜©«ã£˜«˜ - …é¤œª/’¨æ§¦  ¢¨à£ãª"      Send Activate_v065  
+   On_Item "€¤˜›¨¦£ ¡ã œ¤£â¨à© ‰ ¤ã©œà¤ „¨š¦¬ £œ á¢¢ …é¤ "      Send Activate_enhcnzones 
+   On_Item ""                                            Send NONE
+   dfcreate_menu "€¨®œå¦ ›šé¤" driver_popupmenu is a ViewPopupMenu_Sec
+     on_item "‰˜«˜®é¨© ›šé¤"                         send activate_v052                   
+     On_Item ""                                          Send NONE
+     on_item "„¡«ç§à© ›šé¤"                           send activate_r052_0
+   END_PULL_DOWN
+
+   dfcreate_menu "€¨®œå¦ ®£á«à¤" cars_popupmenu is a ViewPopupMenu_Sec
+     on_item "‰˜«˜®é¨© ®£á«à¤"                       send activate_v054
+     On_Item ""                                          Send NONE
+     on_item "„¡«ç§à© ®£á«à¤"                         send activate_r54_0
+     on_item "„¡«ç§à© ¡ ¤ã©œà¤ ®£á«à¤"                send activate_r54_1
+   END_PULL_DOWN
+
+   dfcreate_menu "€¨®œå¦ €¤«¢ é¤" pumps_popupmenu is a ViewPopupMenu_Sec
+     on_item "‰˜«˜®é¨© €¤«¢ é¤"                        send activate_v053
+     On_Item ""                                          Send NONE
+     on_item "„¡«ç§à© €¤«¢ é¤"                          send activate_r53_0
+     on_item "„¡«ç§à© ¡ ¤ã©œà¤ €¤«¢ é¤"                 send activate_r53_1
+   END_PULL_DOWN
+
+     On_Item ""                                          Send NONE
+
+      dfcreate_menu "”¦¨¦¢¦š ¡æª „¡«¬§à«ãª" FHM_popupmenu is a viewpopupmenu
+
+        on_item "‰¢œå© £¦ £â¨˜ª - „¡›¦© '…'"   Send Activate_vwZ
+        on_item ""                               Send None
+        on_item "˜¨á£œ«¨¦ /¬Ÿ£ã©œ ª"           Send Activate_Show_Ctl
+
+      END_PULL_DOWN
+
+
+ END_PULL_DOWN
+
+
+ dfcreate_menu "ƒ ˜®œå¨ © „ ©§¨á¥œà¤" axio_popupmenu is a ViewPopupMenu_Sec
+   on_item "€¥ æš¨˜­˜"                       send activate_vw037
+   On_Item ""                                            Send NONE
+   on_item "„ ©§¨á¥œ ª"                                  send activate_v036
+   on_item "‹˜ ¡âª ¡ ¤ã©œ ª €¥ ¦š¨á­à¤"                 send activate_axioexofl
+   On_Item ""                                            Send NONE
+   on_item "Status €¥ ¦š¨á­à¤"                           send activate_AxioStat
+   on_item "ƒâ©£œ¬© €¥ ¦š¨á­à¤"                         send activate_axiored 
+   On_Item ""                                            Send NONE
+   on_item "„¢œš®¦ª-¨ ©« ¡¦§¦ ã©œ ª ¡ ¤ã©œà¤ €¥ ¦š¨á­à¤" send activate_vaxio  
+   On_Item ""                                            Send NONE
+   dfcreate_menu "„¡«¬§é©œ ª €¥ ¦š¨á­à¤" printaxio_popupmenu is a ViewPopupMenu_Sec
+     on_item "„¡«ç§à© €¥ ¦š¨á­à¤"                      send activate_rv037c
+     on_item "„¡«ç§à© †£œ¨¦¢¦šå¦¬ €¥ ¦š¨á­à¤"          send activate_r044
+     on_item 'Šå©«˜ „ ©§¨á¥œà¤'                         send activate_r36a
+     on_item 'Š¥ á¨ ¦ €¥ ¦š¨á­à¤'                      send activate_r36b
+     on_item ' ¤á¡ ¦ ˜¨˜¢˜™ãª/˜¨á›¦©ª'              send activate_r36k    
+ //    gts 12-06-07 «¦ ¡á«à œ¡«¬§à« ¡æ Ÿ˜ §˜å¥œ  ©« vdf11.ƒ¦¡ £˜©« ¡æ   
+//     on_item '‹˜ ¡ã „¡«ç§à© ¡ ¤ã©œà¤ „ ©§¨á¥œà¤-¢¨à£é¤'  send activate_r36m
+   END_PULL_DOWN
+
+   dfcreate_menu "¦Ÿ« ¡á €¥ ¦š¨á­à¤" helpaxio_popupmenu is a ViewPopupMenu_Sec
+     on_item "’ç§¦  €¥ ¦š¨á­à¤"                          send activate_v034
+     on_item "‰ ¤ã©œ ª  €¥ ¦š¨á­à¤ ©ç¤›œ© £œ ‚.Š. "     send activate_v031
+   On_Item ""                                            Send NONE
+     on_item "ƒ ˜®œå¨ © ’¨˜§œé¤"                       send activate_vwBanks2
+     on_item "ƒ ˜®œå¨ © î¨à¤ ¢¨à£ãª"                  send activate_vwPayTerms
+   On_Item ""                                            Send NONE
+     on_item "„¤£â¨à© ’¨˜§œé¤ ˜§¦ ASCII ˜¨®œå¦"       send activate_vwBankEnhm
+     On_Item ""                                          Send NONE
+     on_item "ƒ£ ¦¬¨šå˜ Œœà¤ î¨à¤ ¢¨à£ãª (30/00-30/300)"  send Activate_vwPayTermsEnhmNEW2
+     on_item "€¤˜›¨. „¤£. Œœà¤ î¨à¤ ¢¨à£ãª (30/00-30/300) ©œ œ¢á«œª ¡˜  ƒ„"  send Activate_vwPayTermsEnhmNEW3
+     //on_item "„¤£â¨à© î¨à¤ ¢¨à£ãª ˜§¦ ASCII ˜¨®œå¦"  send activate_vwPayTermsEnhm
+     On_Item ""                                          Send NONE
+     on_item "€¬«æ£˜« ƒ£ ¦¬¨šå˜ Œâà¤ ‰ ¤ã©œà¤ („£™˜©£˜ & „§ «. †£â¨˜ª)"  send activate_vwMkKinhseis
+   END_PULL_DOWN
+   
+   On_Item ""                                            Send NONE
+   on_item "„¥˜šàšã SAP"                                 send activate_Sap1
+
+   Procedure OnInitMenu
+      Forward Send OnInitMenu
+      Set psMenuModule to '04'
+      Move '04' to gs_Module_Code
+   End_Procedure
+
+ END_PULL_DOWN
+
+ DFCreate_Menu "¦Ÿ« ¡¦å å¤˜¡œª" Sysmain_PopupMenu is a ViewPopupMenu_Sec
+   on_item "‹“”"                                         send activate_vwMyf
+   On_Item ""                                            Send NONE
+   on_item "„ ©˜šàšã ASCII ˜¨®œåà¤"                      send activate_taxio
+   on_item "€¢¢˜šã „«˜ ¨œå˜ª/•¨ã©ª"                     send activate_v3
+   On_Item ""                                            Send NONE
+   on_item "ƒ ˜®œå¨ © „©à«œ¨ ¡é¤  ¤á¡à¤"               send activate_types_maint
+   on_item "ƒ ˜®œå¨ © ‘«˜Ÿœ¨é¤ ‘¬©«ã£˜«¦ª"              send activate_V00
+//   on_item "ƒ ˜®œå¨ © ‘«˜Ÿœ¨é¤ ‘¬©«ã£˜«¦ª2"             send activate_oProperties
+   on_item "ƒ ˜®œå¨ © „¡«¬§é©œà¤"                       send activate_vRep
+   on_item "Œ¦£å©£˜«˜"                                   send activate_nomism  // nomismata
+   on_item "ˆ©¦« £åœª"                                   send activate_nomisot // isotimies
+//   removed from gts
+//   On_Item ""                                            Send NONE
+//   on_item "Š¦š ©« ¡¦§¦å© §˜¨˜©«˜« ¡é¤ - ¡ ¤ã©œà¤ œ£§¦¨ ¡¦ç" send activate_Vlogik
+   On_Item ""                                            Send NONE
+   on_item "„¥˜šàšã €¨®œåà¤ ¡ ¤ã©œà¤ ©œ Ascii ˜¨®œå˜"    send activate_vwexport
+//   on_item "„¥˜šàšã €¨®œåà¤ š ˜ SAP"    send activate_vSAP
+   On_Item ""                                            Send NONE
+   on_item "„€‚—‚† €•„ˆ—Œ ‚„”“„‘ SAP"    send check_sap Of (Client_Area(Self)) //activate_vsap////  
+   
+   on_item "€¨® ¡¦§¦å© «œ®¤ ¡é¤ §¨¦› ˜š¨˜­é¤" send activate_rtehn
+
+   On_Item ""                                            Send NONE
+ //  on_item "„¥˜šàšã €¨®œåà¤ ‚â­¬¨œª SAP test"    send activate_vsap99
+ //  on_item "€¤« ©«¦å® © Šœ¡« ¡é¤1"                       send activate_transla2
+ //  on_item "€¤« ©«¦å® © Šœ¡« ¡é¤2"                       send activate_Transla1
+ //  on_item "€¤« ©«¦å® © Šœ¡« ¡é¤3"                       send activate_transla5
+   on_item "„€‚—‚† „Š€’—Œ Šˆ€Œˆ‰†‘ "    send activate_vsapexp//// 
+   on_item "„¥˜šàšã-„ ©˜šàšã €¨®œåà¤ ¡ ¤ã©œà¤ "    send activate_rmetafypapog  
+   on_item "„¥˜šàšã ¡ ¤ã©œà¤ €§¦š¨˜­ãª SAP "       send activate_vsapDOM  
+ //  on_item "‰¢œå© £¦ ï§¦¢¦å§à¤ ¡ ¤ã©œà¤ "    send activate_rmetafkl
+   On_Item ""                                            Send NONE  
+    
+//   on_item "„¡«ç§à© €¨®œå¦¬ ‰˜«˜š¨˜­é¤"                 send activate_vkatagrafh
+//   On_Item ""                                            Send NONE 
+   
+ //  on_item "€¨®œå¦ ƒ“ ˜§¦ Betolink"                     send activate_EnhDoy
+
+   on_item ""     send None
+   on_item "---------------------------------------"     send None
+   on_item "*** €€‰€Š“‹„ Œ€ ‹†Œ ’„„’„      ***" 
+   on_item "*** ‰€‹ˆ€ € ’ˆ‘ €€‰€’— „ˆŠ‚„‘ ***"     send None
+   on_item "---------------------------------------"     send None
+   dfcreate_menu "Batch „¤£â¨à© ‘¬©«ã£˜«¦ª" BatchSys_popupmenu is a ViewPopupMenu_Sec
+ //    on_item "‚â­¬¨œª Trans_ƒ¦£ ¡ã" send activate_DomBridge
+     on_item "„¤£â¨à© Witemx ˜§¦ Item.Orio" send activate_EnhWitemxNoUse
+     on_item "†€Š/†‘ Bulk: ”¬¢á£œ / „§˜¤˜­â¨¦¬£œ current status §œ¢˜«é¤" send activate_EnhClientsCurrStat
+     On_Item ""                                            Send NONE
+     on_item "„¤£â¨à© Cmoves.Custprom_Code ˜§¦ Bmove.Bmove_Recr" send activate_EnhCmbm
+
+     on_item "„¤£œ¨à© à¢«é¤/“§.¢¨/„¨š¦¢/‹®˜¤. ©«˜ ˜¨®œå˜ ¡ ¤ã©œà¤" send activate_EnhSlsID
+     on_item "„¤£â¨à© Branch"                                         send activate_FixIT
+     on_item "„¤£â¨à© Cmoves (¬§æ¢¦ §˜ › ˜Ÿâ© £˜ ‘¬©®œ«å©œ ª)"        send activate_EnhCmvs
+  //   On_Item ""                                            Send NONE
+  //   on_item "„€‚—‚† €•„ˆ—Œ ‚„”“„‘ SAP ‘“‚‰„‰.†‹/Œˆ€"  send activate_vsap9
+     On_Item ""                                            Send NONE
+
+//------------------- js 23/02/2012
+//     on_item "„Œ†‹„—‘† „Š€’—Œ ‹„ Œ„ “„“‡“Œ Š†—‹—Œ"  send activate_EnhprespID
+//------------------- js 23/02/2012
+     on_item "Batch €¢¢˜šã ˜§¦ â¤˜¤ “§œçŸ¬¤¦ ¢¨à£é¤ ©œ ¡á§¦ ¦¤ á¢¢¦ (£œ ˜¤˜›¨¦£ã ©œ æ¢˜ «˜ œ£§¢œ¡æ£œ¤˜ ˜¨®œå˜) "  send activate_EnhprespNew
+//     on_item "„Œ†‹„—‘† „Š€’—Œ ‹„ Œ„ “„“‡“Œ Š†—‹—Œ"               send activate_EnhprespID
+//     on_item "„Œ†‹„—‘† „‚—Œ ‹„ ‘—‘’ “„“‡“Œ Š†—‹—Œ"               send activate_EnhcnID
+//------------------- js 23/02/2012
+     On_Item ""                                            Send NONE
+
+//-------------------
+     on_item "„¤£â¨à© •¨/ ©/“§¦¢ ”¦¨âà¤ "                            send activate_rYpol
+     on_item "„¤£â¨à© Status €¥ ¦š¨. £œ ¡ ¤ã©œ ª ˜§¦š¨˜­ãª"           send activate_EnbStatus
+     on_item "„¤£â¨à© ¤¦£ ©£á«à¤ ˜¥ ¦š¨á­à¤"                          send activate_EnBaxioIs
+     on_item "„¤£â¨à© Flags numeric §œ›å¦"                            send activate_EnhFlags
+     on_item "‹›œ¤ ©£æª && œ§˜¤˜¬§¦¢¦š/£æª §¦©é¤ && ˜¥ é¤ Witemx+Wam " send activate_EnhMeso
+     on_item "„¤£â¨à© Pmoves+Particle ¬§æ¢¦ §˜ §¦©¦«ã«à¤"             send activate_EnhPms
+     on_item "„¤£â¨à© Wcmoves ¤â¦ª index#5"                           send activate_EnhWcmv
+     on_item "„¤£â¨à© ¡ ¤ã©œà¤ ˜§¦š¨˜­ãª"                             send activate_EnhApog
+     on_item "„¤£â¨à© Clitem (’ £¦¡˜«á¢¦š¦  §œ¢˜«é¤)"                 send activate_Enhclitem 
+     on_item "„¡«ç§à© Log File …à¤é¤"                                  send activate_r65_2
+     on_item "Open Items"                                               send activate_Copen
+     on_item "„¤£â¨à© €¤«¢ é¤ („¢¢¤ ¡á)"  send activate_EnhPumps
+     On_Item "€¢¢˜šã Status €¥ ¦š¨á­à¤ ˜¢˜ áª •¨ã©ª (Batch) " Send activate_enhaxstatus
+     On_Item '„¤£â¨à© SAP š ˜ œ¢á«œª ˜¤˜›¨¦£ ¡á' Send Activate_enhclients
+     On_Item '„¥˜šàšã €¨®œå¦¬ œ¢˜«é¤ £œ ˜§¦š¨˜­âª „«¦¬ª 2004 š ˜ œ¤£â¨à© SAP'  Send Activate_renhypol
+     On_Item 'œ£˜¨¡á¨ ©£˜ „šš¨˜­é¤ ã£˜«¦ª 2 '  Send Activate_uNmark
+     On_Item '€¤˜›¨¦£ ¡ã œ¤£â¨à© ƒ„ £œ à¢«ã'  Send Activate_enhdeopsls 
+     On_Item '€¤˜›¨¦£ ¡ã œ¤£â¨à© ƒ.A £œ ©à©«æ «¨æ§¦ ‹œ«˜­¦¨áª'  Send Activate_enhcarid   
+  //   On_Item '€¤˜›¨¦£ ¡ã œ¤£â¨à© „ ›é¤ £œ ¡à› ¡æ SAP'  Send Activate_enhitemsap 
+  //   On_Item '„§ ¢œ¡« ¡ã ƒ ˜š¨˜­ã œ¢˜«é¤'  Send Activate_cn_sos
+  //   On_Item '„¥˜šàšã „§ ¢œš£â¤à¤ „šš¨˜­é¤ €¨®œå¦¬ œ¢˜«é¤ š ˜ œ¤£â¨à© SAP'  Send Activate_enhsapcl  
+  //    On_Item '€¤˜›¨¦£ ¡æ €¤¦ š£˜-¡¢œå© £¦ ˜¨˜©«˜« ¡é¤'  Send Activate_vopen 
+   END_PULL_DOWN
+
+
+ END_PULL_DOWN
+
+DFCreate_Menu "€©­á¢œ ˜" Security00 IS A ViewPopupMenu_Sec
+    on_item "Auditing - €¨®œå¦ ‹œ«˜™¦¢é¤"                   Send Activate_rAudit
+    on_item "_Auditing - ˆ‘’ˆ‰ €¨®œå¦ ‹œ«˜™¦¢é¤_"        Send Activate_rAuditH
+    on_item "_‹œ«˜­¦¨á ‹œ«˜™¦¢é¤ ©œ ˆ©«¦¨ ¡æ_"              Send Activate_rAuditTr
+    On_Item ''                                              Send None
+    on_item "€¨åŸ£© €¥ ¦š¨á­à¤"                           Send Activate_vwBartNo
+    On_Item ''                                              Send None
+    on_item "ƒ ¡˜ é£˜«˜ £á›à¤ •¨©«é¤ ˜¤˜ Tab Page"        Send Activate_GrpTab0
+    on_item "ƒ ¡˜ é£˜«˜ •¨©«é¤ ˜¤˜ Tab Page"               Send Activate_GrpTab
+    On_Item ''                                              Send None
+    on_item "ƒ ¡˜ é£˜«˜ £á›à¤ •¨©«é¤ ˜¤˜ Activate View"   Send Activate_GrpAct0
+    on_item "ƒ ¡˜ é£˜«˜ •¨©«é¤ ˜¤˜ Activate View"          Send Activate_GrpAct
+    On_Item ''                                              Send None
+    on_item "ƒ ¡˜ é£˜«˜ £á›˜ª •¨©«é¤ ˜¤á „§ ¢¦šã ‹œ¤¦ç" Send Activate_GrpView0
+    on_item "ƒ ¡˜ é£˜«˜ •¨©«é¤ ˜¤á „§ ¢¦šã ‹œ¤¦ç"         Send Activate_GrpViews
+    On_Item ''                                              Send None
+    on_item "Group Of Users Rights Per Screen Field - View" Send Activate_GrpOth0
+    on_item "Users Rights Per Screen Field - View"          Send Activate_GrpOth
+    On_Item ''                                              Send None
+    on_item "**ƒ ˜¡˜ é£˜«˜ £á›˜ª •¨©«é¤ ˜¤á €¨®œå¦ / œ›å¦" Send Activate_GrpPed00
+    on_item "**ƒ ¡˜ é£˜«˜ •¨©«é¤ ˜¤á €¨®œå¦ / œ›å¦"         Send Activate_GrpPedia
+    On_Item ''                                              Send None
+    on_item "•¨ã©«œª"                                       Send Activate_Users
+    on_item "£á›œª •¨©«é¤"                                Send Activate_UserGrps
+    on_item "’£ã£˜«˜ •¨©«é¤"                               Send Activate_Departm
+    On_Item ''                                              Send None
+    on_item "Views / Screen Fields"                         Send Activate_Othon
+    On_Item ''                                              Send None
+    on_item "Views"                                         Send Activate_Views
+    on_item "€¨®œå˜"                                        Send Activate_Arxeia
+    on_item "œ›å˜"                                         Send Activate_Pedia
+    On_Item ''                                              Send None
+    on_item "„¡«ç§à© Security"                             Send Activate_rSecure
+
+    End_Pull_Down // Security
+    Set Status_Help To ""
+    
+
+    Procedure Check_Rights_On_User_Administration
+        Local integer iCount liInt
+        Local String lsUser lsStr
+        Get Item_Count to iCount
+        Get fsLoginUserID to lsUser
+        Move (trim(lsUser)) to lsUser
+        Clear Users
+        Move lsUser to Users.Login_ID
+        Find eq Users By Index.1 // Users:Index.1:Login_ID
+        Set Shadow_State item (iCount-1) to (Users.Admin_Rights<>'1')
+    End_Procedure
+
+    Procedure Activating
+        Forward Send Activating
+        Send Check_Rights_On_User_Administration
+        Send Enhmerose_Views_File_In_Menu
+        If (Sysfile.Enhm_Arxeia=1) Send Enhmerose_Arxeia_File_In_Menu
+    End_Procedure
+//
+    Procedure OnInitMenu
+        String lsStr
+        Integer liInt iCount
+        Get Item_Count to iCount
+        Send Enhmerose_Views_File_In_Menu
+        Send Check_Rights_On_User_Administration
+
+        For liInt From 0 to (iCount-2)
+          Get Value item liInt to lsStr
+          Move (Trim(lsStr)) to lsStr
+          Set Shadow_State item liInt to (Find_User_Rights_In_Menu(Self,lsStr))
+        Loop
+    End_Procedure
+//
+End_Menu // Main_Menu
+//
+//
+Procedure Enhmerose_Views_File_In_Menu
+    Integer liCount liInt liLastNo iMax
+    String lsStr
+    Get Item_Count Of Main_Menu to liCount
+    Clear Views
+    Move 9999 to Views.View_ID
+    Find lt Views by index.1 // view_id
+    If (Found=1)    Move Views.View_ID  to liLastNo
+    Else            Move 0              to liLastNo
+    For liInt From 0 to (liCount-1)
+        Get Value of Main_Menu item liInt to lsStr
+        Move (Trim(lsStr)) to lsStr
+        If ((lsStr<>'') and (Length(lsStr)>2)) Begin
+            Clear Views
+            Move (ToOEM(lsStr)) to Views.Menu_Name
+            Find eq Views by index.2 // Views.Menu_Name
+            If (NOT(Found)) Begin
+                Move (ToOEM(lsStr)) to Views.Menu_Name
+                If (Trim(Views.Menu_Name)<>'') Begin
+                    Add 1 to liLastNo
+                    Move liLastNo to Views.View_ID
+                    Saverecord Views
+                End
+            End
+        End
+    Loop
+End_Procedure
+//
+Procedure Enhmerose_Pedia_File Integer aiFileNumber
+    Integer iFields iInt iField_Number iErr iWait
+    Integer iField_Length iField_Type  iField_Precision
+    String  sField_Name sFileName
+    Get_Attribute DF_FILE_NUMBER_FIELDS Of aiFileNumber to iFields
+    Get_Attribute DF_FILE_DISPLAY_NAME  Of aiFileNumber To sFileName
+    Move (Trim(sFileName)) to sFileName
+
+    For iInt From 1 to iFields // To recnum (0) ektos
+        Get_Attribute DF_FIELD_NUMBER    Of aiFileNumber iInt to iField_Number
+        Get_Attribute DF_FIELD_LENGTH    Of aiFileNumber iInt to iField_Length
+        Get_Attribute DF_FIELD_NAME      Of aiFileNumber iInt to sField_Name
+        Get_Attribute DF_FIELD_PRECISION Of aiFileNumber iInt to iField_Precision
+        Get_Attribute DF_FIELD_TYPE      Of aiFileNumber iInt to iField_Type
+        Clear Pedia
+        Move aiFileNumber   to Pedia.Arxeio_ID
+        Move iField_Number  to Pedia.Pedio_Number
+        Find eq Pedia By Index.1 //Pedia:Index.1:Arxeio_ID+Pedio_Number
+        If (Not(Found)) Begin
+            Move iField_Length      to Pedia.Pedio_Length
+            Move sField_Name        to Pedia.Pedio_Name
+            Move iField_Precision   to Pedia.Pedio_Precision
+            Move iField_Type        to Pedia.Pedio_Type
+            Move (Trim(Trim(sFileName)+'-'+Trim((String(Pedia.Arxeio_ID)))+'-'+Trim((String(Pedia.Pedio_Number))))) to ;
+                    Pedia.Pedio_Recr
+            Saverecord Pedia
+        End
+    Loop
+End_Procedure
+//
+//
+Procedure Enhmerose_Arxeia_File_In_Menu
+    Local Integer File# Open# File_Number# liInt iMax iWait
+    Local String Physicalname# DisplayName# Logicalname# Rootname#
+    Move 0 To File#
+    Repeat
+      Get_Attribute Df_File_Next_Opened Of File# To File#
+      If (File#) Begin
+        Get_Attribute Df_File_Number Of File# To File_Number#
+            Get_Attribute DF_FILE_LOGICAL_NAME  Of File# To LogicalName#
+            Get_Attribute DF_FILE_DISPLAY_NAME  Of File# To DisplayName#
+            Get_Attribute DF_FILE_PHYSICAL_NAME Of File# To PhysicalName#
+            Get_Attribute DF_FILE_ROOT_NAME     Of File# To RootName#
+            Move (UpperCase(LogicalName#)) to LogicalName#
+            Move (UpperCase(DisplayName#)) to DisplayName#
+            Clear Arxeia
+            Move File_Number# to Arxeia.Arxeio_ID
+            Find eq Arxeia By Index.1 // Arxeio_ID
+            If (NOT(Found)) Begin
+                Move LogicalName# to Arxeia.Arxeio_Name
+                Move Displayname# to Arxeia.Access_Name
+                Saverecord Arxeia
+            End
+            If (File_Number#<>0) Send Enhmerose_Pedia_File File_Number#
+      End
+    Until File# Eq 0
+End_Procedure
+                                      
+
+
+Register_Object Client_Area
+

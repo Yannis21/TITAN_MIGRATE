@@ -1,0 +1,137 @@
+
+// Register all objects
+Register_Object syscurxr_DD
+Register_Object Docpresp
+Register_Object payresp_DD
+Register_Object year_DD
+Register_Object rmetafyp.rv
+
+
+
+//AB-IgnoreStart
+
+Use Bproces.Sub
+Use DFAllEnt.pkg
+use syscurxr.dd
+use payresp.dd
+use year.dd
+
+//AB-IgnoreEnd
+
+Object Docpresp is a BusinessProcessSub
+
+    //AB-StoreTopStart
+
+    Property    Integer piError       Public  0
+    property    string  datefrom      public ''
+    property    integer piTxtID       public 0
+    property    integer piLathos      public 0
+    property    string  psclient      public ''
+    property    string  psmodule      public ''
+    property    string  pscode        public ''
+
+    Open SysCurXr
+    //reread syscurxr
+    //unlock
+
+    Set Status_Panel_State to False
+    Set Display_Error_State to True
+
+    //AB-StoreTopEnd
+
+    Set Size to 82 140
+    Set Location to 72 182
+
+    //AB-DDOStart
+
+
+    Object Payresp_DD is a Payresp_DataDictionary
+
+    End_Object    // Payresp_DD
+
+    Object year_DD is a year_DataDictionary
+
+    End_Object    // year_DD
+
+    Object syscurxr_DD is a syscurxr_DataDictionary
+
+    End_Object    // syscurxr
+
+
+    //AB-StoreEnd
+
+
+    //AB-DDOEnd
+
+
+    //AB-StoreStart
+
+    Procedure Start_Processing
+     String  scode smodule spar
+     Number  naxia nx0 np0 nx00 np00 nx1 np1 ndiaf tx0 tp0 tx00 tp00 tx1 tp1 nplafon nofeilh
+     Date    dHmnia
+     string  serr
+     integer iyear icount nyear ctypkinyear
+     Clear payresp
+     move syscurxr.company_code     to payresp.company_code
+     find gt payresp by index.5
+     While ((found=1)and (syscurxr.company_code eq payresp.company_code))
+         add 1 to icount
+         clear year
+         move syscurxr.company_code     to year.company_code
+         move syscurxr.branch_code      to year.branch_code
+         move (syscurxr.year_year+1)    to year.year_year
+         find eq year by index.1
+         if (not(found)) error 3002 'Éú§ ‚Æú´ú ò§¶Â•ú† §‚ò Æ®„©û ©´¶ ¨ß¶°ò´·©´û£ò !!'
+         move payresp.presp_id to scode
+         move year.payresp_plafon to nplafon
+         move year.payresp_ofeilh to nofeilh
+         reread payresp
+         move 0 to payresp.pistosh
+         move 0 to payresp.xreosh
+         move 0 to payresp.ypoloipo
+         move 0 to payresp.overhead
+         // õú§ •‚®‡ ò§ ß®‚ßú† §ò £ûõú§Âù¶¨§ ´ò úß†©≠ò¢„ ß¶©· °ò† ß¶©· òß¶ É.Ä///
+     //    move 0 to payresp.poso_se_apait
+     //    move 0 to payresp.posa_apo_dap
+         move nplafon to payresp.plafon
+         move nofeilh to payresp.orio_syn_ofeilh
+         saverecord payresp
+         unlock
+         Send UpdateWait to (piTxtID(Self))  ('ãûõú§†©£Ê™ ¨ß¶¢.¨ßú¨ü.ß¢û®‡£„™ '+(String(scode)+ ' '+(string(icount))))
+     Find  gt payresp by index.5
+     loop
+
+      if (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+    Procedure OnProcess
+        Send Start_Processing
+    End_Procedure
+
+    Procedure Start_Process
+         Set piTxtID                         to (Wait(Self))
+         Set Button_State    of (Wait(Self)) to False
+         Set BarVisibleState of (Wait(Self)) to '' False
+         Send Popup                          to (Wait(Self))
+         Set piLathos                        to 0
+         Forward Send Start_Process
+    End_Procedure
+
+    Procedure OnError integer error_info string errMsg
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+    Procedure End_Process
+       Forward Send End_Process
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+    //AB-StoreEnd
+
+End_Object
+
+//AB/ End_Object    // prj

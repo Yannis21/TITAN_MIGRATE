@@ -1,0 +1,884 @@
+//AB/ Project RMHTRTITAN:EKTYP-TIMOLOGIO
+//AB/     Object prj is a Report_Project
+//AB/         Set ProjectName to "RMHTRTITAN:EKTYP-TIMOLOGIO"
+//AB/         Set ProjectFileName to "RMHTRTITAN.RV"
+
+// Project Object Structure
+//   RmhtrTITAN is a ReportViewFemSub
+//     GroupSub1 is a GroupSub
+//       TextBoxSub3 is a TextBoxSub
+//       F_HME_APO is a FormSub
+//     RadioGroup3 is a RadioGroup
+//       f_nees is a Radio
+//       f_close is a Radio
+//     DestRadio is a RadioGroup
+//       WindowRadio is a Radio
+//       PrinterRadio is a Radio
+//     ButtonSub3 is a ButtonSub
+//     ButtonSub4 is a ButtonSub
+//     TIMOLOGIO_BasicReport is a BasicReportFemSub
+//       Ptyppar_DD is a Ptyppar_DataDictionary
+//       Ptyppar_DD2 is a Ptyppar_DataDictionary
+//       Particle_DD2 is a Particle_DataDictionary
+//       Clients_DD is a Clients_DataDictionary
+//       Cities_DD is a Cities_DataDictionary
+//       Nomisma_DD is a Nomisma_DataDictionary
+//       Particle_DD is a Particle_DataDictionary
+//       Witemkat_DD is a Witemkat_DataDictionary
+//       Units_DD is a Units_DataDictionary
+//       Item_DD is a Item_DataDictionary
+//       Witemx_DD is a Witemx_DataDictionary
+//       Pmoves_DD is a Pmoves_DataDictionary
+//       Pmsdtl_DD is a Pmsdtl_DataDictionary
+//       Syscurxr_DD is a Syscurxr_DataDictionary
+//       codemast_DD is a codemast_DataDictionary
+//       clitem_DD is a clitem_DataDictionary
+//       cn_DD is a cn_DataDictionary
+//       areas_DD is a areas_DataDictionary
+
+// Register all objects
+Register_Object areas_DD
+Register_Object ButtonSub3
+Register_Object ButtonSub4
+Register_Object Cities_DD
+Register_Object Clients_DD
+Register_Object clitem_DD
+Register_Object cn_DD
+Register_Object codemast_DD
+Register_Object DestRadio
+Register_Object F_HME_APO
+Register_Object f_close
+Register_Object f_nees
+Register_Object GroupSub1
+Register_Object Item_DD
+Register_Object Nomisma_DD
+Register_Object Particle_DD
+Register_Object Particle_DD2
+Register_Object Pmoves_DD
+Register_Object Pmsdtl_DD
+Register_Object PrinterRadio
+Register_Object Ptyppar_DD
+Register_Object Ptyppar_DD2
+Register_Object RadioGroup3
+Register_Object RmhtrTITAN
+Register_Object Syscurxr_DD
+Register_Object TextBoxSub3
+Register_Object TIMOLOGIO_BasicReport
+Register_Object Units_DD
+Register_Object WindowRadio
+Register_Object Witemkat_DD
+Register_Object Witemx_DD
+
+
+//AB/     Report View
+
+
+    //AB-StoreTopStart
+    use company.dd
+    USE codemast.dd
+    use branch.dd
+    use year.dd
+    use clients.dd
+    use ptyppar.dd
+    use nomisma.dd
+    use pseira.dd
+    use ctypkin.dd
+    use wtypkin.dd
+    use clients.dd
+    use cities.dd
+    use wapokat.dd
+    use wapomast.dd
+    use wax.dd
+    use units.dd
+    use witemkat.dd
+    use item.dd
+    use witemx.dd
+    Use particle.dd
+    use pmoves.dd
+    use pmovesl.dd
+    use syscurxr.dd
+    USE rvititan.pkg
+    use clitem.dd
+    use prnesc.pkg
+    use pmsdtl.dd
+    use cn.dd
+    use areas.dd
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use RptvwFem.Sub
+    Use Group.Sub
+    Use Txtbox.Sub
+    Use Form.Sub
+    Use DFAllEnt.pkg
+    Use Button.Sub
+
+    //AB-IgnoreEnd
+
+    ACTIVATE_VIEW Activate_RmhtrTITAN FOR RmhtrTITAN
+
+    Object RmhtrTITAN is a ReportViewFEMSub
+
+        //AB-StoreTopStart
+        Property Integer    Sort_Indexr14_1Rmhtr  Public 1
+        Register_Procedure  StartReport
+        Property integer    piprinter public 0
+        property integer    new_state
+        property string     psnomisma
+        property integer    picount  public 0
+        property string     psrecrbtnl2
+        property string     pmovesrecr
+        property integer    pifrom public 0
+        property integer    pitropos public 0
+        property string     pmsrecr public ''
+        property integer    pipcfpa public 0
+        property integer    pipcdisc public 0
+        property integer    pityponei public 0
+        property number     pnqty public 0
+        property number     pnfpa public 0
+        property number     pndisc public 0
+        property number     pnaxia public 0
+        property number     pnaxiaaf public 0
+        property number     pntotal public 0
+        property number     pnclientypol public 0
+        property string     pstext public ''
+        property integer    pipage public 0
+        property integer    picountpmsdtl public 0
+
+        //        Property Integer    piIsReportCancelled     Public  0
+        //        Property Integer    piAsciiOrPrinter        Public  0
+
+        Open PtypparL
+
+
+        //AB-StoreTopEnd
+
+        Set Label to "Ñ°´Áß‡©û í†£¶¢¶öÂ¶¨"
+        Set Size to 105 181
+        Set Location to 2 143
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object GroupSub1 is a GroupSub
+            Set Size to 29 169
+            Set Location to 2 3
+            Object TextBoxSub3 is a TextBoxSub
+                Set Label to "Ü£/§Âò Ñ°´Áß‡©û™"
+                Set Auto_Size_State to FALSE
+                Set FontSize to 4 0
+                Set Location to 12 5
+                Set Size to 10 74
+                Set TypeFace to "MS Sans Serif"
+                Set Enabled_State to TRUE
+            End_Object    // TextBoxSub3
+
+            Object F_HME_APO is a FormSub
+
+                //AB-StoreTopStart
+
+                //AB-StoreTopEnd
+
+                Set Size to 13 61
+                Set Location to 10 82
+                Set Form_Border Item 0 to Border_Normal
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Form_Datatype Item 0 to Mask_Date_Window
+                Set Form_Mask Item 0 to "d/M/yyyy"
+                Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+                //AB-StoreStart
+
+                //AB-StoreEnd
+
+            End_Object    // F_HME_APO
+
+        End_Object    // GroupSub1
+
+        Object RadioGroup3 is a RadioGroup
+            Set Label to "Ñß†¢¶ö„ Öû£†È§"
+            Set Size to 43 77
+            Set Location to 33 3
+            Object f_nees is a Radio
+                Set Label to "å‚ú™"
+                Set Size to 10 34
+                Set Location to 10 5
+            End_Object    // f_nees
+
+            Object f_close is a Radio
+                Set Label to "èú®ò†‡üúÂ©ú™"
+                Set Size to 10 66
+                Set Location to 29 5
+            End_Object    // f_close
+
+
+            //AB-StoreStart
+            Procedure Notify_Select_State integer iToItem integer iFromItem
+                //for augmentation
+                Forward Send Notify_Select_State  itoitem ifromitem
+                If itoItem EQ 1 Set new_state to 0
+                Else            Set new_state to 1
+
+            End_Procedure
+
+            //AB-StoreEnd
+
+        End_Object    // RadioGroup3
+
+        Object DestRadio is a RadioGroup
+
+            //AB-StoreTopStart
+
+            //AB-StoreTopEnd
+
+            Set Label to "Ñ°´Á&ß‡©û"
+            Set Size to 44 49
+            Set Location to 31 85
+            Object WindowRadio is a Radio
+                Set Size to 13 30
+                Set Location to 12 12
+                Set Bitmap to "screen4.bmp"
+            End_Object    // WindowRadio
+
+            Object PrinterRadio is a Radio
+                Set Size to 10 31
+                Set Location to 30 12
+                Set Bitmap to "PRINT_M1.BMP"
+            End_Object    // PrinterRadio
+
+
+            //AB-StoreStart
+            Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+                Forward Send Notify_Select_State  iNewItem  iOldItem
+                If iNewItem EQ 0 Set Output_Device_Mode  To PRINT_TO_window
+                Else             Set Output_Device_Mode  To PRINT_TO_PRINTER
+            End_Procedure
+
+            //AB-StoreEnd
+
+        End_Object    // DestRadio
+
+        Object ButtonSub3 is a ButtonSub
+
+            //AB-StoreTopStart
+
+            //AB-StoreTopEnd
+
+            Set Bitmap to "RUNPROG.BMP"
+            Set Size to 18 27
+            Set Location to 36 145
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            Procedure OnClick
+               Send StartReport
+            End_Procedure
+
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub3
+
+        Object ButtonSub4 is a ButtonSub
+
+            //AB-StoreTopStart
+
+            //AB-StoreTopEnd
+
+            Set Bitmap to "CANCEL.BMP"
+            Set Size to 18 27
+            Set Location to 58 145
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            Procedure OnClick
+                Send Request_Cancel
+            End_Procedure
+
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub4
+
+
+        //AB-StoreStart
+        //Set Verify_Exit_Msg To Get_No_Confirmation
+
+        //HELP-VARIABLES
+
+        Procedure StartReport
+            send Gemise_Escape_Characters
+            String Whme_APO sRecr
+            integer wnees wclose
+            Local Integer iOutputDevice
+            Local String  FileName
+            local integer inew_state
+            Get Output_Device_Mode To iOutputDevice
+            get new_state to inew_state
+            set piprinter to 0
+            //?????????????????????????????????????????????
+            Get Output_Device_Mode To iOutputDevice
+
+            If iOutputDevice EQ PRINT_TO_WINDOW Begin
+                Set piAsciiOrPrinter    to 0
+                Make_Temp_File "TXT" FileName
+                Move (".\" - FileName)  To FileName
+                Set Output_Device_Name  To FileName
+            End
+            Else Begin
+
+                If (Sysfile.Use_Sql_Reports='1') Begin
+                    If (piAsciiOrPrinter(Self)=0) Error 7000 'Éú§ ©ú´·®ò´ú ´¶ piAsciiOrPrinter\n(Éú§ ß®¶©õ†¶®Â©´û°ú ò§ ò≠¶®· ASCII „ Ñ°´¨ß‡´„)'
+                End
+
+                Get psRecr Of TIMOLOGIO_BasicReport to sRecr
+                Move (Trim(sRecr)) to sRecr
+
+                If (sRecr='') Error 7003 'Éú§ ¨ß·®Æú† Recr ö†ò ´¶ ßò®ò©´ò´†°Ê'
+
+                Clear Particle
+                Move sRecr to Particle.Partl_Recr
+                Find Eq Particle by index.2
+                If (Not(Found)) Error 7001 'Éú§ ô®‚üû°ú ´¶ ßò®ò©´ò´†°Ê'
+
+                Clear Pseira
+                Move SyscurXr.Company_Code  to Pseira.Company_Code
+                Move SyscurXr.Branch_Code   to Pseira.Branch_Code
+                Move Particle.Ptyppar_Code  to Pseira.Ptyppar_Code
+                Move Particle.Pseira_Seira  to Pseira.Pseira_Seira
+                Find Eq Pseira By Index.1 // Pseira:Index.1:Company_Code+Branch_Code+Year_Year+Ptyppar_Code+Pseira_Seira
+                If (Not(Found)) Error 7002 'Éú§ ô®‚üû°ú û ©ú†®·'
+
+                If (piAsciiOrPrinter(Self)=1) Begin
+                    // 1= Output ©ú Ascii
+                    Set Output_Device_Name  To 'C:\DNS_TMP\##Parast.txt'
+                End
+                Else If (piAsciiOrPrinter(Self)=2) Begin
+                    // 2= Output ©ú Printer
+                    Set Output_Device_Name  To Pseira.Pseira_Printer
+                End
+                Else Error 7004 'í¶ Flag piAsciiOrPrinter õú§ úÂ§ò† ©‡©´Ê'
+            End
+
+            Send Run_Report  //record
+
+            If iOutputDevice EQ PRINT_TO_WINDOW Begin
+               RunProgram background "notepad" FileName
+               EraseFile FileName
+            End
+
+        End_Procedure   // StartReport
+
+
+        Object TIMOLOGIO_BasicReport is a BasicReportFemSub
+            Property String psRecr public ''
+            Set Report_Title to "ÇÂ§ú´ò† Ñ°´Áß‡©û èò®ò©´ò´†°¶Á                  "
+
+            Open Syscurxr
+            Open Branch
+
+            Object Ptyppar_DD is a Ptyppar_DataDictionary
+            End_Object    // Ptyppar_DD
+
+            Object Ptyppar_DD2 is a Ptyppar_DataDictionary
+            End_Object    // Ptyppar_DD
+
+            Object Particle_DD2 is a Particle_DataDictionary
+               Set DDO_Server to (Ptyppar_DD2(self))
+            End_Object    // Particle_DD
+
+            Object Clients_DD is a Clients_DataDictionary
+            End_Object    // Clients_DD
+
+            Object Cities_DD is a Cities_DataDictionary
+            End_Object    // Cities_DD
+
+            Object Nomisma_DD is a Nomisma_DataDictionary
+            End_Object    // Nomisma_DD
+
+            Object Particle_DD is a Particle_DataDictionary
+                Set DDO_Server to (Clients_DD(self))
+                Set DDO_Server to (Ptyppar_DD(self))
+                Set DDO_Server to (Nomisma_DD(self))
+            End_Object    // Particle_DD
+
+            Object Witemkat_DD is a Witemkat_DataDictionary
+            End_Object    // Witemkat_DD
+
+            Object Units_DD is a Units_DataDictionary
+            End_Object    // Witemkat_DD
+
+            Object Item_DD is a Item_DataDictionary
+                Set DDO_Server to (Units_DD(self))
+                Set DDO_Server to (Witemkat_DD(self))
+            End_Object    // Item_DD
+
+            Object Witemx_DD is a Witemx_DataDictionary
+                Set DDO_Server to (Item_DD(self))
+            End_Object    // Witemx_DD
+
+            Object Pmoves_DD is a Pmoves_DataDictionary
+                Set DDO_Server to (Witemx_DD(self))
+                Set DDO_Server to (Particle_DD(self))
+            End_Object    // Pmoves_DD
+
+            Object Pmsdtl_DD is a Pmsdtl_DataDictionary
+            end_object
+
+            Object Syscurxr_DD is a Syscurxr_DataDictionary
+            End_Object    // Syscurxr_DD
+
+            Object codemast_DD is a codemast_DataDictionary
+            End_Object    // codemast_DD
+
+            Object clitem_DD is a clitem_DataDictionary
+            End_Object    // clitem_DD
+            //AB-DDOEnd
+
+            Object cn_DD is a cn_DataDictionary
+            End_Object    // cn_DD
+
+            Object areas_DD is a areas_DataDictionary
+            End_Object    // areas_DD
+
+            Report_Index BY Index.3
+            Set Main_File to pmoves.file_Number
+
+            Function Starting_Main_Report Returns Integer
+              Integer   iRetVal iindexr14_1
+              Forward Get Starting_Main_Report to iRetval
+
+              set page_end  to 69
+              set page_feed to 72
+
+         //     set page_end to 72
+         //     set page_feed to 72
+
+        //      Set piIsReportCancelled Of (report_view_id(Self)) to 0
+
+              Function_Return iRetval
+            End_Function
+
+            Procedure Constrain
+                string wrecr
+                Forward Send Constrain
+                Get psrecr to wrecr
+                constrain pmoves.partl_recr eq wrecr
+            End_procedure
+
+           Procedure_Section Page_Top as HeaderR14_1T
+              Local Integer iPage  icount
+              string sdoy  mast srecr stext
+         //     Send Proc_NORMALP
+
+              If (piAsciiOrPrinter(Report_View_Id(Self))=1) Begin
+
+                    Clear Branch
+                    Move SyscurXr.Company_Code  to Branch.Company_Code
+                    Move SyscurXr.Branch_Code   to Branch.Branch_Code
+                    Find Eq Branch By Index.1 // Branch:Index.1:Company_Code+Branch_Code
+                    RELATE BRANCH
+                    Clear Codemast
+                    Move 'JOB'                    to Codemast.Type
+                    Move COMPANY.COMPANY_J_CODE   to Codemast.Code
+                    Find Eq Codemast By Index.1
+                    Move Codemast.Description   to stext
+
+                    Clear Codemast
+                    Move 'DOY'                  to Codemast.Type
+                    Move Branch.BRANCH_DOY      to Codemast.Code
+                    Find Eq Codemast By Index.1
+                    Move Codemast.Description   to sDoy
+                    Move (Trim(Syscurxr.Company_Name)+' ìß¶°/£ò: '+Trim(Branch.Branch_Name)+' É/§©û: '+Trim(Branch.BRANCH_ADDR)) to HeaderStoixeia.1
+                    PRINT HeaderStoixeia.1
+                    Move (Trim(Branch.Branch_TK)+' '+Trim(Branch.Branch_Poli)+' Ñßòöö: '+Trim(sText)+' Ä.î.ã. '+Trim(Branch.BRANCH_AFM)+' É.é.ì. '+Trim(sDoy)) to HeaderStoixeia.2
+                    PRINT HeaderStoixeia.2
+                    OutPut HeaderStoixeia
+                End
+                Else Begin
+                    Blankform headerStoixeia.1
+                    Blankform headerStoixeia.2
+                    OutPut HeaderStoixeia
+              End
+
+              move 1                      to ipage
+              move ipage                  to headerR14_1T.1
+
+
+        ///////////////////////////////////////
+        ///////////// 29/01/2003 //////////////
+        ///////////////////////////////////////
+        ////////////////////////// Old Code Start //////////////////////////
+        //          move (trim(ptyppar.label))          to headerR14_1T.2
+        //          move (trim(ptyppar.label1))         to headerR14_1T.3
+        ////////////////////////// Old Code End  //////////////////////////
+                If (Trim(Ptyppar.Sysxet_Ptyppar)<>'') Begin
+                    Clear ptypparL
+                    Move SyscurXr.Company_Code      to PtypparL.Company_Code
+                    Move SyscurXr.Branch_Code       to PtypparL.Branch_Code
+                    Move Ptyppar.Sysxet_Ptyppar     to PtypparL.Ptyppar_Code
+                    Find Eq PtypparL By Index.1
+                    If ((Trim(PtypparL.label)='') And (Trim(PtypparL.label1)='')) Begin
+                        Move (Trim(PtypparL.Ptyppar_Descr)) to headerR14_1T.2
+                        Blankform                              headerR14_1T.3
+                    End
+                    Else Begin
+                        move (trim(PtypparL.label))     to headerR14_1T.2
+                        move (trim(PtypparL.label1))    to headerR14_1T.3
+                    End
+                End
+                Else Begin
+                    If ((Trim(Ptyppar.label)='') And (Trim(Ptyppar.label1)='')) Begin
+                        Move (Trim(Ptyppar.Ptyppar_Descr)) to headerR14_1T.2
+                        Blankform                             headerR14_1T.3
+                    End
+                    Else Begin
+                        move (trim(Ptyppar.label))     to headerR14_1T.2
+                        move (trim(Ptyppar.label1))    to headerR14_1T.3
+                    End
+                End
+        ////////////////////////// NEW Code End  //////////////////////////
+        ///////////////////////////////////////
+        ///////////// 29/01/2003 //////////////
+        ///////////////////////////////////////
+
+              move particle.partl_no              to headerR14_1T.4
+              move (trim(particle.partl_hmnia))   to headerR14_1T.5
+              move (trim(particle.client_id))     to headerR14_1T.6
+              move (trim(clients.client_name))    to headerR14_1T.7
+              move (trim(clients.client_address)) to headerR14_1T.8
+              move ''                             to stext
+              clear cities
+              move clients.client_city_id         to cities.city_id
+              find eq cities by index.1
+              if (found=1) append stext  (trim(cities.city_descr))
+              append stext ' ' (trim(clients.client_zipcode))
+              clear areas
+              move clients.client_area            to areas.area_id
+              find eq areas by index.1
+              if (found=1) append stext ' ' (trim(areas.area_descr))
+              move (trim(stext))                  to headerR14_1T.9
+
+
+              clear codemast
+              move 'JOB'                          to codemast.type
+              move clients.client_job             to codemast.code
+              find eq codemast by index.1
+              move (trim(codemast.description))   to headerR14_1T.10
+              move (trim(clients.client_afm))     to headerR14_1T.11
+              move (trim(clients.client_doy))     to sdoy
+              move "DOY"                          to mast
+              move (gsfcode_mast(mast,sdoy))      to sdoy
+              move (trim(sdoy))                   to headerR14_1T.12
+              move (trim(particle.cn_code))       to headerR14_1T.13
+
+
+              clear cn
+              move particle.cn_code       to cn.cn_code
+              find eq cn by index.5
+              move (trim(cn.cn_address))  to headerR14_1T.14
+
+              move '' to stext
+              clear cities
+              move cn.cn_city                     to cities.city_id
+              find eq cities by index.1
+              if (found=1) append stext (trim(cities.city_descr))
+              if (cn.cn_zipcode<>'') append stext ' ' (trim(cn.cn_zipcode))
+              clear areas
+              move cn.cn_area             to areas.area_id
+              find eq areas by index.1
+              if (found=1) append stext ' ' (trim(areas.area_descr))
+              move (trim(stext)) to headerR14_1T.15
+
+              move (trim(cn.cn_sls_id))                   to headerR14_1T.16
+              move '' to stext
+              append stext '-' (trim(SyscurXr.Branch_Code))
+              move (trim(stext))           to headerR14_1T.17
+
+
+              OutPut_PageCheck
+              set pipage to ipage
+           End_Procedure
+
+           Procedure_Section  Body as BodyR14_1T
+            string  wrecr stext sdate hdate
+            integer licount liVrow pcfpa pcdisc ipage icountpmsdtl
+            number  nqty nfpa ndisc naxia ntotal naxiaaf
+            number nnunit nnqty nnpcdisc nnaxia nnnet nntotal
+            get picount to licount
+            get pipage to ipage
+            get picountpmsdtl to icountpmsdtl
+            if (licount > 27) begin
+                blankform bodyR14_1T.1 thru bodyR14_1T.8
+                print 'ëú £ú´ò≠¶®· ' to bodyR14_1T.4
+                output bodyR14_1T
+                formfeed
+         //       Send Proc_NORMALP
+                add 1                       to ipage
+                move ipage                  to headerR14_1T.1
+                set pipage to ipage
+                OutPut HeaderStoixeia
+                output headerR14_1T
+                blankform bodyR14_1T.1 thru bodyR14_1T.8
+                print 'ÄßÊ £ú´ò≠¶®· ' to bodyR14_1T.4
+                output_pagecheck
+                blankform bodyR14_1T.4
+                move 1 to licount
+            end
+
+            set pmsrecr to pmoves.pms_recr
+            clear pmsdtl
+            move pmoves.pms_recr to pmsdtl.pms_recr
+            find eq pmsdtl by index.1
+            if (found=1) begin
+                move 1 to icountpmsdtl
+                set picountpmsdtl to icountpmsdtl
+                blankform bodyR14_1T.1 thru bodyR14_1T.8
+                output_pagecheck
+            end
+            if (item.group=1)  blankform bodyR14_1T.1 thru bodyR14_1T.2
+            else begin
+
+        ///////////////////////////////////////
+        ///////////// 29/01/2003 //////////////
+        ///////////////////////////////////////
+        ////////////////////////// Old Code Start //////////////////////////
+        //             print pmoves.sx_arithmos   to bodyR14_1T.1
+        //             move pmoves.sx_hmnia       to hdate
+        //             right pmoves.sx_hmnia      to sdate 2
+        //             insert sdate in hdate at 7
+        //             print hdate                to bodyR14_1T.2
+        ////////////////////////// Old Code End  //////////////////////////
+                 If (pmoves.sx_arithmos<>0) Begin
+                    print pmoves.sx_arithmos   to bodyR14_1T.1
+                    move pmoves.sx_hmnia       to hdate
+                    right pmoves.sx_hmnia      to sdate 2
+                    insert sdate in hdate at 7
+                    print hdate                to bodyR14_1T.2
+                 End
+                 Else Begin
+                    Blankform bodyR14_1T.1
+                    Blankform bodyR14_1T.2
+                 End
+        ////////////////////////// NEW Code End  //////////////////////////
+        ///////////////////////////////////////
+        ///////////// 29/01/2003 //////////////
+        ///////////////////////////////////////
+            end
+            print (trim(pmoves.witemx_code))    to bodyR14_1T.3
+            print (trim(witemx.witemx_descr))   to bodyR14_1T.4
+            print (trim(units.units_descr))     to bodyR14_1T.5
+            print pmoves.pms_qty        to bodyR14_1T.6
+            move pmoves.pms_vatpct      to pcfpa
+            move pmoves.pms_pctdisc     to pcdisc
+            move particle.partl_totambd to naxia
+            move particle.partl_amdiscpms to ndisc
+
+
+            // 04/05/2011
+            move particle.Total_Vat_Poso            to nFpa
+        //        ////////////////////////////////////////////////////////////////////////
+        //        // SOS js 11/04/2011 Gia Titana Patras pou timologei
+        //        // ena pelath sygkentrotika 1 fora ton mhna kai prepei to fpa na ypologizetai sto synolo
+        //        ////////////////////////////////////////////////////////////////////////
+        //        If (particle.partl_euro=1) Begin
+        //            Move Particle.Fpa_On_Total to nFpa
+        //        End
+        //        Else Begin
+        //            If (Sysfile.Fpa_On_Total=1) Begin
+        //                If (Particle.Fpa_On_Total<>0)   Move Particle.Fpa_On_Total to nFpa
+        //                Else                            move particle.partl_vatam  to nfpa
+        //            End
+        //            Else                                move particle.partl_vatam  to nfpa
+        //        End
+
+            move particle.partl_payam   to ntotal
+            move particle.partl_tottem  to nqty
+            move particle.partl_totamad to naxiaaf
+            move (trim(particle.aitiol))        to stext
+            set  pstext                 to stext
+            set pipcfpa                 to pcfpa
+            set pipcdisc                to pcdisc
+            set pnaxia                  to naxia
+            set pndisc                  to ndisc
+            set pnfpa                   to nfpa
+            set pnqty                   to nqty
+            set pntotal                 to ntotal
+            set pnaxiaaf                to naxiaaf
+            set pnclientypol            to clients.ypoloipo
+            print pmoves.pms_unitprice to bodyR14_1T.7
+            print pmoves.pms_ambd      to bodyR14_1T.8
+            set pityponei              to 0
+            if (particle.partl_module='01') begin
+               move (round_number((((pmoves.pms_unitprice*pmoves.pms_pctdisc)/100)),2)) to nntotal
+               move (pmoves.pms_unitprice - nntotal) to nnaxia
+               if (nnaxia<>0) begin
+                  clear clitem
+                  move clients.client_id  to clitem.client_id
+                  move witemx.witemx_code to clitem.item_code
+                  find eq clitem by index.1
+                  if (not(found)) begin
+                     move clients.client_id  to clitem.client_id
+                     move witemx.witemx_code to clitem.item_code
+                     move pmoves.partl_hmnia to clitem.item_date
+                     move nnaxia             to clitem.item_axia
+                     move pmoves.pms_pctdisc to clitem.item_pctdisc
+                     move pmoves.pms_unitprice to clitem.item_price
+                     saverecord clitem
+                  end
+                  else begin
+                     if ((pmoves.pms_unitprice<>clitem.item_price)or(pmoves.pms_pctdisc<>clitem.item_pctdisc)) begin
+                         reread
+                         move pmoves.partl_hmnia to clitem.item_date
+                         move nnaxia             to clitem.item_axia
+                         move pmoves.pms_unitprice to clitem.item_price
+                         move pmoves.pms_pctdisc to clitem.item_pctdisc
+                         saverecord clitem
+                         unlock
+                    end
+                  end
+               end
+            end
+            if (icountpmsdtl =0)output_pagecheck
+            add 1 to licount
+            set picount to licount
+          End_Procedure
+
+
+
+           Procedure_Section  total as totalR14_1T
+            string stext sStr sStr1 sStr2 sOra s1 s2 s0  spmsrecr
+            integer licount liVrow pcfpa pcdisc typonei iLines iInt iLen iKeno icountpmsdtl
+            number  nqty nfpa ndisc naxia ntotal naxiaaf nypoloipo
+            integer ipms
+            get picountpmsdtl to icountpmsdtl
+            get pstext to stext
+            get pipcfpa                 to pcfpa
+            get pipcdisc                to pcdisc
+            get pnaxia                  to naxia
+            get pndisc                  to ndisc
+            get pnfpa                   to nfpa
+            get pnqty                   to nqty
+            get pnaxiaaf                to naxiaaf
+            get pntotal                 to ntotal
+            get pityponei               to typonei
+            get pnclientypol            to nypoloipo
+            get picount                 to licount
+            get pmsrecr                 to spmsrecr
+            if (icountpmsdtl=1) begin
+                clear pmsdtl
+                move spmsrecr to pmsdtl.pms_recr
+                find eq pmsdtl by index.1
+                if (found=1) begin
+                    move 5 to ipms
+                    print pmsdtl.line1           to bodyr14_1T.4
+                    blankform bodyr14_1T.5 thru bodyr14_1T.7
+                    output bodyr14_1T
+                    blankform bodyr14_1T.1 thru bodyr14_1T.8
+                    print pmsdtl.line2    to bodyr14_1T.4
+                    output bodyr14_1T
+                    print pmsdtl.line3    to bodyr14_1T.4
+                    output bodyr14_1T
+                    print pmsdtl.line4    to bodyr14_1T.4
+                    output bodyr14_1T
+                end
+            end
+
+            if (icountpmsdtl=1) move ipms to licount
+
+            for licount from licount to 27
+                blankform bodyR14_1T.1 thru bodyR14_1T.8
+                output bodyR14_1T
+            loop
+        //    Send Proc_NORMALP
+        //    print particle.trex_ypol     to totalR14_1T.1
+            blankform                    totalR14_1T.1
+            print naxia                  to totalR14_1T.2
+            if (pcfpa=0)                 blankform totalR14_1T.3
+            else                         print pcfpa to totalR14_1T.3
+            if (nfpa=0)                  blankform totalR14_1T.4
+            else                         print nfpa to totalR14_1T.4
+            Local string sEnter
+            Move '' to sEnter
+            Append sEnter (Character(13)) (Character(10))
+            Move (Replaces(sEnter,sText,' ')) to sText
+            Move stext to sStr
+            Append sStr ' '
+            move (Length(sStr)) to iLen
+            For iInt From 1 to iLen
+               If (iInt>85) Break
+               If (Mid(sStr,1,iInt)=' ') Move iInt to iKeno
+            Loop
+            Move '' to sStr1
+            Move '' to sStr2
+            Move (Left(sStr,iKeno-1))       to sStr1
+            Move (Right(sStr,iLen-iKeno))   to sStr2
+            if (sstr1<>'') print (trim(sstr1))      to totalR14_1T.5
+            else          print ''          to totalR14_1T.5
+            if (sstr2<>'') print (trim(sstr2))      to totalR14_1T.6
+            else          print ''          to totalR14_1T.6
+            print  ntotal                   to totalR14_1T.7
+            Move (Trim(Particle.SS_Arithmos))  to totalR14_1T.8
+            output_pagecheck
+
+          end_Procedure
+
+            Procedure_Section Page_Bottom as FooterR14_1T
+            End_Procedure
+
+
+            Procedure Ending_Report
+                Integer isCancelled
+                blankform totalR14_1T.1 thru totalR14_1T.7
+                set pstext to ''
+                set pipcfpa                 to 0
+                set pipcdisc                to 0
+                set pnaxia                  to 0
+                set pndisc                  to 0
+                set pnfpa                   to 0
+                set pnqty                   to 0
+                set pnaxiaaf                to 0
+                set pntotal                 to 0
+                set pityponei               to 0
+                set pnclientypol            to 0
+                set picount                 to 0
+                set pitropos                to 0
+                set pipage                  to 0
+                set picountpmsdtl           to 0
+                set pmsrecr                 to ''
+                Get Cancelled_State         to isCancelled
+        //                //If Already with error do not touch
+        //                If (piIsReportCancelled(report_view_id(Self))<>1) ;
+        //                    Set piIsReportCancelled Of (report_view_id(Self)) to (isCancelled=1)
+            End_Procedure
+
+        //            Procedure onError integer ErrNum integer Err_Line string ErrMsg
+        //                If (Display_Error_State(Self)) Send End_Status
+        //                Set piIsReportCancelled Of (report_view_id(Self)) to 1
+        //            End_procedure
+
+        END_OBJECT
+
+
+
+
+
+
+
+
+
+
+
+
+        //AB-StoreEnd
+
+    End_Object    // RmhtrTITAN
+
+
+    //AB-StoreStart
+
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

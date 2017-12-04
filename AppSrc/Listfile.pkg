@@ -1,0 +1,102 @@
+External_function32 FindFirstFile "FindFirstFileA" Kernel32.dll String lpFilename  Pointer lpfindfiledata returns Integer
+External_function32 FindNextFile "FindNextFileA" Kernel32.dll dword hfindfile  Pointer lpfindfiledata returns Integer
+External_function32 FindClose "FindClose" Kernel32.dll Dword hfindFile returns Integer
+
+// WIN32_FIND_DATA attributes
+
+#REPLACE FILE_ATTRIBUTE_READONLY	 1
+#REPLACE FILE_ATTRIBUTE_HIDDEN		 2
+#REPLACE FILE_ATTRIBUTE_SYSTEM		 4
+#REPLACE FILE_ATTRIBUTE_DIRECTORY	 16
+#REPLACE FILE_ATTRIBUTE_ARCHIVE 	 32
+#REPLACE FILE_ATTRIBUTE_NORMAL		 128
+#REPLACE FILE_ATTRIBUTE_TEMPORARY	 256
+#REPLACE FILE_ATTRIBUTE_COMPRESSED	 2048
+#REPLACE FILE_ATTRIBUTE_OFFLINE 	 4096
+
+type filetime
+  Field dwlowdatetime as integer
+  Field dwhighdatetime as integer
+end_type
+
+type win32_find_data
+ Field win32_find_data.dw_fileattribute as dword
+ Field win32_find_data.ft_creationtime1 as dword
+ Field win32_find_data.ft_creationtime2 as dword
+ Field win32_find_data.ft_lastaccesstime1 as dword
+ Field win32_find_data.ft_lastaccesstime2 as dword
+ Field win32_find_data.ft_lastwritetime1 as dword
+ Field win32_find_data.ft_lastwritetime2 as dword
+ Field win32_find_data.dw_filesizehigh as dword
+ Field win32_find_data.dw_filesizelow as dword
+ Field win32_find_data.dw_reserved0 as dword
+ Field win32_find_data.dw_reserved1 as dword
+ Field win32_find_data.s_filename as char 260
+ Field win32_find_data.s_alternate as char 14
+end_type
+
+// The array a_list_file will contain the list of the files found
+object a_list_file is a array
+end_object
+
+
+Procedure list_file string s_search_string returns handle
+
+//Allows to find all files matching a string with wildcards or not
+// The program looks only on the directory indicated in the search string.
+// If no wildcards are in the search string the programm assumes that it's a directory
+// and returns all files in the directory
+// The result is the list of filename in an array.
+// the program returns the Object_id of the array
+// if no file was found the program return 0
+
+   string s_fileinfo s_file  s_alt
+   integer i_result  i_num_item i_attr	i_sizehigh  i_sizelow
+   Pointer p_fileinfo
+   Handle h_filesearch
+
+   send delete_data to (a_list_file(current_object))
+   move 0 to i_num_item
+   move (repeat(character(0), win32_find_data_size)) to s_fileinfo
+   Getaddress of s_fileinfo to p_fileinfo
+
+// To allow to find all files in a directory when the name of directory is given as search string, the program
+// will delete the last character if this one is "\" and will append "\*.*" on the search string
+// before to do a new search
+
+   if ((right(s_search_string,1)) = "\") move (pad(s_search_string,(length(s_search_string) - 1))) to s_search_string
+   move (findfirstfile(s_search_string,p_fileinfo)) to h_filesearch
+   if (h_filesearch = -1) procedure_return 0
+   else begin
+      getbuff from s_fileinfo at win32_find_data.dw_fileattribute to i_attr
+      if (i_attr = FILE_ATTRIBUTE_DIRECTORY) begin
+	 if (((pos("*",s_search_string)) = 0) and ((pos("?",s_search_string)) = 0)) begin
+	    move (findclose(h_filesearch)) to i_result
+	    if ((right(s_search_string,1)) <> "\") move (s_search_string + "\*.*") to s_search_string
+	    else move (s_search_string + "*.*") to s_search_string
+	    move (findfirstfile(s_search_string,p_fileinfo)) to h_filesearch
+	    if (h_filesearch = -1) procedure_return 0
+	 end
+      end
+      move 1 to i_result
+      while (i_result)
+	 getbuff from s_fileinfo at win32_find_data.dw_fileattribute to i_attr
+	 getbuff from s_fileinfo at win32_find_data.dw_filesizehigh to i_sizehigh
+	 getbuff from s_fileinfo at win32_find_data.dw_filesizelow to i_sizelow
+	 move (mid(s_fileinfo,260,45)) to s_file
+	 move (mid(s_fileinfo,14,305)) to s_alt
+
+//  If the file is more than 4.294.967.295 bytes length the size should be
+//  calculated as ((i_sizehigh * (2 ^ 32)) + i_sizelow) Result is more than 4 bytes
+//
+	 if (i_attr <> FILE_ATTRIBUTE_DIRECTORY) begin
+	    set value of a_list_file item i_num_item to s_file
+	    increment i_num_item
+	 end
+	 move (findnextfile(h_filesearch,p_fileinfo)) to i_result
+      end
+      move (findclose(h_filesearch)) to i_result
+   end
+   Procedure_return (a_list_file(current_object))
+End_Procedure // list_file
+

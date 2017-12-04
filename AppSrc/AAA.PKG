@@ -1,0 +1,82 @@
+            Procedure OnClick
+                String sRecr sStr sCmovesRecr
+                Integer isClosed iErr iRecnum ilogik iYes
+                Get Field_Current_Value Of Barticl_DD Field Barticl.Barticl_Recr  to sRecr
+                Get Field_Current_Value Of Barticl_DD Field Barticl.Recnum        to iRecnum
+                Get Field_Current_Value Of Barticl_DD Field Barticl.se_logik      to ilogik
+                if (ilogik=1) begin
+                    Send Stop_Box 'Ñö†§ú ¢¶ö†©´†°¶ß¶Âû©û ßò®ò©´ò´†°¶Á. Éú§ •ú°¢ú†õÈ§ú†' 'ë≠·¢£ò 60112'
+                    procedure_return
+                end
+
+                Move (Trim(sRecr)) to sRecr
+                If (sRecr<>'') Begin
+                    Send Beginning_Of_Data to (dbgrdbmove(tp_bmove(dbtbdlgmove(v036(Self))))) True
+                    If Status Bmove Begin
+                        Begin_Transaction
+                            Set psModule        Of (bpEnCmv3(Self)) to (psModule(Self))
+                            Set psBarticleRecr  Of (bpEnCmv3(Self)) to sRecr
+                            Send DoProcess                          to (bpEnCmv3(Self))
+                            Get piLathos        Of (bpEnCmv3(Self)) to iErr
+                            If (iErr) Abort_Transaction
+                        End_Transaction
+                    End
+
+                    If (iErr) Begin
+                            If (iErr=50000) Send Stop_Box "Éú§ ¨ß·®Æú† ò®Æ†°Ê Barticle Recr"                           "Error 50000"
+                        Else If (iErr=50001) Send Stop_Box "í¶ ò®Æ†°Ê Barticle Recr õú§ ô®‚üû°ú"                        "Error 50001"
+                        Else If (iErr=60002) Send Stop_Box "ë≠·¢£ò ©´û§ ß®¶©ß·üú†ò õ†òö®ò≠„™ Cmoves"                    "Error 60002"
+                        Else If (iErr=60003) Send Stop_Box "Éú§ ô®‚üû°ú Cmoves £ú ´¶ Cmoves Recr ´¶¨ ßò®ò©´ò´†°¶Á"      "Error 60003"
+                        Else If (iErr=60004) Send Stop_Box "ë≠·¢£ò úöö®ò≠„™ Barticle úßú†´ò òß¶ õ†òö®ò≠„ Cmoves"        "Error 60004"
+                        Else If (iErr=50005) Send Stop_Box "Client record not found"                                    "Error 50005"
+                        Else If (iErr=50006) Send Stop_Box "Ctypkin record not found"                                   "Error 50006"
+                        Else If (iErr=50007) Send Stop_Box "Error While Saving Cmoves"                                  "Error 50007"
+                        Else If (iErr=50008) Send Stop_Box "Saved Cmoves but dont have Recr"                            "Error 50008"
+                        Else If (iErr=50009) Send Stop_Box "Error While Saving Barticle after Saving Cmoves"            "Error 50009"
+                        Else If (iErr=50099) Send Stop_Box "Error While Saving Barticle after Saving Cmoves"            "Error 50099"
+                        Else If (iErr=50010) Send Stop_Box "Nomisma record not found"                                   "Error 50010"
+                        Else If (iErr=50011) Send Stop_Box "Client record not found while saving cmoves"                "Error 50011"
+                        Else If (iErr=50012) Send Stop_Box "No Flags found in Cflagkin to process"                      "Error 50012"
+                        Else If (iErr=61000) Send Stop_Box "Found Cmoves Record on Open Barticl"                        "Error 61000"
+                        Else If (iErr=59999) Send Stop_Box "Business Process Called without setting psModule property"  "Error 59999"
+                        Else If (iErr=77777) Send Stop_Box "Äö§‡©´¶ ¢·ü¶™" "Error Unknown 77777"
+                        Else If (iErr=71111) Send Stop_Box "Error while saving Bmove after updating Cmoves_Recr"        "Error 71111"
+                        Else If (iErr=60111) Send Stop_Box "Éú§ ô®‚üû°ú Cmoves ö†ò õ†òö®ò≠„"                            "Error 60111"
+                    End
+
+                    Send Find_By_Recnum to Barticl_DD Barticl.File_Number iRecnum
+                    Get Field_Current_Value Of Barticl_DD Field Barticl.Barticl_Ekleise to isClosed
+
+                    If (isClosed=1) Begin
+                        Get YesNo_Box "á‚¢ú´ú ò¨´Ê£ò´û õû£†¶¨®öÂò ©¨©Æú´Â©ú‡§ (Open Items)" "Ñß†ôúôòÂ‡©û" 0 to iYes
+                        If (iYes=MBR_YES) Begin
+                            Begin_Transaction
+                            Send Rebuild_Constraints to Bmove_DD
+                            Send Find to Bmove_DD First_Record 3
+                            While (Found)
+                                Get Field_Current_Value Of Bmove_DD Field Bmove.Cmoves_Recr to sCmovesRecr
+                                If (Trim(sCmovesRecr)<>'') Begin
+                                    Set piLathos        Of bpACopen to 0
+                                    Set psCmovesRecr    Of bpACopen to sCmovesRecr
+                                    Send DoProcess                  to bpACopen
+                                    Get piLathos        Of bpACopen to iErr
+                                    If (iErr) Begin
+                                        Abort_Transaction
+                                        Send Stop_Box " " (String(iErr))
+                                        Procedure_Return
+                                    End
+
+                                End
+
+                                Send Find to Bmove_DD Next_Record 3
+                            Loop
+
+                            End_Transaction
+                        End
+
+                    End
+
+                End
+
+                Else Send Info_Box "Éú§ ô®‚üû°ú úöö®ò≠„ °Â§û©û™ ò•†¶ö®·≠¶¨" "è¢û®¶≠¶®†ò"
+            End_Procedure // OnClick

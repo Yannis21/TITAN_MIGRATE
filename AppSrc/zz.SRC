@@ -1,0 +1,78 @@
+Use AllEntSc
+
+#REPLACE CURRENT$WORKSPACE   "Empor"
+Register_Object Client_Area
+
+//AB-StoreTopStart
+Use Workspc.pkg
+
+//  Set date attributes as needed
+Set_Date_Attribute sysdate4_State to (TRUE)
+Set_Date_Attribute Date4_State    to (TRUE)
+Set_Date_Attribute epoch_value    to 30
+
+Object ProgramWorkspace is a WorkspaceSub
+    Set WorkspaceName to CURRENT$WORKSPACE
+//    Set ModuleName    to 'ProgramName' // Special module name.
+//    Set HelpName      to 'HelpName.hlp'// Please provide the name of your Windows help file.
+End_Object
+
+Use Idiotht.pkg
+Use Globals.Inc
+Use Calendar.sl
+Use Dates.Utl
+use roundfn.fnc
+Use Connect.Dg
+Use SelectXr.Dg
+
+Use DD_Sec.Sub
+
+Use Help_Ids.inc // Developer should provide this file of help context links.
+Use Std_Help.pkg
+
+//AB-StoreTopEnd
+
+
+Object Main is a Panelsub
+    Set Label To "zz"
+
+    DFCreate_Menu Main_Menu
+        #include File_PM.inc    // file pulldown menu
+
+        DFCreate_Menu "&View" ViewPopupMenu is a ViewPopupMenu
+            On_Item "&EnhFlags\aCtrl+1" Send Activate_EnhFlags
+        End_Pull_down
+        Set Status_Help To "Available Views"
+        
+        #include Navi_pm.inc    // Naviation pulldown menu
+        #include win_PM.inc     // Window of available views
+        #include Helpa_PM.inc   // help pulldown menu w/ About
+    End_Menu
+
+    Use DFStdBtn.pkg //  Tool-Bar object.
+    
+    Object Client_Area is a AppClientAreasub
+        //  Include all views
+        Use EnhFlags.VW                                                                     
+
+    End_Object  // Client_Area
+    
+    On_Key Key_Ctrl+Key_1 Send Activate_EnhFlags To Client_Area
+    
+    Use DFStdSbr.pkg //  Status-Bar object.
+
+    //AB-PanelStoreStart
+    Use StdAbout.pkg // Standard "About" package.
+    //AB-PanelStoreEnd
+
+
+End_Object
+
+
+//AB-StoreStart
+Start_UI
+
+
+
+//AB-StoreEnd
+

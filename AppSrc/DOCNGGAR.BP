@@ -1,0 +1,248 @@
+
+//Set piError to 1001 //›â¤ £œ ¡á¢œ©œ ¡˜¤œåª
+//Set piError to 1002 //«¦ ¡˜¢æ¤ ddo ›â¤ â®œ  current record
+//Set piError to 1003 //›â¤ ™¨âŸž¡œ «¦ original garticl
+
+
+//------------------------------------------------------------------ddo tree
+//        gthhmgio               company
+//           I                     I
+//           I                   branch
+//           I                     I
+//           I                    year
+//           I                     I
+//           I----------I----------I------------I
+//                      I                       I
+//                    gtypkin                 gplan
+//                      I                       I
+//                      I                       I
+//                    garticl                   I
+//                      I                       I
+//                     ccc                      I
+//                      I                       I
+//                      I---------I-------------I
+//                             Gmove
+//------------------------------------------------------------------ddo tree
+
+Use Gthhmgio.dd
+Use Gtypkin.dd
+Use Gplan.dd
+Use Gmove.dd
+Use Garticl.dd
+
+Object oDo_Change_Garticl is a BusinessProcessSub
+
+       Set Status_Panel_State  to False
+       Set Display_Error_State to True
+
+       Property Integer piCalling_Garticl_dd 0
+       Property Integer piError              0
+
+       //------------------------------------------------------------------ddo tree
+
+       Object Gthhmgio_DD is a Gthhmgio_DataDictionary
+       End_Object    // Gthhmgio_DD
+
+       Object Gtypkin_DD is a Gtypkin_DataDictionary
+           Set DDO_Server to (Gthhmgio_DD(Self))
+       End_Object    // Gtypkin_DD
+
+       Object Garticl_DD is a Garticl_DataDictionary
+           Set DDO_Server to (Gtypkin_DD(Self))
+       End_Object    // Garticl_DD
+
+       Object Gplan_DD is a Gplan_DataDictionary
+       End_Object    // Gplan_DD
+
+       Object Gmove_DD is a Gmove_DataDictionary
+           Set DDO_Server to (Gplan_DD(Self))
+           Set DDO_Server to (Garticl_DD(Self))
+           Procedure OnConstrain
+               Constrain Gmove Relates to Garticl
+           End_Procedure
+       End_Object    // Gmove_DD
+       //------------------------------------------------------------------ddo tree
+
+
+       Function   Trexe Integer liCalling_Garticl_dd Returns Integer
+                  Integer liError
+                  Set piCalling_Garticl_dd to liCalling_Garticl_dd
+                  Set piError to 0
+
+                  Send Private.Do_Cascade_Update
+                  //12/02/2000:Send DoProcess
+
+                  Get piError to liError
+                  Set piError to 0
+                  Function_Return liError
+       End_Function //trexe
+
+
+       Procedure Private.Do_Cascade_Update
+                 Integer liGtypkin_dd liGarticl_dd liGplan_dd liGmove_dd
+                 Integer liCurrent_Garticl_Recnum liCalling_Garticl_dd liErr
+
+                 String   lsB_Gtypkin_Recr     lsA_Gtypkin_Recr
+                 Date     ldB_Garticl_Hmnia    ldA_Garticl_Hmnia
+                 Integer  liB_Garticl_No       liA_Garticl_No
+                 String   lsB_Garticl_C_Code2  lsA_Garticl_C_Code2
+                 Number   lnB_Garticl_Rate0    lnA_Garticl_Rate0
+                 Number   lnB_Garticl_Rate00   lnA_Garticl_Rate00
+                 Number   lnB_Garticl_RateR    lnA_Garticl_RateR
+                 Integer  liB_Garticl_Aa       liA_Garticl_Aa
+
+                 Integer  liButton_id //š ˜ ¤˜ ›œå®¤à ©«˜ buttons «žª ®¦¨ãšž©žª/£ž›œ¤ ©£¦ç ˜/˜
+                                      //«˜ gmove recnums
+                 Integer  liGmove_Counter
+
+                 //œç¨œ©ž ¡˜¢¦ç¤«¦ª ddo
+                 Get piCalling_Garticl_dd to liCalling_Garticl_dd
+
+                 //â¢œš®¦ª ¡˜¢¦ç¤«¦ª ddo (œá¤ 0, ¡á¤«ž¤)
+                 If (liCalling_Garticl_dd = 0);
+                 Begin
+                      Set piError to 1001 //›â¤ £œ ¡á¢œ©œ ¡˜¤œåª
+                      Procedure_Return
+                 End
+
+                 //œç¨œ©ž current_record ¡˜¢¦ç¤«¦ª ddo
+                 Get Current_Record of liCalling_Garticl_dd to liCurrent_Garticl_Recnum
+
+                 //â¢œš®¦ª current_record (œá¤ 0, ¡á¤«ž¤)
+                 If (liCurrent_Garticl_Recnum = 0);
+                 Begin
+                      Set piError to 1002 //«¦ ¡˜¢æ¤ ddo ›â¤ â®œ  current record
+                      Procedure_Return
+                 End
+
+                 //˜¤áš¤à©ž §˜¢˜ é¤ « £é¤ «¦¬ ¡˜¢¦ç¤«¦ª ddo
+                 Get psB_Gtypkin_Recr    of liCalling_Garticl_dd to lsB_Gtypkin_Recr
+                 Get pdB_Garticl_Hmnia   of liCalling_Garticl_dd to ldB_Garticl_Hmnia
+                 Get piB_Garticl_No      of liCalling_Garticl_dd to liB_Garticl_No
+                 Get psB_Garticl_C_Code2 of liCalling_Garticl_dd to lsB_Garticl_C_Code2
+                 Get pnB_Garticl_Rate0   of liCalling_Garticl_dd to lnB_Garticl_Rate0
+                 Get pnB_Garticl_Rate00  of liCalling_Garticl_dd to lnB_Garticl_Rate00
+                 Get pnB_Garticl_RateR   of liCalling_Garticl_dd to lnB_Garticl_RateR
+                 Get piB_Garticl_Aa      of liCalling_Garticl_dd to liB_Garticl_Aa
+
+                 //˜¤áš¤à©ž ¤âà¤ « £é¤ «¦¬ ¡˜¢¦ç¤«¦ª ddo
+                 Get psA_Gtypkin_Recr    of liCalling_Garticl_dd to lsA_Gtypkin_Recr
+                 Get pdA_Garticl_Hmnia   of liCalling_Garticl_dd to ldA_Garticl_Hmnia
+                 Get piA_Garticl_No      of liCalling_Garticl_dd to liA_Garticl_No
+                 Get psA_Garticl_C_Code2 of liCalling_Garticl_dd to lsA_Garticl_C_Code2
+                 Get pnA_Garticl_Rate0   of liCalling_Garticl_dd to lnA_Garticl_Rate0
+                 Get pnA_Garticl_Rate00  of liCalling_Garticl_dd to lnA_Garticl_Rate00
+                 Get pnA_Garticl_RateR   of liCalling_Garticl_dd to lnA_Garticl_RateR
+                 Get piA_Garticl_Aa      of liCalling_Garticl_dd to liA_Garticl_Aa
+
+                 //œá¤ æ¢œª ¦  §˜¨á£œ«¨¦  before+after œå¤˜  å©œª,
+                 //«æ«œ ›â¤ £§˜å¤à ¡˜Ÿæ¢¦¬ ©«¦¤ ¡æ§¦ ¤˜ «¨â¥à,
+                 //˜¢¢á ­œçšà ...«¨â®¦¤«˜ª!
+                 If (;
+                      (lsB_Gtypkin_Recr   = lsA_Gtypkin_Recr   ) and;
+                      (ldB_Garticl_Hmnia  = ldA_Garticl_Hmnia  ) and;
+                      (liB_Garticl_No     = liA_Garticl_No     ) and;
+                      (lsB_Garticl_C_Code2= lsA_Garticl_C_Code2) and;
+                      (lnB_Garticl_Rate0  = lnA_Garticl_Rate0  ) and;
+                      (lnB_Garticl_Rate00 = lnA_Garticl_Rate00 ) and;
+                      (lnB_Garticl_RateR  = lnA_Garticl_RateR  ) and;
+                      (liB_Garticl_Aa     = liA_Garticl_Aa     )    ;
+                     ) Begin
+                        Procedure_Return
+                       End
+
+                 //Ÿ¤­¦¨Ÿ¤˜«œ¢¢¬, §¨â§œ  ¤˜ «¨â¥à!
+
+                 //**************************************************************************
+                 //01.œç¨œ©ž object id's «à¤ œ£§¢œ¡¦£â¤à¤ ddo's
+                 //**************************************************************************
+                 Move (Garticl_dd(Self))  to liGarticl_dd
+                 Move (Gplan_dd  (Self))  to liGplan_dd
+                 Move (Gmove_dd (Self))   to liGmove_dd
+                 Move (Gtypkin_dd(Self))  to liGtypkin_dd
+
+                 Get piButton_id of liCalling_Garticl_dd to liButton_id
+                 Set piMode of liGarticl_dd to (piMode(liCalling_Garticl_dd)) //14/02/2000
+
+
+                 //**************************************************************************
+                 //02.rebuild constraints, ¢æšà «à¤ ¡¢á©œà¤
+                 //**************************************************************************
+                 Send Rebuild_Constraints to liGtypkin_dd
+                 Send Rebuild_Constraints to liGarticl_dd
+                 Send Rebuild_Constraints to liGplan_dd
+
+                 //**************************************************************************
+                 //03.œç¨œ©ž garticl
+                 //**************************************************************************
+                 Send Clear to liGarticl_dd
+                 Send Find_By_Recnum to liGarticl_dd Garticl.File_Number liCurrent_Garticl_Recnum
+                 If (Found = 0);
+                 Begin
+                      Set piError to 1003 //›â¤ ™¨âŸž¡œ «¦ original garticl
+                      Procedure_Return
+                 End
+
+                 //**************************************************************************
+                 //04.©á¨à©ž Gmove
+                 //**************************************************************************
+                 Send Rebuild_Constraints to liGmove_dd
+                 Send Clear to liGmove_dd
+                 Send Request_Find to liGmove_dd FIRST_RECORD Gmove.File_Number 3 //garticl_recr+Gmove_recr
+                 While (Found=1)
+                        Increment liGmove_Counter
+
+                        If (liButton_id<>0);
+                        Begin //â®œ  ¡¢žŸœå ˜§¦ ®¦¨ãšž©ž/£ž›œ¤ ©£æ ˜/˜
+                             Set Label of liButton_id to (;
+                                                           "„šš¨˜­ã: "+;
+                                                           (String(liGmove_Counter));
+                                                         )
+                        End
+
+                        Set Field_Changed_Value of liGmove_dd Field Gmove.Gmove_Kk to 1 //sosososo
+                        //Get Request_Validate of liGmove_dd to liErr
+                        //If (liErr<>0);
+                        //     Begin
+                        //      Set piError to 1004 //Gmove not valid!
+                        //      Procedure_Return
+                        //     End
+                        //Else Begin
+                              Send Request_Save to liGmove_dd
+                              Move (Err) to liErr
+                              If (liErr<>0) Begin
+                                             Set piError to 1105 //«¦ Gmoves ›â¤ ©éŸž¡œ
+                                             Procedure_Return
+                                            End
+                        //     End
+
+                        Send Request_Find to liGmove_dd NEXT_RECORD Gmove.File_Number 3 //garticl_recr+Gmove_recr
+                 Loop
+                 //send check_arthro_for_ypol (› æ«  £§¦¨œå ¤˜ ˜¢¢á¥œ   ©¦« £å˜ !)
+       End_Procedure //private.do_cascade_update
+
+
+       Procedure OnProcess0
+                 Send Private.Do_Cascade_Update
+       End_Procedure //onprocess
+
+End_Object //odo_change_garticl
+
+//     Procedure Set_B_Values Integer  lsB_Gtypkin_Recr;
+//                            Date     ldB_Garticl_Hmnia;
+//                            Integer  liB_Garticl_No;
+//                            String   lsB_Garticl_C_Code2;
+//                            Number   lnB_Garticl_Rate0;
+//                            Number   lnB_Garticl_Rate00;
+//                            Number   lnB_Garticl_RateR;
+//                            Integer  liB_Garticl_Aa
+//
+//                Set psB_Gtypkin_Recr    to lsB_Gtypkin_Recr
+//                Set pdB_Garticl_Hmnia   to ldB_Garticl_Hmnia
+//                Set piB_Garticl_No      to liB_Garticl_No
+//                Set psB_Garticl_C_Code2 to lsB_Garticl_C_Code2
+//                Set pnB_Garticl_Rate0   to lnB_Garticl_Rate0
+//                Set pnB_Garticl_Rate00  to lnB_Garticl_Rate00
+//                Set pnB_Garticl_RateR   to lnB_Garticl_RateR
+//                Get piB_Garticl_Aa      to liB_Garticl_Aa
+//     End_Procedure //updatev1

@@ -1,0 +1,166 @@
+Use FlexCOM20.pkg
+
+// CoClass
+// ProgID: Excel.Application.9
+// CLSID: {00024500-0000-0000-C000-000000000046}
+Class cExcelApplication is a cComAutomationObject
+
+    Procedure Construct_Object
+        Forward Send Construct_Object
+//        Set psProgID to "Excel.Application"
+        Set psProgID to "{00024500-0000-0000-C000-000000000046}"
+        Set peAutoCreate to acNoAutoCreate
+    End_Procedure
+    
+    Function ComActiveWorkbook Returns Variant
+        Handle hDispatchDriver
+        Variant retVal
+        Get phDispatchDriver to hDispatchDriver
+        Get InvokeComMethod of hDispatchDriver 308 OLE_VT_DISPATCH to retVal
+        Function_Return retVal
+    End_Function
+
+    Function ComWorkbooks Returns Variant
+        Handle hDispatchDriver
+        Variant retVal
+        Get phDispatchDriver to hDispatchDriver
+        Get InvokeComMethod of hDispatchDriver 572 OLE_VT_DISPATCH to retVal
+        Function_Return retVal
+    End_Function
+
+    Function ComRange Variant llCell1 Variant llCell2 Returns Variant
+        Handle hDispatchDriver
+        Variant retVal
+        Get phDispatchDriver to hDispatchDriver
+        Send PrepareParams to hDispatchDriver 2
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT llCell1
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT llCell2
+        Get InvokeComMethod of hDispatchDriver 197 OLE_VT_DISPATCH to retVal
+        Function_Return retVal
+    End_Function
+
+    Procedure ComQuit
+        Handle hDispatchDriver
+        Get phDispatchDriver to hDispatchDriver
+        Send InvokeComMethod to hDispatchDriver 302 OLE_VT_VOID
+    End_Procedure
+
+    Function ComVisible Returns Boolean
+        Handle hDispatchDriver
+        Boolean retVal
+        Get phDispatchDriver to hDispatchDriver
+        Get InvokeComMethod of hDispatchDriver 558 OLE_VT_BOOL to retVal
+        Function_Return retVal
+    End_Function
+
+    Procedure Set ComVisible Boolean value
+        Handle hDispatchDriver
+        Get phDispatchDriver to hDispatchDriver
+        Send PrepareParams to hDispatchDriver 1
+        Set ComProperty of hDispatchDriver 558 OLE_VT_BOOL to value
+    End_Procedure
+
+End_Class
+
+Class cExcelWorkbooks is a cComAutomationObject
+
+//    Function ComOpen String llFilename Variant llUpdateLinks Variant llReadOnly Variant llFormat Variant llPassword Variant llWriteResPassword Variant llIgnoreReadOnlyRecommended Variant llOrigin Variant llDelimiter Variant llEditable Variant llNotify Variant llConverter Variant llAddToMru Returns Variant
+    Function ComOpen String llFilename Returns Variant
+        Handle hDispatchDriver
+        Variant retVal
+        Get phDispatchDriver to hDispatchDriver
+        Send PrepareParams to hDispatchDriver 13
+        Send DefineParam to hDispatchDriver OLE_VT_BSTR llFilename
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT Nothing
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT Nothing
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT Nothing
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT Nothing
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT Nothing
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT Nothing
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT Nothing
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT Nothing
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT Nothing
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT Nothing
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT Nothing
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT Nothing
+        Get InvokeComMethod of hDispatchDriver 682 OLE_VT_DISPATCH to retVal
+        Function_Return retVal
+    End_Function
+
+    Function ComAdd Variant llTemplate Returns Variant
+        Handle hDispatchDriver
+        Variant retVal
+        Get phDispatchDriver to hDispatchDriver
+        Send PrepareParams to hDispatchDriver 1
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT llTemplate
+        Get InvokeComMethod of hDispatchDriver 181 OLE_VT_DISPATCH to retVal
+        Function_Return retVal
+    End_Function
+
+End_Class
+
+Class cExcelWorkbook is a cComAutomationObject
+    Procedure Construct_Object
+        Forward Send Construct_Object
+        Set psProgID to "{00020819-0000-0000-C000-000000000046}"
+        Set peAutoCreate to acNoAutoCreate
+    End_Procedure
+
+    Procedure ComClose Variant llSaveChanges Variant llFilename Variant llRouteWorkbook
+        Handle hDispatchDriver
+        Get phDispatchDriver to hDispatchDriver
+        Send PrepareParams to hDispatchDriver 3
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT llSaveChanges
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT llFilename
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT llRouteWorkbook
+        Send InvokeComMethod to hDispatchDriver 277 OLE_VT_VOID
+    End_Procedure
+
+    Procedure ComSave
+        Handle hDispatchDriver
+        Get phDispatchDriver to hDispatchDriver
+        Send InvokeComMethod to hDispatchDriver 283 OLE_VT_VOID
+    End_Procedure
+
+//    Procedure ComSaveAs Variant llFilename Variant llFileFormat Variant llPassword Variant llWriteResPassword Variant llReadOnlyRecommended Variant llCreateBackup OLEXlSaveAsAccessMode llAccessMode Variant llConflictResolution Variant llAddToMru Variant llTextCodepage Variant llTextVisualLayout
+    Procedure ComSaveAs Variant llFilename 
+        Handle hDispatchDriver
+        Get phDispatchDriver to hDispatchDriver
+        Send PrepareParams to hDispatchDriver 11
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT llFilename
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT Nothing
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT Nothing
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT Nothing
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT Nothing
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT Nothing
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT Nothing
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT Nothing
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT Nothing
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT Nothing
+        Send DefineParam to hDispatchDriver OLE_VT_VARIANT Nothing
+        Send InvokeComMethod to hDispatchDriver 284 OLE_VT_VOID
+    End_Procedure
+    
+End_Class
+
+// CLSID:{00020846-0000-0000-C000-000000000046}
+// ProgId:
+Class cExcelRange is a cComAutomationObject
+
+    Function ComValue Returns Variant
+        Handle hDispatchDriver
+        Variant retVal
+        Get phDispatchDriver to hDispatchDriver
+        Get InvokeComMethod of hDispatchDriver 6 OLE_VT_VARIANT to retVal
+        Function_Return retVal
+    End_Function
+
+    Procedure Set ComValue Variant value
+        Handle hDispatchDriver
+        Get phDispatchDriver to hDispatchDriver
+        Send PrepareParams to hDispatchDriver 1
+        Set ComProperty of hDispatchDriver 6 OLE_VT_VARIANT to value
+    End_Procedure
+
+End_Class
+

@@ -1,0 +1,160 @@
+use company.dd
+use branch.dd
+use year.dd
+use gplan.dd
+use gmhnes.dd
+use ghmnies.dd
+
+
+Object oDoUpdateIso Is A BusinessProcessSub
+
+        set Status_panel_state to false
+
+        Property Integer piGplan_Rec0
+
+        Property Date    pdHmniaZero
+        //Property Integer piMode           //1=create 2=delete
+
+
+        Object Company_DD is a Company_DataDictionary
+        End_Object    // Company_DD
+
+        Object Branch_DD is a Branch_DataDictionary
+            Set DDO_Server to (Company_DD(Current_Object))
+        End_Object    // Branch_DD
+
+        Object Year_DD is a Year_DataDictionary
+            Set DDO_Server to (Branch_DD(Current_Object))
+        End_Object    // Year_DD
+
+        Object Gplan_DD is a Gplan_DataDictionary //main
+            Set DDO_Server to (Year_DD(Current_Object))
+        End_Object    // Gplan_DD
+
+        Object Gmhnes_DD is a Gmhnes_DataDictionary
+            Set DDO_Server to (Gplan_DD(Current_Object))
+            Set Constrain_File to Gplan.File_Number
+        End_Object    // Gmhnes_DD
+
+        Object Ghmnies_DD is a Ghmnies_DataDictionary
+            Set DDO_Server to (Gmhnes_DD(Current_Object))
+            Set Constrain_File to Gmhnes.File_Number
+
+        End_Object    // Ghmnies_DD
+
+
+
+PROCEDURE TREXE_UPDATE_ISO  Date HmniaZero
+          //Set piMode                       to limode##
+          Set pdHmniaZero                    to HmniaZero
+
+          SEND DOPROCESS
+
+END_PROCEDURE //trexe
+
+
+
+
+Procedure ZeroDateMonths
+
+    Local Integer liMhnesDDo## Active_Hmnia##  liErr## ;
+                  liCompanyDDo## liBranchDDo## liYearDDo## liGplanDDo## liGmhnesDDo## liGHmniesDDo##
+
+    Local String lsGplan_Code## lsSelected_Company_Code## lsSelected_Branch_Code## liSelected_Year##
+
+
+
+    Local Date    ldHmniaZero##
+
+
+    Get pdHmniaZero             to ldHmniaZero##
+
+          //Get piMode                to limode##
+
+        Move ldHmnia## to sDate##
+        Move (Mid(sDate##,2,4)) to limhnas##
+
+        Move (Company_DD(self)) to liCompanyDDo##
+        Move (Branch_DD(self))  to liBranchDDo##
+        Move (Year_DD(self))    to liYearDDo##
+        Move (Gplan_DD(self))   to liGplanDDo##
+        Move (Gmhnes_DD(self))  to liGMhnesDDo##
+        Move (Ghmnies_DD(self)) to liGHmniesDDo##
+
+
+
+
+/////////////////////
+if liBackout0## eq 1 begin
+
+local integer liBathmosBpo1## CounterBack##
+
+        Send Clear to liGplanDDo##                        //Gplan
+        move  lsGplan_Code_BeforeBpo## to Gplan.Gplan_Code
+        Send Find to liGplanDDo## eq 1
+        if (found eq 1) move Gplan.Gplan_Bathmos to liBathmosBpo1##
+
+
+    For CounterBack## From 1 to liBathmosBpo1##
+
+        Send Clear to liGmhnesDDo##
+        move  limhnas##   to Gmhnes.Gmhnes_Mhnas          //Gmhnes
+        Send Find to liGmhnesDDo## eq 1
+        if (found eq 0)  begin
+                     Set Field_Changed_Value of liGmhnesDDo## field Gmhnes.Gmhnes_mhnas   to limhnas##
+        end
+
+        Send Clear to liGhmniesDDo##                      //Ghmnies
+        move  ldHmnia## to Ghmnies.Ghmnies_hmnia
+        Send Find to liGhmniesDDo## eq 1
+
+        if (found eq 0) Begin        //[finderr]
+            Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_Hmnia to ldHmnia##
+
+        End
+
+        //-----> VALUES
+
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Sx2   to nOldX2##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Sp2   to nOldP2##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Sx0   to nOldX0##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Sp0   to nOldP0##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Sx00  to nOldX00##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Sp00  to nOldP00##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_SxR   to nOldXR##
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_SpR   to nOldPR##
+
+
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_Sx2   to (nOldX2## -lnX2_BFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_sP2   to (nOldP2## -lnP2_BFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_Sx0   to (nOldX0## -lnX0_BFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_sP0   to (nOldP0## -lnP0_BFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_Sx00  to (nOldX00##-lnX00_BFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_sP00  to (nOldP00##-lnP00_BFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_SxR   to (nOldXR## -lnXR_BFBpo##)
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_sPR   to (nOldPR## -lnPR_BFBpo##)
+
+
+        get field_current_value of liGhmniesDDo## field Ghmnies.Ghmnies_Gmnorec   to iOldGhmnies_GmNorec##
+        Set field_changed_value of liGhmniesddo## field Ghmnies.Ghmnies_Gmnorec   to (iOldGhmnies_GmNorec##-1)
+
+
+        send request_savebpo to liGhmniesDDo##
+        send request_deletebpo to liGmhnesDDo##
+
+        Move (Find_Previous(liGplanDDo##,lsGplan_Code_BeforeBpo##)) to lsGplan_Code_BeforeBpo##
+
+        Send Clear to liGplanDDo##                        //Gplan
+        move  lsGplan_Code_BeforeBpo## to Gplan.Gplan_Code
+        Send Find to liGplanDDo## eq 1
+
+    loop
+end
+
+
+End_Procedure
+
+Procedure OnProcess
+    send ZeroDateMonths
+End_Procedure
+End_Object

@@ -1,0 +1,1374 @@
+//AB/ Project rmetafypapog
+//AB/     Object prj is a Report_Project
+//AB/         Set ProjectName to "rmetafypapog"
+//AB/         Set ProjectFileName to "rmetafypapog.RV"
+
+// Project Object Structure
+//   rmetafypapog is a ReportViewSub
+//     ButtonSub3 is a ButtonSub
+//     date_apo is a FormSub
+//     date_eos is a FormSub
+//     value_date is a FormSub
+//     FormSub3 is a FormSub
+//     Chkshm is a CheckBoxSub
+//     Chkeisa is a CheckBoxSub
+//     ButtonSub4 is a ButtonSub
+//     TextBoxSub5 is a TextBoxSub
+//     TextBoxSub6 is a TextBoxSub
+//     TextBoxSub7 is a TextBoxSub
+//     TextBoxSub8 is a TextBoxSub
+//     ButtonSub5 is a ButtonSub
+//     Chkkl is a CheckBoxSub
+//     Areas_DD is a Areas_DataDictionary
+//     Payresp_DD is a Payresp_DataDictionary
+//     syscurxr_DD is a syscurxr_DataDictionary
+//     Country_DD is a Country_DataDictionary
+//     Towns_DD is a Towns_DataDictionary
+//     Ctypkin_DD is a Ctypkin_DataDictionary
+//     Cities_DD is a Cities_DataDictionary
+//     Clients_DD is a Clients_DataDictionary
+//     Cmoves_DD is a Cmoves_DataDictionary
+//     metafyp_BasicReport is a BasicReport
+//       Areas_DD is a Areas_DataDictionary
+//       Payresp_DD is a Payresp_DataDictionary
+//       syscurxr_DD is a syscurxr_DataDictionary
+//       Country_DD is a Country_DataDictionary
+//       Towns_DD is a Towns_DataDictionary
+//       Ctypkin_DD is a Ctypkin_DataDictionary
+//       Cities_DD is a Cities_DataDictionary
+//       Clients_DD is a Clients_DataDictionary
+//       Cmoves_DD is a Cmoves_DataDictionary
+//       Cmovesa_DD is a Cmovesa_DataDictionary
+
+// Register all objects
+Register_Object Areas_DD
+Register_Object ButtonSub3
+Register_Object ButtonSub4
+Register_Object ButtonSub5
+Register_Object Chkeisa
+Register_Object Chkkl
+Register_Object Chkshm
+Register_Object Cities_DD
+Register_Object Clients_DD
+Register_Object Cmoves_DD
+Register_Object Cmovesa_DD
+Register_Object Country_DD
+Register_Object Ctypkin_DD
+Register_Object date_apo
+Register_Object date_eos
+Register_Object FormSub3
+Register_Object metafyp_BasicReport
+Register_Object Payresp_DD
+Register_Object rmetafypapog
+Register_Object syscurxr_DD
+Register_Object TextBoxSub5
+Register_Object TextBoxSub6
+Register_Object TextBoxSub7
+Register_Object TextBoxSub8
+Register_Object Towns_DD
+Register_Object value_date
+
+
+//AB/     Report View
+
+
+    //AB-StoreTopStart
+    Use dfallrpt.pkg
+    use areas.dd
+    use country.dd
+    use towns.dd
+    use payresp.dd
+    Use cities.DD
+    Use clients.DD
+    Use ctypkin.DD
+    Use cmoves.DD
+    USE CMOVESA.DD
+    USE SYSCURXR.DD
+    use docpresp.dg
+    use docclients.dg
+    OPEN CN
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use Rptvw.Sub
+    Use Button.Sub
+    Use Form.Sub
+    Use Chkbox.Sub
+    Use Txtbox.Sub
+
+    //AB-IgnoreEnd
+
+    ACTIVATE_VIEW Activate_rmetafypapog FOR rmetafypapog
+
+    Object rmetafypapog is a ReportViewSub
+
+        //AB-StoreTopStart
+        property integer pierr              public 0
+        Property Integer Sort_IndexRlog     Public 1
+        property integer pipayresp          public 0
+        property integer picount            public 0
+        property string  psmodule           public ''
+        property date    pddate             public ''
+        property number  px0                public 0
+        property number  pp0                public 0
+        property number  px00               public 0
+        property number  pp00               public 0
+        property number  px1                public 0
+        property number  pp1                public 0
+
+        //AB-StoreTopEnd
+
+        Set Label to "ãú´ò≠¶®· ¨ß¶¢¶Âß‡§"
+        Set Size to 159 362
+        Set Location to 5 12
+        Set Color to 13540467
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object ButtonSub3 is a ButtonSub
+
+            //AB-StoreTopStart
+
+            //AB-StoreTopEnd
+
+            Set Bitmap to "RUNPROG.BMP"
+            Set Size to 20 23
+            Set Location to 121 243
+            Set Border_Style to Border_StaticEdge
+            Set Focus_Mode to Pointer_Only
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+
+            Set TooltipValue to "Ñ•òö‡ö„-Ñ†©òö‡ö„ ©ú ASCII ò®ÆúÂ¶"
+
+            Procedure OnClick
+                    integer irecnum  idecs ilines iint ilen iYes inum  ieisa  ipis
+                    number nxre npis x0 p0 x00 p00 x1 p1
+                    String sPath sFullName sBranch sunit slogik sid sstr Spartlrecr sbr  sposo
+                    string sline skin spar scn scnrecr ssls spayresp scnt  smhxanik  msgstr
+                    indicate err false
+                    date dapod deosd dvalued
+                    Get Value Of FormSub3 Item 0 to sPath
+                    Move (Trim(sPath)) to sPath
+                    If (sPath='') Begin
+                        Send Info_Box 'Éú§ úß†¢‚•ò´ú ß®¶¶®†©£Ê' 'è¢û®¶≠¶®Âò'
+                        Procedure_Return
+                    End
+
+                    Get Value Of date_apo Item 0 to dapod
+                    get value of date_eos item 0 to deosd
+                    get value of value_date to dvalued
+                    get checked_state of chkeisa item 0 to  ieisa
+                    get checked_state of chkshm  item 0 to  ipis
+                    if (ieisa=0) begin
+                       if ((dapod='') or (deosd='')) begin
+                            send info_box 'Ü£/§Âú™ Ñöö®ò≠È§ òßò®òÂ´û´ú™' 'è¢û®¶≠¶®Âò'
+                            procedure_return
+                       end
+                       if (dvalued='')  begin
+                            send info_box 'Ü£/§Âò Ñ•òö‡ö„™ òßò®òÂ´û´û' 'è¢û®¶≠¶®Âò'
+                            procedure_return
+                       end
+                    end
+                    Get YesNo_Box 'åò •ú°†§„©ú† û õ†òõ†°ò©Âò ?' to iYes
+                    If (iYes=MBR_NO) Procedure_Return
+                    begin_transaction
+
+                        if (ieisa=0) begin
+                           clear ypoprosf
+                           find gt ypoprosf.recnum
+                           while (found)
+                                set label of buttonsub5 to ypoprosf.recnum
+                                delete ypoprosf
+                                find gt ypoprosf.recnum
+                           Loop
+                           Send StartReport
+                           EraseFile spath
+                           Direct_Output Channel 8 spath
+                           Close_Output Channel 8
+                           Append_Output Channel 8 spath
+                           clear ypoprosf
+                           find gt ypoprosf by index.1
+                           while (found)
+                                Write   Channel 8 (Pad(Trim(ypoprosf.xora)                       ,  3))
+                                Write   Channel 8 (Pad(Trim(ypoprosf.date)                        , 10))
+                                Write   Channel 8 (Pad(ypoprosf.ypeyth_pelath                     , 30))
+                                Write   Channel 8 (Pad(ypoprosf.pelaths                           , 15))
+                                Write   Channel 8 (Pad(ypoprosf.cn_code                           , 15))
+                                Write   Channel 8 (Pad(ypoprosf.thl_ypeythynou                    , 15))
+                                Write   Channel 8 (Pad(ypoprosf.sls_id                            , 15))
+                                Write   Channel 8 (Pad(ypoprosf.aitia_kathyst                     , 15))
+                                Write   Channel 8 (Pad(ypoprosf.ar_symbashs                       , 15))
+                                Write   Channel 8 (Pad(ypoprosf.periex_prosf                      , 15))
+                                move    ypoprosf.qty to sposo
+                                Write   Channel 8 (Pad(sposo                                      , 15))
+                                move    ypoprosf.hour to sposo
+                                Write   Channel 8 (Pad(sposo                                      , 15))
+                                move    ypoprosf.disc to sposo
+                                Write   Channel 8 (Pad(sposo                                      , 15))
+                                move    ypoprosf.fpa to sposo
+                                Write   Channel 8 (Pad(sposo                                      , 15))
+                                move    ypoprosf.net to sposo
+                                Write   Channel 8 (Pad(sposo                                      , 15))
+                                move    ypoprosf.total to sposo
+                                Write   Channel 8 (Pad(sposo                                      , 15))
+                                Writeln Channel 8
+                                set label of buttonsub5 to ypoprosf.cn_code
+                                find gt ypoprosf by index.1
+                           Loop
+                        Close_Output Channel 8
+                        End
+                        else begin
+                             Direct_Input Channel 1 spath
+                             Readln Channel 1 sLine
+                             While (not(Seqeof))
+                                 Move (Mid(sLine,03,01)) To skin
+                                 Move (Mid(sLine,10,04)) To dvalued
+                                 Move (Mid(sLine,30,14)) To spar
+                                 Move (Mid(sLine,15,44)) To sid
+                                 Move (Mid(sLine,15,59)) To scn
+                                 Move (Mid(sLine,15,74)) To scnrecr
+                                 Move (Mid(sLine,15,89)) To ssls
+                                 Move (Mid(sLine,15,104)) To spayresp
+                                 Move (Mid(sLine,15,119)) To scnt
+                                 Move (Mid(sLine,15,134)) To smhxanik
+                                 Move (Mid(sLine,15,149)) To x0
+                                 Move (Mid(sLine,15,164)) To p0
+                                 Move (Mid(sLine,15,179)) To x00
+                                 Move (Mid(sLine,15,194)) To p00
+                                 Move (Mid(sLine,15,209)) To x1
+                                 Move (Mid(sLine,15,224)) To p1
+                                 move (trim(skin))      to skin
+                                 move (trim(spar))      to spar
+                                 move (trim(sid))       to sid
+                                 move (trim(scn))       to scn
+                                 move (trim(scnrecr))   to scnrecr
+                                 move (trim(ssls))      to ssls
+                                 move (trim(spayresp))  to spayresp
+                                 move (trim(scnt))      to scnt
+                                 move (trim(smhxanik))  to smhxanik
+                                 if (ipis=0) begin
+                                     Send Clear To Ctypkin_DD
+                                     Send Clear To Clients_DD
+                                     Send Clear To Cmoves_DD
+                                     Move sID   To Clients.Client_Id
+                                     Send Find To Clients_DD eq 6 // Client_ID
+                                     If (not(Found)) Begin
+                                        move 'Éú§ ô®‚üû°ú ¶ èú¢·´û™ ©´¶ Ä®ÆúÂ¶ ! èú¢·´û™ = ' to msgstr
+                                        append msgstr sid
+                                        error 2319 msgstr
+                                     End
+                                     Move skin               To Ctypkin.Ctypkin_Code
+                                     Send Find To Ctypkin_DD eq 1
+                                     If (not(Found)) Begin
+                                        move 'Éú§ ô®‚üû°ú û âÂ§û©û ©´¶ Ä®ÆúÂ¶ ! âÂ§û©û = ' to msgstr
+                                        append msgstr skin
+                                        error 2320 msgstr
+                                     End
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cn_code      To scn
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.cn_recr      To scnrecr
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.sls_id       To ssls
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.presp_id     To spayresp
+
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.cnt_id       To scnt
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.mhxanik_id   To smhxanik
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.presp_id     To spayresp
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_Hmnia To dvalued
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_M_Code   To '01'
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Module_From     To '01'
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_par      To sPar
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_sc_code2   To 'EUR'
+
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.enhm_ofeilh       To '1'
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Enhm_Ypol_Pel     To '1'
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Enhm_Hmnies_Pel   To '1'
+                                     if (x0 > p0) begin
+                                       move (x0 - p0) to x0
+                                       move (x00-p00) to x00
+                                       move (x1-p1)   to x1
+                                       move 0         to p0
+                                       move 0         to p00
+                                       move 0         to p1
+                                       set field_changed_value of cmoves_dd field cmoves.cmoves_axia to x0
+                                     end
+                                     else begin
+                                       move (p0-x0)   to p0
+                                       move (p00-x00) to p00
+                                       move (p1-x1)   to p1
+                                       move 0         to x0
+                                       move 0         to x00
+                                       move 0         to x1
+                                       set field_changed_value of cmoves_dd field cmoves.cmoves_axia to p0
+                                     end
+                                        set field_changed_value of cmoves_dd field cmoves.cmoves_x0 to x0
+                                        set field_changed_value of cmoves_dd field cmoves.cmoves_p0 to p0
+                                        set field_changed_value of cmoves_dd field cmoves.cmoves_x00 to x00
+                                        set field_changed_value of cmoves_dd field cmoves.cmoves_p00 to p00
+                                        set field_changed_value of cmoves_dd field cmoves.cmoves_x1 to x1
+                                        set field_changed_value of cmoves_dd field cmoves.cmoves_p1 to p1
+                                        set label of buttonsub5 to scn
+                                        Send Request_Save To Cmoves_DD
+
+                                 end
+                                 else begin
+                                     Send Clear To Ctypkin_DD
+                                     Send Clear To Clients_DD
+                                     Send Clear To Cmoves_DD
+                                     Move sID   To Clients.Client_Id
+                                     Send Find To Clients_DD eq 6 // Client_ID
+                                     If (not(Found)) Begin
+                                        move 'Éú§ ô®‚üû°ú ¶ èú¢·´û™ ©´¶ Ä®ÆúÂ¶ ! èú¢·´û™ = ' to msgstr
+                                        append msgstr sid
+                                        error 2319 msgstr
+                                     End
+                                     Move '103'               To Ctypkin.Ctypkin_Code
+                                     Send Find To Ctypkin_DD eq 1
+                                     If (not(Found)) Begin
+                                        move 'Éú§ ô®‚üû°ú û âÂ§û©û ©´¶ Ä®ÆúÂ¶ ! âÂ§û©û = ' to msgstr
+                                        append msgstr skin
+                                        error 2320 msgstr
+                                     End
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cn_code      To scn
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.cn_recr      To scnrecr
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.sls_id       To ssls
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.presp_id     To spayresp
+
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.cnt_id       To scnt
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.mhxanik_id   To smhxanik
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.presp_id     To spayresp
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_Hmnia To dvalued
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_M_Code   To '01'
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Module_From     To '01'
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_par      To '*ïê-ëÜã*'
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_sc_code2   To 'EUR'
+
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.enhm_ofeilh       To '1'
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Enhm_Ypol_Pel     To '1'
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Enhm_Hmnies_Pel   To '1'
+                                     if (x0 > 0) begin
+
+                                       set field_changed_value of cmoves_dd field cmoves.cmoves_axia to x0
+                                     end
+                                        set field_changed_value of cmoves_dd field cmoves.cmoves_x0 to x0
+                                        set field_changed_value of cmoves_dd field cmoves.cmoves_p0 to 0
+                                        set field_changed_value of cmoves_dd field cmoves.cmoves_x00 to x00
+                                        set field_changed_value of cmoves_dd field cmoves.cmoves_p00 to 0
+                                        set field_changed_value of cmoves_dd field cmoves.cmoves_x1 to x1
+                                        set field_changed_value of cmoves_dd field cmoves.cmoves_p1 to 0
+                                        set label of buttonsub5 to scn
+                                     if (x0>0) Send Request_Save To Cmoves_DD
+                                     Send Clear To Ctypkin_DD
+                                     Send Clear To Clients_DD
+                                     Send Clear To Cmoves_DD
+                                     Move sID   To Clients.Client_Id
+                                     Send Find To Clients_DD eq 6 // Client_ID
+                                     If (not(Found)) Begin
+                                        move 'Éú§ ô®‚üû°ú ¶ èú¢·´û™ ©´¶ Ä®ÆúÂ¶ ! èú¢·´û™ = ' to msgstr
+                                        append msgstr sid
+                                        error 2319 msgstr
+                                     End
+                                     Move '104'               To Ctypkin.Ctypkin_Code
+                                     Send Find To Ctypkin_DD eq 1
+                                     If (not(Found)) Begin
+                                        move 'Éú§ ô®‚üû°ú û âÂ§û©û ©´¶ Ä®ÆúÂ¶ ! âÂ§û©û = ' to msgstr
+                                        append msgstr skin
+                                        error 2320 msgstr
+                                     End
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cn_code      To scn
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.cn_recr      To scnrecr
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.sls_id       To ssls
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.presp_id     To spayresp
+
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.cnt_id       To scnt
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.mhxanik_id   To smhxanik
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.presp_id     To spayresp
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_Hmnia To dvalued
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_M_Code   To '01'
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Module_From     To '01'
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_par      To '*èë-ëÜã*'
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_sc_code2   To 'EUR'
+
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.enhm_ofeilh       To '1'
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Enhm_Ypol_Pel     To '1'
+                                     Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Enhm_Hmnies_Pel   To '1'
+                                     if (p0 > 0) begin
+
+                                       set field_changed_value of cmoves_dd field cmoves.cmoves_axia to p0
+                                     end
+                                        set field_changed_value of cmoves_dd field cmoves.cmoves_x0 to 0
+                                        set field_changed_value of cmoves_dd field cmoves.cmoves_p0 to p0
+                                        set field_changed_value of cmoves_dd field cmoves.cmoves_x00 to 0
+                                        set field_changed_value of cmoves_dd field cmoves.cmoves_p00 to p00
+                                        set field_changed_value of cmoves_dd field cmoves.cmoves_x1 to 0
+                                        set field_changed_value of cmoves_dd field cmoves.cmoves_p1 to p1
+                                        set label of buttonsub5 to scn
+                                     if (p0>0)  Send Request_Save To Cmoves_DD
+
+
+                                 end
+                              Readln Channel 1 sLine
+                            Loop
+
+                        end
+                    End_Transaction
+                    set label of buttonsub5 to ''
+                    send info_box 'í‚¢¶™ Ñßú•ú®öò©Âò™' 'è¢û®¶≠¶®Âò'
+            End_Procedure
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub3
+
+        Object date_apo is a FormSub
+            Set Size to 13 63
+            Set Location to 26 100
+            Set Label_Col_Offset to 2
+            Set Form_Datatype Item 0 to Mask_Date_Window
+            Set Form_Mask Item 0 to "dd/MM/yyyy"
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+
+            //AB-StoreEnd
+
+        End_Object    // date_apo
+
+        Object date_eos is a FormSub
+            Set Size to 13 71
+            Set Location to 26 191
+            Set Label_Col_Offset to 2
+            Set Form_Datatype Item 0 to Mask_Date_Window
+            Set Form_Mask Item 0 to "dd/MM/yyyy"
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+
+
+            //AB-StoreEnd
+
+        End_Object    // date_eos
+
+        Object value_date is a FormSub
+            Set Size to 13 63
+            Set Location to 50 191
+            Set Label_Col_Offset to 2
+            Set Form_Datatype Item 0 to Mask_Date_Window
+            Set Form_Mask Item 0 to "dd/MM/yyyy"
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+
+
+            //AB-StoreEnd
+
+        End_Object    // value_date
+
+        Object FormSub3 is a FormSub
+            Set Size to 13 201
+            Set Location to 71 93
+            Set Label_Col_Offset to 2
+            Set Prompt_Button_Mode to pb_PromptOn
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+
+            //Set form_Button_Bitmap Item 0  To "OpenFold.bmp"
+            //
+            //Procedure DoSelectFolder
+            //    String sSelectedFolder
+            //    String sMsg
+            //    Move (vSHBrowseForFolder('')) To sSelectedFolder
+            //    If (Right(sSelectedFolder,1)<>'\') Append sSelectedFolder '\'
+            //    Set psSelectedFolder To sSelectedFolder
+            //End_Procedure // DoSelectFolder
+            //
+            //Procedure Prompt
+            //    String sValue
+            //    Send DoSelectFolder
+            //    Get psSelectedFolder To sValue
+            //    Set Value Item 0 To sValue
+            //End_Procedure // Prompt
+
+            Procedure Prompt
+                String  sFileName
+                Integer bOpen
+                Get Show_Dialog Of oOpenFile To bOpen
+                If bOpen Begin
+                    Get File_Name Of oOpenFile To sFileName
+                    If (Trim(sFileName)<>'') Set Value Item 0 To sFileName
+                End
+            End_Procedure
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // FormSub3
+
+        Object Chkshm is a CheckBoxSub
+            Set Label to "ï®ú‡©´†°Ê-è†©´‡´†°Ê ëû£úÂ‡£ò Ñ•òö‡ö„"
+            Set Size to 10 165
+            Set Location to 89 48
+        End_Object    // Chkshm
+
+        Object Chkeisa is a CheckBoxSub
+            Set Label to "Ñ†©òö‡ö„"
+            Set Size to 10 52
+            Set Location to 89 250
+        End_Object    // Chkeisa
+
+        Object ButtonSub4 is a ButtonSub
+
+            //AB-StoreTopStart
+
+            //AB-StoreTopEnd
+
+            Set Label to "ButtonSub2"
+            Set Bitmap to "AbCode.bmp"
+            Set Size to 15 18
+            Set Location to 1 3
+            Set Focus_Mode to Pointer_Only
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            set visible_state to false
+            Set TooltipValue to "Ñ•òö‡ö„-Ñ†©òö‡ö„ ©ú ASCII ò®ÆúÂ¶"
+
+            Procedure OnClick
+            //        integer irecnum  idecs ilines iint ilen iYes inum  ieisa  ipis
+            //        number nxre npis
+            //        String sPath sFullName sBranch sunit slogik sid sstr Spartlrecr sbr
+            //        indicate err false
+            //        date dapo deos dvalue
+            //        Get Value Of FormSub1 Item 0 to sPath
+            //        Move (Trim(sPath)) to sPath
+            //        If (sPath='') Begin
+            //            Send Info_Box 'Éú§ úß†¢‚•ò´ú ß®¶¶®†©£Ê' 'è¢û®¶≠¶®Âò'
+            //            Procedure_Return
+            //        End
+            //
+            //        Get Value Of date_apo Item 0 to dapo
+            //        get value of date_eos item 0 to deos
+            //        get value of value_date to dvalue
+            //        get checked_state of chkeisa item 0 to  ieisa
+            //        get checked_state of chkshm  item 0 to  ipis
+            //
+            //
+            //        String sThousands sDecimal
+            //        If (Default_Thousand_Separator='.') Begin
+            //            Set Custom_Number_Format to Default_Decimal_Separator Default_Thousand_Separator
+            //        End
+            //
+            //        clear rptmp
+            //        find gt rptmp.recnum
+            //        while (found)
+            //            delete rptmp
+            //            find gt rptmp.recnum
+            //        Loop
+            //        move 5 to idecs
+            //        date ddate dapo deos
+            //        number naxia nfpa ntot nqty nunitprice nnet  npmsqty
+            //        string spar speri srecr syear sno swhat stropos sblank sarithmos sdate
+            //        string sitem sitemkat sform setoima scompany msgstr saxia Safm stext
+            //        move '' to sblank
+            //        move '|' to sform
+            //        move '00/00/00' to sdate
+            //        // ú§û£‚®‡©û òß¶ cmoves
+            //        Move '' to sFullName
+            //        Append sFullname sPath 'Invoice1.txt'
+            //
+            //        Set Value Of FormSub1 Item 0 to sFullName
+            //        //Send Page   to FormSub1
+            //        Send Page_Object to FormSub1 true
+            //        get psbranch to sbr
+            //        get pdHmniafrom to dapo
+            //        get pdHmniato   to deos
+            //        Direct_Output Channel 8 sFullName
+            //        Close_Output Channel 8
+            //        Append_Output Channel 8 sFullName
+            //        clear particle
+            //        Move syscurxr.company_code      to particle.company_code
+            //        Move sbr                        to particle.branch_code
+            //        Move syscurxr.year_year         to particle.year_year
+            //        Move '01'                       to particle.partl_module
+            //        move dapo                       to particle.partl_hmnia
+            //        find gt particle by index.14
+            //        while ((found) and (particle.company_code=syscurxr.company_code) and;
+            //                           (particle.branch_code=sbr)                    and;
+            //                           (particle.year_year=syscurxr.year_year)       and;
+            //                           (particle.partl_module='01')                  and;
+            //                           (particle.partl_hmnia ge dapo)                and;
+            //                           (particle.partl_hmnia le deos))
+            //            if (particle.partl_disccl<>1) goto nextgef
+            //
+            ////                // jsjsjsjsjs 16/12/2005
+            ////            // Epanaprosdiorismo ton rythmiseon
+            ////                String  Def_Thous Def_Decim
+            ////                Get Default_Thousand_Symbol  to Def_Thous
+            ////                Get Default_Decimal_Symbol   to Def_Decim
+            //
+            ////                Set_Attribute DF_DECIMAL_SEPARATOR   to (Ascii('.'))
+            ////                Set_Attribute c to (Ascii(','))
+            ////                Set Custom_Number_Format to ',' '.'
+            //
+            //               begin_transaction
+            //                 add 1 to inum
+            //                 move '' to sblank
+            //                 relate particle
+            //                 if (ptyppar.pistotiko=1) goto nextgef
+            //                 if (ptyppar.pistotiko=2) goto nextgef
+            //                 if (ptyppar.singular='') goto nextgef
+            //                 move ptyppar.singular       to spar
+            //                 move clients.client_afm     to safm
+            //                 move particle.company_code  to scompany
+            //                 move particle.partl_totamad to naxia
+            //                 move particle.partl_recr    to Spartlrecr
+            //
+            //                 move particle.partl_vatam   to nfpa
+            //                 move particle.partl_payam   to ntot
+            //                 move particle.partl_no      to sno
+            //                 move particle.partl_time    to slogik
+            //                 move particle.partl_hmnia   to ddate
+            //
+            //                 if (slogik='1') begin
+            //                     move 'ÑÆú† Ñ§û£ú®È©ú† Ç‚≠¨®ò ´¶ èò®ò©´ò´†°Ê = 'to msgstr
+            //                     append msgstr sno
+            //                     send info_box msgstr
+            //                     Get YesNo_Box 'åò ´¶ •ò§ò°ò´úô·©‡ ©´„§ Ç‚≠¨®ò ?' to iYes
+            //                     If (iYes=MBR_YES) BEGIN
+            //                     END
+            //                     else;
+            //                        GOTO nextgef
+            //                 end
+            //                 /// ú§û£‚®‡©û ´ú£ß ö†ò ú°´Áß‡©û
+            //                 set value of (frmcount(self)) to (string(sarithmos))
+            //                 clear pmovesl
+            //                 move 0 to iint
+            //                 move '' to sstr
+            //                 move Spartlrecr       to pmovesl.partl_recr
+            //                 find gt pmovesl by index.12
+            //                 while ((found) and (Spartlrecr=pmovesl.partl_recr))
+            //                    add 1 to iint
+            //                    if (iint=1) begin
+            //                        move pmovesl.witemx_code to sitem
+            //                        move pmovesl.pms_qty     to npmsqty
+            //                    end
+            //                    else begin
+            //                        if (sitem=pmovesl.witemx_code) begin
+            //                            add pmovesl.pms_qty to npmsqty
+            //                        end
+            //                        else begin
+            //                           Move (Append(sstr,(' '+(trim(sitem))+'x'+(string(npmsqty))))) to sstr
+            //                           move pmovesl.witemx_code to sitem
+            //                           move pmovesl.pms_qty to npmsqty
+            //                        end
+            //                    end
+            //                    find gt pmovesl by index.12
+            //                 Loop
+            //                 Move (Append(sstr,(' '+(trim(sitem))+'x'+(string(npmsqty))))) to sstr
+            //                 clear rptmp
+            //                 move (psbranch(self)) to rptmp.branch_code
+            //                 move 'H'              to rptmp.company_code
+            //                 move spar             to rptmp.id1
+            //                 move spar to sid
+            //                 move safm             to rptmp.id2
+            //                 move sno              to rptmp.id3
+            //                 move ddate            to rptmp.hmnia_apo
+            //                 move naxia            to rptmp.a30
+            //                 move inum             to rptmp.seira
+            //                 move (trim(sstr))     to rptmp.name1
+            //                 move (trim(sstr))     to Sstr
+            //                 saverecord rptmp
+            //                 move 6 to idecs
+            //                 get fsgCode_n_Zeroes sno idecs to sarithmos
+            //                 insert 'H|' in spar at 1
+            //                 insert '|'  in safm at 1
+            //                 insert '|'  in sarithmos at 1
+            //                 move ddate to saxia
+            //                 insert '|'  in saxia at 1
+            //                 insert '|'  in scompany at 1
+            //                 Write   Channel 8                 (Pad(spar          ,04))
+            //                 Write   Channel 8                 (Pad(safm          ,09))
+            //                 Write   Channel 8                 (Pad(sarithmos     ,09))
+            //                 Write   Channel 8                 (Pad(saxia         ,11))
+            //                 Write   Channel 8                 (Pad(scompany      ,03))
+            //                 move (Sfi_All_Numbers_decimal(naxia   , 5,2,1))  to saxia
+            //                 Write   Channel 8                 (Pad(sform         ,01))
+            //                 Write   Channel 8                 (Pad(saxia         ,08))
+            //                 move '0.00' to saxia
+            //                 Move (Trim(saxia))                 to saxia
+            //                 Move (Length(saxia))               to iLen
+            //                 For iInt From 1 to (8-iLen)
+            //                    Move (Insert(" ", saxia,1))     to saxia
+            //                 Loop
+            //                 insert '|'  in saxia at 1
+            //                 Write   Channel 8                 (Pad(saxia         ,09))
+            //                 move (Sfi_All_Numbers_decimal(naxia   , 5,2,1))  to saxia
+            //                 insert '|'  in saxia at 1
+            //                 Write   Channel 8                 (Pad(saxia         ,09))
+            //                 move (Sfi_All_Numbers_decimal(nfpa   , 5,2,1))  to saxia
+            //                 insert '|'  in saxia at 1
+            //                 Write   Channel 8                 (Pad(saxia         ,09))
+            //
+            //                 move (Sfi_All_Numbers_decimal(ntot   , 5,2,1))  to saxia
+            //                 insert '|'  in saxia at 1
+            //                 Write   Channel 8                 (Pad(saxia         ,09))
+            //                 insert '|'  in sstr at 1
+            //                 Write   Channel 8                 (Pad(sstr          ,16))
+            //                 Writeln Channel 8
+            //                 move '' to sblank
+            //                 set value of (frmcount(self)) to (string(sarithmos))
+            //                 clear pmoves
+            //                 move Spartlrecr       to pmoves.partl_recr
+            //                 find gt pmoves by index.12
+            //                 while ((found) and (Spartlrecr=pmoves.partl_recr))
+            //                    move 'L' to spar
+            //                    Write   Channel 8                 (Pad(spar          ,01))
+            //                    move pmoves.item_code to sitem
+            //                    move pmoves.pms_qty to nqty
+            //                    relate pmoves
+            //                    move units.units_descr to sunit
+            //                    move pmoves.pms_amaftdisc  to nnet
+            //                    add 1 to inum
+            //                    // ÇêÄñàãé ÄêïÑàéì íÑãè
+            //                     clear rptmp
+            //                     move (psbranch(self)) to rptmp.branch_code
+            //                     move 'L'              to rptmp.company_code
+            //                     move sITEM            to rptmp.id2
+            //                     move nqty to stext
+            //                     Move (Append(stext,(' ' + sunit))) to stext
+            //                     move stext            to rptmp.name1
+            //                     move nnet             to rptmp.a30
+            //                     move inum             to rptmp.seira
+            //                     move sid              to rptmp.id1
+            //                     move sno              to rptmp.id3
+            //                     move ddate            to rptmp.hmnia_apo
+            //                     saverecord rptmp
+            //
+            //
+            //                    insert '|' in sitem at 1
+            //                    Write   Channel 8                 (Pad(sitem          ,09))
+            //                    move (Sfi_All_Numbers_decimal(nqty   , 5,2,1))  to saxia
+            //                    insert '|'  in saxia at 1
+            //                    Write   Channel 8                 (Pad(saxia         ,09))
+            //                    move nqty to stext
+            //                    Move (Append(stext,(' ' + sunit))) to stext
+            //                    insert '|' in stext at 1
+            //                    Write   Channel 8              (Pad(toAnsi(stext)        ,31))
+            //
+            //
+            //                    move pmoves.pms_amaftdisc  to nnet
+            //                    move (Sfi_All_Numbers_decimal(nnet   , 5,2,1))  to saxia
+            //                    insert '|'  in saxia at 1
+            //                    Write   Channel 8                 (Pad(saxia         ,09))
+            //                    move pmoves.pms_vatpct  to nfpa
+            //                    move '' to sblank
+            //                    if (nfpa>0) move 'Y' to sblank
+            //                    else move 'N' to sblank
+            //                    insert '|' in sblank at 1
+            //                    Write   Channel 8                   (Pad(sblank         ,02))
+            //                    move '' to sblank
+            //                    move 'N' to sblank
+            //                    insert '|' in sblank at 1
+            //                    Write   Channel 8                   (Pad(sblank         ,02))
+            //                    Write   Channel 8                   (Pad(sitem          ,31))
+            //                    Writeln Channel 8
+            //                    find gt pmoves by index.12
+            //                 loop
+            //               nextgef:
+            //               //´¶ ßúõÂ¶ partl_time õú©£úÁú´ò† ö†ò ‚§õú†•û export ©´û§ ¢¶ö†©´†°„ KÁß®¶™
+            //               //gts 22/11/05
+            //
+            //               if (slogik='') begin
+            //                    move '1' to particle.partl_time
+            //                    saverecord particle
+            //               end
+            //               end_transaction
+            //
+            //               if (err) send info_box 'èò®¶¨©†·©´û°ú °·ß¶†¶ ë≠·¢£ò ©´û§ Ñ•òö‡ö„' 'è¢û®¶≠¶®Âò'
+            //
+            //            find gt particle by index.14
+            //            loop
+            //        Close_Output Channel 8
+            //        if (not(err)) send info_box 'Ü õ†òõ†°ò©Âò ú•òö‡ö„™ ò®ÆúÂ‡§ ´ú¢úÂ‡©ú' 'è¢û®¶≠¶®Âò'
+            //        else send info_box 'èò®¶¨©†·©´û°ú °·ß¶†¶ ¢·ü¶™ ©´û§ É†òõ†°ò©Âò' 'è¢û®¶≠¶®Âò'
+            //     set value of (frmcount(self)) to '0'
+            //
+            //    If (Default_Thousand_Separator='.') Begin
+            //        Set Custom_Number_Format to Default_Thousand_Separator Default_Decimal_Separator
+            //    End
+            End_Procedure // OnClick
+
+
+
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub4
+
+        Object TextBoxSub5 is a TextBoxSub
+            Set Label to "Ü£/§Âò Ñöö®ò≠È§ ÄßÊ"
+            Set Location to 28 8
+            Set Size to 10 83
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub5
+
+        Object TextBoxSub6 is a TextBoxSub
+            Set Label to "ÑÈ™"
+            Set Location to 28 171
+            Set Size to 10 14
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub6
+
+        Object TextBoxSub7 is a TextBoxSub
+            Set Label to "Ü£/§Âò Ñ•òö‡ö„™"
+            Set Location to 52 116
+            Set Size to 10 63
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub7
+
+        Object TextBoxSub8 is a TextBoxSub
+            Set Label to "è®¶¶®†©£Ê™"
+            Set Location to 71 30
+            Set Size to 10 51
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub8
+
+        Object ButtonSub5 is a ButtonSub
+            Set Size to 14 68
+            Set Location to 126 269
+            Set Border_Style to Border_Normal
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            Procedure OnClick
+
+            End_Procedure // OnClick
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub5
+
+        Object Chkkl is a CheckBoxSub
+            Set Label to "â¢úÂ©†£¶ úöö®ò≠È§ ìß¶°ò´."
+            Set Size to 10 105
+            Set Location to 105 250
+        End_Object    // Chkkl
+
+
+        //AB-StoreStart
+
+        Set Output_Device_Name to None
+
+        ////////////////////////////////////////////
+        // Omada DD gia thn akyrosh ths diadikasia
+        // metaforas ypoloipon
+        ////////////////////////////////////////////
+        Object Areas_DD is a Areas_DataDictionary
+        End_Object
+        Object Payresp_DD is a Payresp_DataDictionary
+        End_Object
+        Object syscurxr_DD is a syscurxr_DataDictionary
+        End_Object
+        Object Country_DD is a Country_DataDictionary
+        End_Object
+        Object Towns_DD is a Towns_DataDictionary
+            Set DDO_Server to (Country_DD(self))
+        End_Object
+        Object Ctypkin_DD is a Ctypkin_DataDictionary
+            set piMustNOTConstrain to 1
+            Procedure Update
+            End_Procedure
+            Procedure Creating
+            End_Procedure
+        End_Object
+        Object Cities_DD is a Cities_DataDictionary
+            Set DDO_Server to (Towns_DD(self))
+        End_Object
+        Object Clients_DD is a Clients_DataDictionary
+            Set DDO_Server to (Cities_DD(self))
+            Set DDO_Server to (Payresp_DD(self))
+            Set DDO_Server to (Areas_DD(self))
+        End_Object
+        Object Cmoves_DD is a Cmoves_DataDictionary
+            Set DDO_Server to (Ctypkin_DD(self))
+            Set DDO_Server to (Clients_DD(self))
+        //            set pifromxrhsh to 1
+            set pifrombp    to 1
+        End_Object
+        ////////////////////////////////////////////
+        ////////////////////////////////////////////
+
+
+
+        Procedure Activate_View Returns Integer
+            String sStr sModule StrDisp
+            Integer rVal
+
+            Forward Get Msg_Activate_View to rVal
+
+            Get psMenuModule  Of Main_Menu  to sModule
+            Set psModule                    to sModule
+            move '01' to smodule
+            // â‡õ†°ò™ ß¶¨ ò≠¶®ò ´¶ constrain ´‡§ ©´¶†Æú†‡§ ´¶¨ view ¶ß‡™ ßò®ò©´ò´†°·
+            // û °†§„©ú†™ ß¶¨ èêÑèÑà §ò úÂ§ò† constrain ò§ò¢¶öò £ú ´¶ °Á°¢‡£ò òß¶
+            // ´¶ ¶ß¶†¶ °ò¢úÂ´ò† ´¶ view. è.ï. ò§ °¢ûüúÂ òß¶ è‡¢„©ú†™/èú¢·´ú™ §ò £û§
+            // ≠òÂ§¶§´ò† ©´ò ßò®ò©´ò´†°· ´ò ctypkin Äö¶®È§ °¢ß....
+
+            Move (gsfCode_mast("MODULE",(psModule(Self)))) to    StrDisp
+
+            if (smodule = "01");
+                 Set Label Of rmetafypapog to ("Ñ•òö‡ö„ - Ñ†©òö‡ö„ Ñöö®ò≠È§"+ ' '+(trim(syscurxr.branch_name)))
+            if (smodule = "02");
+                 Set Label Of rmetafypapog to ("Ñ•òö‡ö„ - Ñ†©òö‡ö„ Ñöö®ò≠È§"+' ' +(trim(syscurxr.branch_name)))
+
+           //   if (smodule(self) = "01");
+           //      Set Report_Title of (rmetafypapog_BasicReport(self)) to  "Ñ•òö‡ö„ - Ñ†©òö‡ö„ Ñöö®ò≠È§         "
+           // if (smodule(self) = "02");
+           //      Set Report_Title of (rmetafypapog_BasicReport(self)) to  "Ñ•òö‡ö„ - Ñ†©òö‡ö„ Ñöö®ò≠È§          "
+
+        End_Procedure
+
+        Procedure StartReport
+            Local Integer iOutputDevice ipayresp
+            Local String  FileName
+            local date ddate
+            SEND RUN_REPORT
+        End_Procedure   // StartReport
+
+
+        Object metafyp_BasicReport is a BasicReport
+
+            Set Report_Title to "Ñßú•ú®öò©Âò Ñöö®ò≠È§                                  "
+            Set Report_Caption to "É†òõ†°ò©Âò ©ú Ñ•‚¢†•û                             "
+            Object Areas_DD is a Areas_DataDictionary
+            End_Object    // Areas_DD
+
+            Object Payresp_DD is a Payresp_DataDictionary
+            End_Object    // Payresp_DD
+
+            Object syscurxr_DD is a syscurxr_DataDictionary
+            End_Object    // syscurxr
+
+            Object Country_DD is a Country_DataDictionary
+            End_Object    // Country_DD
+
+            Object Towns_DD is a Towns_DataDictionary
+                Set DDO_Server to (Country_DD(self))
+            End_Object    // Towns_DD
+
+            Object Ctypkin_DD is a Ctypkin_DataDictionary
+                set piMustNOTConstrain to 1
+
+                Procedure Update
+                End_Procedure
+
+                Procedure Creating
+                End_Procedure
+            End_Object    // Ctypkin_DD
+
+            Object Cities_DD is a Cities_DataDictionary
+                Set DDO_Server to (Towns_DD(self))
+            End_Object    // Cities_DD
+
+            Object Clients_DD is a Clients_DataDictionary
+                Set DDO_Server to (Cities_DD(self))
+                Set DDO_Server to (Payresp_DD(self))
+                Set DDO_Server to (Areas_DD(self))
+            End_Object    // Clients_DD
+
+            Object Cmoves_DD is a Cmoves_DataDictionary
+                Set DDO_Server to (Ctypkin_DD(self))
+                Set DDO_Server to (Clients_DD(self))
+        //        set pifromxrhsh to 1
+        //                set pifrombp    to 1
+            End_Object    // Cmoves_DD
+
+            Object Cmovesa_DD is a Cmovesa_DataDictionary
+                //AB-StoreStart
+                Begin_Constraints
+                    date dapoe deose dvaluee
+                    string smodule
+                    get psmodule to smodule
+                    Get Value Of date_apo Item 0 to dapoe
+                    get value of date_eos item 0 to deose
+                    set ordering to 13
+                    constrain cmovesa.company_code eq syscurxr.company_code
+                    constrain cmovesa.branch_code  eq syscurxr.branch_code
+                    constrain cmovesa.year_year    eq syscurxr.year_year
+                    constrain cmovesa.module_from  eq '01'
+                    constrain cmovesa.cmoves_hmnia ge dapoe
+                    constrain cmovesa.cmoves_hmnia le deose
+                End_Constraints
+            end_object
+            Set Server To (cmovesa_dd(Current_Object))
+
+            //Breaks and Index for the report
+            Report_Index By Index.11
+            Report_breaks cmovesa.company_code cmovesa.branch_code cmovesa.module_from cmovesa.client_id cmovesa.cn_code
+            Function Starting_Main_Report Returns Integer
+              REREAD SYSCURXR
+              UNLOCK
+              Integer iIndexRlog
+              Local Integer iRetVal
+              Forward Get Starting_Main_Report to iRetval
+              send rebuild_constraints to cmovesa_dd
+              Send Find to (cmovesa_dd(self)) First_Record 13
+            End_Function
+
+            Procedure_Section subheader1
+                integer ino
+                move 0 to ino
+                set px0  to 0
+                set px1  to 0
+                set px00 to 0
+                set pp0  to 0
+                set pp1  to 0
+                set pp00 to 0
+                set picount to 0
+            End_Procedure
+
+            Procedure_Section subheader2
+            End_Procedure
+
+            Procedure_Section subheader3
+            End_Procedure
+
+            Procedure_Section subheader4
+            End_Procedure
+
+            Procedure_Section subheader5
+            End_Procedure
+            Procedure_Section  Body
+                String  scode smodule spar serr
+                Number  naxia nx0 np0 nx00 np00 nx1 np1 ndiaf tx0 tp0 tx00 tp00 tx1 tp1
+                Date    dHmnia
+                integer iyear icount nyear ctypkinyear
+                get px0    to nx0
+                get px1    to nx1
+                get px00   to nx00
+                get pp0    to np0
+                get pp1    to np1
+                get pp00   to np00
+                add cmovesa.cmoves_x0     to nx0
+                add cmovesa.cmoves_p0     to np0
+                add cmovesa.cmoves_x00    to nx00
+                add cmovesa.cmoves_p00    to np00
+                add cmovesa.cmoves_x1     to nx1
+                add cmovesa.cmoves_p1     to np1
+                set px0    to nx0
+                set px1    to nx1
+                set px00   to nx00
+                set pp0    to np0
+                set pp1    to np1
+                set pp00   to np00
+            End_Procedure
+
+            Procedure_Section subTOTAL5
+
+                 Number  naxia nx0 np0 nx00 np00 nx1 np1 ndiaf tx0 tp0 tx00 tp00 tx1 tp1
+                 integer icount ieisa ipis ikl
+                 string smodule spar msgstr SID scn   sposo spath
+                 date dvaluee
+                 Get Value Of FormSub3 Item 0 to sPath
+                 Move (Trim(sPath)) to sPath
+                 get psmodule to smodule
+                 get value of value_date to dvaluee
+                 get checked_state of chkeisa item 0 to  ieisa
+                 get checked_state of chkshm  item 0 to  ipis
+                 get checked_state of chkkl   item 0 to  ikl
+                 get picount to icount
+                 move (icount+1) to icount
+                 set picount to icount
+                 get px0    to nx0
+                 get px1    to nx1
+                 get px00   to nx00
+                 get pp0    to np0
+                 get pp1    to np1
+                 get pp00   to np00
+
+                 if ((nx0 <> 0) or (np0 <>0)) begin
+
+
+        //           if (nx0 > np0) begin
+        //              move (nx0 - np0) to nx0
+        //              move (nx00-np00) to nx00
+        //              move (nx1-np1)   to nx1
+        //              move 0           to np0
+        //              move 0           to np00
+        //              move 0           to np1
+        //           end
+        //           else begin
+        //              move (np0-nx0)   to np0
+        //              move (np00-nx00) to np00
+        //              move (np1-nx1)   to np1
+        //              move 0           to nx0
+        //              move 0           to nx00
+        //              move 0           to nx1
+
+        //            send clear to cmoves_dd
+                    clear clients
+                    move cmovesa.client_id to clients.client_id
+                    find eq clients by index.6
+                    if (not(found)) error 2999 'Éú§ ô®Â©°‡ èú¢·´û'
+        
+                    if  (nx0 > np0)  move '101' to ctypkin.ctypkin_code
+                    if  (np0 > nx0) move '102' to ctypkin.ctypkin_code
+                    if ((nx0 > np0)  and (ipis=1)) move '103' to ctypkin.ctypkin_code
+                    if ((np0 > nx0)  and (ipis=1)) move  '104' to ctypkin.ctypkin_code
+                    if (ikl=1) begin
+                        if  (nx0 > np0)  move '102' to ctypkin.ctypkin_code
+                        if  (np0 > nx0)  move '101' to ctypkin.ctypkin_code
+                        if ((nx0 > np0)  and (ipis=1)) begin
+                            move '104' to ctypkin.ctypkin_code
+                            move (nx0-np0) to np0
+                            move (nx00-np00) to np00
+                            move (nx1-np1)  to np1
+                            move 0 to nx0
+                            move 0 to nx00
+                            move 0 to nx1
+                            goto epomenokl
+                        end
+                         if ((np0 > nx0)  and (ipis=1)) begin
+                            move  '103' to ctypkin.ctypkin_code
+                            move (np0-nx0) to nx0
+                            move (np00-nx00) to nx00
+                            move (np1-nx1)  to nx1
+                            move 0 to np0
+                            move 0 to np00
+                            move 0 to np1
+                        end
+                    end
+                    epomenokl:
+                    move '' to spar
+                          if (ctypkin.ctypkin_code='101') move (Append(sPar,('ãú´ò≠.ìß¶¢.'+ (String(dvaluee))))) to sPar
+                    else  if (ctypkin.ctypkin_code='102') move (Append(sPar,('ãú´ò≠.ìß¶¢.'+ (String(dvaluee))))) to sPar
+                    else  if (ctypkin.ctypkin_code='103') move (Append(sPar,('*ïê-ëÜã*'+ (String(dvaluee))))) to sPar
+                    else  if (ctypkin.ctypkin_code='104') move (Append(sPar,('*èë-ëÜã*'+ (String(dvaluee))))) to sPar
+        
+                  //  if (cmovesa.cn_code='') begin
+                  //      move 'Éú§ ô®Â©°‡ Ñ®ö¶ ©´¶§ ßú¢·´û = ' to msgstr
+                  //      append msgstr cmovesa.client_id
+                  //      error 2996 msgstr
+                  //  End
+                    clear ypoprosf
+                    move                      icount to ypoprosf.aa_ypoprosf
+                    move ctypkin.ctypkin_code to ypoprosf.xora
+                    move spar                 to ypoprosf.ypeyth_pelath
+                    move cmovesa.client_id    to ypoprosf.pelaths
+        
+                    if (cmovesa.cn_code='') move '01.Z2.00000' to ypoprosf.cn_code
+                    else move cmovesa.cn_code to ypoprosf.cn_code
+                    move dvaluee              to ypoprosf.date
+                    move cmovesa.cn_recr      to ypoprosf.thl_ypeythynou
+                    move cmovesa.sls_id       to ypoprosf.sls_id
+                    move cmovesa.presp_id     to ypoprosf.aitia_kathyst
+                    move cmovesa.cnt_id       to ypoprosf.ar_symbashs
+                    move cmovesa.mhxanik_id   to ypoprosf.periex_prosf
+                    move nx0                  to ypoprosf.qty
+                    move np0                  to ypoprosf.hour
+                    move nx00                 to ypoprosf.disc
+                    move np00                 to ypoprosf.fpa
+                    move nx1                  to ypoprosf.net
+                    move np1                  to ypoprosf.total
+                    saverecord ypoprosf
+                    MOVE cmovesa.client_id to sid
+                    MOVE cmovesa.cn_code to scn
+                    send update_status ('Ñöö®ò≠„   ' + string(sid) + " : " + string(scn))
+                    move 1 to clients.client_categfpa
+                    saverecord clients
+                    set px0  to 0
+                    set px1  to 0
+                    set px00 to 0
+                    set pp0  to 0
+                    set pp1  to 0
+                    set pp00 to 0
+                 end
+            End_Procedure
+        
+        
+            Procedure_Section subtotal4
+               integer ino
+               move 0 to ino
+            End_Procedure
+        
+        
+            Procedure_Section subtotal3
+               integer ino
+               move 0 to ino
+            End_Procedure
+        
+            Procedure_Section subtotal2
+               integer ino
+               move 0 to ino
+            End_Procedure
+        
+            Procedure_Section subtotal1
+               integer ino
+               move 0 to ino
+            End_Procedure
+        
+        End_Object
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // rmetafypapog
+
+
+    //AB-StoreStart
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

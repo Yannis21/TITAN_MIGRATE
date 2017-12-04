@@ -1,0 +1,93 @@
+// DIALDFLT.SRC - Sample how to use the dvdialer functions.
+//
+// Created by: Marcel J. Zwiebel
+//             Dataview - The Netherlands
+// E-mail    : marcel@dataview-sc.com
+// Web URL   : http://www.dataview-sc.com
+//
+// Date      : 03/24/1999
+
+Use DFAllEnt.pkg
+Use DVDIALER.pkg
+
+Object MainPanel is a BasicPanel
+    set location to 10 10
+    set size     to 32 107
+    set label    to "Dial-up"
+    Set Maximize_Icon to FALSE
+
+    property integer bConnectionStatus public FALSE
+
+    Object StartButton is a Button
+        set location to 1 1
+        set size     to 15 50
+        set label    to "Connect"
+
+        Procedure OnCLick
+           local integer iStat
+
+           set bConnectionStatus to FALSE
+
+           //first get the connect state of the local system...
+           //
+           move (dvInternetGetConnectedState()) to iStat
+
+           if iStat eq 1 begin
+              send Info_Box "You have already a connection to the Internet by modem." "dvdialer"
+              procedure_return
+           end
+           if iStat eq 2 begin
+              send Info_Box "You are connected to the Internet by a LAN." "dvdialer"
+              procedure_return
+           end
+           if iStat eq 3 begin
+              send Info_Box "You are connected to the Internet by a through a proxy server." "dvdialer"
+              procedure_return
+           end
+           if iStat eq 4 begin
+              send Info_Box "Your mode is busy with non-Internet tasks." "dvdialer"
+              procedure_return
+           end
+
+           if iStat eq 0 begin
+              //there is no Internet connection and the modem is not busy, so let's dial...
+              //
+              move (dvInternetAutodial()) to iStat
+              //if you want to use a phonebook entry this would be something like this
+              //move (dvInternetDial("Compuserve Amsterdam")) to iStat
+              //
+              if iStat eq 0 set bConnectionStatus to TRUE
+              else send Info_Box "No dial" "dvdialer"
+           end
+        End_Procedure
+    End_Object
+
+    Object StopButton is a Button
+        set location to 1 51
+        set size     to 15 50
+        set label    to "Disconnect"
+
+        Procedure OnCLick
+            local integer iStat
+
+            //hangup a current connection
+            //
+            if (bConnectionStatus(Current_Object)) begin
+               move (dvInternetAutodialHangup()) to iStat
+               //when using dvInternetDial this would be
+               //move (dvInternetHangup()) to iStat
+               //
+               if iStat eq 0 set bConnectionStatus to FALSE
+               else send Info_Box "No hangup" "dvdialer"
+            end
+        End_Procedure
+    End_Object
+End_Object
+
+start_ui (MainPanel(Current_Object))
+
+
+
+
+
+

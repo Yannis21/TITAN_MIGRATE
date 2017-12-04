@@ -1,0 +1,343 @@
+//AB/ Project Rtropoi:batch enhmer tparticl
+//AB/     Object prj is a Report_Project
+//AB/         Set ProjectName to "Rtropoi:batch enhmer tparticl"
+//AB/         Set ProjectFileName to "Rtropoi.RV"
+
+// Project Object Structure
+//   Rtropoi is a ReportViewSub
+//     frmbranch is a FormSub
+//     cSyDateForm1 is a cSyDateForm
+//     TextBoxSub1 is a TextBoxSub
+//     FormSub2 is a FormSub
+//     btnMess is a ButtonSub
+//     TextBoxSub5 is a TextBoxSub
+//     cSyDateForm2 is a cSyDateForm
+//     TextBoxSub6 is a TextBoxSub
+//     ButtonSub3 is a ButtonSub
+//     enhmtp_BasicReport is a BasicReport
+//       Particle_DD is a Particle_DataDictionary
+
+// Register all objects
+Register_Object ButtonSub3
+Register_Object btnMess
+Register_Object cSyDateForm1
+Register_Object cSyDateForm2
+Register_Object enhmtp_BasicReport
+Register_Object FormSub2
+Register_Object frmbranch
+Register_Object Particle_DD
+Register_Object Rtropoi
+Register_Object TextBoxSub1
+Register_Object TextBoxSub5
+Register_Object TextBoxSub6
+
+
+//AB/     Report View
+
+
+    //AB-StoreTopStart
+    Use dfallrpt.pkg
+    use particle.dd
+    use sl002.sl
+    open tparticl
+    open ptyppar
+    use otropoiplhr
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use Rptvw.Sub
+    Use Form.Sub
+    Use cSyDateForm.Pkg
+    Use Txtbox.Sub
+    Use Button.Sub
+
+    //AB-IgnoreEnd
+
+    ACTIVATE_VIEW Activate_Rtropoi FOR Rtropoi
+
+    Object Rtropoi is a ReportViewSub
+
+        //AB-StoreTopStart
+        property integer pierr              public 0
+        Property Integer Sort_IndexRlog     Public 1
+        property date    pddatefrom         public ''
+        property date    pddateto           public ''
+        property string  psbranch           public ''
+        
+        //AB-StoreTopEnd
+
+        Set Label to "Batch Ñ§û£‚®‡©û ´®Êß‡§ ß¢û®‡£„™ èò®ò©´ò´†°È§"
+        Set Size to 113 272
+        Set Location to 7 12
+        Set Color to 13540467
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object frmbranch is a FormSub
+            Set Size to 13 63
+            Set Location to 5 166
+            Set Label_Col_Offset to 2
+            Set Prompt_Button_Mode to pb_PromptOn
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            Set Prompt_Object to (sl002(Current_object))
+            //AB-StoreEnd
+
+        End_Object    // frmbranch
+
+        Object cSyDateForm1 is a cSyDateForm
+            Set Size to 13 66
+            Set Location to 25 165
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Form_Mask Item 0 to "dd/MM/yyyy"
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            set prompt_object to (ocalendar(self))
+            //AB-StoreEnd
+
+        End_Object    // cSyDateForm1
+
+        Object TextBoxSub1 is a TextBoxSub
+            Set Label to "ÉÈ©´ú û£/§Âò Ñ°õ¶©û™ èò®ò©´ò´†°È§ òßÊ :"
+            Set Color to 13540467
+            Set TextColor to clNavy
+            Set Location to 28 6
+            Set Size to 10 151
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub1
+
+        Object FormSub2 is a FormSub
+            Set Size to 5 268
+            Set Location to 58 0
+            Set Color to clRed
+            Set Label_Col_Offset to 2
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                                        
+            Set Enabled_State   to False
+            Set Color           to clRed
+            
+            //AB-StoreEnd
+
+        End_Object    // FormSub2
+
+        Object btnMess is a ButtonSub
+            Set Size to 14 159
+            Set Location to 74 16
+            Set Border_Style to Border_StaticEdge
+            Set Focus_Mode to NonFocusable
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            Procedure OnClick
+            
+            End_Procedure // OnClick
+            //AB-StoreEnd
+
+        End_Object    // btnMess
+
+        Object TextBoxSub5 is a TextBoxSub
+            Set Label to "ÑÈ™ :"
+            Set Color to 13540467
+            Set TextColor to clNavy
+            Set Location to 45 134
+            Set Size to 12 20
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub5
+
+        Object cSyDateForm2 is a cSyDateForm
+            Set Size to 13 66
+            Set Location to 44 164
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Form_Mask Item 0 to "dd/MM/yyyy"
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            set prompt_object to (ocalendar(self))
+            //AB-StoreEnd
+
+        End_Object    // cSyDateForm2
+
+        Object TextBoxSub6 is a TextBoxSub
+            Set Label to "ìß¶°ò´·©´û£ò (ß®¶ò†®ú´†°Ê)"
+            Set Color to 13540467
+            Set TextColor to clNavy
+            Set Location to 8 7
+            Set Size to 12 103
+            Set FontWeight to 800
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub6
+
+        Object ButtonSub3 is a ButtonSub
+
+            //AB-StoreTopStart
+                                            
+            //AB-StoreTopEnd
+
+            Set Bitmap to "RUNPROG.BMP"
+            Set Size to 20 23
+            Set Location to 71 243
+            Set Border_Style to Border_StaticEdge
+            Set Focus_Mode to Pointer_Only
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                            
+            Set TooltipValue to 'Ñ§ò®•û õ†òõ†°ò©Âò™'
+            
+            Procedure OnClick
+                String StartHmen sbranch sMess
+                Integer ibpoid iYear iPayResp ibpoid1 iChkAkyr iYes
+                date ddatefrom ddateto
+                get value           of csydateform1 to ddatefrom
+                get value           of csydateform2 to ddateto
+                Get value           of frmbranch    to sbranch
+            
+                If (ddatefrom='') Begin
+                    Send Stop_Box 'Éú§ ß¢û°´®¶¢¶ö„©ò´ú û£ú®¶£û§Âò òßÊ' 'ë≠·¢£ò 1001'
+                    Send Activate to cSyDateForm1
+                    Procedure_Return
+                End
+                If (ddateto='') Begin
+                    Send Stop_Box 'Éú§ ß¢û°´®¶¢¶ö„©ò´ú û£ú®¶£û§Âò ÑÈ™' 'ë≠·¢£ò 1001'
+                    Send Activate to cSyDateForm2
+                    Procedure_Return
+                End
+                Send StartReport
+                Set Label Of btnMess to ''
+            End_Procedure
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub3
+
+
+        //AB-StoreStart
+        
+        Set Output_Device_Name to None
+        
+        Procedure StartReport
+            Local Integer iOutputDevice ipayresp
+            Local String  FileName sbranch
+            local date ddatefrom ddateto
+            Get value of csydateform1 item 0 to ddatefrom
+            Get value of csydateform2 item 0 to ddateto
+            get value of frmbranch    item 0 to sbranch
+            set pddatefrom  to ddatefrom
+            set pddateto    to ddateto
+            set psbranch    to sbranch
+            SEND RUN_REPORT
+        End_Procedure
+        
+        
+        Object enhmtp_BasicReport is a BasicReport
+        
+        //    Set Report_Title to "Batch Ñ§û£‚®‡©û ´®Êß‡§ è¢û®‡£„™                   "
+              set status_panel_state to false
+            Object Particle_DD is a Particle_DataDictionary
+                Begin_Constraints
+                    set ordering to 3
+                    constrain Particle.Partl_hmnia ge (pddatefrom(self))
+                    constrain Particle.Partl_hmnia le (pddateto(self))
+                    If (psbranch(self)<>'');
+                        constrain Particle.branch_code eq (psbranch(self))
+                End_Constraints
+            end_object
+            Set Server To (Particle_dd(Current_Object))
+        
+            //Breaks and Index for the report
+            Report_Index By Index.3
+            Function Starting_Main_Report Returns Integer
+              Integer iIndexRlog
+              Local Integer iRetVal
+              Forward Get Starting_Main_Report to iRetval
+              send rebuild_constraints to Particle_dd
+              Send Find to (Particle_dd(self)) First_Record 3
+            End_Function
+        
+        
+            Procedure_Section  Body
+                String  srecr  sbranch
+                integer irecnum iVoid
+                move particle.recnum to irecnum
+                move particle.branch_code to sbranch
+                move particle.partl_recr to srecr
+                if (particle.partl_module<>'01') goto next_particle
+                if (particle.partl_ekleise<>'1') goto next_particle
+                if (ptyppar.ftiaxnei_tpay<>'1')  goto next_particle
+                set label of btnmess to (Trim(Particle.partl_hmnia) +' '+String(Particle.Recnum))
+                get Ftiaxe_Tropous_Plhromhs Of oTropoiPlhromhs sRecr 1 iRecnum sBranch to iVoid
+                next_particle:
+            End_Procedure
+        
+        
+        End_Object
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // Rtropoi
+
+
+    //AB-StoreStart
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

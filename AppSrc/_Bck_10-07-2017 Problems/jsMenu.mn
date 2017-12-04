@@ -1,0 +1,28 @@
+
+
+
+DFCreate_Menu Main_Menu      
+
+    Property String psMenuModule Public ''
+
+    DFCreate_Menu "‚€‹‹€ „ˆƒˆ‰" View1_PopupMenu IS A ViewPopupMenu
+        On_Item "DBLISTS - FormArray Lists"   Send Activate_Lists2
+        On_Item ""   Send None
+        //On_Item "DBLISTS - Ptyppar"   Send Activate_TestView2
+        //On_Item "DBLISTS - Formulas NEW"   Send Activate_TestView3
+        //On_Item "DBLISTS - Formulas"   Send Activate_FormulaLists
+        //On_Item "LISTS   - Formulas"   Send Activate_FormulaLists3
+        
+        Procedure OnInitMenu
+            Forward Send OnInitMenu
+            Set psMenuModule to '01'
+        End_Procedure
+
+    End_Pull_Down // "‚€‹‹€ „ˆƒˆ‰"  
+
+
+End_Menu // Main_Menu
+
+Register_Object Client_Area
+
+

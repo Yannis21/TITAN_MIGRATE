@@ -1,0 +1,2312 @@
+Compiling Program: C:\Vdf6\Develop\Empor\AppSrc\regcheck.src
+Memory Available: 2147483647
+1>Use AllEntSc
+Using pre-compiled package ALLENTSC
+INCLUDING FILE: ALLENTSC.PKI
+30262>
+30262>Register_Object Client_Area
+30262>
+30262>//AB-StoreTopStart
+30262>Use Workspc.pkg
+30262>
+30262>//  Set date attributes as needed
+30262>Set_Date_Attribute sysdate4_State to (TRUE)
+30263>Set_Date_Attribute Date4_State    to (TRUE)
+30264>Set_Date_Attribute epoch_value    to 30
+30265>
+30265>Object ProgramWorkspace is a Workspace
+30267>    Set WorkspaceName to CURRENT$WORKSPACE
+30268>//    Set ModuleName    to 'ProgramName' // Special module name.
+30268>//    Set HelpName      to 'HelpName.hlp'// Please provide the name of your Windows help file.
+30268>End_Object
+30269>
+INCLUDING FILE: REGCHECK.PKG
+30269>>//****************************************************************************
+30269>>// $Module type: Package
+30269>>// $Module name: RegCheck.pkg. Uses RegCheck.inc and Language.pkg
+30269>>// $Author     : Nils G. Svedmyr, Eurosoft.
+30269>>// Contributions by Frank G. Vandervelpen, Peter H. van Wijk,
+30269>>//               Vincent Oorsprong and Ulbe Stellema.
+30269>>// e-mail      : nilss@eurosoft.se
+30269>>// Created     : 1998-12-21 @ 15:04
+30269>>//
+30269>>// See also    : RegCheck.doc for documentation.
+30269>>//
+30269>>// Usage       : To be included at the top code of a VDF .src file, below the Workspace object.
+30269>>//               That's all there is to it!
+30269>>
+30269>>// $Rev History
+30269>>//    1998-12-21 Module header created
+30269>>//    1999-01-02 Nils G. Changed package into a class.
+30269>>//    1999-01-03 Nils G. Added standard status log support.
+30269>>//    1999-01-08 Nils G. Removed hard-coded channels for Direct_Input and
+30269>>//                       Direct_Output. The Seq_Chnl package is now used instead.
+30269>>//                       This is to avoid possible conflicts with other packages or
+30269>>//                       source code that might use the same channels.
+30269>>//    1999-01-28 Nils G. Added the function FindNetwareConnection to check if user is
+30269>>//                       logged on to a Novell Server (Not only has Client32 installed).
+30269>>//    1999-02-08 Nils G. Added public properties psComputerName psUserLoginName (Strings).
+30269>>//                       Moved user documentation to RegCheck.doc.
+30269>>//    1999-02-21         Added property to force the possible change of the setting even if there are
+30269>>//                       two database drivers loaded. It is possible that a (example accounting) BTrieve
+30269>>//                       database get consulted for info while the rest of the data is in DataFlex
+30269>>//                       Property Integer pbDriverBruteForce PUBLIC TRUE
+30269>>//                       Also added piFiles property, which is the number of FILES setting for Config.sys
+30269>>//    1999-02-23 Nils G. Added several checkings to Novell Client32
+30269>>//    1999-02-24 Nils G. Added property pbNTRegistryBackup, to conditionally backup the registry
+30269>>//                       on NT machines when a change has taken place.
+30269>>//    1999-03-04 Nils G. Changed CheckConfigSys and DoAppendConfigSys to also handle the case in
+30269>>//                       config.sys with FILESHIGH=xx
+30269>>//    2000-11-16 PHvW    Made Changed for Windows NT 2K.
+30269>>//                       Added test for NT sp1.
+30269>>//                       Ironed out compiler error for VDF 7. So this is possible not working for VDF6
+30269>>//    2001-11-22 PHvW    Added logic for NT2k and higher. Not tested for XP
+30269>>//                       I would like this pkg to work in a way that it does stop the program or gives a warning
+30269>>//                       when run on ME and XP-Home. Do not think any vdf software should run on it.
+30269>>//    2002-04-22 PHvW    Changed a lot of code. Romeved the stuff mentioned above.
+30269>>//                       Added logic for detecting the windows version. Added properties to select
+30269>>//                       On what windows version you want to allow your application to run.
+30269>>//                       Added several error messages. Did not translate them. And are
+30269>>//                       for improvement.
+30269>>//                       Cleaned up the code for remarked not needed code since vdf7
+30269>>//                       Not tested on vdf8, minor testing (only on win2k sp2)
+30269>>//                       So far debug mode is set to on
+30269>>//    2002-09-29 PHvW    Removed stuff because of VDF8
+30269>>//    2002-11-26 WvA     Added compiler directive to avoid redefine errors for external
+30269>>//                       function Win32_WNetGetUser
+30269>>//                       Reintroduced VDF7 compatibility for now. Be aware that this
+30269>>//                       is not going to last for ever.
+30269>>//    2003-05-05 WvA     Changed references to .NET server into 2003 Server
+30269>>//    2003-05-05 WvA    Windows server 2000, 2003 and XP honour the traditional NT settings
+30269>>//                       but for these platforms there is a new setting
+30269>>//
+30269>>//                       HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\MRXSmb\Parameters\OplocksDisabled
+30269>>//                       See also: http://support.microsoft.com/default.aspx?scid=kb;en-us;Q296264
+30269>>//                      This setting has been added for Clients only
+30269>>//
+30269>>//****************************************************************************
+30269>>//
+30269>>//  Requests
+30269>>//
+30269>>//    2002-04-22 PHvW   Would like to add a test which IE is installed and
+30269>>//                       which common controls version is installed. Just prevent problems when running
+30269>>//                       VDF application.
+30269>>//    2003-05-05 WvA    Extra code for Recent Netware Settings and checking netware settings
+30269>>//                        The current version can be found at:
+30269>>//                        HKEY_LOCAL_MACHINE\SOFTWARE\Novell\  "CurrentVersion"="4.83"
+30269>>//
+30269>>//****************************************************************************
+30269>>
+30269>>Use Windows       // Standard pre-compiled DAC package
+30269>>//
+30269>>// PHvW 07/09/2000 19:57 vdf7 change Next package was used for type definition
+30269>>//                       But is removed so added to this class
+30269>>//
+30269>>//Use Prnt_Dlg.pkg  // Standard DAC package
+30269>>Use Seq_Chnl.pkg  // Standard DAC package
+30269>>Use RegCheck.inc  // All textstrings for this package (Multiple languages)
+INCLUDING FILE: REGCHECK.INC
+30269>>>>Use Language.pkg  // Defines the language to use for the compiler strings below.
+INCLUDING FILE: LANGUAGE.PKG
+30269>>>>>>// Use Language     // Default language setup
+30269>>>>>>// Sets default languange if not set by compiler command line
+30269>>>>>>
+30269>>>>>>define lng_dutch      for 131
+30269>>>>>>define lng_french     for 133 // NOT TRANSLATED. DO NOT SELECT!
+30269>>>>>>define lng_spanish    for 134
+30269>>>>>>define lng_italian    for 139 // NOT TRANSLATED. DO NOT SELECT!
+30269>>>>>>define lng_english    for 144
+30269>>>>>>define lng_danish     for 145
+30269>>>>>>define lng_swedish    for 146
+30269>>>>>>define lng_norwegian  for 147
+30269>>>>>>define lng_Greek    for 148
+30269>>>>>>define lng_german     for 149
+30269>>>>>>define lng_portuguese for 155
+30269>>>>>>define lng_papiamentu for 199 // NOT TRANSLATED. DO NOT SELECT!
+30269>>>>>>
+30269>>>>>>
+30269>>>>>>define lng_default for !@
+30269>>>>>>
+30269>>>>>>  define _LANGUAGE_ for $ENGLISH$
+30269>>>>>>
+#REM LANGUAGE SET BY LANGUAGE.PKG: $ENGLISH$
+30269>>>>
+30269>>>>// Textstrings used by the RegCheck.pkg: (cs is short for Compiler String)
+30269>>>>// Set your LNG_DEFAULT in LANGUAGE.PKG
+30269>>>>
+30269>>>>// The defines csApplicationName and csSoftwareVendorName are not used for the moment.
+30269>>>>//Define csApplicationName              For " the program "
+30269>>>>//Define csSoftwareVendorName           For " your software vendor "
+30269>>>>
+30269>>>>// Note: If you add a translation for your language below, please e-mail
+30269>>>>//       them to contribute@vdf-guidance.com so they can be included in the next revision.
+ERROR: 4324 No active conditionals  ON LINE: 84 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30269>>
+30269>>// Uncomment the "#REPLACE DEGUG$$MODE ON" line if you want to see debug
+30269>>// values for this code. Used by procedure DoCheckCurrentClient.
+30269>>// The purpose is for you (and me) to check that this package is working properly...
+30269>>//#REPLACE DEBUG$$MODE ON
+30269>>
+30269>>//*************** DEFINE STATEMENTS ********************'
+30269>>
+30269>>  Define NO_ERROR                         for 0
+30269>>  Define ERROR_NO_MORE_ITEMS              for 259
+30269>>  Define ERROR_MORE_DATA                  for 234
+30269>>  Define ERROR_NOT_AUTHENTICATED          for 1244
+30269>>
+30269>>  Define FORMAT_MESSAGE_ALLOCATE_BUFFER   for |CI$00000100
+30269>>  Define FORMAT_MESSAGE_IGNORE_INSERTS    for |CI$00000200
+30269>>  Define FORMAT_MESSAGE_FROM_STRING       for |CI$00000400
+30269>>  Define FORMAT_MESSAGE_FROM_HMODULE      for |CI$00000800
+30269>>  Define FORMAT_MESSAGE_FROM_SYSTEM       for |CI$00001000
+30269>>  Define FORMAT_MESSAGE_ARGUMENT_ARRAY    for |CI$00002000
+30269>>  Define FORMAT_MESSAGE_MAX_WIDTH_MASK    for |CI$000000FF
+30269>>
+30269>>  Enum_List
+30269>>    Define RESOURCE_CONNECTED             for |CI$00000001
+30269>>    Define RESOURCE_GLOBALNET RESOURCE_REMEMBERED RESOURCE_RECENT RESOURCE_CONTEXT
+30269>>  End_Enum_List
+30269>>
+30269>>  Define RESOURCETYPE_ANY                 for |CI$00000000
+30269>>  Define RESOURCETYPE_DISK                for |CI$00000001
+30269>>  Define RESOURCETYPE_PRINT               for |CI$00000002
+30269>>  Define RESOURCETYPE_RESERVED            for |CI$00000008
+30269>>  Define RESOURCETYPE_UNKNOWN             for |CI$FFFFFFFF
+30269>>
+30269>>  Define RESOURCEUSAGE_CONNECTABLE        for |CI$00000001
+30269>>  Define RESOURCEUSAGE_CONTAINER          for |CI$00000002
+30269>>  Define RESOURCEUSAGE_NOLOCALDEVICE      for |CI$00000004
+30269>>  Define RESOURCEUSAGE_SIBLING            for |CI$00000008
+30269>>  Define RESOURCEUSAGE_ATTACHED           for |CI$00000010
+30269>>  Define RESOURCEUSAGE_ALL                for (RESOURCEUSAGE_CONNECTABLE + RESOURCEUSAGE_CONTAINER + RESOURCEUSAGE_ATTACHED)
+30269>>  Define RESOURCEUSAGE_RESERVED           for |CI$80000000
+30269>>
+30269>>  Enum_List
+30269>>    Define RESOURCEDISPLAYTYPE_GENERIC
+30269>>    Define RESOURCEDISPLAYTYPE_DOMAIN
+30269>>    Define RESOURCEDISPLAYTYPE_SERVER
+30269>>    Define RESOURCEDISPLAYTYPE_SHARE
+30269>>    Define RESOURCEDISPLAYTYPE_FILE
+30269>>    Define RESOURCEDISPLAYTYPE_GROUP
+30269>>    Define RESOURCEDISPLAYTYPE_NETWORK
+30269>>    Define RESOURCEDISPLAYTYPE_ROOT
+30269>>    Define RESOURCEDISPLAYTYPE_SHAREADMIN
+30269>>    Define RESOURCEDISPLAYTYPE_DIRECTORY
+30269>>  End_Enum_List
+30269>>  Define RESOURCEDISPLAYTYPE_TREE         for |CI$0000000A
+30269>>  Define RESOURCEDISPLAYTYPE_NDSCONTAINER for |CI$0000000B
+30269>>
+30269>>  Enum_List
+30269>>    Define WNNC_NET_MSNET                 for |CI$0001
+30269>>    Define WNNC_NET_LANMAN
+30269>>    Define WNNC_NET_NETWARE
+30269>>    Define WNNC_NET_VINES
+30269>>    Define WNNC_NET_10NET
+30269>>    Define WNNC_NET_LOCUS
+30269>>    Define WNNC_NET_SUN_PC_NFS
+30269>>    Define WNNC_NET_LANSTEP
+30269>>    Define WNNC_NET_9TILES
+30269>>    Define WNNC_NET_BWNFS
+30269>>    Define WNNC_NET_COGENT
+30269>>    Define WNNC_NET_FARALLON
+30269>>    Define WNNC_NET_APPLETALK
+30269>>    Define WNNC_NET_INTERGRAPH
+30269>>    Define WNNC_NET_SYMFONET
+30269>>    Define WNNC_NET_CLEARCASE
+30269>>    Define WNNC_NET_FRONTIER
+30269>>    Define WNNC_NET_BMC
+30269>>    Define WNNC_NET_DCE
+30269>>    Define WNNC_NET_DECORB
+30269>>    Define WNNC_NET_PROTSTOR
+30269>>    Define WNNC_NET_FJ_REDIR
+30269>>    Define WNNC_NET_DISTINCT
+30269>>    Define WNNC_NET_TWINS
+30269>>    Define WNNC_NET_RDR2SAMPLE
+30269>>  End_Enum_List
+30269>>  Define WNNC_NET_LANTASTIC               for |CI$000A
+30269>>  Define WNNC_NET_AS400                   for |CI$000B
+30269>>  Define WNNC_NET_FTP_NFS                 for |CI$000C
+30269>>  Define WNNC_NET_PATHWORKS               for |CI$000D
+30269>>  Define WNNC_NET_LIFENET                 for |CI$000E
+30269>>  Define WNNC_NET_POWERLAN                for |CI$000F
+30269>>
+30269>>Define MAX$COMPUTERNAME$LENGTH            for 15
+30269>>
+30269>>//****************** TYPE STRUCTURES *********************
+30269>>
+30269>>// ** Type    : _NETRESOURCE
+30269>>// ** Purpose : The _NETRESOURCE structure is returned during enumeration of resources on
+30269>>// **         : the network and during enumeration of currently connected resources.
+30269>>Type _NETRESOURCE
+30269>>  Field _NETRESOURCE.dwScope       As dWord
+30269>>  Field _NETRESOURCE.dwType        As dWord
+30269>>  Field _NETRESOURCE.dwDisplayType As dWord
+30269>>  Field _NETRESOURCE.dwUsage       As dWord
+30269>>  Field _NETRESOURCE.lpLocalName   As Pointer
+30269>>  Field _NETRESOURCE.lpRemoteName  As Pointer
+30269>>  Field _NETRESOURCE.lpComment     As Pointer
+30269>>  Field _NETRESOURCE.lpProvider    As Pointer
+30269>>End_Type // _NETRESOURCE
+30269>>
+30269>>// ** Type    : _NETINFOSTRUCT
+30269>>// ** Purpose : The NETINFOSTRUCT structure is used in the WNetGetNetworkInformation
+30269>>// **         : function to describe the behavior of the network.
+30269>>Type _NETINFOSTRUCT
+30269>>  Field _NETINFOSTRUCT.cbStructure       As dWord
+30269>>  Field _NETINFOSTRUCT.dwProviderVersion As dWord
+30269>>  Field _NETINFOSTRUCT.dwStatus          As dWord
+30269>>  Field _NETINFOSTRUCT.dwCharacteristics As dWord
+30269>>  Field _NETINFOSTRUCT.dwHandle          As dWord
+30269>>  Field _NETINFOSTRUCT.wNetType          As Word
+30269>>  Field _NETINFOSTRUCT.dwPrinters        As dWord
+30269>>  Field _NETINFOSTRUCT.dwDrives          As dWord
+30269>>End_Type // _NETINFOSTRUCT
+30269>>
+30269>>Type _DWORD
+30269>>  Field _DWORD.dWord As dWord
+30269>>End_Type // _DWORD
+30269>>
+30269>>Type _OSVERSIONINFO
+30269>>  Field _OSVERSIONINFO.dwOSVersionInfoSize As dWord
+  Field _OSVERSIONINFO.dwOSVersionInfoSize As dWord
+ERROR: 4345 Type check error |CI4, |CI4, |C ON LINE: 246 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 52 Bad format of expression (operator)  ON LINE: 246 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4332 Symbol already defined |CI1 ON LINE: 246 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30269>>  Field _OSVERSIONINFO.dwMajorVersion As dWord
+  Field _OSVERSIONINFO.dwMajorVersion As dWord
+ERROR: 4345 Type check error |CI4, |CI4, |CI4,  ON LINE: 247 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 52 Bad format of expression (operator)  ON LINE: 247 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4332 Symbol already defined |CI5 ON LINE: 247 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30269>>  Field _OSVERSIONINFO.dwMinorVersion As dWord
+  Field _OSVERSIONINFO.dwMinorVersion As dWord
+ERROR: 4345 Type check error |CI4, |CI4, |CI4,  ON LINE: 248 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 52 Bad format of expression (operator)  ON LINE: 248 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4332 Symbol already defined |CI9 ON LINE: 248 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30269>>  Field _OSVERSIONINFO.dwBuildNumber As dWord
+  Field _OSVERSIONINFO.dwBuildNumber As dWord
+ERROR: 4345 Type check error |CI4, |CI4, |CI4,  ON LINE: 249 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 52 Bad format of expression (operator)  ON LINE: 249 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4332 Symbol already defined |CI13 ON LINE: 249 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30269>>  Field _OSVERSIONINFO.dwPlatformId As dWord
+  Field _OSVERSIONINFO.dwPlatformId As dWord
+ERROR: 4345 Type check error |CI4, |CI4, |CI4,  ON LINE: 250 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 52 Bad format of expression (operator)  ON LINE: 250 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4332 Symbol already defined |CI17 ON LINE: 250 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30269>>  Field _OSVERSIONINFO.szCSDVersion As Char 128
+  Field _OSVERSIONINFO.szCSDVersion As Char 128
+ERROR: 4345 Type check error |CI128, |CI128, |CI1 ON LINE: 251 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4345 Type check error |CI128, |CI128, |CI128, |CI1 ON LINE: 251 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 52 Bad format of expression (operator)  ON LINE: 251 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4332 Symbol already defined |CI21 ON LINE: 251 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30269>>End_Type // _OSVERSIONINFO
+30269>>
+30269>>// GetVersionEx constants
+30269>>
+30269>>Enumeration_List
+30269>>  Define VER_PLATFORM_WIN32s        // Win32s on Windows 3.1.
+ERROR: 4332 Symbol already defined |CI0 ON LINE: 257 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30269>>  Define VER_PLATFORM_WIN32_WINDOWS // Win32 on Windows 95.
+ERROR: 4332 Symbol already defined |CI1 ON LINE: 258 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30269>>  Define VER_PLATFORM_WIN32_NT      // Win32 on Windows NT, 2000, XP and 2003
+ERROR: 4332 Symbol already defined |CI2 ON LINE: 259 (30269) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30269>>End_Enumeration_List
+30269>>
+30269>>Enumeration_List
+30269>>  Define Ver_MajorVersion_Windows_95              FOR 4
+30269>>  Define Ver_MajorVersion_Windows_98              FOR 4
+30269>>  Define Ver_MajorVersion_Windows_Me              FOR 4
+30269>>  Define Ver_MajorVersion_Windows_NT_351          FOR 3
+30269>>  Define Ver_MajorVersion_Windows_NT_40           FOR 4
+30269>>  Define Ver_MajorVersion_Windows_2000            FOR 5
+30269>>  Define Ver_MajorVersion_Windows_XP              FOR 5
+30269>>  Define Ver_MajorVersion_Windows_NET_Server      FOR 5
+30269>>End_Enumeration_List
+30269>>
+30269>>Enumeration_List
+30269>>  Define Ver_MinorVersion_Windows_95              FOR 0
+30269>>  Define Ver_MinorVersion_Windows_98              FOR 10
+30269>>  Define Ver_MinorVersion_Windows_Me              FOR 90
+30269>>  Define Ver_MinorVersion_Windows_NT_351          FOR 51
+30269>>  Define Ver_MinorVersion_Windows_NT_40           FOR 0
+30269>>  Define Ver_MinorVersion_Windows_2000            FOR 0
+30269>>  Define Ver_MinorVersion_Windows_XP              FOR 1
+30269>>  Define Ver_MinorVersion_Windows_NET_Server      FOR 1
+30269>>End_Enumeration_List
+30269>>
+30269>>//
+30269>>// PHvW 21/04/2002 09:53 Some vb Code
+30269>>//
+30269>>//Private Const VER_SUITE_SMALLBUSINESS As Long = &H1
+30269>>//Private Const VER_SUITE_ENTERPRISE As Long = &H2
+30269>>//Private Const VER_SUITE_BACKOFFICE As Long = &H4
+30269>>//Private Const VER_SUITE_COMMUNICATIONS As Long = &H8
+30269>>//Private Const VER_SUITE_TERMINAL As Long = &H10
+30269>>//Private Const VER_SUITE_SMALLBUSINESS_RESTRICTED As Long = &H20
+30269>>//Private Const VER_SUITE_EMBEDDEDNT As Long = &H40
+30269>>//Private Const VER_SUITE_DATACENTER As Long = &H80
+30269>>//Private Const VER_SUITE_SINGLEUSERTS As Long = &H100
+30269>>//Private Const VER_SUITE_PERSONAL As Long = &H200
+30269>>//Private Const VER_SUITE_BLADE As Long = &H400
+30269>>
+30269>>Enumeration_List
+30269>>  Define Ver_Suite_SmalLBusiness                  FOR  |CI$0001
+30269>>  Define Ver_Suite_Enterprise                     FOR  |CI$0002
+30269>>  Define Ver_Suite_BackOffice                     FOR  |CI$0004
+30269>>  Define Ver_Suite_Communications                 FOR  |CI$0008
+30269>>  Define Ver_Suite_Terminal                       FOR  |CI$0010
+30269>>  Define Ver_Suite_SmallBusiness_Restricted       FOR  |CI$0020
+30269>>  Define Ver_Suite_EmbeddedNT                     FOR  |CI$0040
+30269>>  Define Ver_Suite_DataCenter                     FOR  |CI$0080
+30269>>  Define Ver_Suite_SingleUserTS                   FOR  |CI$0100
+30269>>  Define Ver_Suite_Personal                       FOR  |CI$0200
+30269>>  Define Ver_Suite_Blade                          FOR  |CI$0400
+30269>>End_Enumeration_List
+30269>>
+30269>>//
+30269>>// PHvW 21/04/2002 09:53 Some incorrect vb Code
+30269>>//
+30269>>//Private Const VER_SERVER_NT As Long = &H80000000
+30269>>//Private Const VER_WORKSTATION_NT As Long = &H40000000
+30269>>
+30269>>Enumeration_List
+30269>>  Define VER_NT_WORKSTATION                       FOR 1           // The system is running Windows NT 4.0 Workstation,
+30269>>                                                                  // Windows 2000 Professional, Windows XP Home Edition, or
+30269>>                                                                  // Windows XP Professional.
+30269>>  Define VER_NT_DOMAIN_CONTROLLER                 FOR 2           // The system is a domain controller.
+30269>>  Define VER_NT_SERVER                            FOR 3           // The system is a server.
+30269>>End_Enumeration_List
+30269>>
+30269>>
+30269>>Type _OSVERSIONINFOEX
+30269>>  Field _OSVERSIONINFOEX.dwOSVersionInfoSize      As dWord
+30269>>  Field _OSVERSIONINFOEX.dwMajorVersion           As dWord
+30269>>  Field _OSVERSIONINFOEX.dwMinorVersion           As dWord
+30269>>  Field _OSVERSIONINFOEX.dwBuildNumber            As dWord
+30269>>  Field _OSVERSIONINFOEX.dwPlatformId             As dWord
+30269>>  Field _OSVERSIONINFOEX.szCSDVersion             As Char 128
+30269>>  Field _OSVERSIONINFOEX.wServicePackMajor        As Word
+30269>>  Field _OSVERSIONINFOEX.wServicePackMinor        As Word
+30269>>  Field _OSVERSIONINFOEX.wSuiteMask               As Word
+30269>>  Field _OSVERSIONINFOEX.wProductType             As Byte
+30269>>  Field _OSVERSIONINFOEX.wReserved                As Byte
+30269>>End_Type // _OSVERSIONINFOEX
+30269>>
+30269>>// ** Function : LocalFree
+30269>>// ** Purpose  : The LocalFree function frees the specified local memory object and invalidates it's handle.
+30269>>// ** Params   : hMem - Handle to local memory object
+30269>>// ** Returns  : If the function succeeds, the return value is NULL.
+30269>>// **          : If the function fails, the return value is equal to a handle to the local memory object.
+30269>>//
+30269>>// PHvW 22/04/2002 17:47 Settings for properties
+30269>>//
+30269>>Enumeration_List
+30269>>  Define cx_Run_Do_Not_Run
+30269>>  Define cx_Run_With_Warning
+30269>>  Define cx_Run_Normal
+30269>>End_Enumeration_List
+30269>>
+30269>>//******************* EXTERNAL FUNCTIONS *************************************
+30269>>
+30269>>External_Function32 GetVersionEx "GetVersionExA" KERNEL32.DLL ;  Pointer lpVersionInformation Returns Integer
+30270>>
+30270>>// ** Function : WNetOpenEnum
+30270>>// ** Purpose  : The WNetOpenEnum function starts an enumeration of network resources or
+30270>>// **          : existing connections.
+30270>>// ** Params   : dwScope       - Scope of enumeration
+30270>>// **          : dwType        - resource types to list
+30270>>// **          : dwUsage       - resource usage to list
+30270>>// **          : lpNetResource - Pointer to resource structure
+30270>>// **          : lphEnum       - Pointer to enumeration handle buffer
+30270>>// ** Returns  : If the function succeeds, the return value is NO_ERROR.
+30270>>// **          : If the function fails, the return value is an error code.
+30270>>External_Function32 WNetOpenEnum "WNetOpenEnumA" MPR.DLL ;  dWord dwScope ;  dWord dwType ;  dWord dwUsage ;  Pointer lpNetResource ;  Pointer lphEnum ;  Returns Integer
+30271>>
+30271>>// ** Function : WNetEnumResource
+30271>>// ** Purpose  : The WNetEnumResource function continues a network-resource enumeration
+30271>>// **          : started by the WNetOpenEnum function.
+30271>>// ** Params   : hEnum        - Handle to enumeration
+30271>>// **          : lpcCount     - Pointer to entries to list
+30271>>// **          : lpBuffer     - Pointer to buffer for results
+30271>>// **          : lpBufferSize - Pointer to buffer size variable
+30271>>// ** Returns  : If the function succeeds, the return value is one of the following values:
+30271>>// **          : NO_ERROR, ERROR_NO_MORE_ITEMS.
+30271>>// **          : If the function fails, the return value is an error code.
+30271>>External_Function32 WNetEnumResource "WNetEnumResourceA" MPR.DLL ;  Handle hEnum ;  Pointer lpcCount ;  Pointer lpBuffer ;  Pointer lpBufferSize ;  Returns Integer
+30272>>
+30272>>// ** Function : WNetCloseEnum
+30272>>// ** Purpose  : The WNetCloseEnum function ends a network resource enumeration started by
+30272>>// **          : the WNetOpenEnum function.
+30272>>// ** Params   : hEnum - Handle to enumeration
+30272>>// ** Returns  : If the function succeeds, the return value is NO_ERROR.
+30272>>// **          : If the function fails, the return value is an error code.
+30272>>External_Function32 WNetCloseEnum "WNetCloseEnum" MPR.DLL ;  Handle hEnum ;  Returns Integer
+30273>>
+30273>>// ** Function : WNetGetNetworkInformation
+30273>>// ** Purpose  : The WNetGetNetworkInformation function returns extended information about
+30273>>// **          : a specific network whose name was returned by a previous network enumeration.
+30273>>// ** Params   : lpProvider      - Pointer to provider name
+30273>>// **          : lpNetInfoStruct - Pointer to structure
+30273>>// ** Returns  : If the function succeeds, the return value is WN_SUCCESS.
+30273>>// **          : If the function fails, the return value is an error code.
+30273>>External_Function32 WNetGetNetworkInformation "WNetGetNetworkInformationA" MPR.DLL ;  Pointer lpProvider ;  Pointer lpNetInfoStruct ;  Returns Integer
+30274>>
+30274>>External_Function32 GetComputerName "GetComputerNameA" Kernel32.Dll ;  Pointer lpComputerName ;  Dword nNameSize ;  Returns Integer
+30275>>
+30275>>// ** 2002-12-26 WvA: Only declare if not already included
+30275>>  External_Function Win32_WNetGetUser 'WNetGetUserA' MPR.dll ;    Pointer lpName;    Pointer lpUserName;    String  lpnLength;    Returns DWord
+30276>>
+30276>>//****************************************************************************
+30276>>// $Module type: CLASS
+30276>>// $Module name: cName
+30276>>// $Author     : Nils G. Svedmyr, Eurosoft Sverige AB
+30276>>// Created     : 1999-01-02 @ 22:44
+30276>>//
+30276>>// Description
+30276>>//
+30276>>// $Rev History
+30276>>//    1999-01-02  Module header created
+30276>>//****************************************************************************
+30276>>Class cRegCheck is a DFObject
+30277>>  Procedure Construct_Object
+30278>>    Forward Send Construct_Object
+30280>>    Set Focus_Mode to No_Activate
+30281>>    // Ask user before making changes?
+30281>>    Property Integer pbSilentMode              False
+30282>>    // Try to make changes on NT machines although it might not be possible due to
+30282>>    // unsufficient user rights. (User will get confirmation if not successful)
+30282>>    Property Integer pbDoNTRegistryChanges     True
+30283>>    Property Integer phoLogObject              0
+30284>>    Property String  psComputerName            ''
+30285>>    Property String  psUserLoginName           ''
+30286>>    // Number of files for Config.sys on Win95/98 machines if Novell Client32 is not used.
+30286>>    Property Integer piFiles                   0
+30287>>    // To conditionally make backup of the registry on NT machines, if changed.
+30287>>    Property Integer pbNTRegistryBackup        False
+30288>>    // To force the possible change of the setting even if there are two database drivers loaded.
+30288>>    // It is possible that a (example accounting) BTrieve database get consulted for info while
+30288>>    // the rest of the data is in DataFlex
+30288>>    Property Integer pbDriverBruteForce        True
+30289>>    // The next 5 properties gives info about the Operating System.
+30289>>    // They are set by the procedure DoSetOSProperties, which is send from
+30289>>    // the automatically invoked DoCheckCurrentClient.
+30289>>    //
+30289>>    // Identifies the major version number of the operating system.
+30289>>    // For example, for Windows NT version 3.51, the major version number is 3;
+30289>>    // and for Windows NT version 4.0, the major version number is 4.
+30289>>    Property Integer piMajorVersion            0
+30290>>    // Identifies the minor version number of the operating system. For example,
+30290>>    // for Windows NT version 3.51, the minor version number is 51; and for
+30290>>    // Windows NT version 4.0, the minor version number is 0.
+30290>>    // For Windows 95, dwMinorVersion is zero.
+30290>>    // For Windows 98, dwMinorVersion is greater than zero.
+30290>>    Property Integer piMinorVersion            0
+30291>>    // Identifies the build number of the operating system.
+30291>>    Property Integer piBuildNumber             0
+30292>>    // Identifies the operating system platform. This member can be one of the
+30292>>    // following values:
+30292>>    // VER_PLATFORM_WIN32s Win32s on Windows 3.1.
+30292>>    // VER_PLATFORM_WIN32_WINDOWS Win32 on Windows 95 or Windows 98.
+30292>>    // VER_PLATFORM_WIN32_NT Win32 on Windows NT.
+30292>>    Property Integer piPlatFormId              0
+30293>>    // Windows NT: Contains a string, such as "Service Pack 3",
+30293>>    // that indicates the latest Service Pack installed on the system. If no
+30293>>    // Service Pack has been installed, the string is empty.
+30293>>    // Windows 95: Contains a null-terminated string that provides arbitrary
+30293>>    // additional information about the operating system.
+30293>>    Property String psCSDVersion               ''
+30294>>    // PHvW 20/04/2002 14:37
+30294>>    // Identifies the major version number of the latest Service Pack installed
+30294>>    // on the system. For example, for Service Pack 3, the major version
+30294>>    // number is 3. If no Service Pack has been installed, the value is zero.
+30294>>    Property Integer piServicePackMajor        0
+30295>>    // PHvW 20/04/2002 14:37
+30295>>    // Identifies the minor version number of the latest Service Pack installed
+30295>>    // on the system. For example, for Service Pack 3, the minor version
+30295>>    // number is 0.
+30295>>    Property Integer piServicePackMinor        0
+30296>>    // PHvW 20/04/2002 14:37
+30296>>    // A set of bit flags that identify the product suites available on the system.
+30296>>    // This member can be a combination of the following values. (see msdn)
+30296>>    Property Integer piSuiteMask               0
+30297>>    // PHvW 20/04/2002 14:37
+30297>>    // Indicates additional information about the system. This member can be
+30297>>    // one of the following values.  (see msdn)
+30297>>    Property Integer piProductType             0
+30298>>    // PHvW 22/04/2002 17:48
+30298>>    // Keeps a text which version of windows is running
+30298>>    // If it can not sort it out it will have "Windows Version UNKNOWN"
+30298>>    Property String  psOSVersion               ""
+30299>>    // PHvW 22/04/2002 17:50
+30299>>    // Running windows version is a server version
+30299>>    Property Integer pbNTServer                FALSE
+30300>>    // PHvW 22/04/2002 17:50
+30300>>    // Running on a Windows HOME version. That is Windows ME and Windows XP Home
+30300>>    // Both are not recommended platforms for business (networking is limited).
+30300>>    // So not for vdf.
+30300>>    Property Integer pbWindowsHome             FALSE
+30301>>    // PHvW 22/04/2002 17:51
+30301>>    // DO I have to check for the service pack and if it is to low
+30301>>    // deny the running of the application
+30301>>    Property Integer pbTestServicePack         TRUE
+30302>>    // PHvW 22/04/2002 17:52
+30302>>    // Default Settings for on which version a vdf program is allowed to run.
+30302>>    // By default not on Win95, Home versions and not known windows version.
+30302>>    Property Integer piRunOnWindows95          cx_Run_Do_Not_Run
+30303>>    Property Integer piRunOnWindows9X          cx_Run_Normal
+30304>>    Property Integer piRunOnWindowsNT40        cx_Run_Normal
+30305>>    Property Integer piRunOnWindowsNT2k        cx_Run_Normal
+30306>>    Property Integer piRunOnWindowsNTXP        cx_Run_Normal
+30307>>    Property Integer piRunOnWindowsNET         cx_Run_With_Warning
+30308>>    Property Integer piRunOnHomeVersion        cx_Run_Do_Not_Run
+30309>>    Property Integer piRunOnServerVersion      cx_Run_Normal
+30310>>    Property Integer piRunOnUnknownVersion     cx_Run_Do_Not_Run
+30311>>    // PHvW 22/04/2002 17:53
+30311>>    // Default service pack for different windows versions.
+30311>>    // Added XP and NET service packs because they will come.
+30311>>    // Did not bother with win 9x service packs.
+30311>>    Property Integer piMinNT40_ServicePack     6
+30312>>    Property Integer piMinNT2K_ServicePack     1
+30313>>    Property Integer piMinXP_ServicePack       0
+30314>>    Property Integer piMinNET_ServicePack      0
+30315>>  End_Procedure // Construct_Object
+30316>>
+30316>>//  Procedure DoCheckInternetExplorerVersion
+30316>>//      String sVersionIE sMessage
+30316>>//      Get_Foreign_Profile_String "Microsoft" "Internet Explorer" "Version" To sVersionIE
+30316>>//      Move (Left(sVersionIE,1)>='5') To gbIeIsOk
+30316>>//      If (gbIeIsOk =0) Begin
+30316>>//          Move ("You need to update your version of Intenet Explorer. The WebApp Studio requires version 5 or greater. You have version " +sVersionIe +' installed.) To sMessage
+30316>>//          Append sMessage "You may continue, but you will not be able to select the New Dialog or select Template Options."
+30316>>//          Send Info_Box sMessage "Internet Explorer Needs Updating"
+30316>>//      End
+30316>>//  End_Procedure
+30316>>
+30316>>
+30316>>  // ** Function : ReadString
+30316>>  // ** Purpose  : This function takes a pointer and reads until the first null character.
+30316>>  // ** Params   : pString - Pointer to the string
+30316>>  // ** Returns  : sString - The string excluding the null-character
+30316>>  Function ReadString Integer pString Returns String
+30317>>    String sCharacter sString
+30318>>    Pointer pCharacter
+30318>>    Integer iVoid
+30318>>
+30318>>    Move (Character(0)) to sCharacter
+30319>>    GetAddress of sCharacter to pCharacter
+30320>>    Move (CopyMemory(pCharacter,pString, 1)) to iVoid
+30321>>    While (sCharacter <> (Character(0)))
+30325>>      Move (Append(sString,sCharacter)) to sString
+30326>>      GetAddress of sCharacter to pCharacter
+30327>>      Increment pString
+30328>>      Move (CopyMemory(pCharacter, pString, 1)) to iVoid
+30329>>    End // While (sCharacter <> (Character(0)))
+30330>>>
+30330>>    Function_Return sString
+30331>>  End_Function // ReadString
+30332>>
+30332>>  // ** Function : FindNetwareConnection
+30332>>  // ** Purpose  : This function determines if an active connection to a netware server exists.
+30332>>  // ** Params   : None
+30332>>  // ** Returns  : DFTrue if an active connection exists.
+30332>>  // **          : DFFalse if no active connection exists or an error occured.
+30332>>  // **          : -1 if an error was detected.
+30332>>  Function FindNetwareConnection Returns Integer
+30333>>    Pointer pEnumHandle pCount pBuffer pBufferSize pProvider pNetInfo pName pRemote pCharacter pServerHandle
+30334>>    String sEnumHandle sCount sBuffer sBufferSize sNetInfo sCharacter sRemote sServerHandle
+30334>>    Integer iResult iType iRetVal iVoid iUsage iScope
+30334>>
+30334>>    // Open the network resource enumeration...
+30334>>    Move (Repeat(Character(0), 4)) to sEnumHandle
+30335>>    GetAddress of sEnumHandle to pEnumHandle
+30336>>    Move (WNetOpenEnum(RESOURCE_CONTEXT, RESOURCETYPE_DISK, 0, 0, pEnumHandle)) to iResult
+30337>>    Move (CopyMemory(pEnumHandle,pEnumHandle, 4)) to iVoid
+30338>>    Move (BytesToCVT(sEnumHandle, 1, 4)) to pEnumHandle
+30339>>
+30339>>    // If we can't open the resource, display an error and exit...
+30339>>    If (iResult <> NO_ERROR) Begin
+30341>>      Send DoShowLastError
+30342>>      Function_Return -1
+30343>>    End // If (iResult <> NO_ERROR) Begin
+30343>>>
+30343>>
+30343>>    // Enumerate the network resources...
+30343>>    Repeat
+30343>>>
+30343>>      Move (dWordToBytes(1)) to sCount
+30344>>      Move (Repeat(Character(0), 255)) to sBuffer
+30345>>      Move (dWordToBytes(255)) to sBufferSize
+30346>>      GetAddress of sCount to pCount
+30347>>      GetAddress of sBuffer to pBuffer
+30348>>      GetAddress of sBufferSize to pBufferSize
+30349>>      Move (WNetEnumResource(pEnumHandle, pCount, pBuffer, pBufferSize)) to iResult
+30350>>      If (iResult <> NO_ERROR AND iResult <> ERROR_NO_MORE_ITEMS) Begin
+30352>>        Send DoShowLastError
+30353>>        Function_Return -1
+30354>>      End // If (iResult <> NO_ERROR And iResult <> ERROR_NO_MORE_ITEMS) Begin
+30354>>>
+30354>>      GetBuff From sBuffer At _NETRESOURCE.dwDisplayType to iType
+30355>>      // Check the resource type...
+30355>>      If iType Eq RESOURCEDISPLAYTYPE_SERVER Begin
+30357>>        GetBuff From sBuffer At _NETRESOURCE.lpProvider to pProvider
+30358>>        If pProvider Begin
+30360>>          ZeroType _NETINFOSTRUCT to sNetInfo
+30361>>          Put _NETINFOSTRUCT_Size to sNetInfo At _NETINFOSTRUCT.cbStructure
+30362>>          GetAddress of sNetInfo to pNetInfo
+30363>>          Move (WNetGetNetworkInformation(pProvider, pNetInfo)) to iResult
+30364>>          // Check for errors...
+30364>>          If (iResult <> NO_ERROR) Begin
+30366>>            Send DoShowLastError
+30367>>            Function_Return -1
+30368>>          End // If (iResult <> NO_ERROR) Begin
+30368>>>
+30368>>          // Check if this is a NetWare server...
+30368>>          GetBuff From sNetInfo At _NETINFOSTRUCT.wNetType to iType
+30369>>          If (iType = WNNC_NET_NETWARE) Begin
+30371>>//          If (iType = WNNC_NET_MSNET) Begin
+30371>>            Move (Repeat(Character(0), 4)) to sServerHandle
+30372>>            GetAddress of sServerHandle to pServerHandle
+30373>>            GetAddress of sBuffer to pBuffer
+30374>>            Move (WNetOpenEnum(RESOURCE_GLOBALNET,RESOURCETYPE_DISK, 0, pBuffer, pServerHandle)) to iResult
+30375>>            Move (CopyMemory(pServerHandle, pServerHandle, 4)) to iVoid
+30376>>            Move (BytesToCVT(sServerHandle, 1, 4)) to pServerHandle
+30377>>            // If we can't open the resource, try to close the other resource and exit...
+30377>>            If (iResult <> NO_ERROR) Begin
+30379>>              // If no active connection exists the following error is triggered, that way we will surpress it...
+30379>>              If (iResult <> ERROR_NOT_AUTHENTICATED) Send DoShowLastError
+30382>>              Move (WNetCloseEnum(pEnumHandle)) to iResult
+30383>>              If (iResult <> NO_ERROR) Send DoShowLastError
+30386>>              Function_Return -1
+30387>>            End // If (iResult <> NO_ERROR) Begin
+30387>>>
+30387>>            Move (dWordToBytes(1)) to sCount
+30388>>            Move (Repeat(Character(0), 255)) to sBuffer
+30389>>            Move (dWordToBytes(255)) to sBufferSize
+30390>>            GetAddress of sCount to pCount
+30391>>            GetAddress of sBuffer to pBuffer
+30392>>            GetAddress of sBufferSize to pBufferSize
+30393>>            Move (WNetEnumResource(pServerHandle, pCount, pBuffer, pBufferSize)) to iResult
+30394>>            If (iResult = NO_ERROR) Move 1 to iRetVal
+30397>>            Move (WNetCloseEnum(pServerHandle)) to iResult
+30398>>          End // If (iType = WNNC_NET_NETWARE) Begin
+30398>>>
+30398>>        End // If pProvider Begin
+30398>>>
+30398>>
+30398>>      End // If iType Eq RESOURCEDISPLAYTYPE_SERVER Begin
+30398>>>
+30398>>    Until (iResult = ERROR_NO_MORE_ITEMS)
+30400>>
+30400>>    // Close the network resource enumeration...
+30400>>    Move (WNetCloseEnum(pEnumHandle)) to iResult
+30401>>
+30401>>    // Check for errors...
+30401>>    If (iResult <> NO_ERROR) Send DoShowLastError
+30404>>
+30404>>    Function_Return iRetVal
+30405>>  End_Function // FindNetwareConnection
+30406>>
+30406>>
+30406>>  // ** Procedure : DoShowLastError
+30406>>  // ** Purpose   : This procedure shows the error message for the last Windows API function called.
+30406>>  // ** Params    : None
+30406>>  // ** Returns   : None
+30406>>  Procedure DoShowLastError
+30407>>    Integer iFlags iResult iVoid iError
+30408>>    Pointer pAddress pBuffer
+30408>>    String sAddress sBuffer
+30408>>
+30408>>    // Allocate four bytes for the buffer address...
+30408>>    Move (Repeat(Character(0), 4)) to sAddress
+30409>>    GetAddress of sAddress to pAddress
+30410>>    Move (GetLastError()) to iError
+30411>>    // Set the flags...
+30411>>    Move (FORMAT_MESSAGE_ALLOCATE_BUFFER iOr FORMAT_MESSAGE_FROM_SYSTEM iOr FORMAT_MESSAGE_IGNORE_INSERTS) ;      to iFlags
+30412>>    Move (FormatMessage(iFlags, 0, iError, 0, pAddress, 0, 0)) to iResult
+ERROR: 54 Invalid symbol in expression FORMATMESSAGE ON LINE: 691 (30412) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30413>>    // If FormatMessage fails the return value will be 0, therefore no bytes will be copied and the
+30413>>    // error will only display the error number returned from the calling function...
+30413>>    Move (CopyMemory(pAddress,pAddress, 4)) to iVoid
+30414>>    Move (BytesToCVT(sAddress, 1, 4)) to pAddress
+30415>>    Move (Repeat(Character(0), iResult)) to sBuffer
+30416>>    GetAddress of sBuffer to pBuffer
+30417>>    Move (CopyMemory(pBuffer, pAddress, iResult)) to iVoid
+30418>>    // Display the error number and the message...
+30418>>    Error (3000 + iError) sBuffer
+30419>>>
+30419>>    // Free the buffer...
+30419>>    Move (LocalFree(pAddress)) to iResult
+ERROR: 54 Invalid symbol in expression LOCALFREE ON LINE: 702 (30419) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30420>>  End_Procedure // DoShowLastError
+30421>>
+30421>>  // Function that returns the Computer Name.
+30421>>  Function ComputerName Returns String
+30422>>    Pointer lpComputerName lpNameSize
+30423>>    String sComputerName sNameSize
+30423>>    Integer iRetval
+30423>>
+30423>>    Movestr (Repeat (Character (0), MAX$COMPUTERNAME$LENGTH + 1)) to sComputerName
+30424>>>
+30424>>    GetAddress of sComputerName to lpComputerName
+30425>>    Movestr (DwordToBytes (MAX$COMPUTERNAME$LENGTH + 1)) to sNameSize
+30426>>>
+30426>>    GetAddress of sNameSize to lpNameSize
+30427>>
+30427>>    Moveint (GetComputerName (lpComputerName, lpNameSize)) to iRetval
+30428>>>
+30428>>
+30428>>    Function_Return (CString(sComputerName))
+30429>>  End_Function // ComputerName
+30430>>
+30430>>  // Function returns the User Name if user logged on to a network, else returns ''.
+30430>>  Function GetUserLoginName Returns String
+30431>>    String sName
+30432>>    Pointer lpNameAddr
+30432>>    Integer iRetval
+30432>>
+30432>>    Move (Repeat(Character(0),255)) to sName
+30433>>    GetAddress of sName to lpNameAddr
+30434>>    Move (Win32_WNetGetUser(0, lpNameAddr, DWORDtoBytes(255))) to iRetval
+30435>>    If iRetval eq 0 ;      Function_Return (ToOem(Cstring(sName)))
+30438>>    Else Function_Return ''
+30440>>  End_Function // GetUserLoginName
+30441>>
+30441>>  // Procedure sets OS info properties defined in this class
+30441>>  // The static variables and the structure used are declared in prnt_dlg.pkg.
+30441>>  Procedure DoSetOSProperties
+30442>>    Integer iRetval
+30443>>    String  sOSVersionInfo sCSDVersion
+30443>>    Pointer pOSVersionInfo
+30443>>
+30443>>    FillType _OSVERSIONINFO With 0 to sOSVersionInfo
+30444>>    Put _OSVERSIONINFO_Size to sOSVersionInfo At _OSVERSIONINFO.dwOSVersionInfoSize
+30445>>    GetAddress of sOSVersionInfo to pOSVersionInfo
+30446>>    Move (GetVersionEx(pOSVersionInfo)) to iRetval // Function in Prnt_Dlg.pkg
+30447>>    Indicate Err False
+30448>>    If Not iRetval Begin
+30450>>      Error 500 csOsVersionNumberCouldNotRetrieved
+      Error 500 csOsVersionNumberCouldNotRetrieved
+ERROR: 4345 Type check error CSOSVERSIONNUMBERCOULDNOTRETRIEVED, CSOSVERSIONNUMBERCOULDNOTRETRIEVED,  ON LINE: 748 (30450) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSOSVERSIONNUMBERCOULDNOTRETRIEVED ON LINE: 748 (30450) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30451>>>
+30451>>      Procedure_Return
+30452>>    End // If Not iRetval Begin
+30452>>>
+30452>>    GetBuff From sOSVersionInfo At _OSVERSIONINFO.dwMajorVersion      to iRetval
+30453>>    Set piMajorVersion to iRetval
+30454>>    GetBuff From sOSVersionInfo At _OSVERSIONINFO.dwMinorVersion      to iRetval
+30455>>    Set piMinorVersion to iRetval
+30456>>    GetBuff From sOSVersionInfo At _OSVERSIONINFO.dwPlatformID        to iRetval
+30457>>    Set piPlatFormId to iRetval
+30458>>    GetBuff_String From sOSVersionInfo At _OSVERSIONINFO.szCSDVersion to sCSDVersion
+30459>>    Move (Cstring(sCSDVersion)) to sCSDVersion
+30460>>    Set psCSDVersion to (Trim(sCSDVersion))
+30461>>  End_Procedure // DoSetOSProperties
+30462>>
+30462>>  Procedure DoSetOSPropertiesEx
+30463>>    Integer iRetval
+30464>>    String  sOSVersionInfoEx sCSDVersion
+30464>>    Pointer pOSVersionInfoEx
+30464>>
+30464>>    FillType _OSVERSIONINFOEX With 0 to sOSVersionInfoEX
+30465>>    Put _OSVERSIONINFOEX_Size to sOSVersionInfoEx At _OSVERSIONINFOEX.dwOSVersionInfoSize
+30466>>    GetAddress of sOSVersionInfoEX to pOSVersionInfoEX
+30467>>    Move (GetVersionEx(pOSVersionInfoEx)) to iRetval
+30468>>    Indicate Err False
+30469>>    If Not iRetval Begin
+30471>>      Error 500 csOsVersionNumberCouldNotRetrieved
+      Error 500 csOsVersionNumberCouldNotRetrieved
+ERROR: 4345 Type check error CSOSVERSIONNUMBERCOULDNOTRETRIEVED, CSOSVERSIONNUMBERCOULDNOTRETRIEVED,  ON LINE: 773 (30471) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSOSVERSIONNUMBERCOULDNOTRETRIEVED ON LINE: 773 (30471) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30472>>>
+30472>>      Procedure_Return
+30473>>    End // If Not iRetval Begin
+30473>>>
+30473>>
+30473>>    GetBuff From sOSVersionInfoEx At _OSVERSIONINFOEX.dwMajorVersion      to iRetval
+30474>>    Set piMajorVersion to iRetval
+30475>>    xSHOWLN "piMajorVersion : " iRetval
+30475>>
+30475>>    GetBuff From sOSVersionInfoEx At _OSVERSIONINFOEX.dwMinorVersion      to iRetval
+30476>>    Set piMinorVersion to iRetval
+30477>>    xSHOWLN "piMinorVersion : " iRetval
+30477>>
+30477>>    GetBuff From sOSVersionInfoEx At _OSVERSIONINFOEX.dwBuildNumber       to iRetval
+30478>>    Set piBuildNumber to iRetval
+30479>>    xSHOWLN "piBuildNumber : " iRetval
+30479>>
+30479>>    GetBuff From sOSVersionInfoEx At _OSVERSIONINFOEX.dwPlatformID        to iRetval
+30480>>    Set piPlatFormId to iRetval
+30481>>    xSHOWLN "piPlatFormId : " iRetval
+30481>>
+30481>>    GetBuff_String From sOSVersionInfoEx At _OSVERSIONINFOEX.szCSDVersion to sCSDVersion
+30482>>    Move (Cstring(sCSDVersion)) to sCSDVersion
+30483>>    Set psCSDVersion to (Trim(sCSDVersion))
+30484>>    xSHOWLN "psCSDVersion : " (Trim(sCSDVersion))
+30484>>
+30484>>    GetBuff From sOSVersionInfoEx At _OSVERSIONINFOEX.wServicePackMajor   to iRetval
+30485>>    Set piServicePackMajor to iRetval
+30486>>    xSHOWLN "piServicePackMajor : " iRetval
+30486>>
+30486>>    GetBuff From sOSVersionInfoEx At _OSVERSIONINFOEX.wServicePackMinor   to iRetval
+30487>>    Set piServicePackMinor to iRetval
+30488>>    xSHOWLN "piServicePackMinor : " iRetval
+30488>>
+30488>>    GetBuff From sOSVersionInfoEx At _OSVERSIONINFOEX.wSuiteMask           to iRetval
+30489>>    Set piSuiteMask to iRetval
+30490>>    xSHOWLN "piSuiteMask : " iRetval
+30490>>
+30490>>    GetBuff From sOSVersionInfoEx At _OSVERSIONINFOEX.wProductType        to iRetval
+30491>>    Set piProductType to iRetval
+30492>>    xSHOWLN "piProductType : " iRetval
+30492>>
+30492>>  End_Procedure // DoSetOSPropertiesEx
+30493>>
+30493>>  PROCEDURE DoSetOsVersion
+30494>>    Integer iMajorVersion
+30495>>    Integer iMinorVersion
+30495>>    Integer iBuildNumber
+30495>>    Integer iPlatFormId
+30495>>    String  sCSDVersion
+30495>>    Integer iServicePackMajor
+30495>>    Integer iServicePackMinor
+30495>>    Integer iSuiteMask
+30495>>    Integer iProductType
+30495>>
+30495>>    GET piMajorVersion     TO iMajorVersion
+30496>>    GET piMinorVersion     TO iMinorVersion
+30497>>    GET piBuildNumber      TO iBuildNumber
+30498>>    GET piPlatFormId       TO iPlatFormId
+30499>>    GET psCSDVersion       TO sCSDVersion
+30500>>    GET piServicePackMajor TO iServicePackMajor
+30501>>    GET piServicePackMinor TO iServicePackMinor
+30502>>    GET piSuiteMask        TO iSuiteMask
+30503>>    GET piProductType      TO iProductType
+30504>>
+30504>>    CASE BEGIN
+30504>>      CASE (iMajorVersion = 3)
+30506>>        SET psOSVersion TO "Windows NT 3.51"
+30507>>        CASE BREAK
+30508>>
+30508>>      CASE (iMajorVersion = 4)                      // Windows 9X Series and Win NT 40
+30511>>        IF (iPlatFormId = VER_PLATFORM_WIN32_WINDOWS) BEGIN    // Then Windows 95 or 98...
+30513>>          CASE BEGIN
+30513>>            CASE (iMinorVersion = 0)
+30515>>              SET psOSVersion TO "Windows 95"
+30516>>              CASE BREAK
+30517>>            CASE (iMinorVersion = 10)
+30520>>              SET psOSVersion TO "Windows 98"
+30521>>              CASE BREAK
+30522>>            CASE (iMinorVersion = 90)
+30525>>              SET psOSVersion   TO "Windows ME"
+30526>>              SET pbWindowsHome TO TRUE
+30527>>              CASE BREAK
+30528>>            CASE ELSE
+30528>>              SET psOSVersion TO "Windows Version UNKNOWN"
+30529>>          CASE END
+30529>>        END
+30529>>>
+30529>>        ELSE BEGIN
+30530>>          CASE BEGIN
+30530>>            CASE (iProductType = VER_NT_WORKSTATION)
+30532>>              SET psOSVersion TO "Windows NT40 Professional"
+30533>>              CASE BREAK
+30534>>            CASE (iProductType = VER_NT_DOMAIN_CONTROLLER)
+30537>>              SET psOSVersion TO "Windows NT40 Server"
+30538>>              SET pbNTServer  TO TRUE
+30539>>              CASE BREAK
+30540>>            CASE ELSE
+30540>>              SET psOSVersion TO "Windows NT40"
+30541>>          CASE END
+30541>>        END
+30541>>>
+30541>>        CASE BREAK
+30542>>
+30542>>      CASE (iMajorVersion = 5)                      // Windows NT2k Series
+30545>>        CASE BEGIN
+30545>>          CASE (iMinorVersion = 0)                  // Windows NT2k
+30547>>            IF (iProductType = VER_NT_WORKSTATION) BEGIN
+30549>>              SET psOSVersion TO  "Windows NT2K Professional"
+30550>>            END
+30550>>>
+30550>>            ELSE BEGIN
+30551>>              SET psOSVersion TO  "Windows NT2k Server"
+30552>>              SET pbNTServer  TO TRUE
+30553>>            END
+30553>>>
+30553>>            CASE BREAK
+30554>>
+30554>>          CASE (iMinorVersion = 1)                  // XP and 2003 server
+30557>>            CASE BEGIN
+30557>>              CASE (iSuiteMask IAND Ver_Suite_Personal)
+30559>>                SET psOSVersion   TO "Windows XP Home"
+30560>>                SET pbWindowsHome TO TRUE
+30561>>                CASE BREAK
+30562>>
+30562>>              CASE (iProductType = VER_NT_WORKSTATION)
+30565>>                SET psOSVersion TO  "Windows XP Professional"
+30566>>                CASE BREAK
+30567>>
+30567>>              CASE (iProductType = VER_NT_DOMAIN_CONTROLLER)
+30570>>                SET psOSVersion TO  "Windows 2003 Server"
+30571>>                SET pbNTServer  TO TRUE
+30572>>                CASE BREAK
+30573>>
+30573>>              CASE (iProductType = VER_NT_SERVER)
+30576>>                SET psOSVersion TO  "Windows 2003 Server"
+30577>>                SET pbNTServer  TO TRUE
+30578>>                CASE BREAK
+30579>>
+30579>>              CASE ELSE
+30579>>                SET psOSVersion TO  "Windows Version UNKNOWN"
+30580>>
+30580>>            CASE END
+30580>>            CASE BREAK
+30581>>
+30581>>          CASE ELSE
+30581>>            SET psOSVersion TO  "Windows Version UNKNOWN"
+30582>>        CASE END
+30582>>        CASE BREAK
+30583>>
+30583>>      CASE ELSE
+30583>>        SET psOSVersion TO  "Windows Version UNKNOWN"
+30584>>    CASE END
+30584>>  END_PROCEDURE // DoSetOsVersion
+30585>>
+30585>>  PROCEDURE doCheckOsVersion
+30586>>    String  sOSVersion               // ""
+30587>>    Integer bNTServer                // FALSE
+30587>>    Integer bWindowsHome             // FALSE
+30587>>    Integer bTestServicePack         // TRUE
+30587>>
+30587>>    Integer iRunOnWindows95          // cx_Run_Do_Not_Run
+30587>>    Integer iRunOnWindows9X          // cx_Run_Normal
+30587>>    Integer iRunOnWindowsNT40        // cx_Run_Normal
+30587>>    Integer iRunOnWindowsNT2k        // cx_Run_Normal
+30587>>    Integer iRunOnWindowsNTXP        // cx_Run_Normal
+30587>>    Integer iRunOnWindowsNET         // cx_Run_With_Warning
+30587>>    Integer iRunOnHomeVersion        // cx_Run_Do_Not_Run
+30587>>    Integer iRunOnServerVersion      // cx_Run_Normal
+30587>>    Integer iRunOnUnknownVersion     // cx_Run_Do_Not_Run
+30587>>
+30587>>    Integer iServicePackMajor        // 0
+30587>>
+30587>>    Integer iMinNT40_ServicePack     // 6
+30587>>    Integer iMinNT2K_ServicePack     // 1
+30587>>    Integer iMinXP_ServicePack       // 0
+30587>>    Integer iMinNET_ServicePack      // 0
+30587>>
+30587>>    Integer iResult
+30587>>    String  sText
+30587>>
+30587>>    GET psOSVersion             TO sOSVersion
+30588>>    GET pbNTServer              TO bNTServer
+30589>>    GET pbWindowsHome           TO bWindowsHome
+30590>>    GET pbTestServicePack       TO bTestServicePack
+30591>>
+30591>>    GET piRunOnWindows95        TO iRunOnWindows95
+30592>>    GET piRunOnWindows9X        TO iRunOnWindows9X
+30593>>    GET piRunOnWindowsNT40      TO iRunOnWindowsNT40
+30594>>    GET piRunOnWindowsNT2k      TO iRunOnWindowsNT2k
+30595>>    GET piRunOnWindowsNTXP      TO iRunOnWindowsNTXP
+30596>>    GET piRunOnWindowsNET       TO iRunOnWindowsNET
+30597>>    GET piRunOnHomeVersion      TO iRunOnHomeVersion
+30598>>    GET piRunOnServerVersion    TO iRunOnServerVersion
+30599>>    GET piRunOnUnknownVersion   TO iRunOnUnknownVersion
+30600>>
+30600>>    GET piServicePackMajor      TO iServicePackMajor
+30601>>
+30601>>    GET piMinNT40_ServicePack   TO iMinNT40_ServicePack
+30602>>    GET piMinNT2K_ServicePack   TO iMinNT2K_ServicePack
+30603>>    GET piMinXP_ServicePack     TO iMinXP_ServicePack
+30604>>    GET piMinNET_ServicePack    TO iMinNET_ServicePack
+30605>>
+30605>>    IF (sOSVersion = "Windows Version UNKNOWN") BEGIN
+30607>>      CASE BEGIN
+30607>>        CASE (iRunOnUnknownVersion = cx_Run_Do_Not_Run)
+30609>>            Move csUnknownWindowsVersion to sText
+ERROR: 4328 Undefined symbol in argument CSUNKNOWNWINDOWSVERSION ON LINE: 974 (30609) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30610>>            Append sText csProgramWillBeTerminated
+            Append sText csProgramWillBeTerminated
+ERROR: 4345 Type check error CSPROGRAMWILLBETERMINATED, CSPROGRAMWILLBETERMINATED, CSPR ON LINE: 975 (30610) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPROGRAMWILLBETERMINATED ON LINE: 975 (30610) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30611>>            Send DoWriteLog sText
+30612>>            Send Stop_Box sText
+30613>>            Abort
+30614>>>
+30614>>          CASE BREAK
+30615>>        CASE (iRunOnUnknownVersion = cx_Run_With_Warning)
+30618>>            Move csUnknownWindowsVersionQuestion to sText
+ERROR: 4328 Undefined symbol in argument CSUNKNOWNWINDOWSVERSIONQUESTION ON LINE: 981 (30618) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30619>>            Append sText csProgramAsksToBeTerminated
+            Append sText csProgramAsksToBeTerminated
+ERROR: 4345 Type check error CSPROGRAMASKSTOBETERMINATED, CSPROGRAMASKSTOBETERMINATED, CS ON LINE: 982 (30619) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPROGRAMASKSTOBETERMINATED ON LINE: 982 (30619) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30620>>            GET YesNo_Box csUnknownWindowsVersionQuestion TO iResult
+30621>>            IF (iResult = MBR_NO) BEGIN
+30623>>              Send DoWriteLog sText
+30624>>              Abort
+30625>>>
+30625>>            END
+30625>>>
+30625>>          CASE BREAK
+30626>>        CASE ELSE
+30626>>      CASE END
+30626>>    END
+30626>>>
+30626>>
+30626>>    IF (sOSVersion = "Windows 95") BEGIN
+30628>>      CASE BEGIN
+30628>>        CASE (iRunOnWindows95 = cx_Run_Do_Not_Run)
+30630>>          Move (csOSDoesNotRunOnWindowsStart + sOSVersion)to sText
+ERROR: 54 Invalid symbol in expression CSOSDOESNOTRUNONWINDOWSSTART ON LINE: 996 (30630) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30631>>          Append sText csProgramWillBeTerminated
+          Append sText csProgramWillBeTerminated
+ERROR: 4345 Type check error CSPROGRAMWILLBETERMINATED, CSPROGRAMWILLBETERMINATED,  ON LINE: 997 (30631) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPROGRAMWILLBETERMINATED ON LINE: 997 (30631) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30632>>          Send DoWriteLog sText
+30633>>          Send Stop_Box sText
+30634>>          Abort
+30635>>>
+30635>>          CASE BREAK
+30636>>        CASE (iRunOnWindows95 = cx_Run_With_Warning)
+30639>>          Move (csOSDoesNotRunOnWindowsStart + sOSVersion) to sText
+ERROR: 54 Invalid symbol in expression CSOSDOESNOTRUNONWINDOWSSTART ON LINE: 1003 (30639) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30640>>          Append sText csOSDoesNotRunOnWindowsWarning
+          Append sText csOSDoesNotRunOnWindowsWarning
+ERROR: 4345 Type check error CSOSDOESNOTRUNONWINDOWSWARNING, CSOSDOESNOTRUNONWINDOWSWARNING, CSOSDOESNOTRUNONWINDOWSWARNIN ON LINE: 1004 (30640) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSOSDOESNOTRUNONWINDOWSWARNING ON LINE: 1004 (30640) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30641>>          Append sText csProgramAsksToBeTerminated
+          Append sText csProgramAsksToBeTerminated
+ERROR: 4345 Type check error CSPROGRAMASKSTOBETERMINATED, CSPROGRAMASKSTOBETERMINATED, CSPROGRAMASKSTOBETERMINATED, CSPROGRAMASKSTOBETERMINATED, CSPROG ON LINE: 1005 (30641) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPROGRAMASKSTOBETERMINATED ON LINE: 1005 (30641) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30642>>          GET YesNo_Box sText TO iResult
+30643>>            IF (iResult = MBR_NO) BEGIN
+30645>>            Send DoWriteLog sText
+30646>>            Abort
+30647>>>
+30647>>          END
+30647>>>
+30647>>          CASE BREAK
+30648>>        CASE ELSE
+30648>>      CASE END
+30648>>    END
+30648>>>
+30648>>
+30648>>    IF ((sOSVersion = "Windows 95") OR (sOSVersion = "Windows 98") OR (sOSVersion = "Windows ME")) BEGIN
+30650>>      CASE BEGIN
+30650>>        CASE (iRunOnWindows9X = cx_Run_Do_Not_Run)
+30652>>          Move (csOSDoesNotRunOnWindowsStart + sOSVersion)to sText
+ERROR: 54 Invalid symbol in expression CSOSDOESNOTRUNONWINDOWSSTART ON LINE: 1019 (30652) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30653>>          Append sText csProgramWillBeTerminated
+          Append sText csProgramWillBeTerminated
+ERROR: 4345 Type check error CSPROGRAMWILLBETERMINATED, CSPROGRAMWILLBETERMINATED,  ON LINE: 1020 (30653) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPROGRAMWILLBETERMINATED ON LINE: 1020 (30653) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30654>>          Send DoWriteLog sText
+30655>>          Send Stop_Box sText
+30656>>          Abort
+30657>>>
+30657>>          CASE BREAK
+30658>>        CASE (iRunOnWindows9X = cx_Run_With_Warning)
+30661>>          Move (csOSDoesNotRunOnWindowsStart + sOSVersion) to sText
+ERROR: 54 Invalid symbol in expression CSOSDOESNOTRUNONWINDOWSSTART ON LINE: 1026 (30661) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30662>>          Append sText csOSDoesNotRunOnWindowsWarning
+          Append sText csOSDoesNotRunOnWindowsWarning
+ERROR: 4345 Type check error CSOSDOESNOTRUNONWINDOWSWARNING, CSOSDOESNOTRUNONWINDOWSWARNING, CSOSDOESNOTRUNONWINDOWSWARNIN ON LINE: 1027 (30662) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSOSDOESNOTRUNONWINDOWSWARNING ON LINE: 1027 (30662) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30663>>          Append sText csProgramAsksToBeTerminated
+          Append sText csProgramAsksToBeTerminated
+ERROR: 4345 Type check error CSPROGRAMASKSTOBETERMINATED, CSPROGRAMASKSTOBETERMINATED, CSPROGRAMASKSTOBETERMINATED, CSPROGRAMASKSTOBETERMINATED, CSPROG ON LINE: 1028 (30663) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPROGRAMASKSTOBETERMINATED ON LINE: 1028 (30663) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30664>>          GET YesNo_Box sText TO iResult
+30665>>            IF (iResult = MBR_NO) BEGIN
+30667>>            Send DoWriteLog sText
+30668>>            Abort
+30669>>>
+30669>>          END
+30669>>>
+30669>>          CASE BREAK
+30670>>        CASE ELSE
+30670>>      CASE END
+30670>>    END
+30670>>>
+30670>>
+30670>>    IF (POS ("40", sOSVersion) > 0) BEGIN
+30672>>      CASE BEGIN
+30672>>        CASE (iRunOnWindowsNT40 = cx_Run_Do_Not_Run)
+30674>>          Move (csOSDoesNotRunOnWindowsStart + sOSVersion)to sText
+ERROR: 54 Invalid symbol in expression CSOSDOESNOTRUNONWINDOWSSTART ON LINE: 1042 (30674) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30675>>          Append sText csProgramWillBeTerminated
+          Append sText csProgramWillBeTerminated
+ERROR: 4345 Type check error CSPROGRAMWILLBETERMINATED, CSPROGRAMWILLBETERMINATED,  ON LINE: 1043 (30675) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPROGRAMWILLBETERMINATED ON LINE: 1043 (30675) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30676>>          Send DoWriteLog sText
+30677>>          Send Stop_Box sText
+30678>>          Abort
+30679>>>
+30679>>          CASE BREAK
+30680>>        CASE (iRunOnWindowsNT40 = cx_Run_With_Warning)
+30683>>          Move (csOSDoesNotRunOnWindowsStart + sOSVersion) to sText
+ERROR: 54 Invalid symbol in expression CSOSDOESNOTRUNONWINDOWSSTART ON LINE: 1049 (30683) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30684>>          Append sText csOSDoesNotRunOnWindowsWarning
+          Append sText csOSDoesNotRunOnWindowsWarning
+ERROR: 4345 Type check error CSOSDOESNOTRUNONWINDOWSWARNING, CSOSDOESNOTRUNONWINDOWSWARNING, CSOSDOESNOTRUNONWINDOWSWARNIN ON LINE: 1050 (30684) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSOSDOESNOTRUNONWINDOWSWARNING ON LINE: 1050 (30684) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30685>>          Append sText csProgramAsksToBeTerminated
+          Append sText csProgramAsksToBeTerminated
+ERROR: 4345 Type check error CSPROGRAMASKSTOBETERMINATED, CSPROGRAMASKSTOBETERMINATED, CSPROGRAMASKSTOBETERMINATED, CSPROGRAMASKSTOBETERMINATED, CSPROG ON LINE: 1051 (30685) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPROGRAMASKSTOBETERMINATED ON LINE: 1051 (30685) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30686>>          GET YesNo_Box sText TO iResult
+30687>>            IF (iResult = MBR_NO) BEGIN
+30689>>            Send DoWriteLog sText
+30690>>            Abort
+30691>>>
+30691>>          END
+30691>>>
+30691>>          CASE BREAK
+30692>>        CASE ELSE
+30692>>      CASE END
+30692>>    END
+30692>>>
+30692>>
+30692>>    IF (POS ("2k", sOSVersion) > 0) BEGIN
+30694>>      CASE BEGIN
+30694>>        CASE (iRunOnWindowsNT2k = cx_Run_Do_Not_Run)
+30696>>          Move (csOSDoesNotRunOnWindowsStart + sOSVersion)to sText
+ERROR: 54 Invalid symbol in expression CSOSDOESNOTRUNONWINDOWSSTART ON LINE: 1065 (30696) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30697>>          Append sText csProgramWillBeTerminated
+          Append sText csProgramWillBeTerminated
+ERROR: 4345 Type check error CSPROGRAMWILLBETERMINATED, CSPROGRAMWILLBETERMINATED,  ON LINE: 1066 (30697) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPROGRAMWILLBETERMINATED ON LINE: 1066 (30697) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30698>>          Send DoWriteLog sText
+30699>>          Send Stop_Box sText
+30700>>          Abort
+30701>>>
+30701>>          CASE BREAK
+30702>>        CASE (iRunOnWindowsNT2k = cx_Run_With_Warning)
+30705>>          Move (csOSDoesNotRunOnWindowsStart + sOSVersion) to sText
+ERROR: 54 Invalid symbol in expression CSOSDOESNOTRUNONWINDOWSSTART ON LINE: 1072 (30705) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30706>>          Append sText csOSDoesNotRunOnWindowsWarning
+          Append sText csOSDoesNotRunOnWindowsWarning
+ERROR: 4345 Type check error CSOSDOESNOTRUNONWINDOWSWARNING, CSOSDOESNOTRUNONWINDOWSWARNING, CSOSDOESNOTRUNONWINDOWSWARNIN ON LINE: 1073 (30706) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSOSDOESNOTRUNONWINDOWSWARNING ON LINE: 1073 (30706) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30707>>          Append sText csProgramAsksToBeTerminated
+          Append sText csProgramAsksToBeTerminated
+ERROR: 4345 Type check error CSPROGRAMASKSTOBETERMINATED, CSPROGRAMASKSTOBETERMINATED, CSPROGRAMASKSTOBETERMINATED, CSPROGRAMASKSTOBETERMINATED, CSPROG ON LINE: 1074 (30707) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPROGRAMASKSTOBETERMINATED ON LINE: 1074 (30707) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30708>>          GET YesNo_Box sText TO iResult
+30709>>            IF (iResult = MBR_NO) BEGIN
+30711>>            Send DoWriteLog sText
+30712>>            Abort
+30713>>>
+30713>>          END
+30713>>>
+30713>>          CASE BREAK
+30714>>        CASE ELSE
+30714>>      CASE END
+30714>>    END
+30714>>>
+30714>>
+30714>>    IF (POS ("XP", sOSVersion) > 0) BEGIN
+30716>>      CASE BEGIN
+30716>>        CASE (iRunOnWindowsNTXP = cx_Run_Do_Not_Run)
+30718>>          Move (csOSDoesNotRunOnWindowsStart + sOSVersion)to sText
+ERROR: 54 Invalid symbol in expression CSOSDOESNOTRUNONWINDOWSSTART ON LINE: 1088 (30718) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30719>>          Append sText csProgramWillBeTerminated
+          Append sText csProgramWillBeTerminated
+ERROR: 4345 Type check error CSPROGRAMWILLBETERMINATED, CSPROGRAMWILLBETERMINATED,  ON LINE: 1089 (30719) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPROGRAMWILLBETERMINATED ON LINE: 1089 (30719) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30720>>          Send DoWriteLog sText
+30721>>          Send Stop_Box sText
+30722>>          Abort
+30723>>>
+30723>>          CASE BREAK
+30724>>        CASE (iRunOnWindowsNTXP = cx_Run_With_Warning)
+30727>>          Move (csOSDoesNotRunOnWindowsStart + sOSVersion) to sText
+ERROR: 54 Invalid symbol in expression CSOSDOESNOTRUNONWINDOWSSTART ON LINE: 1095 (30727) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30728>>          Append sText csOSDoesNotRunOnWindowsWarning
+          Append sText csOSDoesNotRunOnWindowsWarning
+ERROR: 4345 Type check error CSOSDOESNOTRUNONWINDOWSWARNING, CSOSDOESNOTRUNONWINDOWSWARNING, CSOSDOESNOTRUNONWINDOWSWARNIN ON LINE: 1096 (30728) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSOSDOESNOTRUNONWINDOWSWARNING ON LINE: 1096 (30728) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30729>>          Append sText csProgramAsksToBeTerminated
+          Append sText csProgramAsksToBeTerminated
+ERROR: 4345 Type check error CSPROGRAMASKSTOBETERMINATED, CSPROGRAMASKSTOBETERMINATED, CSPROGRAMASKSTOBETERMINATED, CSPROGRAMASKSTOBETERMINATED, CSPROG ON LINE: 1097 (30729) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPROGRAMASKSTOBETERMINATED ON LINE: 1097 (30729) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30730>>          GET YesNo_Box sText TO iResult
+30731>>            IF (iResult = MBR_NO) BEGIN
+30733>>            Send DoWriteLog sText
+30734>>            Abort
+30735>>>
+30735>>          END
+30735>>>
+30735>>          CASE BREAK
+30736>>        CASE ELSE
+30736>>      CASE END
+30736>>    END
+30736>>>
+30736>>
+30736>>    IF (POS ("NET", sOSVersion) > 0) BEGIN
+30738>>      CASE BEGIN
+30738>>        CASE (iRunOnWindowsNTXP = cx_Run_Do_Not_Run)
+30740>>          Move (csOSDoesNotRunOnWindowsStart + sOSVersion)to sText
+ERROR: 54 Invalid symbol in expression CSOSDOESNOTRUNONWINDOWSSTART ON LINE: 1111 (30740) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30741>>          Append sText csProgramWillBeTerminated
+          Append sText csProgramWillBeTerminated
+ERROR: 4345 Type check error CSPROGRAMWILLBETERMINATED, CSPROGRAMWILLBETERMINATED,  ON LINE: 1112 (30741) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPROGRAMWILLBETERMINATED ON LINE: 1112 (30741) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30742>>          Send DoWriteLog sText
+30743>>          Send Stop_Box sText
+30744>>          Abort
+30745>>>
+30745>>          CASE BREAK
+30746>>        CASE (iRunOnWindowsNTXP = cx_Run_With_Warning)
+30749>>          Move (csOSDoesNotRunOnWindowsStart + sOSVersion) to sText
+ERROR: 54 Invalid symbol in expression CSOSDOESNOTRUNONWINDOWSSTART ON LINE: 1118 (30749) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30750>>          Append sText csOSDoesNotRunOnWindowsWarning
+          Append sText csOSDoesNotRunOnWindowsWarning
+ERROR: 4345 Type check error CSOSDOESNOTRUNONWINDOWSWARNING, CSOSDOESNOTRUNONWINDOWSWARNING, CSOSDOESNOTRUNONWINDOWSWARNIN ON LINE: 1119 (30750) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSOSDOESNOTRUNONWINDOWSWARNING ON LINE: 1119 (30750) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30751>>          Append sText csProgramAsksToBeTerminated
+          Append sText csProgramAsksToBeTerminated
+ERROR: 4345 Type check error CSPROGRAMASKSTOBETERMINATED, CSPROGRAMASKSTOBETERMINATED, CSPROGRAMASKSTOBETERMINATED, CSPROGRAMASKSTOBETERMINATED, CSPROG ON LINE: 1120 (30751) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPROGRAMASKSTOBETERMINATED ON LINE: 1120 (30751) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30752>>          GET YesNo_Box sText TO iResult
+30753>>            IF (iResult = MBR_NO) BEGIN
+30755>>            Send DoWriteLog sText
+30756>>            Abort
+30757>>>
+30757>>          END
+30757>>>
+30757>>          CASE BREAK
+30758>>        CASE ELSE
+30758>>      CASE END
+30758>>    END
+30758>>>
+30758>>
+30758>>    IF (bWindowsHome) BEGIN
+30760>>      CASE BEGIN
+30760>>        CASE (iRunOnHomeVersion = cx_Run_Do_Not_Run)
+30762>>          Move csOSVersionIsAHomeVersion to sText
+ERROR: 4328 Undefined symbol in argument CSOSVERSIONISAHOMEVERSION ON LINE: 1134 (30762) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30763>>          Append sText csProgramWillBeTerminated
+          Append sText csProgramWillBeTerminated
+ERROR: 4345 Type check error CSPROGRAMWILLBETERMINATED, CSPROGRAMWILLBETERMINATED, CSPR ON LINE: 1135 (30763) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPROGRAMWILLBETERMINATED ON LINE: 1135 (30763) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30764>>          Send DoWriteLog sText
+30765>>          Send Stop_Box sText
+30766>>          Abort
+30767>>>
+30767>>          CASE BREAK
+30768>>        CASE (iRunOnHomeVersion = cx_Run_With_Warning)
+30771>>          Move csOSVersionIsAHomeVersionWarning to sText
+ERROR: 4328 Undefined symbol in argument CSOSVERSIONISAHOMEVERSIONWARNING ON LINE: 1141 (30771) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30772>>          Append sText csProgramAsksToBeTerminated
+          Append sText csProgramAsksToBeTerminated
+ERROR: 4345 Type check error CSPROGRAMASKSTOBETERMINATED, CSPROGRAMASKSTOBETERMINATED, CS ON LINE: 1142 (30772) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPROGRAMASKSTOBETERMINATED ON LINE: 1142 (30772) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30773>>          GET YesNo_Box sText TO iResult
+30774>>          IF (iResult = MBR_NO) BEGIN
+30776>>            Send DoWriteLog sText
+30777>>            Abort
+30778>>>
+30778>>          END
+30778>>>
+30778>>          CASE BREAK
+30779>>      CASE END
+30779>>    END
+30779>>>
+30779>>
+30779>>    IF (bTestServicePack) BEGIN
+30781>>      CASE BEGIN
+30781>>        CASE (sOSVersion = "Windows NT40 Professional")
+30783>>          IF (iServicePackMajor < iMinNT40_ServicePack) BEGIN
+30785>>            MOVE csServicePackNotInstalledStart TO sText
+ERROR: 4328 Undefined symbol in argument CSSERVICEPACKNOTINSTALLEDSTART ON LINE: 1156 (30785) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30786>>            Append sText (STRING (iMinNT40_ServicePack)) csServicePackNotInstalledMiddle
+ERROR: 4345 Type check error CSSERVICEPACKNOTINSTALLEDMIDDLE, CSSERVICEPACKNOTINSTALLEDMIDDLE, CSS ON LINE: 1157 (30787) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSSERVICEPACKNOTINSTALLEDMIDDLE ON LINE: 1157 (30787) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30788>>          END
+30788>>>
+30788>>          CASE BREAK
+30789>>        CASE (sOSVersion = "Windows NT40 Server")
+30792>>          IF (iServicePackMajor < iMinNT40_ServicePack) BEGIN
+30794>>            MOVE csServicePackNotInstalledStart TO sText
+ERROR: 4328 Undefined symbol in argument CSSERVICEPACKNOTINSTALLEDSTART ON LINE: 1162 (30794) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30795>>            Append sText (STRING (iMinNT40_ServicePack)) csServicePackNotInstalledMiddle
+ERROR: 4345 Type check error CSSERVICEPACKNOTINSTALLEDMIDDLE, CSSERVICEPACKNOTINSTALLEDMIDDLE, CSS ON LINE: 1163 (30796) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSSERVICEPACKNOTINSTALLEDMIDDLE ON LINE: 1163 (30796) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30797>>          END
+30797>>>
+30797>>          CASE BREAK
+30798>>        CASE (sOSVersion = "Windows NT2K Professional")
+30801>>          IF (iServicePackMajor < iMinNT2K_ServicePack) BEGIN
+30803>>            MOVE csServicePackNotInstalledStart TO sText
+ERROR: 4328 Undefined symbol in argument CSSERVICEPACKNOTINSTALLEDSTART ON LINE: 1168 (30803) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30804>>            Append sText (STRING (iMinNT2K_ServicePack)) csServicePackNotInstalledMiddle
+ERROR: 4345 Type check error CSSERVICEPACKNOTINSTALLEDMIDDLE, CSSERVICEPACKNOTINSTALLEDMIDDLE, CSS ON LINE: 1169 (30805) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSSERVICEPACKNOTINSTALLEDMIDDLE ON LINE: 1169 (30805) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30806>>          END
+30806>>>
+30806>>          CASE BREAK
+30807>>        CASE (sOSVersion = "Windows NT2k Server")
+30810>>          IF (iServicePackMajor < iMinNT2K_ServicePack) BEGIN
+30812>>            MOVE csServicePackNotInstalledStart TO sText
+ERROR: 4328 Undefined symbol in argument CSSERVICEPACKNOTINSTALLEDSTART ON LINE: 1174 (30812) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30813>>            Append sText (STRING (iMinNT2K_ServicePack)) csServicePackNotInstalledMiddle
+ERROR: 4345 Type check error CSSERVICEPACKNOTINSTALLEDMIDDLE, CSSERVICEPACKNOTINSTALLEDMIDDLE, CSS ON LINE: 1175 (30814) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSSERVICEPACKNOTINSTALLEDMIDDLE ON LINE: 1175 (30814) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30815>>          END
+30815>>>
+30815>>          CASE BREAK
+30816>>        CASE (sOSVersion = "Windows XP Home")
+30819>>          IF (iServicePackMajor < iMinXP_ServicePack) BEGIN
+30821>>            MOVE csServicePackNotInstalledStart TO sText
+ERROR: 4328 Undefined symbol in argument CSSERVICEPACKNOTINSTALLEDSTART ON LINE: 1180 (30821) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30822>>            Append sText (STRING (iMinXP_ServicePack)) csServicePackNotInstalledMiddle
+ERROR: 4345 Type check error CSSERVICEPACKNOTINSTALLEDMIDDLE, CSSERVICEPACKNOTINSTALLEDMIDDLE, CSS ON LINE: 1181 (30823) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSSERVICEPACKNOTINSTALLEDMIDDLE ON LINE: 1181 (30823) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30824>>          END
+30824>>>
+30824>>          CASE BREAK
+30825>>        CASE (sOSVersion = "Windows XP Professional")
+30828>>          IF (iServicePackMajor < iMinXP_ServicePack) BEGIN
+30830>>            MOVE csServicePackNotInstalledStart TO sText
+ERROR: 4328 Undefined symbol in argument CSSERVICEPACKNOTINSTALLEDSTART ON LINE: 1186 (30830) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30831>>            Append sText (STRING (iMinXP_ServicePack)) csServicePackNotInstalledMiddle
+ERROR: 4345 Type check error CSSERVICEPACKNOTINSTALLEDMIDDLE, CSSERVICEPACKNOTINSTALLEDMIDDLE, CSS ON LINE: 1187 (30832) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSSERVICEPACKNOTINSTALLEDMIDDLE ON LINE: 1187 (30832) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30833>>          END
+30833>>>
+30833>>          CASE BREAK
+30834>>        CASE (sOSVersion = "Windows 2003 Server")
+30837>>          IF (iServicePackMajor < iMinNET_ServicePack) BEGIN
+30839>>            MOVE csServicePackNotInstalledStart TO sText
+ERROR: 4328 Undefined symbol in argument CSSERVICEPACKNOTINSTALLEDSTART ON LINE: 1192 (30839) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30840>>            Append sText (STRING (iMinNET_ServicePack)) csServicePackNotInstalledMiddle
+ERROR: 4345 Type check error CSSERVICEPACKNOTINSTALLEDMIDDLE, CSSERVICEPACKNOTINSTALLEDMIDDLE, CSS ON LINE: 1193 (30841) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSSERVICEPACKNOTINSTALLEDMIDDLE ON LINE: 1193 (30841) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30842>>          END
+30842>>>
+30842>>          CASE BREAK
+30843>>        CASE ELSE
+30843>>      CASE END
+30843>>      IF (sText > "") BEGIN
+30845>>        Append sText sOSVersion csServicePackNotInstalledEnd
+ERROR: 4345 Type check error CSSERVICEPACKNOTINSTALLEDEND, CSSERVICEPACKNOTINSTALLEDEND, C ON LINE: 1199 (30846) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSSERVICEPACKNOTINSTALLEDEND ON LINE: 1199 (30846) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+30847>>        Send DoWriteLog sText
+30848>>        Send Stop_Box sText
+30849>>        Abort
+30850>>>
+30850>>      END
+30850>>>
+30850>>    END
+30850>>>
+30850>>  END_PROCEDURE // doCheckOsVersion
+30851>>
+30851>>  Procedure Set External_Profile_Dword String sRegPath String sKey String sValueName Dword dwValue
+30852>>    REG_SET_DWORD sRegPath sKey sValueName to dwValue
+30856>>  End_Procedure // External_Profile_Dword
+30857>>
+30857>>  Function External_Profile_Dword String sRegPath String sKey String sValueName Returns Dword
+30858>>    Integer dwValue defValue
+30859>>
+30859>>    Move REG_VALUE_NOT_EXIST to defValue
+30860>>    REG_GET_DWORD sRegpath sKey sValueName defValue to dwValue
+30864>>>
+30864>>    Function_Return dwValue
+30865>>  End_Function // External_Profile_Dword
+30866>>
+30866>>  // Function returns: 0 if NWREDIR was not found
+30866>>  //                   1 if NWREDIR was found and ReadCaching is correct set to 0
+30866>>  //                  -1 if Then system.ini could not be opened...
+30866>>  //                  -2 if ReadCaching <> 0
+30866>>  Function CheckSystemIni Returns Integer
+30867>>    Integer iRetval iChannel
+30868>>    String sWindir sFileName sValue
+30868>>
+30868>>    Get_Windows_Directory to sWindir
+30869>>    Move '\SYSTEM.INI' to sFileName
+30870>>    // Use the seq_chnl.pkg to get the next free channel to open:
+30870>>    Get Seq_Open_Input_Channel (sWindir + sFileName) to iChannel
+30871>>    If iChannel Eq DF_SEQ_CHANNEL_ERROR Function_Return -1
+30874>>      Repeat
+30874>>>
+30874>>        Readln sValue
+30875>>        If '[NWREDIR]' in (Uppercase(sValue)) Move -2 to iRetval
+30878>>        If iRetval eq -2 Begin // Ok, we found it. Read next line.
+30880>>          Repeat           // We need to check for blank lines
+30880>>>
+30880>>            Readln sValue
+30881>>          Until (Trim(sValue) ne '' OR Seqeof)
+30883>>          Move (Replaces(' ', sValue, '')) to sValue // Remove any embedded blanks.
+30884>>          If 'READCACHING=0' in (Uppercase(sValue)) Move 1 to iRetval
+30887>>          Indicate Seqeof True  // We're done.
+30888>>        End
+30888>>>
+30888>>      Until (Seqeof)
+30890>>    Send Seq_Close_Channel iChannel
+30891>>    Function_Return iRetval
+30892>>  End_Function // CheckSystemIni
+30893>>
+30893>>  // This client does NOT have entries in System.ini to disable read caching
+30893>>  // for Netware Networks.
+30893>>  // Add an entry in System.ini to disable read caching.
+30893>>  Procedure DoAppendToSystemIni
+30894>>    String sWindir sFileName
+30895>>    Integer iChannel
+30895>>
+30895>>    Get_Windows_Directory to sWindir
+30896>>    Move '\SYSTEM.INI' to sFileName
+30897>>    Get Seq_Append_Output_Channel (sWindir + sFileName) to iChannel
+30898>>    If iChannel Eq DF_SEQ_CHANNEL_ERROR Begin // This should be impossible, but...
+30900>>      Error 33 (sWindir + sFileName)
+30901>>>
+30901>>      Procedure_Return
+30902>>    End // If iChannel Eq DF_SEQ_CHANNEL_ERROR Begin
+30902>>>
+30902>>    Writeln ''
+30904>>    Writeln ''
+30906>>    Writeln channel iChannel '[NWREDIR]'
+30909>>    Writeln channel iChannel 'READCACHING=0'
+30912>>    Send Seq_Close_Channel iChannel
+30913>>    If (iChannel = DF_SEQ_CHANNEL_ERROR) Error 32 (sWindir + sFileName)
+30916>>  End_Procedure // DoAppendToSystemIni
+30917>>
+30917>>  Procedure DoChangeSystemIni
+30918>>    String sWindir sFileName sFileName2 sValue
+30919>>    Integer iInChannel iOutChannel
+30919>>
+30919>>    Get_Windows_Directory to sWindir
+30920>>    Move '\SYSTEM.INI' to sFileName
+30921>>    Get Seq_Open_Input_Channel (sWindir + sFileName) to iInChannel
+30922>>    Move '\SYSTEM.NEW' to sFileName2
+30923>>    Get Seq_Open_Output_Channel ('DIRECT:' + sWindir + sFileName2) to iOutChannel
+30924>>    If (iInChannel  = DF_SEQ_CHANNEL_ERROR OR ;        iOutChannel = DF_SEQ_CHANNEL_ERROR) Begin // This should be impossible, but...
+30926>>      Send Seq_Close_Channel iInChannel
+30927>>      Send Seq_Close_Channel iOutChannel
+30928>>      If (iInChannel  = DF_SEQ_CHANNEL_ERROR) Error 33 (sWindir + sFileName)
+30931>>      If (iOutChannel = DF_SEQ_CHANNEL_ERROR) Error 32 (sWindir + sFileName)
+30934>>      Procedure_Return
+30935>>    End // If iChannel Eq DF_SEQ_CHANNEL_ERROR Begin
+30935>>>
+30935>>    Repeat // This should be no problem since we only go here if we succesfully opened it before.
+30935>>>
+30935>>      Readln channel iInChannel sValue
+30937>>      If '[NWREDIR]' in (Uppercase(sValue)) Begin
+30939>>        Writeln channel iOutChannel sValue
+30942>>        Writeln channel iOutChannel 'READCACHING=0'
+30945>>      End // If '[NWREDIR]' in (Uppercase(sValue)) Begin
+30945>>>
+30945>>      Else Writeln channel iOutChannel sValue
+30949>>    Until (Seqeof)
+30951>>
+30951>>    Send Seq_Close_Channel iInChannel
+30952>>    Send Seq_Close_Channel iOutChannel
+30953>>
+30953>>    Renamefile (sWindir + '\SYSTEM.INI') to (sWindir + '\SYSTEM.OLD')
+30954>>>
+30954>>    Get Seq_Open_Input_Channel (sWindir + '\SYSTEM.INI') to iInChannel
+30955>>    Send Seq_Close_Channel iInChannel
+30956>>    If iInChannel Ne DF_SEQ_CHANNEL_ERROR ;      Erasefile  (sWindir + '\SYSTEM.INI')   // Workaround for rename file in pre 5.1 VDF versions.
+30959>>    Renamefile (sWindir + '\SYSTEM.NEW') to (sWindir + '\SYSTEM.INI')
+30960>>>
+30960>>    If iInChannel Ne DF_SEQ_CHANNEL_ERROR ;      Erasefile  (sWindir + '\SYSTEM.NEW')
+30963>>
+30963>>  End_Procedure // DoChangeSystemIni
+30964>>
+30964>>  // Function returns: 0 if Files setting was incorrect
+30964>>  //                   1 if Files was correct
+30964>>  //                  -1 if Config.sys could not be opened
+30964>>  //                  -2 if Files setting was incorrect and FILESHIGH was used.
+30964>>  // We need to read each line from the file This is because
+30964>>  // 'FILES= ' can be present on more than one line.
+30964>>  Function CheckConfigSys Returns Integer
+30965>>    Integer iRetval iFiles iCheck iChannel
+30966>>    String sFileName sValue sCheck
+30966>>
+30966>>    Get piFiles to iFiles
+30967>>    If iFiles eq 0 Function_Return 1 // Then we don't check
+30970>>    Move 'C:\CONFIG.SYS' to sFileName
+30971>>    Get Seq_Open_Input_Channel sFileName to iChannel
+30972>>    If iChannel Eq DF_SEQ_CHANNEL_ERROR Function_Return -1
+30975>>      Repeat
+30975>>>
+30975>>        Readln sValue
+30976>>        Move (Uppercase(Trim(sValue))) to sValue
+30977>>        If ((sValue contains 'FILES' AND (sValue contains '=')) AND Not(sValue contains 'REM')) Begin // Ok, we found it.
+30979>>          Move (Trim(Replace('FILES', sValue, ''))) to sValue
+30980>>          Move (Trim(Replace('=', sValue, '')))     to sValue
+30981>>          If (sValue contains 'HIGH') Begin
+30983>>            Move (Trim(Replace('HIGH', sValue, ''))) to sValue
+30984>>            If (Trim(sValue) < iFiles)       Move -2 to iRetval // Then we will write FILESHIGH=xx to config.sys
+30987>>            Else if (Trim(sValue) >= iFiles) Move  1 to iRetval // Then FILES is correct.
+30991>>          End // If (sValue contains 'HIGH') Begin
+30991>>>
+30991>>          Else if (Trim(sValue) >= iFiles)   Move  1 to iRetval // Then FILES is correct.
+30995>>        End // If ((sValue contains 'FILES' AND (sValue contains '=')) AND Not(sValue contains 'REM')) Begin
+30995>>>
+30995>>      Until (Seqeof)
+30997>>    Send Seq_Close_Channel iChannel
+30998>>    Function_Return iRetval
+30999>>  End_Function // CheckConfigSys
+31000>>
+31000>>  // Pass -2 if to write FILESHIGH=xx (consistent with CheckConfigSys above)
+31000>>  // Pass whatever else if to write FILES=xx
+31000>>  Procedure DoAppendConfigSys Integer iHigh
+31001>>    Integer iFiles iChannel
+31002>>    String sFileName
+31002>>
+31002>>    Move 'C:\CONFIG.SYS' to sFileName
+31003>>    Get piFiles to iFiles
+31004>>    Get Seq_Append_Output_Channel sFileName to iChannel // Append
+31005>>    Writeln ''
+31007>>    If iHigh eq -2 Writeln channel iChannel ('FILESHIGH = ' + Trim(iFiles))
+31012>>    Else Writeln channel iChannel ('FILES = ' + Trim(iFiles))
+31016>>    Send Seq_Close_Channel iChannel
+31017>>  End_Procedure // DoAppendConfigSys
+31018>>
+31018>>  // VDF5 requires Opportunistic file locking be disabled at an NT server.
+31018>>  // The following registry changes are done if necessary by this procedure:
+31018>>  // HKEY_LOCAL_MACHINE\system\CurrentControlSet\services\LanmanServer\EnableOplockForceClose-->1
+31018>>  // HKEY_LOCAL_MACHINE\system\CurrentControlSet\services\LanmanServer\EnableOpLocks-->0
+31018>>  Procedure DoCheckWindowsNTServerSettings
+31019>>    Integer dwValue1 dwValue2 iRetval iMajorVersion iServicePack
+31020>>    String sText sRegPath sKey sValue sLogText sCSDVersion
+31020>>
+31020>>    Integer bRunOnNew bRunOn2k
+31020>>
+31020>>    Set_Registry_Root to HKEY_LOCAL_MACHINE 'System'
+31021>>    Move 'CurrentControlSet\Services\LanmanServer'                    to sRegPath
+31022>>    Move 'Parameters'                                                 to sKey
+31023>>    Get External_Profile_Dword sRegPath sKey 'EnableOplockForceClose' to dwValue1
+31024>>    Get External_Profile_Dword sRegPath sKey 'EnableOpLocks'          to dwValue2
+31025>>
+31025>>    // Note: We do not check for REG_VALUE_NOT_EXIST here, it has been
+31025>>    // done in the procedure that called us (DoCheckCurrentClient)
+31025>>    If ((dwValue1 <> 1 OR dwValue2 <> 0) AND (pbDoNTRegistryChanges(Self))) Begin
+31027>>      Move MBR_Yes to iRetval
+31028>>      If Not (pbSilentMode(Self)) Begin
+31030>>        Move csChangesAreAboutToBeMade to sText
+ERROR: 4328 Undefined symbol in argument CSCHANGESAREABOUTTOBEMADE ON LINE: 1379 (31030) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31031>>        Append sText csMakeChanges
+        Append sText csMakeChanges
+ERROR: 4345 Type check error CSMAKECHANGES, CSMAKECHANGES, CSMAKECH ON LINE: 1380 (31031) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSMAKECHANGES ON LINE: 1380 (31031) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31032>>        Get YesNo_Box sText to iRetval
+31033>>        If iRetval eq MBR_No Move 1 to iRetval
+31036>>      End // If not (pbSilentMode(Self)) Begin
+31036>>>
+31036>>      If iRetval eq MBR_Yes Begin
+31038>>        Set pbSilentMode to True                    // Do this to prevent asking the user again...
+31039>>        If (dwValue1 <> 1) ;          Set External_Profile_Dword sRegPath sKey 'EnableOplockForceClose' to 1
+31042>>        If (dwValue2 <> 0) ;          Set External_Profile_Dword sRegPath sKey 'EnableOpLocks'          to 0
+31045>>        // Check if the changes were actually made. If not; user rights disallowed it.
+31045>>        Get External_Profile_Dword sRegPath sKey 'EnableOplockForceClose'   to dwValue1
+31046>>        Get External_Profile_Dword sRegPath sKey 'EnableOpLocks'            to dwValue2
+31047>>        If (dwValue1 = REG_VALUE_NOT_EXIST OR dwValue2 = REG_VALUE_NOT_EXIST) Move 4 to iRetval
+31050>>        Else Begin
+31051>>          Move 2 to iRetval
+31052>>          If (dwValue1 <> 1) Begin
+31054>>            Move ('HKEY_LOCAL_MACHINE\System\' + sRegPath + '\' + sKey + '\EnableOplockForceClose has been set to 1') to sLogText
+31055>>            Send DoWriteLog sLogText
+31056>>          End // If (dwValue1 <> 1) Begin
+31056>>>
+31056>>          If (dwValue2 <> 0) Begin
+31058>>            Move ('HKEY_LOCAL_MACHINE\System\' + sRegPath + '\' + sKey + '\EnableOpLocks has been set to 0') to sLogText
+31059>>            Send DoWriteLog sLogText
+31060>>          End // If (dwValue2 <> 0) Begin
+31060>>>
+31060>>        End // Else Begin
+31060>>>
+31060>>      End // If iRetval eq MBR_Yes Begin
+31060>>>
+31060>>    End // If ((dwValue1 <> 1 OR dwValue2 <> 0) AND (pbDoNTRegistryChanges(Self))) Begin
+31060>>>
+31060>>
+31060>>    If iRetval eq 1 Begin
+31062>>      Move csChangesWereDisallowed to sText   // We do this to avoid the length of a source line
+ERROR: 4328 Undefined symbol in argument CSCHANGESWEREDISALLOWED ON LINE: 1409 (31062) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31063>>      Append sText csProgramWillBeTerminated  // to be more than 255 characters.
+      Append sText csProgramWillBeTerminated  // to be more than 255 characters.
+ERROR: 4345 Type check error CSPROGRAMWILLBETERMINATED, CSPROGRAMWILLBETERMINATED, C ON LINE: 1410 (31063) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPROGRAMWILLBETERMINATED ON LINE: 1410 (31063) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31064>>      Send DoWriteLog sText
+31065>>    End // If iRetval eq 1 Begin
+31065>>>
+31065>>    Else If iRetval eq 2 Begin
+31068>>      Move csRegistryChangesHasBeenMade to sText
+ERROR: 4328 Undefined symbol in argument CSREGISTRYCHANGESHASBEENMADE ON LINE: 1414 (31068) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31069>>      Append sText csPleaseRestartTheProgram
+      Append sText csPleaseRestartTheProgram
+ERROR: 4345 Type check error CSPLEASERESTARTTHEPROGRAM, CSPLEASERESTARTTHEPROGRAM, CSPLEASERESTARTTHEPROGRAM, C ON LINE: 1415 (31069) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPLEASERESTARTTHEPROGRAM ON LINE: 1415 (31069) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31070>>      Send DoWriteLog sText
+31071>>    End // Else If iRetval eq 2 Begin
+31071>>>
+31071>>    Else If iRetval eq 4 Begin
+31074>>      Move csRegistryChangesCouldNotBePerformed to sText
+ERROR: 4328 Undefined symbol in argument CSREGISTRYCHANGESCOULDNOTBEPERFORMED ON LINE: 1419 (31074) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31075>>      Append sText csUserRightsIsProbablyNotSufficient
+      Append sText csUserRightsIsProbablyNotSufficient
+ERROR: 4345 Type check error CSUSERRIGHTSISPROBABLYNOTSUFFICIENT, CSUSERRIGHTSISPROBABLYNOTSUFFICIENT, CSUSERRIGHTSISPROBABLYNOTSUFFICIENT, CSUSERRI ON LINE: 1420 (31075) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSUSERRIGHTSISPROBABLYNOTSUFFICIENT ON LINE: 1420 (31075) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31076>>      Append sText csContactYourSystemAdministrator
+      Append sText csContactYourSystemAdministrator
+ERROR: 4345 Type check error CSCONTACTYOURSYSTEMADMINISTRATOR, CSCONTACTYOURSYSTEMADMINISTRATOR, CSCONTACTYOURSYSTEMADMINISTRATOR, CSCONTACTYOURSYSTEMADMINISTRATOR, CSCONTACTYOURSYST ON LINE: 1421 (31076) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSCONTACTYOURSYSTEMADMINISTRATOR ON LINE: 1421 (31076) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31077>>      Send DoWriteLog sText
+31078>>    End // Else If iRetval eq 4 Begin
+31078>>>
+31078>>
+31078>>    If iRetval Begin
+31080>>      Send Stop_Box sText
+31081>>      // RDISK makes a backup of the registry on NT machines
+31081>>      If (iRetval = 2 AND (pbNTRegistryBackup(Self))) Begin
+31083>>        Send DoWriteLog 'RDISK /S has been run.'
+31084>>        Runprogram 'RDISK /S' // Aborts the VDF program.
+31085>>      End // If (iRetval = 2 AND (pbNTRegistryBackup(Self))) Begin
+31085>>>
+31085>>      If (iRetval = 1 OR iRetval = 3 OR iRetval = 4 OR iRetVal = 6 OR iRetVal = 7 OR iRetVal = 8) BEGIN
+31087>>        Abort
+31088>>>
+31088>>      END
+31088>>>
+31088>>    End // If iRetval Begin
+31088>>>
+31088>>
+31088>>  End_Procedure // DoCheckWindowsNTServerSettings
+31089>>
+31089>>  // In addition to VDF installation requirements,
+31089>>  // there are several other changes that needs to be made for each NT workstation in
+31089>>  // order to ensure the robustness of the dataflex database.
+31089>>  // The following registry changes are done if necessary by this procedure:
+31089>>  // HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\UseOpportunisticLocking -->0'
+31089>>  // Registry has also been set to the recommended settings by LOTUS Corp.
+31089>>  // HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\UtilizeNtCaching -->0'
+31089>>  // HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\UseUnlockBehind -->1'
+31089>>  // HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters\UseLockReadUnlock -->0x0'
+31089>>  // For Windows 2000, XP and 2003 the rules are different, MS suggests to set the following registry key:
+31089>>  // HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\MRXSmb\Parameters\OplocksDisabled --> 1
+31089>>  Procedure DoCheckWindowsNTClientSettings
+31090>>    Integer iRetval dwValue1 dwValue2 dwValue3 dwValue4 dwValue5
+31091>>    Integer iMajorVersion iServicePack
+31091>>    String sText sRegPath sKey sValue sLogText sCSDVersion sRegPath2
+31091>>
+31091>>    Integer bRunOnNew bRunOn2k
+31091>>
+31091>>    Set_Registry_Root to HKEY_LOCAL_MACHINE 'System'
+31092>>    Move 'CurrentControlSet\Services\LanmanWorkstation'                to sRegPath
+31093>>    Move 'Parameters'                                                  to sKey
+31094>>    Get External_Profile_Dword sRegPath sKey 'UseOpportunisticLocking' to dwValue1
+31095>>    Get External_Profile_Dword sRegPath sKey 'UtilizeNtCaching'        to dwValue2
+31096>>    Get External_Profile_Dword sRegPath sKey 'UseUnlockBehind'         to dwValue3
+31097>>    Get External_Profile_Dword sRegPath skey 'UseLockReadUnlock'       to dwValue4
+31098>>
+31098>>    // **WvA: If Windows 2000, XP or 2003 server then set the following client setting.
+31098>>    Get piMajorVersion To iMajorVersion
+31099>>    If (iMajorVersion = 5) Begin
+31101>>      Move 'CurrentControlSet\Services\MRXSmb'                         To sRegPath2
+31102>>      Move 'Parameters'                                                To sKey
+31103>>      Get External_Profile_Dword sRegPath2 sKey 'OplocksDisabled'      To dwValue5
+31104>>    End
+31104>>>
+31104>>
+31104>>    If ((dwValue1 <> 0 OR dwValue2 <> 0 OR dwValue3 <> 1 OR dwValue4 <> 0 AND (pbDoNTRegistryChanges(Self))) ;         or ((iMajorVersion = 5) And (dwValue5=0)) ) Begin
+31106>>      Move MBR_Yes to iRetval
+31107>>      If Not (pbSilentMode(Self)) Begin
+31109>>        Move csChangesAreAboutToBeMade to sText     // We do this to avoid the length of a source line
+ERROR: 4328 Undefined symbol in argument CSCHANGESAREABOUTTOBEMADE ON LINE: 1477 (31109) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31110>>        Append sText csMakeChanges                  // to be more than 255 characters.
+        Append sText csMakeChanges                  // to be more than 255 characters.
+ERROR: 4345 Type check error CSMAKECHANGES, CSMAKECHANGES, CSMAKECH ON LINE: 1478 (31110) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSMAKECHANGES ON LINE: 1478 (31110) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31111>>        Get YesNo_Box sText to iRetval
+31112>>        If iRetval eq MBR_No Move 1 to iRetval
+31115>>      End // If Not (pbSilentMode(Self)) Begin
+31115>>>
+31115>>      If iRetval eq MBR_Yes Begin
+31117>>        Set pbSilentMode to True                    // Do this to prevent asking the user again...
+31118>>        Set_Registry_Root to HKEY_LOCAL_MACHINE 'System'
+31119>>        If (dwValue1 <> 0) ;          Set External_Profile_Dword sRegPath sKey 'UseOpportunisticLocking' to 0
+31122>>        If (dwValue2 <> 0) ;          Set External_Profile_Dword sRegPath sKey 'UtilizeNtCaching'        to 0
+31125>>        If (dwValue3 <> 1) ;          Set External_Profile_Dword sRegPath sKey 'UseUnlockBehind'         to 1
+31128>>        If (dwValue4 <> 0) ;          Set External_Profile_Dword sRegPath sKey 'UseLockReadUnlock'       to 0
+31131>>        If ((iMajorVersion = 5) And (dwValue5=0)) Begin
+31133>>          Set External_Profile_Dword sRegPath2 sKey 'OplocksDisabled'        to 1
+31134>>        End
+31134>>>
+31134>>        // Now check that a change actualy were performed. If not user rights disallowed it.
+31134>>        Get External_Profile_Dword sRegPath sKey 'UseOpportunisticLocking' to dwValue1
+31135>>        If dwValue1 eq REG_VALUE_NOT_EXIST Move 4 to iRetval
+31138>>        Else Begin
+31139>>          Move 2 to iRetval
+31140>>          If (dwValue1 <> 0) Begin
+31142>>            Move ('HKEY_LOCAL_MACHINE\System\' + sRegPath + '\' + sKey + '\UseOpportunisticLocking has been set to 0') to sLogText
+31143>>            Send DoWriteLog sLogText
+31144>>          End // If (dwValue1 <> 0) Begin
+31144>>>
+31144>>          If (dwValue2 <> 0) Begin
+31146>>            Move ('HKEY_LOCAL_MACHINE\System\' + sRegPath + '\' + sKey + '\UtilizeNtCaching has been set to 0') to sLogText
+31147>>            Send DoWriteLog sLogText
+31148>>          End // If (dwValue2 <> 0) Begin
+31148>>>
+31148>>          If (dwValue3 <> 1) Begin
+31150>>            Move ('HKEY_LOCAL_MACHINE\System\' + sRegPath + '\' + sKey + '\UseUnlockBehind has been set to 1') to sLogText
+31151>>            Send DoWriteLog sLogText
+31152>>          End // If (dwValue3 <> 1) Begin
+31152>>>
+31152>>          If (dwValue4 <> 0) Begin
+31154>>            Move ('HKEY_LOCAL_MACHINE\System\' + sRegPath + '\' + sKey + '\UseLockReadUnlock has been set to 0') to sLogText
+31155>>            Send DoWriteLog sLogText
+31156>>          End // If (dwValue4 <> 0) Begin
+31156>>>
+31156>>        End // Else Begin.
+31156>>>
+31156>>        If ((iMajorVersion = 5) And (dwValue5=0)) Begin
+31158>>          Move ('HKEY_LOCAL_MACHINE\System\' + sRegPath2 + '\' + sKey + '\OplocksDisabled has been set to 1') to sLogText
+31159>>          Send DoWriteLog sLogText
+31160>>        End
+31160>>>
+31160>>
+31160>>      End // If iRetval eq MBR_Yes Begin
+31160>>>
+31160>>    End // If (dwValue1 ne 0 OR dwValue2 ne 0 OR dwValue3 ne 1 OR dwValue4 ne 0 AND (pbDoNTRegistryChanges(Self))) Begin
+31160>>>
+31160>>
+31160>>    If iRetval eq 1 Begin                           // We do this to avoid the length of a source line
+31162>>      Move csChangesWereDisallowed to sText // to be more than 255 characters.
+ERROR: 4328 Undefined symbol in argument CSCHANGESWEREDISALLOWED ON LINE: 1527 (31162) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31163>>      Send DoWriteLog sText
+31164>>    End // If iRetval eq 1 Begin
+31164>>>
+31164>>    Else If iRetval eq 2 Begin
+31167>>      Move csRegistryChangesHasBeenMade to sText
+ERROR: 4328 Undefined symbol in argument CSREGISTRYCHANGESHASBEENMADE ON LINE: 1531 (31167) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31168>>      Append sText csPleaseRestartTheProgram
+      Append sText csPleaseRestartTheProgram
+ERROR: 4345 Type check error CSPLEASERESTARTTHEPROGRAM, CSPLEASERESTARTTHEPROGRAM, C ON LINE: 1532 (31168) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPLEASERESTARTTHEPROGRAM ON LINE: 1532 (31168) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31169>>      Send DoWriteLog sText
+31170>>    End // Else If iRetval eq 2 Begin
+31170>>>
+31170>>    Else If iRetval eq 4 Begin
+31173>>      Move csRegistryChangesCouldNotBePerformed to sText
+ERROR: 4328 Undefined symbol in argument CSREGISTRYCHANGESCOULDNOTBEPERFORMED ON LINE: 1536 (31173) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31174>>      Append sText csUserRightsIsProbablyNotSufficient
+      Append sText csUserRightsIsProbablyNotSufficient
+ERROR: 4345 Type check error CSUSERRIGHTSISPROBABLYNOTSUFFICIENT, CSUSERRIGHTSISPROBABLYNOTSUFFICIENT, CSUSERRIGHTSISPROB ON LINE: 1537 (31174) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSUSERRIGHTSISPROBABLYNOTSUFFICIENT ON LINE: 1537 (31174) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31175>>      Append sText csContactYourSystemAdministrator
+      Append sText csContactYourSystemAdministrator
+ERROR: 4345 Type check error CSCONTACTYOURSYSTEMADMINISTRATOR, CSCONTACTYOURSYSTEMADMINISTRATOR, CSCONTACTYOURSYSTEMADMINISTRATOR, CSCONTACTYOURSYSTEMADMIN ON LINE: 1538 (31175) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSCONTACTYOURSYSTEMADMINISTRATOR ON LINE: 1538 (31175) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31176>>      Send DoWriteLog sText
+31177>>    End // Else If iRetval eq 4 Begin
+31177>>>
+31177>>
+31177>>    If iRetval Begin
+31179>>      Send Stop_Box sText
+31180>>      // RDISK makes a backup of the registry on NT machines
+31180>>      If (iRetval = 2 AND (pbNTRegistryBackup(Self))) Begin
+31182>>        Send DoWriteLog 'RDISK /S has been run.'
+31183>>        Runprogram 'RDISK /S'                          // This aborts the program.
+31184>>      End // If (iRetval = 2 AND (pbNTRegistryBackup(Self))) Begin
+31184>>>
+31184>>      If (iRetval = 1 OR iRetval = 3 OR iRetval = 4 OR iRetVal = 6 OR iRetVal = 7 OR iRetVal = 8) BEGIN
+31186>>        ABORT
+31187>>>
+31187>>      End
+31187>>>
+31187>>    End // If iRetval Begin
+31187>>>
+31187>>
+31187>>  End_Procedure // DoCheckWindowsNTClientSettings
+31188>>
+31188>>  // In addition to VDF installation requirements,
+31188>>  // there are changes that should be made for a Windows 95 WorkStation using Novell client32
+31188>>  // registry setting in order to ensure the robustness of the dataflex database.
+31188>>  // HKEY_LOCAL_MACHINE\Network\Novell\System Config\Netware Dos Requester\Cache Writes\0-->off
+31188>>  // This recommendation is made by Lotus Corp.
+31188>>  // Note: the registry setting 'Opportunistic Locking' does no longer exist from version 2.2
+31188>>  Procedure DoCheckNetwareClient32Settings
+31189>>    String  sRegPath sKey sValueName sRetval sRetval2 sText sLogText
+31190>>    Integer iRetval dwValue1 dwValue2 iCheck1 iCheck4
+31190>>
+31190>>    Set_Registry_Root to HKEY_LOCAL_MACHINE 'Network'
+31191>>    Move 'Novell\System Config\Install'                      to sRegPath
+31192>>    Move 'Client Version'                                    to sKey
+31193>>    Get External_Profile_Dword sRegPath sKey 'Major Version' to dwValue1
+31194>>    Get External_Profile_Dword sRegPath sKey 'Minor Version' to dwValue2
+31195>>    If dwValue1 lt 2 Move 1 to iCheck1
+31198>>    Else If (dwValue1 = 2 AND dwValue2 < 2) Move 1 to iCheck1
+31202>>
+31202>>    Set_Registry_Root to HKEY_LOCAL_MACHINE 'Network'
+31203>>    Move 'Novell\System Config'                              to sRegPath
+31204>>    Move 'Netware Dos Requester\Cache Writes'                to sKey
+31205>>    Move '0'                                                 to sValueName
+31206>>    Get_Foreign_Profile_String sRegPath sKey sValueName      to sRetval
+31210>>    xShowln "Cache Writes = " (Trim(sRetval))
+31210>>    // Some versions of Client32 write 'NO' and other 'off'
+31210>>    If (Uppercase(sRetval) <> 'NO' AND Uppercase(sRetval) <> 'OFF') Begin
+31212>>      xShowln "Cache Writes needs to be changed."
+31212>>      Move MBR_Yes to iRetval
+31213>>      If Not (pbSilentMode(Self)) Begin
+31215>>        Move csChangesAreAboutToBeMade to sText     // We do this to avoid the length of a source line
+ERROR: 4328 Undefined symbol in argument CSCHANGESAREABOUTTOBEMADE ON LINE: 1585 (31215) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31216>>        Append sText csMakeChanges                  // to be more than 255 characters.
+        Append sText csMakeChanges                  // to be more than 255 characters.
+ERROR: 4345 Type check error CSMAKECHANGES, CSMAKECHANGES, CSMAKECH ON LINE: 1586 (31216) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSMAKECHANGES ON LINE: 1586 (31216) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31217>>        Get YesNo_Box sText to iRetval
+31218>>        If iRetval eq MBR_No Move 1 to iRetval
+31221>>      End // If Not (pbSilentMode(Self)) Begin
+31221>>>
+31221>>      If iRetval eq MBR_Yes Begin
+31223>>        Set pbSilentMode to True                    // Do this to prevent asking the user again...
+31224>>        Set_Registry_Root to HKEY_LOCAL_MACHINE 'Network'
+31225>>        Set_Foreign_Profile_String sRegPath sKey sValueName  to 'off'
+31228>>        Get_Foreign_Profile_String sRegPath sKey sValueName  to sRetval
+31232>>        xShowln "Cache Writes after change = " (Trim(sRetval))
+31232>>        If (Uppercase(sRetval) <> 'OFF') Move 1 to iCheck4
+31235>>        Else Begin
+31236>>          Move 2 to iCheck4
+31237>>          Move ('HKEY_LOCAL_MACHINE\Network\' + sRegPath + '\' + sKey + '\' + sValueName + ' has been set to OFF') to sLogText
+31238>>          Send DoWriteLog sLogText
+31239>>        End // Else Begin
+31239>>>
+31239>>      End // If iRetval eq MBR_Yes Begin
+31239>>>
+31239>>    End // If ((Uppercase(sRetval)) ne 'OFF') Begin
+31239>>>
+31239>>
+31239>>    Set_Registry_Root to HKEY_LOCAL_MACHINE 'Network'
+31240>>    Move 'Netware Dos Requester\Close Behind Ticks'          to sKey
+31241>>    Get_Foreign_Profile_String sRegPath sKey sValueName      to sRetval
+31245>>    xShowln "Close Behind Ticks = " (Trim(sRetval))
+31245>>    If (sRetval <> '0' AND sRetval <> '') Begin
+31247>>      xShowln "Close Behind Ticks needs to be changed."
+31247>>      Move MBR_Yes to iRetval
+31248>>      If Not (pbSilentMode(Self)) Begin
+31250>>        Move csChangesAreAboutToBeMade to sText     // We do this to avoid the length of a source line
+ERROR: 4328 Undefined symbol in argument CSCHANGESAREABOUTTOBEMADE ON LINE: 1613 (31250) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31251>>        Append sText csMakeChanges                  // to be more than 255 characters.
+        Append sText csMakeChanges                  // to be more than 255 characters.
+ERROR: 4345 Type check error CSMAKECHANGES, CSMAKECHANGES, CSMAKECH ON LINE: 1614 (31251) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSMAKECHANGES ON LINE: 1614 (31251) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31252>>        Get YesNo_Box sText to iRetval
+31253>>        If iRetval eq MBR_No Move 1 to iRetval
+31256>>      End // If Not (pbSilentMode(Self)) Begin
+31256>>>
+31256>>      If iRetval eq MBR_Yes Begin
+31258>>        Set pbSilentMode to True                    // Do this to prevent asking the user again...
+31259>>        Set_Registry_Root to HKEY_LOCAL_MACHINE 'Network'
+31260>>        Set_Foreign_Profile_String sRegPath sKey sValueName  to '0'
+31263>>        Get_Foreign_Profile_String sRegPath sKey sValueName  to sRetval
+31267>>        xShowln "Close Behind Ticks after change = " (Trim(sRetval))
+31267>>        If (Uppercase(sRetval) <> '0') Move 1 to iCheck4
+31270>>        Else Begin
+31271>>          Move 2 to iCheck4
+31272>>          Move ('HKEY_LOCAL_MACHINE\Network\' + sRegPath + '\' + sKey + '\' + sValueName + ' has been set to 0') to sLogText
+31273>>          Send DoWriteLog sLogText
+31274>>        End // Else Begin
+31274>>>
+31274>>      End // If iRetval eq MBR_Yes Begin
+31274>>>
+31274>>    End // If (sRetval <> '0' AND sRetval <> '') Begin
+31274>>>
+31274>>
+31274>>    Set_Registry_Root to HKEY_LOCAL_MACHINE 'Network'
+31275>>    Move 'Netware Dos Requester\Delay Writes'                to sKey
+31276>>    Get_Foreign_Profile_String sRegPath sKey sValueName      to sRetval
+31280>>    xShowln "Delay Writes = " (Trim(sRetval))
+31280>>
+31280>>    // Delay Writes:
+31280>>    If (Uppercase(sRetval) <> 'NO' AND Uppercase(sRetval) <> 'OFF') Begin
+31282>>      xShowln "Delay Writes to be changed."
+31282>>      Move MBR_Yes to iRetval
+31283>>      If Not (pbSilentMode(Self)) Begin
+31285>>        Move csChangesAreAboutToBeMade to sText     // We do this to avoid the length of a source line
+ERROR: 4328 Undefined symbol in argument CSCHANGESAREABOUTTOBEMADE ON LINE: 1643 (31285) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31286>>        Append sText csMakeChanges                  // to be more than 255 characters.
+        Append sText csMakeChanges                  // to be more than 255 characters.
+ERROR: 4345 Type check error CSMAKECHANGES, CSMAKECHANGES, CSMAKECH ON LINE: 1644 (31286) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSMAKECHANGES ON LINE: 1644 (31286) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31287>>        Get YesNo_Box sText to iRetval
+31288>>        If iRetval eq MBR_No Move 1 to iRetval
+31291>>      End // If Not (pbSilentMode(Self)) Begin
+31291>>>
+31291>>      If iRetval eq MBR_Yes Begin
+31293>>        Set pbSilentMode to True                    // Do this to prevent asking the user again...
+31294>>        Set_Registry_Root to HKEY_LOCAL_MACHINE 'Network'
+31295>>        Set_Foreign_Profile_String sRegPath sKey sValueName  to 'off'
+31298>>        Get_Foreign_Profile_String sRegPath sKey sValueName  to sRetval
+31302>>        xShowln "Delay Writes after change = " (Trim(sRetval))
+31302>>        If (Uppercase(sRetval) <> 'OFF') Move 1 to iCheck4
+31305>>        Else Begin
+31306>>          Move 2 to iCheck4
+31307>>          Move ('HKEY_LOCAL_MACHINE\Network\' + sRegPath + '\' + sKey + '\' + sValueName + ' has been set to OFF') to sLogText
+31308>>          Send DoWriteLog sLogText
+31309>>        End // Else Begin
+31309>>>
+31309>>      End // If iRetval eq MBR_Yes Begin
+31309>>>
+31309>>    End // If (Uppercase(sRetval) <> 'NO' AND Uppercase(sRetval) <> 'OFF') Begin
+31309>>>
+31309>>
+31309>>    Set_Registry_Root to HKEY_LOCAL_MACHINE 'Network'
+31310>>    Move 'Netware Dos Requester\File Cache Level'            to sKey
+31311>>    Get_Foreign_Profile_String sRegPath sKey sValueName      to sRetval
+31315>>    If ((Uppercase(sRetval)) <> '0') Begin
+31317>>      xShowln "File Cache Level needs to be changed."
+31317>>      Move MBR_Yes to iRetval
+31318>>      If Not (pbSilentMode(Self)) Begin
+31320>>        Move csChangesAreAboutToBeMade to sText     // We do this to avoid the length of a source line
+ERROR: 4328 Undefined symbol in argument CSCHANGESAREABOUTTOBEMADE ON LINE: 1670 (31320) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31321>>        Append sText csMakeChanges                  // to be more than 255 characters.
+        Append sText csMakeChanges                  // to be more than 255 characters.
+ERROR: 4345 Type check error CSMAKECHANGES, CSMAKECHANGES, CSMAKECH ON LINE: 1671 (31321) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSMAKECHANGES ON LINE: 1671 (31321) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31322>>        Get YesNo_Box sText to iRetval
+31323>>        If iRetval eq MBR_No Move 1 to iRetval
+31326>>      End // If Not (pbSilentMode(Self)) Begin
+31326>>>
+31326>>      If iRetval eq MBR_Yes Begin
+31328>>        Set pbSilentMode to True                    // Do this to prevent asking the user again...
+31329>>        Set_Registry_Root to HKEY_LOCAL_MACHINE 'Network'
+31330>>        Set_Foreign_Profile_String sRegPath sKey sValueName  to '0'
+31333>>        Get_Foreign_Profile_String sRegPath sKey sValueName  to sRetval
+31337>>        If (Uppercase(sRetval) <> '0') Move 1 to iCheck4
+31340>>        Else Begin
+31341>>          Move 2 to iCheck4
+31342>>          Move ('HKEY_LOCAL_MACHINE\Network\' + sRegPath + '\' + sKey + '\' + sValueName + ' has been set to 0') to sLogText
+31343>>          Send DoWriteLog sLogText
+31344>>        End // Else Begin
+31344>>>
+31344>>      End // If iRetval eq MBR_Yes Begin
+31344>>>
+31344>>    End // If ((Uppercase(sRetval)) <> '0') Begin
+31344>>>
+31344>>
+31344>>    If iRetval eq 1 Begin
+31346>>      Move csChangesWereDisallowed to sText
+ERROR: 4328 Undefined symbol in argument CSCHANGESWEREDISALLOWED ON LINE: 1690 (31346) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31347>>      Send DoWriteLog sText
+31348>>    End // If iRetval eq 1 Begin
+31348>>>
+31348>>    If iCheck1 Begin
+31350>>      Move csYourNovellNetwareClient32VersionIs to sText       // We do this to avoid the length of a source line
+ERROR: 4328 Undefined symbol in argument CSYOURNOVELLNETWARECLIENT32VERSIONIS ON LINE: 1694 (31350) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31351>>      Append sText " " (Trim(dwValue1) + "." + Trim(dwValue2)) // to be more than 255 characters.
+31353>>      Append sText csAndNeedToBeAtLeastVersion
+      Append sText csAndNeedToBeAtLeastVersion
+ERROR: 4345 Type check error CSANDNEEDTOBEATLEASTVERSION, CSANDNEEDTOBEATLEASTVERSION,  ON LINE: 1696 (31353) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSANDNEEDTOBEATLEASTVERSION ON LINE: 1696 (31353) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31354>>      Append sText csContactYourSystemAdministrator
+      Append sText csContactYourSystemAdministrator
+ERROR: 4345 Type check error CSCONTACTYOURSYSTEMADMINISTRATOR, CSCONTACTYOURSYSTEMADMINISTRATOR, CSCONTACTYOURSYSTEMADMIN ON LINE: 1697 (31354) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSCONTACTYOURSYSTEMADMINISTRATOR ON LINE: 1697 (31354) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31355>>      Send DoWriteLog sText
+31356>>    End // If iCheck1 Begin
+31356>>>
+31356>>
+31356>>    If iCheck4 Begin
+31358>>      If iCheck4 eq 1 Begin
+31360>>        Move csRegistryChangesCouldNotBePerformed to sText
+ERROR: 4328 Undefined symbol in argument CSREGISTRYCHANGESCOULDNOTBEPERFORMED ON LINE: 1703 (31360) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31361>>        Append sText csUserRightsIsProbablyNotSufficient
+        Append sText csUserRightsIsProbablyNotSufficient
+ERROR: 4345 Type check error CSUSERRIGHTSISPROBABLYNOTSUFFICIENT, CSUSERRIGHTSISPROBABLYNOTSUFFICIENT, CSUSERRIGHTSISPROBABLYNOTSUFFICIENT, CSUSERRIGHTSISPROB ON LINE: 1704 (31361) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSUSERRIGHTSISPROBABLYNOTSUFFICIENT ON LINE: 1704 (31361) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31362>>        Append sText csContactYourSystemAdministrator
+        Append sText csContactYourSystemAdministrator
+ERROR: 4345 Type check error CSCONTACTYOURSYSTEMADMINISTRATOR, CSCONTACTYOURSYSTEMADMINISTRATOR, CSCONTACTYOURSYSTEMADMINISTRATOR, CSCONTACTYOURSYSTEMADMINISTRATOR, CSCONTACTYOURSYSTEMADMINIST ON LINE: 1705 (31362) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSCONTACTYOURSYSTEMADMINISTRATOR ON LINE: 1705 (31362) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31363>>        Send DoWriteLog sText
+31364>>      End // If iCheck4 eq 1 Begin
+31364>>>
+31364>>      Else If iCheck4 eq 2 Begin
+31367>>        Move csRegistryChangesHasBeenMade to sText
+ERROR: 4328 Undefined symbol in argument CSREGISTRYCHANGESHASBEENMADE ON LINE: 1709 (31367) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31368>>        Append sText csPleaseRestartTheProgram
+        Append sText csPleaseRestartTheProgram
+ERROR: 4345 Type check error CSPLEASERESTARTTHEPROGRAM, CSPLEASERESTARTTHEPROGRAM, CSPLEASERESTARTTHEPROGRAM, CSPLEASERESTARTTHEPROGRAM, CSPLEASERESTARTTHEPROGRAM, CSPLEASERESTARTTHEPROGRAM, CSPLEASERESTARTTHEPROGRAM, C ON LINE: 1710 (31368) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPLEASERESTARTTHEPROGRAM ON LINE: 1710 (31368) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31369>>        Send DoWriteLog sText
+31370>>      End // Else If iCheck4 eq 2 Begin
+31370>>>
+31370>>    End // If iCheck4 Begin
+31370>>>
+31370>>
+31370>>    If (iRetval OR iCheck1 OR iCheck4) Begin
+31372>>      Send Stop_Box sText
+31373>>      Abort // Quit the application.
+31374>>>
+31374>>    End // If (iRetal OR iCheck1 OR iCheck4) Begin
+31374>>>
+31374>>  End_Procedure // DoCheckNetwareClient32Settings
+31375>>
+31375>>  // a Virtual Network Redirector VREDIR.VXD, ver. 4.00.955 or higher must be present.
+31375>>  // Due to the nature of local caching, it will NOT support ANY DataFlex based application running
+31375>>  // on a Microsoft Network in which this machine is a client.
+31375>>  // Although an acceptable Virtual Network Redirector (VREDIR.VXD) is found,
+31375>>  // (ver. 4.00.955 or higher) local read caching may still occur.
+31375>>  // The value of 'DiscardCacheOnOpen' will be set to 1 of the branch:
+31375>>  // HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VREDIR of the registry.
+31375>>  // There is one more setting that is needed for a Windows 95 WorkStation, in order to
+31375>>  // ensure the robustness of the dataflex database.
+31375>>  // HKEY_LOCAL_MACHINE\System\CurrentControSet\control\FileSystem\DriveWriteBehind-->00 00 00 00
+31375>>  // This recommendation has been made by Lotus Corp.
+31375>>  Procedure DoCheckWindows95ClientSettings
+31376>>    String  sRegPath sKey sValueName
+31377>>    String  sRetval sText sProgram sLogText
+31377>>    Integer iRetval iReply iCheck1 iCheck2 iCheck3 iCheck4 dwValue
+31377>>
+31377>>    // Function returns  0 if Files setting was not correct
+31377>>    //                   1 if Files was correct
+31377>>    //                  -1 if Config.sys could not be opened...
+31377>>    //                  -2 if Files setting was incorrect and FILESHIGH was used.
+31377>>    Get CheckConfigSys to iRetval
+31378>>    xShowln "CheckConfigIni returns = " iRetval
+31378>>    If (iRetval = 0 OR iRetval = -2) Begin
+31380>>      Move MBR_Yes to iReply
+31381>>      If Not (pbSilentMode(Self)) Begin
+31383>>        Move csChangesAreAboutToBeMadeToYourConfig to sText
+ERROR: 4328 Undefined symbol in argument CSCHANGESAREABOUTTOBEMADETOYOURCONFIG ON LINE: 1746 (31383) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31384>>        Append sText csMakeChanges
+        Append sText csMakeChanges
+ERROR: 4345 Type check error CSMAKECHANGES, CSMAKECHANGES, CSMAKECH ON LINE: 1747 (31384) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSMAKECHANGES ON LINE: 1747 (31384) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31385>>        Get YesNo_Box sText to iReply
+31386>>      End // If Not (pbSilentMode(Self)) Begin
+31386>>>
+31386>>      If iReply eq MBR_Yes Begin
+31388>>        Send DoAppendConfigSys iRetval
+31389>>        Move 33 to iCheck1
+31390>>      End // If iReply eq MBR_Yes Begin
+31390>>>
+31390>>      Else Move 4 to iCheck1
+31392>>    End // If iRetval eq 0 Begin
+31392>>>
+31392>>
+31392>>    Else If iRetval eq -1 Move 11 to iCheck1
+31396>>
+31396>>    Get CheckSystemIni to iRetval
+31397>>    xShowln "CheckSystemIni returns = " iRetval
+31397>>    // Function returns  0 if NWREDIR was not found
+31397>>    //                   1 if NWREDIR was found and ReadCaching is correct set to 0
+31397>>    //                  -1 if Then system.ini could not be opened...
+31397>>    //                  -2 if ReadCaching <> 0
+31397>>    If (iRetval = 0 OR iRetval = -2) Begin
+31399>>      Move MBR_Yes to iReply
+31400>>      If Not (pbSilentMode(Self)) Begin
+31402>>        Move csChangesAreAboutToBeMadeToYourSystem to sText
+ERROR: 4328 Undefined symbol in argument CSCHANGESAREABOUTTOBEMADETOYOURSYSTEM ON LINE: 1768 (31402) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31403>>        Append sText csMakeChanges
+        Append sText csMakeChanges
+ERROR: 4345 Type check error CSMAKECHANGES, CSMAKECHANGES, CSMAKECH ON LINE: 1769 (31403) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSMAKECHANGES ON LINE: 1769 (31403) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31404>>        Get YesNo_Box sText to iReply
+31405>>      End // If Not (pbSilentMode(Self)) Begin
+31405>>>
+31405>>      If iReply eq MBR_Yes Begin
+31407>>        If iRetval eq 0 Begin
+31409>>          Send DoAppendToSystemIni
+31410>>          Move 3 to iCheck1
+31411>>        End // If iRetval eq 0 Begin
+31411>>>
+31411>>        Else If iRetval eq -2 Begin
+31414>>          Send DoChangeSystemIni
+31415>>          Move 2 to iCheck1
+31416>>        End // Else If iRetval eq -2 Begin
+31416>>>
+31416>>      End // If iReply eq MBR_Yes Begin
+31416>>>
+31416>>      Else Move 4 to iCheck1
+31418>>    End // If iRetval eq 0 Begin
+31418>>>
+31418>>
+31418>>    Else If iRetval eq -1 Move 1 to iCheck1
+31422>>
+31422>>    Set_Registry_Root to HKEY_LOCAL_MACHINE 'System'
+31423>>    Move 'CurrentControlSet\Services\VXD'                              to sRegPath
+31424>>    Move 'VREDIR'                                                      to sKey
+31425>>    Get External_Profile_Dword sRegPath sKey 'DiscardCacheOnOpen'      to dwValue
+31426>>
+31426>>    If dwValue eq REG_VALUE_NOT_EXIST Move 1 to iCheck2
+31429>>
+31429>>    Else If (dwValue <> 1) Begin
+31432>>      Move MBR_Yes to iRetval
+31433>>      If Not (pbSilentMode(Self)) Begin
+31435>>        Move csChangesAreAboutToBeMade to sText
+ERROR: 4328 Undefined symbol in argument CSCHANGESAREABOUTTOBEMADE ON LINE: 1797 (31435) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31436>>        Append sText csMakeChanges
+        Append sText csMakeChanges
+ERROR: 4345 Type check error CSMAKECHANGES, CSMAKECHANGES, CSMAKECH ON LINE: 1798 (31436) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSMAKECHANGES ON LINE: 1798 (31436) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31437>>        Get YesNo_Box sText to iRetval
+31438>>      End // If Not (pbSilentMode(Self)) Begin
+31438>>>
+31438>>      If iRetval eq MBR_Yes Begin
+31440>>        Set pbSilentMode to True                    // Do this to prevent asking the user again...
+31441>>        Set_Registry_Root to HKEY_LOCAL_MACHINE 'System'
+31442>>        If (dwValue <> 1 ) ;          Set External_Profile_Dword sRegPath sKey 'DiscardCacheOnOpen' to 1
+31445>>        Get External_Profile_Dword sRegPath sKey 'DiscardCacheOnOpen'   to dwValue
+31446>>        If dwValue eq REG_VALUE_NOT_EXIST Move 1 to iCheck3
+31449>>        Else Begin
+31450>>          Move 2 to iCheck3
+31451>>          If (dwValue <> 1 ) Begin
+31453>>            Move ('HKEY_LOCAL_MACHINE\System\' + sRegPath + '\' + sKey + '\DiscardCacheOnOpen has been set to 1') to sLogText
+31454>>            Send DoWriteLog sLogText
+31455>>          End // If (dwValue <> 1 ) Begin
+31455>>>
+31455>>        End // Else Begin
+31455>>>
+31455>>      End // If iRetval eq MBR_Yes Begin
+31455>>>
+31455>>    End // Else If dwValue ne 1 Begin
+31455>>>
+31455>>
+31455>>    Set_Registry_Root to HKEY_LOCAL_MACHINE 'System'
+31456>>    Move 'CurrentControlSet\Control'                            to sRegPath
+31457>>    Move 'FileSystem'                                           to sKey
+31458>>    Get_Foreign_Profile_String sRegPath sKey 'DriveWriteBehind' to sRetval
+31462>>    If (Trim(sRetval) <> '00 00 00 00') Begin
+31464>>      Move MBR_Yes to iRetval
+31465>>      If Not (pbSilentMode(Self)) Begin
+31467>>        Move csChangesAreAboutToBeMade to sText
+ERROR: 4328 Undefined symbol in argument CSCHANGESAREABOUTTOBEMADE ON LINE: 1825 (31467) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31468>>        Append sText csMakeChanges
+        Append sText csMakeChanges
+ERROR: 4345 Type check error CSMAKECHANGES, CSMAKECHANGES, CSMAKECH ON LINE: 1826 (31468) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSMAKECHANGES ON LINE: 1826 (31468) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31469>>        Get YesNo_Box sText to iRetval
+31470>>        If iRetval eq MBR_No Move 1 to iRetval
+31473>>      End // If Not (pbSilentMode(Self)) Begin
+31473>>>
+31473>>      If iRetval eq MBR_Yes Begin
+31475>>        Set pbSilentMode to True                    // Do this to prevent asking the user again...
+31476>>        Set_Registry_Root to HKEY_LOCAL_MACHINE 'System'
+31477>>        Set_Foreign_Profile_String sRegPath sKey 'DriveWriteBehind' to '00 00 00 00'
+31480>>        Get_Foreign_Profile_String sRegPath sKey 'DriveWriteBehind' to sRetval
+31484>>        If (Trim(sRetval) <> '00 00 00 00') Move 1 to iCheck4
+31487>>        Else Begin
+31488>>          Move 2 to iCheck4
+31489>>          Move ('HKEY_LOCAL_MACHINE\System\' + sRegPath + '\' + sKey + '\DriveWriteBehind has been set to 00 00 00 00') to sLogText
+31490>>          Send DoWriteLog sLogText
+31491>>        End // Else Begin
+31491>>>
+31491>>      End // If iRetval eq MBR_Yes Begin
+31491>>>
+31491>>    End // If Trim(sValdata3) ne '00 00 00 00' Begin
+31491>>>
+31491>>    If iRetval eq MBR_NO Begin
+31493>>      Move csChangesWereDisallowed to sText
+ERROR: 4328 Undefined symbol in argument CSCHANGESWEREDISALLOWED ON LINE: 1844 (31493) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31494>>      Append sText csProgramWillBeTerminated
+      Append sText csProgramWillBeTerminated
+ERROR: 4345 Type check error CSPROGRAMWILLBETERMINATED, CSPROGRAMWILLBETERMINATED, C ON LINE: 1845 (31494) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPROGRAMWILLBETERMINATED ON LINE: 1845 (31494) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31495>>      Send DoWriteLog sText
+31496>>      Send Stop_Box sText
+31497>>    End // If iRetval eq MBR_NO Begin
+31497>>>
+31497>>
+31497>>    If iCheck1 eq 11 Begin
+31499>>      Move csConfigSysCouldNotBeOpened to sText
+ERROR: 4328 Undefined symbol in argument CSCONFIGSYSCOULDNOTBEOPENED ON LINE: 1851 (31499) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31500>>      Append sText csContactYourSystemAdministrator
+      Append sText csContactYourSystemAdministrator
+ERROR: 4345 Type check error CSCONTACTYOURSYSTEMADMINISTRATOR, CSCONTACTYOURSYSTEMADMINISTRATOR, CSCONTACTYOURSYSTEMAD ON LINE: 1852 (31500) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSCONTACTYOURSYSTEMADMINISTRATOR ON LINE: 1852 (31500) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31501>>      Send DoWriteLog sText
+31502>>      Send Stop_Box sText
+31503>>    End // If iCheck1 eq 11 Begin
+31503>>>
+31503>>
+31503>>    If iCheck1 eq 33 Begin
+31505>>      Move csImportantChangesHaveBeenMadeToYourConfig to sText
+ERROR: 4328 Undefined symbol in argument CSIMPORTANTCHANGESHAVEBEENMADETOYOURCONFIG ON LINE: 1858 (31505) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31506>>      Send DoWriteLog sText
+31507>>      Send Stop_Box sText
+31508>>    End // Else If iCheck1 eq 33 Begin
+31508>>>
+31508>>
+31508>>    If iCheck1 eq 1 Begin
+31510>>      Move csSystemIniCouldNotBeOpened to sText
+ERROR: 4328 Undefined symbol in argument CSSYSTEMINICOULDNOTBEOPENED ON LINE: 1864 (31510) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31511>>      Append sText csContactYourSystemAdministrator
+      Append sText csContactYourSystemAdministrator
+ERROR: 4345 Type check error CSCONTACTYOURSYSTEMADMINISTRATOR, CSCONTACTYOURSYSTEMADMINISTRATOR, CSCONTACTYOURSYSTEMADMINISTRATOR, CSCONTACTYOURSYSTEMAD ON LINE: 1865 (31511) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSCONTACTYOURSYSTEMADMINISTRATOR ON LINE: 1865 (31511) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31512>>      Send DoWriteLog sText
+31513>>      Send Stop_Box sText
+31514>>    End // If iCheck1 eq 1 Begin
+31514>>>
+31514>>
+31514>>    Else If (iCheck1 = 2 OR iCheck1 = 3) Begin
+31517>>      Move csImportantChangesHaveBeenMadeToYourSystem to sText
+ERROR: 4328 Undefined symbol in argument CSIMPORTANTCHANGESHAVEBEENMADETOYOURSYSTEM ON LINE: 1871 (31517) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31518>>      Send DoWriteLog sText
+31519>>      Send Stop_Box sText
+31520>>    End // Else If (iCheck1 = 2 OR iCheck1 = 3) Begin
+31520>>>
+31520>>
+31520>>    Else If (iCheck1 = 4) Begin
+31523>>      Move csChangesWereDisallowed to sText
+ERROR: 4328 Undefined symbol in argument CSCHANGESWEREDISALLOWED ON LINE: 1877 (31523) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31524>>      Append sText csProgramWillBeTerminated
+      Append sText csProgramWillBeTerminated
+ERROR: 4345 Type check error CSPROGRAMWILLBETERMINATED, CSPROGRAMWILLBETERMINATED, CSPR ON LINE: 1878 (31524) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPROGRAMWILLBETERMINATED ON LINE: 1878 (31524) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31525>>      Send DoWriteLog sText
+31526>>      Send Stop_Box sText
+31527>>    End // Else If (iCheck1 = 2 OR iCheck1 = 3) Begin
+31527>>>
+31527>>
+31527>>    If iCheck2 Begin
+31529>>      Move csProgramFailedToLocateVredir to sText
+ERROR: 4328 Undefined symbol in argument CSPROGRAMFAILEDTOLOCATEVREDIR ON LINE: 1884 (31529) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31530>>      Append sText csThisProgramWillNotRunProperlyWithoutIt
+      Append sText csThisProgramWillNotRunProperlyWithoutIt
+ERROR: 4345 Type check error CSTHISPROGRAMWILLNOTRUNPROPERLYWITHOUTIT, CSTHISPROGRAMWILLNOTRUNPROPERLYWITHOUTIT, CSTHISPROGRAMWIL ON LINE: 1885 (31530) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSTHISPROGRAMWILLNOTRUNPROPERLYWITHOUTIT ON LINE: 1885 (31530) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31531>>      Append sText csProgramWillBeTerminated
+      Append sText csProgramWillBeTerminated
+ERROR: 4345 Type check error CSPROGRAMWILLBETERMINATED, CSPROGRAMWILLBETERMINATED, CSPROGRAMWILLBETERMINATED, CSPROGRAMWILLBETERMINATED, CSPROGRAMWILLBETERM ON LINE: 1886 (31531) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSPROGRAMWILLBETERMINATED ON LINE: 1886 (31531) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31532>>      Send DoWriteLog sText
+31533>>      Send Stop_Box sText
+31534>>    End // If iCheck2 Begin
+31534>>>
+31534>>
+31534>>    If (iCheck3 OR iCheck4) Begin
+31536>>      If (iCheck3 = 1 OR iCheck4 = 1) Begin
+31538>>        Move csRegistryChangesCouldNotBePerformed to sText
+ERROR: 4328 Undefined symbol in argument CSREGISTRYCHANGESCOULDNOTBEPERFORMED ON LINE: 1893 (31538) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31539>>        Append sText csUserRightsIsProbablyNotSufficient
+        Append sText csUserRightsIsProbablyNotSufficient
+ERROR: 4345 Type check error CSUSERRIGHTSISPROBABLYNOTSUFFICIENT, CSUSERRIGHTSISPROBABLYNOTSUFFICIENT,  ON LINE: 1894 (31539) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSUSERRIGHTSISPROBABLYNOTSUFFICIENT ON LINE: 1894 (31539) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31540>>        Append sText csContactYourSystemAdministrator
+        Append sText csContactYourSystemAdministrator
+ERROR: 4345 Type check error CSCONTACTYOURSYSTEMADMINISTRATOR, CSCONTACTYOURSYSTEMADMINISTRATOR, CSCONTACTYOURSYSTEMADMINISTRATOR, CSCONT ON LINE: 1895 (31540) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4328 Undefined symbol in argument CSCONTACTYOURSYSTEMADMINISTRATOR ON LINE: 1895 (31540) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+31541>>      End // If (iCheck3 eq 1 OR iCheck4 eq 1) Begin
+31541>>>
+31541>>      Else If (iCheck3 = 2 OR iCheck4 = 2) Begin
+31544>>        Move csRegistryChangesHasBeenMade to sText
+ERROR: 4328 Undefined symbol in argument CSREGISTRYCHANGESHASBEENMADE ON LINE: 1898 (31544) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 52 Bad format of expression (operator)  ON LINE: 1898 (31544) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+ERROR: 4121 Operation aborted  ON LINE: 1898 (31544) OF FILE: C:\VDF6\VDF6.SUB\SUBCLASS\REGCHECK.PKG
+Summary
+Memory Available: 2147483647
+Total Errors   : 203
+Total Symbols  : 18514
+Total Resources: 0
+Total Commands : 31544
+Total Windows  : 1
+Total Pages    : 1
+Static Data    : 218557
+Message area   : 152841
+Total Blocks   : 10448
+203 ERRORS HAVE BEEN FOUND.

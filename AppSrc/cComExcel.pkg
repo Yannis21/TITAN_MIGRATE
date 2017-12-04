@@ -1,0 +1,323 @@
+Use ExcelBase.pkg
+    
+Class cComExcel is a cExcelApplication
+    Procedure Construct_Object   
+        Forward Send Construct_Object
+        object oWorkbooks is a cExcelWorkbooks
+        end_object
+        object oWorkbook is a cExcelWorkbook
+        end_object
+        object oRange is a cExcelRange
+        end_object
+    End_Procedure
+    
+//*************************************************************************
+//*
+//*  Function:  InitializeExcel
+//*
+//*  Purpose:  To start Excel and connect the object to the application
+//*            (no document loaded and no empty workbook created)
+//*
+//*  Parameters:  bVisible - TRUE if Excel should be visible on the screen (default)
+//*                          FALSE if Excel should be working in the background
+//*
+//*  Return value: TRUE if Excel was loaded, FALSE if error
+//*
+//*************************************************************************
+     
+    function InitializeExcel boolean bVisible returns boolean
+        Boolean bIsComObjectCreated
+    
+        // Test to see if we are already connected. If we are connected,
+        // then the IsComObjectCreated property is set true.
+        Get IsComObjectCreated To bIsComObjectCreated
+    
+        if (Not(bIsComObjectCreated)) Begin
+            // Connect the VDF Automation Wrapper to the Automation Object.
+            Send CreateComObject 
+            if (num_arguments=0) set ComVisible to true
+            else set ComVisible to bVisible
+        end
+        Get IsComObjectCreated To bIsComObjectCreated
+        function_return bIsComObjectCreated
+    end_function
+    
+//*************************************************************************
+//*
+//*  Procedure:  DeInitializeExcel
+//*
+//*  Purpose:  To disconnect from the Excel application
+//*
+//*  Parameters:  bQuit - TRUE if the Excel application should be closed on disconnect
+//*                       FALSE if Excel should be left running (default)
+//*
+//*************************************************************************
+     
+    procedure DeInitializeExcel Boolean bQuit 
+        Boolean bIsComObjectCreated
+        // Test to see if we are already connected. If we are connected,
+        // then the IsComObjectCreated property is set true.
+        Get IsComObjectCreated To bIsComObjectCreated
+    
+        if (bIsComObjectCreated) Begin
+            if (num_arguments>0 and bQuit) ;
+                send ComQuit 
+            send ReleaseComObject 
+        end
+    end_procedure  
+    
+//*************************************************************************
+//*
+//*  Function:  Visible_state
+//*
+//*  Purpose:  To check if Excel is visible
+//*
+//*  Parameters:  none
+//*
+//*  Return value: TRUE if Excel is visible on the screen
+//*                FALSE if Excel is not visible (or not connected)
+//*
+//*************************************************************************
+     
+    function Visible_state returns boolean
+        boolean bState
+        get comVisible to bState
+        function_return bState
+    end_function
+    
+//*************************************************************************
+//*
+//*  Procedure:  SET Visible_state
+//*
+//*  Purpose:  To set the visible_state of the Excel application
+//*
+//*  Parameters:  bState  -  TRUE / FALSE
+//*
+//*************************************************************************
+     
+    procedure SET Visible_state boolean bState
+        set comVisible to bState
+    end_procedure
+    
+    
+//*************************************************************************
+//*
+//*  Function: NewSpreadSheet
+//*
+//*  Purpose:  Commands Excel to create a new (empty) spreadsheet 
+//*
+//*  Parameters:  None
+//*
+//*  Return value: TRUE if spreadsheet created
+//*                FALSE if error
+//*
+//*************************************************************************
+
+    FUNCTION NewSpreadsheet returns boolean
+        variant vWb vret
+        boolean bSuccess
+        get ComWorkbooks to vWb
+        if (Not(IsNullComObject(vWb))) begin
+            set pvComObject of oWorkBooks to vWb
+            get ComAdd of oWorkbooks Nothing to vRet
+            send ReleaseComObject of oWorkBooks
+        end        
+        Move (Not(IsNullComObject(vRet))) to bSuccess // success of variant is not null
+        Function_Return bSuccess
+    END_FUNCTION
+
+//*************************************************************************
+//*
+//*  Function: LoadSpreadSheet
+//*
+//*  Purpose:  Commands Excel to load the spreadsheet passed in SpreadSheetName.
+//*
+//*  Parameters:  SpreadSheetName - the name of the spreadsheet to load.
+//*
+//*  Return value: TRUE if spreadsheet loaded
+//*                FALSE if error
+//*
+//*************************************************************************
+
+    FUNCTION LoadSpreadsheet string SpreadSheetName returns boolean
+        variant vWb vret
+        boolean bSuccess
+        get comWorkbooks to vWb
+        if (Not(IsNullComObject(vWb))) begin
+            set pvComObject of oWorkBooks to vWb
+            get ComOpen of oWorkbooks SpreadSheetName to vRet
+            send ReleaseComObject of oWorkBooks
+        end
+        Move (Not(IsNullComObject(vRet))) to bSuccess // success of variant is not null
+        Function_Return bSuccess
+    END_FUNCTION
+
+//*************************************************************************
+//*
+//*  Function: columnstring
+//*
+//*  Purpose:  Converts a column number to its alfabetical value (1=A, 2=B ..)
+//*
+//*  Parameters:  iCol - the column number to be converted
+//*
+//*  Return value: The alfabetical name of the column iCol (A, B ... AA, AB ...)
+//*
+//*************************************************************************
+
+    function columnstring integer iCol returns string
+        string sVal      
+        integer i
+        if (iCol>26) begin
+            move ((iCol-1)/26) to i
+            move (character(i+64)) to sVal
+            move (iCol-(i*26)) to iCol
+        end
+        append sVal (character(iCol+64))
+        function_return sVal
+    end_function
+                              
+//*************************************************************************
+//*
+//*  Procedure SET:  CellA1
+//*
+//*  Purpose:  Set the value of a cell in the spreadsheet.
+//*
+//*  Parameters:  CellAdr - the cell name in the format A1, A2, B4, etc...
+//*               CellValue - what to set it to.
+//*
+//*************************************************************************
+     
+    Procedure Set CellA1 variant CellAdr variant CellValue
+        variant vRange vret
+        get comRange CellAdr nothing to vRange
+        set pvComObject of oRange to vRange
+        set ComValue of oRange to CellValue
+        send ReleaseComObject of oRange
+    END_Procedure
+
+//*************************************************************************
+//*
+//*  Function:  CellA1
+//*
+//*  Purpose:  Get the value of a cell in the spreadsheet.
+//*
+//*  Parameters:  CellAdr - the cell name in the format A1, A2, B4, etc...
+//*
+//*  Return value: The value of the cell
+//*
+//*************************************************************************
+     
+    FUNCTION CellA1 variant CellAdr returns string
+        variant vRange vRet
+        string sValue
+        boolean bErr
+        get comRange CellAdr nothing to vRange
+        set pvComObject of oRange to vRange
+        get comvalue of oRange to vRet
+        send ReleaseComObject of oRange
+//        Function_Return (toOEM(vRet))
+        Function_Return vRet
+    END_FUNCTION 
+    
+//*************************************************************************
+//*
+//*  Procedure SET:  Cell
+//*
+//*  Purpose:  Set the value of a cell in the spreadsheet.
+//*
+//*  Parameters:  CellRow - the number of the row.
+//*               CellColumn - the number of the Column.
+//*               CellValue - what to set it to.
+//*
+//*************************************************************************
+     
+    Procedure Set Cell integer CellRow integer CellColumn String CellValue
+        string sCell
+        get columnstring CellColumn to sCell
+        append sCell CellRow      
+        set CellA1 sCell to CellValue
+    END_Procedure
+
+//*************************************************************************
+//*
+//*  Function:  Cell
+//*
+//*  Purpose:  Get the value of a cell in the spreadsheet.
+//*
+//*  Parameters:  CellRow - the number of the row.
+//*               CellColumn - the number of the Column.
+//*
+//*  Return value: The value of the cell
+//*
+//*************************************************************************
+     
+    FUNCTION Cell integer CellRow integer CellColumn returns string
+        string sCell sText
+        get columnstring CellColumn to sCell
+        append sCell CellRow      
+        Get CellA1 sCell to sText
+        Function_Return sText
+    END_FUNCTION 
+    
+//*************************************************************************
+//*
+//*  Procedure:  SaveSpreadSheet
+//*
+//*  Purpose:  Saves the active spreadsheet.
+//*
+//*  Parameters:  none
+//*
+//*************************************************************************
+     
+    Procedure SaveSpreadSheet
+        Variant vWb
+        get ComActiveWorkBook to vWb
+        if (Not(IsNullComObject(vWb))) begin
+            set pvComObject of oWorkBook to vWb
+            send ComSave of oWorkBook 
+            send ReleaseComObject of oWorkBook
+        end
+    end_procedure
+
+//*************************************************************************
+//*
+//*  Procedure:  SaveSpreadSheetAS
+//*
+//*  Purpose:  Saves the active spreadsheet as sFileName
+//*
+//*  Parameters:  sFileName  -  The filename to save
+//*
+//*************************************************************************
+     
+    Procedure SaveSpreadSheetAs variant sFileName
+        Variant vWb
+        get ComActiveWorkBook to vWb
+        if (Not(IsNullComObject(vWb))) begin
+            set pvComObject of oWorkBook to vWb
+            send ComSaveAs of oWorkBook sFileName
+            send ReleaseComObject of oWorkBook
+        end
+    end_procedure
+
+//*************************************************************************
+//*
+//*  Procedure:  CloseSpreadSheet
+//*
+//*  Purpose:  Closes the active spreadsheet
+//*
+//*  Parameters:  bSave  -  TRUE if changes should be saved
+//*                         FALSE if changes should be lost when closing
+//*
+//*************************************************************************
+     
+    Procedure CloseSpreadSheet variant bSave
+        Variant vWb
+        get ComActiveWorkBook to vWb
+        if (Not(IsNullComObject(vWb))) begin
+            set pvComObject of oWorkBook to vWb
+            send ComClose of oWorkBook bSave nothing nothing
+            send ReleaseComObject of oWorkBook
+        end
+    end_procedure
+
+end_Class

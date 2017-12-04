@@ -1,0 +1,19 @@
+
+Function fsgCode_With_Zeroes Global Integer aiCode Integer aiPlaces Returns String
+    String rVal iLength iInt
+    Move aiCode to rVal
+    Move (trim(rVal)) to rVal
+    For iInt From 1 to (aiPlaces-(Length(rVal)))
+        Move (Insert('0',rVal,1)) to rVal
+    Loop
+    Function_Return rVal
+End_Function
+
+Function gsfCode_Mast Global String lsType String lsValue Returns String
+         Clear Codemast
+         Move lsType  to Codemast.Type
+         Move lsValue to Codemast.Code
+         Find Eq Codemast by Index.1 //type+code
+         Function_Return Codemast.Description
+End_Function //code_mast
+

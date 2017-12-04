@@ -1,0 +1,27 @@
+Use SubStart            //  Our Logo SplashScreen
+
+Object Splash_Screen Is A SplashScreenPanel
+    Set Bitmap To 'Accstart.bmp'
+    Set Caption_Bar to FALSE
+
+    Procedure Activate
+        Local string lsWaveFile
+        If (Caption_Bar(Self)) Set Label to "çú°†§·ú† û Çú§†°„ ä¶ö†©´†°„..."
+        get_profile_string "WorkSpaces" "CurrentWorkspace" to lsWaveFile
+        If lsWaveFile eq "" Move (WorkspaceName(ProgramWorkSpace(Self))) to lsWaveFile
+        trim lsWaveFile to lsWaveFile
+        insert "WorkSpaces\" in lsWaveFile at 1
+        get_profile_string lsWaveFile "BitmapPath" to lsWaveFile
+        Forward Send Activate
+        //Set WaveFile To (lsWaveFile+"\Hal.wav")
+        Sleep 1
+    End_Procedure
+
+    Send Activate
+    //Send Play_Sound
+
+End_Object
+
+// ãß¶®úÂ §ò £ßúÂ °ò† ©´¶§ bottom °Èõ†°ò ´¶¨ Main Panel
+//Send Deactivate to (Splash_Screen(Self))  // Remove splash screen
+

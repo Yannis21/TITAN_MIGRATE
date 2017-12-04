@@ -1,0 +1,274 @@
+    Use COMPANY.DD
+    Use BRANCH.DD
+    Use YEAR.DD
+    Use GTHHMGIO.DD
+    Use GTYPKIN.DD
+    Use GPLAN.DD
+    Use GARTICL.DD
+    Use GMOVES.DD
+    Use GMHNES.DD
+    Use GHMNIES.DD
+
+local Date hmnia##
+Local Date Hmnia_HmniesDD##
+
+Object oDoUpdateIso Is A BusinessProcessSub
+
+
+        set Status_panel_state to false
+        set Display_Error_state to true
+
+        Property Integer piGplan_Rec0
+        Property Date    pdHmnia
+        Property Integer piMode           //1=create 2=delete
+        Property Integer piChkAll
+        Property Integer piChkOnLine
+        Property Integer piChkTheorimeno
+
+
+        Object Company_DD is a Company_DataDictionary
+        End_Object    // Company_DD
+
+        Object Branch_DD is a Branch_DataDictionary
+            Set DDO_Server to (Company_DD(Current_Object))
+        End_Object    // Branch_DD
+
+        Object Year_DD is a Year_DataDictionary
+            Set DDO_Server to (Branch_DD(Current_Object))
+        End_Object    // Year_DD
+
+        Object Gthhmgio_DD is a Gthhmgio_DataDictionary
+        End_Object    // Gthhmgio_DD
+
+        Object Gtypkin_DD is a Gtypkin_DataDictionary
+            Set DDO_Server to (Year_DD(Current_Object))
+            Set DDO_Server to (Gthhmgio_DD(Current_Object))
+        End_Object    // Gtypkin_DD
+
+        Object Gplan_DD is a Gplan_DataDictionary
+            Set DDO_Server to (Year_DD(Current_Object))
+        End_Object    // Gplan_DD
+
+        Object Garticl_DD is a Garticle_DataDictionary
+            Set DDO_Server to (Gtypkin_DD(Current_Object))
+        End_Object    // Garticl_DD
+
+        Object Gmoves_DD is a Gmoves_DataDictionary
+            Set DDO_Server to (Gplan_DD(Current_Object))
+            Set DDO_Server to (Garticl_DD(Current_Object))
+
+            Begin_Constraints
+                If Hmnia## ne '' Constrain Gmoves.garticl_hmnia ge hmnia##
+            End_Constraints
+
+        End_Object    // Gmoves_DD
+
+        Object Gmhnes_DD is a Gmhnes_DataDictionary
+            Set DDO_Server to (Gplan_DD(Current_Object))
+            //Begin_Constraints
+            //    Constrain Gmhnes relates to Gplan
+            //End_Constraints
+        End_Object    // Gmhnes_DD
+
+        Object Ghmnies_DD is a Ghmnies_DataDictionary
+            Set DDO_Server to (Gmhnes_DD(Current_Object))
+
+            Begin_Constraints
+                //Constrain Ghmnies relates to Gmhnes
+                If Hmnia_HmniesDD## ne '' Constrain Ghmnies.Ghmnies_hmnia ge Hmnia_HmniesDD##
+            End_Constraints
+
+        End_Object    // Ghmnies_DD
+
+        Object Gflagkin_DD is a Gflagkin_DataDictionary
+            Set DDO_Server to (Gtypkin_DD(Current_Object))
+            Set Constrain_File to Gtypkin.File_Number
+        End_Object    // Gflagkin_DD
+
+
+
+
+
+PROCEDURE TREXE_UPISO date ldHmnia1##;
+                      integer liChkAll1##;
+                      integer liChkOnlineX##;
+                      integer liChkTheorimenoX##
+
+          Set pdHmnia                      to ldHmnia1##
+          Set piChkAll                     to liChkAll1##
+          Set piChkOnLine                  to liChkOnlineX##
+          Set piChkTheorimeno              to liChkTheorimenoX##
+
+
+          //Set piMode                       to limode##
+          SEND DOPROCESS
+
+END_PROCEDURE //trexe aa
+
+
+
+
+
+Procedure Update_ISO    ///Enhm AA
+
+    Local Integer liMhnesDDo## Active_Hmnia##  liErr## ;
+                  liCompanyDDo## liBranchDDo## liYearDDo##;
+                  liGthHmgioDDo## liGtypkinDDo## liGarticlDDo## liGMovesDDo##;
+                  liGplanDDo## liGmhnesDDo## liGHmniesDDo## liGflagkinDDo##;
+
+
+    Local Integer liLastAA## keeprec##
+    Local Date ldLastHmniaAA##
+    Local date  ldEosHmnia## sDate##
+    Local string ldHmnia##
+
+    Local integer limhnas##
+    Local integer liYear##
+    Local Integer liBpo_BpoIso## liChkAllBpo## liChkOnLineBpo## liChkTheorimenoBpo##
+
+
+        Move (Company_DD(self))     to liCompanyDDo##
+        Move (Branch_DD(self))      to liBranchDDo##
+        Move (Year_DD(self))        to liYearDDo##
+        Move (GArticl_DD(self))     to liGarticlDDo##
+        Move (Gmoves_DD(self))      to liGmovesDDo##
+
+        Move (Gmhnes_DD(self))  to liGMhnesDDo##
+        Move (Ghmnies_DD(self)) to liGHmniesDDo##
+
+        Move (Gthhmgio_DD(self)) to liGthhmgioDDo##
+        Move (Gtypkin_DD(self))  to liGtypkinDDo##
+        Move (Gflagkin_DD(self)) to liGflagkinDDo##
+
+        Get pdHmnia              to sDate##
+        Get piChkAll             to liChkAllBpo##
+        Get piChkOnLine          to liChkOnLineBpo##
+        Get piChkTheorimeno      to liChkTheorimenoBpo##
+
+        move sdate## to ldHmnia##
+
+        Move (Mid(ldHmnia##,7,4)) to ldHmnia##
+        insert "01/" in ldHmnia## at 1
+        Replace "." in ldHmnia## with "/"
+
+        move ldhmnia## to sdate##
+
+        Move (Mid(ldHmnia##,2,4)) to limhnas##
+        Move (Mid(ldHmnia##,4,7)) to liYear##
+
+
+
+
+        Move sdate## to Hmnia_HmniesDD##
+        Send Clear to liGhmniesDDo##                      //Ghmnies
+
+        Send Rebuild_constraints to liGHmniesDDo##
+        Send Find to liGhmniesDDo## ge 3
+
+        if (liChkOnLineBpo## eq 1) Begin //Temporary
+
+            Move 0 to gnCounterOfRecords##
+            File_Size Ghmnies to gnNumberOfRecords##
+            set current_position of (WaitBar(wait(self))) to 0
+            set maximum_position of (WaitBar(wait(self))) to gnNumberOfRecords##
+            send popup to (Wait(self))
+
+
+            While  ((found eq 1) and (Ghmnies.Ghmnies_hmnia ge sdate##))   //[found]
+
+                Send Request_Delete to liGhmniesDDo##
+                send request_deletebpo to liGmhnesDDo##
+
+                add 1 to gnCounterOfRecords##
+                set current_position of (WaitBar(wait(self))) to gnCounterOfRecords##
+
+                Send Find to liGhmniesDDo## ge 3
+            Loop
+
+            send Deactivate to (Wait(self))
+        end
+
+move (oDoUpdateHmnies(current_object)) to liBpo_BpoIso##
+
+if liChkAllBpo## eq 1 begin
+
+        Move 0 to gnCounterOfRecords##
+        File_Size Gmoves to gnNumberOfRecords##
+        set current_position of (WaitBar(wait(self))) to 0
+        set maximum_position of (WaitBar(wait(self))) to gnNumberOfRecords##
+        send popup to (Wait(self))
+
+
+        Move sdate## to hmnia##
+        Send Rebuild_constraints to liGMovesDDo##
+
+        Send Clear to liGMovesDDo##                      //Gmoves
+
+
+        Send Find to liGmovesDDo## ge 4
+
+
+        While  ((found eq 1) and (Gmoves.Garticl_Hmnia ge sdate##))
+
+           add 1 to gnCounterOfRecords##
+           set current_position of (WaitBar(wait(self))) to gnCounterOfRecords##
+
+
+           send UpdateV1 to liBpo_BpoIso## Gmoves.Garticl_Hmnia;
+                                     0;//lnX2_BF##;
+                                     0;//lnP2_BF##;
+                                     0;//lnX0_BF##;
+                                     0;//lnP0_BF##;
+                                     0;//lnX00_BF##;
+                                     0;//lnP00_BF##;
+                                     0;//lnXR_BF##;
+                                     0;//lnPR_BF##;
+                                     0 //lsGplan_Code_Before##
+
+            send UpdateV2 to liBpo_BpoIso## Gmoves.Gmoves_x2;
+                                     Gmoves.Gmoves_p2;
+                                     Gmoves.Gmoves_x0;
+                                     Gmoves.Gmoves_p0;
+                                     Gmoves.Gmoves_x00;
+                                     Gmoves.Gmoves_p00;
+                                     Gmoves.Gmoves_xr;
+                                     Gmoves.Gmoves_pr;
+                                     Gmoves.Gplan_Code
+
+            if (liChkOnLineBpo## eq 1) Begin //Temporary
+                send trexe to liBpo_BpoIso## 0; //liBackout##
+                                             1; //liUpdate##;
+                                             0; //liCreating##;
+                                             0; //liDeleting##;
+                          Gtypkin.Gtypkin_Code;//lnGtypkin_BF##;
+                          Gtypkin.Gtypkin_Code;//lnGtypkin_AF##;
+                      Gthhmgio.Gthhmgio_Period; //lnGthHmgio_Period##
+                                             0
+            end
+
+            if ((liChkTheorimeno## eq 1) And (Gmoves.Gmoves_AA gt 0)) Begin //Temporary
+                send trexe to liBpo_BpoIso## 0; //liBackout##
+                                             1; //liUpdate##;
+                                             0; //liCreating##;
+                                             0; //liDeleting##;
+                          Gtypkin.Gtypkin_Code;//lnGtypkin_BF##;
+                          Gtypkin.Gtypkin_Code;//lnGtypkin_AF##;
+                      Gthhmgio.Gthhmgio_Period; //lnGthHmgio_Period##
+                                             1
+            end
+
+                Send Find to liGmovesDDo## next_record 4
+        Loop
+        send Deactivate to (Wait(self))
+
+
+End
+
+
+End_Procedure
+
+Procedure OnProcess
+    send Update_Iso
+End_Procedure
+
+End_Object

@@ -1,0 +1,87 @@
+// DVDIALER.PKG - Automatic dialing functions for dial-up access to the Internet
+//
+// Created by: Marcel J. Zwiebel
+//             Dataview - The Netherlands
+// E-mail    : marcel@dataview-sc.com
+// Web URL   : http://www.dataview-sc.com
+//
+// Date      : 03/24/1999
+
+Use Windows.pkg
+Use DLL.pkg 
+
+
+// register external functions of the dvdailer.dll
+
+
+// function   : dvInternetGetConnectedState
+//
+// description: Retrieves the connected state of the local system.
+//                   
+// parameters : none
+//
+// returns    : integer - value 1 = the local system is (currently) connected by a modem to the Internet.
+//                              2 = the local system uses a local area network to connect to the Internet.
+//                              3 = the local system uses a proxy server to connect to the Internet.
+//                              4 = the local system's modem is busy with a non-Internet connection.
+//                              0 = there is no Internet connection.
+//
+External_Function32 dvInternetGetConnectedState "dvInternetGetConnectedState" DVDIALER.DLL Returns Integer
+
+
+// function   : dvInternetAutodial
+//
+// description: Automatically causes the modem to dial the default Internet connection.
+//              Use the function dvInternetAutodialHangup to hangup this connection.
+//                   
+// parameters : none
+//
+// returns    : integer - Is 0 (successful) or 1 (not successful).
+//
+External_Function32 dvInternetAutodial "dvInternetAutodial" DVDIALER.DLL Returns Integer
+
+
+// function   : dvInternetAutodialHangup
+//
+// description: Disconnects an automatic dial-up connection invoked by dvInternetAutodial. 
+//                   
+// parameters : none
+//
+// returns    : integer - Is 0 (successful) or 1 (not successful).
+//
+External_Function32 dvInternetAutodialHangup "dvInternetAutodialHangup" DVDIALER.DLL Returns Integer
+
+
+// function   : dvInternetDial
+//
+// description: Initiates a connection to the Internet using a modem connection and a phonebook entry.
+//              Use the function dvInternetHangup to hangup this connection.
+//                   
+// parameters : string - The name of the dial-up connection to use (phonebook entry).
+//
+// returns    : integer - Is 0 (successful) or 1 (not successful).
+//
+External_Function32 dvInternetDial "dvInternetDial" DVDIALER.DLL String szConnectiontoid Returns Integer
+
+
+// function   : dvInternetHangup
+//
+// description: Instructs the modem to disconnect from the Internet (connection invoked by dvInternetDial). 
+//              
+// parameters : none
+//
+// returns    : integer - Is 0 (successful) or 1 (not successful).
+//
+External_Function32 dvInternetHangUp "dvInternetHangUp" DVDIALER.DLL Returns Integer
+
+
+
+
+
+
+
+
+
+
+
+

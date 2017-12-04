@@ -1,0 +1,423 @@
+//AB/ Project EpilProg
+//AB/     Object prj is a Dialog_Project
+//AB/         Set ProjectName to "EpilProg"
+//AB/         Set ProjectFileName to "EpilProg.DG"
+
+// Project Object Structure
+//   EpilProg is a ModalPanelSub
+//     tmpPagia_DD2 is a tmpPagia_DataDictionary
+//     Tmppagia_DD is a DataDictionary
+//     GridSub1 is a dbGridSub
+//     FormSub1 is a FormSub
+//     ButtonSub1 is a ButtonSub
+//     FormSub2 is a FormSub
+//     FormSub3 is a FormSub
+
+// Register all objects
+Register_Object ButtonSub1
+Register_Object EpilProg
+Register_Object FormSub1
+Register_Object FormSub2
+Register_Object FormSub3
+Register_Object GridSub1
+Register_Object Tmppagia_DD
+Register_Object tmpPagia_DD2
+
+
+
+    //AB-StoreTopStart
+    Open Branch
+    Open HmerProg
+    Use obarray2d.pkg
+    
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use Panel.Sub
+    Use DFAllEnt.pkg
+    Use dbGrid.Sub
+    Use Form.Sub
+    Use Button.Sub
+
+
+    Use TMPPAGIA.DD
+    
+    //AB-IgnoreEnd
+
+    Object EpilProg is a ModalPanelSub
+
+        //AB-StoreTopStart
+                    
+        Property Number  pnMaxQty           Public  0
+        Property Number  pnActQty           Public  0
+        Property String  psItem             Public ''
+        Property Integer piDorderDRecnum    Public  0
+        Property String  psDorderHRecr      Public ''
+        Property String  psDorderHID        Public ''
+        
+        Object tmpPagia_DD2 is a tmpPagia_DataDictionary
+        End_Object
+        
+        //AB-StoreTopEnd
+
+        Set Label to "„§ ¢¦šã „¨š¦©«˜©å¦¬ / ’¦£â˜ ¡˜  ¦©æ«ž«˜ª"
+        Set Size to 182 271
+        Set Location to 14 27
+        Set Color to 13477270
+        Set Exit_Application_Local_State to FALSE
+        Set Modal_State to FALSE
+
+        //AB-DDOStart
+
+        Object Tmppagia_DD is a Tmppagia_DataDictionary
+        End_Object    // Tmppagia_DD
+
+
+        //AB-DDOEnd
+
+        Object GridSub1 is a dbGridSub
+
+            //AB-StoreTopStart
+            
+            //AB-StoreTopEnd
+
+            Set Main_File to Tmppagia.File_Number
+            Set Server to (Tmppagia_DD(self))
+            Set Size to 130 249
+            Set Location to 17 9
+            Set Color to 15853538
+            Set CurrentRowColor to 14798017
+            Set CurrentRowTextColor to clNavy
+            Set CurrentCellColor to 14798017
+            Set CurrentCellTextColor to clNavy
+            Set Wrap_State to FALSE
+            Set No_Create_State to TRUE
+            Set No_Delete_State to TRUE
+
+            Begin_Row
+                Entry_Item Tmppagia.Branch_code
+                Entry_Item Tmppagia.Pagia_code
+                Entry_Item Tmppagia.Pagia_qty
+            End_Row
+
+            Set Form_Width    item 0 to 61
+            Set Header_Label  item 0 to "‰à› ¡æª"
+            
+            Set Form_Width    item 1 to 136
+            Set Header_Label  item 1 to "„¨š¦©«á© ¦"
+            
+            Set Form_Width    item 2 to 46
+            Set Header_Label  item 2 to "¦©æ«ž«˜"
+            
+
+            //AB-StoreStart
+            
+            Set Numeric_Mask    Item 2 to 8 2
+            
+            Set Column_Option Item 0 to NoEnter true
+            Set Column_Option Item 1 to NoEnter true
+            
+            Function Row_changing integer from_item integer to_item returns integer
+                Integer iTo iBase rVal iRec
+                Number  nQty nQtyTot
+                Integer iItem
+                Move 0 to nQty
+                Send Find to tmpPagia_DD2 First_Record 0
+                While (Found)
+                    Get Field_Current_Value of tmpPagia_DD2 Field tmpPagia.Pagia_Qty to nQty
+                    Add nQty to nQtyTot
+                    Send Find to tmpPagia_DD2 Next_Record 0
+                Loop
+                Set Value Of FormSub1 item 0    to nQtyTot
+                Set pnActQty                    to nQtyTot
+                Set Enabled_State Of ButtonSub1 to ((nQtyTot>0) And (nQtyTot<=pnMaxQty(Self)))
+                Forward get row_changing from_item to_item to rVal
+                Function_Return rVal
+            End_Function
+            
+            Procedure OnKillFocus
+                If (Should_Save(tmpPagia_DD(Self))) Send Request_Save to tmpPagia_DD
+            End_Function
+            
+            
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // GridSub1
+
+        Object FormSub1 is a FormSub
+            Set Size to 13 52
+            Set Location to 150 195
+            Set Color to 13477270
+            Set Label_Col_Offset to 2
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+                                                                            
+            Set Numeric_Mask Item 0 to 8 2
+            
+            Set Color to 13477270
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // FormSub1
+
+        Object ButtonSub1 is a ButtonSub
+            Set Label to "„¤ž£â¨à©ž ¨¦š¨˜££˜« ©£¦ç"
+            Set Size to 13 131
+            Set Location to 150 8
+            Set Enabled_State to FALSE
+            Set Focus_Mode to Pointer_Only
+            Set Form_FontWeight Item 0 to 600
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+                    
+            Procedure Finalize_Count
+                Integer iTo iBase rVal iRec
+                Number  nQty nQtyTot
+                Integer iItem
+                Move 0 to nQty
+                Clear tmpPagia
+                Move 0 to tmpPagia.Recnum
+                Find Ge tmpPagia.Recnum
+                While (Found)
+                    Add tmpPagia.Pagia_Qty to nQty
+                    Find Gt tmpPagia.Recnum
+                Loop
+                Send Beginning_Of_Data          to GridSub1 True
+                Set Value Of FormSub1 item 0    to nQty
+                Set pnActQty                    to nQty
+            End_Function
+            
+            Procedure OnClick
+                String  sBranch sCompany sID sRecr sSite sCN
+                String  sDorderHRecr sBranchRecr sVal
+                Integer iCount isFound iDorderDRecnum iGridID iInt iObjID
+                Integer iColumns iCurrent iBase iItems iCol iErr
+                Number  nQty
+                // Gia thn periptosh pou einai se mia grammh tmppagia, valei posothta
+                // kai den sosei alla pathsei amesos to button ayto.
+                Send Finalize_Count
+            
+                If (pnActQty(Self)>pnMaxQty(Self)) Begin
+                    Send Stop_Box 'Ž  œ§ ¢œš£â¤œª §¦©æ«ž«œª ¬§œ¨™˜å¤¦¬¤ «ž¤ › ˜Ÿâ© £ž' '‘­á¢£˜ 4005'
+                    Procedure_Return
+                End
+            
+                Move 0 to iErr
+            
+                Get piDorderDRecnum to iDorderDRecnum
+                Get psDorderHRecr   to sRecr
+                Get psDorderHID     to sID
+            
+                Send ChangeAllFileModes DF_Filemode_ReadOnly
+                Set_Attribute DF_File_Mode Of HmerProg.File_Number  to DF_Filemode_Default
+                Set_Attribute DF_File_Mode Of DorderD.File_Number   to DF_Filemode_Default
+            
+                Indicate Err False
+            
+                BEGIN_TRANSACTION
+                Move Error_Object_ID to iObjID
+            
+                Clear Dorderd
+                Move iDorderDRecnum to Dorderd.Recnum
+                Find Eq Dorderd.Recnum
+                If (Not(Found)) Begin
+                    Move 1 to iErr
+                    Abort_Transaction
+                    Goto EpilProg_Abort1
+                End
+            
+                Relate Dorderd
+            
+                Move DorderH.Company_Code    to sCompany
+                Move DorderH.DorderH_ID      to sID
+                Move DorderH.DorderH_Recr    to sRecr
+                Move DorderH.CN_Code         to sCN
+            
+                Clear tmpPagia
+                Move 0 to tmpPagia.Recnum
+                Find Ge tmpPagia.Recnum
+                While (Found)
+                    Move tmpPagia.Pagia_Qty to nQty
+                    If (nQty>0) Begin
+                        Clear HmerProg
+                        Move tmpPagia.Branch_Code   to HmerProg.Branch_Recr
+                        Move DorderD.Recnum         to HmerProg.DorderD_Recnum
+                        Find Eq HmerProg by index.1
+                        Move (Found)                to isFound
+                        If (isFound) Reread HmerProg
+                        Move DorderD.Hmnia_Parad    to HmerProg.Hmnia
+                        Move DorderD.Ora_Parad      to HmerProg.StartTime
+                        Move sID                    to HmerProg.DorderH_ID
+                        Clear Branch
+                        Move tmpPagia.Branch_Code   to Branch.Branch_Recr
+                        Find Eq Branch By Index.2
+                        If (Not(Found)) Begin
+                            Move 2 to iErr
+                            Abort_Transaction
+                            Goto EpilProg_Abort1
+                        End
+                        Move Branch.Branch_Code     to HmerProg.Site
+                        Move Branch.Beto_Site       to HmerProg.SiteW
+                        Add nQty                    to HmerProg.Qty
+                        Move sCompany               to HmerProg.Company_Code
+                        Move DorderD.Item_Code      to HmerProg.Item_Code
+                        Move DorderD.Pump_ID        to HmerProg.Pump_ID
+                        Move DorderD.Pumpm          to HmerProg.Pumpm
+                        Move sCN                    to HmerProg.CN_Code
+                        Move 1                      to HmerProg.Selected
+                        Saverecord HmerProg
+                        If (Err) Begin
+                            Move 3 to iErr
+                            Abort_Transaction
+                            Goto EpilProg_Abort1
+                        End
+                        Reread DorderD
+                        Add nQty                    to DorderD.Qty_Se_Progr
+                        Move (DorderD.Posothta-DorderD.Qty_Se_Progr) ;
+                                                    to DorderD.Ypol_Posothta
+                        If (DorderD.Ypol_Posothta<0) Error 6001 'EpilProg: “§æ¢¦ §¦ §¦©æ«ž«˜ª < 0'
+                        Saverecord DorderD
+                        Unlock
+                        If (Err) Begin
+                            Move 4 to iErr
+                            Abort_Transaction
+                            Goto EpilProg_Abort1
+                        End
+                        If (isFound) Unlock
+                    End
+                    Find Gt tmpPagia.Recnum
+                Loop
+            
+                END_TRANSACTION
+                EpilProg_Abort1:
+                Move iObjID to Error_Object_ID
+                Send ChangeAllFileModes DF_Filemode_Default
+            
+                If (iErr) Begin
+                        If (iErr=1) Send Stop_Box 'ƒœ¤ ™¨âŸž¡œ ž ˜¨® ¡ã œšš¨˜­ã Dorderd'    '‘­á¢£˜ 1001'
+                   Else If (iErr=2) Send Stop_Box 'ƒœ¤ ™¨âŸž¡œ ž œšš¨˜­ã Branch'            '‘­á¢£˜ 1002'
+                   Else If (iErr=3) Send Stop_Box '¨æ™¢ž£˜ ¡˜«á «ž¤ œšš¨˜­ã HmerProg'      '‘­á¢£˜ 1003'
+                   Else If (iErr=4) Send Stop_Box '¨æ™¢ž£˜ ¡˜«á «ž¤ œ¤ž£â¨à©ž Dorderd'     '‘­á¢£˜ 1004'
+                End
+                Else Send Info_Box '† › ˜› ¡˜©å˜ ¦¢¦¡¢ž¨éŸž¡œ' '¢ž¨¦­¦¨å˜'
+                Send Deactivate to EpilProg
+            End_Procedure // OnClick
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub1
+
+        Object FormSub2 is a FormSub
+            Set Size to 13 52
+            Set Location to 2 195
+            Set Color to 13477270
+            Set Label_Col_Offset to 2
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+                                                                            
+            Set Numeric_Mask Item 0 to 8 2
+            
+            Set Color to 13477270
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // FormSub2
+
+        Object FormSub3 is a FormSub
+            Set Size to 13 137
+            Set Location to 2 57
+            Set Color to 13477270
+            Set Label_Col_Offset to 2
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+                                                                            
+            Set Color to 13477270
+            
+            //AB-StoreEnd
+
+        End_Object    // FormSub3
+
+
+        //AB-StoreStart
+                    
+        Set Locate_Mode to Center_On_Parent
+        
+        Procedure Popup_Modal
+            Send Beginning_Of_Data to GridSub1 True
+            Forward Send Popup
+            Set Value Of FormSub2 Item 0 to (pnMaxQty(Self))
+            Set Value Of FormSub3 Item 0 to (psItem  (Self))
+        End_Procedure
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // EpilProg
+
+
+    //AB-StoreStart
+    
+    
+    
+    
+    
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

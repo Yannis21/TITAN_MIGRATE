@@ -1,0 +1,211 @@
+//AB/ Project bpMakeSx
+//AB/     Object prj is a Dialog_Project
+//AB/         Set ProjectName to "bpMakeSx"
+//AB/         Set ProjectFileName to "bpMakeSx.DG"
+//AB/         Set GenerateFileName to "NONAME"
+
+// Project Object Structure
+//   bpMakeSx is a BusinessProcessSub
+//     Ctypkin_DD is a DataDictionary
+//     Wtypkin_DD is a DataDictionary
+//     Ptyppar_DD is a DataDictionary
+//     Country_DD is a DataDictionary
+//     Towns_DD is a DataDictionary
+//     Cities_DD is a DataDictionary
+//     Areas_DD is a DataDictionary
+//     Payresp_DD is a DataDictionary
+//     Clients_DD is a DataDictionary
+//     Nomisma_DD is a DataDictionary
+//     Particle_DD is a DataDictionary
+//     Wapokat_DD is a DataDictionary
+//     Wapomast_DD is a DataDictionary
+//     Wax_DD is a DataDictionary
+//     Units_DD is a DataDictionary
+//     Witemkat_DD is a DataDictionary
+//     Fpa_DD is a DataDictionary
+//     Item_DD is a DataDictionary
+//     Witemx_DD is a DataDictionary
+//     Pmoves_DD is a DataDictionary
+//     Pmssxet_DD is a DataDictionary
+//     Psxetika_DD is a DataDictionary
+
+// Register all objects
+Register_Object Areas_DD
+Register_Object bpMakeSx
+Register_Object Cities_DD
+Register_Object Clients_DD
+Register_Object Country_DD
+Register_Object Ctypkin_DD
+Register_Object Fpa_DD
+Register_Object Item_DD
+Register_Object Nomisma_DD
+Register_Object Particle_DD
+Register_Object Payresp_DD
+Register_Object Pmoves_DD
+Register_Object Pmssxet_DD
+Register_Object Psxetika_DD
+Register_Object Ptyppar_DD
+Register_Object Towns_DD
+Register_Object Units_DD
+Register_Object Wapokat_DD
+Register_Object Wapomast_DD
+Register_Object Wax_DD
+Register_Object Witemkat_DD
+Register_Object Witemx_DD
+Register_Object Wtypkin_DD
+
+
+
+    //AB-StoreTopStart
+
+
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use Bproces.Sub
+    Use DFAllEnt.pkg
+
+
+    Use CTYPKIN.DD
+    Use WTYPKIN.DD
+    Use PTYPPAR.DD
+    Use COUNTRY.DD
+    Use TOWNS.DD
+    Use CITIES.DD
+    Use AREAS.DD
+    Use PAYRESP.DD
+    Use CLIENTS.DD
+    Use NOMISMA.DD
+    Use PARTICLE.DD
+    Use PSXETIKA.DD
+
+    //AB-IgnoreEnd
+
+    Object bpMakeSx is a BusinessProcessSub
+
+        //AB-StoreTopStart
+
+        Property String     psParticleRecr  Public ''
+        Property String     psSxPartlRecr   Public ''
+        Property Integer    piLathos        Public  0
+        Property Number     pnQty           Public  0
+
+        Set Status_Panel_State to False
+        //Set Allow_Cancel_State  to True
+        Set Display_Error_State to True
+        //Set Process_Title to "               "
+        //Set Status_Log_id to (status_log(Self)) //Use statlog.pkg
+        //Set Status_log_state to True
+
+        Use MyArray.dg
+
+        //AB-StoreTopEnd
+
+        Set Size to 60 100
+        Set Location to 18 17
+
+        //AB-DDOStart
+
+        Object Ctypkin_DD is a Ctypkin_DataDictionary
+        End_Object    // Ctypkin_DD
+
+        Object Wtypkin_DD is a Wtypkin_DataDictionary
+        End_Object    // Wtypkin_DD
+
+        Object Ptyppar_DD is a Ptyppar_DataDictionary
+            Set DDO_Server to (Ctypkin_DD(self))
+            Set DDO_Server to (Wtypkin_DD(self))
+        End_Object    // Ptyppar_DD
+
+        Object Country_DD is a Country_DataDictionary
+        End_Object    // Country_DD
+
+        Object Towns_DD is a Towns_DataDictionary
+            Set DDO_Server to (Country_DD(self))
+        End_Object    // Towns_DD
+
+        Object Cities_DD is a Cities_DataDictionary
+            Set DDO_Server to (Towns_DD(self))
+        End_Object    // Cities_DD
+
+        Object Areas_DD is a Areas_DataDictionary
+        End_Object    // Areas_DD
+
+        Object Payresp_DD is a Payresp_DataDictionary
+        End_Object    // Payresp_DD
+
+        Object Clients_DD is a Clients_DataDictionary
+            Set DDO_Server to (Cities_DD(self))
+            Set DDO_Server to (Areas_DD(self))
+            Set DDO_Server to (Payresp_DD(self))
+        End_Object    // Clients_DD
+
+        Object Nomisma_DD is a Nomisma_DataDictionary
+        End_Object    // Nomisma_DD
+
+        Object Particle_DD is a Particle_DataDictionary
+            Set DDO_Server to (Clients_DD(self))
+            Set DDO_Server to (Ptyppar_DD(self))
+            Set DDO_Server to (Nomisma_DD(self))
+        End_Object    // Particle_DD
+
+        Object Psxetika_DD is a Psxetika_DataDictionary
+            Set DDO_Server to (Particle_DD(self))
+        End_Object    // Psxetika_DD
+
+
+        //AB-DDOEnd
+
+
+        //AB-StoreStart
+
+        Procedure OnProcess
+            String  sParticleRecr sSxPartlRecr
+            Number  nQty nQty1
+            Get psParticleRecr  to sParticleRecr
+            Get psSxPartlRecr   to sSxPartlRecr
+            Get pnQty           to nQty
+
+            If ((sParticleRecr<>'') And (sSxPartlRecr<>'') And (nQty<>0)) Begin
+                Send Clear          to Psxetika_DD
+                Move sParticleRecr  to Psxetika.Partl_Recr
+                Move sSxPartlRecr   to Psxetika.Psx_Partl_Recr
+                Send Request_Find   to Psxetika_DD Eq Psxetika.File_Number 4
+                If (Found) Begin
+                    Get Field_Current_Value Of Psxetika_DD Field Psxetika.Pms_Sx_Qty to nQty1
+                    Add nQty to nQty1
+                    Set Field_Changed_Value Of Psxetika_DD Field Psxetika.Pms_Sx_Qty to nQty1
+                    Send Request_Save to Psxetika_DD
+                End
+            End
+
+        End_Procedure
+
+        Procedure OnError integer error_info string errMsg
+        End_Procedure
+
+        Procedure Start_Process
+            Forward Send Start_Process
+        End_Procedure
+
+        Procedure End_Process
+            Forward Send End_Process
+
+        End_Procedure
+
+        //AB-StoreEnd
+
+    End_Object    // bpMakeSx
+
+
+    //AB-StoreStart
+
+
+
+
+
+
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

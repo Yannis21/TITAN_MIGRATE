@@ -1,0 +1,204 @@
+Use AllEntSc
+
+#REPLACE CURRENT$WORKSPACE   "EmporSap"
+Register_Object Client_Area
+
+//AB-StoreTopStart
+Object ProgramWorkspace is a WorkspaceSub
+    Set WorkspaceName to CURRENT$WORKSPACE
+    Set kEnter_Next_State to True
+//    Set ModuleName    to 'ProgramName' // Special module name.
+//    Set HelpName      to 'HelpName.hlp'// Please provide the name of your Windows help file.
+End_Object
+
+Use Help_Ids.inc // Developer should provide this file of help context links.
+Use Std_Help.pkg
+Integer giWait_Obj
+
+
+
+// General Functions-Procedures and Variables
+Use Globals.Inc
+Use Calendar.sl
+Use Dates.Utl
+use roundfn.fnc
+Use Wait.Dg
+//use checkafm.pkg
+//use checklog.pkg
+Use Menu_Sec.Sub
+Use TranLock
+Use GridUtil.Utl
+Use rptVw.Sub
+
+Use DD_Sec.Sub
+
+Use SelectCY.sl
+Send Activate_WorkSpc to Desktop
+
+
+////------------------------------
+//Use Flexole
+//Use DPDlg    // Full Path Directory Picker
+//Use RasxDll  // Ras Package
+//Use Xfind    // Recursive Directory FILE FINDER
+//Use dvFtp    // FTP Package
+//Use DVDIALER // Vdf6 Dialer
+//Use mbForm
+//Use mbMessage
+
+//AB-StoreTopEnd
+
+
+Object Main is a PanelSub
+    Set Label To "RegChange"
+
+    DFCreate_Menu Main_Menu
+        #include File_PM.inc    // file pulldown menu
+
+        DFCreate_Menu "&View" ViewPopupMenu is a ViewPopupMenu
+            On_Item "&View to Maintain WorkSpc\aCtrl+1" Send Activate_Workspc
+        End_Pull_down
+        Set Status_Help To "Available Views"
+        
+        #include Navi_pm.inc    // Naviation pulldown menu
+        #include win_PM.inc     // Window of available views
+        #include Helpa_PM.inc   // help pulldown menu w/ About
+    End_Menu
+
+    Use DFStdBtn.pkg //  Tool-Bar object.
+    
+    Object Client_Area is a AppClientAreaSub
+
+        //AB-ClientStoreTopStart
+        String  Plhktro_BIP  Plhktro_Esc  Plhktro_N11  Plhktro_N00  Plhktro_FS  Plhktro_AAA  Plhktro_DSI
+        String  Plhktro_SO   Plhktro_DC4     //expanded for 1 line
+        String  Plhktro_SI   Plhktro_DC2     //condesed
+        String  Plhktro_PAV              //underline
+        String  Plhktro_EEE  Plhktro_FFF     //emphasized
+        String  Plhktro_GGG  Plhktro_HHH     //double strike
+        String  Plhktro_WWW              //expanded
+        string  Plhktro_Q Plhktro_160
+        Integer giviewid
+        String  gsviewname
+        
+        Use DD_Sec.Sub
+        use dbviews.sub
+        use dbforms.sub
+        
+        Use Stbarpsc.pkg
+        
+        //Use bpKost1.dg
+        
+        
+        Register_Object oStatusBarSub
+        
+        Open Syscurxr
+        Open SysFile
+        Open Sysrecc
+        Open Sysrecb
+        Open Sysrecw
+        
+        Procedure Reset_All_Files_Except_System
+            Local Integer File# Open# File_Number# liInt iMax iWait isSystem
+            Local String Physicalname# DisplayName# Logicalname# Rootname#
+            Move 0 To File#
+            Repeat
+              Get_Attribute Df_File_Next_Opened Of File# To File#
+              If (File#) Begin
+                Get_Attribute DF_FILE_IS_SYSTEM_FILE    Of File# To isSystem
+                If (NOT(isSystem)) Clear File#
+              End
+            Until File# Eq 0
+        End_Procedure
+        
+        #Include FEM.pkg
+        
+        //AB-ClientStoreTopEnd
+
+        //  Include all views
+        Use workspc.vw                                                                      
+
+        //AB-ClientStoreStart
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-ClientStoreEnd
+
+
+    End_Object  // Client_Area
+    
+    On_Key Key_Ctrl+Key_1 Send Activate_Workspc To Client_Area
+    
+    Use DFStdSbr.pkg //  Status-Bar object.
+
+    //AB-PanelStoreStart
+    Use StdAbout.pkg // Standard "About" package.
+    Use Tooltip.Inc
+    
+    
+    
+    //AB-PanelStoreEnd
+
+
+End_Object
+
+
+//AB-StoreStart
+
+set bitmap of (client_area(main(self))) to "protem1.bmp"
+
+Start_UI
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//AB-StoreEnd
+

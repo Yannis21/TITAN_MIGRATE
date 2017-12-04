@@ -1,0 +1,993 @@
+//AB/ Project vwKleisimo
+//AB/     Object prj is a Report_Project
+//AB/         Set ProjectName to "vwKleisimo"
+//AB/         Set ProjectFileName to "vwKleisimo.RV"
+
+// Project Object Structure
+//   vwKleisimo is a ReportViewSub
+//     value_date is a FormSub
+//     date_apo is a FormSub
+//     date_eos is a FormSub
+//     FormSub3 is a FormSub
+//       oOpenFile is a OpenDialog
+//     ButtonSub3 is a ButtonSub
+//     Chkshm is a CheckBoxSub
+//     Chkeisa is a CheckBoxSub
+//     TextBoxSub5 is a TextBoxSub
+//     TextBoxSub6 is a TextBoxSub
+//     TextBoxSub7 is a TextBoxSub
+//     TextBoxSub8 is a TextBoxSub
+//     ButtonSub5 is a ButtonSub
+//     Chkkl is a CheckBoxSub
+//     Areas_DD is a Areas_DataDictionary
+//     Payresp_DD is a Payresp_DataDictionary
+//     syscurxr_DD is a syscurxr_DataDictionary
+//     Country_DD is a Country_DataDictionary
+//     Towns_DD is a Towns_DataDictionary
+//     Ctypkin_DD is a Ctypkin_DataDictionary
+//     Cities_DD is a Cities_DataDictionary
+//     Clients_DD is a Clients_DataDictionary
+//     Cmoves_DD is a Cmoves_DataDictionary
+//     metafyp_BasicReport is a BasicReport
+//       Areas_DD is a Areas_DataDictionary
+//       Payresp_DD is a Payresp_DataDictionary
+//       syscurxr_DD is a syscurxr_DataDictionary
+//       Country_DD is a Country_DataDictionary
+//       Towns_DD is a Towns_DataDictionary
+//       Ctypkin_DD is a Ctypkin_DataDictionary
+//       Cities_DD is a Cities_DataDictionary
+//       Clients_DD is a Clients_DataDictionary
+//       Cmoves_DD is a Cmoves_DataDictionary
+//       Cmovesa_DD is a Cmovesa_DataDictionary
+
+// Register all objects
+Register_Object Areas_DD
+Register_Object ButtonSub3
+Register_Object ButtonSub5
+Register_Object Chkeisa
+Register_Object Chkkl
+Register_Object Chkshm
+Register_Object Cities_DD
+Register_Object Clients_DD
+Register_Object Cmoves_DD
+Register_Object Cmovesa_DD
+Register_Object Country_DD
+Register_Object Ctypkin_DD
+Register_Object date_apo
+Register_Object date_eos
+Register_Object FormSub3
+Register_Object metafyp_BasicReport
+Register_Object oOpenFile
+Register_Object Payresp_DD
+Register_Object syscurxr_DD
+Register_Object TextBoxSub5
+Register_Object TextBoxSub6
+Register_Object TextBoxSub7
+Register_Object TextBoxSub8
+Register_Object Towns_DD
+Register_Object value_date
+Register_Object vwKleisimo
+
+
+//AB/     Report View
+
+
+    //AB-StoreTopStart
+    Use dfallrpt.pkg
+    use areas.dd
+    use country.dd
+    use towns.dd
+    use payresp.dd
+    Use cities.DD
+    Use clients.DD
+    Use ctypkin.DD
+    Use cmoves.DD
+    USE CMOVESA.DD
+    USE SYSCURXR.DD
+    use docpresp.dg
+    use docclients.dg
+    OPEN CN
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use Rptvw.Sub
+    Use Form.Sub
+    Use Button.Sub
+    Use Chkbox.Sub
+    Use Txtbox.Sub
+
+    //AB-IgnoreEnd
+
+    ACTIVATE_VIEW Activate_vwKleisimo FOR vwKleisimo
+
+    Object vwKleisimo is a ReportViewSub
+
+        //AB-StoreTopStart
+        property integer pierr              public 0
+        Property Integer Sort_IndexRlog     Public 1
+        property integer pipayresp          public 0
+        property integer picount            public 0
+        property string  psmodule           public '01'
+        property date    pddate             public ''
+        property number  px0                public 0
+        property number  pp0                public 0
+        property number  px00               public 0
+        property number  pp00               public 0
+        property number  px1                public 0
+        property number  pp1                public 0
+
+        Property String psFileExair
+        Property String psClientToSkip Public ""
+
+
+        //AB-StoreTopEnd
+
+        Set Label to "â¢úÂ©†£¶ Ñöö®ò≠È§ ÅàèÑ && Öéîéêéà ò§ò ìß¶°ò´ò©´û£ò"
+        Set Size to 159 387
+        Set Location to 5 12
+        Set Color to 12380096
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object value_date is a FormSub
+            Set Size to 13 71
+            Set Location to 4 221
+            Set Label_Col_Offset to 2
+            Set Form_Datatype Item 0 to Mask_Date_Window
+            Set Form_Mask Item 0 to "dd/MM/yyyy"
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // value_date
+
+        Object date_apo is a FormSub
+            Set Size to 13 63
+            Set Location to 26 92
+            Set Label_Col_Offset to 2
+            Set Form_Datatype Item 0 to Mask_Date_Window
+            Set Form_Mask Item 0 to "dd/MM/yyyy"
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+
+            //AB-StoreEnd
+
+        End_Object    // date_apo
+
+        Object date_eos is a FormSub
+            Set Size to 13 71
+            Set Location to 26 222
+            Set Label_Col_Offset to 2
+            Set Form_Datatype Item 0 to Mask_Date_Window
+            Set Form_Mask Item 0 to "dd/MM/yyyy"
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+
+
+            //AB-StoreEnd
+
+        End_Object    // date_eos
+
+        Object FormSub3 is a FormSub
+
+            //AB-StoreTopStart
+
+
+            Object oOpenFile is a OpenDialog
+                Set Location to 2 407
+                Set Dialog_Caption to "Select a file"
+
+                Set Filter_String   To 'Text Files|*.txt|All Files|*.*'
+                Set Initial_Folder  To 'C:\'
+                Set Filter_Index    To 1
+
+            End_Object    // oOpenFile
+
+
+
+            //AB-StoreTopEnd
+
+            Set Size to 13 201
+            Set Location to 49 92
+            Set Label_Col_Offset to 2
+            Set Prompt_Button_Mode to pb_PromptOn
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+
+            Procedure Prompt
+                String  sFileName
+                Integer bOpen
+                Get Show_Dialog Of oOpenFile To bOpen
+                If bOpen Begin
+                    Get File_Name Of oOpenFile To sFileName
+                    If (Trim(sFileName)<>'') Begin
+                        Set Value Item 0 To sFileName
+                        Set psFileExair to sFileName
+                    End
+                    Else     Set psFileExair to ""
+                End
+            End_Procedure
+
+
+
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // FormSub3
+
+        Object ButtonSub3 is a ButtonSub
+
+            //AB-StoreTopStart
+
+            //AB-StoreTopEnd
+
+            Set Bitmap to "RUNPROG.BMP"
+            Set Size to 20 23
+            Set Location to 70 269
+            Set Border_Style to Border_StaticEdge
+            Set Focus_Mode to Pointer_Only
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+
+            Set TooltipValue to "Ñ•òö‡ö„-Ñ†©òö‡ö„ ©ú ASCII ò®ÆúÂ¶"
+
+            Procedure OnClick
+                integer irecnum  idecs ilines iint ilen iYes inum  ipis
+                number nxre npis x0 p0 x00 p00 x1 p1
+                String sPath sFullName sBranch sunit slogik sid sstr Spartlrecr sbr  sposo
+                string sline skin spar scn scnrecr ssls spayresp scnt  smhxanik  msgstr
+                indicate err false
+                date dapod deosd
+
+                Get Value Of FormSub3 Item 0 to sPath
+                Move (Trim(sPath)) to sPath
+                If (sPath='') Begin
+                    Send Info_Box 'Éú§ úß†¢‚•ò´ú ò®ÆúÂ¶ ö†ò ´¶¨™ ßú¢·´ú™ ß¶¨ ÉÑå üò £ûõú§†©¶¨§\nASCII ò®ÆúÂò ú•ò†®‚©ú‡§ "Exaireseis Ypok 81 - BIPE.TXT"' 'è¢û®¶≠¶®Âò'
+                    Procedure_Return
+                End
+
+                Set psFileExair to (Trim(sPath))
+
+                Get Value Of date_apo Item 0 to dapod
+                get value of date_eos item 0 to deosd
+
+
+                get checked_state of chkshm  item 0 to  ipis
+
+                if ((dapod='') or (deosd='')) begin
+                    send info_box 'Ü£/§Âú™ Ñöö®ò≠È§ òßò®òÂ´û´ú™' 'è¢û®¶≠¶®Âò'
+                    procedure_return
+                end
+
+                Get YesNo_Box 'åò •ú°†§„©ú† û õ†òõ†°ò©Âò ?' to iYes
+                If (iYes=MBR_NO) Procedure_Return
+
+                begin_transaction
+
+                    Send StartReport
+
+                End_Transaction
+
+                set label of buttonsub5 to ''
+                send info_box 'í‚¢¶™ Ñßú•ú®öò©Âò™' 'è¢û®¶≠¶®Âò'
+            End_Procedure
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub3
+
+        Object Chkshm is a CheckBoxSub
+            Set Label to "ï®ú‡©´†°Ê-è†©´‡´†°Ê ëû£úÂ‡£ò Ñ•òö‡ö„"
+            Set Size to 10 155
+            Set Location to 67 92
+            Set Color to 12380096
+            Set Checked_State to TRUE
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+        End_Object    // Chkshm
+
+        Object Chkeisa is a CheckBoxSub
+
+            //AB-StoreTopStart
+
+            //AB-StoreTopEnd
+
+            Set Label to "Ñ†©òö‡ö„"
+            Set Size to 10 52
+            Set Location to 126 312
+            Set Color to 12380096
+
+            //AB-StoreStart
+
+            Set Visible_State to False
+            Set Enabled_State to False
+
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // Chkeisa
+
+        Object TextBoxSub5 is a TextBoxSub
+            Set Label to "Ü£/§Âò Ñöö®ò≠È§ ÄßÊ"
+            Set Color to 12380096
+            Set Location to 28 8
+            Set Size to 10 80
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub5
+
+        Object TextBoxSub6 is a TextBoxSub
+            Set Label to "ÑÈ™"
+            Set Color to 12380096
+            Set Location to 28 203
+            Set Size to 10 14
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub6
+
+        Object TextBoxSub7 is a TextBoxSub
+            Set Label to "Ü£/§Âò Ñöö®ò≠„™ ´‡§ â†§„©ú‡§"
+            Set Color to 12380096
+            Set Location to 6 97
+            Set Size to 10 115
+            Set TypeFace to "MS Sans Serif"
+
+            //AB-StoreStart
+
+
+
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // TextBoxSub7
+
+        Object TextBoxSub8 is a TextBoxSub
+            Set Label to "Ä®ÆúÂ¶ Ñ•ò†®‚©ú‡§"
+            Set Color to 12380096
+            Set Location to 50 19
+            Set Size to 10 67
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub8
+
+        Object ButtonSub5 is a ButtonSub
+            Set Size to 14 203
+            Set Location to 102 93
+            Set Border_Style to Border_Normal
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            Procedure OnClick
+
+            End_Procedure // OnClick
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub5
+
+        Object Chkkl is a CheckBoxSub
+            Set Label to "â¢úÂ©†£¶ úöö®ò≠È§ ìß¶°ò´ò©´„£ò´¶™"
+            Set Size to 10 153
+            Set Location to 81 92
+            Set Color to 12380096
+            Set Checked_State to TRUE
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+        End_Object    // Chkkl
+
+
+        //AB-StoreStart
+
+        Set Output_Device_Name to None
+
+        ////////////////////////////////////////////
+        // Omada DD gia thn akyrosh ths diadikasia
+        // metaforas ypoloipon
+        ////////////////////////////////////////////
+        Object Areas_DD is a Areas_DataDictionary
+        End_Object
+        Object Payresp_DD is a Payresp_DataDictionary
+        End_Object
+        Object syscurxr_DD is a syscurxr_DataDictionary
+        End_Object
+        Object Country_DD is a Country_DataDictionary
+        End_Object
+        Object Towns_DD is a Towns_DataDictionary
+            Set DDO_Server to (Country_DD(self))
+        End_Object
+        Object Ctypkin_DD is a Ctypkin_DataDictionary
+            set piMustNOTConstrain to 1
+            Procedure Update
+            End_Procedure
+            Procedure Creating
+            End_Procedure
+        End_Object
+        Object Cities_DD is a Cities_DataDictionary
+            Set DDO_Server to (Towns_DD(self))
+        End_Object
+        Object Clients_DD is a Clients_DataDictionary
+            Set DDO_Server to (Cities_DD(self))
+            Set DDO_Server to (Payresp_DD(self))
+            Set DDO_Server to (Areas_DD(self))
+        End_Object
+        Object Cmoves_DD is a Cmoves_DataDictionary
+            Set DDO_Server to (Ctypkin_DD(self))
+            Set DDO_Server to (Clients_DD(self))
+        //            set pifromxrhsh to 1
+            set pifrombp    to 1
+        End_Object
+        ////////////////////////////////////////////
+        ////////////////////////////////////////////
+
+
+
+        Procedure Activate_View Returns Integer
+            String sStr sModule StrDisp
+            Integer rVal
+
+            Forward Get Msg_Activate_View to rVal
+
+            Move '01'       to sModule
+            Move '01'       to gs_Module_Code
+            Set psModule    to sModule
+
+        End_Procedure
+
+        Procedure StartReport
+            Local Integer iOutputDevice ipayresp
+            Local String  FileName
+            local date ddate
+            SEND RUN_REPORT
+        End_Procedure   // StartReport
+
+
+        Object metafyp_BasicReport is a BasicReport
+
+            Set Report_Title to "Ñßú•ú®öò©Âò Ñöö®ò≠È§                                  "
+            Set Report_Caption to "É†òõ†°ò©Âò ©ú Ñ•‚¢†•û    "
+
+            Object Areas_DD is a Areas_DataDictionary
+            End_Object    // Areas_DD
+
+            Object Payresp_DD is a Payresp_DataDictionary
+            End_Object    // Payresp_DD
+
+            Object syscurxr_DD is a syscurxr_DataDictionary
+            End_Object    // syscurxr
+
+            Object Country_DD is a Country_DataDictionary
+            End_Object    // Country_DD
+
+            Object Towns_DD is a Towns_DataDictionary
+                Set DDO_Server to (Country_DD(self))
+            End_Object    // Towns_DD
+
+            Object Ctypkin_DD is a Ctypkin_DataDictionary
+                set piMustNOTConstrain to 1
+
+                Procedure Update
+                End_Procedure
+
+                Procedure Creating
+                End_Procedure
+            End_Object    // Ctypkin_DD
+
+            Object Cities_DD is a Cities_DataDictionary
+                Set DDO_Server to (Towns_DD(self))
+            End_Object    // Cities_DD
+
+            Object Clients_DD is a Clients_DataDictionary
+                Set DDO_Server to (Cities_DD(self))
+                Set DDO_Server to (Payresp_DD(self))
+                Set DDO_Server to (Areas_DD(self))
+            End_Object    // Clients_DD
+
+            Object Cmoves_DD is a Cmoves_DataDictionary
+                Set DDO_Server to (Ctypkin_DD(self))
+                Set DDO_Server to (Clients_DD(self))
+        //        set pifromxrhsh to 1
+        //                set pifrombp    to 1
+            End_Object    // Cmoves_DD
+
+            Object Cmovesa_DD is a Cmovesa_DataDictionary
+                //AB-StoreStart
+                Begin_Constraints
+                    date dapoe deose dvaluee
+                    string smodule
+                    get psmodule to smodule
+                    Get Value Of date_apo Item 0 to dapoe
+                    get value of date_eos item 0 to deose
+                    set ordering to 13
+                    constrain cmovesa.company_code eq syscurxr.company_code
+                    constrain cmovesa.branch_code  eq syscurxr.branch_code
+                    constrain cmovesa.year_year    eq syscurxr.year_year
+                    constrain cmovesa.module_from  eq '01'
+                    constrain cmovesa.cmoves_hmnia ge dapoe
+                    constrain cmovesa.cmoves_hmnia le deose
+                End_Constraints
+            end_object
+            Set Server To (cmovesa_dd(Current_Object))
+
+            //Breaks and Index for the report
+            Report_Index By Index.11
+            Report_breaks cmovesa.company_code cmovesa.branch_code cmovesa.module_from cmovesa.client_id cmovesa.cn_code
+
+            Function Starting_Main_Report Returns Integer
+              REREAD SYSCURXR
+              UNLOCK
+              Integer iIndexRlog
+              Local Integer iRetVal
+              Forward Get Starting_Main_Report to iRetval
+              send rebuild_constraints to cmovesa_dd
+              Send Find to (cmovesa_dd(self)) First_Record 13
+            End_Function
+
+            Procedure_Section subheader1
+                set px0  to 0
+                set px1  to 0
+                set px00 to 0
+                set pp0  to 0
+                set pp1  to 0
+                set pp00 to 0
+                set picount to 0
+            End_Procedure
+
+            Procedure_Section subheader2
+                set px0  to 0
+                set px1  to 0
+                set px00 to 0
+                set pp0  to 0
+                set pp1  to 0
+                set pp00 to 0
+                set picount to 0
+            End_Procedure
+
+            Procedure_Section subheader3
+                set px0  to 0
+                set px1  to 0
+                set px00 to 0
+                set pp0  to 0
+                set pp1  to 0
+                set pp00 to 0
+                set picount to 0
+            End_Procedure
+
+            Procedure_Section subheader4
+                set px0  to 0
+                set px1  to 0
+                set px00 to 0
+                set pp0  to 0
+                set pp1  to 0
+                set pp00 to 0
+                set picount to 0
+
+                String scode
+                Integer iSkip
+                Move 0 to iSkip
+
+                Set psClientToSkip to ""
+
+                If (psFileExair(Self)<>"") Begin
+
+                    Direct_Input Channel 7 (psFileExair(Self))
+                    Readln Channel 7 scode
+                    While ( (not(Seqeof)) And (iSkip=0))
+                        If (Trim(sCode)=cmovesa.client_id) Begin
+                            Set psClientToSkip to cmovesa.client_id
+                            Goto Ante_apo_edo
+                        End
+                        Readln Channel 7 scode
+                    Loop
+                    Ante_apo_edo:
+                    Close_Input Channel 7
+                 End
+
+
+                If (psClientToSkip(vwKleisimo(Self))<>"") Begin
+                    STring sClSk
+                    Get psClientToSkip to sClSk
+                    //Showln "Skipping Client ID = " (Trim(sClSk))
+                End
+            End_Procedure
+
+            Procedure_Section subheader5
+                set px0  to 0
+                set px1  to 0
+                set px00 to 0
+                set pp0  to 0
+                set pp1  to 0
+                set pp00 to 0
+                set picount to 0
+            End_Procedure
+
+            Procedure_Section  Body
+                String  scode smodule spar serr
+                Number  naxia nx0 np0 nx00 np00 nx1 np1 ndiaf tx0 tp0 tx00 tp00 tx1 tp1
+                Date    dHmnia
+                integer iyear icount nyear ctypkinyear
+
+                If (psClientToSkip(vwKleisimo(Self))=CmovesA.Client_ID) Procedure_Return
+
+                get px0    to nx0
+                get px1    to nx1
+                get px00   to nx00
+                get pp0    to np0
+                get pp1    to np1
+                get pp00   to np00
+                add cmovesa.cmoves_x0     to nx0
+                add cmovesa.cmoves_p0     to np0
+                add cmovesa.cmoves_x00    to nx00
+                add cmovesa.cmoves_p00    to np00
+                add cmovesa.cmoves_x1     to nx1
+                add cmovesa.cmoves_p1     to np1
+                set px0    to nx0
+                set px1    to nx1
+                set px00   to nx00
+                set pp0    to np0
+                set pp1    to np1
+                set pp00   to np00
+            End_Procedure
+
+            Procedure_Section subTOTAL5
+
+                Number  naxia nx0 np0 nx00 np00 nx1 np1 ndiaf tx0 tp0 tx00 tp00 tx1 tp1
+                integer icount ieisa ipis ikl
+                string smodule spar msgstr SID scn   sposo spath scode
+                date dvaluee dHmniaEis
+                String sTypkinCode sClientToSkip
+
+                If (psClientToSkip(vwKleisimo(Self))=CmovesA.Client_ID) Procedure_Return
+
+                Get Value Of (value_date(vwKleisimo(Self))) Item 0 to dHmniaEis
+
+                Get Value Of FormSub3 Item 0 to sPath
+                Move (Trim(sPath)) to sPath
+                Move '01' to smodule
+                get value of value_date to dvaluee
+                get checked_state of chkeisa item 0 to  ieisa
+                get checked_state of chkshm  item 0 to  ipis
+                get checked_state of chkkl   item 0 to  ikl
+                get picount to icount
+                move (icount+1) to icount
+                set picount to icount
+                get px0    to nx0
+                get px1    to nx1
+                get px00   to nx00
+                get pp0    to np0
+                get pp1    to np1
+                get pp00   to np00
+
+                if (((nx0 <> 0) or (np0 <>0)) And ((nx0-np0)<>0) ) begin
+
+                    clear clients
+                    move cmovesa.client_id to clients.client_id
+                    find eq clients by index.6
+                    if (not(found)) error 2999 'Éú§ ô®Â©°‡ èú¢·´û'
+
+                    if (nx0 > np0) begin
+                        move '104'          to sTypkinCode
+                        move (nx0-np0)      to np0
+                        move (nx00-np00)    to np00
+                        move (nx1-np1)      to np1
+                        move 0              to nx0
+                        move 0              to nx00
+                        move 0              to nx1
+                        goto epomenok5
+                    end
+
+                    if (np0 > nx0) begin
+                        move  '103'         to sTypkinCode
+                        move (np0-nx0)      to nx0
+                        move (np00-nx00)    to nx00
+                        move (np1-nx1)      to nx1
+                        move 0 to np0
+                        move 0 to np00
+                        move 0 to np1
+                    end
+
+                    epomenok5:
+
+
+                    If (Trim(sTypkinCode)="") Begin
+                        Showln (Trim(cmovesa.client_id)) "    " (Trim(cmovesa.Ctypkin_Code)) '    '  (Trim(sTypkinCode)) '    ' cmovesa.cmoves_hmnia '    '   cmovesa.cmoves_Recr  "    "  cmovesa.cmoves_x0  "   " cmovesa.cmoves_p0
+                        Error 8800 'Ctypkin problem'
+                    End
+
+
+                    move '' to spar
+
+                          if (sTypkinCode='103') move (Append(sPar,('*ïê-ëÜã*'+ (String(dvaluee))))) to sPar
+                    else  if (sTypkinCode='104') move (Append(sPar,('*èë-ëÜã*'+ (String(dvaluee))))) to sPar
+
+                    MOVE cmovesa.client_id to sid
+                    MOVE cmovesa.cn_code to scn
+                    send update_status ('Ñöö®ò≠„   ' + string(sid) + " : " + string(scn))
+
+
+                    Send Clear To Ctypkin_DD
+                    Send Clear To Clients_DD
+                    Send Clear To Cmoves_DD
+
+                    Move sID   To Clients.Client_Id
+                    Send Find To Clients_DD eq 6 // Client_ID
+                    If (not(Found)) Begin
+                        move 'Éú§ ô®‚üû°ú ¶ èú¢·´û™ ©´¶ Ä®ÆúÂ¶ ! èú¢·´û™ = ' to msgstr
+                        append msgstr sid
+                        error 2319 msgstr
+                    End
+
+                    Move sTypkinCode To Ctypkin.Ctypkin_Code
+                    Send Find To Ctypkin_DD eq 1
+                    If (not(Found)) Begin
+                        move 'Éú§ ô®‚üû°ú û âÂ§û©û ©´¶ Ä®ÆúÂ¶ ! âÂ§û©û = ' to msgstr
+                        append msgstr sTypkinCode
+                        error 2320 msgstr
+                    End
+
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cn_code      To CmovesA.Cn_code
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.cn_recr      To CmovesA.cn_recr
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.sls_id       To CmovesA.sls_id
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.presp_id     To CmovesA.presp_id
+
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.cnt_id       To CmovesA.cnt_id
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.mhxanik_id   To CmovesA.mhxanik_id
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.presp_id     To CmovesA.presp_id
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_Hmnia To dHmniaEis
+
+
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_M_Code   To '01'
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Module_From     To '01'
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_par      To sPar
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_sc_code2 To 'EUR'
+
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.enhm_ofeilh       To '1'
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Enhm_Ypol_Pel     To '1'
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Enhm_Hmnies_Pel   To '1'
+
+
+                    If (nx0>0) Begin
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_axia   to nx0
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_x0     to nx0
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_p0     to 0
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_x00    to nx00
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_p00    to 0
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_x1     to nx1
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_p1     to 0
+
+                        goto epomenok2
+
+                    End
+
+                    If (np0>0) Begin
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_axia   to np0
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_x0     to 0
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_p0     to np0
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_x00    to 0
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_p00    to np00
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_x1     to 0
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_p1     to np1
+                    End
+
+                    epomenok2:
+
+                    Send Request_Save to Cmoves_DD
+
+                 end
+
+            End_Procedure
+
+
+            Procedure_Section subtotal4
+            End_Procedure
+
+
+            Procedure_Section subtotal3
+            End_Procedure
+
+            Procedure_Section subtotal2
+            End_Procedure
+
+            Procedure_Section subtotal1
+            End_Procedure
+
+        End_Object
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //AB-StoreEnd
+
+    End_Object    // vwKleisimo
+
+
+    //AB-StoreStart
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

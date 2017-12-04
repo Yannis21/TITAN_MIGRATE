@@ -1,0 +1,215 @@
+Project test
+Object prj is a APP_Project
+
+//AB-StoreTopStart
+Use Workspc.pkg
+
+//  Set date attributes as needed
+Set_Date_Attribute sysdate4_State to (TRUE)
+Set_Date_Attribute Date4_State    to (TRUE)
+Set_Date_Attribute epoch_value    to 30
+
+Object ProgramWorkspace is a WorkspaceSub
+    Set WorkspaceName to CURRENT$WORKSPACE
+    Set kEnter_Next_State to True
+//    Set ModuleName    to 'ProgramName' // Special module name.
+//    Set HelpName      to 'HelpName.hlp'// Please provide the name of your Windows help file.
+End_Object
+
+Use Help_Ids.inc // Developer should provide this file of help context links.
+Use Std_Help.pkg
+
+Use WinQlSQL.Sub
+Integer giWait_Obj
+
+// General Functions-Procedures and Variables
+Use Globals.Inc
+Use Calendar.sl
+Use Dates.Utl
+Use Roundfn.Fnc
+Use Connect.Dg
+use checkafm.pkg
+use checklog.pkg
+Send Login
+Use TranLock
+#Include Xrhsh.pkg
+Set Button_State    of (Wait(Self)) to False
+Set BarVisibleState of (Wait(Self)) to '' False
+Send Popup                          to (Wait(Self))
+Send UpdateWait to (Wait(Self))     'èò®ò°ò¢È ßú®†£‚§ú´ú. Ñ¢úöÆ¶™ ò®ÆúÂ‡§ ú≠ò®£¶ö„™'
+
+Use Menu_Sec.Sub
+
+//------------------------------
+Use Flexole
+Use DPDlg    // Full Path Directory Picker
+Use RasxDll  // Ras Package
+Use Xfind    // Recursive Directory FILE FINDER
+Use EZFTP    // Ftp Package
+Use dvFTP    // Ftp Package
+Use DVDIALER // Vdf6 Dialer
+//------------------------------
+
+//AB-StoreTopEnd
+
+
+//AB-PanelStoreStart
+Use StdAbout.pkg // Standard "About" package.
+Use Tooltip.Inc
+
+
+
+
+//AB-PanelStoreEnd
+
+
+//AB-ClientStoreStart
+
+
+
+
+
+//AB-ClientStoreEnd
+
+
+//AB-ClientStoreTopStart
+String Plhktro_BIP  Plhktro_Esc  Plhktro_N11  Plhktro_N00  Plhktro_FS  Plhktro_AAA  Plhktro_DSI
+String Plhktro_SO   Plhktro_DC4     //expanded for 1 line
+String Plhktro_SI   Plhktro_DC2     //condesed
+String Plhktro_PAV                  //underline
+String Plhktro_EEE  Plhktro_FFF     //emphasized
+String Plhktro_GGG  Plhktro_HHH     //double strike
+String Plhktro_WWW                  //expanded
+string Plhktro_Q Plhktro_160
+
+
+Integer giviewid
+String  gsviewname
+
+Use DD_Sec.Sub
+use dbviews.sub
+use dbforms.sub
+
+Use Stbarpsc.pkg
+
+Open Nomisma
+Open Isotimia
+
+Function fngConvertPoso Global String asNomismaCodeApo Number anPoso ;
+                               String asNomismaCodeSe  Date   adHmnia;
+                               Number nIsotimia  Returns Number
+
+    Number rVal nApo_Euro_Isot nSe_Euro_Isot
+    Integer iApo_Einai_Euro_Zone iApo_Einai_DRX iApo_Einai_Euro iDekadika_Apo
+    Integer iSe_Einai_Euro_Zone  iSe_Einai_DRX  iSe_Einai_Euro  iDekadika_Se
+    String  sCode
+
+    If (asNomismaCodeApo=asNomismaCodeSe) Function_Return anPoso
+
+    Clear Nomisma
+    Move (Trim(asNomismaCodeApo)) to Nomisma.Nomisma_Code
+    Find eq Nomisma By Index.1 // Nomisma:Index.1:Nomisma_Code
+    Move Nomisma.Euro_Zone      to iApo_Einai_Euro_Zone
+    Move Nomisma.Einai_DRX      to iApo_Einai_DRX
+    Move Nomisma.Einai_EURO     to iApo_Einai_Euro
+    Move Nomisma.KL_ISOT_EURO   to nApo_Euro_Isot
+    Move Nomisma.Dekadika       to iDekadika_Apo
+    // 1. An to nomisma APO den einai ths zonhs euro prepei na vrethei h isotimia tou
+    If ((NOT(iApo_Einai_Euro_Zone)) And (nApo_Euro_Isot=0))  Begin
+        If (adHmnia='') Sysdate            adHmnia
+        Move (Trim(asNomismaCodeApo))   to sCode
+        Clear Isotimia
+        Move sCode                      to Isotimia.Nomisma_Code
+        Move (adHmnia+1)                to Isotimia.Isotimia_Hmnia
+        Find lt Isotimia by Index.1 // Isotimia:Index.1:Nomisma_Code+Isotimia_Hmnia
+        Move Isotimia.Isotimia_Euro     to nApo_Euro_Isot
+    End
+
+    Clear Nomisma
+    Move (Trim(asNomismaCodeSe)) to Nomisma.Nomisma_Code
+    Find eq Nomisma By Index.1 // Nomisma:Index.1:Nomisma_Code
+    Move Nomisma.Euro_Zone      to iSe_Einai_Euro_Zone
+    Move Nomisma.Einai_DRX      to iSe_Einai_DRX
+    Move Nomisma.Einai_EURO     to iSe_Einai_Euro
+    Move Nomisma.KL_ISOT_EURO   to nSe_Euro_Isot
+    Move Nomisma.Dekadika       to iDekadika_Se
+    // 2. An to nomisma SE den einai ths zonhs euro prepei na vrethei h isotimia tou
+    If ((NOT(iSe_Einai_Euro_Zone)) And (nSe_Euro_Isot=0)) Begin
+        If (adHmnia='') Sysdate            adHmnia
+        Move (Trim(asNomismaCodeSe))    to sCode
+        Clear Isotimia
+        Move sCode                      to Isotimia.Nomisma_Code
+        Move (adHmnia+1)                to Isotimia.Isotimia_Hmnia
+        Find lt Isotimia by Index.1 // Isotimia:Index.1:Nomisma_Code+Isotimia_Hmnia
+        Move Isotimia.Isotimia_Euro     to nSe_Euro_Isot
+    End
+
+    Calc (anPoso/nApo_Euro_Isot) to rVal
+    Move (Round_Number(rVal,6)) to rVal
+    Calc (rVal*nSe_Euro_Isot) to rVal
+    Move (Round_Number(rVal,iDekadika_Se)) to rVal
+
+    Function_Return rVal
+End_Function
+
+Register_Object oStatusBarSub
+
+Open Syscurxr
+Open SysFile
+Open Sysrecc
+Open Sysrecb
+Open Sysrecw
+
+Procedure Reset_All_Files_Except_System
+    Local Integer File# Open# File_Number# liInt iMax iWait isSystem
+    Local String Physicalname# DisplayName# Logicalname# Rootname#
+    Move 0 To File#
+    Repeat
+      Get_Attribute Df_File_Next_Opened Of File# To File#
+      If (File#) Begin
+        Get_Attribute DF_FILE_IS_SYSTEM_FILE    Of File# To isSystem
+        If (NOT(isSystem)) Clear File#
+      End
+    Until File# Eq 0
+End_Procedure
+use v037.vw
+#Include FEM.pkg
+
+//AB-ClientStoreTopEnd
+
+    Set psProject_Version to "5.0"
+    Set psMenu_Pkg To jsMenu.mn                                                                       
+    Set psButtonBar_Pkg To Ewbtnbar.pkg
+    Set psStatusBar_Pkg To DFStdSbr.pkg
+    Set ProjectName to "test"
+    Set ProjectFileName to "test.prj"
+    Set GenerateFileName to "test.src"
+    Set psProject_Version to "5.0"
+    Set Component To r6_4G.RV
+
+//AB-StoreStart
+set bitmap of (client_area(main(self))) to "protem1.bmp"
+
+Send DoStoreFileModeInfo to ghoFileModeInfo
+
+
+Start_UI
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//AB-StoreEnd
+
+End_Object    // prj

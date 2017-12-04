@@ -1,0 +1,298 @@
+Use AllEntSc
+
+#REPLACE CURRENT$WORKSPACE   "empor"
+Register_Object Client_Area
+
+//AB-StoreTopStart
+Use Workspc.pkg
+
+//  Set date attributes as needed
+Set_Date_Attribute sysdate4_State to (TRUE)
+Set_Date_Attribute Date4_State    to (TRUE)
+Set_Date_Attribute epoch_value    to 30
+
+Object ProgramWorkspace is a WorkspaceSub
+    Set WorkspaceName to CURRENT$WORKSPACE
+    Set kEnter_Next_State to True
+//    Set ModuleName    to 'ProgramName' // Special module name.
+//    Set HelpName      to 'HelpName.hlp'// Please provide the name of your Windows help file.
+End_Object
+
+Use Help_Ids.inc // Developer should provide this file of help context links.
+Use Std_Help.pkg
+
+Use WinQlSQL.Sub
+Integer giWait_Obj
+
+// General Functions-Procedures and Variables
+Use Globals.Inc
+Use Calendar.sl
+Use Dates.Utl
+Use Roundfn.Fnc
+Use Connect.Dg
+use checkafm.pkg
+use checklog.pkg
+Send Login
+Use Xrhsh.pkg
+//Send Epelexe_Xrhsh
+
+Use Menu_Sec.Sub
+Use DD_Sec.Sub
+
+
+//AB-StoreTopEnd
+
+
+Object Main is a Panelsub
+
+    //AB-PanelStoreTopStart
+    
+    
+    //AB-PanelStoreTopEnd
+
+    Set Label To "#FixTim"
+
+    DFCreate_Menu Main_Menu
+        #include File_PM.inc    // file pulldown menu
+
+        DFCreate_Menu "&View" ViewPopupMenu is a ViewPopupMenu
+        End_Pull_down
+        Set Status_Help To "Available Views"
+        
+        DFCreate_Menu "&Report" ReportPopupMenu is a ViewPopupMenu
+            On_Item "&Concrete Delivery Report New\aCtrl+1" Send Activate_DeliveryReportNew
+        End_Pull_down
+        Set Status_Help To "Available Reports"
+        
+        #include Navi_pm.inc    // Naviation pulldown menu
+        #include win_PM.inc     // Window of available views
+        #include Helpa_PM.inc   // help pulldown menu w/ About
+    End_Menu
+
+    Use DFStdBtn.pkg //  Tool-Bar object.
+    
+    Object Client_Area is a AppClientAreasub
+
+        //AB-ClientStoreTopStart
+        // èêéëéïÜ ÇÑåàâÑë ãÑíÄÅäÜíÑë //
+        String Plhktro_BIP  Plhktro_Esc  Plhktro_N11  Plhktro_N00  Plhktro_FS  Plhktro_AAA  Plhktro_DSI
+        String Plhktro_SO   Plhktro_DC4     //expanded for 1 line
+        String Plhktro_SI   Plhktro_DC2     //condesed
+        String Plhktro_PAV                  //underline
+        String Plhktro_EEE  Plhktro_FFF     //emphasized
+        String Plhktro_GGG  Plhktro_HHH     //double strike
+        String Plhktro_WWW                  //expanded
+        string Plhktro_Q Plhktro_160
+        Integer giViewID
+        String  gsViewName
+        // èêéëéïÜ ÇÑåàâÑë ãÑíÄÅäÜíÑë //
+        
+        Open Sysfile
+        Open Sysrec
+        
+        //Use dbViews.Sub
+        //Use dbForms.Sub
+        
+        //Use GrpPed00.vw
+        //Use GrpPedia.vw
+        //Use GrpView0.vw
+        //Use GrpViews.vw
+        //Use GrpOth0.vw
+        //Use GrpOth.vw
+        //Use Users.vw
+        //Use UserGrps.vw
+        //Use Departm.vw
+        //Use Othon.vw
+        //Use Views.vw
+        //Use Arxeia.vw
+        //Use Pedia.vw
+        //Use Viewflds.vw
+        
+        //Use Cflagkin.vw
+        //Use Wflagkin.vw
+        
+        //Use Listes
+        
+        //Use bpMakeSx.dg
+        
+        //Open Nomisma
+        //Open Isotimia
+        
+        
+        
+        //Function fngConvertPoso Global String asNomismaCodeApo Number anPoso ;
+        //                               String asNomismaCodeSe  Date   adHmnia;
+        //                               Number nIsotimia  Returns Number
+        
+        //    Number rVal nApo_Euro_Isot nSe_Euro_Isot
+        //    Integer iApo_Einai_Euro_Zone iApo_Einai_DRX iApo_Einai_Euro iDekadika_Apo
+        //    Integer iSe_Einai_Euro_Zone  iSe_Einai_DRX  iSe_Einai_Euro  iDekadika_Se
+        //    String  sCode
+        
+        //    If (asNomismaCodeApo=asNomismaCodeSe) Function_Return anPoso
+        
+        //    Clear Nomisma
+        //    Move (Trim(asNomismaCodeApo)) to Nomisma.Nomisma_Code
+        //    Find eq Nomisma By Index.1 // Nomisma:Index.1:Nomisma_Code
+        //    Move Nomisma.Euro_Zone      to iApo_Einai_Euro_Zone
+        //    Move Nomisma.Einai_DRX      to iApo_Einai_DRX
+        //    Move Nomisma.Einai_EURO     to iApo_Einai_Euro
+        //    Move Nomisma.KL_ISOT_EURO   to nApo_Euro_Isot
+        //    Move Nomisma.Dekadika       to iDekadika_Apo
+        //    // 1. An to nomisma APO den einai ths zonhs euro prepei na vrethei h isotimia tou
+        //    If ((NOT(iApo_Einai_Euro_Zone)) And (nApo_Euro_Isot=0))  Begin
+        //        If (adHmnia='') Sysdate            adHmnia
+        //        Move (Trim(asNomismaCodeApo))   to sCode
+        //        Clear Isotimia
+        //        Move sCode                      to Isotimia.Nomisma_Code
+        //        Move (adHmnia+1)                to Isotimia.Isotimia_Hmnia
+        //        Find lt Isotimia by Index.1 // Isotimia:Index.1:Nomisma_Code+Isotimia_Hmnia
+        //        Move Isotimia.Isotimia_Euro     to nApo_Euro_Isot
+        //    End
+        
+        //    Clear Nomisma
+        //    Move (Trim(asNomismaCodeSe)) to Nomisma.Nomisma_Code
+        //    Find eq Nomisma By Index.1 // Nomisma:Index.1:Nomisma_Code
+        //    Move Nomisma.Euro_Zone      to iSe_Einai_Euro_Zone
+        //    Move Nomisma.Einai_DRX      to iSe_Einai_DRX
+        //    Move Nomisma.Einai_EURO     to iSe_Einai_Euro
+        //    Move Nomisma.KL_ISOT_EURO   to nSe_Euro_Isot
+        //    Move Nomisma.Dekadika       to iDekadika_Se
+        //    // 2. An to nomisma SE den einai ths zonhs euro prepei na vrethei h isotimia tou
+        //    If ((NOT(iSe_Einai_Euro_Zone)) And (nSe_Euro_Isot=0)) Begin
+        //        If (adHmnia='') Sysdate            adHmnia
+        //        Move (Trim(asNomismaCodeSe))    to sCode
+        //        Clear Isotimia
+        //        Move sCode                      to Isotimia.Nomisma_Code
+        //        Move (adHmnia+1)                to Isotimia.Isotimia_Hmnia
+        //        Find lt Isotimia by Index.1 // Isotimia:Index.1:Nomisma_Code+Isotimia_Hmnia
+        //        Move Isotimia.Isotimia_Euro     to nSe_Euro_Isot
+        //    End
+        
+        //    Calc (anPoso/nApo_Euro_Isot) to rVal
+        //    Move (Round_Number(rVal,6)) to rVal
+        //    Calc (rVal*nSe_Euro_Isot) to rVal
+        //    Move (Round_Number(rVal,iDekadika_Se)) to rVal
+        
+        //    Function_Return rVal
+        //End_Function
+        
+        
+        //AB-ClientStoreTopEnd
+
+        //  Include all views
+
+        //  Include all reports
+        Use DeliveryReportNew.RV                                                            
+
+        //AB-ClientStoreStart
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-ClientStoreEnd
+
+
+    End_Object  // Client_Area
+    
+    On_Key Key_Ctrl+Key_1 Send Activate_DeliveryReportNew To Client_Area
+    
+    Use DFStdSbr.pkg //  Status-Bar object.
+
+    //AB-PanelStoreStart
+    Use StdAbout.pkg // Standard "About" package.
+    
+    
+    
+    
+    
+    //AB-PanelStoreEnd
+
+
+End_Object
+
+
+//AB-StoreStart
+
+Start_UI
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//AB-StoreEnd
+

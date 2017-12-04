@@ -1,0 +1,223 @@
+//AB/ Project bpAkyrDa
+//AB/ Object prj is a Dialog_Project
+//AB/     Set ProjectName to "bpAkyrDa"
+//AB/     Set ProjectFileName to "bpAkyrDa.DG"
+//AB/     Set GenerateFileName to "NONAME"
+
+// Project Object Structure
+//   bpAkyrDa is a BusinessProcessSub
+//     Ctypkin_DD is a DataDictionary
+//     Wtypkin_DD is a DataDictionary
+//     Ptyppar_DD is a DataDictionary
+//     Country_DD is a DataDictionary
+//     Towns_DD is a DataDictionary
+//     Cities_DD is a DataDictionary
+//     Areas_DD is a DataDictionary
+//     Payresp_DD is a DataDictionary
+//     Clients_DD is a DataDictionary
+//     Nomisma_DD is a DataDictionary
+//     Particle_DD is a DataDictionary
+//     Psxetika_DD is a DataDictionary
+
+// Register all objects
+Register_Object Areas_DD
+Register_Object bpAkyrDa
+Register_Object Cities_DD
+Register_Object Clients_DD
+Register_Object Country_DD
+Register_Object Ctypkin_DD
+Register_Object Nomisma_DD
+Register_Object Particle_DD
+Register_Object Payresp_DD
+Register_Object Psxetika_DD
+Register_Object Ptyppar_DD
+Register_Object Towns_DD
+Register_Object Wtypkin_DD
+
+
+//AB-IgnoreStart
+
+Use Bproces.Sub
+Use DFAllEnt.pkg
+
+
+Use CTYPKIN.DD
+Use WTYPKIN.DD
+Use PTYPPAR.DD
+Use COUNTRY.DD
+Use TOWNS.DD
+Use CITIES.DD
+Use AREAS.DD
+Use PAYRESP.DD
+Use CLIENTS.DD
+Use NOMISMA.DD
+Use PARTICLE.DD
+Use PSXETIKA.DD
+
+//AB-IgnoreEnd
+
+Object bpAkyrDa is a BusinessProcessSub
+
+    //AB-StoreTopStart
+
+    Set Status_Panel_State to True
+    //Set Allow_Cancel_State  to True
+    Set Display_Error_State to True
+    Set Process_Title to "„¤ž£â¨à©ž §¨¦ª «˜ §å©à ©®œ« ¡é¤ §˜¨˜©«˜« ¡é¤ "
+    //Set Status_Log_id to (status_log(Self)) //Use statlog.pkg
+    //Set Status_log_state to True
+
+    Property String     psParticleRecr  Public ''
+    Property Integer    piLathos        Public  0
+    Property Integer    piEkleise       Public  0
+
+    //AB-StoreTopEnd
+
+    Set Size to 60 100
+    Set Location to 15 27
+
+    //AB-DDOStart
+
+    Object Ctypkin_DD is a Ctypkin_DataDictionary
+    End_Object    // Ctypkin_DD
+
+    Object Wtypkin_DD is a Wtypkin_DataDictionary
+    End_Object    // Wtypkin_DD
+
+    Object Ptyppar_DD is a Ptyppar_DataDictionary
+        Set DDO_Server to (Ctypkin_DD(self))
+        Set DDO_Server to (Wtypkin_DD(self))
+    End_Object    // Ptyppar_DD
+
+    Object Country_DD is a Country_DataDictionary
+    End_Object    // Country_DD
+
+    Object Towns_DD is a Towns_DataDictionary
+        Set DDO_Server to (Country_DD(self))
+    End_Object    // Towns_DD
+
+    Object Cities_DD is a Cities_DataDictionary
+        Set DDO_Server to (Towns_DD(self))
+    End_Object    // Cities_DD
+
+    Object Areas_DD is a Areas_DataDictionary
+    End_Object    // Areas_DD
+
+    Object Payresp_DD is a Payresp_DataDictionary
+    End_Object    // Payresp_DD
+
+    Object Clients_DD is a Clients_DataDictionary
+        Set DDO_Server to (Cities_DD(self))
+        Set DDO_Server to (Areas_DD(self))
+        Set DDO_Server to (Payresp_DD(self))
+    End_Object    // Clients_DD
+
+    Object Nomisma_DD is a Nomisma_DataDictionary
+    End_Object    // Nomisma_DD
+
+    Object Particle_DD is a Particle_DataDictionary
+        Set DDO_Server to (Clients_DD(self))
+        Set DDO_Server to (Ptyppar_DD(self))
+        Set DDO_Server to (Nomisma_DD(self))
+    End_Object    // Particle_DD
+
+    Object Psxetika_DD is a Psxetika_DataDictionary
+        Set DDO_Server to (Particle_DD(self))
+        Set Constrain_File to Particle.File_Number
+    End_Object    // Psxetika_DD
+
+    //AB-DDOEnd
+
+
+    //AB-StoreStart
+
+
+    Procedure Frontise_Ta_Deltia
+        String  sRecr sSxetika_Recr
+        Integer iEkleise iFromDelete iErr
+
+        Indicate Err False
+
+        Get psParticleRecr  to sRecr
+        Get piEkleise       to iEkleise
+
+        Clear Psxetika
+        Move sRecr to Psxetika.Partl_recr
+        Find Gt Psxetika By Index.4 //Psxetika:Index.4:Partl_recr+Psx_Partl_Recr
+        While ((Found=1) And (sRecr=Psxetika.Partl_recr))
+
+            Set Process_Title to ("„¤ž£â¨à©ž ©®œ« ¡é¤ §˜¨˜©«˜« ¡é¤ "+Psxetika.Psxetika_Recr)
+
+            Move Psxetika.Psxetika_Recr to sSxetika_Recr
+
+            Clear Particle
+            Move Psxetika.Psx_Partl_Recr to Particle.Partl_Recr
+            Find Eq Particle By Index.2
+            If (Found=1) Begin
+                Set Process_Title to ("„¤ž£â¨à©ž ©®œ« ¡é¤ §˜¨˜©«˜« ¡é¤ "+Particle.Partl_Recr)
+                // 1. An to Akyrotiko parastatiko ekleise ayto shmainei pos
+                //    to timologio akyrothike ara prepei na broume ta sxetika D.AP
+                //    tou timologiou kai na ta 'eleytherosoume'
+                If (iEkleise) Begin
+                    Reread Particle
+                    Move '' to Particle.Partl_Ekl_Recr
+                    Move  0 to Particle.Partl_Timol
+                    Saverecord Particle
+                    Move (Err) to iErr
+                    If (iErr) Begin
+                        Set piLathos to 80001
+                        Procedure_Return
+                    End
+                    Unlock
+                End
+
+
+                Else Begin
+                // 2. An to Akyrotiko anoixe tote shmainei pos to timologio paramenei
+                //    se plhrh isxy ara ta D.AP prepei na xana mplokaristoun
+                    Reread Particle
+                    Move sRecr  to Particle.Partl_Ekl_Recr
+                    Move 1      to Particle.Partl_Timol
+                    Saverecord Particle
+                    Move (Err) to iErr
+                    If (iErr) Begin
+                        Set piLathos to 80002
+                        Procedure_Return
+                    End
+                    Unlock
+                End
+
+            End
+
+            Clear Psxetika
+            Move sSxetika_Recr to Psxetika.Psxetika_Recr
+            Find Eq Psxetika By Index.2
+            Find Gt Psxetika By Index.4 //Psxetika:Index.4:Partl_recr+Psx_Partl_Recr
+        Loop
+    End_Procedure
+
+    Procedure OnProcess
+        If (Trim(psParticleRecr(Self))='') Begin
+            Set piLathos to 80000
+            Procedure_Return
+        End
+        Send Frontise_Ta_Deltia
+    End_Procedure
+
+    Procedure OnError integer error_info string errMsg
+    End_Procedure
+
+    Procedure Start_Process
+        Forward Send Start_Process
+    End_Procedure
+
+    Procedure End_Process
+        Forward Send End_Process
+    End_Procedure
+
+
+    //AB-StoreEnd
+
+End_Object    // bpAkyrDa
+
+//AB/ End_Object    // prj

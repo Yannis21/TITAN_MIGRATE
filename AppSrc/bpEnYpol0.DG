@@ -1,0 +1,208 @@
+//AB/ Project bpEnYpol
+//AB/ Object prj is a Dialog_Project
+//AB/     Set ProjectName to "bpEnYpol"
+//AB/     Set ProjectFileName to "bpEnYpol.DG"
+//AB/     Set GenerateFileName to "NONAME"
+
+// Project Object Structure
+//   bpEnYpol is a BusinessProcessSub
+
+// Register all objects
+Register_Object bpEnYpol
+
+
+//AB-IgnoreStart
+
+Use Bproces.Sub
+
+
+//AB-IgnoreEnd
+
+Object bpEnYpol is a BusinessProcessSub
+
+    //AB-StoreTopStart
+
+    Open Pmoves
+
+    Set Status_Panel_State to False
+    //Set Allow_Cancel_State  to True
+    Set Display_Error_State to True
+    //Set Process_Title to "               "
+    //Set Status_Log_id to (status_log(Self)) //Use statlog.pkg
+    //Set Status_log_state to True
+
+    Property Integer    piFromAkyrosh   Public  0
+    Property Integer    piLathos        Public  0
+    Property Number     pnQty           Public  0
+    Property Integer    piCurrent       Public  0
+    Property String     psRecr          Public ''
+
+
+
+    //AB-StoreTopEnd
+
+    Set Size to 60 100
+    Set Location to 4 5
+
+    //AB-DDOStart
+
+
+    //AB-DDOEnd
+
+
+    //AB-StoreStart
+
+    Function fiUpdate_Pmoves_Qty String asRecr Number anQty Returns Integer
+        Clear Pmoves
+        Move asRecr to Pmoves.Pms_Recr
+        Find Eq Pmoves by index.2
+        If (Found) Begin
+            If ((Pmoves.Timol_Qty+anQty) > Pmoves.Pms_Qty) Function_Return 40001
+            Else Begin
+                Reread Pmoves
+                Add anQty to Pmoves.Timol_Qty
+                Move (Pmoves.Pms_Qty-Pmoves.Timol_Qty) to Pmoves.Timol_Ypol
+                Saverecord Pmoves
+                Unlock
+//                Clear Particle
+//                Move Pmoves.Partl_Recr to Particle.Partl_Recr
+//                Find Eq Particle by Index.2
+//                If (Found) Begin
+//                    Reread
+//                    Add anQty to Particle.Timol_Qty
+//                    If (Particle.Partl_TotTem>0) Begin
+//                        Move (Particle.Partl_TotTem-Particle.Timol_Qty) to Particle.Timol_Ypol
+//                        Move (Particle.Timol_Ypol=0)                    to Particle.Partl_Timol
+//                    End
+//                    Else Move 0 to Particle.Partl_Timol
+//                    Saverecord Particle
+//                    Unlock
+//                End
+//                Else Function_Return 40002
+            End
+        End
+        Else Function_Return 40000
+        Function_Return 0
+    End_Function
+
+    Procedure OnProcess
+        Integer iLathos iSub iAkyro
+        String  sCurr sRecr sPmoveRecr
+        Number  nQty
+
+        Set piLathos        to 0
+        Get pnQty           to nQty
+        Get psRecr          to sRecr
+        Get piFromAkyrosh   to iAkyro
+
+//        // An h posothta einai setarismenh thetika shmainei pos klhthike
+//        // apo thn Update tou PmsSxet, allios an erthei arnhtikh apo thn Backout
+//        // Prepei na to xeroume gia thn periptosh tou akyrotikou, opou tha trexei
+//        // apanota h function kai tha antistrpsei to proshmo ths posothtas.
+//        Move (nQty<0)   to iSub
+
+
+//        // An h posothta einai thetikh pou shmainei oti erxetai apo Update
+//        // tou akyrotikou trexoume prota thn enhmerosh tou TIM kai META thn
+//        // enhmerosh tou DAP gia epanafora posothtas diathesimhs
+//        If (iAkyro) Begin
+//            // An erxetai apo dhmiourgia akyrotikou parastatikou
+//            If (NOT(iSub)) Begin
+//                // An erxetai apo Update tou akyrotikou trxoume prota thn
+//                // enhmerosh tou TIM
+//                Get fiUpdate_Pmoves_Qty sRecr nQty to iLathos
+//            End
+//        End
+//        Else Get fiUpdate_Pmoves_Qty sRecr nQty to iLathos
+//        // Allios an den einai akyrotiko, prepei na trexei h enhmerosh
+//        // tou prohgoumenou parastatikou.
+
+
+//        // js 30/08/2002 Enhmerosh ena bhma pio piso sthn periptosh pou
+//        // h enhmerosh ton pmoves apo backout kai update tou PmsSxet,
+//        // afora Akyrotiko. (DAP --> TIM --> AKYROTIKO). Erxomaste dhladh edo apo
+//        // AKYROTIKO na enhmerosoume tis posothtes tou TIMOLOGIOU.
+//        // Sthn periptosh ayth prepei na kanoume ta exhs:
+//        // 1. Eyresh ton sxetikon tou trxontos pmove TIMOLOGIOU
+//        // 2. Antistrofh tou proshmou ths posothtas tous
+//        // 3. Eyresh tou arxikou Pmoves (DAP) kai enhmerosh posothtas kinhshs
+//        If (iAkyro) Begin
+//            Clear Pmoves
+//            Move sRecr to Pmoves.Pms_Recr
+//            Find Eq Pmoves by index.2
+//            If (Found) Begin
+//                Clear PmsSxet
+//                Move sRecr to PmsSxet.Pms_Recr
+//                Find Gt PmsSxet by Index.1
+//                While ((Found=1) And (PmsSxet.Pms_Recr=sRecr))
+//                    Move PmsSxet.Sxetiko_Recr   to sCurr
+//                    Move PmsSxet.Posothta       to nQty
+//                    If (iSub) Begin
+//                        // An Exei erthei apo Backout tou PmsSxet (to gnorizoume apo thn posothta
+//                        // h opoia sto property einai arnhtikh) tote gyrname thn posothta tou
+//                        // PmsSxet thetikh (Ousiastika thn afhnoume opos einai dhladh).
+//                    End
+//                    Else Begin
+//                        // An Exei erthei apo Update tou PmsSxet (to gnorizoume apo thn posothta
+//                        // h opoia sto property einai thetikh) tote gyrname thn posothta tou
+//                        // PmsSxet arnhtikh.
+//                        Move (nQty*(-1)) to nQty
+//                    End
+//                    Get fiUpdate_Pmoves_Qty sCurr nQty to iLathos
+//                    If (iLathos) Begin
+//                        Set piLathos to (iLathos+3)
+//                        // An Gyrisei Pmoves Not Found      (40000) To kanoume 40003
+//                        // An Gyrisei problhma sto ypoloipo (40001) To kanoume 40004
+//                        // An Gyrisei problhma sto particle (40002) To kanoume 40005
+//                        Procedure_Return
+//                    End
+//                    Clear PmsSxet
+//                    Move sRecr      to PmsSxet.Pms_Recr
+//                    Move sCurr      to PmsSxet.Sxetiko_Recr
+//                    Find Eq PmsSxet by Index.1
+//                    Find Gt PmsSxet by Index.1
+//                Loop
+//            End
+//            Else Set piLathos to 40006
+//        End
+
+        If (piLathos(Self)<>0) Procedure_Return
+
+        If (iAkyro) Begin
+            // An erxetai apo dhmiourgia akyrotikou parastatikou
+            If (iSub) Begin
+                // An erxetai apo Backout tou akyrotikou shmainei oti etrexe prota
+                // h enhmerosh tou DAP, opote meta preprei na trexei h enhmerosh
+                // tou TIM
+                Get fiUpdate_Pmoves_Qty sRecr nQty to iLathos
+            End
+        End
+
+        If (iLathos) Begin
+            Set piLathos to iLathos
+            Procedure_Return
+        End
+
+    End_Procedure
+
+    Procedure OnError integer error_info string errMsg
+    End_Procedure
+
+    Procedure Start_Process
+        Forward Send Start_Process
+    End_Procedure
+
+    Procedure End_Process
+        Forward Send End_Process
+        If (piCurrent(Self)) Begin
+            Clear Pmoves
+            Move (piCurrent(Self)) to Pmoves.Recnum
+            Find Eq Pmoves.Recnum
+        End
+    End_Procedure
+
+    //AB-StoreEnd
+
+End_Object    // bpEnYpol
+
+//AB/ End_Object    // prj

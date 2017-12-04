@@ -1,0 +1,276 @@
+///////////////////////////////////////////////
+// Ginetai #Include sto Program //
+///////////////////////////////////////////////
+Use Idiotht.pkg
+
+Integer igC
+String  sgC sgFull sgRootDir sgDevicePath
+Move 0 to igC
+
+Move (fsReadRegistryFEMRootDir   ()) To sgRootDir
+Move (fsReadRegistryFEMDevicePath()) To sgDevicePath
+
+// An den yparxoun ta settings sto registry (apo Setup Egkatastashs)
+// Tote ta ftiaxnoume me ex orismou C:\FEM_ROOT\ & C:\FEM_ROOT\Device_File1.dat
+// mesa apo tis 2 parakato functions (sto Idiotht.pkg)
+If (Trim(sgRootDir)   ='') Get fiWriteRegistryFEMRootDir    to iGC
+If (Trim(sgDevicePath)='') Get fiWriteRegistryFEMDevicePath to iGC
+//
+
+//====================================================================================================================
+//====================================================================================================================
+// ** START ** Function ths forologikhs ektypotikhs mhxanhs
+//INT16 EXPTYPE FSL_CommandE      (BYTE *strBase  , BYTE *strCmd      , BYTE *strDevFile  , BYTE *strP1   , BYTE *strP2, WORD docTypeId   );
+//INT16 EXPTYPE FSL_SignDocumentE (SIGNDEVICE *Dev, BYTE *strInfile   , BYTE *pbResult    , WORD docTypeId, BOOL isCopy, WORD docProfileId);
+//INT16 EXPTYPE FSL_IssueZreportE (SIGNDEVICE *Dev, BYTE *strZDir);
+//void  EXPTYPE FSL_SetEIgnore    (BOOL fEIgnore);
+//void  EXPTYPE FSL_SetAcDir      (BYTE *strAcDir);
+//void  EXPTYPE FSL_SetUploadE    (BOOL fUploadE);
+//INT16 EXPTYPE FSL_ReloadZreports(SIGNDEVICE *Dev, BYTE *strZdir);
+
+External_Function32 FSL_Command "FSL_Command" SynthexFES.dll;
+                    String  sBaseDir    ;
+                    String  sCommand    ;
+                    String  sDevFile    ;
+                    String  sParam1     ;
+                    String  sParam2     ;
+                    Returns Integer
+
+External_Function32 FSL_CommandE "FSL_CommandE" SynthexFES.dll;
+                    String  sBaseDir    ;
+                    String  sCommand    ;
+                    String  sDevFile    ;
+                    String  sParam1     ;
+                    String  sParam2     ;
+                    Integer iDocTypeID  ;
+                    Integer iCopy       ;
+                    Returns Integer
+
+External_Function32 FSL_SignDocumentE "FSL_SignDocumentE" SynthexFES.dll;
+                    String  sDevFile     ;
+                    String  sParam       ;
+                    String  sResult      ;
+                    Integer iDocTypeID   ;
+                    Integer bIsCopy      ;
+                    Integer docProfileId ;
+                    Returns Integer
+
+External_Function32 FSL_IssueZreportE "FSL_IssueZreportE" SynthexFES.dll;
+                    String  sDevFile     ;
+                    String  sParam       ;
+                    Returns Integer
+
+//====================================================================================================================
+
+
+
+// ** END ** Function ths forologikhs ektypotikhs mhxanhs
+//====================================================================================================================
+//====================================================================================================================
+
+
+// ** START ** Gemisma global string me escape xarakthron gia afairesh tous apo to ascii ths forologikhs
+Move '' to sgC
+For igC From 1 to 254
+    If ((igC<32) Or ((igC>175) And (igC<224)) Or (igC>240)) Begin
+        Move (Append(sgC,Character(igC))) to sgC
+    End
+Loop
+// ** END ** Gemisma escape xarakthron gia afairesh tous apo to ascii ths forologikhs
+
+Property Integer piParastCode Public 0
+
+Function fiEtoimaseTaAscii Returns Integer
+    Set_Argument_Size 512
+    Local String sE_Line sFemPtypparCode
+
+    Integer iFileExist iii iii2 isOK iCode
+    String  sLine sLine2 sLetter sLetter2 sFemPartlRecr sCode
+
+    Set piParastCode to 0
+
+    // 1. Check if file was outputed (C:\Parast.txt)
+    Get Get_File_Exists 'C:\Parast.txt' to iFileExist
+    If (Not(iFileExist)) Function_Return 12556
+
+    // 2. Check if file is outputed but empty
+    Direct_Input Channel 7 "C:\Parast.txt"
+    If (Seqeof) Begin
+        Close_Input Channel 7
+        Function_Return 12557
+    End
+    Close_Input Channel 7
+
+
+    //============================================
+    // SOS Yannis 24/04/2013 Prosthikh tou eLine
+    //============================================
+    // 1. Check if file was outputed (C:\eLine.txt)
+    Get Get_File_Exists "C:\eline.txt" to iFileExist
+    If (Not(iFileExist)) Function_Return 9554
+    // 2. Check if file is outputed but empty
+    Direct_Input Channel 7 "C:\eline.txt"
+    If (Seqeof) Begin
+        Close_Input Channel 7
+        Function_Return 9555
+    End
+    Close_Input Channel 7
+
+    Direct_Input Channel 7 "C:\eline.txt"
+    Readln Channel 7 sFemPtypparCode
+    Readln Channel 7 sE_Line
+    Close_Input Channel 7
+
+    Move (Trim(sFemPtypparCode))    to sCode
+    Move sCode                      to iCode
+
+    If ((sCode="") Or (iCode= 0))   Function_return 9556
+    If (Trim(sE_Line)="")           Function_return 9557
+
+    Set piParastCode      to iCode
+    Move (Trim(sE_Line))  to sLine2
+
+    Append_Output   Channel 7 "C:\Parast.txt"
+    Writeln         Channel 7
+    Writeln         Channel 7  sLine2      // <<<------- ELINE
+    Writeln         Channel 7
+    Close_Output    Channel 7
+
+
+    // 3. Strip file from escape sequences
+    Direct_Input Channel 7 "C:\Parast.txt"
+    Direct_Output Channel 9 "C:\Parast0.txt"
+    Repeat
+        Readln Channel 7 sLine
+        For iii From 1 to (Length(sgC))
+            Move (Replaces((Mid(sgC,1,iii)),sLine,' ')) to sLine
+        Loop
+        Writeln Channel 9 sLine
+    Until (Seqeof)
+    Close_Input Channel 7
+    Close_Output Channel 9
+
+    // 4. Check if new ascii without escape
+    //    sequences is outputed (C:\Parast0.txt)
+    Get Get_File_Exists 'C:\Parast0.txt' to iFileExist
+    If (Not(iFileExist)) Function_Return 12558
+
+    // 5. Check if new file is outputed but empty
+    Direct_Input Channel 7 "C:\Parast0.txt"
+    If (Seqeof) Begin
+        Close_Input Channel 7
+        Function_Return 12559
+    End
+    Close_Input Channel 7
+
+    // 6. Convert file to ELOT
+    Direct_Input Channel 7 "C:\Parast0.txt"
+    Direct_Output Channel 9 "C:\Parast1.txt"
+    Repeat
+        Readln Channel 7        sLine
+        Move (ToAnsi(sLine)) to sLine2
+        Writeln Channel 9       sLine2
+    Until (Seqeof)
+    Close_Input  Channel 7
+    Close_Output Channel 9
+
+    // 7. Check if converted ELOT ascii is outputed (C:\Parast1.txt)
+    Get Get_File_Exists 'C:\Parast1.txt' to iFileExist
+    If (Not(iFileExist)) Function_Return 12560
+
+    // 8. Check if converted ELOT ascii is NOT Empty
+    Direct_Input Channel 7 "C:\Parast1.txt"
+    If (Seqeof) Begin
+        Close_Output Channel 7
+        Function_Return 12561
+    End
+    Close_Output Channel 7
+
+    Function_Return 1 // Everything OK
+End_function
+
+
+Function fiPareYpografh Returns String
+    Integer iFileExist iii iii2 isOK iCode
+    String  sLine sLine2 sLetter sLetter2 sCode sFemPtypparCode sE_Line
+    Move 0 to isOK
+
+    Get piParastCode to iCode
+
+
+    //Pause 24 00 ">>>>> CHECK THE FILES ON THE DISK NOW <<<<<<"
+
+    If (Right(sgRootDir,1)<>"\") Append sgRootDir "\"
+
+    //Move (FSL_Command(sgRootDir,'SIGN',sgDevicePath ,'C:\Parast1.txt','C:\Signature.txt')) to isOK
+      //iRet = FSL_Command( "C:\\My Signature Files\\",          // Sign root dir
+      //                    "SIGN",                              // Command
+      //                    "F:\\My Devices\\Device_1.Dat",      // Use device
+      //                    "F:\\Data Files\\ELOT_FILE.TXT",     // File to sign
+      //                    "C:\\OUT\\Signature.Dat"             // Result file
+      //                 );
+      //if(iRet == 0) {
+      //  // Success
+      //} else {
+      //  // Report it
+      //}
+
+    Move (FSL_CommandE(sgRootDir,'SIGNE',sgDevicePath ,'C:\Parast1.txt','C:\Signature.txt',iCode,0)) to isOK
+
+    If (isOK<>0) Begin
+        Send Stop_Box ("FSL_CommandE Returns NOT OK...  sgRootDir="+ sgRootDir+"  sgDevicePath="+sgDevicePath+"  isOK="+isOK) "Error 555 FEM.PKG"
+        Function_Return ''
+    End
+
+
+    Direct_Input Channel 7 'C:\Signature.txt'
+    If (Seqeof) Function_Return '12562'
+    Readln Channel 7 sLine
+    Move (Trim(sLine)) to sLine
+
+    //If (Length(sLine)<>77) Function_Return '12563'
+
+
+    EraseFile "C:\eline.txt"
+    EraseFile "C:\ElineElot.txt"
+    EraseFile "C:\Eline_SIGNED.txt"
+    EraseFile "C:\Parast*.txt"
+    EraseFile "C:\Signature.txt"
+    //============================================
+    // SOS Yannis 24/04/2013 Prosthikh tou eLine
+    //============================================
+
+
+    Function_return (Trim(sLine))
+End_function
+
+Function fiVgaleZ Returns Integer
+    Integer isOK
+    Move 0 to isOK
+    //Move (FSL_Command(sgRootDir,'Z',sgDevicePath ,'','',0)) to isOK
+    Move (FSL_CommandE(sgRootDir,'Z',sgDevicePath ,'','',0,0)) to isOK
+    Function_return isOK
+    // 0= ok
+End_function
+
+
+Function fiShowCTL Returns Integer
+    Integer isOK
+    Move 0 to isOK
+    Move (FSL_CommandE(sgRootDir,'CTL',sgDevicePath ,'','',0,0)) to isOK
+
+//      iRet = FSL_Command( "C:\\My Signature Files\\",          // Sign root dir
+//                          "CTL",                               // Command
+//                          "F:\\My Devices\\Device_1.Dat",      // Use device
+//                          NULL,                                // Unused
+//                          NULL                                 // Unused
+//                       );
+
+    Function_return isOK
+    // 0= ok
+End_function
+
+
+Use RptVwFem.Sub
+Use BasrpFem.Sub
+

@@ -3,7 +3,7 @@
 
 // File Name : CLIENTS.DD
 // Class Name: Clients_DataDictionary
-// Revision  : 247
+// Revision  : 250
 // Version   : 2
 
 Use  Windows           // Basic Definitions
@@ -106,6 +106,7 @@ Class Clients_DataDictionary  is a DataDictionary_Sec
         Forward Send Construct_Object
         Property Integer piMustNOTConstrain Public 0
         Property Integer piCheckPlaf        Public 0
+        Property Integer piOldExportFlag    Public 0
         //------------------------------------------------
         // Properties gia na kraththoun oi palies times
         // ton pedion Ef' oson to Sysfile.Use_Audit pedio
@@ -141,6 +142,7 @@ Class Clients_DataDictionary  is a DataDictionary_Sec
         Set psAud_Old_PartlRecr    to Clients.Client_Recr
         Set psAud_Old_PmsRecr      to Clients.Client_Recr
         //------------------------------------------------
+        Set piOldExportFlag        to Clients.ExportFlag
      End_Procedure   // New_Current_Record
 
 
@@ -225,6 +227,29 @@ Class Clients_DataDictionary  is a DataDictionary_Sec
         Move Clients.Company_Code    to Clients.CLIENT_COMPANY
         Move Clients.Client_id       to Clients.Client_RepMatch
      //   Move (gsfCode_Mast('JOB',Clients.Client_CatJob)) to Clients.Client_Job
+
+
+//==================
+//// Yannis 13/10/2017   O elegxos metaferetai sto kataxorhtiko view
+////        If (Operation_ORIGIN=Self) Begin
+////            If (piOldExportFlag(Self)=0) Begin
+////                Move 1      to Clients.ExportFlag
+////                Move "SEND" to Clients.ExportStatus
+////            End
+////        End
+//        If (Operation_ORIGIN=Self) Begin
+//            If ((piOldExportFlag(Self)=1) And (Clients.ExportFlag=0)) Begin
+//                Move "CANC" to Clients.ExportStatus
+//            End
+//            Else Begin
+//                Move 1 	    to Clients.ExportFlag
+//				Move "SEND" to Clients.ExportStatus
+//            End
+//        End
+//==================
+
+
+
 
         //---------------------------------------------
         // Auditing / Katagrafh allagon

@@ -1,0 +1,18 @@
+Integer iLines iInt iLen iKeno
+String sStr sStr1 sStr2 sOra s1 s2 s0
+
+Move ............ to sStr
+Append sStr ' '
+
+Move (Length(sStr)) to iLen
+
+For iInt From 1 to iLen
+        If (iInt>30) Break
+        If (Mid(sStr,1,iInt)=' ') Move iInt to iKeno
+Loop
+
+Move '' to sStr1
+Move '' to sStr2
+
+Move (Left(sStr,iKeno-1))       to sStr1
+Move (Right(sStr,iLen-iKeno))   to sStr2

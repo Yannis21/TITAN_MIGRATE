@@ -1,0 +1,475 @@
+// DVFTP.PKG - Internet File Transfer Protocol (FTP) functions
+//             for Visual Dataflex
+//
+// Created by: Marcel J. Zwiebel
+//             Dataview - The Netherlands
+// E-mail    : marcel@dataview-sc.com
+// CIS id    : 100273,2473
+// Web URL   : http://www.dataview-sc.com
+//
+// Date      : 28/07/1997 
+
+Use Windows.pkg
+Use DLL.pkg
+
+// register external functions of the dvftp.dll
+
+
+// function   : dvInternetAttemptConnect
+//
+// description: Attemps to make a connection to the Internet. If the user has a dialup-connection
+//              to an Internet Service Provider (ISP) and the computer is not connected to this 
+//              ISP, the standard dialup dialog box will be evoked.
+//                   
+// parameters : none
+//
+// returns    : integer - Is 0 (ok) or error-number.
+//
+External_Function dvInternetAttemptConnect "dvInternetAttemptConnect" DVFTP.DLL ;
+     Returns Integer
+
+
+// function   : dvInternetOpen
+//
+// description: Initializes the application's use of the WIN32 Internet functions.
+//
+// parameters : none
+//
+// returns    : integer - Is 0 (ok) or error-number.
+//
+External_Function dvInternetOpen "dvInternetOpen" DVFTP.DLL ;
+     Returns Integer
+
+
+// function   : dvInternetConnect
+//
+// description: Opens an FTP-session with a server.
+//
+// parameters : string ServerName - Can be a DNS-name (for example: ftp.daccess.com) or 
+//                                  an ip-number (for example: 145.58.31.4).
+//              string UserName   - Login-name for the server, can be empty for 
+//                                  "anonymous" login (default for most FTP servers).
+//              string Password   - Password for the server, can be empty for 
+//                                  "anonymous" login (default for most FTP servers).
+//              integer Firewall  - Must be 1 for connecting through a SOCKS firewall
+//                                  server, otherwise 0.
+//
+// returns    : integer - Is 0 (ok) or error-number.
+//
+External_Function dvInternetConnect "dvInternetConnect" DVFTP.DLL ;
+     String szServerName String szUserName String szPassword Integer iFirewall;
+     Returns Integer
+
+
+// function   : dvFtpSetCurrentDirectory
+//
+// description: Changes to a different working directory on the FTP server.
+//
+// parameters : string directory - Name of the directory to change to on the remote system. 
+//                                 This can be either a fully qualified path or a name 
+//                                 relative to the current directory. 
+//                                 A backslash (\) or forward slash (/) can be used as the 
+//                                 directory separator for either name. dvFtpSetCurrentDirectory
+//                                 translates the directory name separators to the appropriate 
+//                                 character before they are used. 
+//                                 Use dvFtpGetCurrentDirectory to determine the remote site's 
+//                                 current working directory (not all remote systems use a
+//                                 hierarchical naming scheme for directories).
+//
+// returns    : integer - Is 0 (ok) or error-number.
+//
+External_Function dvFtpSetCurrentDirectory "dvFtpSetCurrentDirectory" DVFTP.DLL ;
+     String szDirectory Returns Integer
+
+
+// function   : dvFtpGetCurrentDirectory
+//
+// description: Retrieves the current directory for the specified FTP session.
+//
+// parameters : none
+//
+// returns    : string - Name of the current directory.
+//
+External_Function dvFtpGetCurrentDirectory "dvFtpGetCurrentDirectory" DVFTP.DLL ;
+     Returns String
+
+
+// function   : dvFtpCreateDirectory
+//
+// description: Creates a new directory on the FTP server. 
+//
+// parameters : string Directory - The name of the directory to create on the remote system.
+//                                 This can be either a fully qualified path or a name 
+//                                 relative to the current directory. 
+//                                 A backslash (\) or forward slash (/) can be used as the 
+//                                 directory separator for either name. dvFtpCreateDirectory
+//                                 translates the directory name separators to the appropriate 
+//                                 character before they are used. 
+//                                 Use dvFtpGetCurrentDirectory to determine the remote site's 
+//                                 current working directory (not all remote systems use a
+//                                 hierarchical naming scheme for directories).
+//
+// returns    : integer - Is 0 (ok) or error-number.
+//
+External_Function dvFtpCreateDirectory "dvFtpCreateDirectory" DVFTP.DLL ;
+     String szDirectory Returns Integer
+
+
+// function   : dvFtpRemoveDirectory
+//
+// description: Removes the specified directory on the FTP server. 
+//
+// parameters : string Directory - The name of the directory to remove on the remote system.
+//                                 This can be either a fully qualified path or a name 
+//                                 relative to the current directory. 
+//                                 A backslash (\) or forward slash (/) can be used as the 
+//                                 directory separator for either name. dvFtpRemoveDirectory
+//                                 translates the directory name separators to the appropriate 
+//                                 character before they are used. 
+//                                 Use dvFtpGetCurrentDirectory to determine the remote site's 
+//                                 current working directory (not all remote systems use a
+//                                 hierarchical naming scheme for directories).
+//
+// returns    : integer - Is 0 (ok) or error-number.
+//
+External_Function dvFtpRemoveDirectory "dvFtpRemoveDirectory" DVFTP.DLL ;
+     String szDirectory Returns Integer
+
+
+// function   : dvFtpFindFirstFile
+//
+// description: Searches the specified directory of the given FTP session.
+//
+// parameters : string FileSelect - A valid directory path or file name (wildcards allowed) for
+//                                  the FTP server's file system. If the string is empty the 
+//                                  first file in the current directory on the server will be 
+//                                  searched for. 
+//              integer UseCache  - Indicates using the local computer's cache.
+//                                  If the value is 0 then the the cache will be used. 
+//                                  If the value is 1 then a download of the requested file, 
+//                                  object, or directory listing from the origin server will be 
+//                                  forced, not from the cache.
+//
+// returns    : string - Name of the first file found or empty when no files found. When the 
+//                       searched directory is empty the string "directory is empty" is returned.
+//
+External_Function dvFtpFindFirstFile "dvFtpFindFirstFile" DVFTP.DLL ;
+     String szFileSelect Integer iUseCache Returns String
+
+
+// function   : dvFtpFindNextFile
+//
+// description: Continues a file search started as a result of executing dvFtpFindFirstFile.
+//
+// parameters : none
+//
+// returns    : string - Name of the next file found or empty when no more files are found.
+//
+External_Function dvFtpFindNextFile "dvFtpFindNextFile" DVFTP.DLL ;
+     Returns String
+
+
+// function   : dvFtpDeleteFile
+//
+// description: Deletes a file stored on the FTP server. 
+//
+// parameters : string FileSelect - Name of the file to be deleted.
+//                                  Can be file names relative to the current directory. 
+//                                  A backslash (\) or forward slash (/) can be used as 
+//                                  the directory separator. dvFtpDeleteFile translates the 
+//                                  directory name separators to the appropriate character 
+//                                  before they are used. 
+//
+// returns    : integer - Is 0 (ok) or error-number.
+//
+External_Function dvFtpDeleteFile "dvFtpDeleteFile" DVFTP.DLL ;
+     String szFileSelect Returns Integer
+
+
+// function   : dvFtpRenameFile
+//
+// description: Renames a file stored on the FTP server. 
+//
+// parameters : string Existing - The name of the file that will have its name changed on the
+//                                remote FTP server. 
+//              string New      - The new name for the remote file. 
+//
+//                                Both names can be relative to the current directory. A backslash 
+//                                (\) or forward slash (/) can be used as the directory separator 
+//                                for either name. dvFtpRenameFile translates the directory name 
+//                                separators to the appropriate character before they are used. 
+//
+// returns    : integer - Is 0 (ok) or error-number.
+//
+External_Function dvFtpRenameFile "dvFtpRenameFile" DVFTP.DLL ;
+     String szExisting String szNew Returns Integer
+
+
+// function   : dvFtpGetFile
+//
+// description: Retrieves a file from the FTP server and stores it under the specified file name, 
+//              creating a new local file in the process. 
+//
+// parameters : string  RemoteFile   - The name of the file to retrieve from the remote system. 
+//              string  NewFile      - The name of the file to create on the local system. 
+//              integer FailIfExists - Boolean flag that indicates whether the function should 
+//                                     proceed if a local file of the specified name already exists. 
+//                                     If value is 1 and the local file exists, dvFtpGetFile fails. 
+//              integer FileType     - Indicates the transfer method.
+//                                     If the value is 0 then the function transfers the file using 
+//                                     FTP's ASCII (Type A) transfer method. Control and formatting 
+//                                     information is converted to local equivalents. 
+//                                     If the value is 1 then the function transfers the file using 
+//                                     FTP's Image (Type I) transfer method. The file is transferred 
+//                                     exactly as it exists with no changes. 
+//
+// returns    : integer - Is 0 (ok) or error-number.
+//
+External_Function dvFtpGetFile "dvFtpGetFile" DVFTP.DLL ;
+     String szRemoteFile String szNewFile Integer bFailIfExists Integer iFileType Returns Integer
+
+
+// function   : dvFtpPutFile
+//
+// description: Stores a file on the FTP server. 
+//
+// parameters : string  LocalFile     - The name of the file to send from the local system. 
+//              string  NewRemoteFile - The name of the file to create on the remote system.
+//              integer FileType      - Indicates the transfer method.
+//                                      If the value is 0 then the function transfers the 
+//                                      file as ASCII. 
+//                                      If the value is 1 then the function transfres the
+//                                      file as binary. 
+//
+// returns    : integer - Is 0 (ok) or error-number.
+//
+External_Function dvFtpPutFile "dvFtpPutFile" DVFTP.DLL ;
+     String szLocalFile String szNewRemoteFile Integer iFileType Returns Integer
+
+
+
+// The following functions give common file-information after performing dvFtpFindFirstFile
+// and dvFtpFindNextFile. Because the FTP protocol provides no standard means of enumerating, 
+// some of the common information about files, such as file creation date and time, is not 
+// always available or correct. When this happens, dvFtpFindFirstFile and dvFtpFindNextFile 
+// fill in unavailable information with a best guess based on available information. For example,
+// creation and last access dates will often be the same as the file's modification date.
+
+
+// function   : dvFtpFilename
+//
+// description: The name of the file. 
+//
+// parameters : none
+//
+// returns    : string - Name of the file
+//
+External_Function dvFtpFilename "dvFtpFilename" DVFTP.DLL ;
+     Returns String
+
+
+// function   : dvFtpAlternateFilename
+//
+// description: An alternative name for the file. This name is in the classic 8.3 (filename.ext)
+//              filename format.
+//
+// parameters : none
+//
+// returns    : string - Alternate name for the file. If the file has a long filename, the complete 
+//                       name can be retrieved by the dvFtpFilename function, and the 8.3 format
+//                       truncated version of the name can be retrieved with this function. Otherwise, 
+//                       this function returns an empty string.
+//
+External_Function dvFtpAlternateFilename "dvFtpAlternateFilename" DVFTP.DLL ;
+     Returns String
+
+
+// function   : dvFtpFileCreated
+//              
+// description: The date/time the file was created in 24-hour format.
+//
+// parameters : integer DateFormat - The format of the date to be retrieved.
+//                                   If value is 0 then US-formatted date is returned (mm/dd/yyyy).
+//                                   If value is 1 then European-formatted date is returned (dd/mm/yyyy).
+//                                   If value is 2 then military-formatted date is returned (yyyy.mm.dd).
+//
+// returns    : string - The file creation-date/time
+//
+External_Function dvFtpFileCreated "dvFtpFileCreated" DVFTP.DLL ;
+     Integer iDateFormat Returns String
+
+
+// function   : dvFtpFileAccessed
+//              
+// description: The last date/time the file was accessed in 24-hour format.
+//
+// parameters : integer DateFormat - The format of the date to be retrieved.
+//                                   If value is 0 then US-formatted date is returned (mm/dd/yyyy).
+//                                   If value is 1 then European-formatted date is returned (dd/mm/yyyy).
+//                                   If value is 2 then military-formatted date is returned (yyyy.mm.dd).
+//
+// returns    : string - The last file access-date/time
+//
+External_Function dvFtpFileAccessed "dvFtpFileAccessed" DVFTP.DLL ;
+     Integer iDateFormat Returns String
+
+
+// function   : dvFtpFileWritten
+//              
+// description: The last date/time the file was written to in 24-hour format.
+//
+// parameters : integer DateFormat - The format of the date to be retrieved.
+//                                   If value is 0 then US-formatted date is returned (mm/dd/yyyy).
+//                                   If value is 1 then European-formatted date is returned (dd/mm/yyyy).
+//                                   If value is 2 then military-formatted date is returned (yyyy.mm.dd).
+//
+// returns    : string - The last file written to-date/time
+//
+External_Function dvFtpFileWritten "dvFtpFileWritten" DVFTP.DLL ;
+     Integer iDateFormat Returns String
+
+
+// function   : dvFtpFileSize
+//              
+// description: The size of the file in bytes.
+//
+// parameters : none
+//
+// returns    : integer - Filesize in bytes.
+//
+External_Function dvFtpFileSize "dvFtpFileSize" DVFTP.DLL ;
+     Returns Integer
+
+
+// function   : dvFtpIsDirectory
+//              
+// description: The file is an directory.
+//
+// parameters : none
+//
+// returns    : integer - If value is 1 the file is directory, otherwise 0 will be returned.
+//
+External_Function dvFtpIsDirectory "dvFtpIsDirectory" DVFTP.DLL ;
+     Returns Integer
+
+
+// function   : dvGetServerMsg
+//              
+// description: Gets the returned message from the FTP server (error-number will
+//              be 12003 "extended error").
+//
+// parameters : none
+//
+// returns    : string - Return message from the FTP server.
+//
+External_Function dvGetServerMsg "dvGetServerMsg" DVFTP.DLL;
+     Returns String
+
+
+// error-numbers returned
+//
+// 12001  "out of handles"            
+// 12002  "timeout"
+// 12003  "extended error"
+// 12004  "internal error"            
+// 12005  "invalid url"               
+// 12006  "unrecognized scheme"       
+// 12007  "name not resolved"         
+// 12008  "protocol not found"        
+// 12009  "invalid option"            
+// 12010  "bad option length"         
+// 12011  "option not settable"      
+// 12012  "shutdown"                  
+// 12013  "incorrect user name"       
+// 12014  "incorrect password"
+// 12015  "login failure"             
+// 12016  "invalid operation"         
+// 12017  "operation cancelled"       
+// 12018  "incorrect handle type"     
+// 12019  "incorrect handle state"
+// 12020  "not proxy request"         
+// 12021  "registry value not found"
+// 12022  "bad registry parameter"    
+// 12023  "no direct access"          
+// 12024  "no context"                
+// 12025  "no callback"               
+// 12026  "request pending"           
+// 12027  "incorrect format"          
+// 12028  "item not found"            
+// 12029  "cannot connect"            
+// 12030  "connection aborted"        
+// 12031  "connection reset"          
+// 12032  "force retry"               
+// 12033  "invalid proxy request"     
+// 12034  "need ui"                   
+// 12036  "handle exists"             
+// 12037  "sec cert date invalid"     
+// 12038  "sec cert cn invalid"       
+// 12039  "http to https on redir"    
+// 12040  "https to http on_redir"    
+// 12041  "mixed security"            
+// 12042  "chg post is non secure"    
+// 12043  "post is non_secure"        
+// 12044  "client auth cert needed"   
+// 12045  "invalid ca"                
+// 12046  "client auth not setup"     
+// 12047  "async thread failed"       
+// 12048  "redirect scheme change"    
+// 12049  "dialog pending"            
+// 12050  "retry dialog"              
+// 12110  "ftp transfer in progress"  
+// 12111  "ftp dropped"               
+// 12112  "ftp no passive mode"       
+// 12157  "security channel error"    
+// 12158  "unable to cache file"      
+// 12159  "tcpip not installed"       
+// 12163  "disconnected"              
+// 12164  "server unreachable"        
+// 12165  "proxy server unreachable"  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

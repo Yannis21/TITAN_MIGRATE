@@ -1,0 +1,353 @@
+//AB/ Project bpProtyp
+//AB/     Object prj is a Dialog_Project
+//AB/         Set ProjectName to "bpProtyp"
+//AB/         Set ProjectFileName to "bpProtyp.DG"
+//AB/         Set GenerateFileName to "NONAME"
+
+// Project Object Structure
+//   bpProtyp is a BusinessProcessSub
+//     Gplan_DD is a DataDictionary
+//     Gthhmgio_DD is a DataDictionary
+//     Gtypkin_DD is a DataDictionary
+//     Garticl_DD is a DataDictionary
+//     Gmove_DD is a DataDictionary
+//     Gparticl_DD is a DataDictionary
+//     Gpmoves_DD is a DataDictionary
+
+// Register all objects
+Register_Object bpProtyp
+Register_Object Garticl_DD
+Register_Object Gmove_DD
+Register_Object Gparticl_DD
+Register_Object Gplan_DD
+Register_Object Gpmoves_DD
+Register_Object Gthhmgio_DD
+Register_Object Gtypkin_DD
+
+
+    //AB-IgnoreStart
+
+    Use Bproces.Sub
+    Use DFAllEnt.pkg
+
+
+    Use GPLAN.DD
+    Use GTHHMGIO.DD
+    Use GTYPKIN.DD
+    Use GARTICL.DD
+    Use GMOVE.DD
+    Use GPARTICL.DD
+    Use GPMOVES.DD
+
+    //AB-IgnoreEnd
+
+    Object bpProtyp is a BusinessProcessSub
+
+        //AB-StoreTopStart
+
+        Property String     psGparticlRecr  public ''
+        Property String     psGtypkinRecr   public ''
+        Property Integer    piLathos        public  0
+        Property Integer    pitxtDisplayID  public  0
+        Property String     psNewRecr       public ''
+
+        Set Status_Panel_State to False
+        //Set Allow_Cancel_State  to True
+        Set Display_Error_State to True
+        //Set Process_Title to "               "
+        //Set Status_Log_id to (status_log(Self)) //Use statlog.pkg
+        //Set Status_log_state to True
+
+        //AB-StoreTopEnd
+
+        Set Size to 60 100
+        Set Location to 9 9
+
+        //AB-DDOStart
+
+        Object Gplan_DD is a Gplan_DataDictionary
+        End_Object    // Gplan_DD
+
+        Object Gthhmgio_DD is a Gthhmgio_DataDictionary
+        End_Object    // Gthhmgio_DD
+
+        Object Gtypkin_DD is a Gtypkin_DataDictionary
+            Set DDO_Server to (Gthhmgio_DD(self))
+        End_Object    // Gtypkin_DD
+
+        Object Garticl_DD is a Garticl_DataDictionary
+            Set DDO_Server to (Gtypkin_DD(self))
+            Set Constrain_File to Gtypkin.File_Number
+        End_Object    // Garticl_DD
+
+        Object Gmove_DD is a Gmove_DataDictionary
+            Set DDO_Server to (Garticl_DD(self))
+            Set DDO_Server to (Gplan_DD(self))
+            Set Constrain_File to Garticl.File_Number
+        End_Object    // Gmove_DD
+
+        Object Gparticl_DD is a Gparticl_DataDictionary
+            Set DDO_Server to (Gtypkin_DD(self))
+            Set Constrain_File to Gtypkin.File_Number
+        End_Object    // Gparticl_DD
+
+        Object Gpmoves_DD is a Gpmoves_DataDictionary
+            Set DDO_Server to (Gparticl_DD(self))
+            Set DDO_Server to (Gplan_DD(self))
+            Set Constrain_File to Gparticl.File_Number
+        End_Object    // Gpmoves_DD
+
+
+        //AB-DDOEnd
+
+
+        //AB-StoreStart
+
+        Procedure OnProcess
+
+            String  GARTICL_COMPANY GARTICL_BRANCH Garticl_Recr Gplan_Recr
+            Integer GARTICL_YEAR GTYPKIN_CODE GTHHMGIO_CODE GARTICL_RATE0 GARTICL_RATE1
+            String  GTHHMGIO_RECR GARTICL_PAR GARTICL_A_CODE GARTICL_C_CODE2 YEAR_RECR sNewRecr
+            Date    GARTICL_DRATE0 GARTICL_DRATE1
+            Number  GARTICL_SX0 GARTICL_SP0 GARTICL_SYP0 GARTCL_SYP0K GARTICL_SX00 GARTICL_SP00
+            Number  GARTICL_SYP00 GARTICL_SYP00K GARTICL_SX1 GARTICL_SP1 GARTICL_SX2 GARTICL_SP2
+            Number  GARTICL_SYP2 GARTICL_SXR GARTICL_SPR GARTICL_SYPR GARTICL_SYPRK GARTICL_XRELINE
+            Number  GARTICL_PISLINE GARTICL_INC GARTICL_EXP GARTICL_CASH GARTICL_OMADA GARTICL_OTHER
+            Number  GARTICL_MLINES
+
+            Date    GMOVES_DLIXIS dShmera
+            String  GMOVES_AITIOL GMOVES_A_CODE GMOVES_SC_CODE2 GMOVES_M_CODE GMOVES_KK GMOVES_C_CODE2
+            Number  GMOVES_X0 GMOVES_P0 GMOVES_X0K GMOVES_P0K GMOVES_X00 GMOVES_P00 GMOVES_X00K GMOVES_P00K
+            Number  GMOVES_X1 GMOVES_P1 GMOVES_X2 GMOVES_P2 GMOVES_X2K GMOVES_P2K GMOVES_XR GMOVES_PR GMOVES_XRK
+            Number  GMOVES_PRK GMOVES_AA GMOVES_STATUS_E GMOVES_STATUS_A GMOVES_S0 GMOVES_YS0 GMOVES_S1 GMOVES_YS1
+            Number  GMOVES_S2 GMOVES_YS2 GMOVES_OPEN GMOVES_AOPEN GMOVES_YN_MYF  GMOVES_MYF_AXIA
+            Integer iID iCount
+
+            Sysdate dShmera
+
+            Get pitxtDisplayID to iID
+
+            Set piLathos to 0
+            Move 0 to iCount
+
+            Send Clear to Gtypkin_DD
+            Move (psGtypkinRecr(Self))  to Gtypkin.Gtypkin_Recr
+            Send Find to Gtypkin_DD Eq 2
+            If (Not(Found)) Begin
+                Set piLathos to 7001
+                Procedure_Return
+            End
+            Move (psGparticlRecr(Self)) to Gparticl.Garticl_Recr
+            Send Request_Find to Gparticl_DD Eq Gparticl.File_Number 2
+            If (Not(Found)) Begin
+                Set piLathos to 7002
+                Procedure_Return
+            End
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_COMPANY to GARTICL_COMPANY
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_BRANCH  to GARTICL_BRANCH
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_YEAR    to GARTICL_YEAR
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GTYPKIN_CODE    to GTYPKIN_CODE
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GTHHMGIO_CODE   to GTHHMGIO_CODE
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GTHHMGIO_RECR   to GTHHMGIO_RECR
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_PAR     to GARTICL_PAR
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_A_CODE  to GARTICL_A_CODE
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_C_CODE2 to GARTICL_C_CODE2
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_RATE0   to GARTICL_RATE0
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_RATE1   to GARTICL_RATE1
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_DRATE0  to GARTICL_DRATE0
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_DRATE1  to GARTICL_DRATE1
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_SX0     to GARTICL_SX0
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_SP0     to GARTICL_SP0
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_SYP0    to GARTICL_SYP0
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTCL_SYP0K    to GARTCL_SYP0K
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_SX00    to GARTICL_SX00
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_SP00    to GARTICL_SP00
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_SYP00   to GARTICL_SYP00
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_SYP00K  to GARTICL_SYP00K
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_SX1     to GARTICL_SX1
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_SP1     to GARTICL_SP1
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_SX2     to GARTICL_SX2
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_SP2     to GARTICL_SP2
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_SYP2    to GARTICL_SYP2
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_SXR     to GARTICL_SXR
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_SPR     to GARTICL_SPR
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_SYPR    to GARTICL_SYPR
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_SYPRK   to GARTICL_SYPRK
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_XRELINE to GARTICL_XRELINE
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_PISLINE to GARTICL_PISLINE
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_INC     to GARTICL_INC
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_EXP     to GARTICL_EXP
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_CASH    to GARTICL_CASH
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_OMADA   to GARTICL_OMADA
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_OTHER   to GARTICL_OTHER
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.GARTICL_MLINES  to GARTICL_MLINES
+            Get Field_Current_Value Of Gparticl_DD Field Gparticl.YEAR_RECR       to YEAR_RECR
+
+            Send Clear to Garticl_DD
+
+
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.Garticl_Hmnia   to dShmera
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.COMPANY_Code    to GARTICL_COMPANY
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.BRANCH_Code     to GARTICL_BRANCH
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.YEAR_Year       to GARTICL_YEAR
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GTYPKIN_CODE    to GTYPKIN_CODE
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GTHHMGIO_CODE   to GTHHMGIO_CODE
+
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_Aitiol  to GARTICL_PAR
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_C_CODE2 to GARTICL_C_CODE2
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_RATE0   to GARTICL_RATE0
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_SX0     to GARTICL_SX0
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_SP0     to GARTICL_SP0
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_SYP0    to GARTICL_SYP0
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_SYP0K   to GARTCL_SYP0K
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_SX00    to GARTICL_SX00
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_SP00    to GARTICL_SP00
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_SYP00   to GARTICL_SYP00
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_SYP00K  to GARTICL_SYP00K
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_SX1     to GARTICL_SX1
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_SP1     to GARTICL_SP1
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_SX2     to GARTICL_SX2
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_SP2     to GARTICL_SP2
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_SYP2    to GARTICL_SYP2
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_SXR     to GARTICL_SXR
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_SPR     to GARTICL_SPR
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_SYPR    to GARTICL_SYPR
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_SYPRK   to GARTICL_SYPRK
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_XRELINE to GARTICL_XRELINE
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_PISLINE to GARTICL_PISLINE
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_INC     to GARTICL_INC
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_CASH    to GARTICL_CASH
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_OMADA   to GARTICL_OMADA
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_OTHER   to GARTICL_OTHER
+            Set Field_Changed_Value Of Garticl_DD Field Garticl.GARTICL_MLINES  to GARTICL_MLINES
+
+            Send Request_Save to Garticl_DD
+
+            Get Field_Current_Value Of Garticl_DD Field Garticl.Garticl_Recr  to sNewRecr
+            Set psNewRecr to (Trim(sNewRecr))
+
+            Send Clear to Gpmoves_DD
+            Send Find to Gpmoves_DD First_Record 1
+            If (Not(Found)) Begin
+                Set piLathos to 7003
+                Procedure_Return
+            End
+
+            While (Found)
+                Get Field_Current_Value Of Gplan_DD Field Gplan.Gplan_Recr to Gplan_Recr
+                Add 1 to iCount
+                Set Label Of iID to (String(iCount))
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_AITIOL   to GMOVES_AITIOL
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_X0       to GMOVES_X0
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_P0       to GMOVES_P0
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_X0K      to GMOVES_X0K
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_P0K      to GMOVES_P0K
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_X00      to GMOVES_X00
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_P00      to GMOVES_P00
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_X00K     to GMOVES_X00K
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_P00K     to GMOVES_P00K
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_X1       to GMOVES_X1
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_P1       to GMOVES_P1
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_X2       to GMOVES_X2
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_P2       to GMOVES_P2
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_X2K      to GMOVES_X2K
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_P2K      to GMOVES_P2K
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_XR       to GMOVES_XR
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_PR       to GMOVES_PR
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_XRK      to GMOVES_XRK
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_PRK      to GMOVES_PRK
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_DLIXIS   to GMOVES_DLIXIS
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_A_CODE   to GMOVES_A_CODE
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_AA       to GMOVES_AA
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_STATUS_E to GMOVES_STATUS_E
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_STATUS_A to GMOVES_STATUS_A
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_S0       to GMOVES_S0
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_YS0      to GMOVES_YS0
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_S1       to GMOVES_S1
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_YS1      to GMOVES_YS1
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_S2       to GMOVES_S2
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_YS2      to GMOVES_YS2
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_SC_CODE2 to GMOVES_SC_CODE2
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_OPEN     to GMOVES_OPEN
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_AOPEN    to GMOVES_AOPEN
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_M_CODE   to GMOVES_M_CODE
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_YN_MYF   to GMOVES_YN_MYF
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_MYF_AXIA to GMOVES_MYF_AXIA
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_KK       to GMOVES_KK
+                Get Field_Current_Value Of Gpmoves_DD Field Gpmoves.GMOVES_C_CODE2  to GMOVES_C_CODE2
+
+                Send Clear to Gplan_DD
+                Send Clear to Gmove_DD
+
+                Move Gplan_Recr to Gplan.Gplan_Recr
+                Send Find to Gplan_DD Eq 2
+                If (Not(Found)) Begin
+                    Set piLathos to 7004
+                    Procedure_Return
+                End
+
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_AITIOL   to GMOVES_AITIOL
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_X0       to GMOVES_X0
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_P0       to GMOVES_P0
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_X0K      to GMOVES_X0K
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_P0K      to GMOVES_P0K
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_X00      to GMOVES_X00
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_P00      to GMOVES_P00
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_X00K     to GMOVES_X00K
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_P00K     to GMOVES_P00K
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_X1       to GMOVES_X1
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_P1       to GMOVES_P1
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_X2       to GMOVES_X2
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_P2       to GMOVES_P2
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_X2K      to GMOVES_X2K
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_P2K      to GMOVES_P2K
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_XR       to GMOVES_XR
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_PR       to GMOVES_PR
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_XRK      to GMOVES_XRK
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_PRK      to GMOVES_PRK
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_DLIXIS   to GMOVES_DLIXIS
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_A_CODE   to GMOVES_A_CODE
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_AA       to GMOVES_AA
+                //Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_STATUS_E to GMOVES_STATUS_E
+                //Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_STATUS_A to GMOVES_STATUS_A
+                //Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_S0       to GMOVES_S0
+                //Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_YS0      to GMOVES_YS0
+                //Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_S1       to GMOVES_S1
+                //Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_YS1      to GMOVES_YS1
+                //Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_S2       to GMOVES_S2
+                //Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_YS2      to GMOVES_YS2
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_SC_CODE2 to GMOVES_SC_CODE2
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_OPEN     to GMOVES_OPEN
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_AOPEN    to GMOVES_AOPEN
+                //Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_M_CODE   to GMOVES_M_CODE
+                //Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_YN_MYF   to GMOVES_YN_MYF
+                //Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_MYF_AXIA to GMOVES_MYF_AXIA
+                Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_KK       to GMOVES_KK
+                //Set Field_Changed_Value Of Gmove_DD Field Gmove.GMOVE_C_CODE2  to GMOVES_C_CODE2
+
+                Send Request_Save to Gmove_DD
+
+                Send Find to Gpmoves_DD Next_Record 1
+            Loop
+
+
+
+        End_Procedure
+
+        Procedure OnError integer error_info string errMsg
+        End_Procedure
+
+        Procedure Start_Process
+            Forward Send Start_Process
+        End_Procedure
+
+        Procedure End_Process
+            Forward Send End_Process
+        End_Procedure
+
+
+        //AB-StoreEnd
+
+    End_Object    // bpProtyp
+
+//AB/     End_Object    // prj

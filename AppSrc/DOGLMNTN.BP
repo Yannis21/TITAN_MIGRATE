@@ -1,0 +1,3275 @@
+// *Comments     : „¡«œ¢œå « ª §˜¨˜¡á«à › ˜› ¡˜©åœª ©¬¤«ã¨©ª:             *
+// *             : 1. xorigise.aa                                           *
+// *             : 2. zero.aa                                               *
+// *             :                                                          *
+
+//1000: «¦ ©ç©«£˜ ›â¤ œ§ «¨â§œ  «¤ ®¦¨ãš© ˜˜
+//1001 //›â¤ ™¨ã¡˜ «¦ year
+//1002 //«˜ garticls ›â¤ œå¤˜  â«¦ £˜ š ˜ ®¦¨ãš© ˜˜
+//1003 //«¦ gthaa â®œ  á¢¢ £œ¨¦£¤å˜
+//1004 //«¦ gthaa â®œ  á¢¢¦¤ ˜/˜
+//1005 // £œ¨¦£¤å˜ §¦¬ ›é©˜«œ œå¤˜  §¨¦šœ¤â©«œ¨
+//     //˜§æ «¤ «œ¢œ¬«˜å˜ £/¤å˜ ®¦¨ãš©ª ˜/˜
+//     //©«¦ ligthhmgio_code
+//1006 //garticl not valid!
+//1007 //«¦ garticl ›â¤ ©éŸ¡œ
+//1008 //›â¤ ©¬£­à¤¦ç¤ 1 + 2
+
+//     ‘  • † !!! ’€ DDA „•“Œ AUGMENTED CLASS METHODS !
+
+
+// *             :                                                          *
+// *‰nown bugs   :                                                          *
+// *             :                                                          *
+// *Improvements :                                                          *
+// *             :                                                          *
+// *             :                                                          *
+// *             :                                                          *
+// **************************************************************************
+// *                        A N A L Y S I S                                 *
+// **************************************************************************
+// *                                                                        *
+// **************************************************************************
+
+
+
+
+//------------------------------------------------------------------ddo tree
+//        gthhmgio               company
+//           I                     I
+//           I                   branch
+//           I                     I
+//           I                    year
+//           I                     I
+//           I----------I----------I------------I
+//                      I                       I
+//                    gtypkin                 gplan
+//                      I                       I
+//                      I                       I
+//                    garticl                   I
+//                      I                       I
+//                     ccc                      I
+//                      I                       I
+//                      I---------I-------------I
+//                              Gmove
+//                                I
+//                               ccc
+//                                I
+//                              Gopen
+//------------------------------------------------------------------ddo tree
+
+
+Use Wait.dg
+
+Use Company.dd
+Use Branch.dd
+Use Year.dd
+Use Gthhmgio.dd
+Use Gtypkin.dd
+Use Garticl.dd
+Use Gplan.dd
+Use Gmove.dd
+Use Gopen.dd
+Use Gmovea.dd //®¨œ áœ«˜  ¦§à›ã§¦«œ, › æ«  œå¤˜  alias file ¡˜ 
+              //©«¤ begin_transaction §¨¦¡˜¢œå deadlock
+
+Use Gbridgeh.dd //š ˜ «¤ external œ¤£â¨à©, £â©à gbridge
+Use Gbridged.dd //š ˜ «¤ external œ¤£â¨à©, £â©à gbridge
+
+//Use Statlog.pkg //creates object named status_log
+
+
+Object oDo_GL_Maintainance is a BusinessProcessSub
+
+       Set Status_Panel_State  to False
+       Set Display_Error_State to False
+
+       Property Integer piError          0 //error code
+       Property Integer piStop           0
+
+
+       Property Integer piWhat_to_Do     0 //«  ›¦¬¢œ á Ÿ˜ ¡á¤à: 1=®¦¨ãš© ˜/˜
+                                           //                    2=£›œ¤ ©£æª ˜/˜
+                                           //                    3=œ¤£â¨à© gmove ˜§æ bmove
+                                           //                    4=œ¤£â¨à© gmove ˜§æ cmove
+                                           //                    5=œ¤£â¨à© gmove ˜§æ vmove
+                                           //                    6=œ¤£â¨à© gmove ˜§æ wmove
+                                           //                    7=reupdate  ©¦çš ˜ šœ¤ ¡ãª ¢¦š ©« ¡ãª
+
+
+       Property Integer piGthhmgio_Code  0 //š ˜ «¤ ®¦¨ãš© ¡˜  £›œ¤ ©£æ ˜/˜
+       Property Date    pdApo_Hmnia      0 //š ˜ «¤ ®¦¨ãš© ˜/˜
+       Property Date    pdEos_Hmnia      0 //š ˜ «¤ ®¦¨ãš© ˜/˜
+
+       Property String  psGarticl_Recr  '' //š ˜ «¤ › ˜š¨˜­ã/› æ¨Ÿà© «¦¬ garticl
+       Property Integer piFlag02         0 //š ˜ «¤ › ˜š¨˜­ã/› æ¨Ÿà© «¦¬ garticl & «¤ œ¤£â¨à© «à¤ gmoves
+       Property Integer piFlag03         0 //š ˜ «¤ › ˜š¨˜­ã/› æ¨Ÿà© «¦¬ garticl & «¤ œ¤£â¨à© «à¤ gmoves
+       Property Integer piFlag04         0 //š ˜ «¤ › ˜š¨˜­ã/› æ¨Ÿà© «¦¬ garticl & «¤ œ¤£â¨à© «à¤ gmoves
+       Property Integer piFlag05         0 //š ˜ «¤ › ˜š¨˜­ã/› æ¨Ÿà© «¦¬ garticl & «¤ œ¤£â¨à© «à¤ gmoves
+
+       Property Integer piCalling_dd     0 //š ˜ «¤ œ¤£â¨à© ˜§æ á¢¢˜ modules
+
+       Property String  psGbridgeh_Recr '' //š ˜ «¤ œ¤£â¨à© «ª š¢ ˜§¦ gbridge
+                                           //®¨© £œçœ  ©˜¤ flag §¦¬ ¬§¦›¢é¤œ 
+                                           //œá¤ Ÿ˜ šå¤œ  batch  ã online œ¤£â¨à©
+                                           //  0  = batch œ¤£â¨à©
+                                           // >0  = online œ¤£â¨à© š ˜ «¦ gbridgeh_recr
+
+       //7:reudate gl
+       Property String psYear_Recr     ''
+
+                               // todo:
+       Object Auxilliary_Object is An Array
+              Property String  psB_Garticl_Recr
+              Property String  psB_Gtypkin_Recr
+              Property Date    pdB_Garticl_Hmnia
+              Property Integer piB_Garticl_No
+              Property String  psB_Garticl_C_Code2
+              Property Number  pnB_Garticl_Rate0
+              Property Number  pnB_Garticl_Rate00
+              Property Number  pnB_Garticl_RateR
+              Property String  psB_Garticl_Aitiol
+
+              Property String  psB_Gmove_Master_Recr
+              Property String  psB_Gplan_Master_Recr
+              Property Number  pnB_Gmove_Master_X2
+              Property Number  pnB_Gmove_Master_P2
+              Property String  psB_Gmove_Master_Aitiol
+
+              Property String  psB_Gmove_Slave_Recr
+              Property String  psB_Gplan_Slave_Recr
+              Property Number  pnB_Gmove_Slave_X2
+              Property Number  pnB_Gmove_Slave_P2
+              Property String  psB_Gmove_Slave_Aitiol
+
+              Property String  psA_Garticl_Recr
+              Property String  psA_Gtypkin_Recr
+              Property Date    pdA_Garticl_Hmnia
+              Property Integer piA_Garticl_No
+              Property String  psA_Garticl_C_Code2
+              Property Number  pnA_Garticl_Rate0
+              Property Number  pnA_Garticl_Rate00
+              Property Number  pnA_Garticl_RateR
+              Property String  psA_Garticl_Aitiol
+
+              Property String  psA_Gmove_Master_Recr
+              Property String  psA_Gplan_Master_Recr
+              Property Number  pnA_Gmove_Master_X2
+              Property Number  pnA_Gmove_Master_P2
+              Property String  psA_Gmove_Master_Aitiol
+
+              Property String  psA_Gmove_Slave_Recr
+              Property String  psA_Gplan_Slave_Recr
+              Property Number  pnA_Gmove_Slave_X2
+              Property Number  pnA_Gmove_Slave_P2
+              Property String  psA_Gmove_Slave_Aitiol
+
+              Property Integer piGarticl_Delete
+              Property Integer piGarticl_Edit
+              Property Integer piGarticl_Create
+              Property Integer piMaster_Gmove_Delete
+              Property Integer piMaster_Gmove_Edit
+              Property Integer piMaster_Gmove_Create
+              Property Integer piSlave_Gmove_Delete
+              Property Integer piSlave_Gmove_Edit
+              Property Integer piSlave_Gmove_Create
+
+
+              //final values, š ˜ «ã¤ feedback œ¤£â¨à© «¦¬ ¡˜¢¦ç¤«¦ª ddo
+              Property String  psF_Garticl_Recr
+              Property String  psF_Gmove_Master_Recr
+              Property String  psF_Gmove_Slave_Recr
+
+
+
+       End_Object //auxilliary_object
+
+       //------------------------------------------------------------------ddo tree start
+
+       Object Gthhmgio_DD is a Gthhmgio_DataDictionary
+       End_Object    // Gthhmgio_DD
+
+       Object Gtypkin_DD is a Gtypkin_DataDictionary
+           Set DDO_Server to (Gthhmgio_DD(Self))
+       End_Object    // Gtypkin_DD
+
+       Object Garticl_DD is a Garticl_DataDictionary
+           Set DDO_Server to (Gtypkin_DD(Self))
+
+           Procedure OnConstrain
+                     Integer liMode liGthhmgio_Code
+                     Date    ldApo_Hmnia ldEos_Hmnia
+                     Get piMode          to liMode
+                     Get piGthhmgio_Code to liGthhmgio_Code
+                     Get pdApo_Hmnia     to ldApo_Hmnia
+                     Get pdEos_Hmnia     to ldEos_Hmnia
+
+                     Case Begin
+                              //Case ((liMode = 1) or (liMode = 2)) //®¦¨ãš© ˜/˜ ã £›œ¤ ©£æª ˜/˜
+                              Case (liMode = 1)                  //®¦¨ãš© ˜/˜
+                                    Set ordering to 4 //index.4:garticl:company_code+
+                                                      //                branch_code+
+                                                      //                year_year+
+                                                      //                gthhmgio_code+
+                                                      //                garticl_hmnia+
+                                                      //                gtypkin_code+
+                                                      //                garticl_no+
+                                                      //                garticl_recr
+                                    Constrain Garticl.Gthhmgio_Code Eq liGthhmgio_Code
+                                    Constrain Garticl.Garticl_Hmnia Ge ldApo_Hmnia
+                                    Constrain Garticl.Garticl_Hmnia Le ldEos_Hmnia
+                              Case Break
+                     Case End
+           End_Procedure //onconstrain
+
+
+           //14/02/2000:á¡¬¨¦¤ !
+           //augmented class method
+           Function private.fiCheck_Garticl_Aa0 Returns Integer
+                    Function_Return 0
+           End_Function //private.ficheck_garticl_aa
+
+       End_Object    // Garticl_DD
+
+       Object Gplan_DD is a Gplan_DataDictionary
+       End_Object    // Gplan_DD
+
+       Object Gmove_DD is a Gmove_DataDictionary
+           Set DDO_Server to (Gplan_DD(Self))
+           Set DDO_Server to (Garticl_DD(Self))
+
+           Procedure OnConstrain
+                     Constrain Gmove Relates to Garticl
+           End_Procedure
+
+
+          //augmented class method 11/02/2000:›â¤ ¬§á¨®œ  ˜¬«ã ©«¤ ¡¢á©!
+           Function private.fiCheck_Gmove_Aa Returns Integer
+                    Function_Return 0
+           End_Function //private.ficheck_Gmove_aa
+
+
+           //12/02/2000
+           //«œ¢ ¡á «˜ §˜¨˜¡á«à œå¤˜  á¡¬¨˜, › æ« 
+           //®¨© £¦§¦å©˜ procedural £âŸ¦›¦
+           //augmented class method
+           //æ«˜¤ «¨â®œ   reupdate, £›œ¤åœ  §¨é«˜ «¦¬ª ˜Ÿ¨¦ ©«âª
+           //¡˜  £œ«á ©«â¢¤œ  request save.
+           //š ˜ ¤˜ œ¤£œ¨àŸ¦ç¤ ©à©«á ¦  ˜Ÿ¨¦ ©«âª, §¨â§œ  ¤˜ "¡¦§œå"  backout !
+           Procedure Backout0
+                     If ((piWhat_to_Do(Self)) = 7) Procedure_Return
+                     Forward Send Backout
+           End_Procedure
+
+
+       End_Object    // Gmove_DD
+
+       //˜¬«æ ®¨œ áœ«˜  £æ¤¦¤ š ˜ «¦ cascade delete «¦¬ garticl,
+       //˜§¦ «¤ private.Transaction_BCVWmove_Update_GL
+       Object Gopen_DD is a Gopen_DataDictionary
+           Set DDO_Server to (Gmove_DD(Self))
+           Procedure OnConstrain
+                     Constrain Gopen Relates to Gmove
+           End_Procedure
+
+           Procedure End_Construct_Object
+                     Forward Send End_Construct_Object
+                     Send Remove_Server_File Gmovea.File_Number
+           End_Procedure //end_construct_object
+
+
+       End_Object    // Gopen_DD
+       //------------------------------------------------------------------ddo tree end
+
+
+
+
+
+
+
+       //****************************************************************************
+       //*                     P R I V A T E    I N T E R F A C E                   *
+       //****************************************************************************
+       Procedure Private.Rebuild_All_Constraints
+                 Send Rebuild_Constraints to (Gtypkin_dd(Self))
+                 Send Rebuild_Constraints to (Gplan_dd  (Self))
+                 Send Rebuild_Constraints to (Garticl_dd(Self))
+                 Send Rebuild_Constraints to (Gmove_dd  (Self))
+                 Send Rebuild_Constraints to (Gopen_dd  (Self))
+       End_Procedure //private.rebuild_all_constraints
+
+
+       Procedure Operation_Not_Allowed Integer liError_Num
+                 String lsError_Message
+
+                 Get Old_Error_Object_id to Error_Object_id // restore previous error object
+                 Set Old_Error_Object_id to 0
+
+                 Case Begin
+                      //˜§æ private.xorigise_aa
+                      Case (liError_Num = 1001)
+                           Move ("BPO GLMNTN:€¤ç§˜¨¡« •¨ã©\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¨â¥«œ ¦¢ ¡æ â¢œš®¦ «ª ™á©ª!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 1002)
+                           Move ("BPO GLMNTN:“§á¨®¦¬¤ £ «œ¢ã á¨Ÿ¨˜\n\n"+;
+                                 "‡˜ §¨â§œ  ¤˜ › ¦¨ŸàŸ¦ç¤!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 1003)
+                           Move ("BPO GLMNTN:€©¬£­à¤å˜ «œ¢œ¬«˜å˜ª £/¤å˜ Ÿœà¨.£œ¨¦¢¦šåà¤ £œ «¦ ˜¨®œå¦ á¨Ÿ¨à¤\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¨â¥«œ reupdate «ª ‚œ¤ ¡ãª Š¦š ©« ¡ãª!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 1004)
+                           Move ("BPO GLMNTN:€©¬£­à¤å˜ «œ¢œ¬«˜å¦¬ ˜/˜ Ÿœà¨.£œ¨¦¢¦šåà¤ £œ «¦ ˜¨®œå¦ á¨Ÿ¨à¤\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¨â¥«œ reupdate «ª ‚œ¤ ¡ãª Š¦š ©« ¡ãª!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 1005)
+                           Move ("BPO GLMNTN:† £/¤å˜ §¦¬ ›é©˜«œ œå¤˜  §¨¦šœ¤â©«œ¨ ˜§¦ «¤ «œ¢œ¬«˜å˜ £/¤å˜ ®¦¨ãš©ª ˜/˜\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ ›é©«œ ˜§¦›œ¡«ã £/¤å˜!") to lsError_Message
+                      Case Break
+
+
+
+                      //˜§æ private.transaction_BCVWmove_update_gl
+                      Case (liError_Num = 3001)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Calling Object id = 0)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 3002)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Calling Current Record = 0)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 3003)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Wrong Booleans)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 3004)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Negative Booleans)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 3005)
+                           Move ("BPO GLMNTN:Transaction Aborted! (update=0 + backout=0)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 3006)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Delete with B records = 0)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 3007)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Delete with A records <> 0)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 3008)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Create with A records = 0)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 3009)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Check Edit <> 0)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 3010)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Create Garticl = FALSE)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 3011)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Gtypkin NOT Found)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 3012)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Garticl Current Record = 0)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 3013)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Create Gmove1 = FALSE)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 3014)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Gplan1 NOT Found)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 3015)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Delete Gmove1)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 3016)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Gmove1 Current Record = 0)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 3017)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Create Gmove2 = FALSE)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 3018)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Gplan2 NOT Found)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 3019)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Delete Gmove2 = FALSE)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 3020)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Gmove2 Current Record = 0)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 3021)
+                           Move ("BPO GLMNTN:Transaction Aborted! (  ¡ ¤ã©œ ª ›â¤ œå¤˜  ¦£¦œ ›œåª!)\n\n"+;
+                                 "’˜ flags 2,3,4,5 §¨â§œ  ¤˜ ©¬š®¨¦¤ ©Ÿ¦ç¤ ©œ æ¢˜ «˜ modules!") to lsError_Message
+                      Case Break
+
+                      //˜§æ private.transaction_delete_garticl
+                      Case (liError_Num = 4001)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Calling Object id = 0)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 4002)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Calling Current Record = 0)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 4003)
+                           Move ("BPO GLMNTN:Transaction Aborted! (ƒâ¤ ™¨âŸ¡œ «¦ ¬§æ › ˜š¨˜­ã á¨Ÿ¨¦ «ª ‚Š!)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 4004)
+                           Move ("BPO GLMNTN:Transaction Aborted! (  ¡ ¤ã©œ ª ›â¤ œå¤˜  ¦£¦œ ›œåª!)\n\n"+;
+                                 "’˜ flags 2,3,4,5 §¨â§œ  ¤˜ ©¬š®¨¦¤ ©Ÿ¦ç¤ ©œ æ¢˜ «˜ modules!") to lsError_Message
+                      Case Break
+
+                      //˜§æ private.transaction_update_garticl
+                      Case (liError_Num = 5001)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Calling Object id = 0)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 5002)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Calling Current Record = 0)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 5003)
+                           Move ("BPO GLMNTN:Transaction Aborted! (ƒâ¤ ™¨âŸ¡œ «¦ ¬§æ › æ¨Ÿà© á¨Ÿ¨¦ «ª ‚Š!)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 5004)
+                           Move ("BPO GLMNTN:Transaction Aborted! (  ¡ ¤ã©œ ª ›â¤ œå¤˜  ¦£¦œ ›œåª!)\n\n"+;
+                                 "’˜ flags 2,3,4,5 §¨â§œ  ¤˜ ©¬š®¨¦¤ ©Ÿ¦ç¤ ©œ æ¢˜ «˜ modules!") to lsError_Message
+                      Case Break
+
+                      //6:˜§æ private.Transaction_Update_GL_From_Gbridge
+                      Case (liError_Num = 6001)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Calling Object id = 0)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 6011)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Gtypkin NOT Found)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 6014)
+                           Move ("BPO GLMNTN:Transaction Aborted! (Gplan NOT Found)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 6021)
+                           Move ("BPO GLMNTN:Transaction Aborted! (  ¡ ¤ã©œ ª ›â¤ œå¤˜  ¦£¦œ ›œåª!)\n\n"+;
+                                 "’˜ flags 2,3,4,5 §¨â§œ  ¤˜ ©¬š®¨¦¤ ©Ÿ¦ç¤ ©œ æ¢˜ «˜ modules!") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 6022) //year not found
+                           Move ("BPO GLMNTN:Transaction Aborted! €¤ç§˜¨¡«¦ª ¡à› ¡æª „«˜ ¨œå˜ª/•¨ã©œàª!)\n\n"+;
+                                 "") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 6023)
+                           Move ("BPO GLMNTN:Transaction Aborted!)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª") to lsError_Message
+                      Case Break
+                      Case (liError_Num = 6024) //gbridgeh not found
+                           Move ("BPO GLMNTN:Transaction Aborted!)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¨â¥«œ «¦¤ ¢ ¡æ „¢œš®¦ «ª «ª á©ª") to lsError_Message
+                      Case Break
+
+
+                      Case Else
+                           Move ("BPO GLMNTN:Transaction Aborted! (No Error Text Available)\n\n"+;
+                                 "˜¨˜¡˜¢¦ç£œ «¢œ­à¤ã©«œ ©«¤ Solution!") to lsError_Message
+                 Case End
+
+                 Error liError_Num lsError_Message
+
+       End_Procedure //operation_not_allowed
+
+
+       //private
+       //¡˜¢œå«˜  ˜§¦ æ¢œª « ª functions «¦¬ public interface ¡˜  £›œ¤åœ  æ¢˜ «˜ properties
+       Procedure private.Initialize_Properties
+                 Set piError          to 0
+                 Set piStop           to 0
+
+                 Set piWhat_to_Do     to 0
+
+                 Set piGthhmgio_Code  to 0
+                 Set pdApo_Hmnia      to 0
+                 Set pdEos_Hmnia      to 0
+
+                 Set piCalling_dd     to 0
+
+                 Set psGarticl_Recr   to ''
+                 Set piFlag02         to 0
+                 Set piFlag03         to 0
+                 Set piFlag04         to 0
+                 Set piFlag05         to 0
+
+                 Set psGbridgeh_Recr  to ''
+
+
+                //7:reudate gl
+                Set psYear_Recr       to ''
+
+       End_Procedure //private.initialize_properties
+
+
+       //****************************************************************************
+       //* 1 : €  • †    •   † ‚ † ‘ †    € / €                                  *
+       //****************************************************************************
+       //private
+       //1:¨¦¬«å¤˜ ®¦¨ãš©ª ˜/˜
+       Procedure private.Xorigise_Aa Integer liGthhmgio_Code;
+                                     Date    ldEos_Hmnia
+                 Integer liGtypkin_dd liGarticl_dd
+                 Integer liErr
+                 Integer liLast_Gthaa_AA     liLast_Garticl_aa    liAa        liCheck_Aa
+                 Date    ldLast_Gthaa_Hmnia  ldLast_Garticl_Hmnia ldApo_Hmnia
+                 Date    ldYear_XrhshFrom ldYear_XrhshTo
+                 Integer liNumber_of_Garticls1 liNumber_of_Garticls2 liGarticl_Recnum
+                 Integer liStop
+                 Number  lnPercent
+
+
+
+
+                 //*******
+                 LOCK
+                 //*******
+
+
+
+
+                 //**************************************************************************
+                 //1-01:œç¨œ© object id's «à¤ œ£§¢œ¡¦£â¤à¤ ddo's
+                 //**************************************************************************
+                 Move (Gtypkin_dd(Self)) to liGtypkin_dd
+                 Move (Garticl_dd(Self)) to liGarticl_dd
+
+                 //**************************************************************************
+                 //1-02:œç¨œ© year, £œ¨¦£¤å˜ª œ¤á¨¥œàª ¡˜  ¢ã¥œàª ®¨ã©œàª ¡˜  â¢œš®¦ª
+                 //     ¡˜«á©«˜©ª ©¬©«ã£˜«¦ª
+                 //**************************************************************************
+                 Move SyscurGL.Year_XrhshFrom to ldYear_XrhshFrom
+                 Move SyscurGL.Year_XrhshTo   to ldYear_XrhshTo
+
+                 //if system not ready for aa set pierror to 1000
+                 //lock system for aa
+
+                 //**************************************************************************
+                 //1-03:â¢œš®¦  data integrity, §¨å¤ §¨¦®à¨ã©à ©«¤ ®¦¨ãš© ˜˜
+                 //**************************************************************************
+
+                 //1-03.01:š ˜ ¢æš¦¬ª ˜©­˜¢œå˜ª ¡˜  data integrity, Ÿ˜ œ¢âš¥à œá¤  £/¤å˜
+                 //      ¡˜  ¦ ˜/˜ §¦ç â®œ  «¦ ˜¨®œå¦ gthaa ©¬£­à¤œå £œ «¦ garticl !
+
+                 //œç¨œ© «ª «œ¢œ¬«˜å˜ª £œ¨¦£¤å˜ª ®¦¨ãš©ª €/€ ¡˜  «¦¬ «œ¢œ¬«˜å¦¬ ˜/˜
+                 // ©«¦ Ÿœà¨£â¤¦ £œ¨¦¢æš ¦ (˜§¦ «¦ gthaa)
+                 Move (private.fdGthaa_Last_Hmnia(liGarticl_dd,liGthHmgio_Code)) to ldLast_Gthaa_Hmnia
+                 Move (private.fiGthaa_Last_Aa   (liGarticl_dd,liGthHmgio_Code)) to liLast_Gthaa_Aa
+
+                 //œç¨œ© «ª «œ¢œ¬«˜å˜ª £œ¨¦£¤å˜ª ®¦¨ãš©ª €/€ ¡˜  «¦¬ «œ¢œ¬«˜å¦¬ ˜/˜
+                 // ©«¦ Ÿœà¨£â¤¦ £œ¨¦¢æš ¦ (˜§¦ «¦ garticl, ™á©œ  «¦¬ index.4 company_code+
+                 //                                                             branch_code+
+                 //                                                             year_year+
+                 //                                                             gthhmgio_code+
+                 //                                                             garticl_hmnia+
+                 //                                                             gtypkin_vode+
+                 //                                                             garticl_no+
+                 //                                                             garticl_recr
+                 Clear Garticl
+                 Move SysCurGL.Company_Code  to Garticl.Company_Code
+                 Move SysCurGL.Branch_Code   to Garticl.Branch_Code
+                 Move SysCurGL.Year_Year     to Garticl.Year_Year
+                 Move liGthhmgio_Code        to Garticl.Gthhmgio_Code
+                 Move ldEos_Hmnia              to Garticl.Garticl_Hmnia
+                 Move 999999                   to Garticl.Gtypkin_Code   //n 6.0
+                 Move 99999999999999           to Garticl.Garticl_No     //n14.0
+                 Move 'éééééééééééé'           to Garticl.Garticl_Recr   //a12
+                 Find Lt Garticl by Index.4 //index.4:garticl:company_code+
+                                            //                branch_code+
+                                            //                year_year+
+                                            //                gthhmgio_code+
+                                            //                garticl_hmnia+
+                                            //                gtypkin_code+
+                                            //                garticl_no+
+                                            //                garticl_recr
+                 While (;
+                        (Found = 1)                                         and;
+                        (Garticl.Company_Code   = gs_Selected_Company_Code) and;
+                        (Garticl.Branch_Code    = gs_Selected_Branch_Code ) and;
+                        (Garticl.Year_Year      = gi_Selected_Year        ) and;
+                        (Garticl.Gthhmgio_Code  = liGthhmgio_Code         ) and;
+                        (Garticl.Garticl_Hmnia <= ldEos_Hmnia             ) and;
+                        (Garticl.Garticl_Aa     = 0                       )    ;
+                       )
+
+                        Get Cancel_Check to liStop
+                        If (liStop <> 0) Begin
+                                          UNLOCK
+                                          Procedure_Return
+                                         End
+
+                        Send Update_Status ("„¢œš®¦ª €¨Ÿ¨à¤:"+;
+                                            (String(Garticl.Gtypkin_Code)) +"-"+;
+                                            (String(Garticl.Garticl_Hmnia))+"-"+;
+                                            (String(Garticl.Garticl_No   ))+"-"+ ;
+                                            (String(Garticl.Garticl_AA   ))+"-"+ ;
+                                            (String(Garticl.Recnum));
+                                           )
+
+                        //1-03.02:œ§å©ª, Ÿ˜ œ¢âš¥à æ«  æ¢˜ «˜ garticls §¦¬ §¨æ¡œ «˜  ¤˜ §á¨¦¬¤ ˜˜
+                        //œå¤˜  ok, ›¢˜›ã â®¦¬¤ ˜˜=0 ¡˜å status=0
+                        If (Not(Garticl.Garticl_Statuse = 0));
+                        Begin
+                             UNLOCK
+                             Set piError to 1002
+                             Send Operation_Not_Allowed 1002 //"¨¦©¦®ã! “§á¨®¦¬¤ †£ «œ¢ã €¨Ÿ¨˜!"
+                             Procedure_Return
+                        End
+
+                        Increment liNumber_of_Garticls1
+
+                        Find Lt Garticl by Index.4 //idex.4:garticl:company_code+
+                                                   //               branch_code+
+                                                   //               year_year+
+                                                   //               gthhmgio_code+
+                                                   //               garticl_hmnia+
+                                                   //               gtypkin_code+
+                                                   //               garticl_no+
+                                                   //               garticl_recr
+                 Loop
+
+                 //«˜ §˜¨˜¡á«à  ©®ç¦¬¤ š ˜ «¦ «œ¢œ¬«˜å¦ find lt, «¦ ¦§¦å¦ £¦¬ ›œå®¤œ 
+                 //œá¤ «¦ £œ¨¦¢æš ¦ â®œ  ¥˜¤˜§á¨œ  ˜˜, ã œå¤˜   §¨é« ­¦¨á.
+                 If (;
+                     (Found = 1)                                         and;
+                     (Garticl.Company_Code   = SysCurGL.Company_Code) and;
+                     (Garticl.Branch_Code    = SysCurGL.Branch_Code ) and;
+                     (Garticl.Year_Year      = SysCurGL.Year_Year   ) and;
+                     (Garticl.Gthhmgio_Code  = liGthhmgio_Code      ) and;
+                     (Garticl.Garticl_Hmnia <= ldEos_Hmnia          ) and;
+                     (Garticl.Garticl_Aa    <> 0                    )    ;
+                    );
+                 Begin //™¨ã¡˜ «¤ «œ¢œ¬«˜å˜ œšš¨˜­ã «¦¬ å› ¦¬ £œ¨¦¢¦šå¦¬, §¦¬ â®œ  ˜/˜
+                   Move Garticl.Garticl_Aa    to liLast_Garticl_Aa
+                   Move Garticl.Garticl_Hmnia to ldLast_Garticl_Hmnia
+                   Move Garticl.Recnum        to liGarticl_Recnum
+                 End
+                 Else;
+                 Begin //«¦ ©¬š¡œ¡¨ £â¤¦ £œ¨¦¢æš ¦ ›â¤ â®œ  §á¨œ  £â®¨  «é¨˜ ˜/˜
+                   Move 0                     to liLast_Garticl_Aa
+                   Move ldYear_XrhshFrom      to ldLast_Garticl_Hmnia
+                   Move 0                     to liGarticl_Recnum
+                 End
+
+                 // «œ¢œ¬«˜å˜ £/¤å˜ ¡˜  ˜˜ §¦¬ ™¨ã¡˜ ˜§¦ «¦ garticl,
+                 //§¨â§œ  ¤˜ œå¤˜  å› ˜ £œ ˜¬«ã¤ §¦ç ™¨ã¡˜ ˜§¦ «¦ gthaa
+                 If (;
+                     (Not(ldLast_Garticl_Hmnia = ldLast_Gthaa_Hmnia));
+                    ) Begin
+                           UNLOCK
+                           Set piError to 1003 //«¦ gthaa â®œ  á¢¢ £œ¨¦£¤å˜
+                                               //˜§æ ˜¬«ã¤ §¦¬ ™¨å©¡à ©«¦ garticl
+                           Send Operation_Not_Allowed 1003
+                           Procedure_Return
+                      End
+                 If (;
+                     (Not(liLast_Garticl_Aa    = liLast_Gthaa_Aa   ));
+                    ) Begin
+                           UNLOCK
+                           Set piError to 1004 //«¦ gthaa â®œ  á¢¢¦¤ ˜/˜
+                                               //˜§æ ˜¬«æ¤ §¦¬ ™¨å©¡à ©«¦ garticl
+                           Send Operation_Not_Allowed 1004
+                           Procedure_Return
+                      End
+
+                 //1-03.03:â¢œš®¦ª ›¦Ÿœå©ª âàª £œ¨¦£¤å˜ª
+                 //§¨â§œ  ¤˜ œå¤˜  >= ˜§¦ «¤ «œ¢œ¬«˜å˜ £œ¨¦£¤å˜ ®¦¨ãš©ª €/€
+                 //š ˜ «¦ ©¬š¡œ¡¨ £â¤¦ Ÿœà¨£â¤¦ £œ¨¦¢æš ¦ (æ§àª «¤ › ˜™áà ˜§¦ «¦ gthaa)
+                 If (;
+                     (Not(ldEos_Hmnia >= ldLast_Gthaa_Hmnia));
+                    ) Begin
+                           UNLOCK
+                           Set piError to 1005 // £œ¨¦£¤å˜ §¦¬ ›é©˜«œ œå¤˜  §¨¦šœ¤â©«œ¨
+                                               //˜§æ «¤ «œ¢œ¬«˜å˜ £/¤å˜ ®¦¨ãš©ª ˜/˜
+                                              //©«¦ ligthhmgio_code
+                           Send Operation_Not_Allowed 1005
+                           Procedure_Return
+                      End
+
+
+                 //œ›é œå¤˜  æ¢˜ ok ¡˜  §¨¦®à¨áà ©«¤ ®¦¨ãš© ˜/˜
+                 Move ldLast_Gthaa_Hmnia to ldApo_Hmnia
+                 Move liLast_Gthaa_Aa    to liAa
+
+                 //**************************************************************************
+                 //1-04:rebuild constraints, ¢æšà «à¤ ¡¢á©œà¤
+                 //**************************************************************************
+                 Send Rebuild_Constraints to liGtypkin_dd
+
+                 //**************************************************************************
+                 //1-05:‘œ«á¨ ©£˜ operation mode «¦¬ Garticl š ˜ «˜ constraints
+                 //**************************************************************************
+                 Set piMode               of liGarticl_dd to 1              //®¦¨ãš© ˜/˜
+                 Set piGthhmgio_Code      of liGarticl_dd to liGthhmgio_Code
+                 Set pdApo_Hmnia          of liGarticl_dd to ldApo_Hmnia
+                 Set pdEos_Hmnia          of liGarticl_dd to ldEos_Hmnia
+                 Send Rebuild_Constraints to liGarticl_dd
+
+                 //**************************************************************************
+                 //1-06:©á¨à© garticl & ®¦¨ãš© ˜/˜
+                 //**************************************************************************
+
+                 Send Clear to liGarticl_dd   //˜¬«æ ®¨œ áœ«˜  ?
+
+                 If (liGarticl_Recnum = 0);
+                 Begin //œá¤  «œ¢œ¬«˜å˜ £/¤å˜ ˜˜ œå¤˜  æ¢ ˜¤¦ ¡«ã (®à¨åª ˜˜)
+                      Send Find  to liGarticl_dd FIRST_RECORD 4 //index.4:garticl:company_code+
+                                                                //                branch_code+
+                                                                //                year_year+
+                                                                //                gthhmgio_code+
+                                                                //                garticl_hmnia+
+                                                                //                gtypkin_code+
+                                                                //                garticl_no+
+                                                                //                garticl_recr
+                 End
+                 Else;
+                 Begin //œá¤ ©«¤ «œ¢œ¬«˜å˜ £/¤å˜ ˜˜, â®à §¨¦©Ÿâ©œ  ¡˜  á¢¢˜ records
+                      Send Find_By_Recnum to liGarticl_dd Garticl.File_Number liGarticl_Recnum
+                      Send Find  to liGarticl_dd           Gt 4 //index.4:garticl:company_code+
+                                                                //                branch_code+
+                                                                //                year_year+
+                                                                //                gthhmgio_code+
+                                                                //                garticl_hmnia+
+                                                                //                gtypkin_code+
+                                                                //                garticl_no+
+                                                                //                garticl_recr
+                 End
+
+                 While (Found = 1)
+
+                        Get Cancel_Check to liStop
+                        If (liStop <> 0) Begin
+                                          UNLOCK
+                                          Procedure_Return
+                                         End
+
+                        Send Update_Status (;
+                                            "€/€:"                                       +;
+                                            (String(liAA                  ))+":      "   +;
+                                            (String(Garticl.Gtypkin_Code  ))+"-"         +;
+                                            (String(Garticl.Garticl_Hmnia ))+"-"         +;
+                                            (String(Garticl.Garticl_No    ))+"      „šš¨˜­âª:"+;
+                                            (String(Garticl.Garticl_Mlines))+"       "   +;
+                                            (String(Integer(lnPercent)    ))+"%:";
+                                           )
+
+                        //š ˜ ¢æš¦¬ª ˜©­˜¢œå˜ª, œ¡ ¤â¦¬ â¢œš®¦ª £›œ¤ ¡¦ç ˜˜
+                        Get Field_Current_Value of liGarticl_dd Field Garticl.Garticl_AA to liCheck_AA
+
+                        If (liCheck_Aa = 0);
+                        Begin //®¦¨šé ˜/˜ ©œ records §¦¬ ›â¤ â®¦¬¤œ
+                              Increment liAA
+
+                              Increment liNumber_of_Garticls2
+
+                              Move (((Number(liNumber_of_Garticls2))/liNumber_of_Garticls1)*100) to lnPercent
+                              Send Update_Status ("__PROGRESS__" + String(Integer(lnPercent)))
+
+                              Set Field_Changed_Value of liGarticl_dd Field Garticl.Garticl_AA to liAA
+
+                              Send Request_Save to liGarticl_dd
+                              //Move (Err) to liErr
+                              //If (liErr <> 0);
+                              //Begin
+                              // UNLOCK
+                              // Set piError to 1006 //«¦ garticl ›â¤ ©éŸ¡œ
+                              // Send Operation_Not_Allowed 1006
+                              // Procedure_Return
+                              //End
+                        End //if (liCheck_Aa = 0)
+
+                        Send Find to liGarticl_dd NEXT_RECORD 4 //index.4:garticl:company_code+
+                                                                //                branch_code+
+                                                                //                year_year+
+                                                                //                gthhmgio_code+
+                                                                //                garticl_hmnia+
+                                                                //                gtypkin_code+
+                                                                //                garticl_no+
+                                                                //                garticl_recr
+                 Loop
+
+
+
+                 //*******
+                 UNLOCK
+                 //*******
+
+                 //14/02/2000:§¨â§œ  ¤˜ ¥˜¤˜œ¢œšŸœå  ¢¦š ¡ã !
+                 //sosososososososososososososososososososososososo
+                 //If (liNumber_of_Garticls1 <> liNumber_of_Garticls2);
+                 //Begin
+                 // Set piError to 1008 //›â¤ ©¬£­à¤¦ç¤ 1 + 2
+                 // Procedure_Return
+                 //End
+       End_Procedure //private.Xorigise_Aa
+       //****************************************************************************
+       //* 1 : ’ „ Š  ‘   •   † ‚ † ‘ †    € / €                                 *
+       //****************************************************************************
+
+
+
+
+
+
+
+
+
+
+       //****************************************************************************
+       //* 2 : €  • †     ‹ † ƒ „ Œ ˆ ‘ ‹  ‘    € / €                             *
+       //****************************************************************************
+       //private
+       //2:¨¦¬«å¤˜ £›œ¤ ©£¦ç ˜/˜
+       Procedure private.Zero_Aa Integer liGthhmgio_Code
+                 Integer liStop liErr
+                 Integer liGarticl_dd liGarticl_Recnum
+                 Number  lnPercent
+                 Integer liGarticl_Last_Aa liGarticl_Counter
+
+
+
+
+
+                 //*******
+                 LOCK
+                 //*******
+
+
+
+
+
+                 //2-01:œç¨œ© object id's «à¤ œ£§¢œ¡¦£â¤à¤ ddo's
+                 Move (Garticl_dd(Self)) to liGarticl_dd
+
+                 //2-02:œç¨œ© year
+
+                 //2-04:©œ«á¨ ©£˜ operation mode «¦¬ Garticl & rebuild constraints
+                 Set piMode               of liGarticl_dd to 2                //£›œ¤ ©£æª ˜/˜
+                 Send Rebuild_Constraints to liGarticl_dd
+
+                 //2-05:‘á¨à© Garticl & ‹›œ¤ ©£æª ˜/˜
+                 Clear Garticl
+                 Move SyscurGL.Company_Code to Garticl.Company_Code
+                 Move SyscurGL.Branch_Code  to Garticl.Branch_Code
+                 Move SyscurGL.Year_Year    to Garticl.Year_Year
+                 Move liGthhmgio_Code          to Garticl.Gthhmgio_Code
+                 Move 99999999999999           to Garticl.Garticl_Aa     //n14.0
+                 Find Lt Garticl by Index.6 //index.6:garticl:company_code+
+                                            //                branch_code+
+                                            //                year_year+
+                                            //                gthhmgio_code+
+                                            //                garticl_aa+
+                                            //                recnum
+                 While (;
+                        (Found = 1)                                         and;
+                        (Garticl.Company_Code   = SyscurGL.Company_Code ) and;
+                        (Garticl.Branch_Code    = SyscurGL.Branch_Code  ) and;
+                        (Garticl.Year_Year      = SyscurGL.Year_Year    ) and;
+                        (Garticl.Gthhmgio_Code  = liGthhmgio_Code         ) and;
+                        (Garticl.Garticl_Aa    <> 0                       ) ;
+                       )
+
+                        If (liGarticl_Last_Aa=0) Move Garticl.Garticl_Aa to liGarticl_Last_Aa
+                        Increment liGarticl_Counter
+                        Move (((Number(liGarticl_Counter))/liGarticl_Last_Aa)*100) to lnPercent
+
+                        Get Cancel_Check to liStop
+                        If (liStop <> 0) Begin
+                                          UNLOCK
+                                          Procedure_Return
+                                         End
+
+                        Send Update_Status (;
+                                            "€/€:"                                       +;
+                                            (String(Garticl.Garticl_AA    ))+":      "   +;
+                                            (String(Garticl.Gtypkin_Code  ))+"-"         +;
+                                            (String(Garticl.Garticl_Hmnia ))+"-"         +;
+                                            (String(Garticl.Garticl_No    ))+"      „šš¨˜­âª:"+;
+                                            (String(Garticl.Garticl_Mlines))+"       "   +;
+                                            (String(Integer(lnPercent)    ))+"%:";
+                                           )
+                        Send Update_Status ("__PROGRESS__" + String(Integer(lnPercent)))
+
+                        Move Garticl.Recnum to liGarticl_Recnum
+
+                        Send Find_By_Recnum to liGarticl_dd Garticl.File_Number liGarticl_Recnum
+                        If (Found=0);
+                        Begin
+                             UNLOCK
+                             Error 2002 "€¤ç§˜¨¡«¦ €¨Ÿ¨¦!"
+                             Set piError to 2001 //›â¤ ™¨ã¡˜ «¦ garticl
+                             Procedure_Return
+                        End
+
+                        Set Field_Changed_Value of liGarticl_dd Field Garticl.Garticl_AA to 0
+                        Send Request_Save to liGarticl_dd
+                        //Move (Err) to liErr
+                        //If (liErr <> 0);
+                        //Begin
+                        // Set piError to 1007 //«¦ garticl ›â¤ ©éŸ¡œ
+                        // UNLOCK
+                        // Procedure_Return
+                        //End
+
+                        Clear Garticl
+                        Move gs_Selected_Company_Code to Garticl.Company_Code
+                        Move gs_Selected_Branch_Code  to Garticl.Branch_Code
+                        Move gi_Selected_Year         to Garticl.Year_Year
+                        Move liGthhmgio_Code          to Garticl.Gthhmgio_Code
+                        Move 99999999999999           to Garticl.Garticl_Aa     //n14.0
+                        Find Lt Garticl by Index.6 //index.6:garticl:company_code+
+                                                   //                branch_code+
+                                                   //                year_year+
+                                                   //                gthhmgio_code+
+                                                   //                garticl_aa+
+                                                   //                recnum
+                 Loop
+
+                 //2-03:› ˜š¨˜­ã gthaa
+                 Clear GthAA
+                 Move gs_Selected_Company_Code to Gthaa.Company_Code
+                 Move gs_Selected_Branch_Code  to Gthaa.Branch_Code
+                 Move gi_Selected_Year         to Gthaa.Year_Year
+                 Move liGthHmgio_Code          to Gthaa.GthHmgio_Code
+                 Find Eq Gthaa By Index.1 //index.1:gthaa:company_code+branch_code+year_year+gthhmgio_code
+                 If (Found = 1) Delete Gthaa
+                 //finderr ??????????? sosososososososososososo
+
+                 //*******
+                 UNLOCK
+                 //*******
+       End_Procedure //private.zero_aa
+       //****************************************************************************
+       //* 2 : ’ „ Š  ‘   ‹ † ƒ „ Œ ˆ ‘ ‹  ‘    € / €                             *
+       //****************************************************************************
+
+
+
+
+
+
+
+       //***************************************************************************
+       //*  €  • †    „ Œ † ‹ „  — ‘ † ‘    ‚ „ Œ ˆ ‰ † ‘    Š  ‚ ˆ ‘ ’ ˆ ‰ † ‘ *
+       //***************************************************************************
+
+//liA_Garticl_Recr       find garticl        Barticl.Garticl_Recr
+//liA_Gtypkin_Recr                           Btypkin.Gtypkin_Recr
+//
+//liA_Gmove_Master_Recr  find master gmove   Barticl.Gmove_Mrecr
+//liA_Gplan_Master_Recr  find master gplan   Barticl.Gplan_Mrecr
+//
+//liA_Gmove_Slave_Recr   find Slave gmove    Bsum.Gmove_Srecr
+//liA_Gplan_Slave_Recr   find Slave gplan    Bmove.Gplan_Srecr <------ Bkinkat.Bkinkat_GplnCode
+
+
+       //private
+       //¡˜¢œå«˜  ˜§æ:private.transaction_BCVWmove_update_gL
+       //transaction enabled !
+       //â¢œš®¦ª befora & after « £é¤ garticl
+       Function private.Garticl_Must_Be_Edited String  lsB_Gtypkin_Recr;
+                                               Date    ldB_Hmnia;
+                                               Integer liB_No;
+                                               String  lsB_C_Code2;
+                                               Number  lnB_Rate0;
+                                               Number  lnB_Rate00;
+                                               Number  lnB_RateR;
+                                               String  lsB_Aitiol;
+                                               String  lsA_Gtypkin_Recr;
+                                               Date    ldA_Hmnia;
+                                               Integer liA_No;
+                                               String  lsA_C_Code2;
+                                               Number  lnA_Rate0;
+                                               Number  lnA_Rate00;
+                                               Number  lnA_RateR;
+                                               String  lsA_Aitiol;
+                                               Returns Integer
+                Function_Return (Not(;
+                                  (lsB_Gtypkin_Recr = lsA_Gtypkin_Recr) and;
+                                  (ldB_Hmnia        = ldA_Hmnia       ) and;
+                                  (liB_No           = liA_No          ) and;
+                                  (lsB_C_Code2      = lsA_C_Code2     ) and;
+                                  (lnB_Rate0        = lnA_Rate0       ) and;
+                                  (lnB_Rate00       = lnA_Rate00      ) and;
+                                  (lnB_RateR        = lnA_RateR       ) and;
+                                  (lsB_Aitiol       = lsA_Aitiol      );
+                                ))
+       End_Function //private.garticl_must_be_edited
+
+
+       //private
+       //¡˜¢œå«˜  ˜§æ:private.transaction_BCVWmove_update_gL
+       //transaction enabled !
+       //â¢œš®¦ª before & after « £é¤ gmove (master & slave)
+       Function private.Gmove_Must_Be_Edited String  lsB_Gplan_Recr;
+                                             Number  lnB_Gmove_X2;
+                                             Number  lnB_Gmove_P2;
+                                             String  lsB_Gmove_Aitiol;
+                                             String  lsA_Gplan_Recr;
+                                             Number  lnA_Gmove_X2;
+                                             Number  lnA_Gmove_P2;
+                                             String  lsA_Gmove_Aitiol;
+                                             Returns Integer
+                Function_Return (Not(;
+                                  (lsB_Gplan_Recr   = lsA_Gplan_Recr  ) and;
+                                  (lnB_Gmove_X2     = lnA_Gmove_X2    ) and;
+                                  (lnB_Gmove_P2     = lnA_Gmove_P2    ) and;
+                                  (lsB_Gmove_Aitiol = lsA_Gmove_Aitiol);
+                                ))
+       End_Function //private.gmove_must_be_edited
+
+
+       //private
+       //¡˜¢œå«˜  ˜§æ:private.transaction_BCVWmove_update_gL
+       //transaction enabled !
+       Function private.Check_Edit String  lsB_Garticl_Recr;
+                                   String  lsB_Gmove_Master_Recr;
+                                   String  lsB_Gmove_Slave_Recr;
+                                   String  lsA_Garticl_Recr;
+                                   String  lsA_Gmove_Master_Recr;
+                                   String  lsA_Gmove_Slave_Recr;
+                                   Returns Integer
+
+                //§¨é«˜ œ¢âš®à æ«  «¦ edit šå¤œ«˜  ©«˜ å› ˜ before & after records
+                If (;
+                    (lsB_Garticl_Recr       <> lsA_Garticl_Recr     ) or;
+                    (lsB_Gmove_Master_Recr  <> lsA_Gmove_Master_Recr) or;
+                    (lsB_Gmove_Slave_Recr   <> lsA_Gmove_Slave_Recr );
+                   );
+                Begin
+                     Function_Return 3005 //"edit:«¦ edit ›â¤ œ§ «¨â§œ«˜  ©œ › ˜­¦¨œ« ¡á records (¢áŸ¦ª ¡é› ¡˜!)"
+                End
+
+                //£œ«á œ¢âš®à æ«  «˜ before records ›â¤ œå¤˜  £›œ¤ ¡á
+                //(§¦¬ æ£àª â®à §¨¦š¦¬£â¤àª ™œ™˜ àŸœå æ«  œå¤˜  å› ˜ £œ «˜ after)
+                If (;
+                    (lsB_Garticl_Recr       = '') or;
+                    (lsB_Gmove_Master_Recr  = '') or;
+                    (lsB_Gmove_Slave_Recr   = '');
+                   );
+                Begin
+                     Function_Return 3005 //"edit:«˜ records œå¤˜  £›œ¤ ¡á (¢áŸ¦ª ¡é› ¡˜!)"
+                End
+                Function_Return 0 //æ¢˜ ok
+       End_Function //private.check_edit
+
+
+       //private
+       //3:¨¦¬«å¤˜ œ¤£â¨à©ª gmove ˜§¦ bmove
+       //transaction enabled !
+       Procedure private.Transaction_BCVWmove_Update_GL
+                 Integer  liCalling_dd liCalling_dd_Current_Recnum
+                 Integer  liGtypkin_dd liGarticl_dd liGplan_dd liGmove_dd
+                 Integer  liErr
+                 Integer  liBackout liUpdate
+
+                 //19 properties §¦¬ › ˜™áà ˜§¦ «¦ ¡˜¢æ¤ ddo
+                 String   lsB_Garticl_Recr           lsA_Garticl_Recr
+                 String   lsB_Gtypkin_Recr           lsA_Gtypkin_Recr
+                 Date     ldB_Garticl_Hmnia          ldA_Garticl_Hmnia
+                 Integer  liB_Garticl_No             liA_Garticl_No
+                 String   lsB_Garticl_C_Code2        lsA_Garticl_C_Code2
+                 Number   lnB_Garticl_Rate0          lnA_Garticl_Rate0
+                 Number   lnB_Garticl_Rate00         lnA_Garticl_Rate00
+                 Number   lnB_Garticl_RateR          lnA_Garticl_RateR
+                 String   lsB_Garticl_Aitiol         lsA_Garticl_Aitiol
+
+                 String   lsB_Gmove_Master_Recr      lsA_Gmove_Master_Recr
+                 String   lsB_Gplan_Master_Recr      lsA_Gplan_Master_Recr
+                 Number   lnB_Gmove_Master_X2        lnA_Gmove_Master_X2
+                 Number   lnB_Gmove_Master_P2        lnA_Gmove_Master_P2
+                 String   lsB_Gmove_Master_Aitiol    lsA_Gmove_Master_Aitiol
+
+                 String   lsB_Gmove_Slave_Recr       lsA_Gmove_Slave_Recr
+                 String   lsB_Gplan_Slave_Recr       lsA_Gplan_Slave_Recr
+                 Number   lnB_Gmove_Slave_X2         lnA_Gmove_Slave_X2
+                 Number   lnB_Gmove_Slave_P2         lnA_Gmove_Slave_P2
+                 String   lsB_Gmove_Slave_Aitiol     lsA_Gmove_Slave_Aitiol
+
+                 //booleans §¦¬ ›¢é¤¦¬¤ «˜ operations §¦¬ §¨â§œ  ¤˜ šå¤¦¬¤ ©«ã¤ š¢
+                 //œå¤˜  ã› ©œ«˜¨ ©£â¤˜ ˜§¦ «¦ calling ddo
+                 //master operation       master operation      slave operation
+                 Integer liGarticl_Delete liMaster_Gmove_Delete liSlave_Gmove_Delete
+                 Integer liGarticl_Edit   liMaster_Gmove_Edit   liSlave_Gmove_Edit
+                 Integer liGarticl_Create liMaster_Gmove_Create liSlave_Gmove_Create
+
+                 //booleans, §¦¬ ¡˜Ÿ¦¨å¦¬¤ «˜ data operations
+                 //©œ«á¨¦¤«˜  œ©à«œ¨ ¡á (private)
+                 Integer  liGarticl_Must_Be_Edited liGmove_Master_Must_Be_Edited liGmove_Slave_Must_Be_Edited
+                 Integer  liCheck_Edit
+
+                 //final values, š ˜ «ã¤ feedback œ¤£â¨à© «¦¬ ¡˜¢¦ç¤«¦ª ddo
+                 String  lsF_Garticl_Recr lsF_Gmove_Master_Recr lsF_Gmove_Slave_Recr
+
+                 //§˜¢˜ âª ®¨œà§ ©«é©œ ª, §¨å¤ «¦ edit
+                 Number lnO_Gmove_Master_X2 //§˜¢˜ á ®¨âà©  «¦¬ master gmove
+                 Number lnO_Gmove_Master_P2 //§˜¢˜ á §å©«à© «¦¬ master gmove
+                 Number lnO_Gmove_Slave_X2  //§˜¢˜ á ®¨âà©  «¦¬ slave  gmove
+                 Number lnO_Gmove_Slave_P2  //§˜¢˜ á §å©«à© «¦¬ slave  gmove
+
+                 //¤âœª ®¨œà§ ©«é©œ ª, æ§àª §¨¦¡ç§«¦¬¤ £œ«á «¦ edit
+                 Number lnN_Gmove_Master_X2 //¤â˜    ®¨âà©  «¦¬ master gmove
+                 Number lnN_Gmove_Master_P2 //¤â˜    §å©«à© «¦¬ master gmove
+                 Number lnN_Gmove_Slave_X2  //¤â˜    ®¨âà©  «¦¬ slave  gmove
+                 Number lnN_Gmove_Slave_P2  //¤â˜    §å©«à© «¦¬ slave  gmove
+
+                 //recr š ˜ «˜ find
+                 String  lsGarticl_Recr
+                 String  lsGtypkin_Recr
+                 String  lsGmove_Master_Recr
+                 String  lsGplan_Master_Recr
+                 String  lsGmove_Slave_Recr
+                 String  lsGplan_Slave_Recr
+
+                 //4 flags §¦¬ §œ¨¤áœ  £œ ¦¨å©£˜«˜ «¦ ¡˜¢æ¤ ddo
+                 Integer liFlag02 liFlag03 liFlag04 liFlag05
+
+                 //4 flags §¦¬ › ˜™áà ˜§¦ «¦ gtypkin
+                 Integer liGFlag02 liGFlag03 liGFlag04 liGFlag05
+
+                 //œç¨œ© ¡˜¢¦ç¤«¦ª ddo
+                 Get piCalling_dd to liCalling_dd
+
+                 //â¢œš®¦ª ¡˜¢¦ç¤«¦ª ddo (œá¤ 0, ¡á¤«¤)
+                 If (liCalling_dd = 0) Send Operation_Not_Allowed 3001 //"dâ¤ £œ ¡á¢œ©œ ¡˜¤œåª!"
+
+                 //œç¨œ© current_record ¡˜¢¦ç¤«¦ª ddo
+                 Get Current_Record of liCalling_dd to liCalling_dd_Current_Recnum
+
+                 //â¢œš®¦ª current_record (œá¤ 0, ¡á¤«¤)
+                 //prosoxi sto delete !!!*** (¡˜  æ£àª, æ¢àª §œ¨ â¨šàª, â®à current record!)
+                 If (liCalling_dd_Current_Recnum = 0) Send Operation_Not_Allowed 3002 //"«¦ ¡˜¢æ¤ ddo ›â¤ â®œ  current record!"
+
+                 //˜¤áš¤à© ¡˜«á©«˜©ª ¡˜¢¦ç¤«¦ª ddo
+                 Get piBackout               of liCalling_dd to liBackout
+                 Get piUpdate                of liCalling_dd to liUpdate
+
+                 //˜¤áš¤à© 19 §˜¢˜ é¤ « £é¤ «¦¬ ¡˜¢¦ç¤«¦ª ddo
+                 Get psB_Garticl_Recr        of liCalling_dd to lsB_Garticl_Recr
+                 Get psB_Gtypkin_Recr        of liCalling_dd to lsB_Gtypkin_Recr
+                 Get pdB_Garticl_Hmnia       of liCalling_dd to ldB_Garticl_Hmnia
+                 Get piB_Garticl_No          of liCalling_dd to liB_Garticl_No
+                 Get psB_Garticl_C_Code2     of liCalling_dd to lsB_Garticl_C_Code2
+                 Get pnB_Garticl_Rate0       of liCalling_dd to lnB_Garticl_Rate0
+                 Get pnB_Garticl_Rate00      of liCalling_dd to lnB_Garticl_Rate00
+                 Get pnB_Garticl_RateR       of liCalling_dd to lnB_Garticl_RateR
+                 Get psB_Garticl_Aitiol      of liCalling_dd to lsB_Garticl_Aitiol
+
+                 Get psB_Gmove_Master_Recr   of liCalling_dd to lsB_Gmove_Master_Recr
+                 Get psB_Gplan_Master_Recr   of liCalling_dd to lsB_Gplan_Master_Recr
+                 Get pnB_Gmove_Master_X2     of liCalling_dd to lnB_Gmove_Master_X2
+                 Get pnB_Gmove_Master_P2     of liCalling_dd to lnB_Gmove_Master_P2
+                 Get psB_Gmove_Master_Aitiol of liCalling_dd to lsB_Gmove_Master_Aitiol
+
+                 Get psB_Gmove_Slave_Recr    of liCalling_dd to lsB_Gmove_Slave_Recr
+                 Get psB_Gplan_Slave_Recr    of liCalling_dd to lsB_Gplan_Slave_Recr
+                 Get pnB_Gmove_Slave_X2      of liCalling_dd to lnB_Gmove_Slave_X2
+                 Get pnB_Gmove_Slave_P2      of liCalling_dd to lnB_Gmove_Slave_P2
+                 Get psB_Gmove_Slave_Aitiol  of liCalling_dd to lsB_Gmove_Slave_Aitiol
+
+                 //˜¤áš¤à© 19 ¤âà¤ « £é¤ «¦¬ ¡˜¢¦ç¤«¦ª ddo
+                 Get psA_Garticl_Recr        of liCalling_dd to lsA_Garticl_Recr
+                 Get psA_Gtypkin_Recr        of liCalling_dd to lsA_Gtypkin_Recr
+                 Get pdA_Garticl_Hmnia       of liCalling_dd to ldA_Garticl_Hmnia
+                 Get piA_Garticl_No          of liCalling_dd to liA_Garticl_No
+                 Get psA_Garticl_C_Code2     of liCalling_dd to lsA_Garticl_C_Code2
+                 Get pnA_Garticl_Rate0       of liCalling_dd to lnA_Garticl_Rate0
+                 Get pnA_Garticl_Rate00      of liCalling_dd to lnA_Garticl_Rate00
+                 Get pnA_Garticl_RateR       of liCalling_dd to lnA_Garticl_RateR
+                 Get psA_Garticl_Aitiol      of liCalling_dd to lsA_Garticl_Aitiol
+
+                 Get psA_Gmove_Master_Recr   of liCalling_dd to lsA_Gmove_Master_Recr
+                 Get psA_Gplan_Master_Recr   of liCalling_dd to lsA_Gplan_Master_Recr
+                 Get pnA_Gmove_Master_X2     of liCalling_dd to lnA_Gmove_Master_X2
+                 Get pnA_Gmove_Master_P2     of liCalling_dd to lnA_Gmove_Master_P2
+                 Get psA_Gmove_Master_Aitiol of liCalling_dd to lsA_Gmove_Master_Aitiol
+
+                 Get psA_Gmove_Slave_Recr    of liCalling_dd to lsA_Gmove_Slave_Recr
+                 Get psA_Gplan_Slave_Recr    of liCalling_dd to lsA_Gplan_Slave_Recr
+                 Get pnA_Gmove_Slave_X2      of liCalling_dd to lnA_Gmove_Slave_X2
+                 Get pnA_Gmove_Slave_P2      of liCalling_dd to lnA_Gmove_Slave_P2
+                 Get psA_Gmove_Slave_Aitiol  of liCalling_dd to lsA_Gmove_Slave_Aitiol
+
+                 //booleans §¦¬ ›¢é¤¦¬¤ «˜ operations §¦¬ §¨â§œ  ¤˜ šå¤¦¬¤ ©«ã¤ š¢
+                 //master operation
+                 Get piGarticl_Delete      of liCalling_dd to  liGarticl_Delete
+                 Get piGarticl_Edit        of liCalling_dd to  liGarticl_Edit
+                 Get piGarticl_Create      of liCalling_dd to  liGarticl_Create
+
+                 Get piMaster_Gmove_Delete of liCalling_dd to  liMaster_Gmove_Delete
+                 Get piMaster_Gmove_Edit   of liCalling_dd to  liMaster_Gmove_Edit
+                 Get piMaster_Gmove_Create of liCalling_dd to  liMaster_Gmove_Create
+
+                 //slave operation
+                 Get piSlave_Gmove_Delete  of liCalling_dd to  liSlave_Gmove_Delete
+                 Get piSlave_Gmove_Edit    of liCalling_dd to  liSlave_Gmove_Edit
+                 Get piSlave_Gmove_Create  of liCalling_dd to  liSlave_Gmove_Create
+
+//©¦©¦©¦©¦©¦sososososo pos xero oti prepei na trexo ?
+
+                 //â¢œš®¦ª æ«  ˜§æ «˜ 3 create+edit+delete booleans, £æ¤¦¤ «¦ 1 œå¤˜  true
+                 If (;
+                      (liGarticl_Create     +liGarticl_Edit     +liGarticl_Delete      <> 1) or;
+                      (liMaster_Gmove_Create+liMaster_Gmove_Edit+liMaster_Gmove_Delete <> 1) or;
+                      (liSlave_Gmove_Create +liSlave_Gmove_Edit +liSlave_Gmove_Delete  <> 1);
+                     );
+                 Begin
+                     Send Operation_Not_Allowed 3003 //"akatalila booleans 1!"
+                 End
+                 If (;
+                      (liGarticl_Create      < 0 ) or;
+                      (liGarticl_Edit        < 0 ) or;
+                      (liGarticl_Delete      < 0 ) or;
+                      (liMaster_Gmove_Create < 0 ) or;
+                      (liMaster_Gmove_Edit   < 0 ) or;
+                      (liMaster_Gmove_Delete < 0 ) or;
+                      (liSlave_Gmove_Create  < 0 ) or;
+                      (liSlave_Gmove_Edit    < 0 ) or;
+                      (liSlave_Gmove_Delete  < 0 );
+                     );
+                 Begin
+                     Send Operation_Not_Allowed 3004 //"akatalila booleans 2!"
+                 End
+
+
+                 //â¢œš®¦ª backout & update
+                 Case Begin
+                      //1.-----------------------------------------------------------------------
+                      Case ((liBAckout =  0) and (liUpdate  =  0)) //˜›ç¤˜«¦¤, ¢áŸ¦ª ¡é› ¡˜!
+                           Send Operation_Not_Allowed 3005 //"›â¤ â«¨œ¥œ ¦ç«œ update ¦ç«œ backout (¢áŸ¦ª ¡é› ¡˜)"
+                      Case Break
+
+                      //2.-----------------------------------------------------------------------
+                      Case ((liBAckout <> 0) and (liUpdate  =  0)) //delete bcvwmove
+                           //æ«˜¤ ¡á¤à delete ©«¦ bcvwmove, «˜ gmoves ¢œ «¦¬¨š¦ç¤ éª œ¥ãª:
+                           // master gmove      slave gmove     ©¬¤Ÿã¡
+                           //-------------      -----------     -------------------
+                           //  edit             delete          bsum_sv0 =0
+                           //  edit             edit            bsum_sv0 > 0
+                           //  delete           delete          barticl_lines = 0
+
+                           //æ¢˜ «˜ find šå¤¦¤«˜  £œ « ª §˜¢˜ âª « £âª,
+                           //› æ«  â®œ  «¨â¥œ  £æ¤¦¤  backout.
+                           //2.1:§¨é«˜ œ¢âš®à æ«  æ¢˜ «˜ before records ›â¤ œå¤˜  £›œ¤ ¡á
+                           If (;
+                               (lsB_Garticl_Recr       = '') or;
+                               (lsB_Gmove_Master_Recr  = '') or;
+                               (lsB_Gmove_Slave_Recr   = '') or;
+                               (lsB_Gplan_Master_Recr  = '') or;
+                               (lsB_Gplan_Slave_Recr   = '') or;
+                               (lsB_Gtypkin_Recr       = '');
+                              );
+                           Begin
+                                Send Operation_Not_Allowed 3006 //"delete:«˜ before records œå¤˜  £›œ¤ ¡á (¢áŸ¦ª ¡é› ¡˜!)"
+                           End
+
+                           //2.2:£œ«á œ¢âš®à æ«  æ¢˜ «˜ after records œå¤˜  £›œ¤ ¡á
+                           If (;
+                               (lsA_Garticl_Recr       <> '') or;
+                               (lsA_Gmove_Master_Recr  <> '') or;
+                               (lsA_Gmove_Slave_Recr   <> '') or;
+                               (lsA_Gplan_Master_Recr  <> '') or;
+                               (lsA_Gplan_Slave_Recr   <> '') or;
+                               (lsA_Gtypkin_Recr       <> '')   ;
+                              );
+                           Begin
+                                Send Operation_Not_Allowed 3007 //"delete:«˜ after records ›â¤ œå¤˜  £›œ¤ ¡á (¢áŸ¦ª ¡é› ¡˜!)"
+                           End
+
+                           //2.3  :£œ«á ©œ«á¨à «˜ recr š ˜ «˜ find, «˜ ¦§¦å˜ Ÿ˜ šå¤¦¬¤ £œ «˜ recr before
+                           //2.3.1:â¬¨œ© garticl ˜§¦ recr before
+                           Move lsB_Garticl_Recr        to lsGarticl_Recr      //edit/delete
+
+                           //2.3.2:â¬¨œ© master gmove ˜§¦ recr before
+                           Move lsB_Gmove_Master_Recr   to lsGmove_Master_Recr //edit/delete
+
+                           //2.3.2:â¬¨œ© slave gmove ˜§¦ recr before
+                           Move lsB_Gmove_Slave_Recr    to lsGmove_Slave_Recr  //edit/delete
+
+                           //2.4:«â¢¦ª, ›¢é¤à æ«  «¦ garticl šå¤œ«˜  â£œ©˜ edited ˜§æ «¦ gmove
+                           //    é©«œ ¤˜ £ã¤ ©«œå¢à request save ©«¦ garticl ddo
+                           Move 0 to liGarticl_Must_Be_Edited
+                      Case Break //«â¢¦ª delete bcvwmove
+
+                      //3.-----------------------------------------------------------------------
+                      Case ((liBAckout =  0) and (liUpdate  <> 0)) //create bcvwmove
+                           //æ«˜¤ ¡á¤à create ©«¦ bcvwmove, «˜ gmoves ¢œ «¦¬¨š¦ç¤ éª œ¥ãª:
+                           // master gmove      slave gmove
+                           //-------------      -----------
+                           //  edit             create
+                           //  edit             edit
+                           //  create           create
+
+                           //3.1:§¨é«˜ œ¢âš®à æ«  £æ¤¦¤ «˜ 3 after records ›â¤ œå¤˜  £›œ¤ ¡á.
+                           //    ˜¬«á Ÿ˜ «˜ ®¨œ ˜©«é £æ¤¦¤ œá¤ ¡á¤à create.
+                           //    ›â¤ œ¢âš®à æ¢˜ «˜ 6 records, › æ«  £§¦¨œå ¤˜ ¡á¤à create.
+                           If (;
+                               (lsA_Gtypkin_Recr       =  '') or;
+                               (lsA_Gplan_Master_Recr  =  '') or;
+                               (lsA_Gplan_Slave_Recr   =  '')   ;
+                              );
+                           Begin
+                                Send Operation_Not_Allowed 3008 //"create:«˜ after records œå¤˜  £›œ¤ ¡á (¢áŸ¦ª ¡é› ¡˜!)"
+                           End
+
+                           //3.2:›¢é¤à œá¤ Ÿ˜ ¡á¤à create/edit garticl
+                           Move liGarticl_Create to liGarticl_Must_Be_Edited
+
+                           //3.3  :£œ«á ©œ«á¨à «˜ recr š ˜ «˜ find, «˜ ¦§¦å˜ Ÿ˜ šå¤¦¬¤ £œ «˜ recr after
+                           //3.3.1:â¬¨œ© garticl ˜§¦ recr after
+                           Move lsA_Garticl_Recr        to lsGarticl_Recr      /create/edit
+                           Move lsA_Gtypkin_Recr        to lsGtypkin_Recr      //®¨œ áœ«˜  ©«¦ create garticl
+
+                           //3.3.2:â¬¨œ© master gmove ˜§¦ recr after
+                           Move lsA_Gmove_Master_Recr   to lsGmove_Master_Recr /create/edit
+                           Move lsA_Gplan_Master_Recr   to lsGplan_Master_Recr //®¨œ áœ«˜  ©«¦ create master gmove
+
+                           //3.3.3:â¬¨œ© slave gmove ˜§¦ recr after
+                           Move lsA_Gmove_Slave_Recr    to lsGmove_Slave_Recr  /create/edit
+                           Move lsA_Gplan_Slave_Recr    to lsGplan_Slave_Recr  //®¨œ áœ«˜  ©«¦ create slave gmove
+                      Case Break //«â¢¦ª create bcvwmove
+
+                      //4.-----------------------------------------------------------------------
+                      Case ((liBAckout <> 0) and (liUpdate  <> 0)) //edit bcvwmove
+                           //æ«˜¤ ¡á¤à edit ©«¦ bcvwmove, «˜ gmoves ¢œ «¦¬¨š¦ç¤ éª œ¥ãª:
+                           // master gmove      slave gmove
+                           //-------------      -----------
+                           //  edit             edit
+
+                           //----------------------˜¨®ã  œ¢âš®à¤ edit-----------------
+                           //4.1:œ­'æ©¦¤ Ÿ˜ ¡á¤à edit, œ¢âš®à «˜ records
+                           Move (private.Check_Edit(Self,;
+                                                   lsB_Garticl_Recr,;
+                                                   lsB_Gmove_Master_Recr,;
+                                                   lsB_Gmove_Slave_Recr,;
+                                                   lsA_Garticl_Recr,;
+                                                   lsA_Gmove_Master_Recr,;
+                                                   lsA_Gmove_Slave_Recr);
+                                ) to liCheck_Edit
+                           If (liCheck_Edit <> 0) Send Operation_Not_Allowed 3009 //to liCalling_dd liCheck_Edit
+
+                           //4.2  :œá¤ æ¢œª ¦  §˜¨á£œ«¨¦  before+after œå¤˜  å©œª,
+                           //      «æ«œ ›â¤ £§˜å¤à ¡˜Ÿæ¢¦¬ ©«¦¤ ¡æ§¦ ¤˜ «¨â¥à,
+                           //      ˜¢¢á ­œçšà ...«¨â®¦¤«˜ª!
+
+                           //4.2.1:â¢œš®¦ª before & after « £é¤ garticl
+                           Move (private.Garticl_Must_Be_Edited(Self,;
+                           lsB_Gtypkin_Recr,;
+                           ldB_Garticl_Hmnia,;
+                           liB_Garticl_No,;
+                           lsB_Garticl_C_Code2,;
+                           lnB_Garticl_Rate0,;
+                           lnB_Garticl_Rate00,;
+                           lnB_Garticl_RateR,;
+                           lsB_Garticl_Aitiol,;
+                           lsA_Gtypkin_Recr,;
+                           ldA_Garticl_Hmnia,;
+                           liA_Garticl_No,;
+                           lsA_Garticl_C_Code2,;
+                           lnA_Garticl_Rate0,;
+                           lnA_Garticl_Rate00,;
+                           lnA_Garticl_RateR,;
+                           lsA_Garticl_Aitiol)) to liGarticl_Must_Be_Edited
+
+                           //4.2.2:â¢œš®¦ª before & after « £é¤ master gmove
+                           Move (private.Gmove_Must_Be_Edited(Self,;
+                           lsB_Gplan_Master_Recr,;
+                           lnB_Gmove_Master_X2,;
+                           lnB_Gmove_Master_P2,;
+                           lsB_Gmove_Master_Aitiol,;
+                           lsA_Gplan_Master_Recr,;
+                           lnA_Gmove_Master_X2,;
+                           lnA_Gmove_Master_P2,;
+                           lsA_Gmove_Master_Aitiol)) to liGmove_Master_Must_Be_Edited
+
+                           //4.2.3:â¢œš®¦ª before & after « £é¤ slave gmove
+                           Move (private.Gmove_Must_Be_Edited(Self,;
+                           lsB_Gplan_Slave_Recr,;
+                           lnB_Gmove_Slave_X2,;
+                           lnB_Gmove_Slave_P2,;
+                           lsB_Gmove_Slave_Aitiol,;
+                           lsA_Gplan_Slave_Recr,;
+                           lnA_Gmove_Slave_X2,;
+                           lnA_Gmove_Slave_P2,;
+                           lsA_Gmove_Slave_Aitiol))  to liGmove_Slave_Must_Be_Edited
+
+                           //4.2.4:œá¤ ›â¤ â®œ  ˜¢¢á¥œ  «å§¦«˜, «¤ ¡á¤à «¨â®¦¤«˜ª
+                           If (;
+                                (liGarticl_Must_Be_Edited      = FALSE) and;
+                                (liGmove_Master_Must_Be_Edited = FALSE) and;
+                                (liGmove_Slave_Must_Be_Edited  = FALSE);
+                              );
+                           Begin
+                                Procedure_Return //›â¤ ®¨œ áœ«˜  ¤˜ ¡á¤à edit ©«¦ á¨Ÿ¨¦
+                           End
+                           //----------------------«â¢¦ª œ¢âš®à¤ edit-----------------
+
+                           //4.3  :unfortunatly §¨â§œ  ¤˜ ¡á¤à edit
+                           //      £œ«á ©œ«á¨à «˜ recr š ˜ «˜ find, «˜ ¦§¦å˜ Ÿ˜ šå¤¦¬¤ £œ «˜ recr after
+                           //4.3.1:â¬¨œ© garticl ˜§¦ recr after
+                           Move lsA_Garticl_Recr        to lsGarticl_Recr      //edit
+
+                           //4.3.2:â¬¨œ© master gmove ˜§¦ recr after
+                           Move lsA_Gmove_Master_Recr   to lsGmove_Master_Recr //edit
+
+                           //4.3.3:â¬¨œ© slave gmove ˜§¦ recr after
+                           Move lsA_Gmove_Slave_Recr    to lsGmove_Slave_Recr  //edit
+                      Case Break //«â¢¦ª edit bcvwmove
+                 Case End
+
+                 //Ÿ¤­¦¨Ÿ¤˜«œ¢¢¬, §¨â§œ  ¤˜ «¨â¥à!
+
+                 //˜¤áš¤à© 4 flags §¦¬ §â¨˜©œ £œ ¦¨å©£˜«˜ «¦ ¡˜¢æ¤ ddo
+                 Get piFlag02 to liFlag02
+                 Get piFlag03 to liFlag03
+                 Get piFlag04 to liFlag04
+                 Get piFlag05 to liFlag05
+
+                 //**************************************************************************
+                 //01.œç¨œ© object id's «à¤ œ£§¢œ¡¦£â¤à¤ ddo's
+                 //**************************************************************************
+                 Move (Gtypkin_dd(Self))  to liGtypkin_dd
+                 Move (Garticl_dd(Self))  to liGarticl_dd
+                 Move (Gplan_dd  (Self))  to liGplan_dd
+                 Move (Gmove_dd  (Self))  to liGmove_dd
+
+                 //**************************************************************************
+                 //02.rebuild constraints, ¢æšà «à¤ ¡¢á©œà¤
+                 //**************************************************************************
+                 Set piMode of liGarticl_dd to 0 //œ¤£â¨à© š¢ ˜§æ b+c+v+wmove
+                 Send Private.Rebuild_All_Constraints
+
+                 //**************************************************************************
+                 //03.›£ ¦¬¨šå˜/œç¨œ©/œ¤£â¨à©/› ˜š¨˜­ã garticl
+                 //**************************************************************************
+                 Send Clear to liGarticl_dd
+                 Move lsGarticl_Recr to Garticl.Garticl_Recr
+                 Send Find to liGarticl_dd Eq 2 //garticl_recr
+
+                 If (Found = 0);
+                 Begin //›£ ¦¬¨šå˜ ¤â¦¬ garticl
+                       If (liGarticl_Create = FALSE) Send Operation_Not_Allowed 3010 //"Create Garticl !"
+                       //a)œç¨œ© gtypkin
+                       Send Clear to liGtypkin_dd
+                       Move lsGtypkin_Recr to Gtypkin.Gtypkin_Recr
+                       Send Find to liGtypkin_dd Eq 2 //gtypkin_recr
+                       If (Found = 0);
+                       Begin //›â¤ ™¨âŸ¡œ «¦ gtypkin
+                              Send Operation_Not_Allowed 3011 //"›â¤ ™¨âŸ¡œ «¦ original gtypkin"
+                       End
+                 End
+
+
+
+
+                 //â¢œš®¦ª «à¤ 4 flags
+                 //§¨â§œ  «˜ flags 2,3,4 ¤˜ œå¤˜  ˜¡¨ ™éª å› ˜,
+                 //œ¤é «¦ flag 5 «ª š¢ ¤˜ œå¤˜  false (˜¬«æ£˜« ˜¨åŸ£©)
+                 Get File_Field_Current_Value of liGarticl_dd File_Field Gtypkin.Gtypkin_Flag02 to liGFlag02
+                 Get File_Field_Current_Value of liGarticl_dd File_Field Gtypkin.Gtypkin_Flag03 to liGFlag03
+                 Get File_Field_Current_Value of liGarticl_dd File_Field Gtypkin.Gtypkin_Flag04 to liGFlag04
+                 Get File_Field_Current_Value of liGarticl_dd File_Field Gtypkin.Gtypkin_Flag05 to liGFlag05
+                 If (;
+                     (liFlag02  <> liGFlag02) or;
+                     (liFlag03  <> liGFlag03) or;
+                     (liFlag04  <> liGFlag04) or;
+                     (liGFlag05 <> 0        )   ;
+                    );
+                 Begin
+                       Send Operation_Not_Allowed 3021 //"  ¡ ¤ã©œ ª ›â¤ œå¤˜  ¦£¦œ ›œåª.˜¨˜¡˜¢é › ¦¨Ÿé©«œ «˜ flags 2,3,4,5
+                 End
+
+
+
+
+                 //cascade delete garticl
+                 If (liGarticl_Delete = TRUE);
+                 Begin //delete garticl
+                      Send Request_Delete to liGarticl_dd //›â¤ ®¨œ á¦¤«˜  validations & error trapping
+                                                          //›å¦«  œå£˜  £â©˜ ©œ transaction !
+                      Set psF_Garticl_Recr        of liCalling_dd to ''
+                      Set psF_Gmove_Master_Recr   of liCalling_dd to ''
+                      Set psF_Gmove_Slave_Recr    of liCalling_dd to ''
+                      Procedure_Return
+                 End   //«â¢¦ª cascade delete garticl
+
+                 //edit or create  existing garticl (§á¤«˜ £œ « ª « £âª after!)
+                 If (liGarticl_Must_Be_Edited   = TRUE);
+                 Begin //create or edit garticl
+                      Set Field_Changed_Value          of liGarticl_dd Field Garticl.Garticl_Hmnia   to ldA_Garticl_Hmnia
+                      Set Field_Changed_Value          of liGarticl_dd Field Garticl.Garticl_No      to liA_Garticl_No
+                      Set Field_Changed_Value          of liGarticl_dd Field Garticl.Garticl_Aitiol  to lsA_Garticl_Aitiol
+                      Set Field_Changed_Value          of liGarticl_dd Field Garticl.Garticl_C_Code2 to lsA_Garticl_C_Code2
+                      Set Field_Changed_Value          of liGarticl_dd Field Garticl.Garticl_Rate0   to lnA_Garticl_Rate0
+                      Set Field_Changed_Value          of liGarticl_dd Field Garticl.Garticl_Rate00  to lnA_Garticl_Rate00
+                      Set Field_Changed_Value          of liGarticl_dd Field Garticl.Garticl_Rater   to lnA_Garticl_Rater
+                      Send Request_Save_No_Transaction to liGarticl_dd //›â¤ ®¨œ á¦¤«˜  validations & error trapping
+                                                                       //›å¦«  œå£˜  £â©˜ ©œ transaction !
+                 End   //«â¢¦ª create or edit garticl
+                 //«â¢¦ª editing or creating garticl
+
+                 //œ›é â¨®¦£˜  §¢â¦¤ £œ current garticl record
+                 If ((Current_Record(liGarticl_dd)) = 0);
+                 Begin
+                      Send Operation_Not_Allowed 3012 //"no garticl current_record!"
+                 End
+                 //feedback œ¤£â¨à© «¦¬ calling dd, £æ¤¦¤ ©«¦ create
+                 Get Field_Current_Value  of liGarticl_dd Field Garticl.Garticl_Recr to lsF_Garticl_Recr
+
+                 //**************************************************************************
+                 //04.›£ ¦¬¨šå˜/œç¨œ©/œ¤£â¨à©/› ˜š¨˜­ã master gmove
+                 //   ˜¬«æ ˜¡¦¢¦¬Ÿœå «¦ å› ¦ patern £œ «¦ garticl
+                 //**************************************************************************
+                 Send Clear               to liGmove_dd
+                 Move lsGmove_Master_Recr to Gmove.Gmove_Recr
+                 Send Find to liGmove_dd Eq 2 //gmove_recr
+
+                 If (Found = 0);
+                 Begin //›£ ¦¬¨šå˜ ¤â¦¬ master gmove
+                       If (liMaster_Gmove_Create = FALSE) Send Operation_Not_Allowed 3013 //"Create Master Gmove !"
+                       //a) œç¨œ© master gplan
+                       Send Clear to liGplan_dd
+                       Move lsGplan_Master_Recr to Gplan.Gplan_Recr
+                       Send Find to liGplan_dd Eq 2 //gplan_recr
+                       If (Found = 0);
+                       Begin //›â¤ ™¨âŸ¡œ «¦ master gplan
+                              Send Operation_Not_Allowed 3014 //"›â¤ ™¨âŸ¡œ «¦ original master gplan"
+                       End //«â¢¦ª œç¨œ©ª master gplan
+                 End       //«â¢¦ª ›£ ¦¬¨šå˜ª ¤â¦¬ master gmove
+
+                 //b) ›£ ¦¬¨šå˜/œ¤£â¨à©/› ˜š¨˜­ã master gmove
+
+                 Get Field_Current_Value of liGmove_dd Field Gmove.Gmove_X2             to lnO_Gmove_Master_X2 //§˜¢˜ á ®¨âà©  «¦¬ master gmove
+                 Get Field_Current_Value of liGmove_dd Field Gmove.Gmove_P2             to lnO_Gmove_Master_P2 //§˜¢˜ á §å©«à© «¦¬ master gmove
+
+                 Move (lnO_Gmove_Master_X2 + (lnA_Gmove_Master_X2-lnB_Gmove_Master_X2)) to lnN_Gmove_Master_X2 //¤â˜ ®¨âà©  «¦¬ master gmove
+                 Move (lnO_Gmove_Master_P2 + (lnA_Gmove_Master_P2-lnB_Gmove_Master_P2)) to lnN_Gmove_Master_P2 //¤â˜ §å©«à© «¦¬ master gmove
+
+                 If (;
+                     (lnN_Gmove_Master_X2 = 0) and;
+                     (lnN_Gmove_Master_P2 = 0);
+                    );
+                 Begin //b.1: › ˜š¨˜­ã master gmove
+                       //¢¦š ¡á œ›é ›â¤ Ÿ˜ §¨â§œ  §¦«â ¤˜ â¨Ÿà, › æ«  â®œ  §¨¦šŸœå
+                       // cascade delete «¦¬ garticl ! ! !
+                       Send Operation_Not_Allowed 3015 //"delete master gmove!"
+                       //**If (liMaster_Gmove_Delete = FALSE) Error 10001 "Delete Master Gmove !"
+                       //**If ((Current_Record(liGmove_dd)) = 0);
+                       //**Begin
+                       //**    Error 1003 "›â¤ â®à current master gmove ¡˜  ›â¤ £§¦¨é ¤˜ ¡á¤à › ˜š¨˜­ã!"
+                       //**    Procedure_Return
+                       //**End
+                       //**Send Request_Delete to liGmove_dd
+                       //**Move '' to lsF_Gmove_Master_Recr  //š ˜ «¤ feedback œ¤£â¨à© «¦¬ calling dd
+                       //                                 // b - c - v - w move
+                 End   //«â¢¦ª › ˜š¨˜­ãª master gmove
+
+                 Else;
+                 Begin //b.2: ›£ ¦¬¨šå˜/œ¤£â¨à© master gmove
+                       Set Field_Changed_Value of liGmove_dd Field Gmove.Gmove_X2     to lnN_Gmove_Master_X2
+                       Set Field_Changed_Value of liGmove_dd Field Gmove.Gmove_P2     to lnN_Gmove_Master_P2
+                       Set Field_Changed_Value of liGmove_dd Field Gmove.Gmove_Aitiol to lsA_Gmove_Master_Aitiol
+                       Send Request_Save       to liGmove_dd
+                 End   //«â¢¦ª ›£ ¦¬¨šå˜ª/œ¤£â¨à©ª master gmove
+
+                 //œ›é â¨®¦£˜  §¢â¦¤ £œ current gmove master record
+                 If ((Current_Record(liGmove_dd)) = 0);
+                 Begin
+                      Send Operation_Not_Allowed 3016 //"no master gmove current_record!"
+                 End
+                 //feedback œ¤£â¨à© «¦¬ calling dd, £æ¤¦¤ ©«¦ create
+                 Get Field_Current_Value of liGmove_dd Field Gmove.Gmove_Recr   to lsF_Gmove_Master_Recr
+
+
+                 //**************************************************************************
+                 //05.›£ ¦¬¨šå˜/œç¨œ© ¡˜  œ¤£â¨à© slave gmove
+                 //**************************************************************************
+                 Send Clear to liGmove_dd
+                 Move lsGmove_Slave_Recr to Gmove.Gmove_Recr
+                 Send Find to liGmove_dd Eq 2 //gmove_recr
+
+                 If (Found = 0);
+                 Begin //›£ ¦¬¨šå˜ ¤â¦¬ slave gmove
+                       If (liSlave_Gmove_Create = FALSE) Send Operation_Not_Allowed 3017 //"Create Slave Gmove !"
+                       //a) œç¨œ© slave gplan
+                       Send Clear to liGplan_dd
+                       Move lsGplan_Slave_Recr to Gplan.Gplan_Recr
+                       Send Find to liGplan_dd Eq 2 //gplan_recr
+                       If (Found = 0);
+                       Begin //›â¤ ™¨âŸ¡œ «¦ slave gplan
+                              Send Operation_Not_Allowed 3018 //›â¤ ™¨âŸ¡œ «¦ original slave gplan
+                       End   //«â¢¦ª œç¨œ©ª slave gplan
+                 End         //«â¢¦ª ›£ ¦¬¨šå˜ª ¤â¦¬ slave gmove
+
+                 //b) ›£ ¦¬¨šå˜/œ¤£â¨à©/› ˜š¨˜­ã slave gmove
+                 Get Field_Current_Value of liGmove_dd Field Gmove.Gmove_X2          to lnO_Gmove_Slave_X2 //§˜¢˜ á ®¨âà©  «¦¬ Slave gmove
+                 Get Field_Current_Value of liGmove_dd Field Gmove.Gmove_P2          to lnO_Gmove_Slave_P2 //§˜¢˜ á §å©«à© «¦¬ Slave gmove
+
+                 Move (lnO_Gmove_Slave_X2 + (lnA_Gmove_Slave_X2-lnB_Gmove_Slave_X2)) to lnN_Gmove_Slave_X2 //¤â˜ ®¨âà©  «¦¬ Slave gmove
+                 Move (lnO_Gmove_Slave_P2 + (lnA_Gmove_Slave_P2-lnB_Gmove_Slave_P2)) to lnN_Gmove_Slave_P2 //¤â˜ §å©«à© «¦¬ Slave gmove
+
+                 If (;
+                     (lnN_Gmove_Slave_X2 = 0) and;
+                     (lnN_Gmove_Slave_P2 = 0);
+                    );
+                 Begin //b.1: › ˜š¨˜­ã slave gmove
+                       If (liSlave_Gmove_Delete = FALSE) Send Operation_Not_Allowed 3019 //"Delete Slave Gmove !"
+                       If ((Current_Record(liGmove_dd)) = 0);
+                       Begin
+                           Send Operation_Not_Allowed 3020 //"›â¤ â®à current slave gmove ¡˜  ›â¤ £§¦¨é ¤˜ ¡á¤à › ˜š¨˜­ã"
+                       End
+                       Send Request_Delete to liGmove_dd
+                       Move 0 to lsF_Gmove_Slave_Recr  //š ˜ «¤ feedback œ¤£â¨à© «¦¬ calling dd
+                                                       // b - c - v - w move
+                 End   //«â¢¦ª › ˜š¨˜­ãª Slave gmove
+
+                 Else;
+                 Begin //b.2: ›£ ¦¬¨šå˜/œ¤£â¨à© Slave gmove
+                       //If ((liSlave_Gmove_Create = 0) and (liSlave_Gmove_Edit = 0)) Error 10001 "Create/Edit Slave Gmove !"
+                       Set Field_Changed_Value of liGmove_dd Field Gmove.Gmove_X2     to lnN_Gmove_Slave_X2
+                       Set Field_Changed_Value of liGmove_dd Field Gmove.Gmove_P2     to lnN_Gmove_Slave_P2
+                       Set Field_Changed_Value of liGmove_dd Field Gmove.Gmove_Aitiol to lsA_Gmove_Slave_Aitiol
+                       Send Request_Save       to liGmove_dd
+                       Get Field_Current_Value of liGmove_dd Field Gmove.Gmove_Recr   to lsF_Gmove_Slave_Recr   //š ˜ «¤ feedback œ¤£â¨à© «¦¬ calling dd
+                                                                                                                // b - c - v - w move
+                 End   //«â¢¦ª ›£ ¦¬¨šå˜ª/œ¤£â¨à©ª slave  gmove
+
+
+                 //**************************************************************************
+                 //06.â¢œš®¦ª á¨Ÿ¨¦¬
+                 //**************************************************************************
+                 //send check_arthro_for_ypol (› æ«  £§¦¨œå ¤˜ ˜¢¢á¥œ   ©¦« £å˜ !)
+
+                 //**************************************************************************
+                 //07.feedback œ¤£â¨à© «¦¬ ¡˜¢¦ç¤«¦ª ddo
+                 //**************************************************************************
+                 //©œ«á¨ ©£˜ « £é¤/properties «¦¬ ¡˜¢¦ç¤«¦ª ddo
+                 Set psF_Garticl_Recr        of liCalling_dd to lsF_Garticl_Recr
+                 Set psF_Gmove_Master_Recr   of liCalling_dd to lsF_Gmove_Master_Recr
+                 Set psF_Gmove_Slave_Recr    of liCalling_dd to lsF_Gmove_Slave_Recr
+       End_Procedure //private.Transaction_BCVWmove_update_gmove
+       //****************************************************************************
+       //* ’ „ Š  ‘    „ Œ † ‹ „  — ‘ † ‘    ‚ „ Œ ˆ ‰ † ‘    Š  ‚ ˆ ‘ ’ ˆ ‰ † ‘ *
+       //****************************************************************************
+
+
+
+       //****************************************************************************
+       //* €  • †      ƒ ˆ € ‚  € ” † ‘    €  ‡   “                            *
+       //****************************************************************************
+       //private
+       //4:¨¦¬«å¤˜ › ˜š¨˜­ãª á¨Ÿ¨¦¬
+       //transaction enabled !
+       Procedure private.Transaction_Delete_Garticl
+                 Integer  liCalling_dd liCalling_dd_Current_Recnum liGarticl_dd
+                 String   lsGarticl_Recr
+
+                 //4 flags §¦¬ §œ¨¤áœ  £œ ¦¨å©£˜«˜ «¦ ¡˜¢æ¤ ddo
+                 Integer liFlag02 liFlag03 liFlag04 liFlag05
+
+                 //4 flags §¦¬ › ˜™áà ˜§¦ «¦ gtypkin
+                 Integer liGFlag02 liGFlag03 liGFlag04 liGFlag05
+
+                 //œç¨œ© ¡˜¢¦ç¤«¦ª ddo
+                 Get piCalling_dd to liCalling_dd
+
+                 //â¢œš®¦ª ¡˜¢¦ç¤«¦ª ddo (œá¤ 0, ¡á¤«¤)
+                 If (liCalling_dd = 0) Send Operation_Not_Allowed 4001 //"dâ¤ £œ ¡á¢œ©œ ¡˜¤œåª!"
+
+                 //œç¨œ© current_record ¡˜¢¦ç¤«¦ª ddo
+                 Get Current_Record of liCalling_dd to liCalling_dd_Current_Recnum
+
+                 //â¢œš®¦ª current_record (œá¤ 0, ¡á¤«¤)
+                 //prosoxi sto delete !!!*** (¡˜  æ£àª, æ¢àª §œ¨ â¨šàª, â®à current record!)
+                 If (liCalling_dd_Current_Recnum = 0) Send Operation_Not_Allowed 4002 //"«¦ ¡˜¢æ¤ ddo ›â¤ â®œ  current record!"
+
+                 //˜¤áš¤à© recr «¦¬ ¬§æ › ˜š¨˜­ã á¨Ÿ¨¦¬
+                 Get psGarticl_Recr to lsGarticl_Recr
+
+                 //unfortunatly, §¨â§œ  ¤˜ «¨â¥à!
+
+                 //˜¤áš¤à© 4 flags
+                  Get piFlag02 to liFlag02
+                  Get piFlag03 to liFlag03
+                  Get piFlag04 to liFlag04
+                  Get piFlag05 to liFlag05
+
+                 //**************************************************************************
+                 //01.œç¨œ© object id's «à¤ œ£§¢œ¡¦£â¤à¤ ddo's
+                 //**************************************************************************
+                 Move (Garticl_dd(Self))  to liGarticl_dd
+
+                 //**************************************************************************
+                 //02.rebuild constraints, ¢æšà «à¤ ¡¢á©œà¤
+                 //**************************************************************************
+                 Set piMode of liGarticl_dd to 0 //œ¤£â¨à© š¢ ˜§æ b+c+v+wmove
+                 Send Private.Rebuild_All_Constraints
+
+                 //**************************************************************************
+                 //03.› ˜š¨˜­ã garticl
+                 //**************************************************************************
+                 Send Clear to liGarticl_dd
+                 Move lsGarticl_Recr to Garticl.Garticl_Recr
+                 Send Find to liGarticl_dd Eq 2 //garticl_recr
+
+                 If (Found = 0);
+                 Begin //›â¤ ™¨âŸ¡œ «¦ ¬§æ › ˜š¨˜­ã garticl
+                       Send Operation_Not_Allowed 4003 //"ƒâ¤ ¨âŸ¡œ «¦ Garticl!
+                 End
+
+                 //â¢œš®¦ª «à¤ 4 flags
+                 Get File_Field_Current_Value of liGarticl_dd File_Field Gtypkin.Gtypkin_Flag02 to liGFlag02
+                 Get File_Field_Current_Value of liGarticl_dd File_Field Gtypkin.Gtypkin_Flag03 to liGFlag03
+                 Get File_Field_Current_Value of liGarticl_dd File_Field Gtypkin.Gtypkin_Flag04 to liGFlag04
+                 Get File_Field_Current_Value of liGarticl_dd File_Field Gtypkin.Gtypkin_Flag05 to liGFlag05
+                 If (;
+                     (liFlag02  <> liGFlag02) or;
+                     (liFlag03  <> liGFlag03) or;
+                     (liFlag04  <> liGFlag04) or;
+                     (liGFlag05 <> 0        )   ;
+                    );
+                 Begin
+                       Send Operation_Not_Allowed 4004 //"  ¡ ¤ã©œ ª ›â¤ œå¤˜  ¦£¦œ ›œåª.˜¨˜¡˜¢é › ¦¨Ÿé©«œ «˜ flags 2,3,4,5
+                 End
+
+                 //cascade delete garticl
+                      Send Request_Delete to liGarticl_dd //›â¤ ®¨œ á¦¤«˜  validations & error trapping
+                                                          //›å¦«  œå£˜  £â©˜ ©œ transaction !
+       End_Procedure //private.transaction_delete_garticl
+       //****************************************************************************
+       //* ’ „ Š  ‘    ƒ ˆ € ‚  € ” † ‘    €  ‡   “                            *
+       //****************************************************************************
+
+
+
+       //****************************************************************************
+       //* €  • †      € Š Š € ‚ † ‘    €  ‡   “                                *
+       //****************************************************************************
+       //private
+       //5:¨¦¬«å¤˜ œ¤£â¨à©ª á¨Ÿ¨¦¬
+       //transaction enabled !
+       //«¦ ¡˜¢æ¤ ddo œå¤˜  «¦ barticl + cmove + vmove + ...
+       Procedure private.Transaction_Update_Garticl
+                 Integer  liCalling_dd liCalling_dd_Current_Recnum
+                 Integer  liGarticl_dd
+                 String   lsGarticl_Recr
+
+                 //3 properties §¦¬ › ˜™áà ˜§¦ «¦ ¡˜¢æ¤ ddo
+                 Date     ldB_Garticl_Hmnia          ldA_Garticl_Hmnia
+                 Integer  liB_Garticl_No             liA_Garticl_No
+                 String   lsB_Garticl_Aitiol         lsA_Garticl_Aitiol
+
+                 //4 flags §¦¬ §œ¨¤áœ  £œ ¦¨å©£˜«˜ «¦ ¡˜¢æ¤ ddo
+                 Integer liFlag02 liFlag03 liFlag04 liFlag05
+
+                 //4 flags §¦¬ › ˜™áà ˜§¦ «¦ gtypkin
+                 Integer liGFlag02 liGFlag03 liGFlag04 liGFlag05
+
+                 //œç¨œ© ¡˜¢¦ç¤«¦ª ddo
+                 Get piCalling_dd to liCalling_dd
+
+                 //â¢œš®¦ª ¡˜¢¦ç¤«¦ª ddo (œá¤ 0, ¡á¤«¤)
+                 If (liCalling_dd = 0) Send Operation_Not_Allowed 5001 //"dâ¤ £œ ¡á¢œ©œ ¡˜¤œåª!"
+
+                 //œç¨œ© current_record ¡˜¢¦ç¤«¦ª ddo
+                 Get Current_Record of liCalling_dd to liCalling_dd_Current_Recnum
+
+                 //â¢œš®¦ª current_record (œá¤ 0, ¡á¤«¤)
+                 //prosoxi sto delete !!!*** (¡˜  æ£àª, æ¢àª §œ¨ â¨šàª, â®à current record!)
+                 If (liCalling_dd_Current_Recnum = 0) Send Operation_Not_Allowed 5002 //"«¦ ¡˜¢æ¤ ddo ›â¤ â®œ  current record!"
+
+                 //˜¤áš¤à© recr «¦¬ ¬§æ › ˜š¨˜­ã á¨Ÿ¨¦¬
+                 Get psGarticl_Recr to lsGarticl_Recr
+
+                 //˜¤áš¤à© 3 §˜¢˜ é¤ « £é¤ «¦¬ ¡˜¢¦ç¤«¦ª ddo
+                 Get pdB_Garticl_Hmnia       of liCalling_dd to ldB_Garticl_Hmnia
+                 Get piB_Garticl_No          of liCalling_dd to liB_Garticl_No
+                 Get psB_Garticl_Aitiol      of liCalling_dd to lsB_Garticl_Aitiol
+
+                 //˜¤áš¤à© 3 ¤âà¤ « £é¤ «¦¬ ¡˜¢¦ç¤«¦ª ddo
+                 Get pdA_Garticl_Hmnia       of liCalling_dd to ldA_Garticl_Hmnia
+                 Get piA_Garticl_No          of liCalling_dd to liA_Garticl_No
+                 Get psA_Garticl_Aitiol      of liCalling_dd to lsA_Garticl_Aitiol
+
+                 //œá¤ æ¢œª ¦  §˜¨á£œ«¨¦  before+after œå¤˜  å©œª,
+                 //«æ«œ ›â¤ £§˜å¤à ¡˜Ÿæ¢¦¬ ©«¦¤ ¡æ§¦ ¤˜ «¨â¥à,
+                 //˜¢¢á ­œçšà ...«¨â®¦¤«˜ª!
+                 If (;
+                      (ldB_Garticl_Hmnia  = ldA_Garticl_Hmnia  ) and;
+                      (liB_Garticl_No     = liA_Garticl_No     ) and;
+                      (lsB_Garticl_Aitiol = lsA_Garticl_Aitiol )    ;
+                     ) Begin
+                        Procedure_Return
+                       End
+
+                 //Ÿ¤­¦¨Ÿ¤˜«œ¢¢¬, §¨â§œ  ¤˜ «¨â¥à!
+
+                 //˜¤áš¤à© 4 flags
+                  Get piFlag02 to liFlag02
+                  Get piFlag03 to liFlag03
+                  Get piFlag04 to liFlag04
+                  Get piFlag05 to liFlag05
+
+                 //**************************************************************************
+                 //01.œç¨œ© object id's «à¤ œ£§¢œ¡¦£â¤à¤ ddo's
+                 //**************************************************************************
+                 Move (Garticl_dd(Self))  to liGarticl_dd
+
+                 //**************************************************************************
+                 //02.rebuild constraints, ¢æšà «à¤ ¡¢á©œà¤
+                 //**************************************************************************
+                 Set piMode of liGarticl_dd to 0 //œ¤£â¨à© š¢ ˜§æ b+c+v+wmove
+                 Send Private.Rebuild_All_Constraints
+
+                 //**************************************************************************
+                 //03.edit garticl
+                 //**************************************************************************
+                 Send Clear to liGarticl_dd
+                 Move lsGarticl_Recr to Garticl.Garticl_Recr
+                 Send Find to liGarticl_dd Eq 2 //garticl_recr
+
+                 If (Found = 0);
+                 Begin //›â¤ ™¨âŸ¡œ «¦ ¬§æ › ˜š¨˜­ã garticl
+                       Send Operation_Not_Allowed 5003 //"ƒâ¤ ¨âŸ¡œ «¦ Garticl!
+                 End
+
+                 //â¢œš®¦ª «à¤ 4 flags
+                 Get File_Field_Current_Value of liGarticl_dd File_Field Gtypkin.Gtypkin_Flag02 to liGFlag02
+                 Get File_Field_Current_Value of liGarticl_dd File_Field Gtypkin.Gtypkin_Flag03 to liGFlag03
+                 Get File_Field_Current_Value of liGarticl_dd File_Field Gtypkin.Gtypkin_Flag04 to liGFlag04
+                 Get File_Field_Current_Value of liGarticl_dd File_Field Gtypkin.Gtypkin_Flag05 to liGFlag05
+                 If (;
+                     (liFlag02  <> liGFlag02) or;
+                     (liFlag03  <> liGFlag03) or;
+                     (liFlag04  <> liGFlag04) or;
+                     (liGFlag05 <> 0        )   ;
+                    );
+                 Begin
+                       Send Operation_Not_Allowed 5004 //"  ¡ ¤ã©œ ª ›â¤ œå¤˜  ¦£¦œ ›œåª.˜¨˜¡˜¢é › ¦¨Ÿé©«œ «˜ flags 2,3,4,5
+                 End
+
+                 //update garticl
+                 Set Field_Changed_Value          of liGarticl_dd Field Garticl.Garticl_Hmnia   to ldA_Garticl_Hmnia
+                 Set Field_Changed_Value          of liGarticl_dd Field Garticl.Garticl_No      to liA_Garticl_No
+                 Set Field_Changed_Value          of liGarticl_dd Field Garticl.Garticl_Aitiol  to lsA_Garticl_Aitiol
+                 Send Request_Save_No_Transaction to liGarticl_dd //›â¤ ®¨œ á¦¤«˜  validations & error trapping
+                                                                       //›å¦«  œå£˜  £â©˜ ©œ transaction !
+       End_Procedure //private.transaction_update_garticl
+       //****************************************************************************
+       //* ’ „ Š  ‘    € Š Š € ‚ † ‘        €  ‡   “                            *
+       //****************************************************************************
+
+
+
+
+
+
+
+
+
+       //****************************************************************************
+       //* €  • †      „ Œ † ‹ „  — ‘ † ‘    €      G B R I D G E               *
+       //****************************************************************************
+       //private
+       //6:¨¦¬«å¤œª œ¤£â¨à©ª š¢ ˜§¦ «¦ ˜¨®œå¦ gbridge
+       //transaction enabled !
+
+
+       //private
+       //¡˜¢œå«˜  ˜§æ «¤ private.transaction_update_gl_from_gbridge
+       Function  private.Transaction_Create_Garticl_from_Gbridgeh String  lsYear_Recr;
+                                                                  Integer lsGarticl_Recr;
+                                                                  Integer lsGtypkin_Recr;
+                                                                  Date    ldGarticl_Hmnia;
+                                                                  Integer liGarticl_No;
+                                                                  String  lsGarticl_Aitiol;
+                                                                  String  lsGarticl_C_Code2;
+                                                                  Number  lnGarticl_Rate0;
+                                                                  Number  lnGarticl_Rate00;
+                                                                  Number  lnGarticl_Rater;
+                                                                  Returns Integer
+
+                 //object id's «à¤ œ£§¢œ¡¦£â¤à¤ ddo's
+                 Integer  liGtypkin_dd liGarticl_dd
+
+                 //4 flags §¦¬ §œ¨¤áœ  £œ ¦¨å©£˜«˜ «¦ ¡˜¢æ¤ ddo
+                 Integer liFlag02 liFlag03 liFlag04 liFlag05
+
+                 //4 flags §¦¬ › ˜™áà ˜§¦ «¦ gtypkin
+                 Integer liGFlag02 liGFlag03 liGFlag04 liGFlag05
+
+                 //return value š ˜ «¤ feedback œ¤£â¨à© «¦¬ gbridgeh
+                 Integer lsF_Garticl_Recr
+
+           If (giWait_Obj <> 0);
+                 Send UpdateWait to giWait_Obj (;
+                                                "BPO GLMNTN:€¨Ÿ¨¦:";
+                                                +(String(ldGarticl_Hmnia));
+                                                +":"+(String(liGarticl_No));
+                                                +":"+(Trim(lsGarticl_C_Code2));
+                                               )
+
+
+
+
+                 //01.˜¤áš¤à© 4 flags §¦¬ §â¨˜©œ £œ ¦¨å©£˜«˜ «¦ ¡˜¢æ¤ ddo
+                 Get piFlag02 to liFlag02
+                 Get piFlag03 to liFlag03
+                 Get piFlag04 to liFlag04
+                 Get piFlag05 to liFlag05
+
+                 //02.œç¨œ© object id's «à¤ œ£§¢œ¡¦£â¤à¤ ddo's
+                 Move (Gtypkin_dd(Self))  to liGtypkin_dd
+                 Move (Garticl_dd(Self))  to liGarticl_dd
+
+                 //03.œç¨œ© year
+                 //04.rebuild constraints, ¢æšà «à¤ ¡¢á©œà¤
+                 Set piMode of liGarticl_dd to 0 //œ¤£â¨à© š¢ ˜§æ gbridge
+                 Send Private.Rebuild_All_Constraints
+
+                 //05.›£ ¦¬¨šå˜/œç¨œ©/œ¤£â¨à©/› ˜š¨˜­ã garticl
+                 Send Clear to liGarticl_dd
+                 Move lsGarticl_Recr to Garticl.Garticl_Recr
+                 Send Find to liGarticl_dd Eq 2 //garticl_recr
+
+                 //cascade delete garticl š ˜ ¤˜ ¡á¤à ©« ©¬¤â®œ ˜ create
+                 If (Found = 1);
+                 Begin //› ˜š¨˜­ã §˜¢˜ ¦ç garticl
+                      Send Request_Delete to liGarticl_dd //›â¤ ®¨œ á¦¤«˜  validations & error trapping
+                                                          //›å¦«  œå£˜  £â©˜ ©œ transaction !
+                      Send Clear to liGarticl_dd
+                 End   //«â¢¦ª cascade delete garticl
+
+                 //›£ ¦¬¨šå˜ ¤â¦¬ garticl
+                 //a)œç¨œ© gtypkin
+                 Send Clear to liGtypkin_dd
+                 Move lsGtypkin_Recr to Gtypkin.Gtypkin_Recr
+                 Send Find to liGtypkin_dd Eq 2 //gtypkin_recr
+                 If (Found = 0);
+                 Begin //›â¤ ™¨âŸ¡œ «¦ gtypkin
+                       Send Operation_Not_Allowed 6011 //"›â¤ ™¨âŸ¡œ «¦ original gtypkin"
+                 End
+
+                 //06.â¢œš®¦ª «à¤ 4 flags
+                 //§¨â§œ  «˜ flags 2,3,4 ¤˜ œå¤˜  ˜¡¨ ™éª å› ˜,
+                 //œ¤é «¦ flag 5 «ª š¢ ¤˜ œå¤˜  false (˜¬«æ£˜« ˜¨åŸ£©)
+                 Get File_Field_Current_Value of liGarticl_dd File_Field Gtypkin.Gtypkin_Flag02 to liGFlag02
+                 Get File_Field_Current_Value of liGarticl_dd File_Field Gtypkin.Gtypkin_Flag03 to liGFlag03
+                 Get File_Field_Current_Value of liGarticl_dd File_Field Gtypkin.Gtypkin_Flag04 to liGFlag04
+                 Get File_Field_Current_Value of liGarticl_dd File_Field Gtypkin.Gtypkin_Flag05 to liGFlag05
+                 If (;
+                     (liFlag02  <> liGFlag02) or;
+                     (liFlag03  <> liGFlag03) or;
+                     (liFlag04  <> liGFlag04) or;
+                     (liGFlag05 <> 0        )   ;
+                    );
+                 Begin
+                       Send Operation_Not_Allowed 6021 //"  ¡ ¤ã©œ ª ›â¤ œå¤˜  ¦£¦œ ›œåª.˜¨˜¡˜¢é › ¦¨Ÿé©«œ «˜ flags 2,3,4,5
+                 End
+
+                 Set Field_Changed_Value          of liGarticl_dd Field Garticl.Garticl_Hmnia   to ldGarticl_Hmnia
+                 Set Field_Changed_Value          of liGarticl_dd Field Garticl.Garticl_No      to liGarticl_No
+                 Set Field_Changed_Value          of liGarticl_dd Field Garticl.Garticl_Aitiol  to lsGarticl_Aitiol
+                 Set Field_Changed_Value          of liGarticl_dd Field Garticl.Garticl_C_Code2 to lsGarticl_C_Code2
+                 Set Field_Changed_Value          of liGarticl_dd Field Garticl.Garticl_Rate0   to lnGarticl_Rate0
+                 Set Field_Changed_Value          of liGarticl_dd Field Garticl.Garticl_Rate00  to lnGarticl_Rate00
+                 Set Field_Changed_Value          of liGarticl_dd Field Garticl.Garticl_Rater   to lnGarticl_Rater
+                 Send Request_Save_No_Transaction to liGarticl_dd //›â¤ ®¨œ á¦¤«˜  validations & error trapping
+                                                                  //›å¦«  œå£˜  £â©˜ ©œ transaction !
+                 //07.feedback œ¤£â¨à© «¦¬ gbridgeh
+                 Get Field_Current_Value  of liGarticl_dd Field Garticl.Garticl_Recr to lsF_Garticl_Recr
+                 Function_Return lsF_Garticl_Recr
+       End_Function  //private.transaction_create_garticl_from_gbridgeh
+
+
+       //private
+       //¡˜¢œå«˜  ˜§æ «¤ private.transaction_update_gl_from_gbridge
+       //©˜¨é¤œ  æ¢˜ «˜ child gbridged «¦¬ gbridgeh ¡˜  œ¤£œ¨é¤œ  «¤ š¢ (gmoves).
+       //§¨â§œ  ¦§à©›ã§¦«œ ¤˜ â®œ  current record «¦ garticl, else abort transaction
+       Procedure private.Transaction_Scan_Gbridged String lsGbridgeh_Recr
+                 Integer liGmove_dd liGplan_dd
+                 String lsF_Gmove_Recr
+
+                 Move (Gmove_dd(Self)) to liGmove_dd
+                 Move (Gplan_dd(Self)) to liGplan_dd
+
+                 Clear Gbridged
+                 Move lsGbridgeh_Recr to Gbridged.Gbridgeh_Recr
+                 Find Gt Gbridged by Index.1 //index.1:gbridged:gbridgeh_recr+ext_gplan_code+recnum
+                 While (;
+                        (Found=1) and;
+                        (lsGbridgeh_Recr = Gbridged.Gbridgeh_Recr);
+                       )
+                       If (giWait_Obj <> 0);
+                       Send UpdateWait to giWait_Obj (;
+                                                      "BPO GLMNTN:„šš¨˜­ã:";
+                                                      +    (String(Gbridged.Gmove_X2));
+                                                      +":"+(String(Gbridged.Gmove_P2));
+                                                      +":"+(Trim  (Gbridged.Ext_Gplan_Code));
+                                                     )
+
+                        Send Clear to liGmove_dd
+                        Move Gbridged.Gmove_Recr to Gmove.Gmove_Recr
+                        Send Find to liGmove_dd Eq 2 //gmove_recr
+                        If (Found=1);
+                        Begin
+                             Send Operation_Not_Allowed 6023 //¦¢ ¡æª â¢œš®¦ª
+                        End
+
+                        //a) œç¨œ© gplan
+                        Move Gbridged.Gplan_Recr to Gplan.Gplan_Recr
+                        Send Find to liGplan_dd Eq 2 //gplan_recr
+                        If (Found = 0);
+                        Begin //›â¤ ™¨âŸ¡œ «¦ gplan
+                               Send Operation_Not_Allowed 6014 //"›â¤ ™¨âŸ¡œ «¦ gplan"
+                        End //«â¢¦ª œç¨œ©ª gplan
+
+                        //b: ›£ ¦¬¨šå˜ gmove
+                        Set Field_Changed_Value of liGmove_dd Field Gmove.Gmove_X2     to Gbridged.Gmove_X2
+                        Set Field_Changed_Value of liGmove_dd Field Gmove.Gmove_P2     to Gbridged.Gmove_P2
+                        Set Field_Changed_Value of liGmove_dd Field Gmove.Gmove_Aitiol to Gbridged.Gmove_Aitiol
+                        Send Request_Save       to liGmove_dd
+
+                        //c: feedback œ¤£â¨à© «¦¬ gbridged
+                        Get Field_Current_Value  of liGmove_dd Field Gmove.Gmove_Recr to lsF_Gmove_Recr
+                        Move lsF_Gmove_Recr to Gbridged.Gmove_Recr
+                        Saverecord Gbridged
+
+                        Find Gt Gbridged by Index.1 //gbridgeh_recr+recnum
+                 Loop //«â¢¦ª ©á¨à©ª gbridged
+       End_Procedure //private.transaction_scan_gbridged
+
+
+       //private
+       //¡œ¤«¨ ¡ã ¨¦¬«å¤˜ œ¤£â¨à©ª š¢ ˜§¦ «¦ ˜¨®œå¦ gbridge
+       //transaction enabled !
+       //«¦ ¡˜¢æ¤ ddo ¡˜«'˜¨®áª £§¦¨œå ¤˜ £ã¤ œå¤˜  ddo (§® ˜§¦ «¤ enhmgl.cls «¦¬ ad),
+       //˜¢¢á ˜¬«æ ›â¤ £˜ª §œ ¨áœ 
+       //¡˜¢œå « ª : ˜) private.transaction_create_garticl_from_gbridgeh
+       //            ™) private.transaction_scan_gbridged
+       Procedure private.Transaction_Update_GL_From_Gbridge Integer lsGbridgeh_Recr
+
+                 Integer  liCalling_dd
+
+                 //**************************************************************************
+                 //01.œç¨œ© ¡˜¢¦ç¤«¦ª object id (›â¤ œå¤˜  ddo !)
+                 //**************************************************************************
+                 Get piCalling_dd to liCalling_dd
+
+                 //**************************************************************************
+                 //02.â¢œš®¦ª ¡˜¢¦ç¤«¦ª object id (œá¤ 0, ¡á¤«¤)
+                 //**************************************************************************
+                 If (liCalling_dd = 0) Send Operation_Not_Allowed 6001 //"dâ¤ £œ ¡á¢œ©œ ¡˜¤œåª!"
+
+                 //**************************************************************************
+                 //06.©á¨à© gbridgeh š ˜ æ¢˜ «˜ œ¡¡¨œ£ã á¨Ÿ¨˜, œ­'æ©¦¤ â®à «ã©œ  batch  šâ­¬¨˜,
+                 //   ˜¢¢¦ éª,
+                 //   œç¨œ© gbridgeh_recr ¡˜  œ¤£â¨à© š¢   , œ­'æ©¦¤ â®à «ã©œ  online šâ­¬¨˜
+                 //**************************************************************************
+                 If (lsGbridgeh_Recr = '');
+                 Begin //˜¨®ã batch œ¤£â¨à©ª «ª š¢
+                       Clear Gbridgeh
+                       Move 0 to Gbridgeh.Gbridgeh_Flag
+                       Find Gt Gbridgeh by Index.3 //gbrigdeh_flag+extinv_recr
+                       While (;
+                              (Found=1) and;
+                              (Gbridgeh.Gbridgeh_Flag = FALSE);
+                             )
+                             Move (private.Transaction_Create_Garticl_from_Gbridgeh(Self,;
+                                                                                    Gbridgeh.Year_Recr,;
+                                                                                    Gbridgeh.Garticl_Recr,;
+                                                                                    Gbridgeh.Gtypkin_Recr,;
+                                                                                    Gbridgeh.Garticl_Hmnia,;
+                                                                                    Gbridgeh.Garticl_No,;
+                                                                                    Gbridgeh.Garticl_Aitiol,;
+                                                                                    Gbridgeh.Garticl_C_Code2,;
+                                                                                    Gbridgeh.Garticl_Rate0,;
+                                                                                    Gbridgeh.Garticl_Rate00,;
+                                                                                    Gbridgeh.Garticl_Rater);
+                                  ) to Gbridgeh.Garticl_Recr
+
+                             Send private.Transaction_Scan_Gbridged Gbridgeh.Gbridgeh_Recr
+
+                             Move 1 to Gbridgeh.Gbridgeh_Flag
+                             Saverecord Gbridgeh //feedback œ¤£â¨à© «¦¬ gbridgeh
+
+                             //06.â¢œš®¦ª á¨Ÿ¨¦¬  sosososososo
+                             //send check_arthro_for_ypol (› æ«  £§¦¨œå ¤˜ ˜¢¢á¥œ   ©¦« £å˜ !)
+
+                             Clear Gbridgeh
+                             Move 0 to Gbridgeh.Gbridgeh_Flag
+                             Find Gt Gbridgeh by Index.3 //gbrigdeh_flag+extinv_recr
+                       Loop //«â¢¦ª ©á¨à©ª gbridgeh š ˜ batch œ¤£â¨à©
+                       Procedure_Return
+                 End   //«â¢¦ª  batch œ¤£â¨à©ª «ª š¢
+
+
+                 Else;
+                 Begin //˜¨®ã  online œ¤£â¨à©ª «ª š¢
+                       Clear Gbridgeh
+                       Move lsGbridgeh_Recr to Gbridgeh.Gbridgeh_Recr
+                       Find Eq Gbridgeh by Index.2 //gbrigdeh_recr
+
+                       If (Found=0);
+                       Begin
+                             Send Operation_Not_Allowed 6024 //›â¤ ™¨âŸ¡œ «¦ gbridgeh
+                       End
+
+                       Move (private.Transaction_Create_Garticl_from_Gbridgeh(Self,;
+                                                                              Gbridgeh.Year_Recr,;
+                                                                              Gbridgeh.Garticl_Recr,;
+                                                                              Gbridgeh.Gtypkin_Recr,;
+                                                                              Gbridgeh.Garticl_Hmnia,;
+                                                                              Gbridgeh.Garticl_No,;
+                                                                              Gbridgeh.Garticl_Aitiol,;
+                                                                              Gbridgeh.Garticl_C_Code2,;
+                                                                              Gbridgeh.Garticl_Rate0,;
+                                                                              Gbridgeh.Garticl_Rate00,;
+                                                                              Gbridgeh.Garticl_Rater);
+                            ) to Gbridgeh.Garticl_Recr
+
+                       Send private.Transaction_Scan_Gbridged Gbridgeh.Gbridgeh_Recr
+
+                       Move 1 to Gbridgeh.Gbridgeh_Flag
+                       Saverecord Gbridgeh //feedback œ¤£â¨à© «¦¬ gbridgeh
+                 End   //«â¢¦ª online œ¤£â¨à©ª «ª š¢
+       End_Procedure //private.transaction_update_gl_from_gbridge
+       //****************************************************************************
+       //* ’ „ Š  ‘    „ Œ † ‹ „  — ‘ † ‘    €      G B R I D G E               *
+       //****************************************************************************
+
+
+
+       //****************************************************************************
+       //* €  • †      ƒ ˆ € ‚  € ” † ‘    €  ‡   “    € GBRIDGEH            *
+       //****************************************************************************
+       //private
+       //10:¨¦¬«å¤˜ › ˜š¨˜­ãª á¨Ÿ¨¦¬
+       //transaction enabled !
+       Procedure private.Transaction_Delete_Garticl_From_Gbridgeh
+                 Integer  liCalling_dd liCalling_dd_Current_Recnum
+                 Integer  liGarticl_dd
+                 String   lsGarticl_Recr
+
+                 //4 flags §¦¬ §œ¨¤áœ  £œ ¦¨å©£˜«˜ «¦ ¡˜¢æ¤ ddo
+                 Integer liFlag02 liFlag03 liFlag04 liFlag05
+
+                 //4 flags §¦¬ › ˜™áà ˜§¦ «¦ gtypkin
+                 Integer liGFlag02 liGFlag03 liGFlag04 liGFlag05
+
+                 //œç¨œ© ¡˜¢¦ç¤«¦ª ddo
+                 //Get piCalling_dd to liCalling_dd
+
+                 //â¢œš®¦ª ¡˜¢¦ç¤«¦ª ddo (œá¤ 0, ¡á¤«¤)
+                 //If (liCalling_dd = 0) Send Operation_Not_Allowed 4001 //"dâ¤ £œ ¡á¢œ©œ ¡˜¤œåª!"
+
+                 //œç¨œ© current_record ¡˜¢¦ç¤«¦ª ddo
+                 //Get Current_Record of liCalling_dd to liCalling_dd_Current_Recnum
+
+                 //â¢œš®¦ª current_record (œá¤ 0, ¡á¤«¤)
+                 //prosoxi sto delete !!!*** (¡˜  æ£àª, æ¢àª §œ¨ â¨šàª, â®à current record!)
+                 //If (liCalling_dd_Current_Recnum = 0) Send Operation_Not_Allowed 4002 //"«¦ ¡˜¢æ¤ ddo ›â¤ â®œ  current record!"
+
+                 //˜¤áš¤à© recr «¦¬ ¬§æ › ˜š¨˜­ã á¨Ÿ¨¦¬
+                 Get psGarticl_Recr to lsGarticl_Recr
+
+                 //unfortunatly, §¨â§œ  ¤˜ «¨â¥à!
+
+                 //˜¤áš¤à© 4 flags
+                  Get piFlag02 to liFlag02
+                  Get piFlag03 to liFlag03
+                  Get piFlag04 to liFlag04
+                  Get piFlag05 to liFlag05
+
+
+                 //**************************************************************************
+                 //01.œç¨œ© object id's «à¤ œ£§¢œ¡¦£â¤à¤ ddo's
+                 //**************************************************************************
+                 Move (Garticl_dd(Self))  to liGarticl_dd
+
+                 //**************************************************************************
+                 //02.rebuild constraints, ¢æšà «à¤ ¡¢á©œà¤
+                 //**************************************************************************
+                 Set piMode of liGarticl_dd to 0 //œ¤£â¨à© š¢ ˜§æ b+c+v+wmove
+                 Send Private.Rebuild_All_Constraints
+
+                 //**************************************************************************
+                 //03.› ˜š¨˜­ã garticl
+                 //**************************************************************************
+                 Send Clear to liGarticl_dd
+                 Move lsGarticl_Recr to Garticl.Garticl_Recr
+                 Send Find to liGarticl_dd Eq 2 //garticl_recr
+
+                 If (Found = 0);
+                 Begin //›â¤ ™¨âŸ¡œ «¦ ¬§æ › ˜š¨˜­ã garticl
+                       Send Operation_Not_Allowed 10003 //"ƒâ¤ ¨âŸ¡œ «¦ Garticl!
+                 End
+
+                 //â¢œš®¦ª «à¤ 4 flags
+                 Get File_Field_Current_Value of liGarticl_dd File_Field Gtypkin.Gtypkin_Flag02 to liGFlag02
+                 Get File_Field_Current_Value of liGarticl_dd File_Field Gtypkin.Gtypkin_Flag03 to liGFlag03
+                 Get File_Field_Current_Value of liGarticl_dd File_Field Gtypkin.Gtypkin_Flag04 to liGFlag04
+                 Get File_Field_Current_Value of liGarticl_dd File_Field Gtypkin.Gtypkin_Flag05 to liGFlag05
+                 If (;
+                     (liFlag02  <> liGFlag02) or;
+                     (liFlag03  <> liGFlag03) or;
+                     (liFlag04  <> liGFlag04) or;
+                     (liGFlag05 <> 0        )   ;
+                    );
+                 Begin
+                       Send Operation_Not_Allowed 10004 //"  ¡ ¤ã©œ ª ›â¤ œå¤˜  ¦£¦œ ›œåª.˜¨˜¡˜¢é › ¦¨Ÿé©«œ «˜ flags 2,3,4,5
+                 End
+
+                 //cascade delete garticl
+                      Send Request_Delete to liGarticl_dd //›â¤ ®¨œ á¦¤«˜  validations & error trapping
+                                                          //›å¦«  œå£˜  £â©˜ ©œ transaction !
+       End_Procedure //private.transaction_delete_garticl_from_gbridgeh
+       //****************************************************************************
+       //* ’ „ Š  ‘    ƒ ˆ € ‚  € ” † ‘    €  ‡   “    € GBRIDGEH            *
+       //****************************************************************************
+
+
+
+
+
+
+
+
+
+       //****************************************************************************
+       //* 7 : €  • †    R E - U P D A T E    ‚ . Š .                              *
+       //****************************************************************************
+       Procedure private.Zero_Gmhnes
+                 Integer liStop
+
+                 LOCK
+
+                 Clear Gmhnes
+                 Move  SyscurGL.Company_Code to Gmhnes.Company_Code
+                 Move  SyscurGL.Branch_Code  to Gmhnes.Branch_Code
+                 Move  SyscurGL.Year_Year    to Gmhnes.Year_Year
+                 Find Gt Gmhnes by Index.1 //index.1:gmhnes:company_code+branch_code+year_year+
+                                           //               gplan_code+gmhnes_yyyy+gmhnes_period
+                 While (;
+                        (Found=1) and;
+                        (SyscurGL.Company_Code= Gmhnes.Company_Code) and;
+                        (SyscurGL.Branch_Code = Gmhnes.Branch_Code ) and;
+                        (SyscurGL.Year_Year   = Gmhnes.Year_Year   );
+                       )
+                        Get Cancel_Check to liStop
+                        If (liStop <> 0) Begin
+                                          UNLOCK
+                                          Procedure_Return
+                                         End
+
+                        Send Update_Status ("‹¤.ˆ©¦çš ˜:"+;
+                                            (String((Trim(Gmhnes.Gplan_Code)))) +" "+;
+                                            (String(Gmhnes.Gmhnes_YYYY  )) +" "+;
+                                            (String(Gmhnes.Gmhnes_Period)) +" "+;
+                                            (String(Gmhnes.Recnum));
+                                           )
+                        //Add 1 to Year.Year_NumGmhnes //§¢ãŸ¦ª gmhnes «ª ®¨ã©ª
+                        //Saverecord Year
+
+                        Move 0 to Gmhnes.Gmhnes_Sx2
+                        Move 0 to Gmhnes.Gmhnes_Sp2
+                        Move 0 to Gmhnes.Gmhnes_Sx0
+                        Move 0 to Gmhnes.Gmhnes_Sp0
+                        Move 0 to Gmhnes.Gmhnes_Sx00
+                        Move 0 to Gmhnes.Gmhnes_Sp00
+                        Move 0 to Gmhnes.Gmhnes_SxR
+                        Move 0 to Gmhnes.Gmhnes_SpR
+                        Move 0 to Gmhnes.Gmhnes_Sx1
+                        Move 0 to Gmhnes.Gmhnes_Sp1
+                        Move 0 to Gmhnes.Gmhnes_GhmNoRec
+                        Saverecord Gmhnes
+
+                        Find Gt Gmhnes by Index.1 //index.1:gmhnes:company_code+branch_code+year_year+
+                                                  //               gplan_code+gmhnes_yyyy+gmhnes_period
+                 Loop //while ghmhnes
+                 UNLOCK
+       End_Procedure //private.zero_gmhnes
+
+
+       Procedure private.Zero_Ghmnies
+                 Integer liStop
+
+                 LOCK
+
+                 Clear Ghmnies
+                 Move  SyscurGL.Company_Code to Ghmnies.Company_Code
+                 Move  SyscurGL.Branch_Code  to Ghmnies.Branch_Code
+                 Move  SyscurGL.Year_Year    to Ghmnies.Year_Year
+                 Find Gt Ghmnies by Index.1 //index.1:Ghmnies:company_code+branch_code+year_year+
+                                            //                gplan_code+gmhnes_yyyy+gmhnes_period
+                 While (;
+                        (Found=1) and;
+                        (SyscurGL.Company_Code= Ghmnies.Company_Code) and;
+                        (SyscurGL.Branch_Code = Ghmnies.Branch_Code ) and;
+                        (SyscurGL.Year_Year   = Ghmnies.Year_Year   );
+                       )
+                        Get Cancel_Check to liStop
+                        If (liStop <> 0) Begin
+                                          UNLOCK
+                                          Procedure_Return
+                                         End
+
+                        Send Update_Status ("œ¨.ˆ©¦çš ˜:"+;
+                                            (String((Trim(Ghmnies.Gplan_Code)))) +" "+;
+                                            (String(Ghmnies.Gmhnes_YYYY  )) +" "+;
+                                            (String(Ghmnies.Gmhnes_Period)) +" "+;
+                                            (String(Ghmnies.Ghmnies_Hmnia));
+                                           )
+                        //Add 1 to Year.Year_NumGhmnies //§¢ãŸ¦ª ghmnies «ª ®¨ã©ª
+                        //Saverecord Year
+
+                        Move 0 to Ghmnies.Ghmnies_Sx2
+                        Move 0 to Ghmnies.Ghmnies_Sp2
+                        Move 0 to Ghmnies.Ghmnies_Sx0
+                        Move 0 to Ghmnies.Ghmnies_Sp0
+                        Move 0 to Ghmnies.Ghmnies_Sx00
+                        Move 0 to Ghmnies.Ghmnies_Sp00
+                        Move 0 to Ghmnies.Ghmnies_SxR
+                        Move 0 to Ghmnies.Ghmnies_SpR
+                        Move 0 to Ghmnies.Ghmnies_Sx1
+                        Move 0 to Ghmnies.Ghmnies_Sp1
+                        Move 0 to Ghmnies.Ghmnies_GmNoRec
+                        Saverecord Ghmnies
+
+                        Find Gt Ghmnies by Index.1 //index.1:gmhnies:company_code+branch_code+year_year+
+                                                  //                 gplan_code+gmhnes_yyyy+gmhnes_period
+                 Loop //while ghmnies
+                 UNLOCK
+       End_Procedure //private.zero_ghmnies
+
+
+       Procedure private.Zero_Gplan
+                 Integer liStop
+
+                 LOCK
+
+                 Clear Gplan
+                 Move SyscurGL.Company_Code to Gplan.Company_Code
+                 Move SyscurGL.Branch_Code  to Gplan.Branch_Code
+                 Move SyscurGL.Year_Year    to Gplan.Year_Year
+                 Find Gt Gplan by Index.1 //index.1:gplan:company_code+branch_code+year_year+gplan_code
+                 While (;
+                        (Found=1) and;
+                        (SyscurGL.Company_Code= Gplan.Company_Code) and;
+                        (SyscurGL.Branch_Code = Gplan.Branch_Code ) and;
+                        (SyscurGL.Year_Year   = Gplan.Year_Year   );
+                       )
+                        Get Cancel_Check to liStop
+                        If (liStop <> 0) Begin
+                                          UNLOCK
+                                          Procedure_Return
+                                         End
+
+                        Send Update_Status ("Š¦š/¡æ ‘®â› ¦:"+;
+                                            (String((Trim(Gplan.Gplan_Code))   )) +" "+;
+                                            (String(Gplan.Recnum));
+                                           )
+
+                        Add 1 to Year.Year_NumGplan //§¢ãŸ¦ª ¢¦š˜¨ ˜©£é¤ «ª ®¨ã©ª
+                        Saverecord Year
+
+                        //Move 0 to Gplan.Gplan_Sx2 ?
+                        //Move 0 to Gplan.Gplan_Sp2 ?
+                        //Move 0 to Gplan.Gplan_Sx1 ?
+                        //Move 0 to Gplan.Gplan_Sp1 ?
+                        Move 0 to Gplan.Gplan_Sx0
+                        Move 0 to Gplan.Gplan_Sp0
+                        Move 0 to Gplan.Gplan_Sx00
+                        Move 0 to Gplan.Gplan_Sp00
+                        Move 0 to Gplan.Gplan_SxR
+                        Move 0 to Gplan.Gplan_SpR
+                        Move 0 to Gplan.Gplan_GmhnNoRec
+                        Saverecord Gplan
+
+                        Find Gt Gplan by Index.1 //index.1:gplan:company_code+branch_code+year_year+gplan_code
+                 Loop //while gplan
+                 UNLOCK
+       End_Procedure //private.zero_gplan
+
+
+       Procedure private.Zero_Garticl
+
+
+//sososososososososososososososososososososososososososososososososososososososososososososo
+PROCEDURE_RETURN
+//sososososososososososososososososososososososososososososososososososososososososososososo
+
+
+                 Integer liStop
+
+                 Clear Garticl
+                 Move  SyscurGL.Company_Code to Garticl.Company_Code
+                 Move  SyscurGL.Branch_Code  to Garticl.Branch_Code
+                 Move  SyscurGL.Year_Year    to Garticl.Year_Year
+                 Find Gt Garticl by Index.1 //index.1:garticl:company_code+branch_code+year_year+
+                                            //                gtypkin_code+garticl_hmnia+garticl_no+garticl_recr
+                 While (;
+                        (Found=1) and;
+                        (SyscurGL.Company_Code = Garticl.Company_Code) and;
+                        (SyscurGL.Branch_Code  = Garticl.Branch_Code ) and;
+                        (SyscurGL.Year_Year    = Garticl.Year_Year   );
+                       )
+                        Get Cancel_Check to liStop
+                        If (liStop <> 0) Begin
+                                          UNLOCK
+                                          Procedure_Return
+                                         End
+
+                        Send Update_Status ("€¨Ÿ¨˜:"+;
+                                            (String(Garticl.Gtypkin_Code)) +" "+;
+                                            (String(Garticl.Garticl_Hmnia))+" "+;
+                                            (String(Garticl.Garticl_No   ))+" "+ ;
+                                            (String(Garticl.Recnum));
+                                           )
+
+                        Add 1 to Year.Year_NumGarticl //§¢ãŸ¦ª á¨Ÿ¨à¤ «ª ®¨ã©ª
+
+                        //garticl.garticl_statuse
+                        //garticl.garticl_statusa
+                        //garticl.garticl_inc
+                        //garticl.garticl_exp
+                        //garticl.garticl_cash
+                        //garticl.garticl_myfnump
+                        //garticl.garticl_myfnuma
+
+                        Move 0 to Garticl.Garticl_XreLine
+                        Move 0 to Garticl.Garticl_PisLine
+
+                        Move 0 to Garticl.Garticl_Omada
+                        Move 0 to Garticl.Garticl_Other
+                        Move 0 to Garticl.Garticl_Mlines //˜¬«æ ˜Ÿ¨¦åœ  ©«¦ year_numgtypkin
+
+                        //¤æ£ ©£˜ œšš¨˜­ãª
+                        Move 0 to Garticl.Garticl_Sx2
+                        Move 0 to Garticl.Garticl_Sp2
+                        Move 0 to Garticl.Garticl_Syp2
+
+                        //¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©ª
+                        Move 0 to Garticl.Garticl_Sx0
+                        Move 0 to Garticl.Garticl_Sp0
+                        Move 0 to Garticl.Garticl_Syp0
+                        Move 0 to Garticl.Garticl_Syp0k
+
+                        //›œ¬«œ¨œç¦¤ ¤æ£ ©£˜ ®¨ã©ª
+                        Move 0 to Garticl.Garticl_Sx00
+                        Move 0 to Garticl.Garticl_Sp00
+                        Move 0 to Garticl.Garticl_Syp00
+                        Move 0 to Garticl.Garticl_Syp00k
+
+                        //¤æ£ ©£˜ reporting
+                        Move 0 to Garticl.Garticl_SxR
+                        Move 0 to Garticl.Garticl_SpR
+                        Move 0 to Garticl.Garticl_SypR
+                        Move 0 to Garticl.Garticl_SypRk
+
+                        //¦¨ ©« ¡¦§¦ £â¤¦ ¡ç¨ ¦ ¤æ£ ©£˜ ®¨ã©ª
+                        Move 0 to Garticl.Garticl_Sx1
+                        Move 0 to Garticl.Garticl_Sp1
+
+                        //flags 7 9 11 13 :˜¬¥á¤œ /£œ é¤œ  ‹“” §à¢ã©œà¤/˜š¦¨é¤ (˜¥å˜/§¢ãŸ¦ª)
+                        Move 0  to Garticl.Garticl_MyfValp
+                        Move 0  to Garticl.Garticl_MyfChkp
+                        Move "" to Garticl.Garticl_MyfCodp
+
+                        Move 0  to Garticl.Garticl_MyfVala
+                        Move 0  to Garticl.Garticl_MyfChka
+                        Move "" to Garticl.Garticl_MyfCoda
+
+                        Saverecord Garticl
+
+                        Find Gt Garticl by Index.1 //index.1:garticl:company_code+branch_code+year_year+
+                                                   //                gtypkin_code+garticl_hmnia+garticl_no+garticl_recr
+                 Loop //while garticl
+       End_Procedure //private.zero_garticl
+
+
+
+       Procedure private.ReUpdate_Isozygia_GL String lsYear_Recr
+                 Integer liStop
+                 Integer liGarticl_dd liGmove_dd
+                 Integer liErr
+
+
+                 //file_mode gtypkin read_only
+
+
+
+
+
+                 //*******
+                 LOCK
+                 //*******
+
+
+                 //02.©á¨à© & £›œ¤ ©£æª ˜Ÿ¨¦ ©«é¤ gmhnes
+                 Send private.Zero_Gmhnes
+
+                 //03.©á¨à© & £›œ¤ ©£æª ˜Ÿ¨¦ ©«é¤ ghmnies
+                 Send private.Zero_Ghmnies
+
+                 //04.©á¨à© & £›œ¤ ©£æª ˜Ÿ¨¦ ©«é¤ gplan
+                 Send private.Zero_Gplan
+
+                 //05.©á¨à© & £›œ¤ ©£æª ˜Ÿ¨¦ ©«é¤ garticl
+
+
+                 Move (Gmove_dd (Self))  to liGmove_dd
+                 //06.©á¨à© gmove & œ¤£â¨à© ghmnies+gmhnes+gplan
+                 Clear Gmove
+                 Move SyscurGL.Company_Code to Gmove.Company_Code
+                 Move SyscurGL.Branch_Code  to Gmove.Branch_Code
+                 Move SyscurGL.Year_Year    to Gmove.Year_Year
+                 Find Gt Gmove by Index.1 //index.1:gmove:company_code+branch_code+year_year+
+                                          //              gtypkin_code+garticl_hmnia+garticl_no+garticl_recr+
+                                          //              gplan_recr+gmove_recr
+                 While (;
+                        (Found=1) and;
+                        (SyscurGL.Company_Code = Gmove.Company_Code) and;
+                        (SyscurGL.Branch_Code  = Gmove.Branch_Code ) and;
+                        (SyscurGL.Year_Year    = Gmove.Year_Year   );
+                       )
+                        Get Cancel_Check to liStop
+                        If (liStop <> 0) Begin
+                                          UNLOCK
+                                          Procedure_Return
+                                         End
+
+                        Send Update_Status ("‰ ¤ã©œ ª:"+;
+                                            (String(Gmove.Gtypkin_Code)) +" "+;
+                                            (String(Gmove.Garticl_Hmnia))+" "+;
+                                            (String(Gmove.Recnum));
+                                           )
+
+                        Add 1 to Year.Year_NumGmove //§¢ãŸ¦ª á¨Ÿ¨à¤ «ª ®¨ã©ª
+                        Saverecord Year
+
+                        //§¨æ©Ÿœ© ¤âà¤ « £é¤
+                        Send private.Update_Isozygia to liGmove_dd Gmove.Gthhmgio_Period;
+                                                                   Gmove.Garticl_Hmnia;
+                                                                   Gmove.Gplan_Recr;
+                                                                   Gmove.Gmove_X2;
+                                                                   Gmove.Gmove_P2;
+                                                                   Gmove.Gmove_X0;
+                                                                   Gmove.Gmove_P0;
+                                                                   Gmove.Gmove_X00;
+                                                                   Gmove.Gmove_P00;
+                                                                   Gmove.Gmove_XR;
+                                                                   Gmove.Gmove_PR;
+                                                                   Gmove.Gmove_X1;
+                                                                   Gmove.Gmove_P1;
+                                                                   1;
+                                                                   FALSE
+
+                        Find Gt Gmove by Index.1 //index.1:gmove:company_code+branch_code+year_year+
+                                                 //              gtypkin_code+garticl_hmnia+garticl_no+garticl_recr+
+                                                 //              gplan_recr+gmove_recr
+                 Loop //while gmove
+
+                 //*******
+                 UNLOCK
+                 //*******
+
+       End_Procedure //private.reupdate_isozygia_gl
+       //****************************************************************************
+       //* 7 : ’ „ Š  ‘    R E - U P D A T E    ‚ . Š .                            *
+       //****************************************************************************
+
+
+
+
+
+
+
+
+
+       Procedure OnProcess
+                 Integer liWhat_to_Do
+                 Integer liGthhmgio_Code
+                 Date    ldEos_Hmnia
+
+                 //7:reupdate gl
+                 String lsYear_Recr
+
+                 Get piWhat_to_Do to liWhat_to_Do
+
+                 Case Begin
+                       Case (liWhat_to_Do = 1) //®¦¨ãš© ˜/˜
+                            Get piGthhmgio_Code to liGthhmgio_Code
+                            Get pdEos_Hmnia     to ldEos_Hmnia
+                            Send private.Xorigise_Aa liGthhmgio_Code ldEos_Hmnia
+                       Case Break
+
+                       Case (liWhat_to_Do = 2) //£›œ¤ ©£æª ˜/˜
+                            Get piGthhmgio_Code to liGthhmgio_Code
+                            Send private.Zero_Aa liGthhmgio_Code
+                       Case Break
+
+                       Case (liWhat_to_Do = 3) //œ¤£â¨à© gmove ˜§æ bmove
+                            Set Display_Error_State to True
+                            Send private.Transaction_BCVWmove_Update_GL
+                       Case Break
+
+                       Case (liWhat_to_Do = 4) //cascade delete «¦¬ garticl
+                            Set Display_Error_State to True
+                            Send private.Transaction_Delete_Garticl
+                       Case Break
+
+                       Case (liWhat_to_Do = 5) //update garticl
+                            Set Display_Error_State to True
+                            Send private.Transaction_Update_Garticl
+                       Case Break
+
+                       Case (liWhat_to_Do = 6) //update from gbridge
+                            Set Display_Error_State to True
+                            Send private.Transaction_Update_GL_From_Gbridge (psGbridgeh_Recr(Self))
+                       Case Break
+
+                       Case (liWhat_to_Do = 7) //re-update  ©¦çš ˜
+                            Get psYear_Recr to lsYear_Recr
+                            Send private.ReUpdate_Isozygia_GL lsYear_Recr
+                       Case Break
+
+                       Case (liWhat_to_Do =10) //delete garticl from gbridgeh
+                            Set Display_Error_State to True
+                            Send private.Transaction_Delete_Garticl_From_Gbridgeh
+                       Case Break
+                 Case End
+
+       End_Procedure //onprocess
+
+
+
+
+
+
+
+       //****************************************************************************
+       //*                     P U B L I C    I N T E R F A C E                     *
+       //****************************************************************************
+
+       //1:
+       Function   Xorigise_Aa Integer liGthhmgio_Code;
+                              Date    ldEos_Hmnia;
+                              Integer liButton_id;
+                              Returns Integer
+
+                  Integer liError
+                  String  lsButton_Label
+
+                  Send private.Initialize_properties
+
+                  Set piWhat_to_Do                          to 1
+                  Set piGthhmgio_Code                       to liGthhmgio_Code
+                  Set pdEos_Hmnia                           to ldEos_Hmnia
+                  Set piButton_Id     of (Garticl_dd(Self)) to liButton_id
+                  Get Label           of liButton_id        to lsButton_Label
+
+                  Clear Gthhmgio
+                  Move liGthhmgio_Code to Gthhmgio.Gthhmgio_Code
+                  Find Eq Gthhmgio by Index.1 //index.1:gthhmgio:gthhmgio_code
+                  If (Found=0);
+                  Begin
+                       Error 9999 "€¤ç§˜¨¡«¦ †£œ¨¦¢æš ¦!"
+                       Function_Return 9999
+                  End
+
+                  If (ldEos_Hmnia <=0);
+                  Begin
+                       Error 9999 "€¡˜«á¢¢¢ †£œ¨¦£¤å˜!"
+                       Function_Return 9999
+                  End
+
+                  //©œ«á¨ ©£˜ «à¤ user interface properties «¦¬ bpo
+                  //1. status panel related properties
+                  Set Status_Panel_State   to TRUE                                //default= TRUE
+                  Set Allow_Cancel_State   to FALSE                               //default= FALSE
+                  Set Process_Caption      to "Utilities ‚œ¤ ¡ãª Š¦š ©« ¡ãª"            //default= "Running Process"
+                  Set Process_Title        to "•¦¨ãš© €/€"                      //default= ""
+                  Set Process_Message      to Gthhmgio.Gthhmgio_Descr             //default= ""
+                  //t Status_Panel_Id      to ""                                  //default= (Status_Panel(Current_Object))
+                  //t Status_Params        to ""                                  //default= ''
+                  //Set Button_Text of (Status_Panel(Self))   to "€¡ç¨à©"
+
+                  //Set Sentinel_Name of (Status_Panel(Self)) to "Sentinel"
+                  Set Sentinel_Name of (Status_Panel(Self)) to "prgssent"
+
+                  //2. error related properties
+                  //   if set true, errors will be forwarded to the normal
+                  //   VDF error handler causing an error message to popup.
+                  //   Normally you would not want this during a batch process.
+                  Set Display_Error_State  to TRUE //`                     //default= False
+                  Set Error_Count          to 0                             //default= 0      // number of errors
+                  Set Old_Error_Object_ID  to 0                             //default= 0
+
+                  //3. Logging
+                  // If you are going to log information you must create a
+                  // status log object and set this property to its ID. See
+                  // Statlog.pkg for more information.
+//                  Set Status_Log_State     to FALSE                          //default= False
+//                  Set Status_Log_Id        to 0
+//                  Set Status_Log_State     to FALSE
+
+                  Send DoProcess
+
+                  Set Label       of liButton_id        to lsButton_Label
+                  Set piButton_Id of (Garticl_dd(Self)) to 0
+                  Get piError                           to liError
+                  Send private.Initialize_properties //£›œ¤ ©£æª properties š ˜ œ§æ£œ¤ ®¨ã©
+                  Function_Return liError
+       End_Function  //xorigise_aa
+
+
+       //2:
+       Function   Zero_Aa Integer liGthhmgio_Code;
+                          Integer liButton_Id;
+                          Returns Integer
+
+                  Integer liError
+                  String  lsButton_Label
+
+                  Send private.Initialize_properties
+
+                  Set piWhat_to_Do                          to 2
+                  Set piGthhmgio_Code                       to liGthhmgio_Code
+                  Set piButton_Id     of (Garticl_dd(Self)) to liButton_id
+                  Get Label           of liButton_id        to lsButton_Label
+
+                  Clear Gthhmgio
+                  Move liGthhmgio_Code to Gthhmgio.Gthhmgio_Code
+                  Find Eq Gthhmgio by Index.1 //index.1:gthhmgio:gthhmgio_code
+                  If (Found=0);
+                  Begin
+                       Error 9999 "€¤ç§˜¨¡«¦ †£œ¨¦¢æš ¦!"
+                       Function_Return 9999
+                  End
+
+                  //©œ«á¨ ©£˜ «à¤ user interface properties «¦¬ bpo
+                  //1. status panel related properties
+                  Set Status_Panel_State   to TRUE                                //default= TRUE
+                  Set Allow_Cancel_State   to FALSE                               //default= FALSE
+                  Set Process_Caption      to "Utilities ‚œ¤ ¡ãª Š¦š ©« ¡ãª"      //default= "Running Process"
+                  Set Process_Title        to "‹›œ¤ ©£æª €/€"                    //default= ""
+                  Set Process_Message      to Gthhmgio.Gthhmgio_Descr             //default= ""
+                  //t Status_Panel_Id      to ""                                  //default= (Status_Panel(Current_Object))
+                  //t Status_Params        to ""                                  //default= ''
+                  //Set Button_Text of (Status_Panel(Self))   to "€¡ç¨à©"
+
+                  //Set Sentinel_Name of (Status_Panel(Self)) to "Sentinel"
+                  Set Sentinel_Name of (Status_Panel(Self)) to "prgssent"
+
+                  //2. error related properties
+                  //   if set true, errors will be forwarded to the normal
+                  //   VDF error handler causing an error message to popup.
+                  //   Normally you would not want this during a batch process.
+                  Set Display_Error_State  to TRUE //`                     //default= False
+                  Set Error_Count          to 0                             //default= 0      // number of errors
+                  Set Old_Error_Object_ID  to 0                             //default= 0
+
+                  //3. Logging
+                  // If you are going to log information you must create a
+                  // status log object and set this property to its ID. See
+                  // Statlog.pkg for more information.
+//                  Set Status_Log_State     to FALSE                          //default= False
+//                  Set Status_Log_Id        to 0
+//                  Set Status_Log_State     to FALSE
+
+                  Send DoProcess
+
+                  Set Label       of liButton_id        to lsButton_Label
+                  Set piButton_Id of (Garticl_dd(Self)) to 0
+                  Get piError                           to liError
+                  Send private.Initialize_properties //£›œ¤ ©£æª properties š ˜ œ§æ£œ¤ ®¨ã©
+                  Function_Return liError
+       End_Function  //zero_aa
+
+
+       //transaction enabled
+       //¡˜¢œå«˜  ˜§æ:˜) bmove.dd (request save & delete)
+       Procedure  Transaction_BCVWmove_Update_GL Integer liCalling_dd;
+                                                 Integer liFlag02;
+                                                 Integer liFlag03;
+                                                 Integer liFlag04;
+                                                 Integer liFlag05
+
+                  Send private.Initialize_properties
+
+                  Set piWhat_to_Do to 3
+                  Set piCalling_Dd to liCalling_dd
+                  Set piFlag02     to liFlag02
+                  Set piFlag03     to liFlag03
+                  Set piFlag04     to liFlag04
+                  Set piFlag05     to liFlag05
+
+                  Send DoProcess
+
+                  Send private.Initialize_properties //£›œ¤ ©£æª properties š ˜ œ§æ£œ¤ ®¨ã©
+       End_Procedure //transaction_BCVWmove_update_gl
+
+
+       //transaction enabled
+       //¡˜¢œå«˜  ˜§æ:˜) barticl_dd (request delete)
+       Procedure  Transaction_Delete_Garticl Integer liCalling_dd;
+                                             String  lsGarticl_Recr;
+                                             Integer liFlag02;
+                                             Integer liFlag03;
+                                             Integer liFlag04;
+                                             Integer liFlag05
+
+                  Send private.Initialize_properties
+
+                  Set piWhat_to_Do   to 4
+                  Set piCalling_Dd   to liCalling_dd
+                  Set psGarticl_Recr to lsGarticl_Recr
+                  Set piFlag02       to liFlag02
+                  Set piFlag03       to liFlag03
+                  Set piFlag04       to liFlag04
+                  Set piFlag05       to liFlag05
+
+                  Send DoProcess
+
+                  Send private.Initialize_properties //£›œ¤ ©£æª properties š ˜ œ§æ£œ¤ ®¨ã©
+       End_Procedure //transaction_delete_garticl
+
+
+       //transaction enabled
+       //¡˜¢œå«˜  ˜§æ:˜) barticl_dd (request save)
+       Procedure  Transaction_Update_Garticl Integer liCalling_dd;
+                                             String  lsGarticl_Recr;
+                                             Integer liFlag02;
+                                             Integer liFlag03;
+                                             Integer liFlag04;
+                                             Integer liFlag05
+
+                  Send private.Initialize_properties
+
+                  Set piWhat_to_Do   to 5
+                  Set piCalling_Dd   to liCalling_dd
+                  Set psGarticl_Recr to lsGarticl_Recr
+                  Set piFlag02       to liFlag02
+                  Set piFlag03       to liFlag03
+                  Set piFlag04       to liFlag04
+                  Set piFlag05       to liFlag05
+
+                  Send DoProcess
+
+                  Send private.Initialize_properties //£›œ¤ ©£æª properties š ˜ œ§æ£œ¤ ®¨ã©
+       End_Procedure //transaction_update_garticl
+
+
+       //transaction enabled
+       //¡˜¢œå«˜  ˜§æ:˜) enhmgl.cls «¦¬ ad
+       Procedure  Transaction_Update_GL_From_Gbridge Integer liCalling_dd;
+                                                     String  lsGbridgeh_Recr;
+                                                     Integer liFlag02;
+                                                     Integer liFlag03;
+                                                     Integer liFlag04;
+                                                     Integer liFlag05
+
+                  Send private.Initialize_properties
+
+                  Set piWhat_to_Do    to 6
+                  Set piCalling_Dd    to liCalling_dd
+
+                  Set psGbridgeh_Recr to lsGbridgeh_Recr
+                  Set piFlag02        to liFlag02
+                  Set piFlag03        to liFlag03
+                  Set piFlag04        to liFlag04
+                  Set piFlag05        to liFlag05
+
+                  Send DoProcess
+
+                  Send private.Initialize_properties //£›œ¤ ©£æª properties š ˜ œ§æ£œ¤ ®¨ã©
+       End_Procedure //transaction_update_gl_from_gbridge
+
+
+       //7:
+       //transaction enabled
+       //¡˜¢œå«˜  ˜§æ:˜) «¦ 1¦ tab «ª GLUTIL
+       Function  Do_ReUpdate_Isozygia_GL String lsYear_Recr Returns Integer
+
+                 Integer liStop
+
+                 Send private.Initialize_properties
+
+                 //©œ«á¨ ©£˜ «à¤ properties «¦¬ bpo
+                 Set piWhat_to_Do to 7
+                 Set psYear_Recr  to lsYear_Recr
+
+                 //©œ«á¨ ©£˜ «à¤ user interface properties «¦¬ bpo
+                 //1. status panel related properties
+                 Set Status_Panel_State   to TRUE                                //default= TRUE
+                 Set Allow_Cancel_State   to TRUE                                //default= FALSE
+                 Set Process_Caption      to "Utilities ‚œ¤ ¡ãª Š¦š ©« ¡ãª"      //default= "Running Process"
+                 Set Process_Title        to "Reupdate ˆ©¦çš ˜"                 //default= ""
+                 Set Process_Message      to "˜¨˜¡˜¢é œ¨ £â¤œ«œ..."            //default= ""
+                 //t Status_Panel_Id      to ""                                  //default= (Status_Panel(Current_Object))
+                 //t Status_Params        to ""                                  //default= ''
+                 Set Button_Text of (Status_Panel(Self))   to "€¡ç¨à©"
+
+                 Set Sentinel_Name of (Status_Panel(Self)) to "Sentinel"
+                 //Set Sentinel_Name of (Status_Panel(Self)) to "prgssent"
+
+                 //2. error related properties
+                 //   if set true, errors will be forwarded to the normal
+                 //   VDF error handler causing an error message to popup.
+                 //   Normally you would not want this during a batch process.
+                 Set Display_Error_State  to TRUE //`                     //default= False
+                 Set Error_Count          to 0                             //default= 0      // number of errors
+                 Set Old_Error_Object_ID  to 0                             //default= 0
+
+                 //3. Logging
+                 // If you are going to log information you must create a
+                 // status log object and set this property to its ID. See
+                 // Statlog.pkg for more information.
+//                 Set Status_Log_State     to FALSE                        //default= False
+//                 Set Status_Log_Id        to 0                            //(Status_Log(Self))
+//                 Set Status_Log_State     to FALSE
+
+                 Send DoProcess
+
+//                 Set Status_Log_State     to FALSE                         //default= False
+//                 Set Status_Log_Id        to 0
+//                 Set Status_Log_State     to FALSE
+
+                 Get piStop to liStop
+
+                 Send private.Initialize_properties //£›œ¤ ©£æª properties š ˜ œ§æ£œ¤ ®¨ã©
+
+                 Function_Return liStop
+
+       End_Function  //do_reupdate_isozygia_gl
+
+
+
+
+
+
+
+//=====================================================================
+       //transaction enabled
+       //¡˜¢œå«˜  ˜§æ:˜) enhmgl.cls «¦¬ ad
+       Procedure  Transaction_Create_Akkyrotiko_Arthro
+                                                     Integer liCalling_dd
+                                                     String  lsGbridgeh_Recr
+                                                     Integer liFlag02
+                                                     Integer liFlag03
+                                                     Integer liFlag04
+                                                     Integer liFlag05
+
+                  Send private.Initialize_properties
+
+                  Set piWhat_to_Do    to 8
+                  Set piCalling_Dd    to liCalling_dd
+
+                  Set psGbridgeh_Recr to lsGbridgeh_Recr
+                  Set piFlag02        to liFlag02
+                  Set piFlag03        to liFlag03
+                  Set piFlag04        to liFlag04
+                  Set piFlag05        to liFlag05
+
+                  //Send DoProcess
+
+                  Send private.Initialize_properties //£›œ¤ ©£æª properties š ˜ œ§æ£œ¤ ®¨ã©
+       End_Procedure //transaction_create_akkyrotiko_arthro
+
+
+
+       //transaction enabled
+       //¡˜¢œå«˜  ˜§æ:˜) enhmgl.cls «¦¬ ad
+       Procedure  Transaction_Copy_Gplan
+                                                     Integer liCalling_dd
+                                                     String  lsGbridgeh_Recr
+                                                     Integer liFlag02
+                                                     Integer liFlag03
+                                                     Integer liFlag04
+                                                     Integer liFlag05
+
+                  Send private.Initialize_properties
+
+                  Set piWhat_to_Do    to 9
+                  Set piCalling_Dd    to liCalling_dd
+
+                  Set psGbridgeh_Recr to lsGbridgeh_Recr
+                  Set piFlag02        to liFlag02
+                  Set piFlag03        to liFlag03
+                  Set piFlag04        to liFlag04
+                  Set piFlag05        to liFlag05
+
+                  //Send DoProcess
+
+                  Send private.Initialize_properties //£›œ¤ ©£æª properties š ˜ œ§æ£œ¤ ®¨ã©
+       End_Procedure //transaction_copy_gplan
+
+
+       //transaction enabled
+       //¡˜¢œå«˜  ˜§æ:˜) barticl_dd (request delete)
+       Procedure  Transaction_Delete_Garticl_From_Gbridgeh Integer liCalling_dd;
+                                                           String  lsGarticl_Recr;
+                                                           Integer liFlag02;
+                                                           Integer liFlag03;
+                                                           Integer liFlag04;
+                                                           Integer liFlag05
+
+                  Send private.Initialize_properties
+
+                  Set piWhat_to_Do   to 10
+                  Set piCalling_Dd   to liCalling_dd
+                  Set psGarticl_Recr to lsGarticl_Recr
+                  Set piFlag02       to liFlag02
+                  Set piFlag03       to liFlag03
+                  Set piFlag04       to liFlag04
+                  Set piFlag05       to liFlag05
+
+                  Send DoProcess
+
+                  Send private.Initialize_properties //£›œ¤ ©£æª properties š ˜ œ§æ£œ¤ ®¨ã©
+       End_Procedure //transaction_delete_garticl_from_gbridgeh
+
+
+End_Object //odo_gl_maintainance
+
+//                       Get Cancel_Check to liStop
+//                       If (liStop <> 0) Procedure_Return
+//
+//
+//                       Add 1 to liCounterOfRecords
+//                       Move (((Number(liCounterOfRecords))/liNumberOfRecords)*100) to lnPercent
+//                       Send Update_Status ("ƒ ˜™á©«¡˜¤: "+;
+//                                           (String(Meg.Recnum))+;
+//                                           "              ‘ç¤¦¢¦ „šš¨˜­é¤: "+;
+//                                           (String(liNumberOfRecords))+;
+//                                           "                       ")
+//                       Send Update_Status ("__PROGRESS__" + String(Integer(lnPercent)))
+
+
+
+
+
+
+/i071_FPA_HEADER
+ _____________________________ _______________________________  ________________                                                                  __/__/____  __:__
+
+                _____________________________________________ ___________ ‹ã¤˜ª __      „«¦ª ___.                                                              ___.
+===================================================================================================================================================================
+‰à›.”€   : œ¨ š¨˜­ã                              : %‘¬¤«.:          ‰å¤© ‹ã¤˜: €§¦­¦¨¦¢¦š£â¤ €¥å˜:____________________:______________________________________
+===================================================================================================================================================================
+/i071_FPA_BODY
+__________:________________________________________:____.__:__,___,___,___,___.__:__,___,___,___,___.__:____________________:______________________________________
+/i071_FPA_SUBTOTAL
+__________:________________________________________:____.__:__,___,___,___,___.__:__,___,___,___,___.__:____________________:______________________________________
+----------:----------------------------------------:-------:---------------------:---------------------:--------------------:--------------------------------------
+/*
+
+Open Gvath
+Open Gvatd
+Open Gplan
+
+
+
+        Procedure private.DoCompute_Fpa Global String  asYear_Recr;
+                                               Integer aiYYYY;
+                                               Integer aiPeriod;
+                                               Integer aiMode;
+                                               Integer aiCurrency;
+                                               Integer aiFlag;
+                                               Integer aiChannel;
+                                               String  asArxeio
+
+                  //aiMode  ;    1=©¬š¡œ¤«¨à« ¡æ  2=˜¤˜¢¬« ¡æ
+                  //aiCurrency   1=0              2=00          3=r
+                  //aiFlag   ;   1=ola  2=oristika
+
+                  //01.â¢œš®¦  ¦¨ ©£á«à¤
+                  Clear Year
+                  Move asYear_Recr to Year.Year_Recr
+                  Find Eq Year by Index.2 //index.2:year:year_recr
+                  If (Found=0);
+                  Begin
+                       Error 9999 "€¤ç§˜¨¡« •¨ã© !"
+                       Procedure_Return
+                  End
+                  Relate Year //œç¨œ© company+branch š ˜ «¦ header
+
+                  If ((aiMode <> 1 ) and (aiMode <> 2));
+                  Begin
+                       Error 9999 "€¡˜«á¢¢¢¦ aiMode !"
+                       Procedure_Return
+                  End
+
+                  If ((aiCurrency <> 1 ) and (aiCurrency <> 2) and (aiCurrency <> 3));
+                  Begin
+                       Error 9999 "€¡˜«á¢¢¢¦ aiCurrency !"
+                       Procedure_Return
+                  End
+
+                  If ((aiFlag <> 1 ) and (aiFlag <> 2));
+                  Begin
+                       Error 9999 "€¡˜«á¢¢¢¦ aiFlag !"
+                       Procedure_Return
+                  End
+
+                  If ((aiChannel < 1 ) or (aiChannel > 9));
+                  Begin
+                       Error 9999 "€¡˜«á¢¢¢¦ aiChannel !"
+                       Procedure_Return
+                  End
+
+                  If (asArxeio = "");
+                  Begin
+                       Error 9999 "€¡˜«á¢¢¢¦ asArxeio !"
+                       Procedure_Return
+                  End
+
+//sosososososo
+///////////////// Move 1                                        to aiChannel
+///////////////// Move "i:\homewin.dev\easyware.vis\gl\fpa.txt" to asArxeio
+//////////////////Move 1                                        to aiMode
+
+                  //02:á¤¦ š£˜ temp file
+                  Direct_Output Channel aiChannel asArxeio
+
+                  //03:§¨¦œ«¦ £˜©å˜ & œ¡«ç§à© header
+                  Blankform i071_FPA_HEADER
+                  Print Company.Company_Name                          to i071_FPA_HEADER.1
+                  Print Branch.Branch_Name                            to i071_FPA_HEADER.2
+                  Print Year.Year_Descr                               to i071_FPA_HEADER.3
+                  Sysdate4                                               i071_FPA_HEADER.4 i071_FPA_HEADER.5 i071_FPA_HEADER.6
+                  Print " „  ˆ  ƒ ˆ ‰ †    ƒ † Š — ‘ †    ”  €"   to i071_FPA_HEADER.7
+                  Print ""                                            to i071_FPA_HEADER.8   // PERIOD
+                  Print aiPeriod                                      to i071_FPA_HEADER.9   // MHNA
+                  Print aiYYYY                                        to i071_FPA_HEADER.10  // ETOS
+                  Blankform                                              i071_FPA_HEADER.11
+
+                  If (aiMode=2);
+                  Begin
+                       Print "‰à›.Š¦š/£¦ç"       to i071_FPA_HEADER.12
+                       Print "œ¨ š¨˜­ã Š¦š/£¦ç" to i071_FPA_HEADER.13
+                  End
+                  Else;
+                  Begin
+                       Blankform                    i071_FPA_HEADER.12
+                       Blankform                    i071_FPA_HEADER.13
+                  End
+                  Output Channel aiChannel   i071_FPA_HEADER
+
+                  //04:©á¨à© gvath
+                  Clear Gvath
+                  Find Gt Gvath by Index.1 //index.1:vath:vath_code
+                  While (Found=1)
+
+                        Blankform i071_FPA_BODY
+                        Blankform i071_FPA_SUBTOTAL
+
+                        Print Gvath.Gvath_Code  to i071_FPA_SUBTOTAL.1
+                        Print Gvath.Gvath_Descr to i071_FPA_SUBTOTAL.2
+                        Print Gvath.Gvath_Pct   to i071_FPA_SUBTOTAL.3
+                        If (i071_FPA_SUBTOTAL.3=0) Blankform i071_FPA_SUBTOTAL.3
+
+                        //04.1:©á¨à© gvatd
+                        Clear Gvatd
+                        Move Gvath.Gvath_Code to Gvatd.Gvath_Code
+                        Move asYear_Recr      to Gvatd.Year_Recr
+                        Find Gt Gvatd by Index.3 //index.3:vatd:vath_code+year_recr+gplan_code+recnum
+                        While (;
+                               (Found=1) and;
+                               (Gvath.Gvath_Code = Gvatd.Gvath_Code) and;
+                               (asYear_Recr      = Gvatd.Year_Recr );
+                              )
+
+                              //04.2:œç¨œ© gmhnes
+                              Clear Gmhnes
+                              Move Gvatd.Gplan_Recr to Gmhnes.Gplan_Recr
+                              Move aiYYYY           to Gmhnes.Gmhnes_YYYY
+                              Move aiPeriod         to Gmhnes.Gmhnes_Period
+                              Find Eq Gmhnes by Index.3 //index.3:gmhnes:gplan_recr+gmhnes_yyyy+gmhnes_period
+                              If (Found=1);
+                              Begin
+                                   Clear Gplan
+                                   Move Gvatd.Gplan_Recr to Gplan.Gplan_Recr
+                                   Find Eq Gplan By Index.2 //index.2:gplan:gplan_recr
+                                   If (Found=1);
+                                   Begin
+                                        Print Gplan.Gplan_Code      to i071_FPA_BODY.6
+                                        Print Gplan.Gplan_Descr1    to i071_FPA_BODY.7
+                                   End
+                                   Else;
+                                   Begin
+                                        Print "*******************" to i071_FPA_BODY.6
+                                        Print "*******************" to i071_FPA_BODY.7
+                                   End
+
+                                   If (Gvatd.Gvatd_XP = "1");
+                                   Begin //®¨œé©œ ª
+                                       If (aiFlag=1);
+                                       Begin //æ¢˜
+                                                  If (aiCurrency=1) Print Gmhnes.Gmhnes_Sx0  to i071_FPA_BODY.4 {Points=2}
+                                             Else If (aiCurrency=2) Print Gmhnes.Gmhnes_Sx00 to i071_FPA_BODY.4 {Points=2}
+                                             Else If (aiCurrency=3) Print Gmhnes.Gmhnes_Sxr  to i071_FPA_BODY.4 {Points=2}
+                                       End
+                                       If (aiFlag=2);
+                                       Begin //¦¨ ©« ¡á
+                                                                    Print Gmhnes.Gmhnes_Sx1  to i071_FPA_BODY.4 {Points=2}
+                                       End
+
+                                       If (aiMode=2) Output Channel aiChannel i071_Fpa_BODY
+
+                                       Print (i071_FPA_BODY.4+i071_FPA_SUBTOTAL.4) to i071_FPA_SUBTOTAL.4 {Points=2}
+                                   End   //«â¢¦ª ®¨œé©œà¤
+
+                                   If (Gvatd.Gvatd_XP = "2");
+                                   Begin //§ ©«é©œ ª
+                                       If (aiFlag=1);
+                                       Begin //æ¢˜
+                                                  If (aiCurrency=1) Print Gmhnes.Gmhnes_Sp0  to i071_FPA_BODY.4 {Points=2}
+                                             Else If (aiCurrency=2) Print Gmhnes.Gmhnes_Sp00 to i071_FPA_BODY.4 {Points=2}
+                                             Else If (aiCurrency=3) Print Gmhnes.Gmhnes_Spr  to i071_FPA_BODY.4 {Points=2}
+                                       End
+                                       If (aiFlag=2);
+                                       Begin //¦¨ ©« ¡á
+                                                                    Print Gmhnes.Gmhnes_Sp1  to i071_FPA_BODY.4 {Points=2}
+                                       End
+
+                                       If (aiMode=2) Output Channel aiChannel i071_Fpa_BODY
+
+                                       Print (i071_FPA_BODY.4+i071_FPA_SUBTOTAL.4) to i071_FPA_SUBTOTAL.4 {Points=2}
+                                   End   //«â¢¦ª § ©«é©œà¤
+                              End  //found gmhnes
+
+                              Find Gt Gvatd by Index.3 //index.3:vatd:vath_code+year_recr+gplan_code+recnum
+                        Loop //while vatd
+
+                        Print (Round_number((i071_FPA_SUBTOTAL.4/(i071_FPA_SUBTOTAL.3/100)),2)) to i071_FPA_SUBTOTAL.5 {Points=2}
+                        If (i071_FPA_SUBTOTAL.5=0) Blankform i071_FPA_SUBTOTAL.5
+                        Output Channel aiChannel i071_Fpa_SUBTOTAL
+
+                        Find Gt Gvath by Index.1 //index.1:vath:vath_code
+                  Loop //while vath
+
+                  //05:¡¢œå© £¦ temp file
+                  Close_Output Channel aiChannel
+        End_Procedure //private.docompute_fpa

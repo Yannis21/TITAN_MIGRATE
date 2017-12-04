@@ -1,0 +1,726 @@
+Use Winuser.pkg
+Use WinUsrez.pkg
+Use Dfdeoft.pkg
+
+Function Xlate Global String Item_Name## Returns String
+//         Local String S_Return_Val##
+//         If sysfile.enable_xlate eq 1 Begin
+
+///////////Lock
+//         Clear Messages
+//         Move Item_Name## To Messages.Greek
+//         Find Eq Messages By Index.1 //Greek
+//         Saverecord Messages
+///////////Unlock
+
+//         If Messages.Local Ne ""         Move Messages.Local   To S_Return_Val##
+//         Else Begin
+//               If Messages.English Ne "" Move Messages.English To S_Return_Val##
+//               Else                      Move Messages.Greek   To S_Return_Val##
+//              End
+//         End
+//         Else Move Item_Name## to S_Return_Val##
+//         Function_Return (Trim(S_Return_Val##))
+         Function_Return (Trim(Item_Name##))
+End_Function //Xlate
+
+// Spy 21/09/98
+// Customize The Default FloatingPopupMenu
+// (aiObj_id = default_form_floating_menu_id „ default_dbfloating_menu_id)
+Procedure DoCustomizeDefaultFloatMenu Integer aiObj_id
+     Set Value of aiObj_id Item 0 to (Xlate("Ñßò§ò≠¶®·"))
+     Set Value of aiObj_id Item 2 to (Xlate("Äß¶°¶ß„"))
+     Set Value of aiObj_id Item 3 to (Xlate("Ä§´†ö®ò≠„"))
+     Set Value of aiObj_id Item 4 to (Xlate("Ñß†°Ê¢¢û©û"))
+     Set Value of aiObj_id Item 5 to (Xlate("É†òö®ò≠„"))
+     Set Value of aiObj_id Item 7 to (Xlate("é¢†°„ Ñß†¢¶ö„"))
+End_Procedure
+
+// 22/10/98 - Spy
+// Customize The Default dbFloatingPopupMenu
+// (aiObj_id = default_form_floating_menu_id „ default_dbfloating_menu_id)
+// Removed from VDF's Dfdeoft.pkg.
+Procedure DoCustomizeDefaultdbFloatMenu Integer aiObj_id
+      Integer liFirstItem
+
+      Get First_Item of aiObj_id to liFirstItem
+      Set Value of aiObj_id Item (liFirstItem+1) to (Xlate("&äÂ©´ò"))
+      Set Value of aiObj_id Item (liFirstItem+3) to (Xlate("&ÑßÊ£ú§¶"))
+      Set Value of aiObj_id Item (liFirstItem+4) to (Xlate("è&®¶ûö¶Á£ú§¶"))
+      Set Value of aiObj_id Item (liFirstItem+6) to (Xlate("Ä°Á®‡©û &é¢†°„"))
+      Set Value of aiObj_id Item (liFirstItem+7) to (Xlate("&Ä°Á®‡©û"))
+      Set Value of aiObj_id Item (liFirstItem+8) to (Xlate("Ñ&öö®ò≠„"))
+      Set Value of aiObj_id Item (liFirstItem+9) to (Xlate("&É†òö®ò≠„ Ñöö®ò≠„™"))
+End_Procedure
+
+//06/01/1999 _ Spy
+//Modify Sysmenu
+Procedure GreekSysMenu
+   Local Integer hWnd hSmId iItems bState
+   Get Window_Handle to hWnd
+   If hWnd ne 0 Begin
+        Move (GetSystemMenu(hWnd,False)) to hSmId
+        Move (GetMenuItemCount(hSmId)) to iItems
+        Move (ModifyMenu(hSmId,SC_RESTORE,MF_BYCOMMAND + MF_STRING,SC_RESTORE,("    "+(ToAnsi(Xlate("Ñßò§ò≠¶&®·")))))) to bState
+        Move (ModifyMenu(hSmId,SC_MOVE,MF_BYCOMMAND + MF_STRING,SC_MOVE,("    "+(ToAnsi(Xlate("&ãú´ò°Â§†©û")))))) to bState
+        Move (ModifyMenu(hSmId,SC_SIZE,MF_BYCOMMAND + MF_STRING,SC_SIZE,("    "+(ToAnsi(Xlate("ã‚&öúü¶™")))))) to bState
+        Move (ModifyMenu(hSmId,SC_MINIMIZE,MF_BYCOMMAND + MF_STRING,SC_MINIMIZE,("    "+(ToAnsi(Xlate("Ñ&¢òÆ†©´¶ß¶Âû©û")))))) to bState
+        Move (ModifyMenu(hSmId,SC_MAXIMIZE,MF_BYCOMMAND + MF_STRING,SC_MAXIMIZE,("    "+(ToAnsi(Xlate("ãúö†&©´¶ß¶Âû©û")))))) to bState
+        Move (ModifyMenu(hSmId,SC_CLOSE,MF_BYCOMMAND + MF_STRING,SC_CLOSE,("   "+(ToAnsi(Xlate("&Ñ•¶õ¶™     Alt+F4")))))) to bState
+        Move (ModifyMenu(hSmId,SC_NEXTWINDOW,MF_BYCOMMAND + MF_STRING,SC_NEXTWINDOW,("    "+(ToAnsi(Xlate("Ñ&ßÊ£ú§¶       Ctrl+F6")))))) to bState
+   End
+End_Procedure
+
+//****************************************************************************
+// $Module type: FUNCTION
+// $Module name: Computername
+// $Author     : SPY
+// Created     : 03-01-99 @ 9:53
+//
+// Description
+//
+// $Rev History
+//****************************************************************************
+Function Computername Global Returns String
+   Local Pointer lpComputerName lpNameSize
+   Local String sComputerName sNameSize
+   Local Integer iRetval
+
+   Movestr (Repeat (Character (0), MAX_COMPUTERNAME_LENGTH + 1)) To sComputerName
+   GetAddress Of sComputerName To lpComputerName
+   Movestr (DwordToBytes (MAX_COMPUTERNAME_LENGTH + 1)) To sNameSize
+   GetAddress Of sNameSize To lpNameSize
+
+   Moveint (GetComputerName (lpComputerName, lpNameSize)) To iRetval
+
+   Function_Return (CString (sComputerName))
+End_Function // ComputerName
+
+
+//****************************************************************************
+// $Module type: FUNCTION
+// $Module name: DateToWeekDay
+// $Author     : SPY
+// Created     : 03-01-99 @ 9:53
+//
+// Description
+//
+// $Rev History
+//****************************************************************************
+
+Function DateToWeekDay Global date dDate returns Integer
+    local string sWeekday
+    local integer iDay
+
+    // convert to 4 digits if needed
+    //
+    //if dDate le 36524 calc (dDate+693975) to dDate
+
+    // 0 û â¨®†ò°„ 1 û Éú¨´‚®ò ... 6 ´¶ ë·ôôò´¶
+    move ((mod((dDate-2),7))) to iDay
+
+    function_return iDay
+End_Function  // DateToWeekDay
+
+
+//****************************************************************************
+// $Module type: FUNCTION
+// $Module name: DateToWeekDayName
+// $Author     : SPY
+// Created     : 03-01-99 @ 9:53
+//
+// Description
+//
+// $Rev History
+//****************************************************************************
+
+Function DateToWeekDayName Global date dDate returns String
+    local string sWeekday
+    local integer iDay
+
+    // convert to 4 digits if needed
+    //
+    //if dDate le 36524 calc (dDate+693975) to dDate
+
+    move (DateToWeekDay(dDate)) to iDay
+
+    if iDay eq 0 move "â¨®†ò°„" to sWeekday
+    else if iDay eq 1 move "Éú¨´‚®ò" to sWeekday
+    else if iDay eq 2 move "í®Â´û" to sWeekday
+    else if iDay eq 3 move "íú´·®´û" to sWeekday
+    else if iDay eq 4 move "è‚£ß´û" to sWeekday
+    else if iDay eq 5 move "èò®ò©°ú¨„" to sWeekday
+    else if iDay eq 6 move "ë·ôôò´¶" to sWeekday
+
+    function_return (Xlate(sWeekday))
+End_Function  // DateToWeekDay
+
+
+
+//****************************************************************************
+// $Module type: FUNCTION
+// $Module name: TheFirstSegment - TheSecondSegment - TheThirdSegment of Date
+// $Author     : SPY
+// Created     : 03-01-99 @ 9:53
+//
+// Description
+//
+// $Rev History
+//****************************************************************************
+
+Function TheFirstSegment Global date dDate Returns Integer
+    Local Integer rVal rPlace
+    Local String sDSep
+    Get_attribute DF_Date_Separator to rval
+    Move (Character(rVal)) to sDSep
+    Pos sDSep in dDate to rPlace
+    Move (Left(dDate,(rPlace-1))) to rVal
+    Function_Return rVal
+End_Function // TheFirstSegment
+
+Function TheSecondSegment Global Date dDate Returns Integer
+    Local Integer rVal rPlace
+    Local String sDSep sDay sTempDate
+    Move dDate to sTempDate
+    Get_attribute DF_Date_Separator to rval
+    Move (Character(rVal)) to sDSep
+    Pos sDSep in sTempDate to rPlace
+    Move (Left(sTempDate,(rPlace-1))) to sDay
+    Replace (sDay+sDSep) in sTempDate With ""
+    Pos sDSep in sTempDate to rPlace
+    Move (Left(sTempDate,(rPlace-1))) to rVal
+    Function_Return rVal
+End_Function // TheMonthSegment
+
+Function TheThirdSegment Global Date dDate Returns Integer
+    Local Integer rVal rPlace
+    Local String sDSep sDay sMonth sTempDate
+    Move dDate to sTempDate
+    Get_attribute DF_Date_Separator to rval
+    Move (Character(rVal)) to sDSep
+    Pos sDSep in sTempDate to rPlace
+    Move (Left(sTempDate,(rPlace-1))) to sDay
+    Replace (sDay+sDSep) in sTempDate With ""
+    Pos sDSep in sTempDate to rPlace
+    Move (Left(sTempDate,(rPlace-1))) to sMonth
+    Replace (sMonth+sDSep) in sTempDate With ""
+    Move sTempDate to rVal
+    Function_Return rVal
+End_Function // TheThirdSegment
+
+
+//****************************************************************************
+// $Module type: FUNCTION
+// $Module name: TheYearSegment
+// $Author     : SPY
+// Created     : 03-01-99 @ 9:53
+//
+// Description
+//
+// $Rev History
+//****************************************************************************
+
+Function TheYearSegment Global Date dDate Returns Integer
+    Local Integer rVal rPlace
+    Local String sDSep
+    Local Number lnDateFormat
+    Get_Attribute DF_DATE_FORMAT to lnDateFormat
+    Get_attribute DF_Date_Separator to rval
+    If lnDateFormat eq DF_DATE_MILITARY Move (TheFirstSegment(dDate)) to rVal
+    Else Move (TheThirdSegment(dDate)) to rVal
+    Function_Return rVal
+End_Function // TheYearSegment
+
+
+//****************************************************************************
+// $Module type: FUNCTION
+// $Module name: TheDaySegment
+// $Author     : SPY
+// Created     : 03-01-99 @ 9:53
+//
+// Description
+//
+// $Rev History
+//****************************************************************************
+
+Function TheDaySegment Global date dDate Returns Integer
+    Local Integer rVal rPlace
+    Local String sDSep
+    Local Number lnDateFormat
+    Get_Attribute DF_DATE_FORMAT to lnDateFormat
+    Get_attribute DF_Date_Separator to rval
+    If lnDateFormat eq DF_DATE_EUROPEAN Move (TheFirstSegment(dDate)) to rVal
+    Else If lnDateFormat eq DF_DATE_USA Move (TheSecondSegment(dDate)) to rVal
+    Else If lnDateFormat eq DF_DATE_MILITARY Move (TheThirdSegment(dDate)) to rVal
+    Function_Return rVal
+End_Function // TheDaySegment
+
+
+//****************************************************************************
+// $Module type: FUNCTION
+// $Module name: TheMonthSegment
+// $Author     : SPY
+// Created     : 03-01-99 @ 9:53
+//
+// Description
+//
+// $Rev History
+//****************************************************************************
+
+
+Function TheMonthSegment Global date dDate Returns Integer
+    Local Integer rVal rPlace
+    Local String sDSep
+    Local Number lnDateFormat
+    Get_Attribute DF_DATE_FORMAT to lnDateFormat
+    Get_attribute DF_Date_Separator to rval
+    If lnDateFormat eq DF_DATE_USA Move (TheFirstSegment(dDate)) to rVal
+    Else Move (TheSecondSegment(dDate)) to rVal
+    Function_Return rVal
+End_Function // TheMonthSegment
+
+Function Sysdate4_Year Global Returns Integer
+    Date ldHmnia
+    Sysdate4 ldHmnia
+    Function_Return (TheYearSegment(ldHmnia))
+End_Function //private.etos
+
+Function Sysdate4_Month Global Returns Integer
+    Date ldHmnia
+    Sysdate4 ldHmnia
+    Function_Return (TheMonthSegment(ldHmnia))
+End_Function //private.mhnas
+
+Function Sysdate4_Day Global Returns Integer
+    Date ldHmnia
+    Sysdate4 ldHmnia
+    Function_Return (TheDaySegment(ldHmnia))
+End_Function //private.mhnas
+
+
+//****************************************************************************
+// $Module type: FUNCTION
+// $Module name: TheMonthName (The Modes 0 The Default , 1 Çú§†°„ ´¶¨ £„§ò, 2 Ä†´†ò´†°„
+// $Author     : SPY
+// Created     : 03-01-99 @ 9:53
+//
+// Description
+//
+// $Rev History
+//****************************************************************************
+
+Enumeration_List
+    Define mMonthOnom
+    Define mMonthGen
+    Define mMonthAit
+End_Enumeration_List
+
+Function TheMonthName Global Integer iMonthNum Integer iMode Returns String
+    Local String rMonth
+
+    If iMode eq mMonthGen Begin
+             If iMonthNum eq 1  Move "àò§¶¨ò®Â¶¨"  to rMonth
+        Else If iMonthNum eq 2  Move "îúô®¶¨ò®Â¶¨" to rMonth
+        Else If iMonthNum eq 3  Move "ãò®´Â¶¨"     to rMonth
+        Else If iMonthNum eq 4  Move "Äß®†¢Â¶¨"    to rMonth
+        Else If iMonthNum eq 5  Move "ãòÂ¶¨"       to rMonth
+        Else If iMonthNum eq 6  Move "à¶¨§Â¶¨"     to rMonth
+        Else If iMonthNum eq 7  Move "à¶¨¢Â¶¨"     to rMonth
+        Else If iMonthNum eq 8  Move "Ä¨ö¶Á©´¶¨"   to rMonth
+        Else If iMonthNum eq 9  Move "ëúß´ú£ô®Â¶¨" to rMonth
+        Else If iMonthNum eq 10 Move "é°´‡ô®Â¶¨"   to rMonth
+        Else If iMonthNum eq 11 Move "å¶ú£ô®Â¶¨"   to rMonth
+        Else If iMonthNum eq 12 Move "Éú°ú£ô®Â¶¨"  to rMonth
+    End
+    Else Begin
+        If iMode eq mMonthAit Begin
+                 If iMonthNum eq 1  Move "àò§¶¨·®†¶"  to rMonth
+            Else If iMonthNum eq 2  Move "îúô®¶¨·®†¶" to rMonth
+            Else If iMonthNum eq 3  Move "ã·®´†¶"     to rMonth
+            Else If iMonthNum eq 4  Move "Äß®Â¢†¶"    to rMonth
+            Else If iMonthNum eq 5  Move "ã·†¶"       to rMonth
+            Else If iMonthNum eq 6  Move "à¶Á§†¶"     to rMonth
+            Else If iMonthNum eq 7  Move "à¶Á¢†¶"     to rMonth
+            Else If iMonthNum eq 8  Move "ÄÁö¶¨©´¶"   to rMonth
+            Else If iMonthNum eq 9  Move "ëúß´‚£ô®†¶" to rMonth
+            Else If iMonthNum eq 10 Move "é°´Èô®†¶"   to rMonth
+            Else If iMonthNum eq 11 Move "å¶‚£ô®†¶"   to rMonth
+            Else If iMonthNum eq 12 Move "Éú°‚£ô®†¶"  to rMonth
+        End
+        Else Begin
+                 If iMonthNum eq 1  Move "àò§¶¨·®†¶™"  to rMonth
+            Else If iMonthNum eq 2  Move "îúô®¶¨·®†¶™" to rMonth
+            Else If iMonthNum eq 3  Move "ã·®´†¶™"     to rMonth
+            Else If iMonthNum eq 4  Move "Äß®Â¢†¶™"    to rMonth
+            Else If iMonthNum eq 5  Move "ã·†¶™"       to rMonth
+            Else If iMonthNum eq 6  Move "à¶Á§†¶™"     to rMonth
+            Else If iMonthNum eq 7  Move "à¶Á¢†¶™"     to rMonth
+            Else If iMonthNum eq 8  Move "ÄÁö¶¨©´¶™"   to rMonth
+            Else If iMonthNum eq 9  Move "ëúß´‚£ô®†¶™" to rMonth
+            Else If iMonthNum eq 10 Move "é°´Èô®†¶™"   to rMonth
+            Else If iMonthNum eq 11 Move "å¶‚£ô®†¶™"   to rMonth
+            Else If iMonthNum eq 12 Move "Éú°‚£ô®†¶™"  to rMonth
+        End
+    End
+
+    Function_Return (Xlate(rMonth))
+End_Function // TheMonthName
+
+//****************************************************************************
+// $Module type: FUNCTION
+// $Module name: LongDateName
+// $Author     : SPY
+// Created     : 03-01-99 @ 9:53
+//
+// Description
+//
+// $Rev History
+//****************************************************************************
+
+Function LongDateName Global Date dDate Returns String
+    Local String sDay sDate sMonth sYear
+    Move (DateToWeekDayName(dDate))        to sDay
+    Move (TheDaySegment(dDate))                   to sDate
+    Move (TheMonthName((TheMonthSegment(dDate)),1)) to sMonth
+    Move (TheYearSegment(dDate))                  to sYear
+    Function_Return (sDay+","*sDate*sMonth*sYear)
+End_Function
+
+//****************************************************************************
+// $Module type: FUNCTION
+// $Module name: isDisekto
+// $Author     : SPY
+// Created     : 03-01-99 @ 9:53
+//
+// Description
+//
+// $Rev History
+//****************************************************************************
+
+Function isDisekto Global Integer liYear Returns Integer
+    Local Integer rVal
+    If (Mod(liYear,4) = 0) Begin
+        If (Mod(liYear,100) = 0) Begin
+            If (Mod(liYear,400) = 0) Move 1 to rVal
+        End
+        Else Move 1 to rVal
+    End
+    Function_Return rVal
+End_Function // isDisekto
+
+//****************************************************************************
+// $Module type: FUNCTION
+// $Module name: DaysOfYear
+// $Author     : SPY
+// Created     : 03-01-99 @ 9:53
+//
+// Description
+//
+// $Rev History
+//****************************************************************************
+
+Function DaysOfYear global Integer iYear Returns Integer
+    Local Integer rVal
+    Move 365 to rVal
+    If (isDisekto(iYear)) Move 366 to rVal
+    Function_Return rval
+End_Function // DaysOfYear
+
+//****************************************************************************
+// $Module type: FUNCTION
+// $Module name: BeginOfMonth
+// $Author     : SPY
+// Created     : 03-01-99 @ 9:53
+//
+// Description
+//
+// $Rev History
+//****************************************************************************
+
+Function BeginOfMonth Global Integer liMonth Integer liYear Returns Date
+    Local Integer rVal
+    Local Date rDate
+    Local String liMM lsDSep
+    Local Number lnDateFormat
+    Get_attribute DF_Date_Separator to rval
+    Move (Character(rVal)) to lsDSep
+    Get_Attribute DF_DATE_FORMAT to lnDateFormat
+    If (Length (liMonth) = 1) Move ("0" + String(liMonth)) to liMM
+    Else Move (String(liMonth)) to liMM
+    If lnDateFormat eq DF_DATE_EUROPEAN       Move ("01" + lsDSep + liMM + lsDSep + String(liYear)) to rDate
+    Else If lnDateFormat eq DF_DATE_USA       Move (liMM + lsDSep + "01" + lsDSep + String(liYear)) to rDate
+    Else If lnDateFormat eq DF_DATE_MILITARY  Move (String(liYear) + lsDSep + liMM + lsDSep + "01") to rDate
+    Function_Return rDate
+End_Function  //BeginOfMonth
+
+
+//****************************************************************************
+// $Module type: FUNCTION
+// $Module name: EndOfMonth
+// $Author     : SPY
+// Created     : 03-01-99 @ 9:53
+//
+// Description
+//
+// $Rev History
+//****************************************************************************
+
+Function EndOfMonth Global Integer liMonth Integer liYear Returns Date
+    Local Date rDate
+    If liMonth eq 12 Move (BeginOfMonth(1,(liYear+1))-1) to rDate
+    Else Move (BeginOfMonth((liMonth+1),liYear)-1) to rDate
+    Function_Return rDate
+End_Function  // EndOfMonth
+
+//****************************************************************************
+// $Module type: FUNCTION
+// $Module name: LastMonday
+// $Author     : SPY
+// Created     : 03-01-99 @ 9:53
+//
+// Description
+//
+// $Rev History
+//****************************************************************************
+
+Function LastMonday global Date dDate Returns Date
+    Local Integer iWeekDay
+    Local Date rVal
+    Move (DateToWeekDay(dDate)) to iWeekDay
+    If iWeekDay eq 0 Move (dDate-6) to rVal
+    Else Move (dDate-(iWeekDay-1)) to rVal
+    Function_Return rval
+End_Function // LastMonday
+
+
+//****************************************************************************
+// $Module type: FUNCTION
+// $Module name: DayOfTheYear
+// $Author     : SPY
+// Created     : 03-01-99 @ 9:53
+//
+// Description
+//
+// $Rev History
+//****************************************************************************
+
+Function DayOfTheYear global date dDate Returns Integer
+    local integer rVal
+    local string sYSeg
+    local date ldate lcheckdate
+    Local Number lnDateFormat
+    Get_Attribute DF_DATE_FORMAT to lnDateFormat
+    Move (BeginOfMonth(1,(TheYearSegment(dDate)))) to lDate
+    Move ((dDate-lDate)+1) to rval
+    If Not (isDisekto(TheYearSegment(dDate))=1) Begin
+        If lnDateFormat eq DF_DATE_EUROPEAN Move ("01/03/"+(String((TheYearSegment(dDate))))) to lcheckdate
+        Else If lnDateFormat eq DF_DATE_USA Move ("03/01/"+(String((TheYearSegment(dDate))))) to lcheckdate
+        Else If lnDateFormat eq DF_DATE_MILITARY Move ((String((TheYearSegment(dDate))))+"03/01/") to lcheckdate
+        If (((lCheckDate-lDate) = 60) and (dDate ge lcheckDate)) Move (dDate-lDate) to rval
+    End
+    Function_Return rVal
+End_Function  // DayOfTheYear
+
+
+//****************************************************************************
+// $Module type: FUNCTION
+// $Module name: TheEasterDay
+// $Author     : SPY
+// Created     : 13-06-99 @ 9:53
+//
+// Description
+//
+// $Rev History
+//****************************************************************************
+
+Function TheEasterDay Global Integer aiTheYear Returns Date
+    Local Integer liMoonYearCycle liEpakth liEasterFullMoon liMonth
+    Local Integer liOldDateFormat liSeparator
+    Local Date ldEasterDay
+    Local String lsDSep
+    Get_attribute DF_Date_Separator to liSeparator
+    Get_Attribute DF_DATE_FORMAT to liOldDateFormat
+    Set_Attribute DF_DATE_FORMAT to DF_DATE_EUROPEAN
+    Move (Character(liSeparator)) to lsDSep
+    Move 3 to liMonth
+    Move (Mod((aiTheYear-2),19)) to liMoonYearCycle
+    Move (Mod((11*liMoonYearCycle),30)) to liEpakth
+    Move ((30-liEpakth)+14) to liEasterFullMoon
+    If liEasterFullMoon ge 21 Begin
+        If liEasterFullMoon gt 31 Begin
+            Move (liEasterFullMoon-31) to liEasterFullMoon
+            Move 4 to liMonth
+        End
+    End
+    Else Begin
+        Move (liEasterFullMoon-1) to liEasterFullMoon
+        Move 4 to liMonth
+    End
+    Move (String(liEasterFullMoon) + lsDSep + String(liMonth) + lsDSep + String(aiTheYear)) to ldEasterDay
+    Set_Attribute DF_DATE_FORMAT to liOldDateFormat
+
+    //âò´· ´¶ à¶¨¢†ò§Ê û£ú®¶¢Êö†¶ û ß®È´û â¨®†ò°„ „ û úßÊ£ú§û ò§ ldEasterDay úÂ§ò† â¨®†ò°„
+    //Move (ldEasterDay + (7- (DateToWeekDay(ldEasterDay)) )  ) to ldEasterDay
+
+    //é£‡™ £ú´· òßÊ ‚¢úöÆ¶ úÂ§ò† 14 û£‚®ú™ £ú´· ´û§ ß®È´û °¨®†ò°„ òßÊ ldEasterDay ò°Ê£ò °ò† ò§
+    //ldEasterDay úÂ§ò† â¨®†ò°„ (õú§ ö§‡®Âù‡ ö†ò´Â)
+    If (DateToWeekDay(ldEasterDay) <> 0) Move (ldEasterDay + (7-(DateToWeekDay(ldEasterDay)))) to ldEasterDay
+    Move (ldEasterDay+14) to ldEasterDay
+    Function_Return ldEasterDay
+End_Function
+
+
+// Remarked - ìß·®Æ¶¨§ ò§´Â©´¶†Æú™ ©´û§ VDF (ToAnsi, ToOEM) 21/09/98 -Spy
+
+//You must be aware that due to compatibility of the database between DOS CM
+//versions and VDF, all data in DataFlex datafiles will be stored using the same
+//character set (like DOS cp850).
+//This means that if you want read data from an ascii file directly into the
+//record buffer, and this ascii file is in windows (ansi) format, you must
+//convert the data first, using the OemToAnsi function. (and v.v. with AnsiToOem
+//if you want to write a text file of windows format).
+
+//The AnsiToOem and OemToAnsi functions itself takes pointers as arguments, so it
+//will be convenient to create functions on top of these, so you can call these
+//functions with a normal string as argument. I have made functions like this:
+
+//            function wintilcpDOS global string sind returns string
+//                local pointer ip
+//                local integer itmp ilen
+//                move (length(sind)) to ilen
+//                append sind (character(0))
+//                getaddress of sind to ip
+//                Move (AnsiToOem(ip,ip)) To iTmp
+//                function_return (left(sind,ilen))
+//            end_function
+
+//            function cpDOStilwin global string sind returns string
+//                local pointer ip
+//                local integer itmp ilen
+//                move (length(sind)) to ilen
+//                append sind (character(0))
+//                getaddress of sind to ip
+//                Move (OemToAnsi(ip,ip)) To iTmp
+//                function_return (left(sind,ilen))
+//            end_function
+
+// Global Handle for Set Object
+Integer ghoExpSet
+
+Function Get_ExpOfTwo Global Real arNum Returns Integer
+    Local real lrNum lrTempNum
+    Local Integer liCounter
+
+    Move arNum to lrNum
+    If ((lrNum < 10e+306) and (lrNum > 0)) Begin
+        //destroy the set using the global integer that hold its handle
+        If (ghoExpSet) Send destroy_object to ghoExpSet
+        //Make an instance of a set to hold the Exp
+        Get Make_Set to ghoExpSet
+        Move 1 to lrTempnum
+        While (lrTempnum<lrNum)
+
+            Repeat
+                If ((2*lrTempnum)<=lrNum) Begin
+                    Move (2*lrTempnum) to lrTempnum
+                    Add 1 to liCounter
+                End
+            Until ((2*lrTempnum)>lrNum)
+            Send Add_Element to ghoExpSet liCounter
+            If (lrTempnum<lrNum) Begin
+                Move (lrnum-lrTempnum) to lrnum
+                Move 1 to lrTempnum
+                Move 0 to liCounter
+            End
+
+        Loop
+    End
+    If ((lrNum = lrTempnum) and (lrNum <> 1)) Move 0 to lrNum
+    Function_Return  (String(lrNum))
+End_Function
+
+
+Function Get_PowerOfTwo Global Returns Real
+    Local Real liPowerOfTwo
+    Local Integer liCounter liExp
+    For liCounter From 0 to (Item_Count(ghoExpSet)-1)
+        Get Value of ghoExpSet Item liCounter to liExp
+        Add (2^liExp) to liPowerOfTwo
+    Loop
+    Function_Return liPowerOfTwo
+End_Function
+
+
+
+//Set Shadow_State of Item N to (Component_Shadow_State(**C**))
+Function Component_Shadow_State Global Integer liComponenet_Code Returns Integer
+         If liComponenet_Code eq 3  Function_Return 1 //disable
+         Function_Return 0 //enabled
+End_Function
+
+// 1 cm = 556,9291 twips
+// 1 in = 1440 twips
+// 1 in = 2,54 cm
+
+Function CmToTwips Global Number aiCm Returns Integer
+    Function_Return (Round(aiCm*566.9291))
+End_Function // CmToTwips
+
+Function CmToInches Global Number aiCm Returns Number
+    Function_Return (aiCm/2.54)
+End_Function // CmToInches
+
+Function InchesToCm Global Number aiIn Returns Number
+    Function_Return (aiIn*2.54)
+End_Function // InchesToCm
+
+Function TwipsToCm Global Integer aiTwips Returns Number
+    Function_Return (aiTwips/566.9291)
+End_Function // TwipsToCm
+
+
+///Çú§†°„ Function ö†ò °¢„©û ´¶¨ Runtime 16/06/2000 Spy
+Procedure DoRunApplication For Baseclass String sAppName
+    String sRuntime
+    Integer bFileExists
+
+    get_profile_string "defaults" "VDFRootDir" to sRuntime
+    append sRuntime "\bin\dfrun.exe "
+    File_Exist sRuntime bFileExists
+    If (Not(bFileExists)) Begin
+        get_profile_string "defaults" "VDFBinDir" to sRuntime
+        append sRuntime "\dfrun.exe "
+        File_Exist sRuntime bFileExists
+        If (Not(bFileExists)) Begin
+            Send Stop_Box "è®¶©¶Æ„. Éú§ ú¨®‚üû ´¶ RunTime!" "ë≠·¢£ò ë¨©´„£ò´¶™"
+            Procedure_Return
+        End
+    End
+    append sRuntime sAppName
+    runprogram background sRuntime
+End_procedure
+
+
+Function fsReturnFileFromPath Global String asFullPath Returns String
+    String rVal lsDirSep
+    Integer iPos iMet iLen iCnt
+    Move (Trim(asFullPath))                 To rVal
+    Move (Sysconf(SYSCONF_DIR_SEPARATOR))   To lsDirSep
+    If (rVal Contains lsDirSep) Begin
+        Move (Length(rVal)) to iLen
+        Move iLen to iCnt
+        While iCnt Gt 0
+            If (Mid(rVal,1,iCnt)=lsDirSep) Begin
+                If (iCnt=iLen) Function_Return asFullPath
+                Else Function_Return (Right(rVal,(iLen-iCnt)))
+            End
+            Decrement iCnt
+        End
+    End
+    Else  Function_Return (Trim(asFullPath))
+    Function_Return rVal
+End_Function
+
+
+
+

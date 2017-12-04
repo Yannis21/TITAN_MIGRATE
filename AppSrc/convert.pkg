@@ -1,0 +1,311 @@
+
+OPEN Nomisma
+OPEN Isotimia
+
+//integers 1 234 567 890
+//        Ò2,147,483,647
+/Image_for_function_Round0
+______________.________       _____________.       ______________.________
+/*
+Function gnfRoundSub global number lnAmmount## Returns Number
+
+
+         ////////////////////////////////////////////////////////
+         //ò§·¢¨©û ©ú ò°‚®ò†¶ °ò† õú°òõ†°Ê £‚®¶™/////////////////
+         ////////////////////////////////////////////////////////
+         Move (ABS(lnAmmount##)) to Image_for_function_Round0.1
+         Move (ABS(lnAmmount##)) to Image_for_function_Round0.2 //ò°‚®ò†¶ £‚®¶™
+         Move (;
+               Image_for_function_Round0.1-;
+               Image_for_function_Round0.2 ;
+              )           to Image_for_function_Round0.3 //õú°òõ†°Ê £‚®¶™
+
+
+         ////////////////////////////////////////////////////////
+         //ö†ò üú´†°¶Á™ ò®†ü£¶Á™, ©´®¶öö¨¢¶ß¶Âû©û ß®¶™ ´ò ß·§‡///
+         ////////////////////////////////////////////////////////
+         If lnAmmount## ge 0 Begin
+            If Image_for_function_Round0.3 ge 0.5;
+               Function_return (Image_for_function_Round0.2+1)
+Else           Function_return  Image_for_function_Round0.2
+                             End
+
+
+         ////////////////////////////////////////////////////////
+         //ö†ò ò®§û´†°¶Á™ ò®†ü£¶Á™, ©´®¶öö¨¢¶ß¶Âû©û ß®¶™ ´ò °·´‡/
+         ////////////////////////////////////////////////////////
+Else                         Begin
+            If Image_for_function_Round0.3 ge 0.5;
+               Function_return ((Image_for_function_Round0.2+1)*(-1))
+Else           Function_return ( Image_for_function_Round0.2   *(-1))
+                             End
+
+End_Function //gnfRoundSub
+
+
+//û ßò®ò°·´‡ function õ‚Æú´ò† input ´¶ ß¶©Ê§ °ò† ´ò õú°òõ†°·
+//©´ò ¶ß¶Âò ü‚¢¶¨£ú §ò öÂ§ú† ©´®¶öö¨¢¶ß¶Âû©û.
+//úß†´®úßÊ£ú§¶ range õú°òõ†°È§ 0-8.
+//£‚ö†©´¶ úß†´®úßÊ£ú§¶ ß¶©Ê§ 99,999,999,999,999.99999999 (n14.8).
+//                     „´¶†  99 ´®Â™
+
+Function pnfRounding global integer liDecimals##;
+                            number  lnAmmount##;
+                            Returns Number
+
+         Local number ln10exp##
+         Local number lnAkeraio_Meros## lnDekadiko_Meros##
+
+
+         ////////////////////////////////////////////////////////
+         //‚¢úöÆ¶† range õú°òõ†°È§ °ò† ß¶©¶Á/////////////////////
+         ////////////////////////////////////////////////////////
+         If liDecimals## gt 8 Move 8 to liDecimals##
+         If liDecimals## lt 0 Move 0 to liDecimals##
+         If lnAmmount## ge 99999999999999.99999999 function_return 99999999999999
+
+
+         ////////////////////////////////////////////////////////
+         //ò§·¢¨©û ©ú ò°‚®ò†¶ °ò† õú°òõ†°Ê £‚®¶™/////////////////
+         ////////////////////////////////////////////////////////
+         Move lnAmmount## to Image_for_function_Round0.1
+         Move lnAmmount## to Image_for_function_Round0.2 //ò°‚®ò†¶ £‚®¶™
+         Move (;
+               Image_for_function_Round0.1-;
+               Image_for_function_Round0.2 ;
+              )           to Image_for_function_Round0.3 //õú°òõ†°Ê £‚®¶™
+
+         Move Image_For_function_Round0.2 to lnAkeraio_Meros##
+         Move Image_For_function_Round0.3 to lnDekadiko_Meros##
+
+
+         ////////////////////////////////////////////////////////
+         //truncation & rounding õú°òõ†°¶Á £‚®¶¨™////////////////
+         ////////////////////////////////////////////////////////
+         Calc (10^liDecimals##)                      to ln10exp##
+         Calc (lnDekadiko_Meros##*ln10exp##)         to lnDekadiko_Meros##
+         Move (gnfRoundSub(lnDekadiko_Meros##))      to lnDekadiko_Meros##
+         Calc (lnDekadiko_Meros##/ln10exp##)         to lnDekadiko_Meros##
+         Calc (lnAkeraio_Meros##+lnDekadiko_Meros##) to lnAmmount##
+
+         Function_Return lnAmmount##
+
+End_Function //pnfRounding
+
+
+
+//°‡õ†°Ê† ¢òüÈ§ ß¶¨ úß†©´®‚≠ú† û function:
+// - 1:õú§ ¨ß·®Æú† ´¶ §Ê£†©£ò òßÊ
+// - 2:õú§ ¨ß·®Æú† ´¶ §Ê£†©£ò ©‚
+// - 3:õ‚§ ô®‚üû°ú †©¶´†£Âò ©´û ùû´¶Á£ú§û û£ú®¶£û§Âò
+// - 4:§Ê£†©£ò ©‚ £û £ú´ò´®‚Ø†£¶
+// - 5:õú§ ¨ß·®Æú† ´¶ §Ê£†©£ò ö†ò rounding               pnfRounding
+
+Function gnfConvert Global string  lsNomisma_From##;
+                           string  lsNomisma_To##;
+                           date    ldHmnia##;
+                           number  lnAmmount##;
+                           number  lnRate##;
+                           returns Number
+
+
+         Local number  lnConverted_Ammount##
+
+         Local Integer liNomisma_From_Type##      //´Áß¶™ §¶£Â©£ò´¶™ òßÊ
+         Local Integer liNomisma_From_Decimals##  //õú°òõ†°· §¶£Â©£ò´¶™ òßÊ
+         Local Integer liNomisma_From_Sign0##     //ß®·•û £ú´ò´®¶ß„™ ©ú §Ê£†©£ò 0
+         Local Integer liNomisma_From_Sign00##    //ß®·•û £ú´ò´®¶ß„™ ©ú §Ê£†©£ò 00
+         Local Integer liNomisma_From_SignR##     //ß®·•û £ú´ò´®¶ß„™ ©ú §Ê£†©£ò R
+         Local Integer liNomisma_From_Euro##      //§Ê£†©£ò òßÊ ò§„°ú† ©´û§ ¶£·õò ú¨®È ? (§òÂ=1,ÊÆ†=0)
+         Local Number  lnNomisma_From_Units##     //£¶§·õú™ ©´†™ ¶ß¶Âú™ ò§ò≠‚®ú´ò† û †©¶´†£Âò ´¶¨ §¶£Â©£ò´¶™ òßÊ
+         Local Number  lnNomisma_From_Rate_Euro## //fixed euro rate ´¶¨ §¶£Â©£ò´¶™ òßÊ
+
+         Local Integer liNomisma_To_Type##        //´Áß¶™ §¶£Â©£ò´¶™ ©‚
+         Local Integer liNomisma_To_Decimals##    //õú°òõ†°· §¶£Â©£ò´¶™ ©‚
+         Local Integer liNomisma_To_Sign0##       //ß®·•û £ú´ò´®¶ß„™ ©ú §Ê£†©£ò 0
+         Local Integer liNomisma_To_Sign00##      //ß®·•û £ú´ò´®¶ß„™ ©ú §Ê£†©£ò 00
+         Local Integer liNomisma_To_SignR##       //ß®·•û £ú´ò´®¶ß„™ ©ú §Ê£†©£ò R
+         Local Integer liNomisma_To_Euro##        //§Ê£†©£ò ©‚ ò§„°ú† ©´û§ ¶£·õò ú¨®È ? (§òÂ=1,ÊÆ†=0)
+         Local Number  lnNomisma_To_Units##       //£¶§·õú™ ©´†™ ¶ß¶Âú™ ò§ò≠‚®ú´ò† û †©¶´†£Âò ´¶¨ §¶£Â©£ò´¶™ ©‚
+         Local Number  lnNomisma_To_Rate_Euro##   //fixed euro rate ´¶¨ §¶£Â©£ò´¶™ ©ú
+
+         Local Number  lnRate0##                   //rate §¶£Â©£ò´¶™ òßÊ ß®Ê™ §Ê£†©£ò book 1
+         Local Number  lnRate00##                  //rate §¶£Â©£ò´¶™ òßÊ ß®Ê™ §Ê£†©£ò book 2
+         Local Number  lnRateR##                   //rate §¶£Â©£ò´¶™ òßÊ ß®Ê™ §Ê£†©£ò book reporting
+
+         //*********************************************************************
+         //01. ú¢úöÆ¶™ ú·§ ´¶ §Ê£†©£ò òßÊ †©¶Á´ò† £ú ´¶ §Ê£†©£ò ©‚             *
+         //*********************************************************************
+         If lsNomisma_From## eq lsNomisma_To## Function_Return lnAmmount##
+
+
+         //*********************************************************************
+         //02. ú¢úöÆ¶™ Áßò®•û™ §¶£Â©£ò´¶™ òßÊ                                  *
+         //*********************************************************************
+         Clear Nomisma
+         Move lsNomisma_From## to Nomisma.Nomisma_Code
+         Find eq Nomisma by index.1 //Nomisma_code
+         [finderr] Begin //õú§ ¨ß·®Æú† ´¶ §Ê£†©£ò òßÊ
+                    Function_Return (-1)
+                   End
+         Move Nomisma.Nomisma_Type      to liNomisma_From_Type##
+         Move Nomisma.Dekadika          to liNomisma_From_Decimals##
+         Move Nomisma.Nomisma_Sign0     to liNomisma_From_Sign0##
+         Move Nomisma.Nomisma_Sign00    to liNomisma_From_Sign00##
+         Move Nomisma.Nomisma_SignR     to liNomisma_From_SignR##
+         Move Nomisma.Nomisma_Euro      to liNomisma_From_Euro##
+         Move Nomisma.Nomisma_Units     to lnNomisma_From_Units##
+         Move Nomisma.Nomisma_Rate_E    to lnNomisma_From_Rate_Euro##
+
+
+         //*********************************************************************
+         //03. ú¢úöÆ¶™ Áßò®•û™ §¶£Â©£ò´¶™ ©‚                                   *
+         //*********************************************************************
+         Clear Nomisma
+         Move lsNomisma_To## to Nomisma.Nomisma_C_Code
+         Find eq Nomisma by index.1 //Nomisma_code
+         [finderr] Begin //õú§ ¨ß·®Æú† ´¶ §Ê£†©£ò ©‚
+                    Function_Return (-2)
+                   End
+         Move Nomisma.Nomisma_Type   to liNomisma_To_Type##
+         Move Nomisma.Nomisma_Dec    to liNomisma_To_Decimals##
+         Move Nomisma.Nomisma_Sign0  to liNomisma_To_Sign0##
+         Move Nomisma.Nomisma_Sign00 to liNomisma_To_Sign00##
+         Move Nomisma.Nomisma_SignR  to liNomisma_To_SignR##
+         Move Nomisma.Nomisma_Euro   to liNomisma_To_Euro##
+         Move Nomisma.Nomisma_Units  to lnNomisma_To_Units##
+         Move Nomisma.Nomisma_Rate_E to lnNomisma_To_Rate_Euro##
+
+
+         //*********************************************************************
+         //04. ò§òö‡ö„ ©´û £¶§·õò ´¶¨ ß®¶™ £ú´ò©Æû£ò´†©£Ê ß¶©¶Á                *
+         //    (ö†ò ITL & JPY)                                                 *
+         //*********************************************************************
+         Calc (lnAmmount##/lnNomisma_From_Units##) to lnAmmount##
+
+
+         //*********************************************************************
+         //05. ú¢úöÆ¶™ ú·§ °ò† ´ò 2 §¶£Â©£ò´ò ò§„°¶¨§ ©´û§ ¶£·õò ú¨®È          *
+         //*********************************************************************
+         If (;
+             (liNomisma_From_Euro## =1) and;
+             (liNomisma_To_Euro##   =1);
+            ) Begin
+               //05a. §Ê£†©£ò òßÊ --> ú¨®È
+               Calc (lnAmmount##/lnNomisma_From_Rate_Euro##)                     to lnConverted_Ammount##
+               Move (pnfRounding(6,lnConverted_Ammount##))                        to lnConverted_Ammount##
+
+//sosososo ´ò 6 ú§õ†·£ú©ò õú°òõ†°·
+
+               //05b. ú¨®È        --> §Ê£†©£ò ©‚ *
+               Calc (lnConverted_Ammount##*lnNomisma_To_Rate_Euro##)             to lnConverted_Ammount##
+               Move (pnfRounding(liNomisma_To_Decimals##,lnConverted_Ammount##)) to lnConverted_Ammount##
+
+               Function_Return lnConverted_Ammount##
+              End //ú·§ °ò† ´ò 2 §¶£Â©£ò´ò ò§„°¶¨§ ©´û§ ¶£·õò ú¨®È
+
+
+         //*********************************************************************
+         //06.úÁ®ú©û rate §¶£Â©£ò´¶™ òßÊ, ô·©ú† û£ú®¶£û§Âò™, ú·§ õ‚§ ‚Æú†      *
+         //   õ¶üúÂ user rate (°ò®≠‡´Ê)                                        *
+         //*********************************************************************
+
+          ////////////////////////////////////////////////////////////
+          //ú·§ õ‚§ ‚Æú† õ¶üúÂ user rate, Ø·Æ§¶¨£ú ©´¶ ò®ÆúÂ¶/////////
+          ////////////////////////////////////////////////////////////
+          If lnRate## eq 0 BEGIN
+                            Move 0 to lnRate0##
+                            Move 0 to lnRate00##
+                            Move 0 to lnRateR##
+
+                            Clear Isotimia
+                            Move lsNomisma_From## to Isotimia.Nomisma_C_Code
+                            Move ldHmnia##         to Isotimia.Isotimia_Hmnia
+                            Find eq Isotimia by index.1 //Nomisma_code+Isotimia_hmnia
+                            [Finderr] Begin //õ‚§ ô®‚üû°ú †©¶´†£Âò ©´û ùû´¶Á£ú§û û£ú®¶£û§Âò
+                                       Function_Return (-3)
+                            End
+
+                            Move Isotimia.Isotimia_Rate0  to lnRate0##
+                            Move Isotimia.Isotimia_Rate00 to lnRate00##
+                            Move Isotimia.Isotimia_RateR  to lnRateR##
+                           END
+
+          ////////////////////////////////////////////////////////////
+          //ú·§ ‚Æú† õ¶üúÂ user rate, ´Ê´ú Æ®û©†£¶ß¶†úÂ´ò† ò¨´Ê
+          ////////////////////////////////////////////////////////////
+ELSE                       BEGIN
+                            Move lnRate## to lnRate0##
+                            Move lnRate## to lnRate00##
+                            Move lnRate## to lnRateR##
+                           END
+
+         //*********************************************************************
+         //07a.ú·§ ´¶ §Ê£†©£ò ©‚ úÂ§ò† ´¶ 0 (book 1)                           *
+         //*********************************************************************
+         If liNomisma_To_Type## eq 1 BEGIN //§Ê£†©£ò book 1
+
+
+            If liNomisma_From_Sign0## eq 1 Begin //ß¶¢¢òß¢ò©†ò£Ê™
+               Calc (lnAmmount##*lnRate0##) to lnConverted_Ammount##
+               Function_Return (pnfRounding(liNomisma_To_Decimals##,lnConverted_Ammount##))
+                                            End
+
+Else        If liNomisma_From_Sign0## eq 2 Begin //õ†òÂ®ú©û
+               Calc (lnAmmount##/lnRate0##) to lnConverted_Ammount##
+               Function_Return (pnfRounding(liNomisma_To_Decimals##,lnConverted_Ammount##))
+                                            End
+
+Else                                        Begin //£„ £ú´ò´®‚Ø†£¶-·¢¢¶
+                                             Function_return (-4)
+                                            End
+         END
+         //*********************************************************************
+         //07b.ú·§ ´¶ §Ê£†©£ò ©‚ úÂ§ò† ´¶ 00 (book 2)                          *
+         //*********************************************************************
+ELSE     If liNomisma_To_Type## eq 2 BEGIN //§Ê£†©£ò book 2
+            If liNomisma_From_Sign00## eq 1 Begin //ß¶¢¢òß¢ò©†ò£Ê™
+               Calc (lnAmmount##*lnRate00##) to lnConverted_Ammount##
+               Function_Return (pnfRounding(liNomisma_To_Decimals##,lnConverted_Ammount##))
+                                             End
+
+Else        If liNomisma_From_Sign00## eq 2 Begin //õ†òÂ®ú©û
+               Calc (lnAmmount##/lnRate00##) to lnConverted_Ammount##
+               Function_Return (pnfRounding(liNomisma_To_Decimals##,lnConverted_Ammount##))
+                                             End
+
+Else                                         Begin //£„ £ú´ò´®‚Ø†£¶-·¢¢¶
+                                              Function_return (-4)
+                                             End
+         END
+         //*********************************************************************
+         //07c.ú·§ ´¶ §Ê£†©£ò ©‚ úÂ§ò† ´¶ R (reporting)                        *
+         //*********************************************************************
+ELSE     If liNomisma_To_Type## eq 3 BEGIN //§Ê£†©£ò reporting
+            If liNomisma_From_SignR## eq 1 Begin //ß¶¢¢òß¢ò©†ò£Ê™
+               Calc (lnAmmount##*lnRateR##) to lnConverted_Ammount##
+               Function_Return (pnfRounding(liNomisma_To_Decimals##,lnConverted_Ammount##))
+                                            End
+
+Else        If liNomisma_From_SignR## eq 2 Begin //õ†òÂ®ú©û
+               Calc (lnAmmount##/lnRateR##) to lnConverted_Ammount##
+               Function_Return (pnfRounding(liNomisma_To_Decimals##,lnConverted_Ammount##))
+                                            End
+
+Else                                        Begin //£„ £ú´ò´®‚Ø†£¶-·¢¢¶
+                                             Function_return (-4)
+                                            End
+         END
+         //*********************************************************************
+         //07d.ú·§ ´¶ §Ê£†©£ò ©‚ õ‚§ úÂ§ò† ¶Á´ú book 1, ¶Á´ú book 2,  ¶Á´ú Reporting
+         //*********************************************************************
+ELSE                                  BEGIN //·¢¢¶ §Ê£†©£ò
+                                             Function_return (-4)
+         END
+
+         Function_return (-99) //call solution !
+
+End_Function //gnfConvert
+
+
+

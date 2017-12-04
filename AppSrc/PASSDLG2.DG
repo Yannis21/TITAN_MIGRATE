@@ -1,0 +1,1118 @@
+//AB/ Project Password Dialog
+//AB/     Object prj is a Dialog_Project
+//AB/         Set ProjectName to "Password Dialog"
+//AB/         Set ProjectFileName to "PASSDLG2.DG"
+
+// Project Object Structure
+//   oNewPassDlg is a ModalPanelSub
+//     ConfirmPassForm is a FormSub
+//     NewPassForm is a FormSub
+//     NewPassForm2 is a FormSub
+//     oOK_bn is a ButtonSub
+//     TextBox_EZ1 is a TextBoxSub
+//     TextBox_EZ2 is a TextBoxSub
+//     TextBox_EZ3 is a TextBoxSub
+//     oCancel_bn is a ButtonSub
+//     chkLengthOverEight is a CheckBoxSub
+//     chk3Consecutive is a CheckBoxSub
+//     chkAtLeast1Upper is a CheckBoxSub
+//     chkAtLeast1Lower is a CheckBoxSub
+//     chkAtLeast1Number is a CheckBoxSub
+//     chkAtLeast1Special is a CheckBoxSub
+//     chkNoGreek is a CheckBoxSub
+//     chkSeiriakous is a CheckBoxSub
+//     chkBlanks is a CheckBoxSub
+//     TextBoxSub4 is a TextBoxSub
+//     TextBoxSub5 is a TextBoxSub
+//     TextBoxSub6 is a TextBoxSub
+//     TextBoxSub7 is a TextBoxSub
+//     TextBoxSub8 is a TextBoxSub
+//     TextBoxSub9 is a TextBoxSub
+//     TextBoxSub10 is a TextBoxSub
+//     TextBoxSub11 is a TextBoxSub
+//     TextBoxSub12 is a TextBoxSub
+//     TextBoxSub13 is a TextBoxSub
+//     TextBoxSub14 is a TextBoxSub
+//     TextBoxSub15 is a TextBoxSub
+//     TextBoxSub16 is a TextBoxSub
+//     txt1 is a TextBoxSub
+//     txt2 is a TextBoxSub
+//     txt3 is a TextBoxSub
+//     txt4 is a TextBoxSub
+//     txt5 is a TextBoxSub
+//     txt6 is a TextBoxSub
+//     txt7 is a TextBoxSub
+//     txt8 is a TextBoxSub
+//     txt9 is a TextBoxSub
+//     ButtonSub1 is a ButtonSub
+
+// Register all objects
+Register_Object ButtonSub1
+Register_Object ConfirmPassForm
+Register_Object chk3Consecutive
+Register_Object chkAtLeast1Lower
+Register_Object chkAtLeast1Number
+Register_Object chkAtLeast1Special
+Register_Object chkAtLeast1Upper
+Register_Object chkBlanks
+Register_Object chkLengthOverEight
+Register_Object chkNoGreek
+Register_Object chkSeiriakous
+Register_Object NewPassForm
+Register_Object NewPassForm2
+Register_Object oCancel_bn
+Register_Object oNewPassDlg
+Register_Object oOK_bn
+Register_Object TextBox_EZ1
+Register_Object TextBox_EZ2
+Register_Object TextBox_EZ3
+Register_Object TextBoxSub10
+Register_Object TextBoxSub11
+Register_Object TextBoxSub12
+Register_Object TextBoxSub13
+Register_Object TextBoxSub14
+Register_Object TextBoxSub15
+Register_Object TextBoxSub16
+Register_Object TextBoxSub4
+Register_Object TextBoxSub5
+Register_Object TextBoxSub6
+Register_Object TextBoxSub7
+Register_Object TextBoxSub8
+Register_Object TextBoxSub9
+Register_Object txt1
+Register_Object txt2
+Register_Object txt3
+Register_Object txt4
+Register_Object txt5
+Register_Object txt6
+Register_Object txt7
+Register_Object txt8
+Register_Object txt9
+
+
+
+    //AB-StoreTopStart
+                
+    Open Sysrec
+    Open Users
+    Open UsersH
+    
+    //Use FlexOle
+    //Use ChilkatCrypt
+    
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use Panel.Sub
+    Use Form.Sub
+    Use Button.Sub
+    Use Txtbox.Sub
+    Use Chkbox.Sub
+
+
+    //AB-IgnoreEnd
+
+    Object oNewPassDlg is a ModalPanelSub
+
+        //AB-StoreTopStart
+        
+        Property String     psOldPassword   Public ""
+        Property String     psNewPassword   Public ""
+        Property String     piCanceled      Public False
+        Property String     piState         Public 0
+        Property Integer    piPasswordState Public 1
+        
+        Enum_List
+            Define All_Ok           // 0
+            Define Canceled         // 1
+            Define Same_Password    // 2
+            Define Wrong_Password   // 3
+            Define Not_Match        // 4
+            Define No_Password      // 5
+            Define Wrong_Prev_Passw // 6
+            Define Already_Used     // 7
+        End_Enum_List
+        
+        //AB-StoreTopEnd
+
+        Set Minimize_Icon to FALSE
+        Set Label to "Ä¢¢òö„ â‡õ†°¶Á è®Ê©ôò©û™"
+        Set Size to 233 387
+        Set Location to 9 31
+        Set Color to 13688273
+        Set Popup_State to TRUE
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object ConfirmPassForm is a FormSub
+
+            //AB-StoreTopStart
+                                                        
+            //AB-StoreTopEnd
+
+            Set Size to 13 110
+            Set Location to 14 157
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                        
+            Set Password_State to True
+            
+            //AB-StoreEnd
+
+        End_Object    // ConfirmPassForm
+
+        Object NewPassForm is a FormSub
+
+            //AB-StoreTopStart
+                                                        
+            //AB-StoreTopEnd
+
+            Set Size to 13 110
+            Set Location to 34 157
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                        
+            Set Password_State to True
+            
+            Procedure OnChange
+            
+                Integer rVal bState i1 i2 i3 i4 i5 i6 i7 i8 i9 iDays iMax iHasProblems
+                Integer iHasProblems1 iHasProblems2 iHasProblems3 iHasProblems4 iHasProblems5
+                Integer iHasProblems6 iHasProblems7 iHasProblems8 iHasProblems9
+                String  asPassw
+            
+                Move 0 to iHasProblems1
+                Move 0 to iHasProblems2
+                Move 0 to iHasProblems3
+                Move 0 to iHasProblems4
+                Move 0 to iHasProblems5
+                Move 0 to iHasProblems6
+                Move 0 to iHasProblems7
+                Move 0 to iHasProblems8
+                Move 0 to iHasProblems9
+            
+                Get Value Item 0 to asPassw
+                Move (Trim(asPassw)) to asPassw
+            
+                Reread Sysrec
+                Unlock
+                Move Sysrec.LIBCAST_CODE    to i1
+                Move Sysrec.AWARD_CODE      to i2
+                Move Sysrec.GIVAWRD_CODE    to i3
+                Move Sysrec.MOVIE_LNK_CODE  to i4
+                Move Sysrec.CAST_LNK_CODE   to i5
+                Move Sysrec.AWARDTP_CODE    to i6
+                Move Sysrec.FESTIVAL_CODE   to i7 // No Greek characters Hard Coded to 1
+                Move Sysrec.STWHAT_CODE     to i8
+                Move Sysrec.SNWHAT_CODE     to i9
+            
+                If ((i1=1) And (Length(asPassw)<8))                Move 1 to iHasProblems1
+                If ((i2=1) And (HasDuplicates (Self,asPassw  )=1)) Move 1 to iHasProblems2
+                If ((i3=1) And (HasOneCap     (Self,asPassw,1)=0)) Move 1 to iHasProblems3
+                If ((i4=1) And (HasOneSmall   (Self,asPassw,1)=0)) Move 1 to iHasProblems4
+                If ((i5=1) And (HasOneNumber  (Self,asPassw  )=0)) Move 1 to iHasProblems5
+                If ((i6=1) And (HasOneSpecial (Self,asPassw  )=0)) Move 1 to iHasProblems6
+                If ((i7=1) And (HasOneGreek   (Self,asPassw  )=1)) Move 1 to iHasProblems7
+                If ((i8=1) And (HasInRow      (Self,asPassw,1)=1)) Move 1 to iHasProblems8
+                If ((i9=1) And (Pos(" ",asPassw)>0))               Move 1 to iHasProblems9
+            
+                If (iHasProblems1=1) Set TextColor Of txt1 to clRed
+                Else                 Set TextColor Of txt1 to clBlack
+            
+                If (iHasProblems2=1) Set TextColor Of txt2 to clRed
+                Else                 Set TextColor Of txt2 to clBlack
+            
+                If (iHasProblems3=1) Set TextColor Of txt3 to clRed
+                Else                 Set TextColor Of txt3 to clBlack
+            
+                If (iHasProblems4=1) Set TextColor Of txt4 to clRed
+                Else                 Set TextColor Of txt4 to clBlack
+            
+                If (iHasProblems5=1) Set TextColor Of txt5 to clRed
+                Else                 Set TextColor Of txt5 to clBlack
+            
+                If (iHasProblems6=1) Set TextColor Of txt6 to clRed
+                Else                 Set TextColor Of txt6 to clBlack
+            
+                If (iHasProblems7=1) Set TextColor Of txt7 to clRed
+                Else                 Set TextColor Of txt7 to clBlack
+            
+                If (iHasProblems8=1) Set TextColor Of txt8 to clRed
+                Else                 Set TextColor Of txt8 to clBlack
+            
+                If (iHasProblems9=1) Set TextColor Of txt9 to clRed
+                Else                 Set TextColor Of txt9 to clBlack
+            
+            
+            End_Procedure
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // NewPassForm
+
+        Object NewPassForm2 is a FormSub
+
+            //AB-StoreTopStart
+                                                        
+            //AB-StoreTopEnd
+
+            Set Size to 13 110
+            Set Location to 49 157
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                        
+            Set Password_State to True
+            
+            //AB-StoreEnd
+
+        End_Object    // NewPassForm2
+
+        Object oOK_bn is a ButtonSub
+
+            //AB-StoreTopStart
+                                                        
+            //AB-StoreTopEnd
+
+            Set Label to "Äß¶õ¶Æ„"
+            Set Default_State to TRUE
+            Set Location to 70 217
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                        
+            Procedure OnClick
+                Set piState to All_Ok
+                Delegate Send Stop_Modal_UI
+            End_Procedure
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // oOK_bn
+
+        Object TextBox_EZ1 is a TextBoxSub
+            Set Label to "èò¢†Ê™ â‡õ†°Ê™"
+            Set Auto_Size_State to FALSE
+            Set Color to 13688273
+            Set FontSize to 4 0
+            Set Location to 14 51
+            Set Size to 13 85
+            Set TypeFace to "MS Sans Serif"
+            Set Enabled_State to TRUE
+        End_Object    // TextBox_EZ1
+
+        Object TextBox_EZ2 is a TextBoxSub
+            Set Label to "å‚¶™ â‡õ†°Ê™"
+            Set Color to 13688273
+            Set FontSize to 4 0
+            Set Location to 35 51
+            Set Size to 10 63
+            Set TypeFace to "MS Sans Serif"
+            Set Enabled_State to TRUE
+        End_Object    // TextBox_EZ2
+
+        Object TextBox_EZ3 is a TextBoxSub
+            Set Label to "å‚¶™ â‡õ†°Ê™ (Ñß†ôúôòÂ‡©û)"
+            Set Color to 13688273
+            Set FontSize to 4 0
+            Set Location to 50 51
+            Set Size to 10 98
+            Set TypeFace to "MS Sans Serif"
+            Set Enabled_State to TRUE
+        End_Object    // TextBox_EZ3
+
+        Object oCancel_bn is a ButtonSub
+
+            //AB-StoreTopStart
+                                                        
+            //AB-StoreTopEnd
+
+            Set Label to "Ä°Á®‡©û"
+            Set Location to 70 157
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                        
+            Procedure OnClick
+                Set piState to Canceled
+                Delegate Send Stop_Modal_UI
+            End_Procedure
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // oCancel_bn
+
+        Object chkLengthOverEight is a CheckBoxSub
+
+            //AB-StoreTopStart
+                                                        
+            //AB-StoreTopEnd
+
+            Set Size to 10 11
+            Set Location to 116 7
+            Set Checked_State to TRUE
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+                                                        
+            Procedure OnChange
+                Integer isChecked
+                String lsTheAppPath
+                Get Checked_State                                       To isChecked
+                Move (GetTheAppPath(Self))                              To lsTheAppPath
+                Set_Profile_String lsTheAppPath "Passw_LengthOverEight" To isChecked
+            End_Procedure
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // chkLengthOverEight
+
+        Object chk3Consecutive is a CheckBoxSub
+
+            //AB-StoreTopStart
+                                                        
+            //AB-StoreTopEnd
+
+            Set Size to 10 11
+            Set Location to 127 7
+            Set Checked_State to TRUE
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+                                                        
+            Procedure OnChange
+                Integer isChecked
+                String lsTheAppPath
+                Get Checked_State                                   To isChecked
+                Move (GetTheAppPath(Self))                          To lsTheAppPath
+                Set_Profile_String lsTheAppPath "Passw_3Consecutive"          To isChecked
+            End_Procedure
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // chk3Consecutive
+
+        Object chkAtLeast1Upper is a CheckBoxSub
+
+            //AB-StoreTopStart
+                                                        
+            //AB-StoreTopEnd
+
+            Set Size to 10 11
+            Set Location to 138 7
+            Set Checked_State to TRUE
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+                                                        
+            Procedure OnChange
+                Integer isChecked
+                String lsTheAppPath
+                Get Checked_State                                   To isChecked
+                Move (GetTheAppPath(Self))                          To lsTheAppPath
+                Set_Profile_String lsTheAppPath "Passw_AtLeast1Upper"          To isChecked
+            End_Procedure
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // chkAtLeast1Upper
+
+        Object chkAtLeast1Lower is a CheckBoxSub
+
+            //AB-StoreTopStart
+                                                        
+            //AB-StoreTopEnd
+
+            Set Size to 10 11
+            Set Location to 150 7
+            Set Checked_State to TRUE
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+                                                        
+            Procedure OnChange
+                Integer isChecked
+                String lsTheAppPath
+                Get Checked_State                                   To isChecked
+                Move (GetTheAppPath(Self))                          To lsTheAppPath
+                Set_Profile_String lsTheAppPath "Passw_AtLeast1Lower"          To isChecked
+            End_Procedure
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // chkAtLeast1Lower
+
+        Object chkAtLeast1Number is a CheckBoxSub
+
+            //AB-StoreTopStart
+                                                        
+            //AB-StoreTopEnd
+
+            Set Size to 10 11
+            Set Location to 161 7
+            Set Checked_State to TRUE
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+                                                        
+            Procedure OnChange
+                Integer isChecked
+                String lsTheAppPath
+                Get Checked_State                                   To isChecked
+                Move (GetTheAppPath(Self))                          To lsTheAppPath
+                Set_Profile_String lsTheAppPath "Passw_AtLeast1Number"          To isChecked
+            End_Procedure
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // chkAtLeast1Number
+
+        Object chkAtLeast1Special is a CheckBoxSub
+
+            //AB-StoreTopStart
+                                                        
+            //AB-StoreTopEnd
+
+            Set Size to 10 11
+            Set Location to 172 7
+            Set Checked_State to TRUE
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+                                                        
+            Procedure OnChange
+                Integer isChecked
+                String lsTheAppPath
+                Get Checked_State                                   To isChecked
+                Move (GetTheAppPath(Self))                          To lsTheAppPath
+                Set_Profile_String lsTheAppPath "Passw_AtLeast1Special"          To isChecked
+            End_Procedure
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // chkAtLeast1Special
+
+        Object chkNoGreek is a CheckBoxSub
+
+            //AB-StoreTopStart
+                                                        
+            //AB-StoreTopEnd
+
+            Set Size to 10 11
+            Set Location to 182 7
+            Set Checked_State to TRUE
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        
+            //AB-StoreEnd
+
+        End_Object    // chkNoGreek
+
+        Object chkSeiriakous is a CheckBoxSub
+
+            //AB-StoreTopStart
+                                                        
+            //AB-StoreTopEnd
+
+            Set Size to 10 11
+            Set Location to 193 7
+            Set Checked_State to TRUE
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+                                                        
+            Procedure OnChange
+                Integer isChecked
+                String lsTheAppPath
+                Get Checked_State                                   To isChecked
+                Move (GetTheAppPath(Self))                          To lsTheAppPath
+                Set_Profile_String lsTheAppPath "Passw_Seiriakous"          To isChecked
+            End_Procedure
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // chkSeiriakous
+
+        Object chkBlanks is a CheckBoxSub
+
+            //AB-StoreTopStart
+                                                        
+            //AB-StoreTopEnd
+
+            Set Size to 10 11
+            Set Location to 204 7
+            Set Checked_State to TRUE
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+                                                        
+            Procedure OnChange
+                Integer isChecked
+                String lsTheAppPath
+                Get Checked_State                                   To isChecked
+                Move (GetTheAppPath(Self))                          To lsTheAppPath
+                Set_Profile_String lsTheAppPath "Passw_Blanks"          To isChecked
+            End_Procedure
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // chkBlanks
+
+        Object TextBoxSub4 is a TextBoxSub
+            Set Label to "________________________"
+            Set Color to 13688273
+            Set Location to 191 257
+            Set Size to 10 32
+            Set Justification_Mode to jMode_Left
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub4
+
+        Object TextBoxSub5 is a TextBoxSub
+            Set Label to "_________________________"
+            Set Color to 13688273
+            Set Location to 170 193
+            Set Size to 10 94
+            Set Justification_Mode to jMode_Left
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub5
+
+        Object TextBoxSub6 is a TextBoxSub
+            Set Label to "_________________________________"
+            Set Color to 13688273
+            Set Location to 159 158
+            Set Size to 10 129
+            Set Justification_Mode to jMode_Left
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub6
+
+        Object TextBoxSub7 is a TextBoxSub
+            Set Label to "____________________________"
+            Set Color to 13688273
+            Set Location to 148 191
+            Set Size to 10 97
+            Set Justification_Mode to jMode_Left
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub7
+
+        Object TextBoxSub8 is a TextBoxSub
+            Set Label to "_______________________________________________"
+            Set Color to 13688273
+            Set Location to 138 207
+            Set Size to 10 82
+            Set Justification_Mode to jMode_Left
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub8
+
+        Object TextBoxSub9 is a TextBoxSub
+            Set Label to "______________"
+            Set Color to 13688273
+            Set Location to 126 249
+            Set Size to 10 41
+            Set Justification_Mode to jMode_Center
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub9
+
+        Object TextBoxSub10 is a TextBoxSub
+            Set Label to "(òò, LL, 44...)"
+            Set Color to 13688273
+            Set Location to 127 293
+            Set Size to 10 63
+            Set FontWeight to 600
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub10
+
+        Object TextBoxSub11 is a TextBoxSub
+            Set Label to "(AB...YZ)"
+            Set Color to 13688273
+            Set Location to 137 295
+            Set Size to 10 41
+            Set FontWeight to 600
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub11
+
+        Object TextBoxSub12 is a TextBoxSub
+            Set Label to "(ab...yz)"
+            Set Color to 13688273
+            Set Location to 148 295
+            Set Size to 10 28
+            Set FontWeight to 600
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub12
+
+        Object TextBoxSub13 is a TextBoxSub
+            Set Label to "(1234567890)"
+            Set Color to 13688273
+            Set Location to 159 293
+            Set Size to 10 73
+            Set FontWeight to 600
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub13
+
+        Object TextBoxSub14 is a TextBoxSub
+            Set Label to "(!@#$%^&/*)(_\=+-><|)"
+            Set Color to 13688273
+            Set Location to 172 292
+            Set Size to 10 75
+            Set FontWeight to 600
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub14
+
+        Object TextBoxSub15 is a TextBoxSub
+            Set Label to "(123...876...efg....MLK)"
+            Set Color to 13688273
+            Set Location to 193 293
+            Set Size to 10 78
+            Set FontWeight to 600
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub15
+
+        Object TextBoxSub16 is a TextBoxSub
+            Set Label to "âò§Ê§ú™ °ò† èú®†¶®†©£¶Â ö†ò ´¶§ °‡õ†°Ê ú†©Êõ¶¨"
+            Set Color to 13688273
+            Set Location to 102 7
+            Set Size to 10 173
+            Set FontWeight to 600
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub16
+
+        Object txt1 is a TextBoxSub
+            Set Label to "åò ‚Æú† £„°¶™ òß¶ 8 °ò† ß·§‡ Æò®ò°´„®ú™"
+            Set Color to 13688273
+            Set Location to 114 21
+            Set Size to 10 179
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // txt1
+
+        Object txt2 is a TextBoxSub
+            Set Label to "åò £û§ úßò§ò¢ò£ô·§ú´ò† ‚§ò™ Æò®ò°´„®ò™ 2 ©¨§úÆÊ£ú§ú™ ≠¶®‚™"
+            Set Color to 13688273
+            Set Location to 127 21
+            Set Size to 10 225
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // txt2
+
+        Object txt3 is a TextBoxSub
+            Set Label to "åò ¨ß·®Æú† ´¶¨¢·Æ†©´¶§ ‚§ò™ °ú≠ò¢òÂ¶™ Æò®ò°´„®ò™"
+            Set Color to 13688273
+            Set Location to 138 21
+            Set Size to 10 184
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // txt3
+
+        Object txt4 is a TextBoxSub
+            Set Label to "åò ¨ß·®Æú† ´¶¨¢·Æ†©´¶§ ‚§ò™ ßúùÊ™ Æò®ò°´„®ò™"
+            Set Color to 13688273
+            Set Location to 148 21
+            Set Size to 10 173
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // txt4
+
+        Object txt5 is a TextBoxSub
+            Set Label to "åò ¨ß·®Æú† ´¶¨¢·Æ†©´¶§ ‚§ò™ ò®†ü£Ê™"
+            Set Color to 13688273
+            Set Location to 161 21
+            Set Size to 10 139
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // txt5
+
+        Object txt6 is a TextBoxSub
+            Set Label to "åò ¨ß·®Æú† ´¶¨¢·Æ†©´¶§ ‚§ò™ ú†õ†°Ê™ Æò®ò°´„®ò™"
+            Set Color to 13688273
+            Set Location to 172 21
+            Set Size to 10 176
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // txt6
+
+        Object txt7 is a TextBoxSub
+
+            //AB-StoreTopStart
+                                                        
+            //AB-StoreTopEnd
+
+            Set Label to "åò £û§ Æ®û©†£¶ß¶†¶Á§´ò† Ñ¢¢û§†°¶Â Æò®ò°´„®ú™"
+            Set Color to 13688273
+            Set Location to 182 21
+            Set Size to 10 171
+            Set TypeFace to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                        
+                                                        
+            //AB-StoreEnd
+
+        End_Object    // txt7
+
+        Object txt8 is a TextBoxSub
+            Set Label to "åò £û§ úß†´‚ß¶§´ò† ß·§‡ òß¶ 2 ©¨§úÆÊ£ú§¶¨™ ©ú ©ú†®· Æò®ò°´„®ú™"
+            Set Color to 13688273
+            Set Location to 193 21
+            Set Size to 10 238
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // txt8
+
+        Object txt9 is a TextBoxSub
+            Set Label to "åò £û§ úß†´®‚ß¶§´ò† °ú§·"
+            Set Color to 13688273
+            Set Location to 204 21
+            Set Size to 10 93
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // txt9
+
+        Object ButtonSub1 is a ButtonSub
+
+            //AB-StoreTopStart
+                                                        
+            //AB-StoreTopEnd
+
+            Set Label to "Show Passwords"
+            Set Size to 14 72
+            Set Location to 212 218
+            Set Focus_Mode to Pointer_Only
+            Set Form_FontWeight Item 0 to 600
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                        
+            Set Enabled_State to False
+            Set Visible_State to False
+            
+            // To-Do Mallon den paizei dynamika to password state
+            // opote den mporeis na emfanizeis dynamika ta asterakia
+            Procedure OnClick00
+                Integer iState
+                String sLabel
+                Get Password_State Of NewPassForm to iState
+                Set piPasswordState to (1-iState)
+                If (piPasswordState(Self)=1) Set Label to "Show Passwords"
+                Else                         Set Label to "Hide Passwords"
+                Set Password_State Of NewPassForm       to (piPasswordState(Self)=1)
+                Set Password_State Of NewPassForm2      to (piPasswordState(Self)=1)
+                Set Password_State Of ConfirmPassForm   to (piPasswordState(Self)=1)
+            End_Procedure // OnClick
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub1
+
+
+        //AB-StoreStart
+        
+        Function ConfirmNewCustomPass Returns Integer
+            Local Integer   bPasswordGood i1 i2 i3 i4 i5 i6 i7 i8 i9 iDays iTries success iMax
+            Local String    sNewPassword sNewPassword2 sConfirmPassword sOldPassword sPassw lsTheAppPath
+            Local String    sNewPasswordC sNewPassword2C sConfirmPasswordC sPasswC sLogin
+        
+            Date    dHmnia
+            String  sHH sMM sSS sTime
+            Sysdate dHmnia sHH sMM sSS
+            Move (Trim(sHH)) to sHH
+            Move (Trim(sMM)) to sMM
+            Move (Trim(sSS)) to sSS
+            If (Length(sHH)=1) Insert '0' in sHH at 1
+            If (Length(sMM)=1) Insert '0' in sMM at 1
+            If (Length(sSS)=1) Insert '0' in sSS at 1
+            Move (sHH+":"+sMM+"."+sSS) to sTime
+        
+        
+            Move "" to sConfirmPassword
+            Move "" to sNewPassword
+            Move "" to sNewPassword2
+            Move "" to sConfirmPasswordC
+            Move "" to sNewPasswordC
+            Move "" to sNewPassword2C
+            Move "" to sPasswC
+        
+        
+            Set value of (NewPassForm    (Current_Object)) item 0 to ""
+            Set value of (NewPassForm2   (Current_Object)) item 0 to ""
+            Set value of (ConfirmPassForm(Current_Object)) item 0 to ""
+        
+            Set piPasswordState to 1
+        
+            Set Password_State Of NewPassForm       to (piPasswordState(Self)=1)
+            Set Password_State Of NewPassForm2      to (piPasswordState(Self)=1)
+            Set Password_State Of ConfirmPassForm   to (piPasswordState(Self)=1)
+        
+            Open Sysrec
+            Open Users
+        
+            Move (fsLoginUserID())  to sLogin
+            Clear Users
+            Move sLogin    to Users.Login_ID
+            Find eq Users by Index.1
+        
+            If (iCountRemain>0) Set Label of oNewPassDlg to ("Çú†ò ©¶¨ "+Trim(Users.NAME)+" - Ä¢¢òö„ â‡õ†°¶Á è®Ê©ôò©û™, òß¶£‚§¶¨§ "+String(iCountRemain)+" ß®¶©ß·üú†ú™")
+            Else                Set Label of oNewPassDlg to ("Çú†ò ©¶¨ "+Trim(Users.NAME)+" - Ä¢¢òö„ â‡õ†°¶Á è®Ê©ôò©û™")
+        
+            Reread Sysrec
+            Unlock
+        
+            Set Locate_Mode to CENTER_ON_SCREEN
+        
+            Move Sysrec.LIBCAST_CODE    to i1
+            Move Sysrec.AWARD_CODE      to i2
+            Move Sysrec.GIVAWRD_CODE    to i3
+            Move Sysrec.MOVIE_LNK_CODE  to i4
+            Move Sysrec.CAST_LNK_CODE   to i5
+            Move Sysrec.AWARDTP_CODE    to i6
+            Move Sysrec.FESTIVAL_CODE   to i7 // No Greek characters Hard Coded to 1
+            Move Sysrec.STWHAT_CODE     to i8
+            Move Sysrec.SNWHAT_CODE     to i9
+            Move Sysrec.LIBVIS_CODE     to iDays
+            Move Sysrec.TIKANEI_CODE    to iMax
+        
+            Set Checked_State Of (chkLengthOverEight(Self))         To i1
+            Set Checked_State Of (chk3Consecutive(Self))            To i2
+            Set Checked_State Of (chkAtLeast1Upper(Self))           To i3
+            Set Checked_State Of (chkAtLeast1Lower(Self))           To i4
+            Set Checked_State Of (chkAtLeast1Number(Self))          To i5
+            Set Checked_State Of (chkAtLeast1Special(Self))         To i6
+            Set Checked_State Of (ChkNoGreek(Self))                 To i7
+            Set Checked_State Of (chkSeiriakous(Self))              To i8
+            Set Checked_State Of (chkBlanks(Self))                  To i9
+        //    Set Value Of frmChangePasswordEveryDays Item 0          to iDays
+        //    Set Value Of frmAttempts                Item 0          to iMax
+        
+            Send Popup_Modal
+        
+            Open Sysrec
+            Open Users
+        
+            Get value of (ConfirmPassForm(Current_Object)) item 0 to sConfirmPassword
+            Get value of (NewPassForm    (Current_Object)) item 0 to sNewPassword
+            Get value of (NewPassForm2   (Current_Object)) item 0 to sNewPassword2
+        
+            Move (Trim(sConfirmPassword))   to sConfirmPassword
+            Move (Trim(sNewPassword))       to sNewPassword
+            Move (Trim(sNewPassword2))      to sNewPassword2
+        
+            If (sConfirmPassword<>"") Move (fsCryptoNew(Self,"Encrypt",sConfirmPassword)) to sConfirmPasswordC
+            If (sNewPassword    <>"") Move (fsCryptoNew(Self,"Encrypt",sNewPassword ))    to sNewPasswordC
+            If (sNewPassword2   <>"") Move (fsCryptoNew(Self,"Encrypt",sNewPassword2))    to sNewPassword2C
+        
+            If (piState(Self)<>Canceled) Begin
+        
+                Move (fsLoginUserID())  to sLogin
+                Clear Users
+                Move sLogin    to Users.Login_ID
+                Find eq Users by Index.1
+                If (Found) Begin
+        
+                    If (Trim(Users.PASSWORD)<>"") Move Users.PASSWORD to sPasswC
+        
+                    // --------------------------------------------------
+                    // Verify if not used in the last 5 passwords history
+                    Integer iRecs isAlreadyUsed
+                    Move 0 to iRecs
+                    Move 0 to isAlreadyUsed
+        
+                    Clear UsersH
+                    Move Users.Login_ID to UsersH.Login_ID
+                    Find GE UsersH By Index.1
+                    While ((Found) And (Users.Login_ID=UsersH.Login_ID) And (isAlreadyUsed=0))
+                        Add 1 to iRecs
+                        If ((Trim(UsersH.New_Password)=sNewPasswordC) And (UsersH.Changed_Date<dHmnia)) Move 1 to isAlreadyUsed
+                        Find GT UsersH By Index.1
+                    Loop
+        
+                    If (isAlreadyUsed) Begin
+                        Set piState to Already_Used // 7
+                        Function_Return (piState(Self))
+                    End
+        
+                    If ((Trim(Users.Password)<>"") And (Trim(Users.Password)<>sConfirmPasswordC)) Begin
+                        Set piState to Wrong_Prev_Passw // 6
+                    End
+                    Else If (sNewPasswordC<>sNewPassword2C)  Begin
+                        Set piState to Not_Match // 4
+                    End
+                    Else Begin
+                        If (Trim(sNewPasswordC)="") Begin
+                            Set piState to No_Password // 5
+                        End
+                        Else If (sPasswC=sNewPasswordC) Begin
+                            Set piState to Same_Password // 2
+                        End
+                        Else Begin
+        
+                            Integer isCheckedOK
+                            Move (fsVerifyThePasswordValidity(Self,sNewPassword)) to isCheckedOK
+                            If (isCheckedOK=0) Begin
+        
+                                Set piState to All_Ok // 0
+        
+                                Reread Users
+                                If (Trim(Users.Password)<>"")   Move Users.Password to Users.Last_Password
+                                Else                            Move sNewPasswordC  to Users.Last_Password
+                                Move sNewPasswordC                                  to Users.PASSWORD
+                                Move  dHmnia                                        to Users.Last_Change
+                                Move (dHmnia+iDays)                                 to Users.Next_Change
+                                Move  dHmnia                                        to Users.Last_Login_Date
+                                Move (Trim(sTime))                                  to Users.Last_Login_Time
+                                SaveRecord Users
+                                Unlock
+        
+        
+                                Move 0 to iRecs
+                                Clear UsersH
+                                Move Users.Login_ID to UsersH.Login_ID
+                                Find GE UsersH By Index.1
+                                While ((Found) And (Users.Login_ID=UsersH.Login_ID))
+                                    Add 1 to iRecs
+                                    If (UsersH.Is_Last=1) Begin
+                                        Reread UsersH
+                                        Move 0 to UsersH.Is_Last
+                                        Saverecord UsersH
+                                        Unlock
+                                    End
+                                    Find GT UsersH By Index.1
+                                Loop
+        
+                                If (iRecs<5) Begin
+                                        Clear UsersH
+                                        Move Users.Login_ID     to UsersH.Login_ID
+                                        Move dHmnia             to UsersH.Changed_Date
+                                        Find Eq UsersH By Index.1
+                                        If (Found) Reread UsersH
+                                        Move sNewPasswordC      to UsersH.New_Password
+                                        Move 1                  to UsersH.Is_Last
+                                        Saverecord UsersH
+                                        If (Found) Unlock
+                                End
+                                Else Begin
+                                    Integer   iX
+                                    Move 0 to iX
+                                    Move 0 to iRecs
+        
+                                    Clear UsersH
+                                    Move Users.Login_ID     to UsersH.Login_ID
+                                    Move dHmnia             to UsersH.Changed_Date
+                                    Find Eq UsersH By Index.1
+                                    If (Found) Begin
+                                        Reread UsersH
+                                        Move sNewPasswordC  to UsersH.New_Password
+                                        Move 1              to UsersH.Is_Last
+                                        Saverecord UsersH
+                                        Unlock
+                                    End
+                                    Else Begin
+                                        Clear UsersH
+                                        Move Users.Login_ID to UsersH.Login_ID
+                                        Move ""             to UsersH.Changed_Date
+                                        Find GE UsersH By Index.1
+                                        If ((Found) And (Users.Login_ID=UsersH.Login_ID) And (UsersH.Changed_Date<dHmnia)) Begin
+                                            Reread UsersH
+                                            Move dHmnia             to UsersH.Changed_Date
+                                            Move sNewPasswordC      to UsersH.New_Password
+                                            Move 1                  to UsersH.Is_Last
+                                            Saverecord UsersH
+                                            Unlock
+                                        End
+                                    End
+                                End
+                            End
+                            Else Set piState to Canceled
+                        End
+                    End
+                End
+                Else Set piState to Canceled
+            End
+            // If Cancelled piState = 1
+            Function_Return (piState(Self))
+        End_Function
+        
+        On_Key Key_Alt+Key_O Send KeyAction To (oOk_bn(current_object))
+        On_Key Key_Alt+Key_A Send KeyAction To (oCancel_bn(current_object))
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // oNewPassDlg
+
+
+    //AB-StoreStart
+                
+                
+                
+                
+                
+                
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

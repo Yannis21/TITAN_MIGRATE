@@ -1,0 +1,88 @@
+Use AllEntEz
+
+#REPLACE CURRENT$WORKSPACE   "AD"
+Register_Object Client_Area
+
+//AB-StoreTopStart
+Use Workspc.pkg
+
+//  Set date attributes as needed
+Set_Date_Attribute sysdate4_State to (TRUE)
+Set_Date_Attribute Date4_State    to (TRUE)
+Set_Date_Attribute epoch_value    to 30
+
+Object ProgramWorkspace is a Workspace_EZ
+    Set WorkspaceName to CURRENT$WORKSPACE
+    Set Kenter_Next_State to True
+End_Object
+
+Use Connect.dg
+Use Selectcy.sl
+Send Select_Company
+Send Login
+
+Send Force_Application_Locales
+
+Use MSWord.pkg
+Use MSExcel.Pkg
+
+Use Help_Ids.inc // Developer should provide this file of help context links.
+Use Std_Help.pkg
+
+Open Sysfile
+
+//AB-StoreTopEnd
+
+
+Object Main is a Panel_EZ
+    Set Label To "ExpSFI Export to SFI"
+
+    DFCreate_Menu Main_Menu
+        #include File_PM.inc    // file pulldown menu
+
+        DFCreate_Menu "&View" ViewPopupMenu is a ViewPopupMenu
+            On_Item "&Ascii Export for RFSI\aCtrl+1" Send Activate_logistm
+        End_Pull_down
+        Set Status_Help To "Available Views"
+        
+        #include Navi_pm.inc    // Naviation pulldown menu
+        #include win_PM.inc     // Window of available views
+        #include Helpa_PM.inc   // help pulldown menu w/ About
+    End_Menu
+
+    Use DFStdBtn.pkg //  Tool-Bar object.
+    
+    Object Client_Area is a AppClientArea_EZ
+        //  Include all views
+        Use Rfsi_asc.vw                                                                     
+
+    End_Object  // Client_Area
+    
+    On_Key Key_Ctrl+Key_1 Send Activate_logistm To Client_Area
+    
+    Use DFStdSbr.pkg //  Status-Bar object.
+
+    //AB-PanelStoreStart
+    Use StdAbout.pkg // Standard "About" package.
+    //AB-PanelStoreEnd
+
+
+End_Object
+
+
+//AB-StoreStart
+
+
+Start_UI
+
+
+
+
+
+
+
+
+
+
+//AB-StoreEnd
+

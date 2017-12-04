@@ -1,0 +1,20 @@
+
+Open Syscurxr
+Open SysFile
+Open Sysrecc
+Open Sysrecb
+Open Sysrecw
+
+Procedure Reset_All_Files_Except_System
+    Local Integer File# Open# File_Number# liInt iMax iWait isSystem
+    Local String Physicalname# DisplayName# Logicalname# Rootname#
+    Move 0 To File#
+    Repeat
+      Get_Attribute Df_File_Next_Opened Of File# To File#
+      If (File#) Begin
+        Get_Attribute DF_FILE_IS_SYSTEM_FILE    Of File# To isSystem
+        If (NOT(isSystem)) Clear File#
+      End
+    Until File# Eq 0
+End_Procedure
+

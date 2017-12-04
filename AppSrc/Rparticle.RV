@@ -1,0 +1,984 @@
+//AB/ Project Rparticle:ektyposh parastatikon
+//AB/     Object prj is a Report_Project
+//AB/         Set ProjectName to "Rparticle:ektyposh parastatikon"
+//AB/         Set ProjectFileName to "Rparticle.RV"
+
+// Project Object Structure
+//   Rparticle is a ReportView
+//     DestRadio is a RadioGroup
+//       WindowRadio is a Radio
+//     ButtonSub1 is a Button
+//     ButtonSub3 is a ButtonSub
+//     prom1WQLReport is a crystalreportSubSQL
+
+// Register all objects
+Register_Object ButtonSub1
+Register_Object ButtonSub3
+Register_Object DestRadio
+Register_Object prom1WQLReport
+Register_Object Rparticle
+Register_Object WindowRadio
+
+
+//AB/     Report View
+
+
+    //AB-StoreTopStart
+    Use dfallrpt
+    Open Sysfile
+    Open Particle
+    Open codemast
+    Open clients
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use DFAllEnt.pkg
+    Use Button.Sub
+
+    //AB-IgnoreEnd
+
+    ACTIVATE_VIEW Activate_Rparticle FOR Rparticle
+
+    Object Rparticle is a ReportView
+
+        //AB-StoreTopStart
+        Property String          psrecr     public ''
+        Property Integer         pimazikh   public 0
+        Property Integer         pino       public 0
+        
+        //AB-StoreTopEnd
+
+        Set Label to "Ñ°´Áß‡©û èò®ò©´ò´†°È§"
+        Set Size to 48 191
+        Set Location to 7 86
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object DestRadio is a RadioGroup
+
+            //AB-StoreTopStart
+                                                                                                                                    
+            //AB-StoreTopEnd
+
+            Set Label to "tz.ektyposh"
+            Set Size to 29 49
+            Set Location to 2 1
+            Object WindowRadio is a Radio
+                Set Size to 13 30
+                Set Location to 12 12
+                Set Bitmap to "screen4.bmp"
+            End_Object    // WindowRadio
+
+
+            //AB-StoreStart
+            Set visible_state Of (destradio(Self)) To False
+            If (pimazikh(Self)=0);
+                Set Output_Device_Mode To WQL_PRINT_TO_WINDOW
+            Else ;
+                Set Output_Device_Mode To WQL_PRINT_TO_PRINTER
+            
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // DestRadio
+
+        Object ButtonSub1 is a Button
+
+            //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+            //AB-StoreTopEnd
+
+            Set Bitmap to "RUNPROG.BMP"
+            Set Size to 18 29
+            Set Location to 6 55
+
+            //AB-StoreStart
+            Procedure OnClick
+               Send Runprom1report To (prom1WQLReport(Current_Object))
+            End_Procedure
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub1
+
+        Object ButtonSub3 is a ButtonSub
+
+            //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+            //AB-StoreTopEnd
+
+            Set Bitmap to "CANCEL.BMP"
+            Set Size to 18 29
+            Set Location to 6 89
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            Procedure OnClick
+                Send Request_Cancel
+            End_Procedure
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub3
+
+
+        //AB-StoreStart
+        Object prom1WQLReport is a crystalreportSubSQL
+             Property Integer ReportReady Public False
+             property integer icur
+             Set Report_View_id To (Parent(Current_object))
+             Set Report_name    To "Rparticle.rpt"
+             Procedure OnStartPrinting
+             Local String  Selection FileName lsdate sitem spay  sdeop sdoy srecr sjob sclient STrOPOS sskopos
+             Local Number  nypoprosf npelates ncn
+             Local Integer FileType Destination SortOrder NumSortFields CurSortField ino
+             Local Integer SortDirection ifrom datefrom istadio
+        
+             Move "" To Selection
+             Move "DOY" To sdoy
+             Move 'JOB' To sjob
+             Get pino To ino
+             Get psrecr To srecr
+             Clear particle
+             Move srecr To particle.partl_recr
+             Find eq particle by Index.2
+             If (Found) Begin
+                Move particle.client_id To sclient
+                Clear clients
+                Move sclient To clients.client_id
+                Find eq clients by Index.6
+                If (Found) Begin
+                    Clear codemast
+                    Move 'DOY' To Codemast.Type
+                    Move clients.client_doy To codemast.code
+                    Find eq codemast by Index.1
+                    If (Found);
+                        Move codemast.description To sdoy
+                    Clear codemast
+                    Move 'JOB' To codemast.Type
+                    Move clients.client_job To codemast.code
+                    Find eq codemast by Index.1
+                    If (Found);
+                        Move codemast.description To sjob
+                    Clear codemast
+                    Move 'SEND_TERMS' To Codemast.Type
+                    Move PARTICLE.TROPOS_DIAKIN To codemast.code
+                    Find eq codemast by Index.1
+                    If (Found);
+                        Move codemast.description To stropos
+                    Clear codemast
+                    Move 'PAY_TERMS' To codemast.Type
+                    Move PARTicle.Tropos_plhromhs To codemast.code
+                    Find eq codemast by Index.1
+                    If (Found);
+                        Move codemast.description To spay
+        
+                    Clear codemast
+                    Move 'SKOPOS' To codemast.Type
+                    Move PARTicle.skopos_diakin To codemast.code
+                    Find eq codemast by Index.1
+                    If (Found);
+                        Move codemast.description To sskopos
+                End
+             End
+             Append Selection (If(Selection <> "", " and ", "")) "{Particle.partl_recr} = "  '"' (Trim(srecr)) '"'
+             Set SelectionFormula To Selection
+             Send AddSortField "{Pmoves.wax_recr}" PE_SF_ascending SortDirection
+             Send AddSortField "{pmoves.witemx_code}" PE_SF_ascending SortDirection
+             Move (Trim(sjob)) To sjob
+             Move (Trim(sdoy)) To sdoy
+             Move (Trim(stropos)) To stropos
+             Move (Trim(spay)) To spay
+             Move (Trim(sskopos)) To sskopos
+             Set Formula "fjob" To (Winql_String(sjob))
+             Set Formula "fdoy" To (Winql_String(sdoy))
+             Set Formula "ftropos" To (Winql_String(stropos))
+             Set Formula "fpay" To (Winql_String(spay))
+             Set Formula "fskopos" To (Winql_String(sskopos))
+             if (icur(self)=1)  Set Formula "fperi" To (Winql_String('èêóíéíìèé'))
+             else               Set Formula "fperi" To (Winql_String('ÄåíàÇêÄîé äéÇàëíÜêàéì'))
+             If Selection eq "" ;
+                Set Formula "SelTxt" To ('"' + "NONE" + '"')
+             Else ;
+                Set Formula "SelTxt" To ('"' + (Replaces('"', Selection, "")) + '"')
+        
+        
+            If (pimazikh(Self)=0) Begin
+               Set Output_Device_Mode To WQL_PRINT_TO_WINDOW
+               Set ReportReady To False
+            End
+            Else Begin
+               Set Output_Device_Mode To " WQL_PRINT_TO_PRINTER "
+          //     Send SelectAndSetPrinter
+        
+          //     If (ino>1);
+          //         Set Copies           To ino
+                   Set ReportReady To True
+            End
+            End_Procedure // OnStartPrinting
+        
+        
+            Procedure Runprom1Report
+                INTEGER INO ii
+                get pino to ino
+                if (ino=0) move 1 to ino
+                for ii from 1 to ino
+                    set icur to ii
+                    Send Cursor_Wait To (Cursor_Control(Current_Object))
+        
+                    Send Run_report
+                    Send Cursor_Ready To (Cursor_Control(Current_Object))
+                loop
+             //   If (ReportReady(Current_object)) ;
+             //       Send Info_box "WinQL report ready."
+            End_Procedure // RunCustReport
+        
+        End_Object //
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // Rparticle
+
+
+    //AB-StoreStart
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

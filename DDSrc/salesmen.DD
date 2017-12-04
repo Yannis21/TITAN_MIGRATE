@@ -37,14 +37,14 @@ Register_Object sl197
 //DDB-SelectionEnd
 
 Class Salesmen_DataDictionary  is a DataDictionary_Sec
-
+ 
     // Save_Main_File:
-
+ 
     Procedure Save_Main_File
         If ((Operation_Origin<>Self) And (Salesmen.Sls_ID='')) Procedure_Return
         Forward Send Save_Main_File
     End_Procedure   // Save_Main_File
-
+ 
     // Define_Fields:
     // This procedure is used to set up all data-dictionary rules.
      Procedure Update
@@ -64,11 +64,13 @@ Class Salesmen_DataDictionary  is a DataDictionary_Sec
         Move salesmen.sls_Rec0       to salesmen.sls_SN
         Move salesmen.sls_id         to salesmen.sls_Repm
 
+
+
         If (Operation_ORIGIN=Self) Begin
             Move 1      to salesmen.ExportFlag
             Move "SEND" to salesmen.ExportStatus
         End
-
+       
 
     End_Procedure   // Update
 
@@ -90,8 +92,8 @@ Class Salesmen_DataDictionary  is a DataDictionary_Sec
         Set Main_File            To Salesmen.File_Number
         Set Cascade_Delete_State To FALSE
 
-        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
-        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
         Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
 
         // Child (Client) file structure................
@@ -111,7 +113,7 @@ Class Salesmen_DataDictionary  is a DataDictionary_Sec
         // Salesmen.Year_Year
 
         // Salesmen.Sls_Id
-        Set Field_Options          Field Salesmen.Sls_Id To DD_AUTOFIND    DD_FINDREQ
+        Set Field_Options          Field Salesmen.Sls_Id To DD_AUTOFIND    DD_FINDREQ    
         Set Field_Prompt_Object    Field Salesmen.Sls_Id To (sl108(Self))
         Set Key_Field_State        Field Salesmen.Sls_Id To TRUE
 

@@ -1,0 +1,96 @@
+Register_Object ypoprosf_DD
+Register_Object Dochpar
+Register_Object clorderd_DD
+Use Bproces.Sub
+Use DFAllEnt.pkg
+use syscurxr.dd
+Use ypoprosf.DD
+Use clorderd.DD
+
+Object Dochpar is a BusinessProcessSub
+
+
+
+      property number  pnypoprosf public 0
+      property date    pddate     public ''
+      Property Integer piErr      Public  0
+      property integer piTxtID    public  0
+      property integer pilathos   public 0
+      property string  pscode     public ''
+
+      Open SysCurXr
+
+      Set Status_Panel_State to False
+      Set Display_Error_State to True
+
+    //AB-StoreTopEnd
+
+      Set Size to 82 140
+      Set Location to 72 182
+
+      Object Ypoprosf_DD is a Ypoprosf_DataDictionary
+      End_Object    // Ypoprosf_DD
+
+      Object clorderd_DD is a clorderd_DataDictionary
+      End_Object    // Ypoprosf_DD
+
+ Procedure Start_Processing
+
+    date    ddate  ldate
+    local number  aaypoprosf
+    integer ierr
+    move 0 to ierr
+    get pnypoprosf to aaypoprosf
+    clear  clorderd
+    move aaypoprosf to clorderd.aa_ypoprosf
+    find ge clorderd by index.3
+    While ((found=1) and (clorderd.aa_ypoprosf = aaypoprosf))
+       if (clorderd.rial_date='') move 1 to ierr
+       if (clorderd.rial_date > ddate) move clorderd.rial_date to ddate
+    find gt clorderd by index.3
+    loop
+    clear ypoprosf
+    move  aaypoprosf to ypoprosf.aa_ypoprosforas
+    find eq ypoprosf by index.1
+    if (found=1) begin
+       reread ypoprosf
+       if (ierr=0) begin
+          move '1' to ypoprosf.finish
+          move ddate to ypoprosf.rial_date
+       end
+       else begin
+          move '' to ypoprosf.finish
+          move '' to ypoprosf.rial_date
+       end
+       saverecord ypoprosf
+       unlock
+    end
+End_Procedure
+
+
+Procedure OnProcess
+       send Start_Processing
+End_Procedure
+
+Procedure Start_Process
+         Set piTxtID                         to (Wait(Self))
+         Set Button_State    of (Wait(Self)) to False
+         Set BarVisibleState of (Wait(Self)) to '' False
+         Send Popup                          to (Wait(Self))
+         Set piLathos                        to 0
+         Forward Send Start_Process
+End_Procedure
+
+Procedure OnError integer error_info string errMsg
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+End_Procedure
+
+
+Procedure End_Process
+       Forward Send End_Process
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+End_Procedure
+
+End_Object
+
+

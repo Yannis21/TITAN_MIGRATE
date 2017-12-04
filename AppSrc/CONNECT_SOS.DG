@@ -1,0 +1,621 @@
+//AB/ Project Connect
+//AB/ Object prj is a Dialog_Project
+//AB/     Set ProjectName to "Connect"
+//AB/     Set ProjectFileName to "Connect.dg"
+
+// Project Object Structure
+//   Connect is a BasicPanelSub
+//     BitmapContainer1 is a BitmapContainerSub
+//     Textbox5 is a TextBoxSub
+//     ComboForm2 is a ComboFormSub
+//     Textbox6 is a TextBoxSub
+//     Form4 is a FormSub
+//     Textbox7 is a TextBoxSub
+//     frmUser is a FormSub
+//     Textbox8 is a TextBoxSub
+//     frmKodikos is a FormSub
+//     CheckBox1 is a CheckBoxSub
+//     oOK_bn is a ButtonSub
+//     oCancel_bn is a ButtonSub
+//     oCrypt is a dbOLEChilkatCrypt2
+
+// Register all objects
+Register_Object BitmapContainer1
+Register_Object CheckBox1
+Register_Object ComboForm2
+Register_Object Connect
+Register_Object Form4
+Register_Object frmKodikos
+Register_Object frmUser
+Register_Object oCancel_bn
+Register_Object oCrypt
+Register_Object oOK_bn
+Register_Object Textbox5
+Register_Object Textbox6
+Register_Object Textbox7
+Register_Object Textbox8
+
+
+
+//AB-StoreTopStart
+    
+Use mertech.inc
+Use FlexOle
+Use ChilkatCrypt
+
+//AB-StoreTopEnd
+
+//AB-IgnoreStart
+
+Use Panel.Sub
+Use Bitmap.Sub
+Use Txtbox.Sub
+Use Cmbfrm.Sub
+Use Form.Sub
+Use Chkbox.Sub
+Use Button.Sub
+
+
+//AB-IgnoreEnd
+
+Object Connect is a BasicPanelSub
+
+    //AB-StoreTopStart
+    
+    
+    //AB-StoreTopEnd
+
+    Set Sysmenu_Icon to FALSE
+    Set Minimize_Icon to FALSE
+    Set Label to "„å©¦›¦ª ©«ž¤ œ­˜¨£¦šã"
+    Set Size to 105 341
+    Set Location to 18 61
+    Set Color to 16760445
+
+    //AB-DDOStart
+
+
+    //AB-DDOEnd
+
+    Object BitmapContainer1 is a BitmapContainerSub
+
+        //AB-StoreTopStart
+                                                                                
+        //AB-StoreTopEnd
+
+        Set Size to 21 23
+        Set Location to 4 4
+        Set Color to 16760445
+        Set Bitmap to "Login1.bmp"
+        Set Border_Style to Border_None
+        Set Bitmap_Style to Bitmap_Center
+        Set Dialog_Caption to "Select a bitmap file"
+
+        //AB-StoreStart
+                                                                                
+        Set Color to 16760445
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // BitmapContainer1
+
+    Object Textbox5 is a TextBoxSub
+        Set Label to "Ž›žšæª"
+        Set Color to 16760445
+        Set FontSize to 4 0
+        Set Location to 8 47
+        Set Size to 10 44
+        Set Justification_Mode to jMode_Left
+        Set TypeFace to "MS Sans Serif"
+        Set Enabled_State to TRUE
+    End_Object    // Textbox5
+
+    Object ComboForm2 is a ComboFormSub
+
+        //AB-StoreTopStart
+                                                                                
+        Set CapsLock_State to True
+        
+        //AB-StoreTopEnd
+
+        Set Size to 13 175
+        Set Location to 6 96
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+
+        //AB-StoreStart
+                                                                                
+        Procedure Combo_Fill_List
+                Local String Availdrv## TempDrv##
+                Local Integer HowMany i p1## p2##
+        
+                get_profile_string "WorkSpaces" "CurrentWorkspace" to AvailDrv##
+                If AvailDrv## eq "" Get WorkspaceName of (ProgramWorkspace(Self)) to AvailDrv##
+                insert "WorkSpaces\" in AvailDrv## at 1
+                get_profile_string AvailDrv## "AvailableDrivers" to AvailDrv##
+        
+                Move Availdrv## to Tempdrv##
+                Repeat
+                    Replace "|" in Tempdrv## With ""
+                    [Found] Increment HowMany
+                Until [Finderr]
+        
+                Send Combo_add_Item ""
+        
+                If HowMany lt 1 Begin
+                    If Availdrv## ne "" Send Combo_Add_Item (UpperCase(Availdrv##))
+                End
+                Else Begin
+                    For i From 0 to HowMany
+                        If i eq 0 Move 1 to p1##
+                        Else Begin
+                            Move ((Pos("|",Availdrv##))+1) to p1##
+                            Replace "|" in Availdrv## With ","
+                        End
+                        Move ((Pos("|",Availdrv##))) to p2##
+                        Send Combo_Add_Item (UpperCase(Mid(Availdrv##,(p2##-p1##),p1##)))
+                    Loop
+                End
+        End_Procedure
+        
+        Set Allow_Blank_state to True
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // ComboForm2
+
+    Object Textbox6 is a TextBoxSub
+        Set Label to "ƒ ˜¡¦£ ©«ãª"
+        Set Color to 16760445
+        Set FontSize to 4 0
+        Set Location to 24 47
+        Set Size to 10 44
+        Set Justification_Mode to jMode_Left
+        Set TypeFace to "MS Sans Serif"
+        Set Enabled_State to TRUE
+    End_Object    // Textbox6
+
+    Object Form4 is a FormSub
+        Set Size to 13 175
+        Set Location to 22 96
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+    End_Object    // Form4
+
+    Object Textbox7 is a TextBoxSub
+        Set Label to "•¨ã©«žª"
+        Set Color to 16760445
+        Set FontSize to 4 0
+        Set Location to 40 47
+        Set Size to 10 44
+        Set Justification_Mode to jMode_Left
+        Set TypeFace to "MS Sans Serif"
+        Set Enabled_State to TRUE
+    End_Object    // Textbox7
+
+    Object frmUser is a FormSub
+        Set Size to 13 175
+        Set Location to 38 96
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+    End_Object    // frmUser
+
+    Object Textbox8 is a TextBoxSub
+        Set Label to "‰à› ¡æª"
+        Set Color to 16760445
+        Set FontSize to 4 0
+        Set Location to 56 47
+        Set Size to 10 44
+        Set Justification_Mode to jMode_Left
+        Set TypeFace to "MS Sans Serif"
+        Set Enabled_State to TRUE
+    End_Object    // Textbox8
+
+    Object frmKodikos is a FormSub
+
+        //AB-StoreTopStart
+                                                                                
+        //AB-StoreTopEnd
+
+        Set Size to 13 175
+        Set Location to 54 96
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+                                                                                
+        Set Password_State Item 0 to True
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // frmKodikos
+
+    Object CheckBox1 is a CheckBoxSub
+        Set Label to "€§¦Ÿã¡œ¬©ž ‰à› ¡¦ç"
+        Set Size to 10 88
+        Set Location to 73 96
+        Set Status_Help to "Remember The Password at Next Login"
+        Set Color to 16760445
+    End_Object    // CheckBox1
+
+    Object oOK_bn is a ButtonSub
+
+        //AB-StoreTopStart
+                                                                                
+        //AB-StoreTopEnd
+
+        Set Label to "Co&nnect"
+        Set Default_State to TRUE
+        Set Bitmap to "mcr.bmp"
+        Set Size to 28 33
+        Set Location to 6 293
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+                                                                                
+        Procedure OnClick
+            Set LoginOk to True
+            Send Stop_Modal_ui
+        End_Procedure
+        
+        Set Status_Help to "‘ç¤›œ©ž / „å©¦›¦ª"
+        
+        //AB-StoreEnd
+
+    End_Object    // oOK_bn
+
+    Object oCancel_bn is a ButtonSub
+        Set Label to "&Cancel"
+        Set Bitmap to "exit2.bmp"
+        Set Size to 28 32
+        Set Location to 36 293
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+                                                                                
+        ON_KEY KENTER SEND Exit_Application to (Connect(Current_Object))
+        
+        Procedure OnClick
+            Set LoginOk to False
+            Send Exit_Application to (Connect(Current_Object))
+        End_Procedure
+        
+        Set Status_Help to "€¡ç¨à©ž / „¥¦›¦ª"
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // oCancel_bn
+
+
+    //AB-StoreStart
+    
+    Set Modal_State to True
+    
+    ON_KEY KENTER SEND OnClick to (oOk_bn(Current_Object))
+    ON_KEY KSAVE_RECORD SEND OK
+    ON_KEY KCANCEL SEND EXIT_APPLICATION
+    ON_KEY KCLOSE_PANEL SEND EXIT_APPLICATION
+    
+    Set Locate_Mode to Center_On_Screen
+    Set Exit_Application_Local_State to False
+    Set Exit_MSG to Exit
+    Set Description_State to True
+    
+    Property Integer LoginOk public false
+    
+    External_Function32 WNetGetUser "WNetGetUserA" MPR.DLL ;
+        Pointer lpName Pointer lpUser_Name Pointer lpLength Returns DWord
+    
+    Function Network_User_Name Returns String
+        Local String sName sLength
+        Local Pointer lpName_Addr lpLength_Addr
+        Local Integer iRetval
+    
+        Movestr (Repeat (Character (0), 255)) To sName
+        GetAddress Of sName To lpName_Addr
+        Movestr (DwordToBytes (255)) To sLength
+        GetAddress Of sLength To lpLength_Addr
+    
+        Moveint (WNetGetUser (0, lpName_Addr, lpLength_Addr)) To iRetval
+    
+        If iRetval Eq 0 Function_Return (CString (sName))
+        Else Function_Return "User Unknown"
+    End_Function // Network_User_Name
+    
+    Function fsCrypto String lsWay String lsOld Returns String
+        Local String lsNew lsTemp
+        Local Integer liCount
+           For liCount From 1 to (Length(lsOld))
+               Mid lsOld to lsTemp 1 liCount
+               If ((Uppercase(lsWay)) eq 'FORWARD') Begin
+                        If ((Ascii(lsTemp) = 255)) Move (Character(32)) to lsTemp
+                        Else Move (Character(Ascii(lsTemp)+1)) to lsTemp
+               End
+               Else Begin
+                   If ((Uppercase(lsWay)) eq 'BACKWARD') Begin
+                       If ((Ascii(lsTemp) = 32)) Move (Character(255)) to lsTemp
+                       Else Move (Character(Ascii(lsTemp)-1)) to lsTemp
+                   End
+               End
+               Append lsNew lsTemp
+           Loop
+        Function_Return (lsNew)
+    End_Function
+    
+    Object oCrypt is a dbOLEChilkatCrypt2
+    End_Object
+    
+    Function fsEncryptOrDecryptMyString Integer aiEncryptOrDecrypt String asText Returns String
+        String password sReturnText
+        Move "" to sReturnText
+    
+        //------------------------------------------------------------------------
+        // „«¦ £˜©œ « ª §˜¨˜£œ«¨¦¬ª š ˜ «¦ encryption / decryption
+        //------------------------------------------------------------------------
+        SET ChilkatCrypt2CryptAlgorithm Of oCrypt to "ARC4" //"aes"
+        SET ChilkatCrypt2CipherMode     Of oCrypt to "cbc"
+        SET ChilkatCrypt2KeyLength      Of oCrypt to  16
+        Move "YannisSecretPhrase"                 to password
+        //  Generate a binary secret key from a password string
+        //  of any length.  For 128-bit encryption, GenEncodedSecretKey
+        //  generates the MD5 hash of the password and returns it
+        //  in the encoded form requested.  The 2nd param can be
+        //  "hex", "base64", "url", "quoted-printable", etc.
+        String hexKey
+        Get ChilkatCrypt2GenEncodedSecretKey    Of oCrypt password "hex" to hexKey
+        Send ChilkatCrypt2SetEncodedKey         Of oCrypt hexKey   "hex"
+        SET ChilkatCrypt2EncodingMode           Of oCrypt                to "base32"
+        //------------------------------------------------------------------------
+        // „«¦ £˜©œ « ª §˜¨˜£œ«¨¦¬ª š ˜ «¦ encryption / decryption
+        //------------------------------------------------------------------------
+    
+        If (aiEncryptOrDecrypt=1) Begin
+            // Encrypt a string and return the binary encrypted data
+            //  in a base-64 encoded string.
+            Get ChilkatCrypt2EncryptStringENC Of oCrypt asText to sReturnText
+        End
+        Else If (aiEncryptOrDecrypt=2) Begin
+            //  Decrypt and show the original string:
+            Get ChilkatCrypt2DecryptStringENC Of oCrypt asText to sReturnText
+        End
+        Function_Return sReturnText
+    End_Function
+    
+    
+    Procedure Activating
+        Local String LoginDriver## LoginServer## LoginUserid## LoginPassword##
+        Local String LastLogin## LoginSeq##
+        Local Integer SavePassword##
+    
+        Forward Send Activating
+    
+        get_profile_string "WorkSpaces" "CurrentWorkspace" to LastLogin##
+        If LastLogin## eq "" Get WorkspaceName of (ProgramWorkspace(Self)) to LastLogin##
+        insert "WorkSpaces\" in LastLogin## at 1
+        Append LastLogin## "\" (Module_Name(Self)) "\LastLogin"
+        get_profile_string LastLogin## "LoginDriver" to LoginSeq##
+    
+        If "|" in LoginSeq## move (left(LoginSeq##,(pos("|",LoginSeq##) -1))) to LoginDriver##
+        Else Move LoginSeq## to LoginDriver##
+        get_profile_string LastLogin## "LoginServer"  to LoginServer##
+        get_profile_string LastLogin## "LoginUserId"  to LoginUserId##
+        get_profile_string LastLogin## "SavePassword" to SavePassword##
+        If LoginUserId## eq "" Move (Network_User_Name(Current_Object)) to LoginUserId##
+    
+        If (((UpperCase(LoginDriver##)) eq "DATAFLEX") or (LoginDriver## eq "")) Begin
+                Set Value of (ComboForm2(Current_Object)) Item 0 to ""
+                Set Value of (Form4(Current_Object))      Item 0 to ""
+        End
+        Else Begin
+            Set Value of (ComboForm2(Current_Object)) Item 0 to LoginDriver##
+            Set Value of (Form4(Current_Object))      Item 0 to LoginServer##
+        End
+        Set Value of (frmUser(Current_Object))          Item 0 to LoginUserID##
+        Set Select_State of (CheckBox1(Current_Object)) Item 0 to SavePassword##
+    
+    //    If (SavePassword##) Begin
+    //        Set_Registry_Root TO HKEY_CURRENT_USER "Software"
+    //        get_foreign_profile_string ("SubNet Hellas\"+(WorkspaceName(ProgramWorkspace(Self)))+"\"+(Module_Name(Self))) LoginUserID## "Access" to LoginPassword##
+    //        Set Value of (frmKodikos(Current_Object)) Item 0 to (fsEncryptOrDecryptMyString(Self,2,LoginPassword##))
+    //        SET_REGISTRY_ROOT to HKEY_LOCAL_MACHINE "SOFTWARE"
+    //    End
+    
+    End_Procedure
+    
+    Function LoginUser Returns Integer
+        Integer SavePassword## Size## PasswordOk success
+        String LoginDriver## LoginServer## LoginUserid## LoginPassword## LoginSeq## LastLogin##
+        String lsLoginDate lsHH lsMM lsSS sDepartment
+        Integer liOpenCursors
+        String sDeCryptoPassw
+    
+        Send Popup_Modal
+    
+        // Trexei thn Activating kai meta epanerxetai edo
+    
+        Send Activate Of oCrypt
+        Get ChilkatCrypt2UnlockComponent Of oCrypt "Crypt12345678_4CC88148VHXA" to success
+    
+        Get Checked_State Of CheckBox1 to SavePassword##
+    
+    //    If (SavePassword##) Begin
+    //        Set_Registry_Root TO HKEY_CURRENT_USER "Software"
+    //        get_foreign_profile_string ("SubNet Hellas\"+(WorkspaceName(ProgramWorkspace(Self)))+"\"+(Module_Name(Self))) LoginUserID## "Access" to LoginPassword##
+    //        Set Value of (frmKodikos(Current_Object)) Item 0 to (fsEncryptOrDecryptMyString(Self,2,LoginPassword##))
+    //        SET_REGISTRY_ROOT to HKEY_LOCAL_MACHINE "SOFTWARE"
+    //    End
+    
+    
+    
+    
+    
+        Get Value of (ComboForm2(Current_Object))       Item 0 to LoginDriver##
+        Get Value of (Form4(Current_Object))            Item 0 to LoginServer##
+        Get Value of (frmUser(Current_Object))          Item 0 to LoginUserID##
+        Get Value of (frmKodikos(Current_Object))       Item 0 to LoginPassword##
+    
+        Get Select_State of (CheckBox1(Current_Object)) Item 0 to SavePassword##
+        Set Value of (frmKodikos(Current_Object))       Item 0 to ""
+    
+        If ((LoginDriver## <> "") and (UpperCase(LoginDriver##)<>"DATAFLEX"))  begin
+            Set LoginOk to True
+        End
+        Else Begin
+            Set LoginOk to True
+            Open "Users" as Users
+            Move "DATAFLEX" To LoginDriver##
+            Move "" to LoginServer##
+            File_Size Users to Size##
+            If Size## ne 0 Begin
+                 Clear Users
+                 Move LoginUSerId##   to Users.Login_Id
+                 Find eq Users by Index.1
+                 [Finderr] Begin
+                    Error 25000 "Unknown User"
+                    Set LoginOk to False
+                    Get LoginOk to PasswordOk
+                    Function_Return PasswordOk
+                 End
+                 [Found] Begin
+                    Move (fsEncryptOrDecryptMyString(Self,2,Users.Password)) to sDeCryptoPassw
+                    If (LoginPassword## ne sDeCryptoPassw) Begin
+                        Error 25000 "Invalid Password"
+                        Set LoginOk to False
+                        Get LoginOk to PasswordOk
+                        Function_Return PasswordOk
+                    End
+                    Else Move Users.Departm_Code to sDepartment
+                    Move (Trim(sDepartment)) to sDepartment
+                 End
+            End
+            Close Users
+        End
+    
+        Open Users
+        //Open "Users" as Users
+        File_Size Users to Size##
+        If Size## ne 0 Begin
+             Clear Users
+             Move LoginUSerId##   to Users.Login_Id
+             Find eq Users by Index.1
+             [Finderr] Begin
+                Error 25000 "Unknown User"
+                Set LoginOk to False
+                Get LoginOk to PasswordOk
+                Function_Return PasswordOk
+             End
+             [Found] Begin
+                Move (fsEncryptOrDecryptMyString(Self,2,Users.Password)) to sDeCryptoPassw
+                If (LoginPassword## ne sDeCryptoPassw) Begin
+                    Error 25000 "Invalid Password"
+                    Set LoginOk to False
+                    Get LoginOk to PasswordOk
+                    Function_Return PasswordOk
+                End
+                Else Move Users.Departm_Code to sDepartment
+                Move (Trim(sDepartment)) to sDepartment
+             End
+        End
+        Close Users
+    
+        Get LoginOk to PasswordOk
+        Sysdate lsLoginDate lsHH lsMM lsSS
+        get_profile_string "WorkSpaces" "CurrentWorkspace" to LastLogin##
+        If LastLogin## eq "" Get WorkspaceName of (ProgramWorkspace(Self)) to LastLogin##
+        insert "WorkSpaces\" in LastLogin## at 1
+        get_profile_string LastLogin## "AvailableDrivers" to LoginSeq##
+        If ((LoginDriver## ne "") and ((UpperCase(LoginDriver##)) ne "DATAFLEX")) Begin
+           If Not LoginDriver## in LoginSeq## Begin
+                 If LoginSeq## eq "" Move LoginDriver## to LoginSeq##
+                 Else Move (LoginSeq##+"|"+LoginDriver##) to LoginSeq##
+                 set_profile_string LastLogin## "AvailableDrivers" to LoginSeq##
+           End
+        End
+        Append LastLogin## "\" (Module_Name(Self))
+        Append LastLogin## "\LastLogin"
+        get_profile_string LastLogin## "LoginDriver" to LoginSeq##
+    
+        If "|" in LoginSeq## Begin
+            If ((left(LoginSeq##,(pos("|",LoginSeq##) -1))) ne LoginDriver##) Insert (LoginDriver##+"|") in LoginSeq## at 1
+        End
+        Else Begin
+            If LoginSeq## eq "" Move LoginDriver## to LoginSeq##
+            Else If LoginSeq## ne LoginDriver## Insert (LoginDriver##+"|") in LoginSeq## at 1
+        End
+        Left LoginSeq## to LoginSeq## 250
+        set_profile_string LastLogin## "LoginDriver" to (UpperCase(LoginSeq##))
+        set_profile_string LastLogin## "LoginServer" to LoginServer##
+        set_profile_string LastLogin## "LoginUserId" to LoginUserId##
+        set_profile_string LastLogin## "SavePassword" to SavePassword##
+        If lsHH lt 10 Insert 0 in lsHH at 1
+        If lsMM lt 10 Insert 0 in lsMM at 1
+        If lsSS lt 10 Insert 0 in lsSS at 1
+        Append lsLoginDate " - " lsHH ":" lsMM ":" lsSS
+        set_profile_string LastLogin## "LoginTime" to lsLoginDate
+        If (SavePassword##) Begin
+            Set_Registry_Root TO HKEY_CURRENT_USER "Software"
+    
+            set_foreign_profile_string ("SubNet Hellas\"+(WorkspaceName(ProgramWorkspace(Self)))+"\"+(Module_Name(Self))) LoginUserID## "Access" to (fsEncryptOrDecryptMyString(Self,1,LoginPassword##))
+    
+            SET_REGISTRY_ROOT to HKEY_LOCAL_MACHINE "SOFTWARE"
+        End
+        Else Begin
+            Set_Registry_Root TO HKEY_CURRENT_USER "Software"
+            set_foreign_profile_string ("SubNet Hellas\"+(WorkspaceName(ProgramWorkspace(Self)))+"\"+(Module_Name(Self))) LoginUserID## "Access" to ""
+            SET_REGISTRY_ROOT to HKEY_LOCAL_MACHINE "SOFTWARE"
+        End
+    
+        Function_Return PasswordOk
+    End_Function
+    
+    Procedure Login For Desktop
+        Local Integer LoginPassword##
+        Get LoginUser of (Connect(Current_Object)) to LoginPassword##
+        If Not LoginPassword## Send Exit_Application
+    End_Procedure
+    
+    Function CheckLogin For Desktop Returns Integer
+        Local Integer LoginPassword##
+        Get LoginUser of (Connect(Current_Object)) to LoginPassword##
+        Function_Return LoginPassword##
+    End_Function
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //AB-StoreEnd
+
+End_Object    // Connect
+
+
+//AB-StoreStart
+    
+    
+    
+    
+    
+    
+//AB-StoreEnd
+
+//AB/ End_Object    // prj

@@ -3,7 +3,7 @@
 
 // File Name : CLIENTS.DD
 // Class Name: Clients_DataDictionary
-// Revision  : 248
+// Revision  : 250
 // Version   : 2
 
 Use  Windows           // Basic Definitions
@@ -106,6 +106,7 @@ Class Clients_DataDictionary  is a DataDictionary_Sec
         Forward Send Construct_Object
         Property Integer piMustNOTConstrain Public 0
         Property Integer piCheckPlaf        Public 0
+        Property Integer piOldExportFlag    Public 0
         //------------------------------------------------
         // Properties gia na kraththoun oi palies times
         // ton pedion Ef' oson to Sysfile.Use_Audit pedio
@@ -141,6 +142,7 @@ Class Clients_DataDictionary  is a DataDictionary_Sec
         Set psAud_Old_PartlRecr    to Clients.Client_Recr
         Set psAud_Old_PmsRecr      to Clients.Client_Recr
         //------------------------------------------------
+        Set piOldExportFlag        to Clients.ExportFlag
      End_Procedure   // New_Current_Record
 
 
@@ -227,10 +229,25 @@ Class Clients_DataDictionary  is a DataDictionary_Sec
      //   Move (gsfCode_Mast('JOB',Clients.Client_CatJob)) to Clients.Client_Job
 
 
-        //If (Operation_ORIGIN=Self) Begin
-        //    Move 1      to Clients.ExportFlag
-        //    Move "SEND" to Clients.ExportStatus
-        //End
+//==================
+//// Yannis 13/10/2017   O elegxos metaferetai sto kataxorhtiko view
+////        If (Operation_ORIGIN=Self) Begin
+////            If (piOldExportFlag(Self)=0) Begin
+////                Move 1      to Clients.ExportFlag
+////                Move "SEND" to Clients.ExportStatus
+////            End
+////        End
+//        If (Operation_ORIGIN=Self) Begin
+//            If ((piOldExportFlag(Self)=1) And (Clients.ExportFlag=0)) Begin
+//                Move "CANC" to Clients.ExportStatus
+//            End
+//            Else Begin
+//              Move 1 	    to Clients.ExportFlag
+//				Move "SEND" to Clients.ExportStatus
+//            End
+//        End
+//==================
+
 
 
 
@@ -455,8 +472,8 @@ Class Clients_DataDictionary  is a DataDictionary_Sec
         Set Main_File            To Clients.File_Number
         Set Cascade_Delete_State To FALSE
 
-        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
-        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
         Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
 
         // Child (Client) file structure................
@@ -495,7 +512,7 @@ Class Clients_DataDictionary  is a DataDictionary_Sec
         // Clients.Custprom_Code
 
         // Clients.Client_Id
-        Set Field_Options          Field Clients.Client_Id To DD_AUTOFIND    DD_NOPUT
+        Set Field_Options          Field Clients.Client_Id To DD_AUTOFIND    DD_NOPUT      
         Set Field_Prompt_Object    Field Clients.Client_Id To (sl100(Self))
         Set Key_Field_State        Field Clients.Client_Id To TRUE
 
@@ -503,15 +520,15 @@ Class Clients_DataDictionary  is a DataDictionary_Sec
         Set Field_Prompt_Object    Field Clients.Client_Name To (sl100(Self))
 
         // Clients.Client_Afm
-        Set Field_Options          Field Clients.Client_Afm To DD_AUTOFIND
+        Set Field_Options          Field Clients.Client_Afm To DD_AUTOFIND   
 
         // Clients.Client_Rec0
-        Set Field_Options          Field Clients.Client_Rec0 To DD_AUTOFIND
+        Set Field_Options          Field Clients.Client_Rec0 To DD_AUTOFIND   
 
         // Clients.Custprom_Recr
 
         // Clients.Client_Recr
-        Set Field_Options          Field Clients.Client_Recr To DD_AUTOFIND
+        Set Field_Options          Field Clients.Client_Recr To DD_AUTOFIND   
 
         // Clients.Last_Xreosh
 

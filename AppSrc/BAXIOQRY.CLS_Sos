@@ -1,0 +1,283 @@
+// **************************************************************************
+// *                        A N A L Y S I S                                 *
+// **************************************************************************
+// *Ü °¢·©û ò¨´„ úß†´®‚ßú† ´¶ ´®‚•†£¶ õ†ò≠¶®ú´†°È§ queries ©´¶ Baxio.        *
+// *Ç†ò °·üú index ´¶¨ Baxio, ôö·ùú† °ò† ´¶ ò§´Â©´¶†Æ¶ public interface      *
+// *Baxio_Scan_By_IndexN, Êß¶¨ N=1,2,7                                       *
+// *                                                                        *
+// *ë·§ ¶®Â©£ò´ò ´¶¨ public interface, Æ®û©†£¶ß¶†¶Á£ú ´ò °Á®†ò ßúõÂò        *
+// *´¶¨ ò§´Â©´¶†Æ¶¨ index, ¶ßÊ´ú û °¢·©û £ú ú•¨ß§¶ scan, ©ò®È§ú† £Ê§¶§      *
+// *´ò ú¢·Æ†©´ò òßò®òÂ´û´ò records ´¶¨ Baxio ß¶¨ ß®¶°Áß´¶¨§ òß¶ ´¶§ index.   *
+// *                                                                        *
+// *Ñ·§ Ê£‡™ ü‚¢¶¨£ú §ò ßú®†¶®Â©¶¨£ú ò°Ê£û ßú®†©©Ê´ú®¶ ´ò selected records  *
+// *£ú ßú®†©©Ê´ú®ò selection criteria ß¶¨ õ‚§ ©¨£ßú®†¢ò£ô·§¶§´ò† ©´¶§ index *
+// *©ú´·®¶¨£ú ´ò ò§´Â©´¶†Æò non-indexed properties.                         *
+// *                                                                        *
+// *í‚¢¶™, ß®¶°ú†£‚§¶¨ §ò öú£Â©¶¨£ú °ò† °·ß¶†¶ temporary file £ú ´ò selected*
+// *records, È©´ú §ò ®òß¶®´·®¶¨£ú ´¶ temp_file, ß®‚ßú† §ò ¶®Â©¶¨£ú °ò†      *
+// *´¶ ò§´Â©´¶†Æ¶ property                                                  *
+// **************************************************************************
+
+
+
+
+
+//********************************************************
+//*open all necessary files (class must be independent)  *
+//********************************************************
+Open Baxio
+Open Barticl
+
+
+
+Class Baxio_Query Is a BusinessProcessSub
+
+
+
+      //*****************************************************************
+      //*p r i v a t e    i n t e r f a c e                             *
+      //*****************************************************************
+
+      Procedure Construct_Object
+                Forward Send     Construct_Object
+
+                //©ú´·®†©£ò ´‡§ user interface properties ´¶¨ bpc
+                //1. status panel related properties
+                Set Status_Panel_State   to TRUE                                //default= TRUE
+                Set Allow_Cancel_State   to TRUE                                //default= FALSE
+                Set Process_Caption      to "Report Ä•†¶ö®·≠‡§"                 //default= "Running Process"
+                Set Process_Title        to "èò®ò°ò¢È èú®†£‚§ú´ú..."            //default= ""
+                Set Process_Message      to "Ñß†¢¶ö„ Ä•†¶ö®·≠‡§"                //default= ""
+                //t Status_Panel_Id      to ""                                  //default= (Status_Panel(Current_Object))
+                //t Status_Params        to ""                                  //default= ''
+                Set Button_Text of (Status_Panel(Self))   to "Ä°Á®‡©û"
+
+                Set Sentinel_Name of (Status_Panel(Self)) to "Sentinel"
+
+                //2. error related properties
+                //   if set true, errors will be forwarded to the normal
+                //   VDF error handler causing an error message to popup.
+                //   Normally you would not want this during a batch process.
+                Set Display_Error_State  to TRUE                          //default= False
+                Set Error_Count          to 0                             //default= 0 (number of errors)
+                Set Old_Error_Object_ID  to 0                             //default= 0
+
+                //3. Logging
+                // If you are going to log information you must create a
+                // status log object and set this property to its ID. See
+                // Statlog.pkg for more information.
+                Set Status_Log_State     to FALSE                         //default= False
+                Set Status_Log_Id        to 0                             //default= 0
+
+
+
+                Property Integer piStop      0        //ú·§ <> 0 procedure_return
+
+                Property String  psBanks        ""        //©ß¶®òõ†°„ úß†¢¶ö„ ´®òßúùÈ§
+                Property String  psSeparator    ""        //õ†òÆ‡®†©´†°Ê strings
+
+      End_Procedure //construct_object
+
+
+      //hook procedure
+      Procedure Zero_Temporary_Files
+      End_Procedure //zero_temporary_file
+
+      //hook procedure
+      Procedure Update_Temporary_Files
+                Integer liStop
+                Get Cancel_Check to liStop
+                If (liStop <> 0);
+                Begin
+                     Set piStop to 1
+                End
+      End_Procedure //update_temporary_file
+
+
+      Function  private.Baxio_Select_By_Index5 String  asYear_Recr;
+                                               Integer aiBaxiokat_Code;
+                                               Integer aiBaxio_Status;
+                                               Integer aiBaxio_Place;
+                                               Date    adBaxio_Hmnial_Apo;
+                                               Date    adBaxio_Hmnial_Eos;
+                                               Integer aiLast_Btypkin_Code;
+                                               Returns Integer
+
+                Integer liMatch //ú·§ 0, jump out of index 5      :function return 0
+                                //ú·§ 1, £¶¨ °·§ú†                :function return 1
+                Integer liSkip  //ú·§ 0, continue with next record:function return -1
+
+                String  lsBanks
+                String  lsSeparator
+                String  lsBanka
+
+                Get psSeparator to lsSeparator
+                Get psBanks     to lsBanks
+
+
+                //------ú·§ õ‚§ ‚Æ‡ active baxio, ß®¶≠ò§È™ õ‚§ £ß¶®È §ò ú¢‚ö•‡ ´Âß¶´ò!
+                If Not Status Baxio Function_Return 0 //jump out of index.5
+
+                //------1¶™ ú¢úöÆ¶™ Æ®„©û™,´Áß¶¨,status, & place, úò§ ò§úß†´¨Æ„™, jump out of index.5
+                Move (;
+                       (Baxio.Year_Recr     = asYear_Recr       ) and;
+                       (Baxio.Baxiokat_Code = aiBaxiokat_Code   ) and;
+                       (Baxio.Baxio_Status  = aiBaxio_Status    ) and;
+                       (Baxio.Baxio_Place   = aiBaxio_Place     )    ;
+                     ) to liMatch //out of index.5 if = 0
+                If (liMatch = 0) Function_Return 0 //jump out of index.5
+
+                //------2¶™ ú¢úöÆ¶™ ¢„•û™ òßÊ, úò§ ò§úß†´¨Æ„™, jump out of index.5
+                If (adBaxio_Hmnial_Apo <> 0);
+                Begin //ú·§ ‚Æú† ùû´ûüúÂ ¢„•û òßÊ
+                      Move (;
+                             (liMatch=1) and;
+                             (Baxio.Baxio_Hmnial >= adBaxio_Hmnial_Apo);
+                           ) to liMatch //out of index.5 if = 0
+                      If (liMatch = 0) Function_Return 0 //jump out of index.5
+                End   //ú·§ ‚Æú† ùû´ûüúÂ ¢„•û òßÊ
+
+                //------3¶™ ú¢úöÆ¶™ ¢„•û™ ‚‡™, úò§ ò§úß†´¨Æ„™, jump out of index.5
+                If (adBaxio_Hmnial_Eos <> 0);
+                Begin //ú·§ ‚Æú† ùû´ûüúÂ ¢„•û òßÊ
+                      Move (;
+                             (liMatch=1) and;
+                             (Baxio.Baxio_Hmnial <= adBaxio_Hmnial_Eos);
+                           ) to liMatch //out of index.5 if = 0
+                      If (liMatch = 0) Function_Return 0 //jump out of index.5
+                End   //ú·§ ‚Æú† ùû´ûüúÂ ¢„•û ‚‡™
+
+
+                Move liMatch to liSkip //next record if = 0
+
+                //------4¶™ ú¢úöÆ¶™ ´ú¢ú¨´òÂò™ °Â§û©û™, úò§ ò§úß†´¨Æ„™, continue with next record
+                If (aiLast_Btypkin_Code <> 0);
+                Begin //ú·§ ‚Æú† ùû´ûüúÂ £Ê§¶§ £Âò ´ú¢ú¨´òÂò °Â§û©û
+                      Clear Barticl
+                      // jsjs 26/10/2001
+                      // Move Baxio.Baxio_Lpar to Barticl.Barticl_Rec0
+                      Move Baxio.Baxio_Lpar to Barticl.Barticl_Recr
+                      Find Eq Barticl by Index.2 //index.2:barticl:barticl_recr
+                      Move (;
+                             (Found =1) and;
+                             (liSkip=1) and;
+                             (Baxio.Baxio_Lpar = aiLast_Btypkin_Code);
+                           ) to liSkip
+                      If liSkip Eq 0 Function_Return (-1) //continue with next record
+                End //aibtypkin_code
+
+
+                //------5¶™ ú¢úöÆ¶™ ´®òßúùÈ§
+
+                If (lsBanks <> "") Begin
+                //ú·§ ‚Æú† ùû´ûüúÂ ©¨ö°ú°®†£‚§ú™ ´®·ßúùú™
+
+//                      js 11/02/2002
+//                      Move (lsSeparator + (Trim(Baxio.Baxio_Banka)) + lsSeparator) to lsBanka
+//                      Move (;
+//                             (lsBanks Contains lsBanka);
+//                           ) to liSkip
+
+                      Move (Trim(Baxio.Baxio_Banka))  to lsBanka
+                      If (lsBanks Contains lsBanka) Move 1 to liSkip
+                      Else Move 0 to liSkip
+//                      js 11/02/2002
+
+                      If liSkip Eq 0 Function_Return (-1) //continue with next record
+                End //aibtypkin_code
+
+               If (liSkip = 1) Function_Return 1    //£¶¨ °·§ú†!
+               Else            Function_Return (-1) //continue with next record
+
+      End_Function //private.baxio_select_by_index5
+
+
+
+      //*****************************************************************
+      //*p u b l i c    i n t e r f a c e                               *
+      //*****************************************************************
+
+
+      Procedure Initialize Integer aiMustZero_Temporary_Files
+
+                //------conditional £ûõú§†©£Ê™ temporary_file & non-indexed properties
+                Set piStop           to 0
+
+                If (aiMustZero_Temporary_Files=TRUE) Send Zero_Temporary_Files
+
+                Set psBanks     to ""
+                Set psSeparator to ""
+      End_Procedure //initialize
+
+
+      Function  Baxio_Single_Scan_By_Index5 Integer asYear_Recr ;
+                                            Integer aiBaxiokat_Code;
+                                            Integer aiBaxio_Status;
+                                            Integer aiBaxio_Place;
+                                            Integer aiLast_Btypkin_Code;
+                                            Date    adBaxio_Hmnial_Apo;
+                                            Date    adBaxio_Hmnial_Eos;
+                                            Returns Integer
+
+                Integer liMatch //ú·§  0 , jump out of index 5
+                                //ú·§  1 , ö‚£†©ú temp
+                                //ú·§ -1 , skip record
+
+                //Integer liDays_Counter
+                //Date    ldHmnia
+
+                Integer liStop        //ú·§ <> 0, procedure_return
+
+
+                //------úßò§ò¢ò£ôò§Ê£ú§û °¢„©û ´û™ private select ö†ò °·üú û£/§Âò
+                //For liDays_Counter from 0 to (adBaxio_Hmnial_Eos-adBaxio_Hmnial_Apo)
+                //  Move (adBaxio_Hmnial_Apo+liDays_Counter) to ldHmnia
+
+                    Clear Baxio
+                    Move asYear_Recr        to Baxio.Year_Recr     //index.5 1st field:¨ ß ¶ Æ ® ú ‡ ´ † ° Ê
+                    Move aiBaxiokat_Code    to Baxio.Baxiokat_Code //index.5 2nd field:¨ ß ¶ Æ ® ú ‡ ´ † ° Ê
+                    Move aiBaxio_Status     to Baxio.Baxio_Status  //index.5 3rd field:¨ ß ¶ Æ ® ú ‡ ´ † ° Ê
+                    Move aiBaxio_Place      to Baxio.Baxio_Place   //index.5 4th field:¨ ß ¶ Æ ® ú ‡ ´ † ° Ê
+
+                    Move adBaxio_Hmnial_Apo to Baxio.Baxio_Hmnial  //index.5 5th field:ß ® ¶ ò † ® ú ´ † ° Ê
+
+                    Repeat //until (limatch=0)
+
+                           Get Cancel_Check to liStop
+                           If (liStop <> 0);
+                           Begin
+                                Set piStop to 1
+                                Function_Return (1) //stopped
+                           End
+
+                           Find Gt Baxio by Index.5 //index.5:baxio:year_recr+
+                                                    //              baxiokat_code+
+                                                    //              baxio_status+
+                                                    //              baxio_place+
+                                                    //              ...recnum !
+                           Move (private.Baxio_Select_By_Index5( Self,;
+                                                                 asYear_Recr,;
+                                                                 aiBaxiokat_Code,;
+                                                                 aiBaxio_Status,;
+                                                                 aiBaxio_Place,;
+                                                                 adBaxio_Hmnial_Apo,;
+                                                                 adBaxio_Hmnial_Eos,;
+                                                                 aiLast_Btypkin_Code);
+                                                               ) to liMatch
+
+                           If liMatch Eq 1 Begin //û úö®ò≠„ £¶¨ °·§ú†!
+                                             Send Update_Temporary_Files
+                                             Get piStop to liStop
+                                             If (liStop <> 0) Function_Return (1) //stopped
+                                          End
+                    Until (liMatch=0)
+                //Loop //for lidays_counter from 0 to (ldeos_hmnia-ldapo_hmnia)
+
+////Send End_Process
+
+                Function_Return 0 //Ê¢ò ok !
+      End_Function  //baxio_single_scan_by_index5
+
+
+
+End_Class // baxio_query

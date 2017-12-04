@@ -1,0 +1,747 @@
+//AB/ Project FtpOK
+//AB/ Object prj is a Dialog_Project
+//AB/     Set ProjectName to "FtpOK"
+//AB/     Set ProjectFileName to "FtpOK.DG"
+//AB/     Set GenerateFileName to "NONAME"
+
+// Project Object Structure
+//   oFtpPanel is a BasicPanelSub
+//     oFtpAddressForm is a FormSub
+//     oUserForm is a FormSub
+//     oPasswordForm is a FormSub
+//     oDirectoryForm is a FormSub
+//     oConnectButton is a ButtonSub
+//     oStatusForm is a EditSub
+//     oDirList is a GridSub
+//     oGetFileButton is a ButtonSub
+//     oDirectoryButton is a ButtonSub
+//     oPutFileButton is a ButtonSub
+//     oDeleteFileButton is a ButtonSub
+//     oRenFileButton is a ButtonSub
+//     oRemoveDirButton is a ButtonSub
+//     oCreateDirButton is a ButtonSub
+//     oExit_Btn is a ButtonSub
+//     oSaveFile is a SaveAsDialog
+//     oOpenFile is a OpenDialog
+//     oRenameDialog is a ModalPanel
+//       oBox is a Container3d
+//         oExistForm is a Form
+//         oNewForm is a Form
+//       oOK_bn is a Button
+//     oCreateDirDialog is a ModalPanel
+//       oBox is a Container3d
+//         oNewNameForm is a Form
+//       oOK_bn is a Button
+//     oInternetErrorArray is a Array
+
+// Register all objects
+Register_Object oBox
+Register_Object oConnectButton
+Register_Object oCreateDirButton
+Register_Object oCreateDirDialog
+Register_Object oDeleteFileButton
+Register_Object oDirectoryButton
+Register_Object oDirectoryForm
+Register_Object oDirList
+Register_Object oExistForm
+Register_Object oExit_Btn
+Register_Object oFtpAddressForm
+Register_Object oFtpPanel
+Register_Object oGetFileButton
+Register_Object oInternetErrorArray
+Register_Object oNewForm
+Register_Object oNewNameForm
+Register_Object oOK_bn
+Register_Object oOpenFile
+Register_Object oPasswordForm
+Register_Object oPutFileButton
+Register_Object oRemoveDirButton
+Register_Object oRenameDialog
+Register_Object oRenFileButton
+Register_Object oSaveFile
+Register_Object oStatusForm
+Register_Object oUserForm
+
+
+//AB-IgnoreStart
+
+Use Panel.Sub
+Use Form.Sub
+Use Button.Sub
+Use Edit.Sub
+Use Grid.Sub
+
+
+//AB-IgnoreEnd
+
+Object oFtpPanel is a BasicPanelSub
+
+    //AB-StoreTopStart
+    
+    property string psExistingName public ""
+    property string psNewName      public ""
+    property string psUserName     public ""
+    property string psPassword     public ""
+    property string psFtp           public ""
+    
+    Register_Object oSaveFile
+    Register_Object oOpenFile
+    Register_Object oRenameDialog
+    Register_Object oCreateDialog
+    
+    //AB-StoreTopEnd
+
+    Set Minimize_Icon to FALSE
+    Set Label to "File Transfer"
+    Set Size to 269 441
+    Set Location to 5 15
+
+    //AB-DDOStart
+
+
+    //AB-DDOEnd
+
+    Object oFtpAddressForm is a FormSub
+        Set Label to "Address"
+        Set Size to 13 85
+        Set Location to 2 64
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+        Set Value Item 0 to "FormSub1"
+
+        //AB-StoreStart
+                
+        Procedure OnChange   
+            String sVal         
+            Get Value to sVal
+            Set psFtp to (Trim(sVal))
+        End_Procedure
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // oFtpAddressForm
+
+    Object oUserForm is a FormSub
+        Set Label to "User"
+        Set Size to 13 85
+        Set Location to 18 64
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+        Set Value Item 0 to "FormSub2"
+
+        //AB-StoreStart
+                
+        Procedure OnChange
+            String sVal         
+            Get Value to sVal
+            Set psUserName to (Trim(sVal))
+        End_Procedure
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // oUserForm
+
+    Object oPasswordForm is a FormSub
+        Set Label to "Password"
+        Set Size to 13 85
+        Set Location to 33 64
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+        Set Value Item 0 to "FormSub3"
+
+        //AB-StoreStart
+        Procedure OnChange
+            String sVal         
+            Get Value to sVal
+            Set psPassword to (Trim(sVal))
+        End_Procedure
+        
+        //AB-StoreEnd
+
+    End_Object    // oPasswordForm
+
+    Object oDirectoryForm is a FormSub
+        Set Label to "Directory"
+        Set Size to 13 85
+        Set Location to 49 64
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+        Set Value Item 0 to "FormSub4"
+    End_Object    // oDirectoryForm
+
+    Object oConnectButton is a ButtonSub
+        Set Label to "Connect"
+        Set Size to 14 63
+        Set Location to 19 169
+        Set Focus_Mode to Pointer_Only
+
+        //AB-StoreStart
+                
+        Procedure OnClick
+            local integer iRetVal
+            local string  sAddress sDir sUserName sPassword
+            //
+            //connect to a FTP-server
+            //
+            Get psFtp to sAddress
+            //get value of ( oFtpAddressForm ( Current_Object ) ) item 0 to sAddress
+            send AddInfo to ( oStatusForm ( Current_Object ) ) ("Connecting to"*sAddress-"...")
+            send delete_data to ( oDirList ( Current_Object ) )
+            set value of ( oDirectoryForm ( Current_Object ) ) item 0 to ""
+            if ( trim ( sAddress ) ) gt "" begin
+                if ( psUserName ( Current_Object ) <> "" ) begin
+                   get psUserName to sUserName
+                   get psPassword to sPassword
+                   //set psUserName to ""
+                   //set psPassword to ""
+                   move ( dvInternetConnect ( sAddress,sUserName,sPassword,0 ) ) to iRetVal
+                end
+                else move ( dvInternetConnect ( sAddress,"","",0 ) ) to iRetVal //anonymous login
+            end
+            if iRetVal begin
+                send ShowInternetErrorMessage iRetval
+                procedure_return
+            end
+            //
+            //connect ok, now read the default login directory-name
+            //
+            move ( dvFtpGetCurrentDirectory () ) to sDir
+            set value of ( oDirectoryForm ( Current_Object ) ) item 0 to sDir
+            //
+            //list the files in the current directory
+            //
+            send ListDir to ( oDirList ( Current_Object ) ) 0
+            //
+        End_Procedure
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // oConnectButton
+
+    Object oStatusForm is a editSub
+        Set Size to 41 263
+        Set Location to 204 64
+
+        //AB-StoreStart
+                                                                                    
+        Procedure AddInfo string sInfo
+            send beginning_of_data
+            ifnot ( character(13) ) in sInfo ;
+                append sInfo ( character(13) ) ( character(10) )
+            send insert sInfo
+            send paint
+        End_Procedure
+        
+        //AB-StoreEnd
+
+    End_Object    // oStatusForm
+
+    Object oDirList is a GridSub
+        Set Size to 113 289
+        Set Location to 76 64
+        Set Wrap_State to FALSE
+
+        Set Line_Width to 3 0
+
+        Set Form_Width    item 0 to 154
+        Set Header_Label  item 0 to "Column 1"
+        
+        Set Form_Width    item 1 to 69
+        Set Header_Label  item 1 to "Column 2"
+        
+        Set Form_Width    item 2 to 56
+        Set Header_Label  item 2 to "Column 3"
+        
+
+        //AB-StoreStart
+                        
+        Set Header_Label              item 0 To 'filename'
+        Set Header_Label              item 1 To 'bytesize'
+        Set Header_Label              item 2 To 'date/time written'
+        
+        Procedure ListDir integer iUseCache
+            local string sName
+            local integer iDateFormat
+            //
+            send AddInfo to ( oStatusForm ( Current_Object ) ) "Reading directory..."
+            //
+            send delete_data
+            get_date_format to iDateFormat
+            move ( dvFtpFindFirstFile ("",iUseCache) ) to sName //find the first file in the directory
+            if ( ( trim ( sName ) ) ne "directory is empty") begin
+                Send Add_Item 0 ( dvFtpFilename () )                   //filename
+                if ( dvFtpIsDirectory () ) Send Add_Item 1 "directory"
+                else Send Add_Item 1 ( dvFtpFileSize () )              //filesize
+                Send Add_Item 2 ( dvFtpFileWritten (iDateFormat) )     //filedate/time
+                Send paint
+                //
+                repeat //read the remaining files in the directory
+                    move (dvFtpFindNextFile()) to sName //read the next file in the directory
+                    if ( ( trim ( sName ) ) ne "") begin
+                        Send Add_Item 0 ( dvFtpFilename () )                   //filename
+                        if ( dvFtpIsDirectory () ) Send Add_Item 1 "directory"
+                        else Send Add_Item 1 ( dvFtpFileSize () )              //filesize
+                        Send Add_Item 2 ( dvFtpFileWritten (iDateFormat) )     //filedate/time
+                        Send paint
+                    end
+                until ( ( trim ( sName ) ) eq "")
+            end
+            else begin
+                Send Add_Item 0 sName
+                Send paint
+            end
+            send AddInfo to ( oStatusForm ( Current_Object ) ) "Ok"
+        End_Procedure
+        
+        Function GetFileName returns string
+            function_return ( value ( Current_Object, current ) )
+        End_Function
+        
+        //AB-StoreEnd
+
+    End_Object    // oDirList
+
+    Object oGetFileButton is a ButtonSub
+        Set Label to "Get File"
+        Set Size to 14 63
+        Set Location to 76 364
+
+        //AB-StoreStart
+        Procedure OnClick
+            local string sRemoteFile sNewFile
+            local integer iRetVal bSave
+            //
+            get GetFileName of ( oDirList ( Current_Object ) ) to sRemoteFile
+            Set File_Title of ( oSaveFile ( Current_Object ) ) to sRemoteFile
+            Get Show_Dialog of ( oSaveFile ( Current_Object ) ) To bSave
+            if bSave Begin
+                Get File_Title of ( oSaveFile ( Current_Object ) ) To sNewFile
+                if ( trim ( sNewFile ) ) ne "" begin
+                    //
+                    Get File_Name  of ( oSaveFile ( Current_Object ) ) To sNewFile
+                    send AddInfo to ( oStatusForm ( Current_Object ) ) ;
+                        ("Getting remote file"*sRemoteFile*"to"*sNewFile-"...")
+                    //
+                    move ( dvFtpGetFile (sRemoteFile,sNewFile,0,1)) to iRetVal //get remote file from server
+                    if iRetVal begin
+                        send ShowInternetErrorMessage iRetval
+                        procedure_return
+                    end
+                    send AddInfo to ( oStatusForm ( Current_Object ) ) "Ok"
+                end
+            end
+            else Send Info_Box "You choose NOT to save"
+        End_Procedure
+        
+        //AB-StoreEnd
+
+    End_Object    // oGetFileButton
+
+    Object oDirectoryButton is a ButtonSub
+        Set Label to "Set/List Dir"
+        Set Size to 14 63
+        Set Location to 48 168
+        Set Focus_Mode to Pointer_Only
+
+        //AB-StoreStart
+                        
+        Procedure OnClick
+            local string sDir
+            local integer iRetVal
+            get value of ( oDirectoryForm ( Current_Object ) ) item 0 to sDir
+            if ( trim ( sDir ) ) gt "" begin
+                //
+                send AddInfo to ( oStatusForm ( Current_Object ) ) ("Setting directory to"*sDir-"...")
+                //
+                move ( dvFtpSetCurrentDirectory (sDir) ) to iRetVal //change to the (new) directory
+                if iRetVal begin
+                    send ShowInternetErrorMessage iRetval
+                    procedure_return
+                end
+                //
+                //list the files in the (new) directory
+                //
+                send ListDir to ( oDirList ( Current_Object ) ) 0
+            end
+        End_Procedure
+        
+        //AB-StoreEnd
+
+    End_Object    // oDirectoryButton
+
+    Object oPutFileButton is a ButtonSub
+        Set Label to "Send File"
+        Set Size to 14 63
+        Set Location to 93 364
+
+        //AB-StoreStart
+                        
+        Procedure OnClick
+            local string sLocalFile sNewRemoteFile
+            local integer iRetVal bSave
+            //
+            Get Show_Dialog of ( oOpenFile ( Current_Object ) ) To bSave
+            if bSave Begin
+                Get File_Title of ( oOpenFile ( Current_Object ) ) To sNewRemoteFile
+                if ( trim ( sNewRemoteFile ) ) ne "" begin
+                    //
+                    Get File_Name of ( oOpenFile ( Current_Object ) ) To sLocalFile
+                    send AddInfo to ( oStatusForm ( Current_Object ) ) ;
+                        ("Putting local file"*sLocalFile*"on remote server...")
+                    //
+                    move ( dvFtpPutFile (sLocalFile,sNewRemoteFile,1)) to iRetVal //put local file on remote server
+                    if iRetVal begin
+                        send ShowInternetErrorMessage iRetval
+                        procedure_return
+                    end
+                    send AddInfo to ( oStatusForm ( Current_Object ) ) "Ok"
+                    send ListDir to ( oDirList ( Current_Object ) ) 1 //update directory-listing
+                end
+            end
+            else Send Info_Box "You choose NOT to save"
+        End_Procedure
+        
+        //AB-StoreEnd
+
+    End_Object    // oPutFileButton
+
+    Object oDeleteFileButton is a ButtonSub
+        Set Label to "Delete File"
+        Set Size to 14 63
+        Set Location to 110 364
+
+        //AB-StoreStart
+                        
+        Procedure OnCLick
+            local string sFileName
+            local integer iRetVal
+            //
+            get GetFileName of ( oDirList ( Current_Object ) ) to sFileName
+            if ( trim ( sFileName ) ) ne "" begin
+                Get YesNo_Box ("Delete remote file"*sFileName*"?") "Delete confirmation" to iRetVal
+                If ( iRetVal=MBR_Yes ) begin
+                    //
+                    send AddInfo to ( oStatusForm ( Current_Object ) );
+                        ("Deleting remote file"*sFileName-"...")
+                    //
+                    move ( dvFtpDeleteFile (sFileName) ) to iRetVal //delete remote file
+                    if iRetVal begin
+                        send ShowInternetErrorMessage iRetval
+                        procedure_return
+                    end
+                    send AddInfo to ( oStatusForm ( Current_Object ) ) "Ok"
+                    send ListDir to ( oDirList ( Current_Object ) ) 1 //update directory-listing
+                end
+            end
+        End_Procedure
+        
+        //AB-StoreEnd
+
+    End_Object    // oDeleteFileButton
+
+    Object oRenFileButton is a ButtonSub
+        Set Label to "Rename File"
+        Set Size to 14 63
+        Set Location to 127 364
+        Set Focus_Mode to Pointer_Only
+
+        //AB-StoreStart
+                        
+        Procedure OnCLick
+            local string sExisting sNew
+            local integer iRetVal
+            //
+            get GetFileName of ( oDirList ( Current_Object ) ) to sExisting
+            if ( trim ( sExisting ) ) ne "" begin
+                set psExistingName to sExisting
+                send popup to ( oRenameDialog ( Current_Object ) )
+                get psNewName to sNew
+                if ( trim ( sNew ) ) ne "" begin
+                    //
+                    send AddInfo to ( oStatusForm ( Current_Object ) );
+                        ("Renaming"*sExisting*"to"*sNew-"...")
+                    //
+                    move ( dvFtpRenameFile (sExisting,sNew) ) to iRetVal //rename remote file
+                    if iRetVal begin
+                        send ShowInternetErrorMessage iRetval
+                        procedure_return
+                    end
+                    send AddInfo to ( oStatusForm ( Current_Object ) ) "Ok"
+                    send ListDir to ( oDirList ( Current_Object ) ) 1 //update directory-listing
+                end
+            end
+        End_Procedure
+        
+        //AB-StoreEnd
+
+    End_Object    // oRenFileButton
+
+    Object oRemoveDirButton is a ButtonSub
+        Set Label to "Remove Directory"
+        Set Size to 14 63
+        Set Location to 175 364
+        Set Focus_Mode to Pointer_Only
+
+        //AB-StoreStart
+                        
+        Procedure OnCLick
+            local string sDirName
+            local integer iRetVal
+            //
+            get GetFileName of ( oDirList ( Current_Object ) ) to sDirName
+            if ( trim ( sDirName ) ) ne "" begin
+                Get YesNo_Box ("Delete remote directory"*sDirName*"?") "Delete confirmation" to iRetVal
+                If ( iRetVal=MBR_Yes ) begin
+                    //
+                    send AddInfo to ( oStatusForm ( Current_Object ) );
+                        ("Removing remote directory"*sDirName-"...")
+                    //
+                    move ( dvFtpRemoveDirectory (sDirName) ) to iRetVal //remove remote directory
+                    if iRetVal begin
+                        send ShowInternetErrorMessage iRetval
+                        procedure_return
+                    end
+                    send AddInfo to ( oStatusForm ( Current_Object ) ) "Ok"
+                    send ListDir to ( oDirList ( Current_Object ) ) 1 //update directory-listing
+                end
+            end
+        End_Procedure
+        
+        //AB-StoreEnd
+
+    End_Object    // oRemoveDirButton
+
+    Object oCreateDirButton is a ButtonSub
+        Set Label to "Create Directory"
+        Set Size to 14 63
+        Set Location to 156 364
+        Set Focus_Mode to Pointer_Only
+
+        //AB-StoreStart
+                        
+        Procedure OnCLick
+            local string sNew
+            local integer iRetVal
+            //
+            send popup to ( oCreateDirDialog ( Current_Object ) )
+            get psNewName to sNew
+            if ( trim ( sNew ) ) ne "" begin
+                //
+                send AddInfo to ( oStatusForm ( Current_Object ) ) ;
+                    ("Creating remote directory"*sNew-"...")
+                //
+                move ( dvFtpCreateDirectory (sNew) ) to iRetVal //create remote directory
+                if iRetVal begin
+                    send ShowInternetErrorMessage iRetval
+                    procedure_return
+                end
+                send AddInfo to ( oStatusForm ( Current_Object ) ) "Ok"
+                send ListDir to ( oDirList ( Current_Object ) ) 1 //update directory-listing
+            end
+        End_Procedure
+        
+        //AB-StoreEnd
+
+    End_Object    // oCreateDirButton
+
+    Object oExit_Btn is a ButtonSub
+        Set Label to "Close"
+        Set Location to 2 369
+        Set Focus_Mode to Pointer_Only
+
+        //AB-StoreStart
+                
+        Procedure OnClick
+            Send Stop_UI
+        End_Procedure
+        
+        //AB-StoreEnd
+
+    End_Object    // oExit_Btn
+
+
+    //AB-StoreStart
+    
+    Object oSaveFile is a SaveAsDialog
+        Set Filter_String  To "All Files|*.*;Text files|*.txt"
+        Set Initial_Folder To "."
+        Set Dialog_Caption To "Save remote file as local file..."
+    End_Object
+    
+    Object oOpenFile is an OpenDialog
+        Set Filter_String  To "All files|*.*;Text files|*.txt"
+        Set Initial_Folder To "."
+        Set Dialog_Caption To "Put local file on remote server..."
+    End_Object
+    
+    Object oRenameDialog is a ModalPanel
+        Set Minimize_Icon to FALSE
+        Set Maximize_Icon to FALSE
+        Set Label to "Rename file/directory"
+        Set Size to 104 173
+        set popup_state to true
+        set locate_mode to center_on_screen
+    
+        Object oBox is a Container3d
+            Set Border_Style to Border_StaticEdge
+            Set Size to 56 157
+            Set Location to 4 6
+            Object oExistForm is a Form
+                Set Label to "Existing name:"
+                Set Label_Col_Offset to 50
+                Set Size to 13 85
+                Set Location to 10 55
+                Set Object_Shadow_State to true
+                Procedure activating
+                    forward send activating
+                    Set Value item 0 to ( psExistingName ( Current_Object ) )
+                End_Procedure
+            End_Object    // ExistForm
+    
+            Object oNewForm is a Form
+                Set Label to "New name:"
+                Set Label_Col_Offset to 50
+                Set Size to 13 85
+                Set Location to 29 55
+            End_Object    // NewForm
+        End_Object    // oBox
+    
+        Object oOK_bn is a Button
+            Set Label to "&OK"
+            Set Size to 14 50
+            Set Location to 68 59
+            Procedure OnClick
+                set psNewName to ( value ( oNewForm ( oBox ( Current_Object ) ), 0 ) )
+                send deactivate to ( parent ( Current_Object ) )
+            End_Procedure
+        End_Object    // oOK_bn
+    End_Object    // oRenameDialog
+    
+    Object oCreateDirDialog is a ModalPanel
+        Set Minimize_Icon to FALSE
+        Set Maximize_Icon to FALSE
+        Set Label to "Create remote directory"
+        Set Size to 91 173
+        set popup_state to true
+        set locate_mode to center_on_screen
+    
+        Object oBox is a Container3d
+            Set Border_Style to Border_StaticEdge
+            Set Size to 43 157
+            Set Location to 4 6
+            Object oNewNameForm is a Form
+                Set Label to "Directory name:"
+                Set Label_Col_Offset to 50
+                Set Size to 13 85
+                Set Location to 10 55
+            End_Object    // NewNameForm
+        End_Object    // oBox
+    
+        Object oOK_bn is a Button
+            Set Label to "&OK"
+            Set Size to 14 50
+            Set Location to 55 59
+            Procedure OnClick
+                set psNewName to ( value ( oNewNameForm ( oBox ( Current_Object ) ), 0 ) )
+                send deactivate to ( parent ( Current_Object ) )
+            End_Procedure
+        End_Object    // oOK_bn
+    End_Object    // oRenameDialog
+    
+    
+    Object oInternetErrorArray is an Array
+        Procedure InitializeErrorArray
+            //
+            // you can replace these messages with more
+            // end-user friendly information
+            //
+            set array_value item 1   to "out of handles"
+            set array_value item 2   to "timeout"
+            set array_value item 3   to "extended error"
+            set array_value item 4   to "internal error"
+            set array_value item 5   to "invalid url"
+            set array_value item 6   to "unrecognized scheme"
+            set array_value item 7   to "name not resolved"
+            set array_value item 8   to "protocol not found"
+            set array_value item 9   to "invalid option"
+            set array_value item 10  to "bad option length"
+            set array_value item 11  to "option not settable"
+            set array_value item 12  to "shutdown"
+            set array_value item 13  to "incorrect user name"
+            set array_value item 14  to "incorrect password"
+            set array_value item 15  to "login failure"
+            set array_value item 16  to "invalid operation"
+            set array_value item 17  to "operation cancelled"
+            set array_value item 18  to "incorrect handle type"
+            set array_value item 19  to "incorrect handle state"
+            set array_value item 20  to "not proxy request"
+            set array_value item 21  to "registry value not found"
+            set array_value item 22  to "bad registry parameter"
+            set array_value item 23  to "no direct access"
+            set array_value item 24  to "no context"
+            set array_value item 25  to "no callback"
+            set array_value item 26  to "request pending"
+            set array_value item 27  to "incorrect format"
+            set array_value item 28  to "item not found"
+            set array_value item 29  to "cannot connect"
+            set array_value item 30  to "connection aborted"
+            set array_value item 31  to "connection reset"
+            set array_value item 32  to "force retry"
+            set array_value item 33  to "invalid proxy request"
+            set array_value item 34  to "need ui"
+            set array_value item 36  to "handle exists"
+            set array_value item 37  to "sec cert date invalid"
+            set array_value item 38  to "sec cert cn invalid"
+            set array_value item 39  to "http to https on redir"
+            set array_value item 40  to "https to http on_redir"
+            set array_value item 41  to "mixed security"
+            set array_value item 42  to "chg post is non secure"
+            set array_value item 43  to "post is non_secure"
+            set array_value item 44  to "client auth cert needed"
+            set array_value item 45  to "invalid ca"
+            set array_value item 46  to "client auth not setup"
+            set array_value item 47  to "async thread failed"
+            set array_value item 48  to "redirect scheme change"
+            set array_value item 49  to "dialog pending"
+            set array_value item 50  to "retry dialog"
+            set array_value item 110 to "ftp transfer in progress"
+            set array_value item 111 to "ftp dropped"
+            set array_value item 112 to "ftp no passive mode"
+            set array_value item 157 to "security channel error"
+            set array_value item 158 to "unable to cache file"
+            set array_value item 159 to "tcpip not installed"
+            set array_value item 163 to "disconnected"
+            set array_value item 164 to "server unreachable"
+            set array_value item 165 to "proxy server unreachable"
+        End_Procedure
+    End_Object
+    
+    Procedure ShowInternetErrorMessage integer iInetError
+        local string sMsg
+        //
+        //show server-message or local error
+        //
+        move ( dvGetServerMsg() ) to sMsg
+        if ( trim ( sMsg ) ) eq "" get array_value of ( oInternetErrorArray ( Current_Object ) ) ;
+            item ( iInetError - 12000 ) to sMsg
+        send AddInfo to ( oStatusForm ( Current_Object ) ) ( "Error:"*sMsg ) true
+    End_Procedure
+    
+        Procedure activating
+            local integer iRetVal
+            forward send activating
+            send InitializeErrorArray to ( oInternetErrorArray ( Current_Object ) )
+            move ( dvInternetAttemptConnect () ) to iRetVal //attempt an connect to the internet
+            move ( dvInternetOpen () ) to iRetVal           //initialize internet functions
+        End_Procedure
+    
+    
+    
+    //AB-StoreEnd
+
+End_Object    // oFtpPanel
+
+//AB/ End_Object    // prj

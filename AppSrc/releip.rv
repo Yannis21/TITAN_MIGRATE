@@ -1,0 +1,420 @@
+//AB/ Project Releip
+//AB/     Object prj is a Report_Project
+//AB/         Set ProjectName to "Releip"
+//AB/         Set ProjectFileName to "releip.rv"
+
+// Project Object Structure
+//   Releip is a ReportViewSub
+//     ButtonSub3 is a ButtonSub
+//     ButtonSub4 is a ButtonSub
+//     eleiph_BasicReport is a BasicReport
+//       Item_DD is a Item_DataDictionary
+//       Btnemp_DD is a Btnemp_DataDictionary
+//       Btnordd_DD is a Btnordd_DataDictionary
+//       Btnordh_DD is a Btnordh_DataDictionary
+
+// Register all objects
+Register_Object Btnemp_DD
+Register_Object Btnordd_DD
+Register_Object Btnordh_DD
+Register_Object ButtonSub3
+Register_Object ButtonSub4
+Register_Object eleiph_BasicReport
+Register_Object Item_DD
+Register_Object Releip
+
+
+//AB/     Report View
+
+
+    //AB-StoreTopStart
+    Use dfallrpt.pkg
+    Use btnemp.dd
+    Use btnordh.dd
+    use btnordd.dd
+    use item.dd
+    use sysfile.dd
+    USE SYSCURXR.DD
+    Open Syscurxr
+    
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use Rptvw.Sub
+    Use Button.Sub
+
+    //AB-IgnoreEnd
+
+    ACTIVATE_VIEW Activate_Releip FOR Releip
+
+    Object Releip is a ReportViewSub
+
+        //AB-StoreTopStart
+        
+        Property Integer Sort_IndexRlog     Public 1
+        Property integer piprinter          public 0
+        property integer piola              public 0
+        property integer pinooflines        public 0
+        property integer pietoimo           public 0
+        property integer pifirst            public 0
+        
+        Property Number  pnTotalRecords     Public 0
+        property number  pitimhmon          public 0
+        property number  piel               public 0
+        property number  pnqty              public 0
+        
+        property string  pspar              public ''
+        property string  psmodule           public ''
+        property date    pddatefrom         public ''
+        property date    pddateto           public ''
+        
+        
+        //AB-StoreTopEnd
+
+        Set Label to "„¤ž£â¨à©ž „¢¢œ §é¤"
+        Set Size to 39 186
+        Set Location to 1 23
+        Set Color to 16744448
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object ButtonSub3 is a ButtonSub
+
+            //AB-StoreTopStart
+                            
+            //AB-StoreTopEnd
+
+            Set Bitmap to "RUNPROG.BMP"
+            Set Size to 18 27
+            Set Location to 3 119
+            Set Border_Style to Border_StaticEdge
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                            
+            Procedure OnClick
+            
+            End_Procedure
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub3
+
+        Object ButtonSub4 is a ButtonSub
+
+            //AB-StoreTopStart
+                            
+            //AB-StoreTopEnd
+
+            Set Bitmap to "CANCEL.BMP"
+            Set Size to 18 27
+            Set Location to 3 153
+            Set Border_Style to Border_StaticEdge
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            Procedure OnClick
+                Send Request_Cancel
+            End_Procedure
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub4
+
+
+        //AB-StoreStart
+        set output_device_name to none
+        Procedure StartReport
+            Local Integer iOutputDevice
+            Local String  FileName
+            SEND RUN_REPORT
+        End_Procedure   // StartReport
+        
+        
+        Object eleiph_BasicReport is a BasicReport
+        
+            Set Report_Title to "„¤ž£â¨à©ž œ¢¢œ §é¤                   "
+        
+         //   Set Status_Panel_State  to False
+            Set Display_Error_State to True
+        
+           Object Item_DD is a Item_DataDictionary
+           End_Object    // Item_DD
+        
+           Object Btnemp_DD is a Btnemp_DataDictionary
+                begin_constraints
+                   string datefrom dateto spar  smodule
+                   get pddatefrom   to datefrom
+                   get pddateto     to dateto
+                   get pspar        to spar
+                   get psmodule     to smodule
+        
+                   constrain btnemp.vcompany   eq syscurxr.company_code
+                   constrain btnemp.vsiteemf   eq syscurxr.branch_site
+        
+                   If      (smodule='01')   constrain btnemp.ap eq '1' //Polhseis
+                   Else If (sModule='02')   constrain btnemp.ap eq '2' //agores
+        
+                   constrain btnemp.pms_recr   eq "0"
+        
+                   if (datefrom <> '') constrain btnemp.vdate ge datefrom
+                   if (dateto   <> '') constrain btnemp.vdate le dateto
+        
+                   constrain btnemp.vvoucher eq spar
+                end_constraints
+            End_Object
+        
+            Object Btnordd_DD is a Btnordd_DataDictionary
+              Set read_only_state to true
+            End_Object    // Btnordd_DD
+        
+            Object Btnordh_DD is a Btnordh_DataDictionary
+              Set read_only_state to true
+            End_Object    // Btnordh_DD
+            //Main DD for the report
+            Set Server To (btnemp_dd(Self))
+        
+            //Breaks and Index for the report
+            Report_Index By Index.14
+            Report_breaks btnemp.vdate btnemp.vconscode btnemp.vsn
+        
+            Function Starting_Main_Report Returns Integer
+              Integer iIndexRlog
+              Local Integer iRetVal
+              Forward Get Starting_Main_Report to iRetval
+              send rebuild_constraints to btnemp_dd
+              Send Find to (btnemp_dd(self)) First_Record 14
+              while (found=1)
+                 if (btnemp.vprodcode=sysfile.elleipes) send request_delete to btnemp_dd
+                 Send Find to (btnemp_dd(self)) next_Record 14
+              loop
+              // js 16/01/2003
+              Send Clear to btnemp_dd
+              //
+              Send rebuild_constraints to btnemp_dd
+              Send Find to (btnemp_dd(self)) First_Record 14
+            End_Function
+        
+            Procedure_Section subheader1
+                integer ino
+                move 0 to ino
+            End_Procedure
+        
+            Procedure_Section subheader2
+                Set piFirst to 0
+            End_Procedure
+        
+            Procedure_Section subheader3
+                set pinooflines to 0
+                set pietoimo    to 0
+                set piola       to 0
+                set pnqty       to 0
+                set piel        to 0
+                set pitimhmon   to 0
+        
+            End_Procedure
+        
+            Procedure_Section  Body
+                integer iola
+                string svclient svitem svcn darxh
+                number neleiph nprice
+        
+                clear item
+                move btnemp.vprodcode to item.item_code
+                find eq item by index.5
+                if (item.wapokat_code = sysfile.wapokat_etoima) begin
+                   set pietoimo to 1
+                   move Btnemp.vclientcode  to svclient
+                   move Btnemp.vconscode    to svcn
+                   move Btnemp.vdate        to darxh
+        
+                   clear btnordd
+                   move svclient            to btnordd.vclient_id
+                   move svcn                to btnordd.vcn_code
+                   move sysfile.elleipes    to btnordd.vitem
+                   move 0                   to btnordd.vactive
+                   move darxh               to btnordd.arxh_date
+                   find le btnordd by index.4//client_id+cn_code+item+arxh_date
+                   if ((found=1) and (sysfile.elleipes=btnordd.vitem) and (darxh ge btnordd.arxh_date) and (darxh le btnordd.deop_date) and (btnordd.vactive=0) and (svcn=btnordd.vcn_code)) begin
+                       move btnordd.vprice to nprice
+                       if (nprice) begin
+                           send update_status ('”¦¨â˜ª' + ":" + string(SVCLIENT))
+                           set pnqty to btnemp.vqty
+                           set pitimhmon to nprice
+                           clear btnordh
+                           move btnordd.vorderbt to btnordh.aa_deop
+                           find eq btnordh by index.1
+                           move btnordh.eleiph to neleiph
+                           set piel     to neleiph
+                           set piola    to btnordh.velxr
+                       End
+                   end
+                end
+            End_Procedure
+        
+            Procedure_Section subTOTAL3
+                 if (pietoimo(self)) begin
+                   if (piola(self)) begin
+                      if (piola(self)=2) begin
+                         if (pnqty(self)<piel(self)) begin
+                              reread btnemp
+                              move 0 to btnemp.recnum
+                              move (sysrecc.btnemp_rec0+1)                  to btnemp.btnemp_rec0
+                              move (sysrecc.btnemp_rec0+1)                  to sysrecc.btnemp_rec0
+                              saverecord sysrecc
+                              Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                                   (Trim(String(btnemp.btnemp_Rec0))))))    to btnemp.btnemp_Recr
+                              move (btnemp.vrow+1)                          to btnemp.vrow
+                              move sysfile.elleipes                         to btnemp.vprodcode
+                              move sysCURXR.BRANCH_CODE                     to btnemp.wapomast
+                              move (pitimhmon(self))                        to btnemp.vorderprice
+                              Move (piEl(Self)-pnQty(Self))                 to btnemp.vqty
+        
+                              //------------------
+                              // Yannis 29/11/2013
+                              //------------------
+                              //Integer   iCount
+                              //String    sApomast
+                              //Move ""   to sApomast
+                              //Move 0    to iCount
+                              //Clear Item
+                              //move sysfile.elleipes to Item.Item_Code
+                              //Find Eq Item By Index.5
+                              //Clear Wapomast
+                              //Move Item.Wapokat_Code    to Wapomast.Wapokat_Code
+                              //Find GE Wapomast By Index.1
+                              //While ((Found) And (Item.Wapokat_Code=Wapomast.Wapokat_Code))
+                              //    Add 1 to iCount
+                              //    Move Wapomast.Wapomast_Code to sApomast
+                              //    Find GT Wapomast By Index.1
+                              //Loop
+                              //If (iCount=1) Move (Trim(sApomast)) to Btnemp.Wapomast
+                              //------------------
+                              // Yannis 29/11/2013
+                              //------------------
+        
+                              saverecord btnemp
+                              unlock
+                         end
+                      end
+                      else begin
+                         if (pnqty(self)<piel(self)) begin
+                            Set piFirst to (piFirst(Self)+1)
+                            If (piFirst(Self)>1) Begin
+                              reread btnemp
+                              move 0 to btnemp.recnum
+                              move (sysrecc.btnemp_rec0+1)                  to btnemp.btnemp_rec0
+                              move (sysrecc.btnemp_rec0+1)                  to sysrecc.btnemp_rec0
+                              saverecord sysrecc
+                              Move (Append('',((Trim(SysCurXR.Branch_Site))+;
+                                   (Trim(String(btnemp.btnemp_Rec0))))))    to btnemp.btnemp_Recr
+                              move (btnemp.vrow+1)                          to btnemp.vrow
+                              move sysfile.elleipes                         to btnemp.vprodcode
+                              move sysCURXR.BRANCH_CODE                     to btnemp.wapomast
+                              move (pitimhmon(self))                        to btnemp.vorderprice
+                              Move (piEl(Self)-pnQty(Self))                 to btnemp.vqty
+        
+                              //------------------
+                              // Yannis 29/11/2013
+                              //------------------
+                              //Integer   iCount
+                              //String    sApomast
+                              //Move ""   to sApomast
+                              //Move 0    to iCount
+                              //Clear Item
+                              //move sysfile.elleipes to Item.Item_Code
+                              //Find Eq Item By Index.5
+                              //Clear Wapomast
+                              //Move Item.Wapokat_Code    to Wapomast.Wapokat_Code
+                              //Find GE Wapomast By Index.1
+                              //While ((Found) And (Item.Wapokat_Code=Wapomast.Wapokat_Code))
+                              //    Add 1 to iCount
+                              //    Move Wapomast.Wapomast_Code to sApomast
+                              //    Find GT Wapomast By Index.1
+                              //Loop
+                              //If (iCount=1) Move (Trim(sApomast)) to Btnemp.Wapomast
+                              //------------------
+                              // Yannis 29/11/2013
+                              //------------------
+        
+                              saverecord btnemp
+                              unlock
+                            End
+                          end
+                      end
+                   end
+                end
+            End_Procedure
+        
+            Procedure_Section subtotal2
+               integer ino
+               move 0 to ino
+            End_Procedure
+        
+            Procedure_Section subtotal1
+               integer ino
+               move 0 to ino
+            End_Procedure
+        
+           Procedure Ending_Report
+                set pinooflines to 0
+                set pietoimo    to 0
+                set piola       to 0
+                set pnqty       to 0
+                set piel        to 0
+                set pitimhmon   to 0
+                set pifirst     to 0
+           End_Procedure
+        
+        End_Object
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // Releip
+
+
+    //AB-StoreStart
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

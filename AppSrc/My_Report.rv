@@ -1,0 +1,374 @@
+//AB/ Project My Report
+//AB/ Object prj is a REPORT_Project 
+//AB/     Set ProjectName to "My Report"
+//AB/     Set ProjectFileName to "My_Report.rv"
+//AB/     Set GenerateFileName to "NONAME"
+
+// Project Object Structure
+//   My_Report is a ReportView
+//     oSelectGroup1 is a Group
+//       oSelStart1 is a Form
+//       oSelStop1 is a Form
+//     oPrintTo is a RadioGroup
+//       oRadio1 is a Radio
+//       oRadio2 is a Radio
+//     oBtnPrint is a Button
+//     oBtnCancel is a Button
+//     RptMy_Report is a WinReport
+
+//  Register all objects
+Register_Object My_Report
+Register_Object oBtnCancel
+Register_Object oBtnPrint
+Register_Object oPrintTo
+Register_Object oRadio1
+Register_Object oRadio2
+Register_Object oSelectGroup1
+Register_Object oSelStart1
+Register_Object oSelStop1
+Register_Object RptMy_Report
+
+
+//AB/  AppBuild VIEW
+
+    //AB-IgnoreStart
+
+    Use DFAllEnt.pkg
+
+    //AB-IgnoreEnd
+
+    //AB-StoreTopStart
+
+    Use DFAllRpt.pkg
+
+    Open Company
+
+    //AB-StoreTopEnd
+
+    ACTIVATE_VIEW Activate_My_Report_rpt FOR My_Report_rpt
+
+    Object My_Report_rpt is a ReportView
+        Set label to "My Report"
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object oSelectGroup1 is a Group
+            Set Label    to "Select Company Code"
+            Set Size     to 34 165
+            Set Location to 5 5
+
+            Object oSelStart1 is a Form
+                Set Size     to 13 50
+                Set Location to 13 30
+                Set Label_Justification_Mode to jMode_Right
+                Set Label_Col_Offset to 2
+                Set Label    to "From:"
+                Set Status_Help to "First value in selection range."
+            End_Object    // oSelStart1
+
+            Object oSelStop1 is a Form
+                Set Size     to 13 50
+                Set Location to 13 104
+                Set Label_Justification_Mode to jMode_Right
+                Set Label_Col_Offset to 2
+                Set Label    to "To:"
+                Set Status_Help to "Last value in selection range."
+            End_Object    // oSelStop1
+
+        End_Object    // oSelectGroup1
+
+        Object oPrintTo is a RadioGroup
+            Set Label    to "Print to"
+            Set Size     to 38 105
+            Set Location to 43 5
+            Set Current_Radio to 0
+
+            Object oRadio1 is a Radio
+                Set Label    to "Preview"
+                Set Size     to 10 42
+                Set Location to 12 6
+                Set Status_Help to "Prints the report to screen"
+            End_Object    // oRadio1
+
+            Object oRadio2 is a Radio
+                Set Label    to "Printer"
+                Set Size     to 10 42
+                Set Location to 24 6
+                Set Status_Help to "Prints the report to printer"
+            End_Object    // oRadio2
+
+        End_Object    // oPrintTo
+
+
+        Object oBtnPrint is a Button
+            Set Label    to "Print"
+            Set Size     to 14 50
+            Set Location to 49 120
+            Set Status_Help to "Print the Selected report"
+            Set Default_State to True
+
+            //AB-StoreStart
+            Procedure OnClick
+                Send StartReport
+            End_Procedure
+            //AB-StoreEnd
+
+        End_Object    // oBtnPrint
+
+        Object oBtnCancel is a Button
+            Set Label    to "Cancel"
+            Set Size     to 14 50
+            Set Location to 67 120
+            Set Status_Help to "Close this Panel"
+
+            //AB-StoreStart
+            Procedure OnClick
+                Send Close_Panel
+            End_Procedure
+            //AB-StoreEnd
+
+        End_Object
+
+
+        //AB-StoreStart
+        // Procedures and functions used by the user interface
+
+        //This function is called by the procedure StartReport
+        Function Print_to_Screen_State Returns Integer
+            Integer iRad
+            Get Current_Radio of oPrintTo To iRad
+            Function_Return (iRad=1)
+        End_Function
+
+        // Use this procedure to do print setup
+        Procedure SetupReport
+            send DFPrintSetup to (Report_Object_Id(self))
+        End_Procedure
+
+        // Use this procedure to start the report
+        Procedure StartReport
+            Integer iToPrinter iRepObj
+            String sVal
+            Get Report_Object_Id To iRepObj
+
+            Get Value of (oSelStart1(oSelectGroup1(self))) item 0 To sVal
+            Set pSelStart1 of iRepObj To sVal
+
+            Get Value of (oSelStop1(oSelectGroup1(self))) item 0 To sVal
+            Set pSelStop1  of iRepObj To sVal
+
+
+            Get Print_to_Screen_State to iToPrinter
+            If iToPrinter Set OutPut_Device_Mode to PRINT_TO_PRINTER
+            Else Set OutPut_Device_Mode to PRINT_TO_WINDOW
+
+            Send Run_Report to iRepObj
+
+        End_Procedure
+
+
+        // The Report
+        Object RptMy_Report is a WinReport
+            Property String pSelStart1 Public ""
+            Property String pSelStop1  Public ""
+
+            //Set the title on the information box (sentinel)
+            Set Report_Title to "Printing My Report Listing"
+
+            //Main File for the report
+            Report_Main_File COMPANY
+
+            // Constrain to use depending on users choice
+            // This is a smart constraint. If either start or
+            // stop is blank we will assume that there is no limit
+            Begin_Constraints
+                String sStart sStop
+                Number nStart nStop
+                Date   dStart dStop
+                //
+                Get pSelStart1 to sStart
+                Get pSelStop1 to sStop
+                If (sStart<>"" and sStop<>"") ;
+                    Constrain Company.COMPANY_CODE Between sStart And sStop
+                Else if (sStart > "");
+                    Constrain Company.COMPANY_CODE GE sStart
+                Else if (sStop  > "");
+                    Constrain Company.COMPANY_CODE LE sStop
+            End_Constraints
+
+            //Breaks and Index for the report
+            Report_Index By COMPANY.RECNUM
+
+            // Starting_Main_Report should ALWAYS be used! 
+            // Setting of margins should be set inside
+            // Starting_Main_Report and after the Forward Get.
+            Function Starting_Main_Report Returns Integer
+                Integer iRetVal
+                Send DFSetMetrics To WinPrintId "CM" // Must Set Before Forward! 
+                Forward Get Starting_Main_Report To iRetVal
+                If iRetVal Function_return iRetVal
+                Send DFSetmargins To WinPrintId 1 1 1 1
+            End_Function
+
+            // Selection is a good choice if you are doing a slow
+            // finds like (as) in constrain. The advantage is that the
+            // report could be interupted
+            Function Selection Returns Integer
+                //If ????.???? Eq ???? Function_return RPT_OK
+                //Else Function_return RPT_NOT_SELECT
+            End_Function
+
+
+            // Display selection ranges in the header section.
+            // Pass: Selection title, start value and end value
+            Procedure ShowRange string sTitle string sStart string sStop
+                string sText
+                If (sStart="" AND sStop="") Procedure_return
+                If (sStart="0" AND sStop="0") Procedure_return
+                If (sStart<>"" and sStop<>"") ;
+                    Move ("between" * sStart * "and" * sStop) to sText
+                Else if (sStart > "");
+                    Move ("starting at " * sStart) to sText
+                Else if (sStop > "");
+                    Move ("up to " * sStop) to sText
+                dfWriteLn ("   Print records" * sTitle * sText) (FONT_BOLD)
+            End_Procedure
+
+
+            Procedure_Section Page_Top
+                String sStart sStop
+
+                DFFont "Times New Roman" //  Use Times New Roman size 16
+                DFFontSize 16
+
+                  DFBeginHeader DFPageTop          //Header of type DFPageTop
+
+                    DFHeaderPos   HDR_LEFT         //Write data from left margin in the header
+                    DFHeaderFrame HDR_MARGINS 0.05 //Set the box from margin to margin using size 0.05
+
+                    DFWriteBMP "RPTHEAD.BMP" 0.2 0.5 3.0 0.75 // Write the BMP in the header so it wraps with the header 
+
+                    DFFontSize 9
+
+                    //Page number, also se #subpagecount#. MUST be in small letters!
+                    DFWritePos "Page "        17     (FONT_ITALIC+FONT_BOLD) -1 0
+                    DFWritePos "#pagecount#"  18     (FONT_ITALIC+FONT_BOLD) -1 0
+
+                    DFFontSize 16
+
+                    DFWriteln ""                  // Write data to the header
+                    DFWritelnPos "My Report Listing" 8       (FONT_ITALIC+FONT_BOLD) -1 0
+                    DFWriteln ""                  // Write data to the header
+                    DFWriteln ""                  // Write data to the header
+                    DFWriteln ""                  // Write data to the header
+                    DFWriteln ""                  // Write data to the header
+                    DFWriteln ""                  // Write data to the header
+
+                    DFFontSize 9
+
+                    //
+                    Get pSelStart1 to sStart
+                    Get pSelStop1 to sStop
+                    Send ShowRange "Company.Company_code" sStart sStop
+                    DFWriteln ""
+
+                    DFWritePos    "Recnum"                  1.59    (FONT_BOLD+FONT_RIGHT) -1 1.09  
+                    DFWritePos    "Company Code"            2.09    (FONT_BOLD)            -1 1.84  
+                    DFWritePos    "Company Name"            4.43    (FONT_BOLD)            -1 8.19  
+                    DFWritePos    "Company Afm"             13.12   (FONT_BOLD)            -1 2.73  
+                    DFWriteln ""
+                    // Remove comment to display a metric ruler
+                    // Send ShowRuler // displays a ruler for aligning fields
+                  DFEndHeader                     //End and print header
+
+            End_Procedure
+
+
+            //Will only be printet once in a report after page_top
+            //Procedure_Section Report_Header
+            //      DFBeginHeader DFReportHeader
+            //        DFWrite     "Report_Header" (FONT_ITALIC)
+            //      DFEndHeader
+            //End_Procedure
+
+
+            //Page header is printed after Page_Top (Report_Headrer) on each page
+            //Procedure_Section Page_Header
+            //      DFBeginHeader DFPageHeader
+            //        DFWrite     "Page_Header" (FONT_ITALIC)
+            //      DFEndHeader
+            //End_Procedure
+
+
+            //Page title is printed on each page after Page_Header 
+            //Procedure_Section Page_Title
+            //      DFBeginHeader DFPageTitle
+            //        DFWrite     "Page_Title" (FONT_ITALIC)
+            //      DFEndHeader
+            //End_Procedure
+
+
+
+            Procedure_Section Body
+
+                // Update the information box (sentinel) for each body record 
+                Send Update_Status ("Record" * String(COMPANY.RECNUM))
+
+                DFFont "Arial" //  Use Arial
+                DFFontSize 8
+
+
+                DFWritePos    Company.RECNUM              1.59    (FONT_DEFAULT+FONT_RIGHT)  0 1.09  
+                DFWritePos    Company.COMPANY_CODE        2.09    (FONT_DEFAULT)            -1 1.84  
+                DFWritePos    Company.COMPANY_NAME        4.43    (FONT_DEFAULT)            -1 8.19  
+                DFWritePos    Company.COMPANY_AFM         13.12   (FONT_DEFAULT)            -1 2.73  
+                DFWriteln ""
+
+            End_Procedure
+
+            //Report footer is only printed on the last page before Page_Footer 
+            //Procedure_Section Report_Footer
+            //      DFBeginHeader DFReportFooter
+            //        DFWrite     "Report_Footer" (FONT_ITALIC)
+            //      DFEndHeader
+            //End_Procedure
+
+
+            //Page footer is printed on each page before Page_Bottom 
+            //Procedure_Section Page_Footer
+            //      DFBeginHeader DFPageFooter
+            //        DFWrite     "Page_Footer" (FONT_ITALIC)
+            //      DFEndHeader
+            //End_Procedure
+
+
+
+            Procedure_Section Page_Bottom
+
+                DFFont "Arial" //  Use Arial
+                DFFontSize 9
+
+                  DFBeginHeader DFPageBottom       //Header of type DFPageBottom
+
+                    DFHeaderPos   HDR_CENTER       //Write data in center
+                    DFHeaderFrame HDR_MARGINS 0.07 //Set the box from margin to margin using size 0.07
+
+                    DFWrite     "Report Wizard version 1.1. Printed on: " (FONT_ITALIC)
+                    DFWriteln   (RptToday(self)) (FONT_ITALIC)
+
+                  DFEndHeader                     //End and print header
+
+            End_Procedure
+
+        End_Object    //  RptMy_Report
+
+        //AB-StoreEnd
+
+        Set Size to 105 182
+        Set Location to 6 6
+
+    End_Object    //  My_Report_rpt
+
+//AB/    End_Object    //  prj

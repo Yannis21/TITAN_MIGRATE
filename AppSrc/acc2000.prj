@@ -1,0 +1,242 @@
+Project Acc2000
+Object prj is a APP_Project
+
+//AB-StoreTopStart
+Use Workspc.pkg
+
+//  Set date attributes as needed
+Set_Date_Attribute sysdate4_State to (TRUE)
+Set_Date_Attribute Date4_State    to (TRUE)
+Set_Date_Attribute epoch_value    to 30
+
+Object ProgramWorkspace is a WorkspaceSub
+    Set WorkspaceName to CURRENT$WORKSPACE
+//    Set ModuleName    to 'ProgramName' // Special module name.
+//    Set HelpName      to 'HelpName.hlp'// Please provide the name of your Windows help file.
+    Set kEnter_Next_State to True
+End_Object
+
+Open Users
+Use CheckLog.pkg
+Use WinQlSQL.Sub
+Use Calendar.sl
+// General Functions-Procedures and Variables
+Use Globals.Inc
+use roundfn.fnc
+Use Idiotht.pkg
+Use Menu_Sec.Sub
+Use DD_Sec.Sub
+
+Integer giWait_Obj
+// Create-Edit-Delete Records only if the field m_code = gs_Module_Code
+Move "01" to gs_Module_Code
+
+//////////////////////
+// Regional Settings
+//Use Locales.pkg
+//Set Application_Locales ghoWorkSpace to True
+//Send Force_Application_Locales
+//////////////////////
+
+// Activate application once
+Set DoAutoSwitchPartial To ""
+
+// The Login Dialog Box
+Use ConnGL.dg
+Send LoginGL
+
+// Select Company-Branch-Year Dialog Box
+Use SelectGL.dg
+
+Send Cursor_Wait to (Cursor_Control(Self))
+
+//Use AccStart.pkg // The Acc2000 Splash Screen
+
+// The Tips Object
+Use TipOfDay.dg
+
+Use CheckLog.pkg
+Use Checkafm.pkg
+Use Help_Ids.inc // Developer should provide this file of help context links.
+Use Std_Help.pkg
+
+//AB-StoreTopEnd
+
+
+//AB-PanelStoreStart
+//Use StdAbout.pkg // Standard "About" package.
+
+//Set Label to "‚œ¤ ¡ã Š¦š ©« ¡ã                                     Visual Acc2000 v6.0"
+
+Use AccAbout.pkg   //  Acc2000 "About" package.
+
+//Set Icon to "Ide1.ico"
+
+Set View_Mode to ViewMode_Zoom
+
+//Send Deactivate to (Splash_Screen(Self))
+
+Send Cursor_Ready to (Cursor_Control(Self))
+
+// The Objects for the button tooltips
+// (always at the bottom code of Main Panel)
+Use Tooltip.Inc
+
+
+
+
+
+
+
+//AB-PanelStoreEnd
+
+
+//AB-ClientStoreStart
+Use Vdfsort.vw
+
+
+
+
+//AB-ClientStoreEnd
+
+
+//AB-ClientStoreTopStart
+Open Ctypkin
+Open Wtypkin
+Open Particle
+
+Function fngConvertPoso Global String asNomismaCodeApo Number anPoso ;
+                               String asNomismaCodeSe  Date   adHmnia;
+                               Number nIsotimia  Returns Number
+
+    Number rVal nApo_Euro_Isot nSe_Euro_Isot
+    Integer iApo_Einai_Euro_Zone iApo_Einai_DRX iApo_Einai_Euro iDekadika_Apo
+    Integer iSe_Einai_Euro_Zone  iSe_Einai_DRX  iSe_Einai_Euro  iDekadika_Se
+    String  sCode
+
+    If (asNomismaCodeApo=asNomismaCodeSe) Function_Return anPoso
+
+    Clear Nomisma
+    Move (Trim(asNomismaCodeApo)) to Nomisma.Nomisma_Code
+    Find eq Nomisma By Index.1 // Nomisma:Index.1:Nomisma_Code
+    Move Nomisma.Euro_Zone      to iApo_Einai_Euro_Zone
+    Move Nomisma.Einai_DRX      to iApo_Einai_DRX
+    Move Nomisma.Einai_EURO     to iApo_Einai_Euro
+    Move Nomisma.KL_ISOT_EURO   to nApo_Euro_Isot
+    Move Nomisma.Dekadika       to iDekadika_Apo
+    // 1. An to nomisma APO den einai ths zonhs euro prepei na vrethei h isotimia tou
+    If ((NOT(iApo_Einai_Euro_Zone)) And (nApo_Euro_Isot=0))  Begin
+        If (adHmnia='') Sysdate            adHmnia
+        Move (Trim(asNomismaCodeApo))   to sCode
+        Clear Isotimia
+        Move sCode                      to Isotimia.Nomisma_Code
+        Move (adHmnia+1)                to Isotimia.Isotimia_Hmnia
+        Find lt Isotimia by Index.1 // Isotimia:Index.1:Nomisma_Code+Isotimia_Hmnia
+        Move Isotimia.Isotimia_Euro     to nApo_Euro_Isot
+    End
+
+    Clear Nomisma
+    Move (Trim(asNomismaCodeSe)) to Nomisma.Nomisma_Code
+    Find eq Nomisma By Index.1 // Nomisma:Index.1:Nomisma_Code
+    Move Nomisma.Euro_Zone      to iSe_Einai_Euro_Zone
+    Move Nomisma.Einai_DRX      to iSe_Einai_DRX
+    Move Nomisma.Einai_EURO     to iSe_Einai_Euro
+    Move Nomisma.KL_ISOT_EURO   to nSe_Euro_Isot
+    Move Nomisma.Dekadika       to iDekadika_Se
+    // 2. An to nomisma SE den einai ths zonhs euro prepei na vrethei h isotimia tou
+    If ((NOT(iSe_Einai_Euro_Zone)) And (nSe_Euro_Isot=0)) Begin
+        If (adHmnia='') Sysdate            adHmnia
+        Move (Trim(asNomismaCodeSe))    to sCode
+        Clear Isotimia
+        Move sCode                      to Isotimia.Nomisma_Code
+        Move (adHmnia+1)                to Isotimia.Isotimia_Hmnia
+        Find lt Isotimia by Index.1 // Isotimia:Index.1:Nomisma_Code+Isotimia_Hmnia
+        Move Isotimia.Isotimia_Euro     to nSe_Euro_Isot
+    End
+
+    Calc (anPoso/nApo_Euro_Isot) to rVal
+    Move (Round_Number(rVal,6)) to rVal
+    Calc (rVal*nSe_Euro_Isot) to rVal
+    Move (Round_Number(rVal,iDekadika_Se)) to rVal
+
+    Function_Return rVal
+End_Function
+//AB-ClientStoreTopEnd
+
+    Set psProject_Version to "5.0"
+    Set psMenu_Pkg To glmenu.mn
+    Set psButtonBar_Pkg To DFStdBtn.pkg
+    Set psStatusBar_Pkg To DFStdSbr.pkg
+    Set ProjectName to "Acc2000"
+    Set ProjectFileName to "Acc2000.prj"
+    Set GenerateFileName to "Acc2000.src"
+    Set psProject_Version to "5.0"
+    Set Component To GFormat.vw
+    Set Component To Fpa.vw
+    Set Component To Glutil.vw
+    Set Component To Gmoves.VW
+    Set Component To gplan.vw
+    Set Component To Gpmoves.VW
+    Set Component To AnalKath.VW
+    Set Component To V56v59v6.vw
+    Set Component To V58u.vw
+    Set Component To Gthhmgio.VW
+    Set Component To gtypkin.vw
+    Set Component To V063.vw
+    Set Component To V068.vw
+    Set Component To V071.vw
+    Set Component To r056_1.rv
+    Set Component To r058.rv
+    Set Component To r058t.rv
+    Set Component To R071.rv
+    Set Component To R056.rv
+    Set Component To V164.VW
+    Set Component To R150_0.RV
+    Set Component To R157_1.RV
+    Set Component To Vrep.vw
+    Set Component To R157_2.RV
+    Set Component To r059.rv
+    Set Component To V3.vw
+    Set Component To Cdtypent.vw
+
+//AB-StoreStart
+
+Send Epelexe_Xrhsh
+
+//Activate the Tip Dialog at Startup
+Send Popup to (oTipDialog(Self))
+
+Start_UI
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//AB-StoreEnd
+
+End_Object    // prj

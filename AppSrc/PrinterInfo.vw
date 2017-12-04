@@ -47,21 +47,21 @@ Object oPrinterInfo is a dbView
         String sDriver sDevice sPort 
         Integer iCancel iResult
         Pointer pHeap
-        String[] sPrinter
-        String[] sEmpty
+        String sPrinter()
+        String sEmpty()
         
-        Move sEmpty to sPrinter
+        //Move sEmpty to sPrinter
     
         Get PrintDialog of oPrintDialog to iCancel
 
-        Get DeviceName of oPrintDialog to sPrinter[0]
-        Get DriverName of oPrintDialog to sPrinter[1]
-        Get OutputName of oPrintDialog to sPrinter[2]
+        Get DeviceName of oPrintDialog to sPrinter(0)
+        Get DriverName of oPrintDialog to sPrinter(1)
+        Get OutputName of oPrintDialog to sPrinter(2)
         
         If (iCancel) Begin
-            Move " " to sPrinter[0]  
-            Move " " to sPrinter[1]  
-            Move " " to sPrinter[2]  
+            Move " " to sPrinter(0)  
+            Move " " to sPrinter(1)  
+            Move " " to sPrinter(2)  
         End
         
         // Unlock and free allocated memory
@@ -69,9 +69,9 @@ Object oPrinterInfo is a dbView
         Move (GlobalFree(DevModeHandle(oPrintDialog(Self))))   to iResult
         Move (GlobalFree(DevNamesHandle(oPrintDialog(Self))))  to iResult
         
-        Set Value of oForm1 to sPrinter[0]
-        Set Value of oForm2 to sPrinter[1]
-        Set Value of oForm3 to sPrinter[2]
+        Set Value of oForm1 to sPrinter(0)
+        Set Value of oForm2 to sPrinter(1)
+        Set Value of oForm3 to sPrinter(2)
         
     End_Procedure
 

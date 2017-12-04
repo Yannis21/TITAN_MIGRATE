@@ -1,0 +1,342 @@
+//AB/ Project tOpItem
+//AB/     Object prj is a View_Project
+//AB/         Set ProjectName to "tOpItem"
+//AB/         Set ProjectFileName to "tOpItem.VW"
+//AB/         Set GenerateFileName to "NONAME"
+
+// Project Object Structure
+//   tOpItem is a dbViewSub
+//     txtTo is a TextBoxSub
+//     frmTO is a cSyDateForm
+//     btnAutoCopen is a ButtonSub
+//     frmLast is a cSyDateForm
+//     txtLast is a TextBoxSub
+//     frmText is a FormSub
+
+// Register all objects
+Register_Object btnAutoCopen
+Register_Object frmLast
+Register_Object frmText
+Register_Object frmTO
+Register_Object tOpItem
+Register_Object txtLast
+Register_Object txtTo
+
+
+//AB/     AppBuild VIEW
+
+
+    //AB-StoreTopStart
+
+    Use Globals.Inc
+    Use bp2ndCop.dg
+    Use bpACopen.dg
+    Open Ctypkin
+    Open Btypkin
+    Open Barticl
+    Open Bmove
+    Use TranLock
+
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use dbView.Sub
+    Use Txtbox.Sub
+    Use cSyDateForm.Pkg
+    Use Button.Sub
+    Use Form.Sub
+
+    //AB-IgnoreEnd
+
+    ACTIVATE_VIEW Activate_tOpItem FOR tOpItem
+
+    Object tOpItem is a dbViewSub
+
+        //AB-StoreTopStart
+
+        Property String psModule ''
+
+        //AB-StoreTopEnd
+
+        Set Label to "ãòù†°„ ú§û£‚®‡©û ©¨©Æú´Â©ú‡§"
+        Set Size to 116 253
+        Set Location to 5 17
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object txtTo is a TextBoxSub
+            Set Label to "Ñ§û£‚®‡©û / °¢‚†©†£¶ ú‡™"
+            Set Location to 26 7
+            Set Size to 10 91
+        End_Object    // txtTo
+
+        Object frmTO is a cSyDateForm
+            Set Size to 13 66
+            Set Location to 24 127
+            Set Color to clAqua
+            Set TextColor to clNavy
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Form_FontWeight Item 0 to 600
+            Set Form_Mask Item 0 to "dd/MM/yyyy"
+        End_Object    // frmTO
+
+        Object btnAutoCopen is a ButtonSub
+            Set Label to "Ñßú•ú®öò©Âò"
+            Set Size to 15 77
+            Set Location to 58 86
+            Set Focus_Mode to Pointer_Only
+            Set Form_FontWeight Item 0 to 600
+
+            //AB-StoreStart
+
+            Set TooltipValue to "Ä¨´Ê£ò´û õû£†¶¨®öÂò úöö®ò≠È§ ©¨©Æ‚´†©û™ (Open Items)"
+
+            Procedure OnClick
+                String  sStr sModule sLabel sCmovesRecr
+                Integer iYes iError_Object_ID iMet iRecnum
+                Date    dHmnia dLast
+
+                Move ''                         to sStr
+                Set Value Of frmText    Item 0  to ''
+                Get Value Of frmTo      Item 0  to dHmnia
+                Get Value Of frmLast    Item 0  to dLast
+
+                Get psModule                    to sModule
+                If (Trim(sModule)='') Move '01' to sModule
+
+                If (dHmnia='') Begin
+                    Send Stop_Box 'Éú§ úß†¢‚•ò´ú û£ú®¶£û§Âò °¢ú†©Â£ò´¶™' 'è®¶©¶Æ„'
+                    Send Activate to frmTo
+                    Procedure_Return
+                End
+                If ((dLast<>'') And (dLast>=dHmnia)) Begin
+                    Send Stop_Box 'Ü û£ú®¶£û§Âò °¢ú†©Â£ò´¶™ õú§ úÂ§ò†\n£ú´òöú§‚©´ú®û ´û™ ´ú¢ú¨´òÂò™ û£ú®¶£û§Âò™' 'è®¶©¶Æ„'
+                    Send Activate to frmTo
+                    Procedure_Return
+                End
+
+                Append sStr 'åò ©¨§úÆÂ©‡ £ú ´û§ ò¨´Ê£ò´û õû£†¶¨®öÂò\n'
+                Append sStr 'úöö®ò≠È§ ©¨©Æ‚´†©û™ ú‡™ ´û§ ' (String(dHmnia))
+
+                Get YesNo_Box sStr "Ñß†ôúôòÂ‡©û" 0 to iYes
+                If (iYes=MBR_YES) Begin
+
+                    Set Enabled_State to False
+
+            //        Send ChangeAllFileModes DF_Filemode_ReadOnly
+            //        Set_Attribute DF_File_Mode Of Copen.File_Number     to DF_Filemode_Default
+            //        Set_Attribute DF_File_Mode Of Cmoves.File_Number    to DF_Filemode_Default
+            //        Set_Attribute DF_File_Mode Of Clients.File_Number   to DF_Filemode_Default
+            //        Set_Attribute DF_File_Mode Of Payresp.File_Number   to DF_Filemode_Default
+            //        Set_Attribute DF_File_Mode Of Sysrecc.File_Number   to DF_Filemode_Default
+
+                    Indicate Err False
+
+                    Begin_Transaction
+                        Reread
+                        move Error_Object_ID to iError_Object_ID
+
+                        Clear Bmove
+                        Move SyscurXr.Company_Code  to Bmove.Company_Code
+                        Move SyscurXr.Branch_Code   to Bmove.Branch_Code
+                        Move SyscurXr.Year_Year     to Bmove.Year_Year
+                        Move 0                      to Bmove.Exei_Enhmerosei
+
+                        Find GT Bmove by Index.7 // Comp+Branch+Year+Exei_Enhmerosei+Barticl_Hmnia+Bmove_Rec0
+                        While ((Found=1) And (Bmove.Company_Code=SyscurXr.Company_Code) And ;
+                                             (Bmove.Branch_Code =SyscurXr.Company_Code) And ;
+                                             (Bmove.Year_Year   =SyscurXr.Year_Year)    And ;
+                                             (Bmove.Exei_Enhmerosei=0))
+
+                            Set Value Of frmText Item 0 to (Trim(String(Bmove.Recnum)))
+                            Clear Barticl
+                            Move Bmove.Barticl_Recr to Barticl.Barticl_Recr
+                            Find Eq Barticl By Index.2
+                            If (Found) Begin
+                                If (Barticl.Barticl_Ekleise='1') Begin
+                                    Clear Btypkin
+                                    Move Barticl.Btypkin_Recr to Btypkin.Btypkin_Recr
+                                    Find Eq Btypkin By Index.2
+                                    If (Found) Begin
+                                        Clear Ctypkin
+                                        Move Btypkin.Ctypkin_Code to Ctypkin.Ctypkin_Code
+                                        Find Eq Ctypkin By Index.1 // Ctypkin_Code
+                                        If ((Found=1) And (Ctypkin.Ctypkin_Module='01')) Begin
+                                            Move Bmove.Recnum to iRecnum
+                                            Move Bmove.Cmoves_Recr to sCmovesRecr
+                                            If (Trim(sCmovesRecr)<>'') Begin
+                                                Add 1 to iMet
+                                                Set piLathos        Of bpACopen to 0
+                                                Set pdHmniaEos      Of bpACopen to dHmnia
+                                                Set psCmovesRecr    Of bpACopen to sCmovesRecr
+                                                Set psModule        Of bpACopen to sModule
+                                                Send DoProcess                  to bpACopen
+                                            End
+                                            Move 1 to Bmove
+                                            //Clear Bmove
+                                        End
+                                    End
+                                End
+                            End
+                            Find GT Bmove by Index.7 // Comp+Branch+Year+Exei_Enhmerosei+Barticl_Hmnia+Bmove_Rec0
+                        Loop
+                    End_Transaction
+                    UNLOCK
+            //        Send ChangeAllFileModes DF_Filemode_Default
+                    Move iError_Object_ID to  Error_Object_ID
+                    Set Enabled_State to True
+                    Set Value Of frmText Item 0 to ''
+                    If (Not(Err)) Send Info_Box 'Ü ò¨´Ê£ò´û õû£†¶¨®öÂò ¶¢¶°¢û®Èüû°ú' 'è¢û®¶≠¶®Âò'
+                End
+            End_Procedure // OnClick
+
+
+
+
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // btnAutoCopen
+
+        Object frmLast is a cSyDateForm
+            Set Size to 13 66
+            Set Location to 5 127
+            Set Color to clNavy
+            Set TextColor to clAqua
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Form_FontWeight Item 0 to 600
+            Set Form_Mask Item 0 to "dd/MM/yyyy"
+
+            //AB-StoreStart
+                                                                                    
+            Set Enabled_State   to False
+            Set Color           to clNavy
+            Set TextColor       to clAqua
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // frmLast
+
+        Object txtLast is a TextBoxSub
+            Set Label to "íú¢ú¨´òÂò ú§û£‚®‡©û / °¢úÂ©£¶"
+            Set Location to 7 7
+            Set Size to 10 114
+        End_Object    // txtLast
+
+        Object frmText is a FormSub
+            Set Size to 13 237
+            Set Location to 81 6
+            Set Color to clBtnFace
+            Set Label_Col_Offset to 2
+            Set Form_Datatype Item 0 to Mask_Window
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+                        
+                        
+            //AB-StoreEnd
+
+        End_Object    // frmText
+
+
+        //AB-StoreStart
+                        
+        Procedure Activate_View Returns Integer
+            Integer rVal iMonth iYear iLastDay iDay
+            Date    dShmera dTo dLast
+            String  sTo sDay sMonth sModule
+            Move '' to sTo
+            Sysdate dShmera
+            Clear Bmove
+            Move SyscurXr.Company_Code  to Bmove.Company_Code
+            Move SyscurXr.Branch_Code   to Bmove.Branch_Code
+            Move SyscurXr.Year_Year     to Bmove.Year_Year
+            Move 1                      to Bmove.Exei_Enhmerosei
+            Move '31/12/2100'           to Bmove.Barticl_Hmnia
+            Find Le Bmove by Index.7 // Comp+Branch+Year+Exei_Enhmerosei+Barticl_Hmnia+Bmove_Rec0
+            If ((Found=1) And (Bmove.Company_Code=SyscurXr.Company_Code) And ;
+                              (Bmove.Branch_Code =SyscurXr.Company_Code) And ;
+                              (Bmove.Year_Year   =SyscurXr.Year_Year)    And ;
+                              (Bmove.Exei_Enhmerosei=1))                     ;
+                    Set Value Of frmLast Item 0 to Bmove.Barticl_Hmnia
+            Else    Set Value Of frmLast Item 0 to ''
+        
+            Move (TheDaySegment  (dShmera)) to iDay
+            Move (TheMonthSegment(dShmera)) to iMonth
+            Move (TheYearSegment (dShmera)) to iYear
+            Move (EndOfMonth(iMonth,iYear)) to iLastDay
+            If (iLastDay=iDay) Set Value Of frmTO Item 0 to dShmera
+            Else Begin
+                Sub 1 From iMonth
+                If (iMonth<1) Begin
+                    Move 12 to iMonth
+                    Sub 1 From iYear
+                End
+                Move (EndOfMonth(iMonth,iYear)) to dShmera
+                Set Value Of frmTO  Item 0  to dShmera
+            End
+            Forward Get Msg_Activate_View to rVal
+        
+            Get psMenuModule Of Main_Menu   to sModule
+            Set psModule                    to sModule
+            Procedure_Return rVal
+        End_Procedure
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // tOpItem
+
+
+    //AB-StoreStart
+                        
+                        
+                        
+                        
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

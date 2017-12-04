@@ -1,0 +1,824 @@
+Project Betolink Enterprise V.4.9.5  08/04/15
+Object prj is a APP_Project
+
+//AB-StoreTopStart
+//------- v.4.9.5  08/04/15 -------
+// + Diorthosh sthn ektyposh Proypologismou Tzirou Ergon (Erga >> ProypTzirou) Pollaploi Tropoi Plhromhs
+// + Sthn klash tou btnemp yphrxe ena property ek paradromhs to opoio den eprepe na yparxei kai den
+//   yphrxe dhlosh tou sthn Create Object. Tora giati pote xtypage kai pote oxi mallon exei na kanei
+//   me thn diadikasia diagrafhs kai epanadhmioyrgias tou DEOP otan to antigrafoyme gia na prosthesoume kati
+//------- v4.9.4  27/03/2015 -------
+// + Nea othonh back door parastatikou Alt+o
+//   me prosthiki Psifiakhs ypografhs Forologikou sto PartleditNEW
+// + Prosthikh Flag piso portas sto pmove gia to flag apo metasxhmatismo me Alt+q
+// + Elegxos sto pedio kodikos sap sta eidh an yparxei hdh kataxorhmenos vgazei mhnyma apodoxhs
+// + Prosthiki elegxou sthn kataxorhsh eidous, ean einai kathgorias 05 - Antlies,
+//   to pedio sygkentrotika sto metasxhmatismo (iTem.group) ginetai aytomatos 1
+// + Prosthiki poiothtas sto ektypotiko
+//------- v4.9.3  02/03/2015 -------
+// + Prosthiki Showln sto VsapDomikh gia provlhma Stayroulas
+//------- v4.9.3  11/02/2015 -------
+// + Diorthosh sthn ektyposh Proypologismou Tzirou Ergon (Erga >> ProypTzirou)
+//------- v4.9.2  03/02/2015 -------
+// + ¨¦©Ÿã¡ Auditing ©«¦ ã£˜ 1,  ˜¨®œå¦ BTNEMP
+//------- v4.9.1  17/12/2014 -------
+// + ƒ æ¨Ÿà© ©«¤ › æ¨Ÿà© ©«¦¤ â¢œš®¦ ¡¢œ ›à£á«à¤ ™á© £œ¨¦£¤å˜ª SAP
+//------- v4.9.1  11/12/2014 -------
+// + ƒ æ¨Ÿà© ©«¦¤ â¢œš®¦ ¡¢œ ›à£á«à¤ ™á© £œ¨¦£¤å˜ª SAP
+//   “§ã¨®œ ¢áŸ¦ª ©«¦¤ ¡é› ¡˜ œ™˜œ 31/12/99 ©«¤ £œ¨¦£¤ ˜ SAP
+//   ¡˜  â¡˜¤œ find GE ˜¤«å š ˜ LE š ˜ ¤˜ ™¨œ  «¤ «œ¢œ¬«˜å˜ ˜§¦©«¦¢ã
+//------- v4.9.0  08/12/2014 -------
+// + ¨¦©Ÿã¡ log file š ˜ £ œ¬¨œ© ˜¤˜¢à©œà¤ ©« ª œ¤›¦› ˜¡ ¤©œ ª
+// + ‘«˜ 3 ¡¬¡¢à£˜«˜ €¥ ¦, ’ £¦¢ ¡˜  ƒ ˜¡ ¤ £§˜å¤œ  â¢œš®¦ª ˜§˜šæ¨œ¬©ª
+//   ¤œ˜ª œšš¨˜­ãª ˜¤ £¤ ˜ <= «œ¢ £¤ ˜ª SAP  (tmpSap.Date)
+//------- v4.9.0  02/12/2014 -------
+// + ƒ ¦¨Ÿà© ©«¤ œ¤£œ¨à© §œ¢˜«à¤ £œ ¬§. §¢¨à£à¤ ENHPRESPID
+//------- v4.8.9  16/09/2014 -------
+// + ‰¢œå›à£˜ †£¤ ˜ª œ¡«¬§à©ª ¡˜  ’œ¢ ¨ ©« ¡¦§¦å©ª ©«¦ Branch
+//   œ› ˜ Branch.Date_Locked & Branch.Last_Hmnia_Ekt £œ«˜ ˜§¦ œ¥˜šàšã
+//   ‚â­¬¨˜ª ©«¦ SAP.
+// + œ¡¢œå›à£˜ (1 £œ¨˜ §å©à) «à¤ å› à¤ §œ›åà¤ ©«¤ €¤˜å¨œ© ‚œ­¬¨é¤
+//   (TELIKA AYTO DEN EGINE, AN XREIASTEI THA ANOIGOUME APO TIS
+//    EPIMEROUS PISO PORTES KAI OXI AYTOMATA ME THN ANAIRESH THS GEFYRAS
+// + ¨¦©Ÿã¡ „¢œš®¦¬ - ‹ã¤¬£˜ & ‰à› ¡æª (05091960) - œ˜¤ «¦ flag §¦¬
+//   §˜¨˜¡á£§«œ  «¦¤ â¢œš®¦ «à¤ ’œ®¤ ¡é¤ ¨¦› ˜š¨˜­é¤ œå¤˜  œ¤œ¨šæ ¡˜ 
+//   ¬§á¨®œ  §˜¨á¡˜£¯ «¤ é¨˜ §¦¬ ›£ ¦¬¨š¦ç¤«˜  ¦  ‚â­¬¨œª SAP.
+// + „¢œš®¦ª ©«¤ ›£ ¦¬¨šå˜ „¤›¦› ˜¡å¤©ª œ˜¤  £œ¨¦£¤å˜ §¦¬ §áœ 
+//   ¤˜ ›£ ¦¬¨šŸœå œå¤˜  ã› ¡¢œ ›à£â¤ (§œ›å˜ «¦¬ Branch ˜§¦ §á¤à)
+//   ˜§¦ «¤ œ¥˜šàšã šâ­¬¨˜ª «¦¬ SAP.
+//------- v4.8.8  03/06/2014 -------
+// + ƒ ¦¨Ÿà© ©«¤ ¤œ˜ „¤£â¨à© “§.¢¨à£à¤
+//   š ˜ ¢ç© §¨¦™¢ã£˜«¦ª ‹˜¤é¢ ©«¤ ’¨˜¤ª
+//------- v4.8.7  21/03/2014 -------
+// + ‰¢œ ›é¤¦¬£œ «¦ ”€ ©«˜ ˜¨˜©«˜« ¡á é¢©ª
+//   ¡˜  £§˜ ¤œ  £ ˜ § ©à §¦¨«˜ š ˜ ˜©­á¢œ ˜
+//------- v4.8.6  17/03/2014 -------
+// + €¢¢˜šã ©«˜ ˜¥ ¦š¨˜­˜ «¦ §œ›å¦ Barticl_Pae_Arithm
+//   œš ¤œ «à¨˜ String š ˜ ¤˜ §˜å¨¤œ  «¦ „ §¦¬ Ÿâ¢œ  ¦ ’ «á¤˜ª
+// + Prostethike mono gia Timologish Mazikh timolghsh
+//   ektyposh Sxolia pelath sthn Dieythynsh Ergou sto parastatiko
+//   Axaia timologhs me grouparisma ergon. Allaxtikan kai ta 3
+//   rmhtrtitan, rmhtrtitana,rmhtrtitanola
+//------------------------
+
+Use Workspc.pkg
+
+//  Set date attributes as needed
+Set_Date_Attribute sysdate4_State to (TRUE)
+Set_Date_Attribute Date4_State    to (TRUE)
+Set_Date_Attribute epoch_value    to 30
+
+Object ProgramWorkspace is a WorkspaceSub
+    Set WorkspaceName to CURRENT$WORKSPACE
+    Set kEnter_Next_State to True
+//    Set ModuleName    to 'ProgramName' // Special module name.
+//    Set HelpName      to 'HelpName.hlp'// Please provide the name of your Windows help file.
+End_Object
+
+Use Help_Ids.inc // Developer should provide this file of help context links.
+Use Std_Help.pkg
+
+Use WinQlSQL.Sub
+Integer giWait_Obj
+string sXrhs sKodi sDeCryptoPassw
+String gsMyStr
+//-----
+
+Open Sysrec
+//Open Sysrecg
+Open Users
+
+// General Functions-Procedures and Variables
+Use Globals.Inc
+Use Calendar.sl
+Use Dates.Utl
+Use Roundfn.Fnc
+
+use checkafm.pkg
+use checklog.pkg
+
+Use Menu_Sec.Sub
+Use DD_Sec.Sub
+
+Function GetTheWorkSpace returns String
+    String lsWorkSpace
+    get_profile_string "WorkSpaces" "CurrentWorkspace" to lsWorkSpace
+    If lsWorkSpace eq "" Get WorkspaceName of (ProgramWorkspace(Self)) to lsWorkSpace
+    insert "WorkSpaces\" in lsWorkSpace at 1
+    Function_Return lsWorkSpace
+End_Function
+
+Function GetTheAppPath Returns String
+   String lsWorkSpace lsModule lsTheAppPath
+   Move (GetTheWorkSpace(Self)) to lsWorkSpace
+   Move (Module_Name(Self)) to lsModule
+   Move (lsWorkSpace + "\" + lsModule) to lsTheAppPath
+   Function_Return lsTheAppPath
+End_Function
+
+
+////Integer iStPan
+////Move (Status_Panel(Self)) To iStPan
+////Set Allow_Cancel_State Of iStPan To False
+////Send Initialize_StatusPanel To iStPan '„¢œš®¦ª €¨®œåà¤ „­˜¨£¦šãª                ' '    ' '˜¨˜¡˜¢é œ¨ £â¤œ«œ....           '
+////
+////Send Start_StatusPanel To iStPan
+
+Use Menu_Sec.Sub
+
+//------------------------------
+Use Flexole
+Use DPDlg    // Full Path Directory Picker
+Use RasxDll  // Ras Package
+Use Xfind    // Recursive Directory FILE FINDER
+Use EZFTP    // Ftp Package
+Use dvFTP    // Ftp Package
+Use DVDIALER // Vdf6 Dialer
+//------------------------------
+
+
+//===========================================================
+//===========================================================
+Integer iMetrhthsProsp iHasAPassword
+Integer iMax00 iApotel iCountRemain iMustResetPass iAnenergos
+//--
+
+Open Sysrec
+//Open Sysreg
+Open Users
+
+Register_Procedure ChangeMyPassword
+
+//--
+Use PasswVerif.pkg
+//--
+
+Use Connect.dg
+//use checkafm.pkg
+//use checklog.pkg
+
+Reread Sysrec
+Unlock
+Move Sysrec.TIKANEI_CODE    to iMax00
+Move 1                      to iMetrhthsProsp
+
+Use PASSDLG2.DG
+
+Procedure ChangeMyPassword
+    Integer iResult
+    Get ConfirmNewCustomPass of oNewPassDlg to iResult
+         If (iResult=0) Send Info_Box   " ¡à› ¡æª ©˜ª «¨¦§¦§¦ ãŸ¡œ œ§ «¬®éª"                              "¢¨¦­¦¨å˜"
+    Else If (iResult=1) Send Info_Box   "€¡¬¨éŸ¡œ ˜§¦ «¦¤ ®¨ã©«"                                          " ¡à› ¡æª ©˜ª ƒ„Œ âš ¤œ ›œ¡«æª"
+    Else If (iResult=2) Send Info_Box   " ¤â¦ª ¡à› ¡æª œå¤˜  å› ¦ª £œ «¦¤ §˜¢ æ"                           " ¡à› ¡æª ©˜ª ƒ„Œ âš ¤œ ›œ¡«æª"
+    Else If (iResult=3) Send Info_Box   " ¡à› ¡æª œ ©æ›¦¬ œå¤˜  ¢áŸ¦ª"                                     " ¡à› ¡æª ©˜ª ƒ„Œ âš ¤œ ›œ¡«æª"
+    Else If (iResult=4) Send Info_Box   " ¡à› ¡æª œ§ ™œ™˜åà©ª › ˜­â¨œ  ˜§¦ «¦¤ ¡à› ¡æ œ ©æ›¦¬"            " ¡à› ¡æª ©˜ª ƒ„Œ âš ¤œ ›œ¡«æª"
+    Else If (iResult=5) Send Info_Box   " ¡à› ¡æª œå¤˜  ¡œ¤æª"                                             " ¡à› ¡æª ©˜ª ƒ„Œ âš ¤œ ›œ¡«æª"
+    Else If (iResult=6) Send Info_Box   " §˜¢ æª ¡à› ¡æª œå˜¤  ¢áŸ¦ª"                                      " ¡à› ¡æª ©˜ª ƒ„Œ âš ¤œ ›œ¡«æª"
+    Else If (iResult=7) Send Info_Box   " ¡à› ¡æª â®œ  ã› ¥˜¤˜®¨© £¦§¦ Ÿœå ©« ª 5 «œ¢œ¬«˜åœª ˜¢¢˜šâª"   " ¡à› ¡æª ©˜ª ƒ„Œ âš ¤œ ›œ¡«æª"
+    Else                Send Info_Box   "êš¤à©«¦ ‘­á¢£˜"                                                    " ¡à› ¡æª ©˜ª ƒ„Œ âš ¤œ ›œ¡«æª"
+    Move iResult to iApotel
+End_Procedure
+
+
+Move 0 to iMetrhthsProsp
+
+//=======================
+Start_Entry_Validation:
+//-----------------------
+Move 0 to iMustResetPass
+Move 0 to iAnenergos
+Move 0 to iApotel
+
+Move (iMax00-iMetrhthsProsp+1)  to iCountRemain
+If (iMetrhthsProsp>=iMax00)     Send Exit_Application
+
+Send Login
+
+If (iHasAPassword=0) Send ChangeMyPassword
+If (iAnenergos   =1) Goto Start_Entry_Validation
+If (iApotel      >0) Goto Start_Entry_Validation
+
+Move 0 to iApotel
+Move 0 to iMetrhthsProsp
+Move 0 to iAnenergos
+Move 0 to iMustResetPass
+//=======================
+
+Use Xrhsh.pkg
+
+Use TranLock
+Set Button_State    of (Wait(Self)) to False
+Set BarVisibleState of (Wait(Self)) to '' False
+Send Popup                          to (Wait(Self))
+Send UpdateWait to (Wait(Self))     '˜¨˜¡˜¢é §œ¨ £â¤œ«œ. „¢œš®¦ª ˜¨®œåà¤ œ­˜¨£¦šãª'
+
+
+//AB-StoreTopEnd
+
+
+//AB-PanelStoreStart
+
+Procedure Exit_Application
+    Integer iYes
+    Move (YesNo_Box("‡â¢œ«œ ¤˜ «œ¨£˜«å©œ«œ «¤ œ­˜¨£¦šã ? ", ;
+                         "¨¦©¦®ã",  MB_DEFBUTTON2) ) to iYes
+    If (iYes=MBR_YES) Forward Send Exit_Application
+End_Procedure
+
+Use StdAbout.pkg // Standard "About" package.
+
+
+
+
+Use Tooltip.Inc
+
+
+
+
+
+
+
+
+
+
+
+//AB-PanelStoreEnd
+
+
+//AB-PanelStoreTopStart
+
+
+
+//AB-PanelStoreTopEnd
+
+
+//AB-ClientStoreStart
+
+
+
+//// 21/06/2011 v4.6.7
+//Use PASSDLG2.DG
+
+On_Key Key_Ctrl+Key_W Send ChangeMyPassword
+
+//Procedure ChangeMyPassword
+//    Integer iResult
+//    Get ConfirmNewCustomPass of oNewPassDlg to iResult
+//         If (iResult=0) Send Info_Box " ¡à› ¡æª ©˜ª «¨¦§¦§¦ ãŸ¡œ œ§ «¬®éª"    "¢¨¦­¦¨å˜"
+//    Else If (iResult=1) Send Info_Box " ¡à› ¡æª ©˜ª ƒ„Œ «¨¦§¦§¦ ãŸ¡œ"         "€¡¬¨éŸ¡œ ˜§¦ «¦¤ •¨ã©«"
+//    Else If (iResult=2) Send Info_Box " ¡à› ¡æª ©˜ª ƒ„Œ «¨¦§¦§¦ ãŸ¡œ"         "¢¡«¨¦¢¦šãŸ¡œ í› ¦ª ‰à› ¡æª"
+//    Else If (iResult=3) Send Info_Box " ¡à› ¡æª ©˜ª ƒ„Œ «¨¦§¦§¦ ãŸ¡œ"         "€¤ç§˜¨¡«¦ª ‰à› ¡æª §¨¦ª ˜¢¢˜šã"
+//    Else If (iResult=4) Send Info_Box " ¡à› ¡æª ©˜ª ƒ„Œ «¨¦§¦§¦ ãŸ¡œ"         "‰à› ¡æª „§ ™œ™˜åà©ª › ˜­¦¨œ« ¡æª"
+//    Else                Send Info_Box " ¡à› ¡æª ©˜ª ƒ„Œ «¨¦§¦§¦ ãŸ¡œ"         "êš¤à©«¦ ‘­á¢£˜"
+//End_Procedure
+//// 21/06/2011 v4.6.7
+
+
+
+if (Wait(Self)) send deactivate to (Wait(Self))
+//Send Stop_StatusPanel To (Status_Panel(Self))
+
+
+
+
+
+
+
+
+
+//AB-ClientStoreEnd
+
+
+//AB-ClientStoreTopStart
+
+// ‘•† ‚„Œˆ‰„‘ ‹„’€Š†’„‘ //
+String Plhktro_BIP  Plhktro_Esc  Plhktro_N11  Plhktro_N00  Plhktro_FS  Plhktro_AAA  Plhktro_DSI
+String Plhktro_SO   Plhktro_DC4     //expanded for 1 line
+String Plhktro_SI   Plhktro_DC2     //condesed
+String Plhktro_PAV                  //underline
+String Plhktro_EEE  Plhktro_FFF     //emphasized
+String Plhktro_GGG  Plhktro_HHH     //double strike
+String Plhktro_WWW                  //expanded
+string Plhktro_Q Plhktro_160
+Integer giViewID
+String  gsViewName
+// ‘•† ‚„Œˆ‰„‘ ‹„’€Š†’„‘ //
+
+Open Sysfile
+Open Sysrec
+Open Clients
+
+Use Clients.DD
+
+Use dbViews.Sub
+Use dbForms.Sub
+Use dbTabDlg.Sub
+Use dbtabdlgs.Sub
+Use DD_Sec.Sub
+Use Listes.pkg
+use bpMakeSx.dg
+Use GrpPed00.vw
+Use GrpPedia.vw
+Use GrpView0.vw
+Use GrpViews.vw
+Use GrpOth0.vw
+Use GrpOth.vw
+Use Users.vw
+Use UserGrps.vw
+Use Departm.vw
+Use Othon.vw
+Use Views.vw
+Use Arxeia.vw
+Use Pedia.vw
+Use Viewflds.vw
+
+Use Cflagkin.vw
+Use Wflagkin.vw
+
+
+
+Open Nomisma
+Open Isotimia
+
+//Use Property.vw
+
+Use OBarray2d
+
+Object xxx is a c2dArray
+    Set piNumColumns to 2
+
+    Procedure Fill_PayTerms
+        Integer iArx
+
+        For iArx From 0 to 12
+            Case Begin
+                Case (iArx=0)
+                    Set Cell_Value Of xxx 0 iArx to "K000"
+                    Set Cell_Value Of xxx 1 iArx to "Š†—’„ €‹„‘€"
+                    Case Break
+                Case (iArx=1)
+                    Set Cell_Value Of xxx 0 iArx to "K030"
+                    Set Cell_Value Of xxx 1 iArx to "30 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                    Case Break
+                Case (iArx=2)
+                    Set Cell_Value Of xxx 0 iArx to "K060"
+                    Set Cell_Value Of xxx 1 iArx to "60 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                    Case Break
+                Case (iArx=3)
+                    Set Cell_Value Of xxx 0 iArx to "K090"
+                    Set Cell_Value Of xxx 1 iArx to "90 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                    Case Break
+                Case (iArx=4)
+                    Set Cell_Value Of xxx 0 iArx to "K120"
+                    Set Cell_Value Of xxx 1 iArx to "120 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                    Case Break
+                Case (iArx=5)
+                    Set Cell_Value Of xxx 0 iArx to "K150"
+                    Set Cell_Value Of xxx 1 iArx to "150 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                    Case Break
+                Case (iArx=6)
+                    Set Cell_Value Of xxx 0 iArx to "K180"
+                    Set Cell_Value Of xxx 1 iArx to "180 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                    Case Break
+                Case (iArx=7)
+                    Set Cell_Value Of xxx 0 iArx to "K210"
+                    Set Cell_Value Of xxx 1 iArx to "210 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                    Case Break
+                Case (iArx=8)
+                    Set Cell_Value Of xxx 0 iArx to "K240"
+                    Set Cell_Value Of xxx 1 iArx to "240 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                    Case Break
+                Case (iArx=9)
+                    Set Cell_Value Of xxx 0 iArx to "K270"
+                    Set Cell_Value Of xxx 1 iArx to "270 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                    Case Break
+                Case (iArx=10)
+                    Set Cell_Value Of xxx 0 iArx to "K300"
+                    Set Cell_Value Of xxx 1 iArx to "300 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                    Case Break
+                Case (iArx=11)
+                    Set Cell_Value Of xxx 0 iArx to "K330"
+                    Set Cell_Value Of xxx 1 iArx to "330 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                    Case Break
+                Case (iArx=12)
+                    Set Cell_Value Of xxx 0 iArx to "K360"
+                    Set Cell_Value Of xxx 1 iArx to "360 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                    Case Break
+            Case End
+        Loop
+
+    End_Procedure
+
+    Procedure End_Construct_Object
+        Forward Send End_Construct_Object
+        Send Fill_PayTerms
+    End_Procedure
+
+End_Object
+
+
+
+Function fngConvertPoso Global String asNomismaCodeApo Number anPoso ;
+                               String asNomismaCodeSe  Date   adHmnia;
+                               Number nIsotimia  Returns Number
+
+    Number rVal nApo_Euro_Isot nSe_Euro_Isot
+    Integer iApo_Einai_Euro_Zone iApo_Einai_DRX iApo_Einai_Euro iDekadika_Apo
+    Integer iSe_Einai_Euro_Zone  iSe_Einai_DRX  iSe_Einai_Euro  iDekadika_Se
+    String  sCode
+
+    If (asNomismaCodeApo=asNomismaCodeSe) Function_Return anPoso
+
+    Clear Nomisma
+    Move (Trim(asNomismaCodeApo)) to Nomisma.Nomisma_Code
+    Find eq Nomisma By Index.1 // Nomisma:Index.1:Nomisma_Code
+    Move Nomisma.Euro_Zone      to iApo_Einai_Euro_Zone
+    Move Nomisma.Einai_DRX      to iApo_Einai_DRX
+    Move Nomisma.Einai_EURO     to iApo_Einai_Euro
+    Move Nomisma.KL_ISOT_EURO   to nApo_Euro_Isot
+    Move Nomisma.Dekadika       to iDekadika_Apo
+    // 1. An to nomisma APO den einai ths zonhs euro prepei na vrethei h isotimia tou
+    If ((NOT(iApo_Einai_Euro_Zone)) And (nApo_Euro_Isot=0))  Begin
+        If (adHmnia='') Sysdate            adHmnia
+        Move (Trim(asNomismaCodeApo))   to sCode
+        Clear Isotimia
+        Move sCode                      to Isotimia.Nomisma_Code
+        Move (adHmnia+1)                to Isotimia.Isotimia_Hmnia
+        Find lt Isotimia by Index.1 // Isotimia:Index.1:Nomisma_Code+Isotimia_Hmnia
+        Move Isotimia.Isotimia_Euro     to nApo_Euro_Isot
+    End
+
+    Clear Nomisma
+    Move (Trim(asNomismaCodeSe)) to Nomisma.Nomisma_Code
+    Find eq Nomisma By Index.1 // Nomisma:Index.1:Nomisma_Code
+    Move Nomisma.Euro_Zone      to iSe_Einai_Euro_Zone
+    Move Nomisma.Einai_DRX      to iSe_Einai_DRX
+    Move Nomisma.Einai_EURO     to iSe_Einai_Euro
+    Move Nomisma.KL_ISOT_EURO   to nSe_Euro_Isot
+    Move Nomisma.Dekadika       to iDekadika_Se
+    // 2. An to nomisma SE den einai ths zonhs euro prepei na vrethei h isotimia tou
+    If ((NOT(iSe_Einai_Euro_Zone)) And (nSe_Euro_Isot=0)) Begin
+        If (adHmnia='') Sysdate            adHmnia
+        Move (Trim(asNomismaCodeSe))    to sCode
+        Clear Isotimia
+        Move sCode                      to Isotimia.Nomisma_Code
+        Move (adHmnia+1)                to Isotimia.Isotimia_Hmnia
+        Find lt Isotimia by Index.1 // Isotimia:Index.1:Nomisma_Code+Isotimia_Hmnia
+        Move Isotimia.Isotimia_Euro     to nSe_Euro_Isot
+    End
+
+    Calc (anPoso/nApo_Euro_Isot) to rVal
+    Move (Round_Number(rVal,6)) to rVal
+    Calc (rVal*nSe_Euro_Isot) to rVal
+    Move (Round_Number(rVal,iDekadika_Se)) to rVal
+
+    Function_Return rVal
+End_Function
+
+Open Syscurxr
+Open SysFile
+Open Sysrecc
+Open Sysrecb
+Open Sysrecw
+
+Procedure Reset_All_Files_Except_System
+    Local Integer File# Open# File_Number# liInt iMax iWait isSystem
+    Local String Physicalname# DisplayName# Logicalname# Rootname#
+    Move 0 To File#
+    Repeat
+      Get_Attribute Df_File_Next_Opened Of File# To File#
+      If (File#) Begin
+        Get_Attribute DF_FILE_IS_SYSTEM_FILE    Of File# To isSystem
+        If (NOT(isSystem)) Clear File#
+      End
+    Until File# Eq 0
+End_Procedure
+
+#Include FEM.pkg
+
+
+Procedure Check_Sap
+    Integer iVal
+    string  lsTheAppPath
+//    Move (GetTheAppPath(Self))                  to lsTheAppPath
+//    Get_profile_string lsTheAppPath "ShowPAE"   to iVal
+    reread sysfile
+    unlock
+    move sysfile.mhdeniko_partl to ival
+    If (iVal<>1)    Send Activate_Vsap          to (Client_Area(Self))
+    Else            Send Activate_VsapDomikh    to (Client_Area(Self))   // <== EDO PAIZEI O TITANAS
+End_Procedure
+
+
+//AB-ClientStoreTopEnd
+
+    Set psProject_Version to "5.0"
+    Set psMenu_Pkg To empor.mn
+    Set psButtonBar_Pkg To Ewbtnbar.pkg
+    Set psStatusBar_Pkg To DFStdSbr.pkg
+    Set ProjectName to "Betolink Enterprise V.4.9.5  26/05/15"
+    Set ProjectFileName to "Empor.PRJ"
+    Set GenerateFileName to "Empor.SRC"
+    Set psProject_Version to "5.0"
+    Set Component To vwCmoves.VW
+    Set Component To Particle.VW
+    Set Component To Hmgio.VW
+    Set Component To Units.vw
+    Set Component To V031.VW
+    Set Component To V034.VW
+    Set Component To V036.VW
+    Set Component To V037.VW
+    Set Component To VWCLIENTS.vw
+    Set Component To CN.VW
+    Set Component To Fpa.vw
+    Set Component To HmgioW.vw
+    Set Component To Item.VW
+    Set Component To Nomism.vw
+    Set Component To Nomisot.vw
+    Set Component To PartlFpa.VW
+    Set Component To Ptyppar.VW
+    Set Component To VWKARTEL.VW
+    Set Component To Wax.VW
+    Set Component To Wflagkin.VW
+    Set Component To Witemkat.vw
+    Set Component To r044.RV
+    Set Component To r18_1.RV
+    Set Component To R18_2.RV
+    Set Component To r18_3.RV
+    Set Component To r18_3b.RV
+    Set Component To r18_4.RV
+    Set Component To r22_1.RV
+    Set Component To R6_1.rv
+    Set Component To R6_2b.rv
+    Set Component To R6_3.RV
+    Set Component To r6_4G.RV
+    Set Component To r6_1c.RV
+    Set Component To V109.VW
+    Set Component To V111.VW
+    Set Component To v108.VW
+    Set Component To r109_0.rv
+    Set Component To r108_0.RV
+    Set Component To R111.RV
+    Set Component To r26_1.RV
+    Set Component To v192.vw
+    Set Component To V014.VW
+    Set Component To v198.vw
+    Set Component To r109_1.RV
+    Set Component To r109_2.RV
+    Set Component To r41_0.RV
+    Set Component To r111_2.RV
+    Set Component To R108_2.RV
+    Set Component To r111_3.RV
+    Set Component To r9_1.RV
+    Set Component To r9_2.RV
+    Set Component To r100_0.RV
+    Set Component To r100_1.RV
+    Set Component To r100_2.RV
+    Set Component To r26_2.RV
+    Set Component To R9_3.rv
+    Set Component To r108_3.RV
+    Set Component To V193.vw
+    Set Component To V052.VW
+    Set Component To V053.VW
+    Set Component To V054.VW
+    Set Component To v055.VW
+    Set Component To V041.VW
+    Set Component To r052_0.RV
+    Set Component To v057.VW
+    Set Component To v058.VW
+    Set Component To V197.vw
+    Set Component To v064.VW
+    Set Component To R55_0.rv
+    Set Component To v065.VW
+    Set Component To R55_1.RV
+    Set Component To r55_2.RV
+    Set Component To TPArticl.VW
+    Set Component To r70_0.RV
+    Set Component To KinApoth.VW
+    Set Component To r6_5.RV
+    Set Component To r26_3.RV
+    Set Component To R186_0.RV
+    Set Component To R186_1.RV
+    Set Component To r7_0.RV
+    Set Component To r29_0.RV
+    Set Component To r54_0.RV
+    Set Component To r53_0.RV
+    Set Component To V185.vw
+    Set Component To R185_0.RV
+    Set Component To V94.vw
+    Set Component To v94_1.VW
+    Set Component To r94_1.rv
+    Set Component To R94_3.rv
+    Set Component To R94_2.rv
+    Set Component To Cdtypent.vw
+    Set Component To Cflagkin.vw
+    Set Component To Othon.VW
+    Set Component To GrpPed00.VW
+    Set Component To GrpPedia.VW
+    Set Component To GrpView0.VW
+    Set Component To Grpviews.vw
+    Set Component To Users.vw
+    Set Component To Usergrps.vw
+    Set Component To Departm.VW
+    Set Component To Arxeia.vw
+    Set Component To Pedia.VW
+    Set Component To r18_5.RV
+    Set Component To rv037C.RV
+    Set Component To V3.vw
+    Set Component To r3_1.rv
+    Set Component To r17_1.RV
+    Set Component To AxioStat.VW
+    Set Component To v14_1.VW
+    Set Component To PtypMet.VW
+    Set Component To EnBaxioIs.VW
+    Set Component To EnhCmvs.VW
+    Set Component To EnhFlags.VW
+    Set Component To EnhMeso.VW
+    Set Component To EnhPms.VW
+    Set Component To EnhWcmv.VW
+    Set Component To EnhApog.VW
+    Set Component To Enhclitem.VW
+    Set Component To R17_2.RV
+    Set Component To R109_3.RV
+    Set Component To R100_3.RV
+    Set Component To R111_4.RV
+    Set Component To R109_4.RV
+    Set Component To R111_5.RV
+    Set Component To r36.rv
+    Set Component To R36a.RV
+    Set Component To Copen.vw
+    Set Component To Axiored.VW
+    Set Component To Axioexofl.VW
+    Set Component To Vwtimol.VW
+    Set Component To V182s.VW
+    Set Component To r108_4.RV
+    Set Component To r6_3a.RV
+    Set Component To vw051.VW
+    Set Component To vw062.VW
+    Set Component To V00.VW
+    Set Component To V193c.VW
+    Set Component To v193a.VW
+    Set Component To R193.RV
+    Set Component To rvDorder.RV
+    Set Component To rvHmProg.RV
+    Set Component To V14A.VW
+    Set Component To V193d.VW
+    Set Component To rNoDeop.RV
+    Set Component To R14.rv
+    Set Component To R54_1.RV
+    Set Component To R53_1.RV
+    Set Component To tAxio.VW
+    Set Component To FtpView.VW
+    Set Component To Vrep.vw
+    Set Component To r100_a.RV
+    Set Component To vwexport.VW
+    Set Component To tOpItem.VW
+    Set Component To tOpItDel.VW
+    Set Component To r105.RV
+    Set Component To r26_1B.RV
+    Set Component To RMHTRTITAN.RV
+    Set Component To R108_6.RV
+    Set Component To r108_10.RV
+    Set Component To R26_6.RV
+    Set Component To r100s.RV
+    Set Component To R41_1.RV
+    Set Component To Hpal.RV
+    Set Component To R00.RV
+    Set Component To r100_34.RV
+    Set Component To r100_E.RV
+    Set Component To r108_1.RV
+    Set Component To r111_1.RV
+    Set Component To R41_2.RV
+    Set Component To R91_2.rv
+    Set Component To rvApotEr.RV
+    Set Component To SAP1.VW
+    Set Component To Enbstatus.VW
+    Set Component To V17x.VW
+    Set Component To HpalPr.RV
+    Set Component To Rypol.RV
+    Set Component To EnhSlsId.VW
+    Set Component To FixIt.VW
+    Set Component To FtpRDisk.VW
+    Set Component To releip.rv
+    Set Component To RMHTRAXIO1.RV
+    Set Component To r31.RV
+    Set Component To EnhPumps.VW
+    Set Component To Show_Ctl.VW
+    Set Component To vwZ.VW
+    Set Component To tOpFix.VW
+    Set Component To R193_p.RV
+    Set Component To r111_ep.RV
+    Set Component To V192a.VW
+    Set Component To EnhCmBm.VW
+    Set Component To tOpDMetX.VW
+    Set Component To enhaxstatus.VW
+    Set Component To R041cn.RV
+    Set Component To Rtropoi.RV
+    Set Component To R41.RV
+    Set Component To r36b.RV
+    Set Component To R6_1hm.RV
+    Set Component To R6_2.rv
+    Set Component To rmetafyp.RV
+    Set Component To Vanprod.VW
+    Set Component To Vsap.VW
+    Set Component To rtehn.RV
+    Set Component To Vwsap.vw
+    Set Component To ranal.RV
+    Set Component To R182_0.RV
+    Set Component To R193_1.RV
+    Set Component To ranprod.RV
+    Set Component To Rclsap.RV
+    Set Component To R144.RV
+    Set Component To Enhclients.VW
+    Set Component To renhypol.RV
+    Set Component To rdiakin.RV
+    Set Component To R36k.RV
+    Set Component To StoixEmp2.RV
+    Set Component To Partledit.vw
+    Set Component To ranal90.RV
+    Set Component To ranald.RV
+    Set Component To vwMyf.VW
+    Set Component To Unmark.VW
+    Set Component To Rmetafth.RV
+    Set Component To vallagh.VW
+    Set Component To V193v.VW
+    Set Component To R100_ab.RV
+    Set Component To enhdeopsls.VW
+    Set Component To Rapoth.RV
+    Set Component To Enhprespid.VW
+    Set Component To enhcnid.VW
+    Set Component To R193A.RV
+    Set Component To Enhbrzones.VW
+    Set Component To r111_6.RV
+    Set Component To Saprep.RV
+    Set Component To Deltia.RV
+    Set Component To Deltia1.RV
+    Set Component To Enhcarid.VW
+    Set Component To enhcnzones.VW
+    Set Component To r65_1.RV
+    Set Component To r65_2.RV
+    Set Component To R36m.RV
+    Set Component To vwParAsc.vw
+    Set Component To vaxio.VW
+    Set Component To RCHEK.RV
+    Set Component To vkatagrafh.VW
+    Set Component To rkatagrafh.RV
+    Set Component To rAudit.RV
+    Set Component To vwBartNo.VW
+    Set Component To Vsapdomikh.VW
+    Set Component To gefyres.VW
+    Set Component To rvbtnordh.RV
+    Set Component To Rparticle.RV
+    Set Component To vsapexp.VW
+    Set Component To rmetafypapog.RV
+    Set Component To vsapdom.VW
+    Set Component To GrpAct.VW
+    Set Component To GrpAct0.VW
+    Set Component To GrpOth.VW
+    Set Component To GrpOth0.VW
+    Set Component To GrpTab.VW
+    Set Component To GrpTab0.VW
+    Set Component To RMHTRTITANA.RV
+    Set Component To V014ola.VW
+    Set Component To V14Aola.VW
+    Set Component To RMHTRTITANOLA.RV
+    Set Component To ShowSx.VW
+    Set Component To changePump.VW
+    Set Component To enhanprod.VW
+    Set Component To r182_1.RV
+    Set Component To r182_2.RV
+    Set Component To rAuditTr.vw
+    Set Component To rAuditH.RV
+    Set Component To rSecure.RV
+    Set Component To Delivery.RV
+    Set Component To ranprod1.RV
+    Set Component To DeliveryReportNew.RV
+    Set Component To AntlisiReport.RV
+    Set Component To ProypTzirou.RV
+    Set Component To PolEidikon2.RV
+    Set Component To PosostaDeop.RV
+    Set Component To EnhPrespNew.VW
+    Set Component To vwBanks.VW
+    Set Component To vwBankEnhm.VW
+    Set Component To vwPayTerms.VW
+    Set Component To vwPayTermsEnhm.VW
+    Set Component To vwMkKinhseis.VW
+    Set Component To vwPayTermsEnhmNEW2.VW
+    Set Component To vwPayTermsEnhmNEW3.VW
+    Set Component To CompareTP.VW
+    Set Component To vwBanks2.VW
+    Set Component To PartleditNew.VW
+
+//AB-StoreStart
+
+set bitmap of (client_area(main(self))) to "protem1.bmp"
+
+Send DoStoreFileModeInfo to ghoFileModeInfo
+
+Start_UI
+
+
+
+//AB-StoreEnd
+
+End_Object    // prj

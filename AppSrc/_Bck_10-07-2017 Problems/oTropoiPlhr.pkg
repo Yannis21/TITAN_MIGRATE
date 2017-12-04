@@ -1,0 +1,255 @@
+
+Object oTropoiPlhromhs is a Array
+
+    Object Company_DD is a Company_DataDictionary
+        Set Read_Only_State to True
+    End_Object    // Company_DD
+
+    Object Branch_DD is a Branch_DataDictionary
+        Set DDO_Server to (Company_DD(self))
+        Set Read_Only_State to True
+    End_Object    // Branch_DD
+
+    Object Ctypkin_DD is a Ctypkin_DataDictionary
+        Set Read_Only_State to True
+    End_Object    // Ctypkin_DD
+
+    Object Wtypkin_DD is a Wtypkin_DataDictionary
+        Set Read_Only_State to True
+    End_Object    // Wtypkin_DD
+
+    Object Ptyppar_DD is a Ptyppar_DataDictionary
+        Set DDO_Server to (Ctypkin_DD(self))
+        Set DDO_Server to (Wtypkin_DD(self))
+        Set piMustNotConstrain  to true
+        Set Read_Only_State     to True
+        Procedure Update
+        End_procedure
+    End_Object    // Ptyppar_DD
+
+    Object Pseira_DD is a Pseira_DataDictionary
+        Set Read_Only_State to True
+    End_Object    // Pseira_DD
+
+    Object Nomisma_DD is a Nomisma_DataDictionary
+        Set Read_Only_State to True
+    End_Object    // Nomisma_DD
+
+    Object Country_DD is a Country_DataDictionary
+        Set Read_Only_State to True
+    End_Object    // Country_DD
+
+    Object Towns_DD is a Towns_DataDictionary
+        Set DDO_Server to (Country_DD(self))
+        Set Read_Only_State to True
+    End_Object    // Towns_DD
+
+    Object Cities_DD is a Cities_DataDictionary
+        Set DDO_Server to (Towns_DD(self))
+        Set Read_Only_State to True
+    End_Object    // Cities_DD
+
+    Object Payresp_DD is a Payresp_DataDictionary
+        Set Read_Only_State to True
+    End_Object    // Payresp_DD
+
+    Object Areas_DD is a Areas_DataDictionary
+        Set Read_Only_State to True
+    End_Object    // Areas_DD
+
+    Object Clients_DD is a Clients_DataDictionary
+        Set DDO_Server to (Cities_DD(self))
+        Set DDO_Server to (Payresp_DD(self))
+        Set DDO_Server to (Areas_DD(self))
+        Set Read_Only_State to True
+    End_Object    // Clients_DD
+
+    Object Particle_DD is a Particle_DataDictionary
+        Set DDO_Server to (Ptyppar_DD(self))
+        Set DDO_Server to (Nomisma_DD(self))
+        Set DDO_Server to (Clients_DD(self))
+        Set Read_Only_State to True
+        Procedure Update
+        End_procedure
+    End_Object    // Particle_DD
+
+    Object Baxiokat_DD is a Baxiokat_DataDictionary
+        Set Read_Only_State to True
+    End_Object    // Baxiokat_DD
+
+    Object Syscurxr_DD is a Syscurxr_DataDictionary
+        Set Read_Only_State to True
+    End_Object    // Syscurxr_DD
+
+    Object Salesmen_DD is a Salesmen_DataDictionary
+        Set Read_Only_State to True
+    End_Object    // Salesmen_DD
+
+    Object Constrct_DD is a Constrct_DataDictionary
+        Set Read_Only_State to True
+    End_Object    // Constrct_DD
+
+    Object Cn_DD is a Cn_DataDictionary
+        Set DDO_Server to (Clients_DD(self))
+        Set DDO_Server to (Salesmen_DD(self))
+        Set DDO_Server to (Constrct_DD(self))
+        Set Read_Only_State to True
+    End_Object    // Cn_DD
+
+    Object Tparticl_DD is a Tparticl_DataDictionary
+        Set DDO_Server to (Particle_DD(self))
+        Set DDO_Server to (Baxiokat_DD(self))
+        Set Constrain_File to Particle.File_Number
+    End_Object    // Tparticl_DD
+
+
+    Function Ftiaxe_Tropous_Plhromhs String asPartlRecr Integer aisClosed Integer aiPartlRecnum String asBranch Returns Integer
+
+        String  sClient sErgo sPresp sBranch
+        Integer iFoundOne iFromWhere isClosed iErr
+
+        // Hard Coded ¨ß¶¢¶ö†©£Ê™ ´®Êß‡§ ß¢û®‡£„™ £ú ´û§ ú•„™ ëìÇâÑâêàãÑåÜ ©ú†®·
+        // 1. Ñ®ö¶  -  2. èú¢·´û™ -  3. ìß. è¢û®‡£„™ - 4. ìß¶°ò´·©´û£ò
+
+
+        // É†òö®ò≠û ´‡§ ´®¶ß‡§ ß¢û®‡£û™ ©´¶ ßò®ò©´ò´†°Ê ò§ úÂ§ò† ò§¶†Æ´Ê
+        If (Not(aisClosed)) Begin
+            Clear Tparticl
+            Move asPartlRecr to Tparticl.Partl_Recr
+            Find Gt Tparticl By Index.1
+            While ((Found=1) And (Tparticl.Partl_Recr=asPartlRecr))
+                Delete TParticl
+                Move (Err) to iErr
+                If (iErr) Function_Return 1
+                Find Gt Tparticl By Index.1
+            Loop
+            Function_Return 0
+        End
+
+        Send Find_By_Recnum to Particle_DD Particle.File_Number aiPartlRecnum
+        If (Not(Found)) Function_Return 2
+
+        Clear Branch
+        Move SysCurXr.Company_Code  to Branch.Company_Code
+        Move asBranch               to Branch.Branch_Code
+        Find Eq Branch By Index.1 // Company_Code+Branch_Code
+        If (Not(Found)) Function_Return 3
+
+        Move Branch.Branch_Recr                                                 to sBranch
+        Get Field_Current_Value Of Particle_DD Field Particle.Client_ID         to sClient
+        Get Field_Current_Value Of Particle_DD Field Particle.Presp_ID          to sPresp
+        Get Field_Current_Value Of Particle_DD Field Particle.CN_Code           to sErgo
+
+        Move  0 to iFoundOne
+        Move  0 to iFromWhere
+
+        Clear TPErga
+        Move sErgo to TPErga.CN_Code
+        Find Gt TPErga By Index.1 // CN_Code+...
+        If ((Found=1) And (TPErga.CN_Code=sErgo)) Move 1 to iFoundOne
+        If (iFoundOne) Begin
+            Move 1 to iFromWhere
+            Clear TPErga
+            Move sErgo to TPErga.CN_Code
+            Find Gt TPErga By Index.1 // CN_Code+...
+            While ((Found=1) And (TPErga.CN_Code=sErgo))
+                Send Clear                  to TPArticl_DD
+                Send Clear                  to Baxiokat_DD
+                Move TPErga.Baxiokat_Code   to Baxiokat.Baxiokat_Code
+                Send Find to Baxiokat_DD Eq 1
+                If (Not(Found)) Function_Return 4
+                Set Field_Changed_Value Of TParticl_DD Field TParticl.Pct_Epi_Synolou   to TPErga.Pct_Epi_Synolou
+                Set Field_Changed_Value Of TParticl_DD Field TParticl.Paralabh_Meres    to TPErga.Paralabh_Meres
+                Set Field_Changed_Value Of TParticl_DD Field TParticl.Xarhtos_Meres     to TPErga.Xarhtos_Meres
+                Set Field_Changed_Value Of TParticl_DD Field TParticl.Plhroteo_Meres    to TPErga.Plhroteo_Meres
+                Send Calc_All_The_Fields to TPArticl_DD
+                Send Request_Save to Tparticl_DD
+                Find Gt TPErga By Index.1 // CN_Code+...
+            Loop
+        End
+        Else Begin
+            Move 0 to iFoundOne
+            Clear TPClient
+            Move sClient to TPClient.Client_ID
+            Find Gt TPClient By Index.1 // TPClient_ID+...
+            If ((Found=1) And (TPClient.Client_ID=sClient)) Move 1 to iFoundOne
+            If (iFoundOne) Begin
+                Move 2 to iFromWhere
+                Clear TPClient
+                Move sClient to TPClient.Client_ID
+                Find Gt TPClient By Index.1 // Client_ID+...
+                While ((Found=1) And (TPClient.Client_ID=sClient))
+                    Send Clear to TPArticl_DD
+                    Send Clear to Baxiokat_DD
+                    Move TPClient.Baxiokat_Code to Baxiokat.Baxiokat_Code
+                    Send Find to Baxiokat_DD Eq 1
+                    If (Not(Found)) Function_Return 5
+                    Set Field_Changed_Value Of TParticl_DD Field TParticl.Pct_Epi_Synolou   to TPClient.Pct_Epi_Synolou
+                    Set Field_Changed_Value Of TParticl_DD Field TParticl.Paralabh_Meres    to TPClient.Paralabh_Meres
+                    Set Field_Changed_Value Of TParticl_DD Field TParticl.Xarhtos_Meres     to TPClient.Xarhtos_Meres
+                    Set Field_Changed_Value Of TParticl_DD Field TParticl.Plhroteo_Meres    to TPClient.Plhroteo_Meres
+                    Send Calc_All_The_Fields to TPArticl_DD
+                    Send Request_Save to Tparticl_DD
+                    Find Gt TPClient By Index.1 // Client_ID+...
+                Loop
+            End
+            Else Begin
+                Move 0 to iFoundOne
+                Clear TPPresp
+                Move sPresp to TPPresp.PayResp_ID
+                Find Gt TPPresp By Index.1 // Presp_ID+...
+                If ((Found=1) And (TPPresp.PAYRESP_ID=sPresp)) Move 1 to iFoundOne
+                If (iFoundOne) Begin
+                    Move 3 to iFromWhere
+                    Clear TPPresp
+                    Move sPresp to TPPresp.PayResp_ID
+                    Find Gt TPPresp By Index.1 // Presp_ID+...
+                    While ((Found=1) And (TPPresp.PAYRESP_ID=sPresp))
+                        Send Clear to TPArticl_DD
+                        Send Clear to Baxiokat_DD
+                        Move TPPresp.Baxiokat_Code to Baxiokat.Baxiokat_Code
+                        Send Find to Baxiokat_DD Eq 1
+                        If (Not(Found)) Function_Return 6
+                        Set Field_Changed_Value Of TParticl_DD Field TParticl.Pct_Epi_Synolou   to TPPresp.Pct_Epi_Synolou
+                        Set Field_Changed_Value Of TParticl_DD Field TParticl.Paralabh_Meres    to TPPresp.Paralabh_Meres
+                        Set Field_Changed_Value Of TParticl_DD Field TParticl.Xarhtos_Meres     to TPPresp.Xarhtos_Meres
+                        Set Field_Changed_Value Of TParticl_DD Field TParticl.Plhroteo_Meres    to TPPresp.Plhroteo_Meres
+                        Send Calc_All_The_Fields to TPArticl_DD
+                        Send Request_Save to Tparticl_DD
+                        Find Gt TPPresp By Index.1 // Presp_ID+...
+                    Loop
+                End
+                Else Begin
+                    Move 0 to iFoundOne
+                    Clear TPBranch
+                    Move sBranch to TPBranch.Branch_Recr
+                    Find Gt TPBranch By Index.1 // Branch_Recr+...
+                    If ((Found=1) And (TPBranch.Branch_Recr=sBranch)) Move 1 to iFoundOne
+                    If (iFoundOne) Begin
+                        Move 4 to iFromWhere
+                        Clear TPBranch
+                        Move sBranch to TPBranch.Branch_Recr
+                        Find Gt TPBranch By Index.1 // Branch_Recr+...
+                        While ((Found=1) And (TPBranch.Branch_Recr=sBranch))
+                            Send Clear to TPArticl_DD
+                            Send Clear to Baxiokat_DD
+                            Move TPBranch.Baxiokat_Code to Baxiokat.Baxiokat_Code
+                            Send Find to Baxiokat_DD Eq 1
+                            If (Not(Found)) Function_Return 7
+                            Set Field_Changed_Value Of TParticl_DD Field TParticl.Pct_Epi_Synolou   to TPBranch.Pct_Epi_Synolou
+                            Set Field_Changed_Value Of TParticl_DD Field TParticl.Paralabh_Meres    to TPBranch.Paralabh_Meres
+                            Set Field_Changed_Value Of TParticl_DD Field TParticl.Xarhtos_Meres     to TPBranch.Xarhtos_Meres
+                            Set Field_Changed_Value Of TParticl_DD Field TParticl.Plhroteo_Meres    to TPBranch.Plhroteo_Meres
+                            Send Calc_All_The_Fields to TPArticl_DD
+                            Send Request_Save to Tparticl_DD
+                            Find Gt TPBranch By Index.1 // Branch_ID+...
+                        Loop
+                    End
+                End
+            End
+        End
+        Function_Return 0
+    End_Function
+
+End_Object
+

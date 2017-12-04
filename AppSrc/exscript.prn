@@ -1,0 +1,3302 @@
+Compiling Program: L:\VDF6\DEVELOP\EMPORSAP\appsrc\exscript.src
+Memory Available: 2147483647
+1>Use AllEntSc
+Using pre-compiled package ALLENTSC
+INCLUDING FILE: ALLENTSC.PKI
+30310>
+30310>Register_Object Client_Area
+30310>
+30310>//AB-StoreTopStart
+30310>Use Workspc.pkg
+30310>
+30310>//  Set date attributes as needed
+30310>Set_Date_Attribute sysdate4_State to (TRUE)
+30311>Set_Date_Attribute Date4_State    to (TRUE)
+30312>Set_Date_Attribute epoch_value    to 29
+30313>
+30313>Object ProgramWorkspace is a WorkspaceSub
+30315>    Set WorkspaceName to CURRENT$WORKSPACE
+30316>//    Set ModuleName    to 'ProgramName' // Special module name.
+30316>//    Set HelpName      to 'HelpName.hlp'// Please provide the name of your Windows help file.
+30316>End_Object
+30317>
+30317>Use Help_Ids.inc // Developer should provide this file of help context links.
+INCLUDING FILE: HELP_IDS.INC
+30317>>>// Help_ids.inc
+30317>>>//
+30317>>>// Context ids for the order entry system. This uses
+30317>>>// help file ordentry.hlp.
+30317>>>//
+30317>>>// This is a sample version. YOU must supply
+30317>>>// the ID values
+30317>>>
+30317>>>//  Generic Context Ids
+30317>>>//
+30317>>>
+30317>>>// It is expected that file-names ids will be the same as their
+30317>>>// filenumber.
+30317>>>
+30317>>>
+30317>>>//  View and selection-list specific context ids
+30317>>>//
+30317>>>//..........add view, object, selection-list ids here....
+30317>Use Std_Help.pkg
+INCLUDING FILE: STD_HELP.PKG
+30317>>>// STD_HELP.PKG
+30317>>>//
+30317>>>// Global Help Object
+30317>>>//
+30317>>>//  Creates all Help Support required to access WINDOWs help system
+30317>>>//  with DataFlex. Creates a global object named Help_Object.
+30317>>>//
+30317>>>//  9/19/97 JJT - Modified to define stadnard help Ids if they are undefined
+30317>>>
+30317>>>use DFHlpSys // Context Sensitive Help Support
+30317>>>
+30317>>>
+30317>>>// This file needs to be provided by the developer. It will contain
+30317>>>// symbolic replacements for the ID integer values used to access the
+30317>>>// the windows help file's topics.
+30317>>>//
+30317>>>use Help_ids.inc
+30317>>>
+30317>>>// If the following are not defined in help_ids.inc,
+30317>>>//  create default 0 values for them
+30317>>>Define GeneralHelpId    for    0
+30317>>>Define KeysHelpId       for    0
+30317>>>Define FileHelpId       for    0
+30317>>>Define ErrorHelpId      for    0  // probably not used in VDF
+30317>>>Define IndexHelpId      for    0  // probably not used in VDF
+30317>>>
+30317>>>object Help_Object is a HelpSystem // global help object
+30319>>>
+30319>>>   Set Help_Id_General to GeneralHelpId    // these should all be defined
+30320>>>   Set Help_Id_Index   to IndexHelpId      // in help_ids.inc.
+30321>>>   Set Help_Id_Keys    to KeysHelpId       //
+30322>>>   Set Help_Id_Files   to FileHelpId       //
+30323>>>   Set Help_Id_Errors  to ErrorHelpId      //
+30324>>>
+30324>>>end_object
+30325>
+30325>Use Wait.dg
+INCLUDING FILE: WAIT.DG
+30325>>>USE AllEntSc
+30325>>>
+30325>>>//AB-IgnoreEnd
+30325>>>
+30325>>>
+30325>>>//AB-IgnoreEnd
+30325>>>
+30325>>>Object Wait is a ModalPanelSub
+30327>>>
+30327>>>    //AB-StoreTopStart
+30327>>>
+30327>>>    // How to Use It
+30327>>>    // Get the maximum position of the bar
+30327>>>    // Move (Bar_Maximum_position(Wait(self))) to iMax
+30327>>>    //
+30327>>>    // Set the maximum position of the bar
+30327>>>    // Set Bar_Maximum_position of (Wait(self)) to iMax
+30327>>>    //
+30327>>>    // Start Bar Progress from beginning
+30327>>>    // Send Bar_Current_Position to (Wait(Self)) 0 0 0 False
+30327>>>    //
+30327>>>    // End Bar Progress
+30327>>>    // Send Bar_Current_Position to (Wait(Self)) iMax iMax iMax False
+30327>>>    //
+30327>>>    // Update Bar Progress
+30327>>>    // Send Bar_Current_Position to (Wait(Self)) i iCounter iMax True OR
+30327>>>    // Send Bar_Current_Position to (Wait(Self)) i iCounter iMax False
+30327>>>    // When you want the update to be done for every i (this is slower)
+30327>>>    // Where i=Counter's current value, icounter=Counter's Max Value and iMax=Bar Max Position
+30327>>>    //
+30327>>>    // Display Buttons on the object
+30327>>>    // Set Button_State of (Wait(Self)) to False/True
+30327>>>    // If the Progress Bar gets initialized without buttons, it MUST be Deactivated
+30327>>>    //
+30327>>>    // Initialization of the Progress Bar
+30327>>>    // Send Popup to (Wait(Self))
+30327>>>    //
+30327>>>    // Deactivation of the Progress Bar
+30327>>>    // Send Deactivate to (Wait(Self))
+30327>>>    //
+30327>>>    // Message during the process
+30327>>>    // Set Wait_Message of (Wait(Self)) to "Now Processing..."
+30327>>>    //
+30327>>>    // Extra Info for button "Info >>"
+30327>>>    // Send Wait_Details to (Wait(Self)) sFile sDetail bInitData
+30327>>>    // If sFile<>'' then reads the contents of the file
+30327>>>    // Else Fills the Edit with the string of sDetail
+30327>>>    // If bInitData is True then the edit object is cleared first else extra info is appended
+30327>>>    //
+30327>>>    // Remarks instead of Progress Bar
+30327>>>    // Set Button_State of (Wait(Self))     to False
+30327>>>    // Set BarVisibleState of (Wait(Self))  to 'Remarks' False
+30327>>>    // Update During Process
+30327>>>    // Send UpdateWait to (Wait(Self)) 'Remarks'
+30327>>>
+30327>>>    //AB-StoreTopEnd
+30327>>>
+30327>>>    Set Exit_Application_Local_State to FALSE
+30328>>>    Set Modal_State to FALSE
+30329>>>    Set Popup_State to TRUE
+30330>>>    Set Border_Style to Border_Thick
+30331>>>    Set Minimize_Icon to FALSE
+30332>>>    Set Label to "˜¨˜¡˜¢é §œ¨ £â¤œ«œ..."
+30333>>>    Set Size to 138 256
+30334>>>
+30334>>>    //AB-DDOStart
+30334>>>
+30334>>>
+30334>>>    //AB-DDOEnd
+30334>>>
+30334>>>    Object WaitBar is a ProgressBarSub
+30336>>>
+30336>>>        //AB-StoreTopStart
+30336>>>
+30336>>>        //AB-StoreTopEnd
+30336>>>
+30336>>>        Set Size to 21 243
+30337>>>        Set Location to 7 4
+30338>>>
+30338>>>        //AB-StoreStart
+30338>>>        Send DoRegSize  self smTopRight
+30339>>>        //AB-StoreEnd
+30339>>>
+30339>>>    End_Object
+30340>>>
+30340>>>    Object WaitText is a TextBoxSub
+30342>>>
+30342>>>        //AB-StoreTopStart
+30342>>>
+30342>>>        //AB-StoreTopEnd
+30342>>>
+30342>>>        Set Enabled_State to TRUE
+30343>>>        Set Label to "Processing"
+30344>>>        Set FontSize to 4 0
+30345>>>        Set Size to 10 81
+30346>>>        Set Location to 36 5
+30347>>>
+30347>>>        //AB-StoreStart
+30347>>>
+30347>>>        //AB-StoreEnd
+30347>>>
+30347>>>    End_Object
+30348>>>
+30348>>>    Object bnCancel is a ButtonSub
+30350>>>
+30350>>>        //AB-StoreTopStart
+30350>>>
+30350>>>        //AB-StoreTopEnd
+30350>>>
+30350>>>        Set Default_State to TRUE
+30351>>>        Set Label to "OK"
+30352>>>        Set Location to 34 143
+30353>>>
+30353>>>        //AB-StoreStart
+30353>>>
+30353>>>        Procedure OnClick
+30355>>>             Send Deactivate to (Wait(Self))
+30356>>>        End_Procedure
+30357>>>
+30357>>>        Send DoRegAlign self amTopRight
+30358>>>        //AB-StoreEnd
+30358>>>
+30358>>>    End_Object
+30359>>>
+30359>>>    Object bnDetail is a ButtonSub
+30361>>>
+30361>>>        //AB-StoreTopStart
+30361>>>
+30361>>>        //AB-StoreTopEnd
+30361>>>
+30361>>>        Set Focus_Mode to Pointer_Only
+30362>>>        Set Label to "Info >>"
+30363>>>        Set Location to 34 197
+30364>>>
+30364>>>        //AB-StoreStart
+30364>>>
+30364>>>        Procedure OnClick
+30366>>>            Delegate Send Show_Details False
+30368>>>        End_Procedure
+30369>>>
+30369>>>        Send DoRegAlign self amTopRight
+30370>>>        //AB-StoreEnd
+30370>>>
+30370>>>    End_Object
+30371>>>
+30371>>>    Object LineControlSub1 is a LineControlSub
+30373>>>
+30373>>>        //AB-StoreTopStart
+30373>>>
+30373>>>        //AB-StoreTopEnd
+30373>>>
+30373>>>        Set Size to 2 243
+30374>>>        Set Location to 54 4
+30375>>>
+30375>>>        //AB-StoreStart
+30375>>>
+30375>>>        Send DoRegSize  self smTopRight
+30376>>>        //AB-StoreEnd
+30376>>>
+30376>>>    End_Object
+30377>>>
+30377>>>    Object WaitEdit is a editSub
+30379>>>
+30379>>>        //AB-StoreTopStart
+30379>>>
+30379>>>        //AB-StoreTopEnd
+30379>>>
+30379>>>        Set Enabled_State to FALSE
+30380>>>        Set Read_Only_State to TRUE
+30381>>>        Set Size to 58 243
+30382>>>        Set Location to 60 4
+30383>>>        Set Color to clWhite
+30384>>>
+30384>>>        //AB-StoreStart
+30384>>>
+30384>>>        Send DoRegSize Self amBottomRight
+30385>>>        Delegate Set Size to 66 256
+30387>>>
+30387>>>        //AB-StoreEnd
+30387>>>
+30387>>>    End_Object
+30388>>>
+30388>>>    Object oTxtAntiBar is a TextBoxSub
+30390>>>        Set Enabled_State to TRUE
+30391>>>        Set Visible_State to FALSE
+30392>>>        Set Label to "˜¨˜¡˜¢é §œ¨ £â¤œ«œ..."
+30393>>>        Set Justification_Mode to (jMode_Center IOR jMode_VCenter)
+30394>>>        Set Auto_Size_State to FALSE
+30395>>>        Set FontWeight to 600
+30396>>>        Set FontSize to 4 0
+30397>>>        Set Size to 10 209
+30398>>>        Set Location to 10 4
+30399>>>        Set TextColor to clNavy
+30400>>>    End_Object
+30401>>>
+30401>>>
+30401>>>    //AB-StoreStart
+30401>>>    Property Integer piWaitSize  Public (Size(Self))
+30403>>>    Property Integer piPrevSize  Public (Size(Self))
+30405>>>    Property Integer piState     Public False
+30407>>>
+30407>>>    Set Locate_Mode to Center_On_Screen
+30408>>>    Set Destroy_Object_State to True
+30409>>>
+30409>>>    Procedure Show_Details Integer bAlways
+30411>>>        Local Integer liOriSize liSize hiSize hiOriSize lowSize bState
+30412>>>        Local String sLabel
+30412>>>        Get Size                to liSize
+30413>>>        Get piState             to bState
+30414>>>        Get piWaitSize          to liOriSize
+30415>>>        Move (Hi(liSize))       to hiSize
+30416>>>        Move (Low(liSize))      to lowSize
+30417>>>        Move (Hi(liOriSize))    to hiOriSize
+30418>>>        If (bAlways) Begin
+30420>>>            Set piState         to False
+30421>>>            Move 0              to bState
+30422>>>        End
+30422>>>>
+30422>>>        If bState Begin
+30424>>>             Set Size to hiOriSize lowSize
+30425>>>             Set Label of (bnDetail(Self)) to "Info >>"
+30426>>>        End
+30426>>>>
+30426>>>        Else Begin
+30427>>>             Set Size to 138 lowSize
+30428>>>             Set Label of (bnDetail(Self)) to "<< Info"
+30429>>>        End
+30429>>>>
+30429>>>        Set piState to (1-bState)
+30430>>>    End_Procedure
+30431>>>
+30431>>>    Procedure Bar_Current_Position Integer iCount Integer iOccurances Integer iMaximum Integer bState
+30433>>>       If (bState) Begin
+30435>>>         If (Mod(iCount,(iCount*((Number(iMaximum))/(Number(iOccurances)))))=0) ;            Set Current_Position of (WaitBar(Self)) to (iCount*((Number(iMaximum))/(Number(iOccurances))))
+30438>>>       End
+30438>>>>
+30438>>>       Else Set Current_Position of (WaitBar(Self)) to (iCount*((Number(iMaximum))/(Number(iOccurances))))
+30440>>>    End_Procedure
+30441>>>
+30441>>>    Procedure DoInitialize_WaitBar
+30443>>>        Send Bar_Current_Position to (Wait(Self)) 0 0 0 False
+30444>>>    End_Procedure
+30445>>>
+30445>>>    Procedure DoTerminate_WaitBar
+30447>>>        Local Integer iMax
+30448>>>        Get Maximum_position of (WaitBar(Self)) to iMax
+30449>>>        Send Bar_Current_Position to (Wait(Self)) iMax iMax Imax False
+30450>>>    End_Procedure
+30451>>>
+30451>>>    Procedure Set Bar_Maximum_Position Integer iMaximum
+30453>>>         Set Maximum_position of (WaitBar(Self)) to iMaximum
+30454>>>    End_Procedure
+30455>>>
+30455>>>    Function Bar_Maximum_Position Returns Integer
+30457>>>        Function_Return (Maximum_position(WaitBar(Self)))
+30458>>>    End_Function
+30459>>>
+30459>>>    Procedure Set Bar_Minimum_Position Integer iMinimum
+30461>>>         Set Minimum_position of (WaitBar(Self)) to iMinimum
+30462>>>    End_Procedure
+30463>>>
+30463>>>    Function Bar_Minimum_Position Returns Integer
+30465>>>        Function_Return (Minimum_position(WaitBar(Self)))
+30466>>>    End_Function
+30467>>>
+30467>>>    Procedure Set Bar_Step_Value Integer iStep
+30469>>>         Set Step_Value of (WaitBar(Self)) to iStep
+30470>>>    End_Procedure
+30471>>>
+30471>>>    Function Bar_Step_Value Returns Integer
+30473>>>        Function_Return (Step_Value(WaitBar(Self)))
+30474>>>    End_Function
+30475>>>
+30475>>>    Procedure Set Wait_Message String sMessage
+30477>>>        Set Value of (WaitText(Self)) to sMessage
+30478>>>    End_Procedure
+30479>>>
+30479>>>    Procedure Wait_Details String sFile String sDetail Integer bInitData
+30481>>>        Local Integer liEditId
+30482>>>        Move (WaitEdit(Self)) to liEditId
+30483>>>        If bInitData Send Delete_Data to liEditId
+30486>>>        If sFile ne "" Begin
+30488>>>           Send Read to liEditId sFile
+30489>>>           Send Beginning_Of_Data to liEditId
+30490>>>        End
+30490>>>>
+30490>>>        Else Begin
+30491>>>           Send Insert to liEditId sDetail
+30492>>>        End
+30492>>>>
+30492>>>    End_Procedure
+30493>>>
+30493>>>    Procedure OnResize
+30495>>>        Local Integer liSize liHiSize liPrevSize liHiPrevSize bState liHiLoc liLoc
+30496>>>        Get Size to liPrevSize
+30497>>>        Move (Hi(liPrevSize)) to liHiPrevSize
+30498>>>        Forward Send OnResize
+30500>>>        Get Location of (WaitEdit(Self)) to liLoc
+30501>>>        Move (Hi(liLoc)) to liHiLoc
+30502>>>        Get piState to bState
+30503>>>        Get Size to liSize
+30504>>>        Move (Hi(liSize)) to liHiSize
+30505>>>        If (liHiSize > (liHiLoc +30)) Begin
+30507>>>            Set Value of (bnDetail(Self)) to "<< Info"
+30508>>>            If (liHiPrevSize <= (liHiLoc +30)) Set piState to (1-bState)
+30511>>>        End
+30511>>>>
+30511>>>        Else Begin
+30512>>>            Set Value of (bnDetail(Self)) to "Info >>"
+30513>>>            If (liHiPrevSize > (liHiLoc +30)) Set piState to (1-bState)
+30516>>>        End
+30516>>>>
+30516>>>    End_Procedure
+30517>>>
+30517>>>    Procedure Set Button_State Integer bState
+30519>>>        If bState Begin
+30521>>>            Set Caption_Bar to True
+30522>>>            Set Size to 66 256
+30523>>>        End
+30523>>>>
+30523>>>        Else Begin
+30524>>>            Set Caption_Bar to False
+30525>>>            Set Size to 38 256
+30526>>>        End
+30526>>>>
+30526>>>    End_Procedure
+30527>>>
+30527>>>    Procedure Set BarVisibleState String sMsg Integer bState
+30529>>>        Set Visible_State of (oTxtAntiBar(Self)) to (bState = 0)
+30530>>>        Set Visible_State of (WaitBar(Self))     to (bState = 1)
+30531>>>        If (bState = 0) Begin
+30533>>>            Set Size to 24 256
+30534>>>            Set Location of (oTxtAntiBar(Self)) to 6 5
+30535>>>        End
+30535>>>>
+30535>>>        If sMsg ne "" Set Value of (oTxtAntiBar(Self)) to sMsg
+30538>>>    End_Procedure
+30539>>>
+30539>>>    Procedure Deactivating integer search_mode Returns Integer
+30541>>>        local integer rval
+30542>>>        Forward Get MSG_Deactivating search_mode to rval
+30544>>>        Set Modal_State of (Wait(Self)) to False
+30545>>>        Set BarVisibleState of (Wait(Self)) to "˜¨˜¡˜¢é §œ¨ £â¤œ«œ..." True
+30546>>>        Procedure_Return rval
+30547>>>    End_Procedure
+30548>>>
+30548>>>    Procedure UpdateWait String sMsg
+30550>>>        Set Value of (oTxtAntiBar(Self)) to sMsg
+30551>>>    End_Procedure
+30552>>>
+30552>>>
+30552>>>    Procedure Set Horizontal_Justification Integer aiMode
+30554>>>        Set Justification_Mode of oTxtAntiBar to (jMode_VCenter IOR aiMode)
+30555>>>    End_Procedure
+30556>>>
+30556>>>
+30556>>>
+30556>>>
+30556>>>
+30556>>>
+30556>>>    //AB-StoreEnd
+30556>>>
+30556>>>End_Object
+30557>>>
+30557>>>
+30557>>>//AB-StoreStart
+30557>>>
+30557>>>//AB-StoreEnd
+30557>>>
+30557>>>//AB/ End_Object    // prj
+30557>Use Flexole
+INCLUDING FILE: FLEXOLE.PKG
+30557>>>//****************************************************************************
+30557>>>//
+30557>>>// $File name  : FlexOLE
+30557>>>// $File title : Base class for OLE Automation in DataFlex under win95/NT
+30557>>>// Notice      : Copyright (c) ADB-UTVECKLING AB 1996-1998
+30557>>>// $Author     : JW, SF
+30557>>>// $System     : DFOLE
+30557>>>// Created     : 96-05-30 @ 18.12.51
+30557>>>// $Last Rev   : 96-10-09 @ 14.59.35
+30557>>>//
+30557>>>// $Description
+30557>>>// This file contains the complete FlexOLE OLE2 implementation in DataFlex.
+30557>>>// Including all DLL interface declarations and DataFlex classes
+30557>>>//
+30557>>>// $Rev History
+30557>>>//   96-05-30 File header created
+30557>>>//
+30557>>>//****************************************************************************
+30557>>>
+30557>>>USE DLL
+30557>>>USE FOLE_API
+INCLUDING FILE: FOLE_API.PKG
+30557>>>>>//****************************************************************************
+30557>>>>>//
+30557>>>>>// $File name  : FOLE_API
+30557>>>>>// $File title : API for FlexOLE
+30557>>>>>// Notice      : Copyright (c) ADB-UTVECKLING AB 1996-1998
+30557>>>>>// $Author     : JW, SF
+30557>>>>>// $System     : FlexOLE
+30557>>>>>// Created     : 96-05-30 @ 18.12.51
+30557>>>>>// $Last Rev   : 96-10-09 @ 14.59.35
+30557>>>>>//
+30557>>>>>// $Description
+30557>>>>>//  DLL interface declarations
+30557>>>>>//
+30557>>>>>// $Rev History
+30557>>>>>//   96-05-30 File header created
+30557>>>>>//
+30557>>>>>//****************************************************************************
+30557>>>>>
+30557>>>>>
+30557>>>>>USE DLL
+30557>>>>>
+30557>>>>>// Global variable for OLE
+30557>>>>>Integer WM_DFOCXEVENT // This is the message sent from the DLL
+30557>>>>>Integer WM_DFOCXNOTIFYEVENT // This is the notify message sent from the DLL
+30557>>>>>
+30557>>>>>//Global integer for objectId
+30557>>>>>Integer oOLEVariantId
+30557>>>>>
+30557>>>>>
+30557>>>>>
+30557>>>>>// Optional param for OLEVariant.
+30557>>>>>// For optional parameters, pass OLE_VT_OPTIONAL instead of an OLEVariant
+30557>>>>>
+30557>>>>>// DISP_E_PARAMNOTFOUND is the constant used together with OLE_VT_ERROR
+30557>>>>>// to signify that this parameter is optional and not specified.
+30557>>>>>// It is only used internally, DON'T use it directly, see above constant.
+30557>>>>>
+30557>>>>>// The current maximum size of strings, used both for String and OLEVariant with OLE_VT_BSTR
+30557>>>>>
+30557>>>>>// Null terminating for C strings
+30557>>>>>
+30557>>>>>// Alias data types
+30557>>>>>                            // but since DataFlex has no substitute data type
+30557>>>>>                            // it is internally casted back and forth
+30557>>>>>                            // into an Integer
+30557>>>>>                            // NOTE! Might be changed to a one char string
+30557>>>>>
+30557>>>>>
+30557>>>>>
+30557>>>>>// Pointers to vars needs to be inside a Type to use GetAddress...
+30557>>>>>// It looks like we have to create these anyway (to compile cleanly)
+30557>>>>>
+30557>>>>>
+30557>>>>>Type TP_OLEVariant
+30557>>>>>    Field Variant.vt     as DWORD      // An OLE_VT_XXX constant
+30557>>>>>    Field Variant.iVal   as DWORD      // If vt is OLE_VT_I2 this field contains a Short value
+30557>>>>>    Field Variant.lVal   as DWORD      // If vt is OLE_VT_I4 this field contains an Integer value
+30557>>>>>    Field Variant.fltVal as Char 10    // If vt is OLE_VT_R4 this field contains a ShortReal value
+30557>>>>>    Field Variant.dblVal as Char 20    // If vt is OLE_VT_R8 this field contains a Real value
+30557>>>>>    Field Variant.cyVal  as Char 25    // If vt is OLE_VT_CY this field contains a Currency value
+30557>>>>>    Field Variant.dtVal  as Date       // If vt is OLE_VT_DATE this field contains a Date value
+30557>>>>>    Field Variant.strVal as Char 255   // If vt is OLE_VT_BSTR this field contains a pointer to a String
+30557>>>>>    Field Variant.dspVal as LPDISPATCH // If vt is OLE_VT_DISPATCH this field contains an LPDISPATCH
+30557>>>>>    Field Variant.errVal as OLEError   // If vt is OLE_VT_ERROR this field contains an OLEError
+30557>>>>>    Field Variant.blVal  as Bool       // If vt is OLE_VT_BOOL this field contains a Bool value
+30557>>>>>    Field Variant.uknVal as LPIUNKNOWN // If vt is OLE_VT_UNKNOWN this field contains an LPIUnknown
+30557>>>>>    Field Variant.ui1Val as DWORD      // If vt is OLE_VT_UI1 this field contains a UChar value
+30557>>>>>End_Type
+30557>>>>>
+30557>>>>>
+30557>>>>>// VARIANT constants used with the vt field in an OLEVariant type
+30557>>>>>
+30557>>>>>
+30557>>>>>
+30557>>>>>// SetFocus/KillFocus event, sent in wParam of WM_DFOCXNOTIFYEVENT
+30557>>>>>
+30557>>>>>// Used to register the OCX event notification messages
+30557>>>>>External_Function32 RegisterWindowMessage "RegisterWindowMessageA" USER32.DLL;                    String sWM_MSG;                    Returns Integer
+30558>>>>>
+30558>>>>>// External functions providing access to DFOLECLN.DLL
+30558>>>>>// These functions are normally not accessed directly, they are
+30558>>>>>// rather accessed through an Automation_Client/OCX_Client derived class/object
+30558>>>>>
+30558>>>>>//********DLL Interface OLE Auto General Functions************
+30558>>>>>
+30558>>>>>External_Function32 CreateAutomationClient "CreateAutomationClient" DFOLECLN.DLL;                    Returns DWORD
+30559>>>>>
+30559>>>>>
+30559>>>>>External_Function32 DestroyAutomationClient "DestroyAutomationClient" DFOLECLN.DLL;                    Integer clientId;                    Returns DWORD
+30560>>>>>
+30560>>>>>External_Function32 CreateAutoClientDispatch "CreateAutoClientDispatch" DFOLECLN.DLL;                    Integer clientId;                    String progIdStr;                    Returns DWORD
+30561>>>>>
+30561>>>>>External_Function32 AttachAutoClientDispatch "AttachAutoClientDispatch" DFOLECLN.DLL;                    Integer clientId;                    LPDispatch disp;                    Integer addRef;                    Returns DWORD
+30562>>>>>
+30562>>>>>External_Function32 AttachAutoClientActiveObject "AttachAutoClientActiveObject" DFOLECLN.DLL;                    Integer clientId;                    String progIdStr;                    Returns DWORD
+30563>>>>>
+30563>>>>>External_Function32 ReleaseAutoClientDispatch "ReleaseAutoClientDispatch" DFOLECLN.DLL;                    Integer clientId;                    Returns DWORD
+30564>>>>>
+30564>>>>>External_Function32 GetAutoClientDispatch "GetAutoClientDispatch" DFOLECLN.DLL;                    Integer clientId;                    Returns LPDispatch
+30565>>>>>
+30565>>>>>//********DLL Interface OLE Auto Get Property Functions**************
+30565>>>>>
+30565>>>>>External_Function32 GetAutoClientBoolProperty "GetAutoClientBoolProperty" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    Returns DWORD
+30566>>>>>
+30566>>>>>External_Function32 GetAutoClientCurrencyProperty "GetAutoClientCurrencyProperty" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    Pointer destStr;                    Returns Integer
+30567>>>>>
+30567>>>>>External_Function32 GetAutoClientDateProperty "GetAutoClientDateProperty" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    Returns Date
+30568>>>>>
+30568>>>>>External_Function32 GetAutoClientLPDispatchProperty "GetAutoClientLPDispatchProperty" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    Returns LPDispatch
+30569>>>>>
+30569>>>>>External_Function32 GetAutoClientRealProperty "GetAutoClientRealProperty" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    Pointer destStr;                    Returns Integer
+30570>>>>>
+30570>>>>>External_Function32 GetAutoClientShortRealProperty "GetAutoClientShortRealProperty" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    Pointer destStr;                    Returns Real
+30571>>>>>
+30571>>>>>External_Function32 GetAutoClientIntegerProperty "GetAutoClientIntegerProperty" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    Returns DWORD
+30572>>>>>
+30572>>>>>External_Function32 GetAutoClientShortProperty "GetAutoClientShortProperty" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    Returns Integer
+30573>>>>>
+30573>>>>>
+30573>>>>>External_Function32 GetAutoClientStringProperty "GetAutoClientStringProperty" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    Pointer destStr;                    Returns DWORD
+30574>>>>>
+30574>>>>>External_Function32 GetAutoClientOLEVariantProperty "GetAutoClientOLEVariantProperty" DFOLECLN.DLL;                    Integer  clientId;                    DWORD  dwDispId;                    LPOLEVar destVar;                    Returns  LPOLEVar
+30575>>>>>
+30575>>>>>
+30575>>>>>//********DLL Interface OLE Auto Set Property Functions**************
+30575>>>>>
+30575>>>>>External_Function32 SetAutoClientBoolProperty "SetAutoClientBoolProperty" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    DWORD    prop;                    Returns DWORD
+30576>>>>>
+30576>>>>>External_Function32 SetAutoClientCurrencyProperty "SetAutoClientCurrencyProperty" DFOLECLN.DLL;                    Integer  clientId;                    DWORD  dwDispId;                    String prop;                    Returns  DWORD
+30577>>>>>
+30577>>>>>External_Function32 SetAutoClientDateProperty "SetAutoClientDateProperty" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    Date    prop;                    Returns DWORD
+30578>>>>>
+30578>>>>>External_Function32 SetAutoClientLPDispatchProperty "SetAutoClientLPDispatchProperty" DFOLECLN.DLL;                    Integer    clientId;                    DWORD    dwDispId;                    LPDispatch prop;                    Returns    DWORD
+30579>>>>>
+30579>>>>>External_Function32 SetAutoClientRealProperty "SetAutoClientRealProperty" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    String   prop;                    Returns DWORD
+30580>>>>>
+30580>>>>>External_Function32 SetAutoClientShortRealProperty "SetAutoClientShortRealProperty" DFOLECLN.DLL;                    Integer   clientId;                    DWORD   dwDispId;                    String prop;                    Returns   DWORD
+30581>>>>>
+30581>>>>>External_Function32 SetAutoClientIntegerProperty "SetAutoClientIntegerProperty" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    DWORD prop;                    Returns DWORD
+30582>>>>>
+30582>>>>>External_Function32 SetAutoClientShortProperty "SetAutoClientShortProperty" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    Integer   prop;                    Returns DWORD
+30583>>>>>
+30583>>>>>External_Function32 SetAutoClientStringProperty "SetAutoClientStringProperty" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    String  prop;                    Returns DWORD
+30584>>>>>
+30584>>>>>External_Function32 SetAutoClientOLEVariantProperty "SetAutoClientOLEVariantProperty" DFOLECLN.DLL;                    Integer  clientId;                    DWORD  dwDispId;                    String prop;                    Returns  DWORD
+30585>>>>>
+30585>>>>>
+30585>>>>>//******DLL Interface OLE Auto Pre Invoke Functions**************
+30585>>>>>
+30585>>>>>External_Function32 DeclareAutoClientInvokeParams "DeclareAutoClientInvokeParams" DFOLECLN.DLL;                    Integer clientId;                    DWORD nrOfParams;                    Returns DWORD
+30586>>>>>
+30586>>>>>External_Function32 DefineAutoClientBoolParam "DefineAutoClientBoolParam" DFOLECLN.DLL;                    Integer clientId;                    DWORD    param;                    Returns DWORD
+30587>>>>>
+30587>>>>>External_Function32 DefineAutoClientCurrencyParam "DefineAutoClientCurrencyParam" DFOLECLN.DLL;                    Integer clientId;                    String  param;                    Returns DWORD
+30588>>>>>
+30588>>>>>External_Function32 DefineAutoClientDateParam "DefineAutoClientDateParam" DFOLECLN.DLL;                    Integer clientId;                    Date    param;                    Returns DWORD
+30589>>>>>
+30589>>>>>External_Function32 DefineAutoClientRealParam "DefineAutoClientRealParam" DFOLECLN.DLL;                    Integer clientId;                    String    param;                    Returns DWORD
+30590>>>>>
+30590>>>>>External_Function32 DefineAutoClientShortRealParam "DefineAutoClientShortRealParam" DFOLECLN.DLL;                    Integer   clientId;                    String param;                    Returns   DWORD
+30591>>>>>
+30591>>>>>External_Function32 DefineAutoClientIntegerParam "DefineAutoClientIntegerParam" DFOLECLN.DLL;                    Integer clientId;                    DWORD param;                    Returns DWORD
+30592>>>>>
+30592>>>>>External_Function32 DefineAutoClientShortParam "DefineAutoClientShortParam" DFOLECLN.DLL;                    Integer clientId;                    Integer   param;                    Returns DWORD
+30593>>>>>
+30593>>>>>External_Function32 DefineAutoClientLPDispatchParam "DefineAutoClientLPDispatchParam" DFOLECLN.DLL;                    Integer clientId;                    LPDispatch param;                    Returns DWORD
+30594>>>>>
+30594>>>>>External_Function32 DefineAutoClientStringParam "DefineAutoClientStringParam" DFOLECLN.DLL;                    Integer clientId;                    String  param;                    Returns DWORD
+30595>>>>>
+30595>>>>>External_Function32 DefineAutoClientOLEVariantParam "DefineAutoClientOLEVariantParam" DFOLECLN.DLL;                    Integer  clientId;                    OLEVariant param;                    Returns  DWORD
+30596>>>>>
+30596>>>>>//********DLL Interface OLE Auto Invoke Functions*********************
+30596>>>>>
+30596>>>>>External_Function32 InvokeAutoClientVoidFunction "InvokeAutoClientVoidFunction" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    Returns DWORD
+30597>>>>>
+30597>>>>>External_Function32 InvokeAutoClientBoolFunction "InvokeAutoClientBoolFunction" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    Returns DWORD
+30598>>>>>
+30598>>>>>External_Function32 InvokeAutoClientCurrencyFunction "InvokeAutoClientCurrencyFunction" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    Pointer destStr;                    Returns Integer
+30599>>>>>
+30599>>>>>External_Function32 InvokeAutoClientDateFunction "InvokeAutoClientDateFunction" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    Returns Date
+30600>>>>>
+30600>>>>>External_Function32 InvokeAutoClientLPDispatchFunction "InvokeAutoClientLPDispatchFunction" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    Returns LPDispatch
+30601>>>>>
+30601>>>>>External_Function32 InvokeAutoClientRealFunction "InvokeAutoClientRealFunction" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    Pointer destStr;                    Returns Integer
+30602>>>>>
+30602>>>>>External_Function32 InvokeAutoClientShortRealFunction "InvokeAutoClientShortRealFunction" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    Pointer destStr;                    Returns Integer
+30603>>>>>
+30603>>>>>External_Function32 InvokeAutoClientIntegerFunction "InvokeAutoClientIntegerFunction" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    Returns DWORD
+30604>>>>>
+30604>>>>>External_Function32 InvokeAutoClientShortFunction "InvokeAutoClientShortFunction" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    Returns Integer
+30605>>>>>
+30605>>>>>External_Function32 InvokeAutoClientStringFunction "InvokeAutoClientStringFunction" DFOLECLN.DLL;                    Integer clientId;                    DWORD dwDispId;                    Pointer  destStr;                    Returns Integer
+30606>>>>>
+30606>>>>>
+30606>>>>>External_Function32 InvokeAutoClientOLEVariantFunction "InvokeAutoClientOLEVariantFunction" DFOLECLN.DLL;                    Integer  clientId;                    DWORD  dwDispId;                    LPOLEVar destVar;                    Returns  Integer
+30607>>>>>
+30607>>>>>//********DLL Interface OLE Control Functions*********************
+30607>>>>>
+30607>>>>>
+30607>>>>>External_Function32 CreateOCXClient "CreateOCXClient" DFOLECLN.DLL;                    Returns Integer
+30608>>>>>
+30608>>>>>
+30608>>>>>External_Function32 CreateOCXControl "CreateOCXControl" DFOLECLN.DLL;                    Integer iCId;                    Pointer pPar;                    String  sCId;                    String  sCap;                    Dword   wSty;                    String  sLic;                    String  sFile;                    Returns Integer
+30609>>>>>
+30609>>>>>External_Function32 DestroyOCXControl "DestroyOCXControl" DFOLECLN.DLL;                    Integer iClientId;                    Returns Integer
+30610>>>>>
+30610>>>>>External_Function32 GetOCXEventBoolParam "GetOCXEventBoolParam" DFOLECLN.DLL;                    Pointer pDispParams;                    Integer param;                    Returns Integer
+30611>>>>>
+30611>>>>>External_Function32 GetOCXEventCurrencyParam "GetOCXEventCurrencyParam" DFOLECLN.DLL;                    Pointer pDispParams;                    Integer param;                    Pointer destStr;                    Returns Integer
+30612>>>>>
+30612>>>>>External_Function32 GetOCXEventDateParam "GetOCXEventDateParam" DFOLECLN.DLL;                    Pointer pDispParams;                    Integer param;                    Returns Date
+30613>>>>>
+30613>>>>>External_Function32 GetOCXEventRealParam "GetOCXEventRealParam" DFOLECLN.DLL;                    Pointer pDispParams;                    Integer param;                    Pointer destStr;                    Returns Integer
+30614>>>>>
+30614>>>>>External_Function32 GetOCXEventShortRealParam "GetOCXEventShortRealParam" DFOLECLN.DLL;                    Pointer pDispParams;                    Integer param;                    Pointer destStr;                    Returns Integer
+30615>>>>>
+30615>>>>>External_Function32 GetOCXEventIntegerParam "GetOCXEventIntegerParam" DFOLECLN.DLL;                    Pointer pDispParams;                    Integer param;                    Returns Integer
+30616>>>>>
+30616>>>>>External_Function32 GetOCXEventShortParam "GetOCXEventShortParam" DFOLECLN.DLL;                    Pointer pDispParams;                    Integer param;                    Returns Integer
+30617>>>>>
+30617>>>>>External_Function32 GetOCXEventStringParam "GetOCXEventStringParam" DFOLECLN.DLL;                    Pointer pDispParams;                    Integer param;                    Pointer pDestStr;                    Returns Integer
+30618>>>>>
+30618>>>>>External_Function32 GetOCXEventOLEVariantParam "GetOCXEventOLEVariantParam" DFOLECLN.DLL;                    Pointer pDispParams;                    Integer param;                    LPOLEVAR pDestVar;                    Returns Integer
+30619>>>>>
+30619>>>>>External_Function32 EnableOCXControl "EnableOCXControl" DFOLECLN.DLL;                    Integer iClientId;                    BOOL bEnable;                    Returns Integer
+30620>>>>>
+30620>>>>>External_Function32 GetOCXControlCaption "GetOCXControlCaption" DFOLECLN.DLL;                    Integer iClientId;                    Pointer lpDestStr;                    Returns Integer
+30621>>>>>
+30621>>>>>External_Function32 SetOCXControlCaption "SetOCXControlCaption" DFOLECLN.DLL;                    Integer iClientId;                    String  sCaption;                    Returns Integer
+30622>>>>>
+30622>>>>>External_Function32 LoadOlePicture "LoadOlePicture" DFOLECLN.DLL;                    String  sFilename;                    Returns LPDispatch
+30623>>>>>
+30623>>>>>External_Function32 ReleaseComPointer "ReleaseComPtr" DFOLECLN.DLL;                    LPIUnknown  comPtr;                    Returns Integer
+30624>>>>>
+30624>>>>>External_Function32 DFOleInit "DFOleInit" DFOLECLN.DLL;                    Returns Integer
+30625>>>>>
+30625>>>>>External_Function32 DFOleUninit "DFOleUninit" DFOLECLN.DLL;                    Returns Integer
+30626>>>>>
+30626>>>>>External_Function32 AlterOCXEventParam "AlterOCXEventParam" DFOLECLN.DLL;                    Pointer  pdispParams;                    Integer iparam;                    OLEVariant vNewValue;                    Returns  Integer
+30627>>>>>
+30627>>>>>
+30627>>>>>
+30627>>>>>// This command is only used internaly and should NOT be used by the developer
+30627>>>>>
+30627>>>USE DFEXTCLM
+30627>>>USE EXTFRM
+30627>>>USE DBEXTFRM
+30627>>>
+30627>>>//**********
+30627>>>//*** Error messages***
+30627>>>//**********
+30627>>>
+30627>>>    Enum_List
+30627>>>        Define OLE_SV_LANG
+30627>>>        Define OLE_US_LANG
+30627>>>    End_Enum_List
+30627>>>
+30627>>>    Define OLE_CURR_LANG For OLE_US_LANG
+30627>>>
+30627>>>        //*** US
+INCLUDING FILE: FLXOLEUS.INC
+30627>>>>
+30627>>>
+30627>>>
+30627>>>// This class encapsulates the behaviour of an OLEVariant, and simplifies
+30627>>>// tasks involved working with the OLEVariant.
+30627>>>Class cOLEVariant is an array
+30628>>>    Procedure Construct_Object
+30629>>>        Forward Send Construct_Object
+30631>>>        Local Integer iRetVal
+30632>>>        Move (DFOleInit()) to iRetVal
+30633>>>        Send OCXInit
+30634>>>    End_Procedure
+30635>>>
+30635>>>    Procedure Destroy_Object
+30636>>>        Local Integer iRetVal
+30637>>>        Move (DFOleUninit()) to iRetVal
+30638>>>        Forward Send Destroy_Object
+30640>>>    End_Procedure
+30641>>>
+30641>>>    Procedure OCXInit
+30642>>>        Move (RegisterWindowMessage("WM_DFOCXEVENT")) to WM_DFOCXEVENT
+30643>>>        Move (RegisterWindowMessage("WM_DFOCXNOTIFYEVENT")) to WM_DFOCXNOTIFYEVENT
+30644>>>    End_Procedure
+30645>>>
+30645>>>    Function GetType  OLEVariant var Returns DWORD
+30646>>>        Local DWORD varVt
+30647>>>        GetBuff from var at Variant.vt to varVt
+30648>>>        Function_Return varVt
+30649>>>    End_Function
+30650>>>
+30650>>>    Function GetShort OLEVariant var Returns Integer
+30651>>>        Local Integer iVal
+30652>>>        GetBuff from var at Variant.iVal to iVal
+30653>>>        Function_Return iVal
+30654>>>    End_Function
+30655>>>
+30655>>>    Function GetInteger OLEVariant var Returns Integer
+30656>>>        Local Integer lVal
+30657>>>        GetBuff from var at Variant.lVal to lVal
+30658>>>        Function_Return lVal
+30659>>>    End_Function
+30660>>>
+30660>>>    Function GetFloat OLEVariant var Returns OLEReal
+30661>>>        Local OLEReal fltVal
+30662>>>        GetBuff_String from var at Variant.fltVal to fltVal
+30663>>>        Function_Return fltVal
+30664>>>    End_Function
+30665>>>
+30665>>>    Function GetDouble OLEVariant var Returns OLEReal
+30666>>>        Local OLEReal dblVal
+30667>>>        GetBuff_String from var at Variant.dblVal to dblVal
+30668>>>        Function_Return dblVal
+30669>>>    End_Function
+30670>>>
+30670>>>    Function GetCurrency OLEVariant var Returns Number
+30671>>>        Local Number cyVal
+30672>>>        GetBuff_String from var at Variant.cyVal to cyVal
+30673>>>        Function_Return cyVal
+30674>>>    End_Function
+30675>>>
+30675>>>    Function GetDate OLEVariant var Returns Date
+30676>>>        Local Date dtVal
+30677>>>        GetBuff from var at Variant.dtVal to dtVal
+30678>>>        Function_Return dtVal
+30679>>>    End_Function
+30680>>>
+30680>>>    Function GetString OLEVariant var Returns String
+30681>>>        Local String strVal
+30682>>>        GetBuff_String from var at Variant.strVal to strVal
+30683>>>        Function_Return strVal
+30684>>>    End_Function
+30685>>>
+30685>>>    Function GetLPDispatch OLEVariant var Returns LPDispatch
+30686>>>        Local LPDispatch dspVal
+30687>>>        GetBuff from var at Variant.dspVal to dspVal
+30688>>>        Function_Return dspVal
+30689>>>    End_Function
+30690>>>
+30690>>>    Function GetOLEError OLEVariant var Returns OLEError
+30691>>>        Local OLEError errVal
+30692>>>        GetBuff from var at Variant.errVal to errVal
+30693>>>        Function_Return errVal
+30694>>>    End_Function
+30695>>>
+30695>>>    Function GetBool OLEVariant var Returns Bool
+30696>>>        Local Bool blVal
+30697>>>        GetBuff from var at Variant.blVal to blVal
+30698>>>        Function_Return blVal
+30699>>>    End_Function
+30700>>>
+30700>>>    Function GetLPIUnknown OLEVariant var Returns LPIUnknown
+30701>>>        Local LPIUnknown uknVal
+30702>>>        GetBuff from var at Variant.uknVal to uknVal
+30703>>>        Function_Return uknVal
+30704>>>    End_Function
+30705>>>
+30705>>>    Function GetUChar OLEVariant var Returns UChar
+30706>>>        Local UChar ui1Val
+30707>>>        GetBuff from var at Variant.ui1Val to ui1Val
+30708>>>        Function_Return ui1Val
+30709>>>    End_Function
+30710>>>
+30710>>>    Function GetValue OLEVariant var Returns String
+30711>>>        Local DWORD vt
+30712>>>        Local String retVal
+30712>>>        Get GetType var to vt
+30713>>>             If vt Eq OLE_VT_I2        Get GetShort var to retVal
+30716>>>        Else If vt Eq OLE_VT_I4        Get GetInteger var to retVal
+30720>>>        Else If vt Eq OLE_VT_R4        Get GetFloat var to retVal
+30724>>>        Else If vt Eq OLE_VT_R8        Get GetDouble var to retVal
+30728>>>        Else If vt Eq OLE_VT_CY        Get GetCurrency var to retVal
+30732>>>        Else If vt Eq OLE_VT_DATE      Get GetDate var to retVal
+30736>>>        Else If vt Eq OLE_VT_BSTR      Get GetString var to retVal
+30740>>>        Else If vt Eq OLE_VT_DISPATCH  Get GetLPDispatch var to retVal
+30744>>>        Else If vt Eq OLE_VT_ERROR     Get GetOLEError var to retVal
+30748>>>        Else If vt Eq OLE_VT_BOOL      Get GetBool var to retVal
+30752>>>        Else If vt Eq OLE_VT_UNKNOWN   Get GetLPIUnknown var to retVal
+30756>>>        Else If vt Eq OLE_VT_UI1       Get GetUChar var to retVal
+30760>>>        Function_Return retVal
+30761>>>    End_Function
+30762>>>
+30762>>>    Function PutValue DWORD vt String val Returns OLEVariant
+30763>>>        Inst_OLEVariant var
+30765>>>        Put vt to var at Variant.vt
+30766>>>             If vt Eq OLE_VT_I2        Put (Integer(val)) to var at Variant.iVal
+30769>>>        Else If vt Eq OLE_VT_I4        Put (Integer(val)) to var at Variant.lVal
+30773>>>        Else If vt Eq OLE_VT_R4        Put_String val to var at Variant.fltVal
+30777>>>        Else If vt Eq OLE_VT_R8        Put_String val to var at Variant.dblVal
+30781>>>        Else If vt Eq OLE_VT_CY        Put_String val to var at Variant.cyVal
+30785>>>        Else If vt Eq OLE_VT_DATE      Put (Date(val)) to var at Variant.dtVal
+30789>>>        Else If vt Eq OLE_VT_BSTR      Put_String val to var at Variant.strVal
+30793>>>        Else If vt Eq OLE_VT_DISPATCH  Put (LPDispatch(val)) to var at Variant.dspVal
+30797>>>        Else If vt Eq OLE_VT_ERROR     Put (OLEError(val)) to var at Variant.errVal
+30801>>>        Else If vt Eq OLE_VT_BOOL      Put (Bool(val)) to var at Variant.blVal
+30805>>>        Else If vt Eq OLE_VT_UNKNOWN   Put (LPIUnknown(val)) to var at Variant.uknVal
+30809>>>        Else If vt Eq OLE_VT_UI1       Put (UChar(val)) to var at Variant.ui1Val
+30813>>>        Else begin
+30814>>>            Put OLE_VT_ERROR to var at Variant.vt
+30815>>>            Put DISP_E_PARAMNOTFOUND to var at Variant.errVal
+30816>>>        End
+30816>>>>
+30816>>>        Function_Return var
+30817>>>    End_Function
+30818>>>
+30818>>>End_Class
+30819>>>
+30819>>>// The one and only cOLEVariant helper object
+30819>>>Object oOLEVariant is a cOLEVariant
+30821>>>        Move Current_Object to oOLEVariantId
+30822>>>End_Object
+30823>>>
+30823>>>//Command so we get nicer code for the events, only used internally
+30823>>>
+30823>>>// Command to extract the value of an OLEVariant no matter what datatype its currently holding
+30823>>>
+30823>>>// Command to both set the datatype and value to an OLEVariant
+30823>>>
+30823>>>
+30823>>>// The OLE Base class, all OLE classes are derived from this class
+30823>>>// Defines basic functionality and conversation with DLL interface
+30823>>>
+30823>>>Class cCOM_IDispatch is a Message
+30824>>>
+30824>>>    Procedure DefineCOM_IDispatch
+30825>>>        Property String  progIdStr Public ""
+30826>>>        Property Integer ClientId Public 0
+30827>>>        Property Integer AutoAddRef Public 0
+30828>>>    End_Procedure
+30829>>>
+30829>>>// GetProperty functions
+30829>>>    Function GetIntegerProperty DWORD dwDispId returns Integer
+30830>>>        Local Integer lpropVal iClientId
+30831>>>        Get clientId to iClientId
+30832>>>        Move (GetAutoClientIntegerProperty (iClientId,dwDispId)) to lpropVal
+30833>>>        Function_Return lpropVal
+30834>>>    End_Function
+30835>>>
+30835>>>    Function GetShortProperty DWORD dwDispId returns Integer
+30836>>>        Local Integer lpropVal iClientId
+30837>>>        Get clientId to iClientId
+30838>>>        Move (GetAutoClientShortProperty (iClientId,dwDispId)) to lpropVal
+30839>>>        Function_Return lpropVal
+30840>>>    End_Function
+30841>>>
+30841>>>    Function GetBoolProperty DWORD dwDispId returns BOOL
+30842>>>        Local BOOL lpropVal
+30843>>>        Local Integer iClientId
+30843>>>        Get clientId to iClientId
+30844>>>        Move (GetAutoClientBoolProperty (iClientId,dwDispId)) to lpropVal
+30845>>>        Function_Return lpropVal
+30846>>>    End_Function
+30847>>>
+30847>>>    Function GetCurrencyProperty DWORD dwDispId returns Number
+30848>>>        Local Number lpropVal
+30849>>>        Local String lsProp
+30849>>>        Local Integer iClientId iRetVal
+30849>>>        Local Pointer llpsprop
+30849>>>        Get clientId to iClientId
+30850>>>        Move (Repeat(Character(0),OLESTR_MAX)) to lsProp
+30851>>>        GetAddress of lsprop to llpsprop
+30852>>>        Move (GetAutoClientCurrencyProperty (iClientId,dwDispId,llpsprop)) to iRetVal
+30853>>>        Move lsProp to lpropVal
+30854>>>        Function_Return lpropVal
+30855>>>    End_Function
+30856>>>
+30856>>>    Function GetDateProperty DWORD dwDispId returns Date
+30857>>>        Local Date lpropVal
+30858>>>        Local Integer iClientId
+30858>>>        Get clientId to iClientId
+30859>>>        Move (GetAutoClientDateProperty (iClientId,dwDispId)) to lpropVal
+30860>>>        Function_Return lpropVal
+30861>>>    End_Function
+30862>>>
+30862>>>    Function GetLPDispatchProperty DWORD dwDispId returns Date
+30863>>>        Local LPDispatch lpropVal
+30864>>>        Local Integer iClientId
+30864>>>        Get clientId to iClientId
+30865>>>        Move (GetAutoClientLPDispatchProperty (iClientId,dwDispId)) to lpropVal
+30866>>>        Function_Return lpropVal
+30867>>>    End_Function
+30868>>>
+30868>>>    Function GetRealProperty DWORD dwDispId returns OLEReal
+30869>>>        Local OLEReal lpropVal
+30870>>>        Local Integer iClientId iRetVal
+30870>>>        Local String lsProp
+30870>>>        Local Pointer llpsprop
+30870>>>        Get clientId to iClientId
+30871>>>        Move (Repeat(Character(0),OLESTR_MAX)) to lsProp
+30872>>>        GetAddress of lsprop to llpsprop
+30873>>>        Move (GetAutoClientRealProperty (iClientId,dwDispId,llpsprop)) to iRetVal
+30874>>>        Move lsProp to lpropVal
+30875>>>        Function_Return lpropVal
+30876>>>    End_Function
+30877>>>
+30877>>>    Function GetShortRealProperty DWORD dwDispId returns OLEReal
+30878>>>        Local OLEReal lpropVal
+30879>>>        Local Integer iClientId iRetVal
+30879>>>        Local String lsProp
+30879>>>        Local Pointer llpsprop
+30879>>>        Get clientId to iClientId
+30880>>>        Move (Repeat(Character(0),OLESTR_MAX)) to lsProp
+30881>>>        GetAddress of lsprop to llpsprop
+30882>>>        Move (GetAutoClientShortRealProperty (iClientId,dwDispId,llpsprop)) to iRetVal
+30883>>>        Move lsProp to lpropVal
+30884>>>        Function_Return lpropVal
+30885>>>    End_Function
+30886>>>
+30886>>>    Function GetStringProperty DWORD dwDispId returns String
+30887>>>        Local String lpropVal
+30888>>>        Local Integer iClientId iRetVal
+30888>>>        Local Pointer llppropVal
+30888>>>        Get clientId to iClientId
+30889>>>        Move (Repeat(Character(0),OLESTR_MAX)) to lpropVal
+30890>>>        GetAddress of lpropVal to llppropval
+30891>>>        Move (GetAutoClientStringProperty (iClientId,dwDispId,llppropVal)) to iRetVal
+30892>>>        Function_Return (CString(lpropVal))
+30893>>>    End_Function
+30894>>>
+30894>>>    Function GetOLEVariantProperty DWORD dwDispId returns OLEVariant
+30895>>>        Local OLEVariant lpropVal
+30896>>>        Local Integer iClientId iRetVal
+30896>>>        Local Pointer llppropVal
+30896>>>        Get clientId to iClientId
+30897>>>        ZeroType TP_OLEVariant to lpropVal
+30898>>>        GetAddress of lpropVal to llppropval
+30899>>>        Move (GetAutoClientOLEVariantProperty (iClientId,dwDispId,llppropVal)) to iRetVal
+30900>>>        Function_Return lpropVal
+30901>>>    End_Function
+30902>>>
+30902>>>// SetProperty procedures
+30902>>>    Procedure SetIntegerProperty DWORD dwDispId Integer lpropVal
+30903>>>        Local Integer iClientId iRetVal
+30904>>>        Get ClientId to iClientId
+30905>>>        Move (SetAutoClientIntegerProperty (iClientId,dwDispId,lpropVal)) to iRetVal
+30906>>>    End_Procedure
+30907>>>
+30907>>>    Procedure SetShortProperty DWORD dwDispId Integer lpropVal
+30908>>>        Local Integer iClientId iRetVal
+30909>>>        Get ClientId to iClientId
+30910>>>        Move (SetAutoClientShortProperty (iClientId,dwDispId,lpropVal)) to iRetVal
+30911>>>    End_Procedure
+30912>>>
+30912>>>    Procedure SetBoolProperty DWORD dwDispId BOOL lpropVal
+30913>>>        Local Integer iClientId iRetVal
+30914>>>        Get ClientId to iClientId
+30915>>>        Move (SetAutoClientShortProperty (iClientId,dwDispId,lpropVal)) to iRetVal
+30916>>>    End_Procedure
+30917>>>
+30917>>>    Procedure SetCurrencyProperty DWORD dwDispId Number lpropVal
+30918>>>        Local Integer iClientId iRetVal
+30919>>>        Local String lsprop
+30919>>>        Get ClientId to iClientId
+30920>>>        Move lpropVal to lsprop
+30921>>>        Move (SetAutoClientCurrencyProperty(iClientId,dwDispId,lsprop)) to iRetVal
+30922>>>    End_Procedure
+30923>>>
+30923>>>    Procedure SetDateProperty DWORD dwDispId Date lpropVal
+30924>>>        Local Integer iClientId iRetVal
+30925>>>        Get ClientId to iClientId
+30926>>>        Move (SetAutoClientDateProperty(iClientId,dwDispId,lpropVal)) to iRetVal
+30927>>>    End_Procedure
+30928>>>
+30928>>>    Procedure SetLPDispatchProperty DWORD dwDispId LPDispatch lpropVal
+30929>>>        Local Integer iClientId iRetVal
+30930>>>        Get ClientId to iClientId
+30931>>>        Move (SetAutoClientLPDispatchProperty(iClientId,dwDispId,lpropVal)) to iRetVal
+30932>>>    End_Procedure
+30933>>>
+30933>>>    Procedure SetRealProperty DWORD dwDispId OLEReal lpropVal
+30934>>>        Local Integer iClientId iRetVal
+30935>>>        Local String lsprop
+30935>>>        Get ClientId to iClientId
+30936>>>        Move lpropVal to lsprop
+30937>>>        Move (SetAutoClientRealProperty(iClientId,dwDispId,lsprop)) to iRetVal
+30938>>>    End_Procedure
+30939>>>
+30939>>>    Procedure SetShortRealProperty DWORD dwDispId OLEReal lpropVal
+30940>>>        Local Integer iClientId iRetVal
+30941>>>        Local String lsprop
+30941>>>        Get ClientId to iClientId
+30942>>>        Move lpropVal to lsprop
+30943>>>        Move (SetAutoClientShortRealProperty(iClientId,dwDispId,lsprop)) to iRetVal
+30944>>>    End_Procedure
+30945>>>
+30945>>>    Procedure SetStringProperty DWORD dwDispId String lpropVal
+30946>>>        Local Integer iClientId iRetVal
+30947>>>        Get ClientId to iClientId
+30948>>>        Move (SetAutoClientStringProperty(iClientId,dwDispId,lpropVal)) to iRetVal
+30949>>>    End_Procedure
+30950>>>
+30950>>>    Procedure SetOLEVariantProperty DWORD dwDispId OLEVariant lpropVal
+30951>>>        Local Integer iClientId iRetVal
+30952>>>        Get ClientId to iClientId
+30953>>>        If (Length(lpropval)) Lt TP_OLEVariant_Size;            Get PutValue of oOLEVariantId OLE_VT_ERROR DISP_E_PARAMNOTFOUND to lpropVal
+30956>>>        Move (SetAutoClientOLEVariantProperty(iClientId,dwDispId,lpropVal)) to iRetVal
+30957>>>    End_Procedure
+30958>>>
+30958>>>// Pre-Invoke functions
+30958>>>    Procedure DeclareParams Integer nrOfParams
+30959>>>        Local Integer iClientId iRetVal
+30960>>>        Get ClientId to iCLientId
+30961>>>        Move (DeclareAutoClientInvokeParams(iClientId,nrOfParams)) to iRetVal
+30962>>>    End_Procedure
+30963>>>
+30963>>>    Procedure DefineIntegerParam Integer param
+30964>>>        Local Integer iClientId iRetVal
+30965>>>        Get ClientId to iClientId
+30966>>>        Move (DefineAutoClientIntegerParam(iClientId,param)) to iRetVal
+30967>>>    End_Procedure
+30968>>>
+30968>>>    Procedure DefineShortParam Integer param
+30969>>>        Local Integer iClientId iRetVal
+30970>>>        Get ClientId to iClientId
+30971>>>        Move (DefineAutoClientShortParam(iClientId,param)) to iRetVal
+30972>>>    End_Procedure
+30973>>>
+30973>>>    Procedure DefineBoolParam BOOL param
+30974>>>        Local Integer iClientId iRetVal
+30975>>>        Get ClientId to iClientId
+30976>>>        Move (DefineAutoClientBoolParam(iClientId,param)) to iRetVal
+30977>>>    End_Procedure
+30978>>>
+30978>>>    Procedure DefineCurrencyParam Number param
+30979>>>        Local Integer iClientId iRetVal
+30980>>>        Local String lsparam
+30980>>>        Get ClientId to iClientId
+30981>>>        Move param to lsparam
+30982>>>        Move (DefineAutoClientCurrencyParam(iClientId,lsparam)) to iRetVal
+30983>>>    End_Procedure
+30984>>>
+30984>>>    Procedure DefineDateParam Date param
+30985>>>        Local Integer iClientId iRetVal
+30986>>>        Get ClientId to iClientId
+30987>>>        Move (DefineAutoClientDateParam(iClientId,param)) to iRetVal
+30988>>>    End_Procedure
+30989>>>
+30989>>>    Procedure DefineLPDispatchParam LPDispatch param
+30990>>>        Local Integer iClientId iRetVal
+30991>>>        Get ClientId to iClientId
+30992>>>        Move (DefineAutoClientLPDispatchParam(iClientId,param)) to iRetVal
+30993>>>    End_Procedure
+30994>>>
+30994>>>    Procedure DefineRealParam OLEReal param
+30995>>>        Local Integer iClientId iRetVal
+30996>>>        Local String lsparam
+30996>>>        Get ClientId to iClientId
+30997>>>        Move param to lsparam
+30998>>>        Move (DefineAutoClientRealParam(iClientId,lsparam)) to iRetVal
+30999>>>    End_Procedure
+31000>>>
+31000>>>    Procedure DefineShortRealParam OLEReal param
+31001>>>        Local Integer iClientId iRetVal
+31002>>>        Local String lsparam
+31002>>>        Get ClientId to iClientId
+31003>>>        Move param to lsparam
+31004>>>        Move (DefineAutoClientShortRealParam(iClientId,lsparam)) to iRetVal
+31005>>>    End_Procedure
+31006>>>
+31006>>>    Procedure DefineStringParam String param
+31007>>>        Local Integer iClientId iRetVal
+31008>>>        Get ClientId to iClientId
+31009>>>        Append param OLENull
+31010>>>        Move (DefineAutoClientStringParam(iClientId,param)) to iRetVal
+31011>>>    End_Procedure
+31012>>>
+31012>>>    Procedure DefineOLEVariantParam OLEVariant param
+31013>>>        Local Integer iClientId iRetVal
+31014>>>        Get ClientId to iClientId
+31015>>>        If (Length(param)) Lt TP_OLEVariant_Size ;            Get PutValue of oOLEVariantId OLE_VT_ERROR DISP_E_PARAMNOTFOUND to param
+31018>>>        Move (DefineAutoClientOLEVariantParam(iClientId,param)) to iRetVal
+31019>>>    End_Procedure
+31020>>>
+31020>>>// Invoke functions
+31020>>>    Procedure InvokeVoidFunction DWORD dwDispId
+31021>>>        Local Integer iClientId iRetVal
+31022>>>        Get ClientId to iClientId
+31023>>>        Move (InvokeAutoClientVoidFunction(iClientId,dwDispId)) to iRetVal
+31024>>>    End_Procedure
+31025>>>
+31025>>>    Function InvokeIntegerFunction DWORD dwDispId returns Integer
+31026>>>        Local Integer iClientId iRetVal
+31027>>>        Get ClientId to iClientId
+31028>>>        Move (InvokeAutoClientIntegerFunction(iClientId,dwDispId)) to iRetVal
+31029>>>        Function_Return iRetVal
+31030>>>    End_Function
+31031>>>
+31031>>>    Function InvokeShortFunction DWORD dwDispId returns Integer
+31032>>>        Local Integer iClientId iRetVal
+31033>>>        Get ClientId to iClientId
+31034>>>        Move (InvokeAutoClientShortFunction(iClientId,dwDispId)) to iRetVal
+31035>>>        Function_Return iRetVal
+31036>>>    End_Function
+31037>>>
+31037>>>    Function InvokeBoolFunction DWORD dwDispId returns BOOL
+31038>>>        Local Integer iClientId iRetVal
+31039>>>        Get ClientId to iClientId
+31040>>>        Move (InvokeAutoClientBoolFunction(iClientId,dwDispId)) to iRetVal
+31041>>>        Function_Return iRetVal
+31042>>>    End_Function
+31043>>>
+31043>>>    Function InvokeCurrencyFunction DWORD dwDispId returns Number
+31044>>>        Local Integer iClientId iRetVal
+31045>>>        Local Number nRetVal
+31045>>>        Local String sRetVal
+31045>>>        Local Pointer psRetVal
+31045>>>        Get ClientId to iClientId
+31046>>>        Move (Repeat(Character(0),OLESTR_MAX)) to sRetVal
+31047>>>        GetAddress of sRetVal to psRetVal
+31048>>>        Move (InvokeAutoClientCurrencyFunction(iClientId,dwDispId,psRetVal)) to iRetVal
+31049>>>        Move sRetVal to nRetVal
+31050>>>        Function_Return nRetVal
+31051>>>    End_Function
+31052>>>
+31052>>>    Function InvokeDateFunction DWORD dwDispId returns Date
+31053>>>        Local Integer iClientId
+31054>>>        Local Date dRetVal
+31054>>>        Get ClientId to iClientId
+31055>>>        Move (InvokeAutoClientDateFunction(iClientId,dwDispId)) to dRetVal
+31056>>>        Function_Return dRetVal
+31057>>>    End_Function
+31058>>>
+31058>>>    Function InvokeLPDispatchFunction DWORD dwDispId returns LPDispatch
+31059>>>        Local Integer iClientId
+31060>>>        Local LPDispatch lpdRetVal
+31060>>>        Get ClientId to iClientId
+31061>>>        Move (InvokeAutoClientLPDispatchFunction(iClientId,dwDispId)) to lpdRetVal
+31062>>>        Function_Return lpdRetVal
+31063>>>    End_Function
+31064>>>
+31064>>>    Function InvokeRealFunction DWORD dwDispId returns OLEReal
+31065>>>        Local Integer iClientId iRetVal
+31066>>>        Local OLEReal rRetVal
+31066>>>        Local String sRetVal
+31066>>>        Local Pointer psRetVal
+31066>>>        Get ClientId to iClientId
+31067>>>        Move (Repeat(Character(0),OLESTR_MAX)) to sRetVal
+31068>>>        GetAddress of sRetVal to psRetVal
+31069>>>        Move (InvokeAutoClientRealFunction(iClientId,dwDispId,psRetVal)) to iRetVal
+31070>>>        Move sRetVal to rRetVal
+31071>>>        Function_Return rRetVal
+31072>>>    End_Function
+31073>>>
+31073>>>    Function InvokeShortRealFunction DWORD dwDispId returns OLEReal
+31074>>>        Local Integer iClientId iRetVal
+31075>>>        Local OLEReal rRetVal
+31075>>>        Local String sRetVal
+31075>>>        Local Pointer psRetVal
+31075>>>        Get ClientId to iClientId
+31076>>>        Move (Repeat(Character(0),OLESTR_MAX)) to sRetVal
+31077>>>        GetAddress of sRetVal to psRetVal
+31078>>>        Move (InvokeAutoClientShortRealFunction(iClientId,dwDispId,psRetVal)) to iRetVal
+31079>>>        Move sRetVal to rRetVal
+31080>>>        Function_Return rRetVal
+31081>>>    End_Function
+31082>>>
+31082>>>    Function InvokeStringFunction DWORD dwDispId returns String
+31083>>>        Local Integer iClientId iRetVal
+31084>>>        Local String sRetVal
+31084>>>        Local Pointer psRetVal
+31084>>>        Get ClientId to iClientId
+31085>>>        Move (Repeat(Character(0),OLESTR_MAX)) to sRetVal
+31086>>>        GetAddress of sRetVal to psRetVal
+31087>>>        Move (InvokeAutoClientStringFunction(iClientId,dwDispId,psRetVal)) to iRetVal
+31088>>>        Function_Return (CString(sRetVal))
+31089>>>    End_Function
+31090>>>
+31090>>>    Function InvokeOleVariantFunction DWORD dwDispId returns OLEVariant
+31091>>>        Local Integer iClientId iRetVal
+31092>>>        Local OLEVariant vRetVal
+31092>>>        Local Pointer pvRetVal
+31092>>>        Get ClientId to iClientId
+31093>>>        ZeroType TP_OLEVariant to vRetVal
+31094>>>        GetAddress of vRetVal to pvRetVal
+31095>>>        Move (InvokeAutoClientOLEVariantFunction(iClientId,dwDispId,pvRetVal)) to iRetVal
+31096>>>        Function_Return vRetVal
+31097>>>    End_Function
+31098>>>
+31098>>>
+31098>>>// Event parameter functions, might be moved to cOCX_Client_Mixin or similar
+31098>>>    Function GetEventIntegerParam DWORD lParam DWORD iPara returns Integer
+31099>>>        Local Integer iRetVal
+31100>>>        Move (GetOCXEventIntegerParam(lParam,iPara)) to iRetVal
+31101>>>        Function_Return iRetVal
+31102>>>    End_Function
+31103>>>
+31103>>>    Function GetEventShortParam DWORD lParam DWORD iPara returns Integer
+31104>>>        Local Integer iRetVal
+31105>>>        Move (GetOCXEventShortParam(lParam,iPara)) to iRetVal
+31106>>>        Function_Return iRetVal
+31107>>>    End_Function
+31108>>>
+31108>>>    Function GetEventBoolParam DWORD lParam DWORD iPara returns Bool
+31109>>>        Local Bool iRetVal
+31110>>>        Move (GetOCXEventBoolParam(lParam,iPara)) to iRetVal
+31111>>>        Function_Return iRetVal
+31112>>>    End_Function
+31113>>>
+31113>>>    Function GetEventCurrencyParam DWORD lParam DWORD iPara returns Currency
+31114>>>        Local Integer iretVal
+31115>>>        Local Currency cRetVal
+31115>>>        Local String destStr
+31115>>>        Local Pointer pdestStr
+31115>>>        Move (Repeat(Character(0),OLESTR_MAX)) to destStr
+31116>>>        GetAddress of destStr to pdestStr
+31117>>>        Move (GetOCXEventCurrencyParam(lParam,iPara,pdestStr)) to iRetVal
+31118>>>        Move (CString(destStr)) to cRetVal
+31119>>>        Function_Return cRetVal
+31120>>>    End_Function
+31121>>>
+31121>>>    Function GetEventDateParam DWORD lParam DWORD iPara returns Date
+31122>>>        Local Date dRetVal
+31123>>>        Move (GetOCXEventDateParam(lParam,iPara)) to dRetVal
+31124>>>        Function_Return dRetVal
+31125>>>    End_Function
+31126>>>
+31126>>>    Function GetEventLPDispatchParam DWORD lParam DWORD iPara returns LPDispatch
+31127>>>        Local LPDispatch lpRetVal
+31128>>>        Get GetEventIntegerParam lParam iPara to lpRetVal
+31129>>>        Function_Return lpRetVal
+31130>>>    End_Function
+31131>>>
+31131>>>    Function GetEventRealParam DWORD lParam DWORD iPara returns OLEReal
+31132>>>        Local Integer iretVal
+31133>>>        Local OLEReal rRetVal
+31133>>>        Local String destStr
+31133>>>        Local Pointer pdestStr
+31133>>>        Move (Repeat(Character(0),OLESTR_MAX)) to destStr
+31134>>>        GetAddress of destStr to pdestStr
+31135>>>        Move (GetOCXEventRealParam(lParam,iPara,pdestStr)) to iRetVal
+31136>>>        Move (CString(destStr)) to rRetVal
+31137>>>        Function_Return rRetVal
+31138>>>    End_Function
+31139>>>
+31139>>>    Function GetEventShortRealParam DWORD lParam DWORD iPara returns ShortReal
+31140>>>        Local Integer iretVal
+31141>>>        Local ShortReal rRetVal
+31141>>>        Local String destStr
+31141>>>        Local Pointer pdestStr
+31141>>>        Move (Repeat(Character(0),OLESTR_MAX)) to destStr
+31142>>>        GetAddress of destStr to pdestStr
+31143>>>        Move (GetOCXEventShortRealParam(lParam,iPara,pdestStr)) to iRetVal
+31144>>>        Move (CString(destStr)) to rRetVal
+31145>>>        Function_Return rRetVal
+31146>>>    End_Function
+31147>>>
+31147>>>    Function GetEventStringParam DWORD lParam DWORD iPara returns String
+31148>>>        Local Integer iretVal
+31149>>>        Local String sRetVal
+31149>>>        Local Pointer psRetVal
+31149>>>        Move (Repeat(Character(0),OLESTR_MAX)) to sRetVal
+31150>>>        GetAddress of sRetVal to psRetVal
+31151>>>        Move (GetOCXEventStringParam(lParam,iPara,psRetVal)) to iRetVal
+31152>>>        Function_Return (CString(sRetVal))
+31153>>>    End_Function
+31154>>>
+31154>>>    Function GetEventOLEVariantParam DWORD lParam DWORD iPara returns OLEVariant
+31155>>>        Local Integer iretVal
+31156>>>        Inst_OLEVariant vRetVal
+31157>>>        Local Pointer pvRetVal
+31157>>>        GetAddress of vRetVal to pvRetVal
+31158>>>        Move (GetOCXEventOLEVariantParam(lParam,iPara,pvRetVal)) to iRetVal
+31159>>>        Function_Return vRetVal
+31160>>>    End_Function
+31161>>>
+31161>>>End_Class
+31162>>>
+31162>>>
+31162>>>// The OLE Automation base class,
+31162>>>// which all automation classes are derived from
+31162>>>
+31162>>>Class Automation_Client is a cCOM_IDispatch
+31163>>>    Procedure Construct_Object
+31164>>>        Forward Send Construct_Object
+31166>>>        Send DefineCOM_IDispatch
+31167>>>        Local Integer iClientId
+31168>>>        Move (CreateAutomationClient()) To iClientId
+31169>>>        If iClientId Eq 0 Begin
+31171>>>            Set ClientId to 0
+31172>>>            Error 1002 DFOLEError1002
+31173>>>>
+31173>>>        End
+31173>>>>
+31173>>>        Else Set ClientId To iClientId
+31175>>>        End_Procedure
+31176>>>
+31176>>>    Procedure Destroy_Object
+31177>>>        Local Integer iRetVal iClientId
+31178>>>        Get ClientId to iClientId
+31179>>>        Move (DestroyAutomationClient(iClientId)) to iRetVal
+31180>>>        Forward Send Destroy_Object
+31182>>>    End_Procedure
+31183>>>
+31183>>>    Procedure CreateDispatch
+31184>>>                Local Integer iRetVal
+31185>>>                Local Integer iClientId
+31185>>>        Local String sCLSID
+31185>>>        Get progIdStr to sCLSID
+31186>>>        Append sCLSID OLENull
+31187>>>
+31187>>>                Get clientId to iClientId
+31188>>>        Move (CreateAutoClientDispatch (iClientId,sCLSID)) To iRetVal
+31189>>>                If iRetVal Eq 0 Begin
+31191>>>            Error 1000 DFOLEError1000
+31192>>>>
+31192>>>                End
+31192>>>>
+31192>>>        End_Procedure
+31193>>>
+31193>>>        Procedure AttachDispatch LPDispatch pdisp
+31194>>>                Local Integer iRetVal
+31195>>>                Local Integer iClientId
+31195>>>                Local Integer bAutoAddRef
+31195>>>                Get clientId to iClientId
+31196>>>                Get AutoAddRef to bAutoAddRef
+31197>>>                Move (AttachAutoClientDispatch (iClientId,pdisp,bAutoAddRef)) To iRetVal
+31198>>>                If iRetVal Eq 0 Begin
+31200>>>                Error 1001 DFOLEError1001
+31201>>>>
+31201>>>                End
+31201>>>>
+31201>>>    End_Procedure
+31202>>>
+31202>>>    Function AttachActiveObject Returns Bool
+31203>>>                Local Bool bRetVal
+31204>>>                Local Integer iClientId
+31204>>>                Local String sCLSID
+31204>>>                Get progIdStr to sCLSID
+31205>>>                Append sCLSID OLENull
+31206>>>                Get clientId to iClientId
+31207>>>                Move (AttachAutoClientActiveObject (iClientId,sCLSID)) To bRetVal
+31208>>>                Function_Return bRetVal
+31209>>>    End_Function
+31210>>>
+31210>>>    Procedure ReleaseDispatch
+31211>>>        Local Integer iRetVal
+31212>>>        Local Integer iClientId
+31212>>>        Get clientId to iClientId
+31213>>>        Move (ReleaseAutoClientDispatch (iClientId)) to iRetVal
+31214>>>    End_Procedure
+31215>>>
+31215>>>    Function GetDispatch returns LPDispatch
+31216>>>        Local LPDispatch retVal
+31217>>>        Local Integer iClientId
+31217>>>        Get clientId to iClientId
+31218>>>        Move (GetAutoClientDispatch(iClientId)) to retVal
+31219>>>        Function_Return retVal
+31220>>>    End_Function
+31221>>>
+31221>>>End_Class
+31222>>>
+31222>>>
+31222>>>//     cCom_IDispatch  External_Class_Mixin
+31222>>>//                 |       |    
+31222>>>//                 |       cOCXNavigation_Mixin
+31222>>>//                 |         |    
+31222>>>//               cOCX_Client_Mixin
+31222>>>//                        |    |
+31222>>>//                        |    |
+31222>>>// Form_External_Control  |    |   dbForm_External_Control
+31222>>>//                 |      |    |        |  
+31222>>>//                OCX_Client   dbOCX_Client
+31222>>>
+31222>>>
+31222>>>
+31222>>>// The focus navigation mixin class for ActiveX controls
+31222>>>Class cOCX_Navigation_Class_Mixin is a Mixin 
+31223>>>    Import_Class_Protocol External_Class_Mixin
+31224>>>    Register_Procedure WMDF_DFOCXNotifyEvent
+31224>>>
+31224>>>    Procedure WMDF_DFOCXNotifyEvent Integer wParam Integer lParam
+31225>>>        ON_EVENT WM_DFOCX_FOCUSCHANGE Fire OCXFocusChange
+31228>>>    End_Procedure
+31229>>>
+31229>>>    Procedure OCXFocusChange Integer lParam
+31230>>>        If (lParam);            Send External_SetFocus
+31233>>>        Else;            Send External_KillFocus
+31235>>>    End_Procedure
+31236>>>
+31236>>>    //Provided just to cancel the External_Class_Mixin implementation
+31236>>>    //It actually gets cancelled in the cOCX_Clint_Mixin, but hey!?
+31236>>>    Procedure Page_Object Integer state
+31237>>>        Forward Send Page_Object state        
+31239>>>    End_Procedure
+31240>>>
+31240>>>    Procedure Enable_Window integer iState
+31241>>>      // Here we switch iState again, for backwards compatibility
+31241>>>      Set OcxShadow_State to (Not(iState))
+31242>>>    End_procedure
+31243>>>
+31243>>>End_Class
+31244>>>
+31244>>>
+31244>>>//The standard OCX class mixin, it is the 
+31244>>>// OCX base class which all OLE Controls are derived from (read mixin'd)
+31244>>>Class cOCX_Client_Mixin is a Mixin
+31245>>>
+31245>>>    Import_Class_Protocol cCOM_IDispatch
+31246>>>    Import_Class_Protocol cOCX_Navigation_Class_Mixin
+31247>>>    Register_Procedure WMDF_DFOCXEVENT Integer wParam Integer lParam
+31247>>>
+31247>>>    Procedure DefineOCX_Client
+31248>>>        Send DefineCOM_IDispatch
+31249>>>        Local Integer iClientId
+31250>>>        Property integer Private.OCXShadowState Public 0
+31251>>>        Property String  Private.OCXCaption Public ""
+31252>>>        Property String  OCXLicense Public ""
+31253>>>        Property String  OCXPropFile Public ""
+31254>>>        Move (CreateOCXClient()) to iclientId
+31255>>>                Set ClientId to iClientId
+31256>>>        Send Use_Parent_Color
+31257>>>    End_Procedure
+31258>>>
+31258>>>    Function OCXShadow_State Returns Integer
+31259>>>        Local Integer bEnabled
+31260>>>        Get Private.OCXShadowState to bEnabled
+31261>>>        Function_Return bEnabled
+31262>>>    End_Function
+31263>>>
+31263>>>    Procedure Set OCXShadow_State Integer bEnable
+31264>>>        Local integer hWnd iSuccess iCLientId
+31265>>>        Set Private.OCXShadowState to bEnable
+31266>>>        Get clientId to iClientId
+31267>>>        If bEnable;            Move (false) to bEnable
+31270>>>        else;            Move (true) to bEnable
+31272>>>        Get Window_Handle to hWnd
+31273>>>        If hWnd;            Move (EnableOCXControl(iClientId,bEnable)) To iSuccess
+31276>>>    End_Procedure
+31277>>>
+31277>>>    Procedure SetOCXCaption String sCaption
+31278>>>        Local Integer iClientId iRetVal
+31279>>>        Get ClientId to iClientId
+31280>>>        Append sCaption OLENull
+31281>>>        Move (SetOCXControlCaption(iClientId,sCaption)) to iRetVal
+31282>>>        If (Not(iRetVal));            Error 1004 DFOLEError1004
+31285>>>        Else;            Set Private.OCXCaption to sCaption
+31287>>>    End_Procedure
+31288>>>
+31288>>>    Function GetOCXCaption Returns String
+31289>>>        Local Integer iClientId iRetVal
+31290>>>        Local String destStr
+31290>>>        Local Pointer lpDestStr
+31290>>>        Move (Repeat(Character(0),OLESTR_MAX)) to destStr
+31291>>>        GetAddress of destStr to lpDestStr
+31292>>>        Move (GetOCXControlCaption(iClientId,lpDestStr)) to iRetVal
+31293>>>        If (not(iRetVal));            Error 1004 DFOLEError1004
+31296>>>        Set Private.OCXCaption to (CString(destStr))
+31297>>>        Function_Return (Private.OCXCaption(Current_Object))
+31298>>>    End_Function
+31299>>>
+31299>>>    Procedure SET OCXCaption String sCaption
+31300>>>        If (Window_Handle(Current_Object));            Send SetOCXCaption sCaption
+31303>>>        Else;            Set Private.OCXCaption to sCaption
+31305>>>    End_Procedure
+31306>>>
+31306>>>    Function OCXCaption Returns String
+31307>>>        If (Window_Handle(Current_Object));            Function_Return (GetOCXCaption(Current_Object))
+31310>>>        Else;            Function_Return (Private.OCXCaption(Current_Object))
+31312>>>    End_Procedure
+31313>>>
+31313>>>    // To avoid flickering during resize operations
+31313>>>    Procedure Use_Parent_Color
+31314>>>        Local Integer Clr Txtclr Backclr
+31315>>>        Delegate Get Object_Color To Clr
+31317>>>        Move (Hi(Clr)) To Txtclr
+31318>>>        Move (Low(Clr)) To Backclr
+31319>>>        Set Object_Color To Txtclr Backclr
+31320>>>    End_Procedure
+31321>>>
+31321>>>    Procedure Page_Object integer iState
+31322>>>        Forward Send Page_Object iState
+31324>>>        If iState Eq (True) Send LoadOCX
+31327>>>    End_Procedure
+31328>>>
+31328>>>    Procedure Remove_Object
+31329>>>        Send UnloadOCX
+31330>>>        Forward send Remove_Object
+31332>>>    End_Procedure
+31333>>>
+31333>>>    Procedure LoadOCX
+31334>>>        Local Pointer HWnd
+31335>>>        Local Integer iCLientId iRetVal iVisible iShadow dwSty
+31335>>>        Local String sPrgId lic sCap sPropFile
+31335>>>        Send PreCreateOCX
+31336>>>        Get ClientId to iClientId
+31337>>>        Get Window_Handle to hwnd
+31338>>>        Get progIdStr to sPrgId
+31339>>>        Append sPrgId OLENull
+31340>>>        Get Private.OCXCaption To sCap
+31341>>>        Append sCap OLENull
+31342>>>        Get OCXLicense To Lic
+31343>>>        Append Lic OLENull
+31344>>>        Get OCXPropFile To sPropFile
+31345>>>        Append sPropfile OLENull
+31346>>>        Get Visible_State to iVisible
+31347>>>        If (iVisible) Move WS_VISIBLE to dwSty
+31350>>>        Else Move 0 to dwSty
+31352>>>        Get Private.OCXShadowState to iShadow
+31353>>>        If (iShadow) Move (dwSty ior WS_DISABLED) to dwSty
+31356>>>        Move (dwSty ior WS_TABSTOP) to dwSty
+31357>>>        Move (CreateOCXControl(iClientId,HWnd,sPrgId,sCap,dwSty,lic,sPropFile)) to iRetVal
+31358>>>        Send PostCreateOCX
+31359>>>    End_Procedure
+31360>>>
+31360>>>    Procedure UnloadOCX
+31361>>>        Local Integer iRetVal
+31362>>>                Local Integer iClientId
+31362>>>                Get ClientId to iClientId
+31363>>>                Move (DestroyOCXControl(iClientId)) to iRetVal
+31364>>>    End_Procedure
+31365>>>
+31365>>>    //This procedure is triggered before the OCX control is created
+31365>>>    Procedure PreCreateOCX
+31366>>>    End_Procedure
+31367>>>
+31367>>>    //This procedure is triggered after the OCX control is created but
+31367>>>    //before it's shown
+31367>>>    Procedure PostCreateOCX
+31368>>>    End_Procedure
+31369>>>End_Class
+31370>>>
+31370>>>// The non data aware OCX class
+31370>>>// Derive from this class if you DON'T want your ActiveX control to be data aware
+31370>>>Class OCX_Client is a FormExternalControl
+31371>>>    Import_Class_Protocol cOCX_Client_Mixin
+31372>>>
+31372>>>    //These allows us to use the VDF standard 'Value' to get and set the
+31372>>>    // caption of the ActiveX control (e.g. Get/Set Value to someVariable)
+31372>>>
+31372>>>    Procedure Set ControlValue string sVal
+31373>>>        Set OCXCaption to sVal
+31374>>>    End_Procedure
+31375>>>
+31375>>>    Function Value Integer item_number Returns String
+31376>>>        Function_Return (OCXCaption(Current_Object))
+31377>>>    End_Function
+31378>>>
+31378>>>End_Class
+31379>>>
+31379>>>
+31379>>>// The Data aware OCX class
+31379>>>// Derive from this class if you want your ActiveX control to be data aware
+31379>>>Class dbOCX_Client is a dbFormExternalControl
+31380>>>    Import_Class_Protocol cOCX_Client_Mixin
+31381>>>
+31381>>>    Procedure DefinedbOCX_Client
+31382>>>        Send DefineOCX_Client
+31383>>>        Property String  Private.OCXdbValue public ""
+31384>>>    End_Procedure
+31385>>>
+31385>>>    Procedure Set ControlValue string sVal
+31386>>>        If (Window_Handle(Current_Object));            Send OnRefreshDbOcxValue sVal
+31389>>>    End_Procedure
+31390>>>
+31390>>>    Function ControlValue Returns String
+31391>>>        Function_Return (Private.OCXDbValue(Current_Object))
+31392>>>    End_Function
+31393>>>
+31393>>>    //Triggered when the database value has changed,
+31393>>>    // and the ActiveX control needs to be updated
+31393>>>    //Override and perform necessary updating to the OCX
+31393>>>    Procedure OnRefreshDbOcxValue String sVal
+31394>>>    End_Procedure
+31395>>>
+31395>>>    //Should be called when the ActiveX control's value has changed,
+31395>>>    // and the database value needs to be updated
+31395>>>    Procedure UpdateDbOcxValue String sVal
+31396>>>        Set Private.OCXdbValue to sVal
+31397>>>        Send ControlValueChanged
+31398>>>    End_Procedure
+31399>>>
+31399>>>End_Class
+31400>>>
+31400>>>
+31400>>>// Command for common declarations of ActiveX control classes, only used internally
+31400>>>
+31400>>>
+31400>>>Use FontDisp
+INCLUDING FILE: FONTDISP.PKG
+31400>>>>>// OLEStdFont Charset Constants
+31400>>>>>Enum_List
+31400>>>>>        Define OLEANSI_CHARSET for 0 
+31400>>>>>        Define OLEDEFAULT_CHARSET for 1
+31400>>>>>        Define OLESYMBOL_CHARSET for 2
+31400>>>>>End_Enum_List
+31400>>>>>
+31400>>>>>
+31400>>>>>// CLSID:{BEF6E003-A874-101A-8BBA-00AA00300CAB}
+31400>>>>>// ProgId: 
+31400>>>>>Class OLEFontMixin is a Automation_Client
+31401>>>>>
+31401>>>>>        Function StdFontName Returns String
+31402>>>>>                Local String lpropVal
+31403>>>>>                Get GetStringProperty 0 to lpropVal
+31404>>>>>                Function_Return lpropVal
+31405>>>>>        End_Function
+31406>>>>>
+31406>>>>>        Procedure SET StdFontName String lpropVal
+31407>>>>>                Send SetStringProperty 0 lpropVal
+31408>>>>>        End_Procedure
+31409>>>>>
+31409>>>>>        Function StdFontSize Returns Currency
+31410>>>>>                Local Currency lpropVal
+31411>>>>>                Get GetCurrencyProperty 2 to lpropVal
+31412>>>>>                Function_Return lpropVal
+31413>>>>>        End_Function
+31414>>>>>
+31414>>>>>        Procedure SET StdFontSize Currency lpropVal
+31415>>>>>                Send SetCurrencyProperty 2 lpropVal
+31416>>>>>        End_Procedure
+31417>>>>>
+31417>>>>>        Function StdFontBold Returns Bool
+31418>>>>>                Local Bool lpropVal
+31419>>>>>                Get GetBoolProperty 3 to lpropVal
+31420>>>>>                Function_Return lpropVal
+31421>>>>>        End_Function
+31422>>>>>
+31422>>>>>        Procedure SET StdFontBold Bool lpropVal
+31423>>>>>                Send SetBoolProperty 3 lpropVal
+31424>>>>>        End_Procedure
+31425>>>>>
+31425>>>>>        Function StdFontItalic Returns Bool
+31426>>>>>                Local Bool lpropVal
+31427>>>>>                Get GetBoolProperty 4 to lpropVal
+31428>>>>>                Function_Return lpropVal
+31429>>>>>        End_Function
+31430>>>>>
+31430>>>>>        Procedure SET StdFontItalic Bool lpropVal
+31431>>>>>                Send SetBoolProperty 4 lpropVal
+31432>>>>>        End_Procedure
+31433>>>>>
+31433>>>>>        Function StdFontUnderline Returns Bool
+31434>>>>>                Local Bool lpropVal
+31435>>>>>                Get GetBoolProperty 5 to lpropVal
+31436>>>>>                Function_Return lpropVal
+31437>>>>>        End_Function
+31438>>>>>
+31438>>>>>        Procedure SET StdFontUnderline Bool lpropVal
+31439>>>>>                Send SetBoolProperty 5 lpropVal
+31440>>>>>        End_Procedure
+31441>>>>>
+31441>>>>>        Function StdFontStrikethrough Returns Bool
+31442>>>>>                Local Bool lpropVal
+31443>>>>>                Get GetBoolProperty 6 to lpropVal
+31444>>>>>                Function_Return lpropVal
+31445>>>>>        End_Function
+31446>>>>>
+31446>>>>>        Procedure SET StdFontStrikethrough Bool lpropVal
+31447>>>>>                Send SetBoolProperty 6 lpropVal
+31448>>>>>        End_Procedure
+31449>>>>>
+31449>>>>>        Function StdFontWeight Returns Integer
+31450>>>>>                Local Integer lpropVal
+31451>>>>>                Get GetShortProperty 7 to lpropVal
+31452>>>>>                Function_Return lpropVal
+31453>>>>>        End_Function
+31454>>>>>
+31454>>>>>        Procedure SET StdFontWeight Integer lpropVal
+31455>>>>>                Send SetShortProperty 7 lpropVal
+31456>>>>>        End_Procedure
+31457>>>>>
+31457>>>>>        Function StdFontCharset Returns Integer
+31458>>>>>                Local Integer lpropVal
+31459>>>>>                Get GetShortProperty 8 to lpropVal
+31460>>>>>                Function_Return lpropVal
+31461>>>>>        End_Function
+31462>>>>>
+31462>>>>>        Procedure SET StdFontCharset Integer lpropVal
+31463>>>>>                Send SetShortProperty 8 lpropVal
+31464>>>>>        End_Procedure
+31465>>>>>
+31465>>>>>End_Class
+31466>>>>>
+31466>>>>>// CoClass CLSID:{0BE35203-8F91-11CE-9DE3-00AA004BB851}
+31466>>>>>// ProgId: StdFont
+31466>>>>>// Number of impl.Types:1
+31466>>>>>// Referenced class Font
+31466>>>>>Class OLEStdFont is a Automation_Client
+31467>>>>>        Import_Class_Protocol OLEFontMixin
+31468>>>>>
+31468>>>>>        Procedure Construct_Object
+31469>>>>>                Forward Send Construct_Object
+31471>>>>>                Set progIdStr to "StdFont"
+31472>>>>>        End_Procedure
+31473>>>>>End_Class
+31474>>>Use PicDisp
+INCLUDING FILE: PICDISP.PKG
+31474>>>>>
+31474>>>>>// Picture Type Constants
+31474>>>>>//Enum_List
+31474>>>>>        Define OLEPICTYPE_UNINITIALIZED for -1 // Uninitialized
+31474>>>>>        Define OLEPICTYPE_NONE for 0 // None
+31474>>>>>        Define OLEPICTYPE_BITMAP for 1 // Bitmap
+31474>>>>>        Define OLEPICTYPE_METAFILE for 2 // Windows Metafile
+31474>>>>>        Define OLEPICTYPE_ICON for 3 // Icon
+31474>>>>>        Define OLEPICTYPE_ENHMETAFILE for 4 // Enhanced Metafile
+31474>>>>>//End_Enum_List
+31474>>>>>
+31474>>>>>// CLSID:{7BF80981-BF32-101A-8BBB-00AA00300CAB}
+31474>>>>>// ProgId: 
+31474>>>>>Class OLEPictureMixin is a Automation_Client
+31475>>>>>
+31475>>>>>        Function StdPictureHandle Returns OLE_HANDLE
+31476>>>>>                Local OLE_HANDLE lpropVal
+31477>>>>>                Get GetIntegerProperty 0 to lpropVal
+31478>>>>>                Function_Return lpropVal
+31479>>>>>        End_Function
+31480>>>>>
+31480>>>>>        Function StdPicturehPal Returns OLE_HANDLE
+31481>>>>>                Local OLE_HANDLE lpropVal
+31482>>>>>                Get GetIntegerProperty 2 to lpropVal
+31483>>>>>                Function_Return lpropVal
+31484>>>>>        End_Function
+31485>>>>>
+31485>>>>>        Procedure SET StdPicturehPal OLE_HANDLE lpropVal
+31486>>>>>                Send SetIntegerProperty 2 lpropVal
+31487>>>>>        End_Procedure
+31488>>>>>
+31488>>>>>        Function StdPictureType Returns Integer
+31489>>>>>                Local Integer lpropVal
+31490>>>>>                Get GetShortProperty 3 to lpropVal
+31491>>>>>                Function_Return lpropVal
+31492>>>>>        End_Function
+31493>>>>>
+31493>>>>>        Function StdPictureWidth Returns OLE_XSIZE_HIMETRIC
+31494>>>>>                Local OLE_XSIZE_HIMETRIC lpropVal
+31495>>>>>                Get GetIntegerProperty 4 to lpropVal
+31496>>>>>                Function_Return lpropVal
+31497>>>>>        End_Function
+31498>>>>>
+31498>>>>>        Function StdPictureHeight Returns OLE_YSIZE_HIMETRIC
+31499>>>>>                Local OLE_YSIZE_HIMETRIC lpropVal
+31500>>>>>                Get GetIntegerProperty 5 to lpropVal
+31501>>>>>                Function_Return lpropVal
+31502>>>>>        End_Function
+31503>>>>>
+31503>>>>>        Procedure StdPictureRender DWORD lhdc DWORD lx DWORD ly DWORD lcx DWORD lcy OLE_XPOS_HIMETRIC lxSrc OLE_YPOS_HIMETRIC lySrc OLE_XSIZE_HIMETRIC lcxSrc OLE_YSIZE_HIMETRIC lcySrc LPOLE_RECT lprcWBounds
+31504>>>>>                Send DeclareParams 10
+31505>>>>>                Send DefineIntegerParam lhdc
+31506>>>>>                Send DefineIntegerParam lx
+31507>>>>>                Send DefineIntegerParam ly
+31508>>>>>                Send DefineIntegerParam lcx
+31509>>>>>                Send DefineIntegerParam lcy
+31510>>>>>                Send DefineIntegerParam lxSrc
+31511>>>>>                Send DefineIntegerParam lySrc
+31512>>>>>                Send DefineIntegerParam lcxSrc
+31513>>>>>                Send DefineIntegerParam lcySrc
+31514>>>>>                Send DefineIntegerParam lprcWBounds
+31515>>>>>                Send InvokeVoidFunction 6
+31516>>>>>        End_Procedure 
+31517>>>>>
+31517>>>>>End_Class
+31518>>>>>
+31518>>>>>// CoClass CLSID:{0BE35204-8F91-11CE-9DE3-00AA004BB851}
+31518>>>>>// ProgId: StdPicture
+31518>>>>>// Number of impl.Types:1
+31518>>>>>// Referenced class Picture
+31518>>>>>Class OLEStdPicture is a Automation_Client
+31519>>>>>        Import_Class_Protocol OLEPictureMixin
+31520>>>>>
+31520>>>>>        Procedure Construct_Object
+31521>>>>>                Forward Send Construct_Object
+31523>>>>>                Set progIdStr to "StdPicture"
+31524>>>>>        End_Procedure
+31525>>>>>End_Class
+31526>
+31526>//AB-StoreTopEnd
+31526>
+31526>
+31526>Object Main is a PanelSub
+31528>    Set Label To "ExScript"
+31529>
+31529>    DFCreate_Menu Main_Menu
+INCLUDING FILE: FILE_PM.INC
+31532>>Object oMyWinPrint is an DF_PRINTER
+31534>>
+31534>>    Procedure DFPrint
+31536>>        Local Integer iRetVal
+31537>>
+31537>>        Get DFGetPrintDialogFlags To iRetVal
+31538>>
+31538>>        If iRetVal Begin
+31540>>            Send DFPrintDoc
+31541>>            Send DFClearDoc
+31542>>        End
+31542>>>
+31542>>    End_Procedure
+31543>>    Move Current_Object to WinPrintId
+31544>>End_Object
+31545>>
+31545>>
+31545>>DFCreate_Menu "&File" File_Menu is a DEOPopupMenu
+31549>>    On_Item "&Clear/Add\aF5" send Request_Clear
+31550>>        Set Status_Help To 'Clear current record / Add a new record'
+31551>>
+31551>>    On_Item "Clear &all\aCtrl+F5" send Request_Clear_All
+31552>>        Set Status_Help To 'Clear all data from view'
+31553>>
+31553>>    On_Item "&Delete\aShift+F2" send Request_Delete
+31554>>        Set Status_Help To 'Delete the current record'
+31555>>
+31555>>    On_Item "&Find\aF9" send Find_GE
+31556>>        Set Status_Help To 'Find a record'
+31557>>
+31557>>    On_Item "&Next\aF8" send Find_Next
+31558>>        Set Status_Help To 'Find the Next record'
+31559>>
+31559>>    On_Item "&Previous\aF7" send Find_Previous
+31560>>        Set Status_Help To 'Find the Previous record'
+31561>>
+31561>>    On_Item "Superfind\aShift+F9" send Superfind
+31562>>        Set Status_Help To 'Superfind a record'
+31563>>
+31563>>    On_Item "Superfind next\aShift+F8" send Superfind_Next
+31564>>        Set Status_Help To 'Superfind the Next record'
+31565>>
+31565>>    On_Item "Superfind previous\aShift+F7" send Superfind_Previous
+31566>>        Set Status_Help To 'Superfind the Previous record'
+31567>>
+31567>>    On_Item "Find fi&rst\aCtrl+Home" send Beginning_Of_Data
+31568>>        Set Status_Help To 'Find the First record'
+31569>>
+31569>>    On_Item "Find &last\aCtrl+End" send End_Of_Data
+31570>>        Set Status_Help To 'Find the Last record'
+31571>>
+31571>>    On_Item "&Save\aF2" send Request_Save
+31572>>        Set Status_Help To 'Save the current record'
+31573>>
+31573>>
+31573>>    On_Item "" send NONE
+31574>>
+31574>>    on_item   "Printer Settings   "  send DFPrintSetup       to (oWinPrint(Self))
+31575>>    Set Status_Help To ""
+31576>>    on_item   "Print              "  send DFPrint            to (oMyWinPrint(Self))
+31577>>    Set Status_Help To ""
+31578>>
+31578>>    On_Item "" send NONE
+31579>>
+31579>>    On_Item "Properties" send DoShowProperties to Self
+31580>>    Set Status_Help To 'Setup Program Properties'
+31581>>
+31581>>    On_Item "" send NONE
+31582>>
+31582>>    On_Item "E&xit\aAlt+F4" send Exit_Application to desktop
+31583>>        Set Status_Help To "Stop Program's execution"
+31584>>
+31584>>    Procedure DoShowProperties
+31586>>       // If (Close_All_Views(Self,True)=0) Send Activate_View to (piPropertiesObjectId(self))
+31586>>    End_Procedure
+31587>>
+31587>>    On_Key Key_Alt+Key_I Send DoShowProperties
+31588>>
+31588>>    //
+31588>>    Procedure OnInitMenu
+31590>>        Local integer Obj# IsDeo Changed NoIndex File# Field# Srvr Itm
+31591>>        Local integer IsDeoControl lId liClId
+31591>>        Get Focus to Obj#
+31592>>        Get is_Function Get_DEO_Object Obj# TRUE to IsDeo
+31593>>        If IsDeo Get Server of obj# to Srvr          // invoking data-set
+31596>>        If (isDeo AND Srvr) Begin
+31598>>            // returns T if object in question is a DEO control object (i.e.
+31598>>            // understands the data_file, data_field messages).
+31598>>            Get is_Function Get_DEO_Control_Object Obj# False to IsDeoControl
+31599>>            Get Should_Save of Obj# to changed  // changed file?
+31600>>            If IsDEOControl Begin
+31602>>                Get data_file of Obj# to file#
+31603>>                Get data_field of Obj# to field#
+31604>>                Move ( File#=0 OR ;                    (Field_Main_Index(Srvr,File#,Field#)=-1) ;                    ) to NoIndex             // has a find index?
+31605>>            End
+31605>>>
+31605>>            Else ;                Move 1 to NoIndex
+31607>>            Set Shadow_state item  0  to False                     // Clear
+31608>>            Set Shadow_state item  1  to False                     // Clear All
+31609>>            Set Shadow_state item  2  to (Current_record(Srvr)=0)  // Delete
+31610>>            Set Shadow_state item  3  to NoIndex                   // Find
+31611>>            Set Shadow_state item  4  to NoIndex                   // Find Next
+31612>>            Set Shadow_state item  5  to NoIndex                   // Find Previous
+31613>>            Set Shadow_state item  6  to NoIndex                   // Superfind
+31614>>            Set Shadow_state item  7  to NoIndex                   // Superfind Next
+31615>>            Set Shadow_state item  8  to NoIndex                   // Superfind Previous
+31616>>            Set Shadow_state item  9  to NoIndex                   // Find First
+31617>>            Set Shadow_state item 10  to NoIndex                   // Find Last
+31618>>            Set Shadow_state item 11  to (Should_Save(Srvr)=0)     // Save
+31619>>            Set Shadow_state item 12  to NoIndex                   // Printer
+31620>>            Set Shadow_state item 13  to NoIndex                   // Print
+31621>>//            Set Shadow_state item 14  to NoIndex                   // Properties
+31621>>//            Set Shadow_state item 15  to (Should_Save(Srvr)=0)     // Exodos
+31621>>        End
+31621>>>
+31621>>        Else Begin
+31622>>            for itm from 0 to 13
+31628>>>
+31628>>                set shadow_State item itm to TRUE
+31629>>            Loop
+31630>>>
+31630>>        End
+31630>>>
+31630>> //       Set Shadow_State Item 14 to (piPropertiesObjectId(Self)=0)
+31630>>    End_Procedure
+31631>>
+31631>>    Register_Procedure Activate_oPrnSetup
+31631>>
+31631>>End_Pull_Down
+31633>>Set Status_Help to "Find, Save, Delete, Clear information or quit this application."
+31634>
+31634>        DFCreate_Menu "&View" ViewPopupMenu is a ViewPopupMenu
+31638>            On_Item "&ExecScript\aCtrl+1" Send Activate_ExecScript
+31639>        End_Pull_down
+31641>        Set Status_Help To "Available Views"
+31642>        
+INCLUDING FILE: NAVI_PM.INC
+31642>>Use DFDEOMnu
+31642>>
+31642>>DFCreate_Menu "&Navigation" NAVIGATE_Menu is a DEOPopupMenu
+31646>>    On_Item "&Next Area\aF6"            send Switch_Next_Area
+31647>>        Set Status_Help To  'Move to Next Area'
+31648>>
+31648>>    On_Item "&Previous Area\aShift+F6"  send Switch_Prior_Area
+31649>>        Set Status_Help To  'Move to Previous Area'
+31650>>
+31650>>    On_Item "N&ext View\aAlt+F6"        send Switch_Next_View
+31651>>        Set Status_Help To  'Move to Next View'
+31652>>
+31652>>    On_Item "P&revious View\aCtrl+F6"   send Switch_Prior_View
+31653>>        Set Status_Help To  'Move to Previous View'
+31654>>
+31654>>    On_Item ""                          send none
+31655>>
+31655>>    On_Item "&List\aF4"               send Prompt
+31656>>        Set Status_Help To  'Show Selection Lists'
+31657>>
+31657>>    On_Item "&Zoom\aAlt+F9"             send Zoom
+31658>>        Set Status_Help To  'Show Zoom'
+31659>>
+31659>>    Procedure OnInitMenu
+31661>>        Local integer Obj# IsDeo Itm prmpt zm isDeoControl
+31662>>        Get Focus to Obj#
+31663>>        Get is_Function Get_DEO_Object Obj# TRUE to IsDeo
+31664>>        If IsDeo Begin
+31666>>            Get is_Function Get_DEO_Control_Object Obj# False to IsDeoControl
+31667>>            If IsDeoControl Begin
+31669>>                Get Prompt_Object of Obj# to Prmpt
+31670>>                Get Zoom_Object of Obj# to zm
+31671>>            End
+31671>>>
+31671>>            Set Shadow_state item 0  to False
+31672>>            Set Shadow_state item 1  to False
+31673>>            Set Shadow_state item 2  to False
+31674>>            Set Shadow_state item 3  to False
+31675>>            Set Shadow_state item 5  to (Prmpt=0)
+31676>>            Set Shadow_state item 6  to (Zm=0)
+31677>>        End
+31677>>>
+31677>>        Else Begin
+31678>>            for itm from 0 to 6
+31684>>>
+31684>>                set shadow_State item itm to TRUE
+31685>>            Loop
+31686>>>
+31686>>        End
+31686>>>
+31686>>    End_Procedure
+31687>>
+31687>>End_Pull_Down
+31689>>Set Status_Help to "Navigation in different areas of the screen"
+31690>>
+INCLUDING FILE: WIN_PM.INC
+31690>>DFCreate_Menu "&Window" Window_Menu
+31694>>    Set select_mode to Multi_Select
+31695>>    // normal number of items in pulldown (w/ no active views)
+31695>>    property integer std_item_count public 0
+31697>>
+31697>>    DFCreate_Menu "&Preferences" Display_Options_Menu
+31701>>        Set select_mode to Multi_Select
+31702>>        On_Item "&ToolBar"        Send Toggle_Toolbar             To Self
+31703>>        On_Item "&StatusBar"      Send Toggle_Statusbar           To Self
+31704>>        On_Item "&Arrange Icons"  Send Toggle_Auto_Arrange_Icons  To Self
+31705>>
+31705>>        //  When ever the menu [pulldown] is initialized, check/set
+31705>>        //  the state of its items.
+31705>>        //
+31705>>        Procedure OnInitMenu
+31707>>            local integer bState
+31708>>
+31708>>            Get ToolBar_State to bState
+31709>>            Set Select_State Item 0 to bState
+31710>>            if  bState   Set Status_Help Item 0 To '' //'Hide the ToolBar'
+31713>>            Else         Set Status_Help Item 0 to '' //'Show the ToolBar'
+31715>>
+31715>>            Get Statusbar_State to bState
+31716>>            Set Select_State Item 1 to bState
+31717>>            if  bState  Set Status_Help Item 1 To ''// 'Hide the StatusBar'
+31720>>            Else        Set Status_Help Item 1 to ''// 'Show the StatusBar'
+31722>>
+31722>>            Get Auto_Arrange_Icons_State to bState
+31723>>            Set Select_State Item 2 to bState
+31724>>            if  bState  Set Status_Help Item 2 To '' //'Hide AutoArrange Icons'
+31727>>            Else        Set Status_Help Item 2 to '' //'Show AutoArrange Icons'
+31729>>
+31729>>        End_procedure
+31730>>
+31730>>
+31730>>    End_Pull_Down
+31732>>    Set Status_Help                                           To '' //"Enable Toolbar, StatusBar, and AutoArrange Icons options"
+31733>>
+31733>>    On_Item ""
+31734>>
+31734>>    On_Item "&Cascade" send Cascade_Windows                   To Self
+31735>>        Set Status_Help                                       To ''
+31736>>
+31736>>    On_Item "Tile &Horizontally" send Tile_Windows_Horizontal To Self
+31737>>        Set Status_Help                                       To ''
+31738>>
+31738>>    On_Item "Tile &Vertically" send Tile_Windows_Vertical     To Self
+31739>>        Set Status_Help                                       To ''
+31740>>
+31740>>    On_Item ""
+31741>>
+31741>>    On_Item "Minimize all" send Minimize_all_Windows          To Current_Object
+31742>>        Set Status_Help                                       To ''
+31743>>
+31743>>    On_Item "&Restore all" send Restore_all_Windows           To Current_Object
+31744>>        Set Status_Help                                       To ''
+31745>>
+31745>>    On_Item ""
+31746>>
+31746>>    On_Item "&Arrange Icons" send Arrange_Icons               To Current_Object
+31747>>        Set Status_Help                                       To ''
+31748>>
+31748>>    // set this to the number of items in the menu with no views.
+31748>>    Set Std_item_count to (item_count(current_object))
+31749>>
+31749>>    // add all active views to the end of the menu
+31749>>    Procedure OnInitMenu
+31751>>        local integer iStdCnt iNumCnt hVw hCl iCount
+31752>>        Local string sLbl
+31752>>        //*** Remove all old view items
+31752>>        Get Item_count     to iNumCnt
+31753>>        get Std_item_count to iStdCnt
+31754>>        For iCount from 1  to (iNumCnt - iStdCnt)
+31760>>>
+31760>>            Send Delete_item iStdCnt
+31761>>        Loop
+31762>>>
+31762>>
+31762>>        Move iStdcnt to iNumCnt
+31763>>        get Client_id to hCl // object id of client area
+31764>>        If hCl Begin
+31766>>           Get Next_Mdi_Dialog of hcl TRUE to hVw // find first view
+31767>>           While hVw
+31771>>              if (Active_state(hVw)) Begin
+31773>>                 if iNumCnt eq iStdCnt Begin // if first view, add separator
+31775>>                    send add_item 0 ''
+31776>>                    increment iNumCnt
+31777>>                 end
+31777>>>
+31777>>                 Get Label of hVw to sLbl // caption bar (name) of view
+31778>>                 // note that all views understand the message activate_view.
+31778>>                 send add_item msg_activate_view sLbl // set message, value and destination
+31779>>                 set aux_value item iNumcnt to hVw
+31780>>                 // if this is the focus view, mark it.
+31780>>                 If (current_scope(desktop)=hVw and View_mode(hVw)<>VIEWMODE_ICONIZE) ;                     set select_state item iNumCnt to True
+31783>>                 // create status help
+31783>>                 Set Status_help item iNumCnt to ("Make this view (" - trim(sLbl) - ") the active window.")
+31784>>                 increment iNumCnt
+31785>>              end
+31785>>>
+31785>>              Get Next_Mdi_Dialog of hcl FALSE to hVw // find next
+31786>>           End
+31787>>>
+31787>>        End
+31787>>>
+31787>>    End_Procedure // OnInitMenu
+31788>>
+31788>>End_Pull_Down
+31790>>Set Status_Help to ''
+INCLUDING FILE: HELPA_PM.INC
+31791>>
+31791>>
+31791>>DFCreate_Menu "&Help" Help_Menu
+31795>>    on_item "&Help Topic" send Help_on_topic
+31796>>        Set Status_Help To "Search for help on a particular subject."
+31797>>        on_item "" send NONE
+31798>>    on_item "&Context Help"          send Extended_Help
+31799>>        Set Status_Help To "Show Context sensitive help."
+31800>>
+31800>>    on_item "&Files Help"            send File_Help
+31801>>        Set Status_Help To "Show Files help."
+31802>>
+31802>>    on_item "&Keys Help"             send Keys_Help
+31803>>        Set Status_Help To "Show Keys help."
+31804>>
+31804>>    on_item "" send NONE
+31805>>
+31805>>    on_item "&How to Use Help"       send Help_For_Help
+31806>>        Set Status_Help To "How to Use Help"
+31807>>
+31807>>    on_item "" send NONE
+31808>>
+31808>>    On_Item "&Tips of the Day" send Activate_TipOfDay
+31809>>        Set Status_Help To "Tips of the Day"
+31810>>
+31810>>    on_item "" send NONE
+31811>>
+31811>>    On_item "About" Send Activate_About
+31812>>        Set Status_Help To "System Information"
+31813>>end_pull_down
+31815>>Set Status_Help to "Access to the program's help subsystem"
+31816>>
+31816>>Register_Procedure Activate_TipOfDay
+31816>>
+31816>>
+31816>    End_Menu
+31818>
+31818>    Use DFStdBtn.pkg //  Tool-Bar object.
+INCLUDING FILE: DFSTDBTN.PKG
+31818>>>// 07/23/96 JJT - New Class names
+31818>>>// 10/03/97 KCR - removed leading separator
+31818>>>
+31818>>>Use DFMainBt  // dfMain_ButtonBar
+INCLUDING FILE: DFMAINBT.PKG
+31818>>>>>//-------------------------------------------------------------------------
+31818>>>>>// DFMainBt.pkg - DfMain_ButtonBar class
+31818>>>>>//
+31818>>>>>//
+31818>>>>>// 07/23/96 JJT - New Class names
+31818>>>>>//-------------------------------------------------------------------------
+31818>>>>>
+31818>>>>>Use DfPanel // dfapp_buttonbar
+31818>>>>>
+31818>>>>>Class ToolBar is a AppToolBar
+31819>>>>>
+31819>>>>>    Function Is_Function Integer MsgId Integer ObjId Integer DelegateFg Returns Integer
+31820>>>>>      Local integer rval MainObj#
+31821>>>>>      Get Main_Panel_id to MainObj#
+31822>>>>>      If (ObjId>Desktop AND MainObj#) ;         Get Is_Function of MainObj# MsgId ObjId DelegateFg to rVal
+31825>>>>>      Function_Return rVal
+31826>>>>>    End_Function
+31827>>>>>
+31827>>>>>    Procedure Redirect_Button_Message integer Itm
+31828>>>>>         Local integer Msg# Aux# rval Understood
+31829>>>>>         If (Shadow_State(Current_Object,itm)) Procedure_Return
+31832>>>>>         Get Message   item itm  to Msg#
+31833>>>>>         Get Aux_Value item itm  to Aux#
+31834>>>>>         If Msg# Begin
+31836>>>>>           If Aux# eq 0 Begin
+31838>>>>>              Get Focus to Aux#
+31839>>>>>              Get Is_Function Get_DEO_Object Aux# TRUE to Understood
+31840>>>>>              If Not Understood Move 0 to Aux#
+31843>>>>>           End
+31843>>>>>>
+31843>>>>>           If Aux# Get Msg# of Aux# to rval
+31846>>>>>           Procedure_return rval
+31847>>>>>         end
+31847>>>>>>
+31847>>>>>    End_Procedure // Redirect_Message
+31848>>>>>
+31848>>>>>End_Class
+31849>>>>>
+31849>>>>>
+31849>>>
+31849>>>//  Button bar object.
+31849>>>
+31849>>>Object Tool_Bar is a ToolBar
+31851>>>
+31851>>>    Send ImageList_Add 'bgn.bmp'   // 0
+31852>>>    Send ImageList_Add 'end.bmp'   // 1
+31853>>>    Send ImageList_Add 'next.bmp'  // 2
+31854>>>    Send ImageList_Add 'prev.bmp'  // 3
+31855>>>    Send ImageList_Add 'clr.bmp'   // 4
+31856>>>    Send ImageList_Add 'clra.bmp'  // 5
+31857>>>
+31857>>>    send Add_button (ico_user+0) msg_beginning_of_data
+31858>>>    Send Add_ToolTip "Beginning of file"
+31859>>>    Set  Status_Help To 'Find the First record (Ctrl+Home)'
+31860>>>
+31860>>>    send Add_button (ico_user+3) msg_find_previous
+31861>>>    Send Add_ToolTip "Find Previous"
+31862>>>    Set  Status_Help To 'Find the Previous record (F7)'
+31863>>>
+31863>>>    send Add_button (ico_user+2) msg_find_next
+31864>>>    Send Add_ToolTip "Find Next"
+31865>>>    Set  Status_Help To 'Find the Next record (F8)'
+31866>>>
+31866>>>    send Add_button (ico_user+1) msg_end_of_data
+31867>>>    Send Add_ToolTip "End of File"
+31868>>>    Set  Status_Help To 'Find the Last record (Ctrl+End)'
+31869>>>
+31869>>>    Send Add_space
+31870>>>
+31870>>>    send Add_button ico_std_find msg_prompt
+31871>>>    Send Add_ToolTip "Prompt"
+31872>>>    Set  Status_Help To 'Show available selections (F4)'
+31873>>>
+31873>>>    send Add_button (ico_user+4) msg_request_clear
+31874>>>    Send Add_ToolTip "Clear"
+31875>>>    Set  Status_Help To 'Clear current record / Add a new record (F5)'
+31876>>>
+31876>>>    send Add_button (ico_user+5) msg_request_clear_all
+31877>>>    Send Add_ToolTip "Clear All"
+31878>>>    Set  Status_Help To 'Clear all data from view (Ctrl+F5)'
+31879>>>
+31879>>>    send Add_space
+31880>>>
+31880>>>    send Add_button ico_std_filesave msg_request_save
+31881>>>    Send Add_ToolTip "Save"
+31882>>>    Set  Status_Help To 'Save the current record (F2)'
+31883>>>
+31883>>>    send Add_button ico_std_delete msg_request_delete
+31884>>>    Send Add_ToolTip "Delete"
+31885>>>    Set  Status_Help To 'Delete the current record (Shift+F2)'
+31886>>>
+31886>>>    send Add_space
+31887>>>
+31887>>>    send Add_button ico_std_cut msg_cut
+31888>>>    Send Add_ToolTip "Cut"
+31889>>>    Set  Status_Help to "Cuts the selection and puts it on the Clipboard"
+31890>>>
+31890>>>    send Add_button ico_std_copy msg_copy
+31891>>>    Send Add_ToolTip "Copy"
+31892>>>    Set  Status_Help to "Copies the selection and puts it on the Clipboard"
+31893>>>
+31893>>>    send Add_button ico_std_paste msg_paste
+31894>>>    Send Add_ToolTip "Paste"
+31895>>>    Set  Status_Help to "Inserts Clipboard contents"
+31896>>>
+31896>>>End_Object
+31897>>>
+31897>    
+31897>    Object Client_Area is a AppClientAreaSub
+31899>        //  Include all views
+31899>        Use ExecScript.VW                                                                   
+INCLUDING FILE: EXECSCRIPT.VW
+31899>>>//AB/ Project ExecScript
+31899>>>//AB/     Object prj is a View_Project
+31899>>>//AB/         Set ProjectName to "ExecScript"
+31899>>>//AB/         Set ProjectFileName to "ExecScript.VW"
+31899>>>
+31899>>>// Project Object Structure
+31899>>>//   ExecScript is a dbViewSub
+31899>>>//     frmFileName is a FormSub
+31899>>>//     frmODBC is a FormSub
+31899>>>//     ButtonSub1 is a ButtonSub
+31899>>>//     oOpenFile is a OpenDialog
+31899>>>//     TextBoxSub1 is a TextBoxSub
+31899>>>//     RunSQLScript is a OLEExecScript
+31899>>>
+31899>>>// Register all objects
+31899>>>Register_Object ButtonSub1
+31899>>>Register_Object ExecScript
+31899>>>Register_Object frmFileName
+31899>>>Register_Object frmODBC
+31899>>>Register_Object oOpenFile
+31899>>>Register_Object RunSQLScript
+31899>>>Register_Object TextBoxSub1
+31899>>>
+31899>>>
+31899>>>//AB/     AppBuild VIEW
+31899>>>
+31899>>>
+31899>>>    //AB-StoreTopStart
+31899>>>        
+31899>>>    Use ExecScript
+INCLUDING FILE: EXECSCRIPT.PKG
+31899>>>>>// Visual DataFlex OLE Classes generated from C:\WINNT\system32\ExecCtrl_1ocx.ocx
+31899>>>>>// Generated by FlexOLE Class Generator Monday, November 08, 2004 15:43:09
+31899>>>>>// Registered user: 20249-SOLUTION HIGH TECHNOLOGY SYSTEMS
+31899>>>>>
+31899>>>>>// CLSID:{A6F985C8-2E75-40B9-A139-49AB98AEA85B}
+31899>>>>>// ProgId: 
+31899>>>>>Class OLE_ExecScript is a Message
+31900>>>>>
+31900>>>>>        Function ExecScriptScriptExec String lScriptFilePath String ldsn Returns String
+31901>>>>>                Local String lretVal
+31902>>>>>                Send DeclareParams 2
+31903>>>>>                Send DefineStringParam lScriptFilePath
+31904>>>>>                Send DefineStringParam ldsn
+31905>>>>>                Get InvokeStringFunction 1610809344 to lretVal
+31906>>>>>                Function_Return lretVal
+31907>>>>>        End_Function 
+31908>>>>>
+31908>>>>>End_Class
+31909>>>>>
+31909>>>>>// CLSID:{13CB70EC-1780-495F-89D8-B9CBDED0D351}
+31909>>>>>// ProgId: 
+31909>>>>>Class OLE__ExecScript is a Message
+31910>>>>>
+31910>>>>>End_Class
+31911>>>>>
+31911>>>>>// CoClass CLSID:{2F2BB7F4-AA7F-4D4B-88F1-CB3EA21AFFD8}
+31911>>>>>// ProgId: ExecCtrl.ExecScript
+31911>>>>>// Number of impl.Types:2
+31911>>>>>// Referenced class _ExecScript
+31911>>>>>// Referenced class __ExecScript
+31911>>>>>Class OLEExecScript is a OCX_Client
+31912>>>>>        Import_Class_Protocol OLE_ExecScript
+31913>>>>>        Import_Class_Protocol OLE__ExecScript
+31914>>>>>
+31914>>>>>        Procedure Construct_Object
+31915>>>>>                Forward Send Construct_Object
+31917>>>>>                Send DefineOCX_Client
+31918>>>>>                Set progIdStr to "ExecCtrl.ExecScript"
+31919>>>>>                Set OCXLicense to ""
+31920>>>>>                DECLARE_ACTIVEX_CTRL_CLASS "OLEExecScript"
+31923>>>>>        End_Procedure
+31924>>>>>
+31924>>>>>        Procedure WMDF_DFOCXEvent Integer wParam Integer lParam
+31925>>>>>        End_Procedure
+31926>>>>>End_Class
+31927>>>>>
+31927>>>>>// CoClass CLSID:{2F2BB7F4-AA7F-4D4B-88F1-CB3EA21AFFD8}
+31927>>>>>// ProgId: ExecCtrl.ExecScript
+31927>>>>>// Number of impl.Types:2
+31927>>>>>// Referenced class _ExecScript
+31927>>>>>// Referenced class __ExecScript
+31927>>>>>Class dbOLEExecScript is a dbOCX_Client
+31928>>>>>        Import_Class_Protocol OLE_ExecScript
+31929>>>>>        Import_Class_Protocol OLE__ExecScript
+31930>>>>>
+31930>>>>>        Procedure Construct_Object
+31931>>>>>                Forward Send Construct_Object
+31933>>>>>                Send DefineDbOCX_Client
+31934>>>>>                Set progIdStr to "ExecCtrl.ExecScript"
+31935>>>>>                Set OCXLicense to ""
+31936>>>>>                DECLARE_ACTIVEX_CTRL_CLASS "OLEExecScript"
+31939>>>>>        End_Procedure
+31940>>>>>
+31940>>>>>        Procedure WMDF_DFOCXEvent Integer wParam Integer lParam
+31941>>>>>        End_Procedure
+31942>>>>>End_Class
+31943>>>    
+31943>>>    //AB-StoreTopEnd
+31943>>>
+31943>>>    //AB-IgnoreStart
+31943>>>
+31943>>>    Use dbView.Sub
+31943>>>    Use Form.Sub
+31943>>>    Use Button.Sub
+31943>>>    Use DFAllEnt.pkg
+31943>>>    Use Txtbox.Sub
+31943>>>
+31943>>>    //AB-IgnoreEnd
+31943>>>
+31943>>>    DEFERRED_VIEW Activate_ExecScript FOR ;    ;    Object ExecScript is a dbViewSub
+31962>>>
+31962>>>        //AB-StoreTopStart
+31962>>>                        
+31962>>>        Property Integer piLathos   Public   0
+31964>>>        Property String  psModule   Public '01'
+31966>>>        Property Integer piWhat     Public   0
+31968>>>        
+31968>>>        
+31968>>>        //AB-StoreTopEnd
+31968>>>
+31968>>>        Set Label to "‘¬š®¨¦¤ ©£æª / „¤ž£â¨à©ž SQL ™á©žª"
+31969>>>        Set Size to 113 451
+31970>>>        Set Location to 9 7
+31971>>>
+31971>>>        //AB-DDOStart
+31971>>>
+31971>>>
+31971>>>        //AB-DDOEnd
+31971>>>
+31971>>>        Object frmFileName is a FormSub
+31973>>>            Set Size to 13 321
+31974>>>            Set Location to 6 63
+31975>>>            Set Label_Col_Offset to 2
+31976>>>            Set Label_Justification_Mode to jMode_Right
+31977>>>            Set Prompt_Button_Mode to pb_PromptOn
+31978>>>            Set Form_TypeFace Item 0 to "MS Sans Serif"
+31979>>>
+31979>>>            //AB-StoreStart
+31979>>>                                                                                                                                                                                                                                                                            
+31979>>>            Procedure Prompt
+31981>>>                String  sFileName
+31982>>>                Integer bOpen
+31982>>>                Get Show_Dialog of oOpenFile To bOpen
+31983>>>                If bOpen Begin
+31985>>>                    Get File_Name of oOpenFile to sFileName
+31986>>>                    If (Trim(sFileName)<>'') Set Value Item 0 to sFileName
+31989>>>                End
+31989>>>>
+31989>>>            End_Procedure
+31990>>>            
+31990>>>            
+31990>>>            //AB-StoreEnd
+31990>>>
+31990>>>        End_Object    // frmFileName
+31991>>>
+31991>>>        Object frmODBC is a FormSub
+31993>>>            Set Label to "ODBC"
+31994>>>            Set Size to 13 85
+31995>>>            Set Location to 25 63
+31996>>>            Set Label_Col_Offset to 2
+31997>>>            Set Label_Justification_Mode to jMode_Right
+31998>>>            Set Form_TypeFace Item 0 to "MS Sans Serif"
+31999>>>            Set Value Item 0 to "SMSNT"
+32000>>>        End_Object    // frmODBC
+32001>>>
+32001>>>        Object ButtonSub1 is a ButtonSub
+32003>>>
+32003>>>            //AB-StoreTopStart
+32003>>>            
+32003>>>            //AB-StoreTopEnd
+32003>>>
+32003>>>            Set Label to "„§œ¥œ¨š˜©å˜"
+32004>>>            Set Size to 14 218
+32005>>>            Set Location to 70 101
+32006>>>            Set Form_TypeFace Item 0 to "MS Sans Serif"
+32007>>>
+32007>>>            //AB-StoreStart
+32007>>>            
+32007>>>            Procedure OnClick
+32009>>>                String  sFile sFile2 sLabel sODBC sMess sStr sParams
+32010>>>                Integer iFileExists iCheck iInt
+32010>>>                Get label                       to slabel
+32011>>>                Set Enabled_State               to False
+32012>>>                Get Value Of frmODBC Item 0     to sODBC
+32013>>>                If (sODBC='') Begin
+32015>>>                    Send Stop_Box "ƒœ¤ ©¬£§¢ž¨é©˜«œ «¦ ODBC." "‘­á¢£˜ 1003"
+32016>>>                    Set Enabled_State to True
+32017>>>                    Procedure_Return
+32018>>>                End
+32018>>>>
+32018>>>                Get Value Of frmFileName item 0 to sFile
+32019>>>                Move (Trim(UpperCase(sFile)))   to sFile
+32020>>>                If (sFile<>'') Begin
+32022>>>                    Get Get_File_Exists sFile   To iFileExists
+32023>>>                    If (NOT(iFileExists)) Begin
+32025>>>                        Send Stop_Box "ƒœ¤ ™¨âŸž¡œ «¦ ˜¨®œå¦." "‘­á¢£˜ 1001"
+32026>>>                        Set Enabled_State to True
+32027>>>                        Procedure_Return
+32028>>>                    End
+32028>>>>
+32028>>>            
+32028>>>            //        Direct_Output   Channel 8   'C:\MyScript.txt'
+32028>>>            //        Direct_Input    Channel 9   sFile
+32028>>>            //        Readln Channel 9 sStr
+32028>>>            //        While (Not(Seqeof))
+32028>>>            //            Add 1 to iCheck
+32028>>>            //            Move (Replaces('GO',sStr,' ' )) to sStr
+32028>>>            //            Writeln Channel 8 sStr
+32028>>>            //            Readln Channel 9 sStr
+32028>>>            //            Set Label to (String(iCheck))
+32028>>>            //        Loop
+32028>>>            
+32028>>>            //        Get ExecScriptScriptExec Of RunSQLScript 'C:\MyScript.txt' sOdbc to sMess
+32028>>>            
+32028>>>            //        EraseFile 'C:\MyScript.txt'
+32028>>>                    //Move (MyScriptExec(sFile,sODBC)) to sMess
+32028>>>            
+32028>>>                    Move '' to sParams
+32029>>>                    Append sParams "/P /U sa /i " (Trim(sFile)) ' /R ' (Trim(sODBC))
+32033>>>            
+32033>>>                    //Runprogram Wait "osql.exe " ("/P /U sa /i "+(Trim(sFile))+' /R '+(Trim(sODBC)))
+32033>>>            
+32033>>>                    RunProgram Wait "C:\ExeSQL.bat" sFile
+32034>>>                    //Runprogram Wait "c:\osql.exe" sParams
+32034>>>                    //Pause 24 00 '**'
+32034>>>                    //Runprogram Wait ("c:\osql.exe " +sParams)
+32034>>>            
+32034>>>                    Send Info_Box (Trim(sMess)) '¢ž¨¦­¦¨å˜'
+32035>>>                End
+32035>>>>
+32035>>>                Else Send Stop_Box 'ƒœ¤ §¨¦©› ¦¨å©˜«œ §¦¬ ™¨å©¡œ«œ «¦ ˜¨®œå¦' '‘­á¢£˜ 1002'
+32037>>>                Set Label Of ButtonSub1 to sLabel
+32038>>>                Set Enabled_State to True
+32039>>>            End_Procedure // OnClick
+32040>>>            
+32040>>>            
+32040>>>            
+32040>>>            
+32040>>>            
+32040>>>            
+32040>>>            
+32040>>>            
+32040>>>            //AB-StoreEnd
+32040>>>
+32040>>>        End_Object    // ButtonSub1
+32041>>>
+32041>>>        Object oOpenFile is a OpenDialog
+32043>>>            Set Location to 2 407
+32044>>>
+32044>>>            //AB-StoreStart
+32044>>>            Set Filter_String   to 'Text Files|*.txt|All Files|*.*'
+32045>>>            Set Initial_Folder  to 'C:\VDF6\Develop\Empor'
+32046>>>            Set Filter_Index    to 1
+32047>>>            
+32047>>>            //AB-StoreEnd
+32047>>>
+32047>>>        End_Object    // oOpenFile
+32048>>>
+32048>>>        Object TextBoxSub1 is a TextBoxSub
+32050>>>            Set Label to "„§ ¢¦šã ˜¨®œå¦¬"
+32051>>>            Set Location to 7 5
+32052>>>            Set Size to 10 55
+32053>>>            Set TypeFace to "MS Sans Serif"
+32054>>>        End_Object    // TextBoxSub1
+32055>>>
+32055>>>
+32055>>>        //AB-StoreStart
+32055>>>                        
+32055>>>                        
+32055>>>        Object RunSQLScript is a OLEExecScript
+32057>>>            Set Visible_State to False
+32058>>>        End_Object
+32059>>>        
+32059>>>        
+32059>>>        
+32059>>>        
+32059>>>        
+32059>>>        
+32059>>>        
+32059>>>        
+32059>>>        
+32059>>>        
+32059>>>        
+32059>>>        //AB-StoreEnd
+32059>>>
+32059>>>    CD_End_Object    // ExecScript
+32061>>>>
+32061>>>
+32061>>>
+32061>>>    //AB-StoreStart
+32061>>>        
+32061>>>        
+32061>>>        
+32061>>>        
+32061>>>        
+32061>>>    //AB-StoreEnd
+32061>>>
+32061>>>//AB/     End_Object    // prj
+32061>
+32061>    End_Object  // Client_Area
+32062>    
+32062>    On_Key Key_Ctrl+Key_1 Send Activate_ExecScript To Client_Area
+32063>    
+32063>    Use DFStdSbr.pkg //  Status-Bar object.
+INCLUDING FILE: DFSTDSBR.PKG
+32063>>>// 07/23/96 JJT - New Class names
+32063>>>// Very prototype global status bar
+32063>>>//
+32063>>>Use dfMainSt.pkg
+INCLUDING FILE: DFMAINST.PKG
+32063>>>>>// 07/23/96 JJT - New Class names
+32063>>>>>Use dfAstbar.pkg
+32063>>>>>
+32063>>>>>Class StatusBar is a AppStatusBar
+32064>>>>>
+32064>>>>>    Procedure Construct_Object
+32065>>>>>       Forward Send Construct_Object
+32067>>>>>       //
+32067>>>>>       Send Add_Item 350  ''     // micro-help
+32068>>>>>       Send Add_Item  40  'View:'
+32069>>>>>       Set Item_Display_Style To sbNORMAL
+32070>>>>>       Send Add_Item 200  ''     // view name
+32071>>>>>       Send Add_Item   0  ''     // spring 'normal' to end
+32072>>>>>       Set Item_Display_Style To sbNORMAL
+32073>>>>>    End_Procedure // Construct_Object
+32074>>>>>
+32074>>>>>    Procedure Show_View_Name String sName
+32075>>>>>        Set Value item 2 to sName
+32076>>>>>    End_Procedure
+32077>>>>>
+32077>>>>>End_Class
+32078>>>
+32078>>>If (Wait(Self)) Send Deactivate to (Wait(Self))
+32081>>>
+32081>>>Object oStatusBarSub  is a StatusBar
+32083>>>    Use DFTimer // DfTimer Manager Must Have a WindowHandle
+32083>>>    
+32083>>>    Property Integer piStdPanes Public (PaneCount(Self))
+32085>>>    
+32085>>>    //Set Value     Item 1 to (ToANSI("„§ ¢¦šã:"))
+32085>>>    Set PaneWidth item 1 to 50
+32086>>>    
+32086>>>    Send AddPane 55  ""        sbLOWERED
+32087>>>    Send AddPane 70  ""        sbLOWERED
+32088>>>    Send AddPane 55  ""        sbLOWERED
+32089>>>    
+32089>>>    Procedure pTimer
+32091>>>        String lsDay lsHour lsHH lsMM lsSS
+32092>>>        Integer liStdPanes lbState
+32092>>>    
+32092>>>        Get piStdPanes to liStdPanes
+32093>>>        Sysdate lsDay lsHH lsMM lsSS
+32097>>>        If (Length(lsHH)=1) Insert "0" In lsHH At 1
+32101>>>        If (Length(lsMM)=1) Insert "0" In lsMM At 1
+32105>>>        If (Length(lsSS)=1) Insert "0" In lsSS At 1
+32109>>>        Move (lsHH+":"+lsMM+":"+lsSS) to lsHour
+32110>>>        Get Simple_state to lbState
+32111>>>        If  Not (lbState) Begin
+32113>>>            Set Value Item liStdPanes     to lsHour
+32114>>>            Set Value Item (liStdPanes+1) to lsDay
+32115>>>        End
+32115>>>>
+32115>>>    
+32115>>>    End_Procedure // pTimer
+32116>>>    
+32116>>>    
+32116>>>    Object oTimerObj Is A DFTimer
+32118>>>        Set Timeout to 1000
+32119>>>        Set Timer_Active_State to TRUE
+32120>>>        Set Timer_Object to (oStatusBarSub(Current_Object))
+32121>>>        Set Timer_Message to pTimer
+32122>>>    End_Object // oTimerOdj
+32123>>>End_Object // oStatusBar
+32124>>>
+32124>>>
+32124>
+32124>    //AB-PanelStoreStart
+32124>    Use StdAbout.pkg // Standard "About" package.
+INCLUDING FILE: STDABOUT.PKG
+32124>>>//************************************************************************
+32124>>>// Confidential Trade Secret.
+32124>>>// Copyright (c) 1997 Data Access Corporation, Miami Florida
+32124>>>// as an unpublished work.  All rights reserved.
+32124>>>// DataFlex is a registered trademark of Data Access Corporation.
+32124>>>//
+32124>>>//************************************************************************
+32124>>>//************************************************************************
+32124>>>//
+32124>>>// $File name  : StdAbout.pkg
+32124>>>// $File title : Standard about object package for VDF
+32124>>>// Notice      :
+32124>>>// $Author(s)  : John Tuohy
+32124>>>//
+32124>>>// $Rev History
+32124>>>//
+32124>>>// JT 06/27/97   File created
+32124>>>//************************************************************************
+32124>>>
+32124>>>// This provides a quick and simple way to create an about package for a program.
+32124>>>// You need to create a message inside you client area called Activate_About.
+32124>>>// Within this message you should send the message DoAbout passing needed
+32124>>>// string information.
+32124>>>//
+32124>>>//       Procedure Activate_About
+32124>>>//           Send DoAbout sTitle sVersion sCopyright sAuthor sBitmap
+32124>>>//       End_Procedure
+32124>>>//    where: sTitle =     Name of application. If none provided, uses caption
+32124>>>//                        bar title
+32124>>>//           sVersion   = Version Line. If none provided, will be blank
+32124>>>//           sCopyRight = Copyright Line. If none provided, will be blank
+32124>>>//           sAuthor    = Author name, blank if none provided
+32124>>>//           sBitMap    = Bitmap logo. If none provided, standard VDF bitmap
+32124>>>//                        is used.
+32124>>>// It is expected that you will place this in your own object package. For
+32124>>>// example an order about package may look like this:
+32124>>>//
+32124>>>//   // OrderAbout.pkg
+32124>>>//   Use StdAbout.pkg
+32124>>>//   Procedure Activate_About
+32124>>>//      Local String sTitle sCopyright sVersion sAuthor
+32124>>>//      Move "My Order Entry System" to sTitle
+32124>>>//      Move "Version 2.1" to sVersion
+32124>>>//      Move "Copyright 1997, Super Software Inc." to sCopyright
+32124>>>//      Move "John Smith"  to sAuthor
+32124>>>//      Send DoAbout sTitle sVersion sCopyright sAuthor ""
+32124>>>//   end_procedure
+32124>>>//   // end of file.
+32124>>>
+32124>>>Use DfAbout.pkg
+INCLUDING FILE: DFABOUT.PKG
+32124>>>>>//************************************************************************
+32124>>>>>// Confidential Trade Secret.
+32124>>>>>// Copyright (c) 1997 Data Access Corporation, Miami Florida
+32124>>>>>// as an unpublished work.  All rights reserved.
+32124>>>>>// DataFlex is a registered trademark of Data Access Corporation.
+32124>>>>>//
+32124>>>>>//************************************************************************
+32124>>>>>//************************************************************************
+32124>>>>>//
+32124>>>>>// $File name  : DfAbout.pkg
+32124>>>>>// $File title : About class support
+32124>>>>>// Notice      :
+32124>>>>>// $Author(s)  : Vincent Oorsprong, Ken Ross
+32124>>>>>//
+32124>>>>>// $Rev History
+32124>>>>>//
+32124>>>>>// JJT 11/5/98    Added version information
+32124>>>>>// VOO 29/10/98   Replaced the GetFreeSystemResources for the Win32 variant
+32124>>>>>// JJT 7/31/97    Registered Enumerate Workspace so dfabout can exist without
+32124>>>>>//                workspace package.
+32124>>>>>// JJT 6/27/97    Turned the sysinfo objects into classes so the AboutDialog
+32124>>>>>//                class can create this object.
+32124>>>>>//                Cleaned up the interface (used correct classes and messages)
+32124>>>>>//                Added workspace reporting support to sys-info.
+32124>>>>>//                Turned off wrapping in the sys-info editor.
+32124>>>>>// KR  ??/??/96   File created
+32124>>>>>//************************************************************************
+32124>>>>>Use windows.pkg
+32124>>>>>Use DFbitmap.pkg
+32124>>>>>
+32124>>>>>External_Function32 WNetGetUser "WNetGetUserA" MPR.DLL ;    Pointer lpName Pointer lpUser_Name Pointer lpLength Returns DWord
+32125>>>>>
+32125>>>>>//****************************************************************************
+32125>>>>>// $Module type: FUNCTION
+32125>>>>>// $Module name: Network_User_Name
+32125>>>>>// $Author     : AK/VOO/KCR
+32125>>>>>// Created     : 24-09-96 @ 19:17
+32125>>>>>//
+32125>>>>>// Description
+32125>>>>>//    This function reads the current username of windows and returns that
+32125>>>>>//    name or an text unknown user
+32125>>>>>//
+32125>>>>>// $Rev History
+32125>>>>>//    24-09-96  Module header created
+32125>>>>>//****************************************************************************
+32125>>>>>Function Network_User_Name Returns String
+32127>>>>>    Local String sName sLength
+32128>>>>>    Local Pointer lpName_Addr lpLength_Addr
+32128>>>>>    Local Integer iRetval
+32128>>>>>
+32128>>>>>    Movestr (Repeat (Character (0), 255)) To sName
+32129>>>>>>
+32129>>>>>    GetAddress Of sName To lpName_Addr
+32130>>>>>    Movestr (DwordToBytes (255)) To sLength
+32131>>>>>>
+32131>>>>>    GetAddress Of sLength To lpLength_Addr
+32132>>>>>
+32132>>>>>    Moveint (WNetGetUser (0, lpName_Addr, lpLength_Addr)) To iRetval
+32133>>>>>>
+32133>>>>>
+32133>>>>>    If iRetval Eq 0 Function_Return (CString (sName))
+32136>>>>>    Else Function_Return "User Unknown"
+32138>>>>>End_Function // Network_User_Name
+32139>>>>>
+32139>>>>>Type MEMORYSTATUS
+32139>>>>>   Field MEMORYSTATUS.dwLength         As Dword // sizeof(MEMORYSTATUS)
+32139>>>>>   Field MEMORYSTATUS.dwMemoryLoad     As Dword // percent of memory in use
+32139>>>>>   Field MEMORYSTATUS.dwTotalPhys      As Dword // bytes of physical memory
+32139>>>>>   Field MEMORYSTATUS.dwAvailPhys      As Dword // free physical memory bytes
+32139>>>>>   Field MEMORYSTATUS.dwTotalPageFile  As Dword // bytes of paging file
+32139>>>>>   Field MEMORYSTATUS.dwAvailPageFile  As Dword // free bytes of paging file
+32139>>>>>   Field MEMORYSTATUS.dwTotalVirtual   As Dword // user bytes of address space
+32139>>>>>   Field MEMORYSTATUS.dwAvailVirtual   As Dword // free user bytes
+32139>>>>>End_Type // MEMORYSTATUS
+32139>>>>>
+32139>>>>>External_Function GlobalMemoryStatus "GlobalMemoryStatus" Kernel32.Dll Pointer lpsMemoryStatus Returns Integer
+32140>>>>>
+32140>>>>>// If a global workspace object exists it will use this variable to store
+32140>>>>>// its object id.
+32140>>>>>
+32140>>>>>Class SysinfoDisplay Is An Edit
+32141>>>>>    Procedure Construct_Object
+32142>>>>>        forward send construct_object
+32144>>>>>
+32144>>>>>        Set Location To 6 6
+32145>>>>>        Set Size To 110 255
+32146>>>>>        Set Read_Only_State To True
+32147>>>>>        Set wrap_state to False
+32148>>>>>    end_Procedure
+32149>>>>>
+32149>>>>>    //****************************************************************************
+32149>>>>>    // $Module type: PROCEDURE
+32149>>>>>    // $Module name: Add_Line
+32149>>>>>    // $Author     : VOO
+32149>>>>>    // Created     : 06-10-96 @ 15:23
+32149>>>>>    //
+32149>>>>>    // Description
+32149>>>>>    //    This method will add a line to this edit object, it should go simpler
+32149>>>>>    //    but it seems to be done this way.
+32149>>>>>    //
+32149>>>>>    // $Rev History
+32149>>>>>    //    06-10-96  Module header created
+32149>>>>>    //****************************************************************************
+32149>>>>>    Procedure Add_Line String sVal
+32150>>>>>        Local Integer iLine
+32151>>>>>
+32151>>>>>        Moveint (Line_Count (Current_Object)) To iLine
+32152>>>>>>
+32152>>>>>        If (iLine = 1 And Changed_State (Current_Object) = False) Moveint 0 To iLine
+32155>>>>>        Set Value Item iLine To sVal
+32156>>>>>    End_Procedure // Add_Line
+32157>>>>>
+32157>>>>>    //****************************************************************************
+32157>>>>>    // $Module type: PROCEDURE
+32157>>>>>    // $Module name: Show_Current_Directory
+32157>>>>>    // $Author     : VOO
+32157>>>>>    // Created     : 06-10-96 @ 15:24
+32157>>>>>    //
+32157>>>>>    // Description
+32157>>>>>    //    This method will show the name of the current directory in the system
+32157>>>>>    //    information box
+32157>>>>>    //
+32157>>>>>    // $Rev History
+32157>>>>>    //    06-10-96  Module header created
+32157>>>>>    //****************************************************************************
+32157>>>>>    Procedure Show_Current_Directory
+32158>>>>>        Local String sDir
+32159>>>>>
+32159>>>>>        Get_Current_Directory To sDir
+32160>>>>>        Send Add_Line ("Current Directory: " + sDir)
+32161>>>>>    End_Procedure // Show_Current_Directory
+32162>>>>>
+32162>>>>>    Procedure Show_Windows_Directory
+32163>>>>>        Local String sWindir
+32164>>>>>
+32164>>>>>        Get_Windows_Directory To sWindir
+32165>>>>>        Send Add_Line ("Windows Directory: " * sWindir)
+32166>>>>>    End_Procedure // Show_Windows_Directory
+32167>>>>>
+32167>>>>>    Procedure Show_Current_User
+32168>>>>>        Send Add_Line ("Network User Name: " * Network_User_Name (Current_Object))
+32169>>>>>    End_Procedure // Show_Current_User
+32170>>>>>
+32170>>>>>    Procedure Show_Number_Format
+32171>>>>>        Local Integer iFormat
+32172>>>>>
+32172>>>>>        Get_Attribute Df_Thousands_Separator To iFormat
+32175>>>>>        Send Add_Line ('Thousands Separator: "' - Character (iFormat) - '" (' - String (iFormat) - ')')
+32176>>>>>        Get_Number_Format To iFormat
+32177>>>>>        Send Add_Line ('Decimal Separator: "' - If (iFormat = 0, '.', ',') - '"')
+32178>>>>>    End_Procedure // Show_Number_Format
+32179>>>>>
+32179>>>>>    Procedure Show_Filelist_Name
+32180>>>>>        Local String sFilename
+32181>>>>>
+32181>>>>>        Get_Attribute Df_Filelist_Name To sFilename
+32184>>>>>        Send Add_Line ("Current Filelist: " * sFilename)
+32185>>>>>    End_Procedure // Show_Filelist_Name
+32186>>>>>
+32186>>>>>    Procedure Show_Lock_Delay
+32187>>>>>        Local Integer iLockdelay
+32188>>>>>
+32188>>>>>        Get_Attribute Df_Lock_Delay To iLockdelay
+32191>>>>>        Send Add_Line ("Database Locking Delay: " * String (iLockdelay) * "Milliseconds")
+32192>>>>>    End_Procedure // Show_Lock_Delay
+32193>>>>>
+32193>>>>>    Procedure Show_Lock_Timeout
+32194>>>>>        Local Integer iLockTimeout
+32195>>>>>
+32195>>>>>        Get_Attribute Df_Lock_Timeout To iLockTimeout
+32198>>>>>        Send Add_Line ("Database Locking Timeout: " * String (iLockTimeout) * "Milliseconds")
+32199>>>>>    End_Procedure // Show_Lock_Timeout
+32200>>>>>
+32200>>>>>    Procedure Show_Screen_Size
+32201>>>>>        Local Integer iYscreensize iXscreensize
+32202>>>>>
+32202>>>>>        Moveint (GetSystemMetrics (SM_CXSCREEN)) To iXscreensize
+32203>>>>>>
+32203>>>>>        Moveint (GetSystemMetrics (SM_CYSCREEN)) To iYscreensize
+32204>>>>>>
+32204>>>>>
+32204>>>>>        Send Add_Line ("Video Resolution: " * String (iXscreensize) * "by" * String (iYscreensize))
+32205>>>>>    End_Procedure // Show_Screen_Size
+32206>>>>>
+32206>>>>>    Procedure Show_Page_Size
+32207>>>>>        Send Add_Line ("Page End: " * String (Pageend) * "Form Feed: " * String (Pagefeed))
+32208>>>>>    End_procedure
+32209>>>>>
+32209>>>>>    Procedure Show_Date
+32210>>>>>        Local Date dToday
+32211>>>>>
+32211>>>>>        Sysdate4 dToday
+32212>>>>>        Send Add_Line ("Current System Date: " * String (dToday))
+32213>>>>>    End_procedure // Show_Date
+32214>>>>>
+32214>>>>>    Procedure Show_Date_Format
+32215>>>>>        Local Integer iDateFormat
+32216>>>>>        Local String sDateFormat
+32216>>>>>
+32216>>>>>        Get_Attribute Df_Date_Format To iDateFormat
+32219>>>>>        if iDateFormat Eq DF_DATE_USA ;            Movestr "USA" To sDateFormat
+32222>>>>>        else if iDateformat Eq DF_DATE_EUROPEAN ;            Movestr "European" To sDateFormat
+32226>>>>>        else if iDateformat Eq DF_DATE_MILITARY ;            Movestr "Military" To sDateFormat
+32230>>>>>        else ;            Movestr "Unknown Date Type" To sDateFormat
+32232>>>>>        Send Add_Line ("Date Format: " * sDateformat)
+32233>>>>>    End_Procedure // Show_Date_Format
+32234>>>>>
+32234>>>>>    Procedure Show_Memavail
+32235>>>>>        Local Integer iMem
+32236>>>>>
+32236>>>>>        Memory iMem
+32237>>>>>>
+32237>>>>>        Send Add_Line ("Available Memory: " * String (iMem))
+32238>>>>>    End_Procedure // Show_Memavail
+32239>>>>>
+32239>>>>>    Procedure Show_Systemresources
+32240>>>>>        Local String sMemoryStatus
+32241>>>>>        Local Pointer lpsMemoryStatus
+32241>>>>>        Local Integer iVoid
+32241>>>>>        Local Dword dwMemoryLoad dwTotalPhys dwAvailPhys dwTotalPageFile dwAvailPageFile dwTotalVirtual dwAvailVirtual
+32241>>>>>
+32241>>>>>        ZeroType MEMORYSTATUS To sMemoryStatus
+32242>>>>>        GetAddress Of sMemoryStatus To lpsMemoryStatus
+32243>>>>>
+32243>>>>>        Moveint (GlobalMemoryStatus (lpsMemoryStatus)) To iVoid
+32244>>>>>>
+32244>>>>>
+32244>>>>>        GetBuff From sMemoryStatus At MEMORYSTATUS.dwMemoryLoad    To dwMemoryLoad
+32245>>>>>        GetBuff From sMemoryStatus At MEMORYSTATUS.dwTotalPhys     To dwTotalPhys
+32246>>>>>        GetBuff From sMemoryStatus At MEMORYSTATUS.dwAvailPhys     To dwAvailPhys
+32247>>>>>        GetBuff From sMemoryStatus At MEMORYSTATUS.dwTotalPageFile To dwTotalPageFile
+32248>>>>>        GetBuff From sMemoryStatus At MEMORYSTATUS.dwAvailPageFile To dwAvailPageFile
+32249>>>>>        GetBuff From sMemoryStatus At MEMORYSTATUS.dwTotalVirtual  To dwTotalVirtual
+32250>>>>>        GetBuff From sMemoryStatus At MEMORYSTATUS.dwAvailVirtual  To dwAvailVirtual
+32251>>>>>
+32251>>>>>        Send Add_Line ("Current memory utilization:" * String (dwMemoryLoad))
+32252>>>>>        Send Add_Line ("Percentage available physical memory:" * String (dwAvailPhys / dwTotalPhys * 100.0) - "%")
+32253>>>>>        Send Add_Line ("Percentage available pagefile space:" * String (dwAvailPageFile / dwTotalPageFile * 100.0) - "%")
+32254>>>>>        Send Add_Line ("Percentage available virtual memory:" * String (dwAvailVirtual / dwTotalVirtual * 100.0) - "%")
+32255>>>>>    End_Procedure // Show_Systemresources
+32256>>>>>
+32256>>>>>    Procedure Show_Registration
+32257>>>>>        Local String sRegName
+32258>>>>>        Local Integer iSN
+32258>>>>>        Registration sRegName iSN
+32259>>>>>>
+32259>>>>>
+32259>>>>>        Send Add_Line ("Serial# : " + (String(iSN)))
+32260>>>>>        Send Add_Line ("Reg Name: " + sRegName)
+32261>>>>>
+32261>>>>>    End_Procedure // Show_Current_Directory
+32262>>>>>
+32262>>>>>
+32262>>>>>
+32262>>>>>    //****************************************************************************
+32262>>>>>    // If workspaces are used, we will send the message EnumerateWorkspaceData
+32262>>>>>    // to the workspace object passing the an object and message to send back
+32262>>>>>    // to this object. It is expected that the workspace object will send this
+32262>>>>>    // message for every line of information it wants displayed (passing the
+32262>>>>>    // information to be displayed
+32262>>>>>    //****************************************************************************
+32262>>>>>    register_procedure EnumerateWorkspaceData integer hObjId integer hmMessId
+32262>>>>>    Procedure Show_WorkspaceInformation
+32263>>>>>        If ghoWorkspace ;            Send EnumerateWorkspaceData to ghoWorkspace Current_object Msg_add_Line
+32266>>>>>    End_Procedure
+32267>>>>>
+32267>>>>>    Function VersionStr integer iVer integer iRev integer iBld Returns string
+32268>>>>>        Function_Return (string(iVer)-"."-string(iRev)-"."-string(iBld))
+32269>>>>>    End_Function
+32270>>>>>
+32270>>>>>    Procedure Show_Versions
+32271>>>>>        local integer iVersion iRevision iBuild
+32272>>>>>        Version_information iVersion iRevision iBuild
+32274>>>>>        Send Add_Line ("Runtime Version:" * VersionStr(self,iVersion,iRevision,iBuild) )
+32275>>>>>        Send Add_Line ("Package Version:" * VersionStr(self,PKG_VERSION, PKG_REVISION, PKG_BUILD) )
+32276>>>>>        Send Add_Line ("FMAC Version:"    * VersionStr(self,FMAC_VERSION, FMAC_REVISION, FMAC_BUILD) )
+32277>>>>>    End_Procedure
+32278>>>>>
+32278>>>>>
+32278>>>>>    //***
+32278>>>>>    //*** BW
+32278>>>>>    //*** Procedure: Show_Drivers
+32278>>>>>    //*** Purpose  : Show loaed database drivers
+32278>>>>>    //***
+32278>>>>>
+32278>>>>>    Procedure Show_Drivers
+32279>>>>>        Local String  Current_drvr
+32280>>>>>        Local String  Loadeddrvrs
+32280>>>>>        Local Integer Number_of_drvrs
+32280>>>>>        Local Integer Count
+32280>>>>>
+32280>>>>>        Move "" To Loadeddrvrs
+32281>>>>>        Get_attribute DF_NUMBER_DRIVERS To Number_of_drvrs
+32284>>>>>        For Count From 1 To Number_of_drvrs
+32290>>>>>>
+32290>>>>>            Get_attribute DF_DRIVER_NAME Of Count To Current_drvr
+32293>>>>>            If (Loadeddrvrs <> "") ;                Move (Append(Loadeddrvrs, ", ")) To Loadeddrvrs
+32296>>>>>            Move (Append(Loadeddrvrs, Current_drvr)) To Loadeddrvrs
+32297>>>>>        Loop
+32298>>>>>>
+32298>>>>>        Send Add_Line ("Database driver(s):" * Loadeddrvrs)
+32299>>>>>    End_Procedure // Show_Drivers
+32300>>>>>
+32300>>>>>    //****************************************************************************
+32300>>>>>    // $Module type: PROCEDURE
+32300>>>>>    // $Module name: Add_Focus
+32300>>>>>    // $Author     : VOO
+32300>>>>>    // Created     : 24-09-96 @ 19:43
+32300>>>>>    //
+32300>>>>>    // Description
+32300>>>>>    //    During activation we will remove the old information and add the newly
+32300>>>>>    //    found systeminformation
+32300>>>>>    //
+32300>>>>>    // $Rev History
+32300>>>>>    //    24-09-96  Module header created
+32300>>>>>    //****************************************************************************
+32300>>>>>    Procedure Add_Focus Integer hoRoot
+32301>>>>>        Forward Send Add_Focus hoRoot
+32303>>>>>
+32303>>>>>        Send Delete_Data
+32304>>>>>        Set Changed_State To False
+32305>>>>>        Set Read_Only_State To True
+32306>>>>>        Send Show_WorkSpaceInformation // added to show WS info
+32307>>>>>        SEnd Show_Drivers
+32308>>>>>        Send Show_Current_User
+32309>>>>>        Send Show_Windows_Directory
+32310>>>>>        Send Show_Current_Directory
+32311>>>>>        Send Show_Filelist_Name
+32312>>>>>        Send Show_Versions
+32313>>>>>        Send Show_Memavail
+32314>>>>>        Send Show_Screen_Size
+32315>>>>>        Send Show_Page_Size
+32316>>>>>        Send Show_Number_Format
+32317>>>>>        Send Show_Date_Format
+32318>>>>>        Send Show_Lock_Delay
+32319>>>>>        Send Show_Lock_Timeout
+32320>>>>>        Send Show_Date
+32321>>>>>        Send Show_Systemresources
+32322>>>>>        Send Show_Registration
+32323>>>>>    End_Procedure // Show_All_Info
+32324>>>>>
+32324>>>>>End_Class // SysinfoDisplay
+32325>>>>>
+32325>>>>>
+32325>>>>>//****************************************************************************
+32325>>>>>// $Module type: OBJECT
+32325>>>>>// $Module name: Sysinfo_Dialog
+32325>>>>>// $Author     : VOO
+32325>>>>>// Created     : 24-09-96 @ 18:47
+32325>>>>>//
+32325>>>>>// Description
+32325>>>>>//    This object shows the systeminformation on the screen
+32325>>>>>//
+32325>>>>>// $Rev History
+32325>>>>>//    24-09-96  Module header created
+32325>>>>>//****************************************************************************
+32325>>>>>Class SysInfoDialog Is A ModalPanel
+32326>>>>>    Procedure Construct_Object
+32327>>>>>        forward send construct_object
+32329>>>>>
+32329>>>>>        Set Caption_Bar To True
+32330>>>>>        Set Sysmenu_Icon To True
+32331>>>>>        Set Label To "System Information"
+32332>>>>>        Set Size To 152 270
+32333>>>>>        Set Locate_Mode to CENTER_ON_SCREEN
+32334>>>>>        Set Minimize_Icon To False
+32335>>>>>        Set Maximize_Icon To False
+32336>>>>>        Set Border_Style To Border_Dialog
+32337>>>>>
+32337>>>>>        Object Sysinfo_Display Is A SysInfoDisplay
+32339>>>>>        End_Object
+32340>>>>>
+32340>>>>>        Object Close_Button Is A Button
+32342>>>>>            Set Label to "&Close"
+32343>>>>>            Set Location To 120 212
+32344>>>>>            Set Message item 0 to msg_Close_Panel
+32345>>>>>            Set default_action_button to current_object
+32346>>>>>        End_Object // Close_Button
+32347>>>>>
+32347>>>>>        On_Key Kcancel       Send Close_Panel
+32348>>>>>        On_Key Key_Alt+Key_C Send Close_Panel
+32349>>>>>    End_procedure
+32350>>>>>
+32350>>>>>End_Class // SysinfoDialog
+32351>>>>>
+32351>>>>>// Purpose:
+32351>>>>>//
+32351>>>>>// Ken Ross 12/17/96 5:16PM
+32351>>>>>//
+32351>>>>>Class AboutDialog Is A ModalPanel
+32352>>>>>
+32352>>>>>    Procedure construct_object
+32353>>>>>        String sVdfRootDir
+32354>>>>>        forward send construct_object
+32356>>>>>        Set Label to "About..."
+32357>>>>>        Set Size to 100 217
+32358>>>>>        Set Locate_Mode to CENTER_ON_SCREEN
+32359>>>>>
+32359>>>>>        Object SysInfo_Dialog is a SysInfoDialog
+32361>>>>>        End_Object
+32362>>>>>
+32362>>>>>        Object oBox is a Container3d
+32364>>>>>            Set Border_Style to Border_StaticEdge
+32365>>>>>            Set Size to 63 202
+32366>>>>>            Set Location to 4 5
+32367>>>>>
+32367>>>>>            Object AboutGraphic is a BitmapContainer
+32369>>>>>                Set Border_Style to Border_None
+32370>>>>>                Set Bitmap_Style to Bitmap_Center
+32371>>>>>                Set Size to 48 48
+32372>>>>>                Set Location to 7 2
+32373>>>>>            End_Object    // AboutGraphic
+32374>>>>>
+32374>>>>>            Object ProductName is a TextBox
+32376>>>>>                Set label to "ProductName"
+32377>>>>>                Set Size to 10 45
+32378>>>>>                Set Location to 8 53
+32379>>>>>            End_Object    // ProductName
+32380>>>>>
+32380>>>>>            Object Version is a TextBox
+32382>>>>>                Set label to "Version"
+32383>>>>>                Set Size to 10 25
+32384>>>>>                Set Location to 21 53
+32385>>>>>            End_Object    // Version
+32386>>>>>
+32386>>>>>            Object Copyright is a TextBox
+32388>>>>>                Set label to "Copyright"
+32389>>>>>                Set Size to 10 31
+32390>>>>>                Set Location to 34 53
+32391>>>>>            End_Object    // Copyright
+32392>>>>>
+32392>>>>>            Object Author is a TextBox
+32394>>>>>                Set label to "Author"
+32395>>>>>                Set Size to 10 22
+32396>>>>>                Set Location to 46 53
+32397>>>>>            End_Object    // Author
+32398>>>>>
+32398>>>>>        End_Object    // oBox
+32399>>>>>
+32399>>>>>        Object OK_bn is a Button
+32401>>>>>            On_Item "&OK" Send Close_Panel
+32402>>>>>            Set Size to 14 50
+32403>>>>>            Set Location to 71 157
+32404>>>>>        End_Object    // OK_bn
+32405>>>>>
+32405>>>>>        Object SysInfo_bn is a Button
+32407>>>>>            On_Item "&System Info" Send Show_Sysinfo
+32408>>>>>            Set Size to 14 50
+32409>>>>>            Set Location to 71 101
+32410>>>>>        End_Object    // SysInfo_bn
+32411>>>>>
+32411>>>>>        On_Key Kcancel Send KeyAction to (Ok_bn(Current_Object))
+32412>>>>>        On_Key Key_Alt+Key_O Send KeyAction to (Ok_bn(Current_Object))
+32413>>>>>        On_Key Key_Alt+Key_S Send KeyAction to (SysInfo_bn(Current_Object))
+32414>>>>>
+32414>>>>>        Get_Profile_String "Defaults" "VdfRootDir" To sVdfRootDir
+32417>>>>>        Set logo to (sVdfRootDir +"\Bitmaps\DacAbout.bmp")  // square bitmaps of 42x42 work best
+32418>>>>>
+32418>>>>>    End_Procedure
+32419>>>>>
+32419>>>>>    Procedure set productname string sval
+32420>>>>>        set label of (productname(oBox(current_object))) to sval
+32421>>>>>    End_Procedure
+32422>>>>>
+32422>>>>>    Procedure set version string sval
+32423>>>>>        set label of (version(oBox(current_object))) to sval
+32424>>>>>    End_Procedure
+32425>>>>>
+32425>>>>>    Procedure set copyright string sval
+32426>>>>>        set label of (copyright(oBox(current_object))) to sval
+32427>>>>>    End_Procedure
+32428>>>>>
+32428>>>>>    Procedure set author string sval
+32429>>>>>        set label of (author(oBox(current_object))) to sval
+32430>>>>>    End_Procedure
+32431>>>>>
+32431>>>>>    // square bitmaps of 42x42 work best
+32431>>>>>    //
+32431>>>>>    Procedure set logo string sval
+32432>>>>>        set bitmap of (aboutgraphic(oBox(current_object))) to sval
+32433>>>>>    End_Procedure
+32434>>>>>
+32434>>>>>    Procedure Show_Sysinfo
+32435>>>>>        Send Popup_Modal To (Sysinfo_Dialog(Current_Object))
+32436>>>>>    End_Procedure // Show_Sysinfo
+32437>>>>>
+32437>>>>>End_Class
+32438>>>>>
+32438>>>>>
+32438>>>>>//Object About_Dialog is an AboutDialog
+32438>>>>>//    set productname to "Visual DataFlex"
+32438>>>>>//    set version to "version 4.0"
+32438>>>>>//    set copyright to "Copyright 1997 Data Access Corporation"
+32438>>>>>//    set author to ""
+32438>>>>>//    set logo to "ablogo.bmp"  // square bitmaps of 42x42 work best
+32438>>>>>//End_Object
+32438>>>>>
+32438>>>>>//Procedure Activate_About
+32438>>>>>//   Send Popup_Modal To (About_Dialog (Current_Object))
+32438>>>>>//End_Procedure
+32438>>>
+32438>>>// *************************************************************************
+32438>>>//  Public message. This is the default message. It is expected that you will
+32438>>>//   create your own message to override this
+32438>>>// *************************************************************************
+32438>>>
+32438>>>Procedure Activate_About
+32440>>>   Send DoAbout "" "" "" "" "" ""
+32441>>>End_Procedure
+32442>>>
+32442>>>// *************************************************************************
+32442>>>//  Public message. It is expected that you will send this message (most
+32442>>>//  likely from Activate_About. This creates an about object, activates it
+32442>>>//  and destroys it when done. It is not exepected that you will augment this.
+32442>>>// *************************************************************************
+32442>>>
+32442>>>Procedure DoAbout string sTitle string sVersion string sCopyRight string sAuthor string sBitmap
+32444>>>        Local integer hoObj hoMain
+32445>>>
+32445>>>        // create object
+32445>>>        Object About is an AboutDialog
+32447>>>            // if no title passed use the label of the main panel
+32447>>>            // (if a main panel exists).
+32447>>>            if sTitle     eq '' Begin
+32449>>>                Get Main_Window to hoMain
+32450>>>                if hoMain Get Label of hoMain to sTitle
+32453>>>            end
+32453>>>>
+32453>>>            set productname to sTitle
+32454>>>            set version     to sVersion
+32455>>>            set copyright   to sCopyRight
+32456>>>            set author      to sAuthor
+32457>>>            If sBitmap    ne '' ;               set logo to sBitMap // square bitmaps of 42x42 work best
+32460>>>            Move Current_Object to hoObj // object Id
+32461>>>        End_Object
+32462>>>        Send Popup to hoObj    // popup the about object
+32463>>>        Send Request_Destroy_Object to hoObj // when done, it will be destroyed
+32464>>>End_procedure
+32465>    //AB-PanelStoreEnd
+32465>
+32465>
+32465>End_Object
+32466>
+32466>
+32466>//AB-StoreStart
+32466>Start_UI
+32467>
+32467>
+32467>//AB-StoreEnd
+32467>
+32467>
+Summary
+Memory Available: 2147483647
+Total Errors   : 0
+Total Symbols  : 18982
+Total Resources: 0
+Total Commands : 32466
+Total Windows  : 1
+Total Pages    : 1
+Static Data    : 225225
+Message area   : 163741
+Total Blocks   : 10802

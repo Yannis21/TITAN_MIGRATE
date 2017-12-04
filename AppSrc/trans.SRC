@@ -1,0 +1,99 @@
+Use AllEntSc
+
+#REPLACE CURRENT$WORKSPACE   "empor"
+Register_Object Client_Area
+
+//AB-StoreTopStart
+Use Workspc.pkg
+//  Set date attributes as needed
+Set_Date_Attribute sysdate4_State to (TRUE)
+Set_Date_Attribute Date4_State    to (TRUE)
+Set_Date_Attribute epoch_value    to 30
+
+Object ProgramWorkspace is a WorkspaceSub
+    Set WorkspaceName to CURRENT$WORKSPACE
+    Set kEnter_Next_State to True
+//    Set ModuleName    to 'ProgramName' // Special module name.
+//    Set HelpName      to 'HelpName.hlp'// Please provide the name of your Windows help file.
+End_Object
+
+Use Help_Ids.inc // Developer should provide this file of help context links.
+Use Std_Help.pkg
+Use WinQlSQL.Sub
+// General Functions-Procedures and Variables
+Use Globals.Inc
+Use Calendar.sl
+Use Dates.Utl
+Use Connect.Dg
+Send Login
+Use SelectXr.Dg
+Send Epelexe_Xrhsh
+Use Menu_Sec.Sub
+Use dd_sec.sub
+//AB-StoreTopEnd
+
+
+Object Main is a Panelsub
+    Set Label To "transfer"
+
+    DFCreate_Menu Main_Menu
+        #include File_PM.inc    // file pulldown menu
+
+        DFCreate_Menu "&View" ViewPopupMenu is a ViewPopupMenu
+        End_Pull_down
+        Set Status_Help To "Available Views"
+        
+        DFCreate_Menu "&Report" ReportPopupMenu is a ViewPopupMenu
+            On_Item "&R17_2:karteles eidon\aCtrl+1" Send Activate_R17_2
+        End_Pull_down
+        Set Status_Help To "Available Reports"
+        
+        #include Navi_pm.inc    // Naviation pulldown menu
+        #include win_PM.inc     // Window of available views
+        #include Helpa_PM.inc   // help pulldown menu w/ About
+    End_Menu
+
+    Use DFStdBtn.pkg //  Tool-Bar object.
+    
+    Object Client_Area is a AppClientAreasub
+        //  Include all views
+
+        //  Include all reports
+        Use R17_2.RV                                                                        
+
+    End_Object  // Client_Area
+    
+    On_Key Key_Ctrl+Key_1 Send Activate_R17_2 To Client_Area
+    
+    Use DFStdSbr.pkg //  Status-Bar object.
+
+    //AB-PanelStoreStart
+    Use StdAbout.pkg // Standard "About" package.
+    //AB-PanelStoreEnd
+
+
+End_Object
+
+
+//AB-StoreStart
+Start_UI
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//AB-StoreEnd
+

@@ -1,0 +1,205 @@
+    Use COMPANY.DD
+    Use BRANCH.DD
+    Use YEAR.DD
+    Use GTHHMGIO.DD
+    Use GTYPKIN.DD
+    Use GPLAN.DD
+    Use GARTICL.DD
+    Use GMOVES.DD
+    Use GMHNES.DD
+    Use GHMNIES.DD
+
+Local Number lnThHmgio_DD##
+Local Number lnGarticl_Recnum##
+Local Date ldHmniaForward##
+
+Object oDoUpdateAA Is A BusinessProcessSub
+
+        set Status_panel_state to false
+        set Display_Error_state to true
+
+        Property Integer piGplan_Rec0
+        Property Date    pdHmnia
+        Property Number  pnGthHmgio
+        Property Integer piMode           //1=create 2=delete
+
+        Object Company_DD is a Company_DataDictionary
+        End_Object    // Company_DD
+
+        Object Branch_DD is a Branch_DataDictionary
+            Set DDO_Server to (Company_DD(Current_Object))
+        End_Object    // Branch_DD
+
+        Object Year_DD is a Year_DataDictionary
+            Set DDO_Server to (Branch_DD(Current_Object))
+        End_Object    // Year_DD
+
+        Object Gthhmgio_DD is a Gthhmgio_DataDictionary
+        End_Object    // Gthhmgio_DD
+
+        Object Gtypkin_DD is a Gtypkin_DataDictionary
+            Set DDO_Server to (Year_DD(Current_Object))
+            Set DDO_Server to (Gthhmgio_DD(Current_Object))
+        End_Object    // Gtypkin_DD
+
+        Object Gplan_DD is a Gplan_DataDictionary
+            Set DDO_Server to (Year_DD(Current_Object))
+        End_Object    // Gplan_DD
+
+        Object Garticl_DD is a Garticle_DataDictionary
+            Set DDO_Server to (Gtypkin_DD(Current_Object))
+            Begin_Constraints
+                // Constrain aa gt 0
+                If lnThHmgio_DD##   ne 0 Constrain Garticl.GthHmgio_code eq lnThHmgio_DD##
+                if ldHmniaForward## ne "" Constrain Garticl.Garticl_Hmnia gt ldHmniaForward##
+
+            End_Constraints
+        End_Object    // Garticl_DD
+
+        Object Gmoves_DD is a Gmoves_DataDictionary
+            Set DDO_Server to (Gplan_DD(Current_Object))
+            Set DDO_Server to (Garticl_DD(Current_Object))
+
+            Begin_Constraints
+                Constrain Gmoves Relates to Garticl
+            //    //If lnThHmgio_DD## ne 0 Constrain Garticl.GthHmgio_code eq lnThHmgio_DD##
+            End_Constraints
+
+            //Set Constrain_File to Garticl.File_Number
+        End_Object    // Gmoves_DD
+
+        Object Gmhnes_DD is a Gmhnes_DataDictionary
+            Set DDO_Server to (Gplan_DD(Current_Object))
+        End_Object    // Gmhnes_DD
+
+        Object Ghmnies_DD is a Ghmnies_DataDictionary
+            Set DDO_Server to (Gmhnes_DD(Current_Object))
+        End_Object    // Ghmnies_DD
+
+
+
+
+
+PROCEDURE TREXEAA date ldHmnia1## Number  lnGthHmgio##
+
+          Set pdHmnia                      to ldHmnia1##
+          Set pnGThHmgio                   to lnGthHmgio##
+
+          //Set piMode                       to limode##
+          SEND DOPROCESS
+
+END_PROCEDURE //trexe aa
+
+
+
+
+
+Procedure UpdateAA    ///Enhm AA
+
+    Local Integer liMhnesDDo## Active_Hmnia##  liErr## ;
+                  liCompanyDDo## liBranchDDo## liYearDDo##;
+                  liGthHmgioDDo## liGtypkinDDo## liGarticlDDo## liGMovesDDo##;
+                  liGplanDDo## liGmhnesDDo## liGHmniesDDo##
+
+    Local Number Recnum##
+
+    Local Integer liLastAA## keeprec##
+    Local Date ldLastHmniaAA##
+    Local date  ldEosHmnia##
+
+
+        Get pdHmnia               to ldEosHmnia##
+        Get pnGthHmgio            to lnThHmgio_DD##
+
+        //Get piMode                to limode##
+
+        Move (Company_DD(self))     to liCompanyDDo##
+        Move (Branch_DD(self))      to liBranchDDo##
+        Move (Year_DD(self))        to liYearDDo##
+        Move (GArticl_DD(self))     to liGarticlDDo##
+        Move (Gmoves_DD(self))      to liGmovesDDo##
+
+        send Rebuild_constraints to liGarticlDDo##
+
+
+        Send Clear to liGarticlDDo##     //Find's Last AA
+        Send Find to liGarticlDDo## Last_Record 3
+
+        if (found eq 1) begin
+
+            get field_current_value of liGarticlDDo## field GArticl.Garticl_aa    to liLastAA##
+            if liLastAA## ne 0 begin
+                get field_current_value of liGarticlDDo## field GArticl.Garticl_Hmnia to ldHmniaForward##
+                get field_current_value of liGarticlDDo## field GArticl.Garticl_aa    to liLastAA##
+            end
+        end
+        else move 0 to liLastAA##
+
+
+        //if (ldHmniaForward## ne 0)
+        send Rebuild_constraints to liGarticlDDo##
+        send Rebuild_Constraints to liGmovesDDo##
+
+
+        Send Clear to liGarticlDDo##
+        Send Find  to liGarticlDDo## first_Record 4
+
+
+        //get_attribute DF_FILE_RECORDS_USED of 57 to gnNumberOfRecords##
+        Move 0 to gnCounterOfRecords##
+        File_Size Garticl to gnNumberOfRecords##
+        set current_position of (WaitBar(wait(self))) to 0
+        set maximum_position of (WaitBar(wait(self))) to gnNumberOfRecords##
+        send popup to (Wait(self))
+
+
+        While ((found eq 1) And (Garticl.Garticl_Hmnia lt ldEosHmnia##)) //le
+
+               add 1 to gnCounterOfRecords##
+               set current_position of (WaitBar(wait(self))) to gnCounterOfRecords##
+
+               if (Garticl.Garticl_AA eq 0) Begin
+
+
+                   Calc (liLastAA##+1) to liLastAA##
+                   Set field_changed_value of liGarticlddo## field Garticl.Garticl_AA to liLastAA##
+                   Set field_changed_value of liGarticlddo## field Garticl.Garticl_SX1 to Garticl.Garticl_SX0
+                   Set field_changed_value of liGarticlddo## field Garticl.Garticl_SP1 to Garticl.Garticl_SP0
+
+                   Send Set_ZeroAA   to liGarticlDDo## 1
+                   Send Request_Save to liGarticlDDo##
+
+               //send Rebuild_Constraints to liGmovesDDo##
+                   Send Clear to liGmovesDDo##
+                   Send Find  to liGmovesDDo## first_Record 1
+                   While (found eq 1)
+                       Move Gmoves.recnum to Recnum##
+                       Set field_changed_value of liGmovesddo## field Gmoves.Gmoves_AA to liLastAA##
+
+                       Set field_changed_value of liGmovesddo## field Gmoves.Gmoves_X1 to Gmoves.Gmoves_X0
+                       Set field_changed_value of liGmovesddo## field Gmoves.Gmoves_P1 to Gmoves.Gmoves_P0
+
+                       Send Request_SaveTh to liGmovesDDo## 1
+
+                       send find_by_Recnum to liGmovesDDo## Gmoves.File_number Recnum##
+
+                      Send Find to liGmovesDDo## gt 1
+
+                   Loop
+                    Send Set_ZeroAA   to liGarticlDDo## 0
+
+                End
+
+             Send Find  to liGarticlDDo## GT 4
+        Loop
+
+        send Deactivate to (Wait(self))
+
+
+End_Procedure
+
+Procedure OnProcess
+    send UpdateAA
+End_Procedure
+
+End_Object

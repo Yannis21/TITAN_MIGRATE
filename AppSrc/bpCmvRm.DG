@@ -1,0 +1,167 @@
+//AB/ Project bpCmvRm
+//AB/ Object prj is a Dialog_Project
+//AB/     Set ProjectName to "bpCmvRm"
+//AB/     Set ProjectFileName to "bpCmvRm.DG"
+//AB/     Set GenerateFileName to "NONAME"
+
+// Project Object Structure
+//   bpCmvRm is a BusinessProcessSub
+//     Ctypkin_DD is a DataDictionary
+//     Country_DD is a DataDictionary
+//     Towns_DD is a DataDictionary
+//     Cities_DD is a DataDictionary
+//     Areas_DD is a DataDictionary
+//     Payresp_DD is a DataDictionary
+//     Clients_DD is a DataDictionary
+//     Cmoves_DD is a DataDictionary
+//     Cmovesa_DD is a DataDictionary
+//     Copen_DD is a DataDictionary
+
+// Register all objects
+Register_Object Areas_DD
+Register_Object bpCmvRm
+Register_Object Cities_DD
+Register_Object Clients_DD
+Register_Object Cmoves_DD
+Register_Object Cmovesa_DD
+Register_Object Copen_DD
+Register_Object Country_DD
+Register_Object Ctypkin_DD
+Register_Object Payresp_DD
+Register_Object Towns_DD
+
+
+//AB-IgnoreStart
+
+Use Bproces.Sub
+Use DFAllEnt.pkg
+
+
+Use CTYPKIN.DD
+Use COUNTRY.DD
+Use TOWNS.DD
+Use CITIES.DD
+Use AREAS.DD
+Use PAYRESP.DD
+Use CLIENTS.DD
+Use CMOVES.DD
+Use CMOVESA.DD
+Use COPEN.DD
+
+//AB-IgnoreEnd
+
+Object bpCmvRm is a BusinessProcessSub
+
+    //AB-StoreTopStart
+
+    Property String     psCmovesRecr    Public ''
+    Property String     psCmovesARecr   Public ''
+    Property Integer    piLathos        Public 0
+    Property Number     pnAxia          Public 0
+
+    Set Status_Panel_State  to False
+    Set Display_Error_State to True
+
+    //AB-StoreTopEnd
+
+    Set Size to 60 100
+    Set Location to 2 5
+
+    //AB-DDOStart
+
+    Object Ctypkin_DD is a Ctypkin_DataDictionary
+    End_Object    // Ctypkin_DD
+
+    Object Country_DD is a Country_DataDictionary
+    End_Object    // Country_DD
+
+    Object Towns_DD is a Towns_DataDictionary
+        Set DDO_Server to (Country_DD(self))
+    End_Object    // Towns_DD
+
+    Object Cities_DD is a Cities_DataDictionary
+        Set DDO_Server to (Towns_DD(self))
+    End_Object    // Cities_DD
+
+    Object Areas_DD is a Areas_DataDictionary
+    End_Object    // Areas_DD
+
+    Object Payresp_DD is a Payresp_DataDictionary
+    End_Object    // Payresp_DD
+
+    Object Clients_DD is a Clients_DataDictionary
+        Set DDO_Server to (Cities_DD(self))
+        Set DDO_Server to (Areas_DD(self))
+        Set DDO_Server to (Payresp_DD(self))
+    End_Object    // Clients_DD
+
+    Object Cmoves_DD is a Cmoves_DataDictionary
+        Set DDO_Server to (Ctypkin_DD(self))
+        Set DDO_Server to (Clients_DD(self))
+        Set piFromBP            to 1
+        Set piNotMoveSyscurXr   to 1
+        Set piFromSysxet        to 1
+    End_Object    // Cmoves_DD
+
+    Object Cmovesa_DD is a Cmovesa_DataDictionary
+    End_Object    // Cmovesa_DD
+
+    Object Copen_DD is a Copen_DataDictionary
+        Set DDO_Server to (Cmoves_DD(self))
+        Set DDO_Server to (Cmovesa_DD(self))
+        Set piFromBP            to 1
+        Set Constrain_File to Cmoves.File_Number
+    End_Object    // Copen_DD
+
+
+    //AB-DDOEnd
+
+
+    //AB-StoreStart
+
+    Procedure OnProcess
+        String  sCmovesRecr sCmovesARecr
+        Number  nAxia
+
+        Get psCmovesRecr            to sCmovesRecr
+        Get psCmovesARecr           to sCmovesARecr
+        Move (Trim(sCmovesRecr))    to sCmovesRecr
+        Move (Trim(sCmovesARecr))   to sCmovesARecr
+
+        Send Clear to Cmoves_DD
+        Move sCmovesARecr to Cmoves.Cmoves_Recr
+        Send Find to Cmoves_DD Eq 2
+
+        If (Not(Found)) Begin
+            ////////Set piLathos to 30000
+            Procedure_Return
+        End
+
+        Send Clear to Copen_DD
+        Move sCmovesARecr   to Copen.Cmoves_Recr
+        Move sCmovesRecr    to Copen.CmovesA_Recr
+        Send Find to Copen_DD Eq 5
+        If (Found) Begin
+            Get Field_Current_Value Of Copen_DD Field Copen.Copen_Axia0 to nAxia
+            Set pnAxia to nAxia
+            Send Request_Delete to Copen_DD
+        End
+        ///////Else Set piLathos to 30001
+    End_Procedure
+
+    Procedure Start_Process
+        Set piLathos    to 0
+        Set pnAxia      to 0
+        Forward Send Start_Process
+    End_Procedure
+
+    Procedure End_Process
+        Forward Send End_Process
+    End_Procedure
+
+
+    //AB-StoreEnd
+
+End_Object    // bpCmvRm
+
+//AB/ End_Object    // prj

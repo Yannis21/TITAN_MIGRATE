@@ -1,0 +1,171 @@
+//AB/ Project EnhApog
+
+// Project Object Structure
+//   EnhApog is a dbViewSub
+//     ButtonSub1 is a ButtonSub
+
+// Register all objects
+Register_Object ButtonSub1
+Register_Object EnhApog
+
+
+//AB/ AppBuild VIEW
+
+
+//AB-StoreTopStart
+    
+Open Syscurxr
+Open Wcmoves
+
+
+//AB-StoreTopEnd
+
+//AB-IgnoreStart
+
+Use dbView.Sub
+Use Button.Sub
+
+//AB-IgnoreEnd
+
+ACTIVATE_VIEW Activate_EnhApog FOR EnhApog
+
+Object EnhApog is a dbViewSub
+
+    //AB-StoreTopStart
+                                                                                                                                                                    
+    //AB-StoreTopEnd
+
+    Set Label to "Ñßò§ò¨ß¶¢¶ö†©£Ê™ ß¶©È§ òß¶ö®ò≠„™ ô·©û ß¶©Ê´û´ò™ °ò† ´†£û™ £¶§·õ¶™"
+    Set Size to 89 425
+    Set Location to 7 10
+
+    //AB-DDOStart
+
+
+    //AB-DDOEnd
+
+    Object ButtonSub1 is a ButtonSub
+
+        //AB-StoreTopStart
+                    
+        //AB-StoreTopEnd
+
+        Set Label to "ButtonSub1"
+        Set Size to 14 181
+        Set Location to 39 120
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+                    
+        Set Label to 'Ñ§û£ú®‡©û'
+        
+        Procedure OnClick
+            String  sLabel sStr sNomisma
+            Integer iCount iErr
+            Number  nAxia nPosothta nUnitPrice nIsotimia
+            Date    dHmnia
+        
+            Indicate Err False
+            Move 0 to iCount
+        
+            Get Label to sLabel
+        
+            Clear Wcmoves
+            Lock
+            Move Syscurxr.Company_Code  to Wcmoves.Company_Code
+            Move Syscurxr.Branch_Code   to Wcmoves.Branch_Code
+            Move Syscurxr.Year_Year     to Wcmoves.Year_Year
+            Move '300'                  to Wcmoves.Wtypkin_Code
+        
+            Find Gt Wcmoves By Index.1
+        
+            While ((Found)  And (Trim(Wcmoves.Wtypkin_Code)='300')          And (Wcmoves.Year_Year=Syscurxr.Year_Year)      ;
+                            And (Wcmoves.Branch_Code=Syscurxr.Branch_Code)  And (Wcmoves.Company_Code=Syscurxr.Company_Code))
+        
+                Add 1 to iCount
+                Set Label to ('Ñ§û£‚®‡©û Wcmoves  ' + Wcmoves.Wcmove_Recr)
+        
+                Move WCmoves.WCmove_Hmnia                       to dHmnia
+                Move WCmoves.WCmove_Qty                         to nPosothta
+                Move WCmoves.Unit_Price                         to nUnitPrice
+        
+                Move (Round_Number(nUnitPrice,4))               to nUnitPrice
+                Move (Round_Number(nUnitPrice,4))               to WCmoves.Unit_Price
+        
+                Move Wcmoves.Wcmove_SC_Code2                    to sNomisma
+                Move (Trim(sNomisma))                           to sNomisma
+        
+                Move (Round_Number((nPosothta*nUnitPrice),2))   to nAxia
+        
+                Move nAxia                                      to wcmoves.wcmove_Axia
+                Move nAxia                                      to wcmoves.wcmove_x2
+        
+                Move (fngConvertPoso(sNomisma,nAxia,SysCurXr.C_Code0 ,dHmnia,nIsotimia)) to wcmoves.wcmove_x0
+                Move (fngConvertPoso(sNomisma,nAxia,SysCurXr.C_Code00,dHmnia,nIsotimia)) to wcmoves.wcmove_x00
+                Move (fngConvertPoso(sNomisma,nAxia,SysCurXr.C_Coder ,dHmnia,nIsotimia)) to wcmoves.wcmove_x1
+        
+                Move 0 to wcmoves.wcmove_p0
+                Move 0 to wcmoves.wcmove_p00
+                Move 0 to wcmoves.wcmove_p1
+                Move 0 to wcmoves.wcmove_p2
+        
+                Move (fngConvertPoso(sNomisma,nUnitPrice,SysCurXr.C_Code0 ,dHmnia,nIsotimia)) to wcmoves.Unit_price0
+                Move (fngConvertPoso(sNomisma,nUnitPrice,SysCurXr.C_Code00,dHmnia,nIsotimia)) to wcmoves.Unit_price00
+                Move (fngConvertPoso(sNomisma,nUnitPrice,SysCurXr.C_CodeR ,dHmnia,nIsotimia)) to wcmoves.Unit_priceR
+        
+                Move nPosothta  to Wcmoves.Wcmove_Qty_Eisa
+                Move nPosothta  to WCmoves.Wcmove_Qty
+                Move 0          to Wcmoves.Wcmove_Qty_Exa
+        
+                Saverecord Wcmoves
+                Move (Err) to iErr
+                If (iErr) Begin
+                    Error 51014 ("ë≠·¢£ò °ò´ò ´û§ òß¶ü„°ú¨©û ´û™ úöö®ò≠„™ " + String(Wcmoves.Wcmove_Recr))
+                    Goto Diakoph
+                End
+        
+                Find GT Wcmoves by index.1
+            Loop
+        
+            Diakoph:
+            Unlock
+            If (Not(iErr)) Begin
+                Send Info_Box 'Ü ú§û£‚®‡©û ´ú¢úÂ‡©ú úß†´¨ÆÈ™' 'è¢û®¶≠¶®Âò'
+                Send Info_Box 'ãû§ •úÆ·©ú´ú §ò ´®‚•ú´ú\n´¶ ß®Êö®ò££ò ú§û£‚®‡©û™ £ú©¶©´òü£†°È§' 'è¢û®¶≠¶®Âò'
+            End
+            Else                Send Info_Box 'ìß„®•ò§ ©≠·¢£ò´ò °ò† û ú§û£‚®‡©û õ†ú°Êßú†' 'è¢û®¶≠¶®Âò'
+            Set Label to sLabel
+        End_Procedure // OnClick
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub1
+
+
+    //AB-StoreStart
+                                                                                                                                                                    
+    //AB-StoreEnd
+
+End_Object    // EnhApog
+
+
+//AB-StoreStart
+    
+    
+    
+    
+    
+    
+    
+    
+//AB-StoreEnd
+

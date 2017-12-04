@@ -1,0 +1,44 @@
+Project Maintain WorkSpc
+Object prj is a APP_Project
+
+//AB-StoreTopStart
+Use Workspc.pkg
+
+//  Set date attributes as needed
+Set_Date_Attribute sysdate4_State to (TRUE)
+Set_Date_Attribute Date4_State    to (TRUE)
+Set_Date_Attribute epoch_value    to 30
+
+Object ProgramWorkspace is a WorkspaceSub
+    Set WorkspaceName to CURRENT$WORKSPACE
+//    Set ModuleName    to 'ProgramName' // Special module name.
+//    Set HelpName      to 'HelpName.hlp'// Please provide the name of your Windows help file.
+    Set KEnter_Next_State to True
+End_Object
+
+Use Help_Ids.inc // Developer should provide this file of help context links.
+Use Std_Help.pkg
+//AB-StoreTopEnd
+
+
+//AB-PanelStoreStart
+Use StdAbout.pkg // Standard "About" package.
+//AB-PanelStoreEnd
+
+    Set psProject_Version to "5.0"
+    Set psButtonBar_Pkg To DFStdBtn.pkg
+    Set psStatusBar_Pkg To DFStdSbr.pkg
+    Set ProjectName to "Maintain WorkSpc"
+    Set ProjectFileName to "Workspc.PRJ"
+    Set GenerateFileName to "Workspc.SRC"
+    Set Component To WorkSpc.VW
+
+//AB-StoreStart
+
+Send Activate_Workspc to (Client_Area(Main(Self))))
+Start_UI
+
+
+//AB-StoreEnd
+
+End_Object    // prj

@@ -1,0 +1,63 @@
+// Use Language     // Default language setup
+// Sets default languange if not set by compiler command line
+
+define lng_dutch      for 131
+define lng_french     for 133 // NOT TRANSLATED. DO NOT SELECT!
+define lng_spanish    for 134
+define lng_italian    for 139 // NOT TRANSLATED. DO NOT SELECT!
+define lng_english    for 144
+define lng_danish     for 145
+define lng_swedish    for 146
+define lng_norwegian  for 147
+define lng_Greek    for 148
+define lng_german     for 149
+define lng_portuguese for 155
+define lng_papiamentu for 199 // NOT TRANSLATED. DO NOT SELECT!
+
+#IF !@<100
+ #COMPAT lng_english  // <-- Change default language here
+#ENDIF
+
+define lng_default for !@
+
+#IFSAME _LANGUAGE_ $DUTCH$ $SPANISH$ $ENGLISH$ $DANISH$ $SWEDISH$ $NORWEGIAN$ $GERMAN$ $PORTUGUESE$ $FRENCH$ $ITALIAN$ $PAPIAMENTU$ $Greek$
+#ELSE
+ #IF LNG_DEFAULT=LNG_DUTCH
+  define _LANGUAGE_ for $DUTCH$
+ #ENDIF
+ #IF LNG_DEFAULT=LNG_SPANISH
+  define _LANGUAGE_ for $SPANISH$
+ #ENDIF
+ #IF LNG_DEFAULT=LNG_ENGLISH
+  define _LANGUAGE_ for $ENGLISH$
+ #ENDIF
+ #IF LNG_DEFAULT=LNG_DANISH
+  define _LANGUAGE_ for $DANISH$
+ #ENDIF
+ #IF LNG_DEFAULT=LNG_SWEDISH
+  define _LANGUAGE_ for $SWEDISH$
+ #ENDIF
+ #IF LNG_DEFAULT=LNG_NORWEGIAN
+  define _LANGUAGE_ for $NORWEGIAN$
+ #ENDIF
+ #IF LNG_DEFAULT=LNG_GERMAN
+  define _LANGUAGE_ for $GERMAN$
+ #ENDIF
+ #IF LNG_DEFAULT=LNG_PORTUGUESE
+  define _LANGUAGE_ for $PORTUGUESE$
+ #ENDIF
+ #IF LNG_DEFAULT=LNG_FRENCH
+  define _LANGUAGE_ for $FRENCH$
+ #ENDIF
+ #IF LNG_DEFAULT=LNG_ITALIAN
+  define _LANGUAGE_ for $ITALIAN$
+ #ENDIF
+ #IF LNG_DEFAULT=LNG_PAPIAMENTU
+  define _LANGUAGE_ for $PAPIAMENTU$
+ #ENDIF
+ #IF LNG_DEFAULT=LNG_Greek
+  define _LANGUAGE_ for $Greek$
+ #ENDIF
+#ENDIF
+
+#REM LANGUAGE SET BY LANGUAGE.PKG: _LANGUAGE_

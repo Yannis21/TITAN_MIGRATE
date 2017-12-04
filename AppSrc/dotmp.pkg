@@ -1,0 +1,121 @@
+        use bttmp1.dd
+        Use wcmoves.DD
+   Object oDotmp Is A BusinessProcessSub
+
+        set Status_panel_state to false
+        set Display_Error_state to true
+        property string psdatefrom
+        property string psdateto
+        property string psapomast
+        Property Integer piBarID
+        Object wcmoves_DD is a wcmoves_DataDictionary
+            set read_only_state to true
+            begin_constraints
+              string datefrom dateto apomast
+              get psdatefrom to datefrom
+              get psdateto   to dateto
+              get psapomast  to apomast
+
+              Constrain wcmoves.Company_Code  eq syscurxr.company_code
+              Constrain wcmoves.Branch_code   eq syscurxr.Branch_Code
+              Constrain wcmoves.Year_Year     eq syscurxr.year_year
+              if (apomast <> '') begin
+                 constrain wcmoves.wax_recr eq apomast
+              end
+              if (datefrom <> '') begin
+                 constrain wcmoves.wcmove_hmnia ge datefrom
+              end
+              if (dateto <> '') begin
+                 constrain wcmoves.wcmove_hmnia le dateto
+              end
+        end_constraints
+        End_Object    // caitemsp_DD
+
+
+        Object bttmp1_DD is a bttmp1_DataDictionary
+        End_Object
+
+PROCEDURE beg_tmp string datefrom string dateto string apomast
+          set psapomast to apomast
+          set psdatefrom to datefrom
+          set psdateto to dateto
+          send DOPROCESS
+END_PROCEDURE
+
+Procedure update_rec
+        string witemx## wapomast##
+        integer liwcmovesddo## libttmp1ddo## icount
+        string ddate
+        number  qty## qtyeisa## x0## x00## x1## tqty##  tqtyeisa## tx0## tx00## tx1##;
+                                p0## p00## p1## tp0## tp00## tp1##
+        Move (wcmoves_DD(self))    to liwcmovesDDo##
+        Move (bttmp1_DD(self))     to libttmp1DDo##
+        Send Clear to liwcmovesDDo##
+        send Rebuild_constraints to liwcmovesDDo##
+        Send Find  to liwcmovesDDo## FIRST_Record 12
+        While (found eq 1)
+           send clear to libttmp1ddo##
+           get field_current_value of liwcmovesddo## field wcmoves.wax_recr        to wapomast##
+           get field_current_value of liwcmovesddo## field wcmoves.witemx_code     to witemx##
+           get field_current_value of liwcmovesddo## field wcmoves.wcmove_qty_exa  to qty##
+           get field_current_value of liwcmovesddo## field wcmoves.wcmove_qty_eisa to qtyeisa##
+           get field_current_value of liwcmovesddo## field wcmoves.wcmove_x0       to x0##
+           get field_current_value of liwcmovesddo## field wcmoves.wcmove_x00      to x00##
+           get field_current_value of liwcmovesddo## field wcmoves.wcmove_x1       to x1##
+           get field_current_value of liwcmovesddo## field wcmoves.wcmove_p0       to p0##
+           get field_current_value of liwcmovesddo## field wcmoves.wcmove_p00      to p00##
+           get field_current_value of liwcmovesddo## field wcmoves.wcmove_p1       to p1##
+           move syscurxr.company_code           to bttmp1.company_code
+           move syscurxr.branch_code            to bttmp1.branch_code
+           move syscurxr.year_year              to bttmp1.year_year
+           move wapomast##                      to bttmp1.wax_recr
+           move witemx##                        to bttmp1.witemx_code
+           send find to libttmp1ddo## eq 1
+           if (found = 1) begin
+              get field_current_value of libttmp1ddo## field bttmp1.wcmove_qty_exa  to tqty##
+              get field_current_value of libttmp1ddo## field bttmp1.wcmove_qty_eisa to tqtyeisa##
+              get field_current_value of libttmp1ddo## field bttmp1.wcmove_x0 to tx0##)
+              get field_current_value of libttmp1ddo## field bttmp1.wcmove_x00 to tx00##
+              get field_current_value of libttmp1ddo## field bttmp1.wcmove_x1 to tx1##
+              get field_current_value of libttmp1ddo## field bttmp1.wcmove_p0 to tp0##)
+              get field_current_value of libttmp1ddo## field bttmp1.wcmove_p00 to tp00##
+              get field_current_value of libttmp1ddo## field bttmp1.wcmove_p1 to tp1##
+              set field_changed_value of libttmp1ddo## field bttmp1.wcmove_qty_exa to (tqty## + qty##)
+              set field_changed_value of libttmp1ddo## field bttmp1.wcmove_x0 to (tx0## + x0##)
+              set field_changed_value of libttmp1ddo## field bttmp1.wcmove_x00 to (tx00## + x00##)
+              set field_changed_value of libttmp1ddo## field bttmp1.wcmove_x1 to (tx1## + x1##)
+              set field_changed_value of libttmp1ddo## field bttmp1.wcmove_qty_eisa to (tqtyeisa## + qtyeisa##)
+              set field_changed_value of libttmp1ddo## field bttmp1.wcmove_p0 to (tp0## + p0##)
+              set field_changed_value of libttmp1ddo## field bttmp1.wcmove_p00 to (tp00## + p00##)
+              set field_changed_value of libttmp1ddo## field bttmp1.wcmove_p1 to (tp1## + p1##)
+               send request_save to libttmp1ddo##
+           end
+           else begin
+              set field_changed_value of libttmp1ddo## field bttmp1.company_code to syscurxr.company_code
+              set field_changed_value of libttmp1ddo## field bttmp1.branch_code  to syscurxr.branch_code
+              set field_changed_value of libttmp1ddo## field bttmp1.year_year    to syscurxr.year_year
+              set field_changed_value of libttmp1ddo## field bttmp1.wax_recr     to wapomast##
+              set field_changed_value of libttmp1ddo## field bttmp1.witemx_code  to witemx##
+
+              set field_changed_value of libttmp1ddo## field bttmp1.wcmove_qty_exa to qty##
+              set field_changed_value of libttmp1ddo## field bttmp1.wcmove_x0 to x0##
+              set field_changed_value of libttmp1ddo## field bttmp1.wcmove_x00 to x00##
+              set field_changed_value of libttmp1ddo## field bttmp1.wcmove_x1 to x1##
+              set field_changed_value of libttmp1ddo## field bttmp1.wcmove_qty_eisa to qtyeisa##
+              set field_changed_value of libttmp1ddo## field bttmp1.wcmove_p0 to p0##
+              set field_changed_value of libttmp1ddo## field bttmp1.wcmove_p00 to p00##
+              set field_changed_value of libttmp1ddo## field bttmp1.wcmove_p1 to p1##
+               send request_save to libttmp1ddo##
+           end
+     send find to liwcmovesddo## Next_record 12
+     Loop
+End_Procedure
+
+
+Procedure OnProcess
+    send update_rec
+End_Procedure
+
+End_Object
+
+

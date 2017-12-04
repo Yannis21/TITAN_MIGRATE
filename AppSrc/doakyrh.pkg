@@ -1,0 +1,175 @@
+        Use clients.dd
+        Use clorder.dd
+        Use clorderd.dd
+        Use v94_1.vw
+        use areas.dd
+        use country.dd
+        use towns.dd
+        use cities.dd
+        use payresp.dd
+        Use yclients.dd
+        use salesmen.dd
+        Use ypoprosf.dd
+
+
+      Object oDoakyrh is A BusinessProcessSub
+        set Status_panel_state to false
+        set Display_Error_state to true
+        property string psid
+        property string psrecr
+        property integer piTxtID public 0
+        property integer piLathos public 0
+
+        Object Areas_DD is a Areas_DataDictionary
+        End_Object    // Areas_DD
+
+
+        Object Country_DD is a Country_DataDictionary
+        End_Object    // Country_DD
+
+        Object Towns_DD is a Towns_DataDictionary
+           Set DDO_Server to (Country_DD(self))
+        End_Object    // Towns_DD
+
+        Object Cities_DD is a Cities_DataDictionary
+           Set DDO_Server to (Towns_DD(self))
+        End_Object    // Cities_DD
+
+        Object Payresp_DD is a Payresp_DataDictionary
+        End_Object    // Payresp_DD
+
+
+        Object Clients_DD is a Clients_DataDictionary
+           Set DDO_Server to (Cities_DD(self))
+           Set DDO_Server to (Payresp_DD(self))
+           Set DDO_Server to (Areas_DD(self))
+        End_Object  // Clients_DD
+
+
+       Object Clorder_DD is a Clorder_DataDictionary
+          Set DDO_Server to (Clients_DD(self))
+          Set Constrain_File to Clients.File_Number
+       End_Object  // Clorder_DD
+
+       Object Clorderd_DD is a Clorderd_DataDictionary
+        Set DDO_Server to (Clorder_DD(self))
+        begin_constraints
+             string wrecr
+             get psrecr to wrecr
+             Constrain clorderd.clorder_recr eq wrecr
+             Constrain clorderd.finish eq 0
+        End_Constraints
+       End_Object  // Clorderd_DD
+
+       Object Yclients_DD is a Yclients_DataDictionary
+       end_object
+
+       Object Salesmen_DD is a Salesmen_DataDictionary
+       End_Object    // Salesmen_DD
+
+       Object Ypoprosf_DD is a Ypoprosf_DataDictionary
+          Set DDO_Server to (Yclients_DD(self))
+          Set DDO_Server to (salesmen_DD(self))
+       //   Set Constrain_File to Yclients.File_Number
+       end_object
+
+
+
+PROCEDURE beg_upakyrh string wrecr string sid
+          set psrecr to wrecr
+          set psid to sid
+          SEND DOPROCESS
+END_PROCEDURE
+
+Procedure upakyrh_rec
+    Local Integer liclientsddo## liclorderddo## liclorderdddo## listatus## licount## liqty##;
+                  liyear## finish##  aaypoprosf
+          date    lsdate## lsourdate## lsrialdate##
+    local number  lntotqty## lntotfpa## lnpcdisc## lntotdisc## lntotextra## lntotpay## lnunitprice##;
+                  lnposofpa## lnposonet## lnkm## lnhour## aarec## lnqty## lnhbsave## lntot##
+   local string  lscompany## lsbranch## lsaapar## lsarmod##  lsclient itemcode smodule;
+                  promitem## wrecr##  lscust## wcust##  aapar## lsrecr## orecr## nrecr##
+
+        Move (clients_DD(self))      to liClientsDDo##
+        Move (clorder_DD(self))      to liclorderDDo##
+        Move (clorderd_DD(self))     to liclorderdDDo##
+        send clear to liclientsddo##
+        send clear to liclorderddo##
+        send clear to liclorderdddo##
+        get  psrecr to wrecr##
+        get psid    to lsclient
+        move lsclient to clients.client_id
+        send find to liclientsddo## eq 6
+        if (found) begin
+            move wrecr## to clorder.recr
+            Send Find  to liclorderDDo## EQ  2
+            get field_current_value of liclorderddo## field clorder.recr to lsrecr##
+            get field_current_value of liclorderddo## field clorder.finish to finish##
+            if ((found) and (lsrecr## eq wrecr##) and (finish## = 0)) begin
+                set field_changed_value of liclorderddo## field clorder.akyrh  to 1
+                set field_changed_value of liclorderddo## field clorder.qtydtl to 0
+                set field_changed_value of liclorderddo## field clorder.posodtl to 0
+                sysdate4 lsdate##
+                set field_changed_value of liclorderddo## field clorder.rial_date to lsdate##
+                send request_save to liclorderddo##
+                get field_current_value of liclorderddo## field clorder.module to smodule
+                get field_current_value of liclorderddo## field clorder.order1_recr to aaypoprosf
+                send Rebuild_constraints to liclorderdDDo##
+                Send Find  to liclorderdDDo## first_record 3 //js 10/10/2001 Allagh apo index 1
+                While (found)
+                    get field_current_value of liclorderdDdo## field clorderd.item_code to itemcode
+                    get field_current_value of liclorderdDdo## field clorderd.ypol_qty to lnqty##
+                    get field_current_value of liclorderdddo## field clorderd.akyrh_qty to lntot##
+                    set field_changed_value of liclorderdddo## field clorderd.akyrh to 1
+                    set field_changed_value of liclorderdddo## field clorderd.akyrh_qty to (lnqty## + lntot##)
+                    set field_changed_value of liclorderdddo## field clorderd.ypol_qty to 0
+                    sysdate4 lsdate##
+                    set field_changed_value of liclorderdddo## field clorderd.rial_date to lsdate##
+                    send request_save to liclorderdddo##
+                    Send UpdateWait to (piTxtID(Self))  ('Ä°Á®‡©û èò®òööú¢Âò™ ÑÂõ¶¨™ '+(String(itemcode)))
+                    Send Find  to liclorderdddo## next_record 3
+                loop
+            end
+        end
+        if (not(err)) begin
+            if ((smodule='01') and (aaypoprosf<>0))  begin
+                send clear to ypoprosf_dd
+                move aaypoprosf to ypoprosf.aa_ypoprosf
+                send find to ypoprosf_dd eq 1
+                if (found) begin
+                    set field_changed_value of ypoprosf_dd field ypoprosf.status to '3'
+                    send request_save to ypoprosf_dd
+                end
+            end
+        end
+
+
+End_Procedure
+
+Procedure OnProcess
+       send upakyrh_rec
+End_Procedure
+
+Procedure Start_Process
+         Set piTxtID                         to (Wait(Self))
+         Set Button_State    of (Wait(Self)) to False
+         Set BarVisibleState of (Wait(Self)) to '' False
+         Send Popup                          to (Wait(Self))
+         Set piLathos                        to 0
+         Forward Send Start_Process
+ End_Procedure
+
+    Procedure OnError integer error_info string errMsg
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+    Procedure End_Process
+       Forward Send End_Process
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+End_Object
+
+

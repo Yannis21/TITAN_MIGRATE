@@ -1,0 +1,333 @@
+
+        Use COMPANY.DD
+        Use BRANCH.DD
+        Use YEAR.DD
+        Use GTHHMGIO.DD
+        Use GTYPKIN.DD
+        Use GPLAN.DD
+        Use GARTICL.DD
+        Use GMOVE.DD
+
+
+Object oDoAkArth Is A BusinessProcessSub
+
+        set Status_panel_state to false
+        set Display_Error_state to true
+
+        Number LnAkyrotikoArthro##
+
+
+        Property Integer piNumber_Of_MasterArthro
+
+
+        Integer LiCopyArthro##
+
+        Object Company_DD is a Company_DataDictionary
+        End_Object    // Company_DD
+
+        Object Branch_DD is a Branch_DataDictionary
+            Set DDO_Server to (Company_DD(Current_Object))
+        End_Object    // Branch_DD
+
+        Object Year_DD is a Year_DataDictionary
+            Set DDO_Server to (Branch_DD(Current_Object))
+        End_Object    // Year_DD
+
+        Object Gthhmgio_DD is a Gthhmgio_DataDictionary
+        End_Object    // Gthhmgio_DD
+
+        Object Gtypkin_DD is a Gtypkin_DataDictionary
+            Set DDO_Server to (Gthhmgio_DD(Current_Object))
+        End_Object    // Gtypkin_DD
+
+        Object Gplan_DD is a Gplan_DataDictionary
+        End_Object    // Gplan_DD
+
+        Object Garticl_DD is a Garticle_DataDictionary
+            Set DDO_Server to (Gtypkin_DD(Current_Object))
+            Begin_Constraints
+                If LnAkyrotikoArthro## ne 0 Constrain Garticl.Recnum eq LnAkyrotikoArthro##
+            End_Constraints
+
+        End_Object    // Garticl_DD
+
+        Object Gmove_DD is a Gmove_DataDictionary
+            Set DDO_Server to (Gplan_DD(Current_Object))
+            Set DDO_Server to (Garticl_DD(Current_Object))
+            Begin_Constraints
+                Constrain Gmove Relates to Garticl
+            End_Constraints
+        End_Object    // Gmoves_DD
+
+
+        //////////////////////////////////////////////////2nd Tree
+
+        Object Company_A_DD is a Company_DataDictionary
+        End_Object    // Company_DD
+
+        Object Branch_A_DD is a Branch_DataDictionary
+            Set DDO_Server to (Company_A_DD(Current_Object))
+        End_Object    // Branch_DD
+
+        Object Year_A_DD is a Year_DataDictionary
+            Set DDO_Server to (Branch_A_DD(Current_Object))
+        End_Object    // Year_DD
+
+        Object Gthhmgio_A_DD is a Gthhmgio_DataDictionary
+        End_Object    // Gthhmgio_DD
+
+        Object Gtypkin_A_DD is a Gtypkin_DataDictionary
+            Set DDO_Server to (Gthhmgio_A_DD(Current_Object))
+        End_Object    // Gtypkin_DD
+
+        Object Gplan_A_DD is a Gplan_DataDictionary
+        End_Object    // Gplan_DD
+
+        Object Garticl_A_DD is a Garticle_DataDictionary
+            Set DDO_Server to (Gtypkin_A_DD(Current_Object))
+        End_Object    // Garticl_DD
+
+        Object Gmoves_A_DD is a Gmoves_DataDictionary
+            Set DDO_Server to (Gplan_A_DD(Current_Object))
+            Set DDO_Server to (Garticl_A_DD(Current_Object))
+            Begin_Constraints
+                Constrain Gmoves Relates to Garticl
+            End_Constraints
+        End_Object    // Gmoves_DD
+
+
+       ////////////////////////////////////////////////////
+PROCEDURE AK_Arthro Number lnArthroRecnum##
+          Set piNumber_Of_MasterArthro to lnArthroRecnum##
+
+          SEND DOPROCESS
+
+END_PROCEDURE //trexe aa
+
+
+Procedure Cancel_Arthro    //
+
+    Local Integer liMhnesDDo## Active_Hmnia##  liErr## ; //Master
+                  liCompanyDDo## liBranchDDo## liYearDDo##;
+                  liGthHmgioDDo## liGtypkinDDo## liGarticlDDo## liGMovesDDo##;
+                  liGParticlDDo## liGPMovesDDo##;
+                  liGplanDDo## liGmhnesDDo## liGHmniesDDo##
+
+    Local Integer liMhnesDDo_A## ;                     //Akyrotiko
+                  liCompanyDDo_A## liBranchDDo_A## liYearDDo_A##;
+                  liGthHmgioDDo_A## liGtypkinDDo_A## liGarticlDDo_A## liGMovesDDo_A##;
+                  liGplanDDo_A## liGmhnesDDo_A## liGHmniesDDo_A##
+
+
+   Local String  lsKeepGarticlRecr## ;
+                 lsGp_Gtypkin_Recr## ;
+                 lsGp_Gthhmgio_Recr##;
+                 lsGp_GPlan_Recr##;
+
+   ///////////////////////////////////////////////
+   //LOCAL VARIABLES FOR PKID AND RECORD VALUES
+
+    Local String ldGarticl_Datebpo##
+
+    Local Number lnGp_Gtypkin_Code##;
+                 lnGp_Gthhmgio_Code##;
+                 lnGp_Rate0##
+
+    Local String lsGp_Par##;
+                 lsGp_C_Code2##
+
+
+    Local Number lnGp_Gmoves_X2##;
+                 lnGp_Gmoves_P2##;
+                 Recnum##
+
+    Local STring lsGp_Gplan_Code##
+
+
+
+
+    Local Number liMasterArthroDDo##
+   /////////////////////////////////////////////
+
+
+        Get piNumber_Of_MasterArthro  to liMasterArthroDDo##
+        Get piNumber_Of_MasterArthro  to LnAkyrotikoArthro##
+
+
+
+        Move (Company_DD(self))     to liCompanyDDo## //MAster
+        Move (Branch_DD(self))      to liBranchDDo##
+        Move (Year_DD(self))        to liYearDDo##
+        Move (Gtypkin_DD(self))     to liGtypkinDDo##
+        Move (Garticl_DD(self))     to liGarticlDDo##
+        Move (Gmoves_DD(self))      to liGmovesDDo##
+
+        Move (Company_A_DD(self))     to liCompanyDDo_A## //Akyrotiko
+        Move (Branch_A_DD(self))      to liBranchDDo_A##
+        Move (Year_A_DD(self))        to liYearDDo_A##
+        Move (Gtypkin_A_DD(self))     to liGtypkinDDo_A##
+        Move (GPlan_A_DD(self))       to liGplanDDo_A##
+
+        Move (Garticl_A_DD(self))     to liGarticlDDo_A##
+        Move (Gmoves_A_DD(self))      to liGmovesDDo_A##
+
+
+
+
+//    Begin_Transaction
+
+
+        send Rebuild_constraints to liGarticlDDo## //Master
+        send Rebuild_Constraints to liGmovesDDo##
+
+        send Rebuild_constraints to liGarticlDDo_A## //Akyrotiko
+        send Rebuild_Constraints to liGmovesDDo_A##
+
+
+
+        Send Clear to liGarticlDDo##                  //Finds Copy Arthro
+        Send Find  to liGarticlDDo## FIRST_Record 1
+
+        While (found eq 1)
+
+            get field_Current_value of liGarticlDDo## field GArticl.Garticl_Hmnia   to ldGarticl_Datebpo##
+            get field_current_value of liGarticlDDo## field GArticl.Gtypkin_Code    to lnGp_Gtypkin_Code##
+            get field_current_value of liGarticlDDo## field GArticl.Gtypkin_Recr    to lsGp_Gtypkin_Recr##
+            get field_current_value of liGarticlDDo## field GArticl.Gthhmgio_Code   to lnGp_Gthhmgio_Code##
+            get field_current_value of liGarticlDDo## field GArticl.Gthhmgio_Recr   to lsGp_Gthhmgio_Recr##
+            get field_current_value of liGarticlDDo## field GArticl.Garticl_C_Code2 to lsGp_C_Code2##
+            get field_current_value of liGarticlDDo## field GArticl.Garticl_Rate0   to lnGp_Rate0##
+            get field_current_value of liGarticlDDo## field GArticl.Garticl_Par     to lsGp_Par##
+
+            Send Clear to liGarticlDDo_A##                        //Akyrvtiko
+
+            Send Clear to liGtypkinDDo_A##   //-A                     //GTypkin
+            move lnGp_Gtypkin_Code## to Gtypkin.Gtypkin_Code
+            Send Find to liGTypkinDDo_A## eq 1
+
+
+
+            set field_changed_value of liGarticlDDo_A## field GArticl.Garticl_Hmnia   to ldGarticl_Datebpo##
+            set field_changed_value of liGarticlDDo_A## field GArticl.Gtypkin_Code    to lnGp_Gtypkin_Code##
+            set field_changed_value of liGarticlDDo_A## field GArticl.Gtypkin_Recr    to lsGp_Gtypkin_Recr##
+            set field_changed_value of liGarticlDDo_A## field GArticl.Gthhmgio_Code   to lnGp_Gthhmgio_Code##
+            set field_changed_value of liGarticlDDo_A## field GArticl.Gthhmgio_Recr   to lsGp_Gthhmgio_Recr##
+            set field_changed_value of liGarticlDDo_A## field GArticl.Garticl_C_Code2 to lsGp_C_Code2##
+            set field_changed_value of liGarticlDDo_A## field GArticl.Garticl_Rate0   to lnGp_Rate0##
+            set field_changed_value of liGarticlDDo_A## field GArticl.Garticl_Par     to lsGp_Par##
+
+
+            Send Request_Save to liGarticlDDo_A##
+            Get field_Current_value of liGarticlDDo_A## field Garticl.Garticl_Recr   to lsKeepGarticlRecr## //in order to save details gmoves
+
+            Send Clear to liGmovesDDo_A##
+
+            //
+            send Rebuild_constraints to liGarticlDDo## //Master
+            send Rebuild_Constraints to liGmovesDDo##
+
+            Send Clear to liGarticlDDo##                  //Finds Copy Arthro
+            Send Find  to liGarticlDDo## FIRST_Record 1
+
+            //Wait Dg
+
+            // rem 19/02/2002 js
+            //Move 0 to gnCounterOfRecords##
+            //move 2 to gnNumberOfRecords##
+            //set current_position of (WaitBar(wait(self))) to 0
+            //set maximum_position of (WaitBar(wait(self))) to gnNumberOfRecords##
+            //send popup to (Wait(self))
+
+
+
+
+            ///End Wait Dg
+            //
+            //Send Clear to liGmovesDDo##
+
+            Send Find  to liGmovesDDo## first_Record 1
+
+            While (found eq 1)
+
+
+               add 1 to gnCounterOfRecords##
+               set maximum_position of (WaitBar(wait(self))) to ((gnNumberOfRecords##*gnCounterOfRecords##)+1)
+
+               set current_position of (WaitBar(wait(self))) to gnCounterOfRecords##
+
+
+                Send Clear to liGarticlDDo_A##                        //GTypkin
+                move lsKeepGarticlRecr## to Garticl.Garticl_Recr
+                Send Find to liGarticlDDo_A## eq 2
+
+                Get field_Current_value of liGmovesDDo## field Gmoves.Recnum to Recnum##
+               //Move Gpmoves.recnum to Recnum##
+
+                get field_current_value of liGmovesDDo## field Gmoves.Gplan_Recr   to lsGp_GPlan_Recr##
+
+                Send Clear to liGplanDDo_A##                        //GTypkin
+                move lsGp_GPlan_Recr## to Gplan.Gplan_Recr
+                Send Find to liGplanDDo_A## eq 2
+
+
+                get field_current_value of liGmovesDDo## field Gmoves.Gplan_Code   to lsGp_Gplan_Code##
+                get field_current_value of liGmovesDDo## field Gmoves.Gmoves_X2    to lnGp_Gmoves_X2##
+                get field_current_value of liGmovesDDo## field Gmoves.Gmoves_P2    to lnGp_Gmoves_P2##
+
+
+                set field_changed_value of liGmovesDDo_A## field Gmoves.Garticl_Hmnia to ldGarticl_Datebpo##
+                set field_changed_value of liGmovesDDo_A## field Gmoves.Garticl_Recr  to lsKeepGarticlRecr##
+
+                set field_changed_value of liGmovesDDo_A## field Gmoves.Gthhmgio_Code   to lnGp_Gthhmgio_Code##
+                set field_changed_value of liGmovesDDo_A## field Gmoves.Gthhmgio_Recr   to lsGp_Gthhmgio_Recr##
+                set field_changed_value of liGmovesDDo_A## field Gmoves.Gmoves_C_Code2  to lsGp_C_Code2##
+
+
+                set field_changed_value of liGmovesDDo_A## field Gmoves.Gplan_Recr    to lsGp_GPlan_Recr##
+                set field_changed_value of liGmovesDDo_A## field Gmoves.Gplan_Code    to lsGp_Gplan_Code##
+                set field_changed_value of liGmovesDDo_A## field Gmoves.Gmoves_X2     to (lnGp_Gmoves_X2##*(-1))
+                set field_changed_value of liGmovesDDo_A## field Gmoves.Gmoves_P2     to (lnGp_Gmoves_P2##*(-1))
+
+
+                Send Request_Save to liGmovesDDo_A##
+                Send Clear to liGmovesDDo_A##
+
+                send find_by_Recnum to liGmovesDDo## Gmoves.File_number Recnum##
+                Send Find to liGmovesDDo## gt 1
+
+            Loop
+            Send Find  to liGarticlDDo## GT 1
+        Loop
+
+        send Rebuild_constraints to liGarticlDDo_A##
+
+        Send Clear to liGarticlDDo_A##                        //GArticl
+        move lsKeepGarticlRecr## to Garticl.Garticl_Recr
+        Send Find to liGarticlDDo_A## eq 2
+
+        send Rebuild_Constraints to liGmovesDDo_A##
+
+
+        send check_Arthro_For_Ypol to liGmovesDDo_A##
+        send Deactivate to (Wait(self))
+
+
+//    End_Transaction
+
+
+               set maximum_position of (WaitBar(wait(self))) to gnCounterOfRecords##
+               set current_position of (WaitBar(wait(self))) to gnCounterOfRecords##
+
+
+
+
+End_Procedure
+
+
+Procedure OnProcess
+    send Cancel_Arthro
+End_Procedure
+
+End_Object
+
+

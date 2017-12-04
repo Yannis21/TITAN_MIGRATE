@@ -1,0 +1,99 @@
+
+// Xrhsh : Prota stelnoume Send Gemise_Escape_Characters
+//         Kai meta stelnoume thn procedure Send Con_On gia na arxisei
+//         na typonei condensed kai otan teleiosei stelnoume Send Con_Off
+
+
+PROCEDURE Gemise_Escape_Characters
+
+// Oi parakato metavlhtes prepei na dhlothoun global sto client_area
+// giati allios den tis vlepoun oi parakato procedures (Proc_Con_On...)
+
+//    String Key_BIP  Key_ESC  Plhktro_N11  Plhktro_N00  Plhktro_FS  Plhktro_AAA  Plhktro_DSI
+//    String Plhktro_SO   Plhktro_DC4     //expanded for 1 line
+//    String Plhktro_SI   Plhktro_DC2     //condesed
+//    String Plhktro_PAV              //underline
+//    String Plhktro_EEE  Plhktro_FFF     //emphasized
+//    String Plhktro_GGG  Plhktro_HHH     //double strike
+//    String Plhktro_WWW              //expanded
+//    String Plhktro_Q    Plhktro_160
+
+    Character 27 To Plhktro_Esc
+    Character  0 To Plhktro_N00
+    Character  1 To Plhktro_N11
+    Character  7 To Plhktro_Bip
+    Character 28 To Plhktro_Fs
+    Character 64 To Plhktro_Aaa
+    Character 18 To Plhktro_Dsi
+
+    Character 14 To Plhktro_So                 //Expanded For 1 Line
+    Character 20 To Plhktro_Dc4
+    Character 15 To Plhktro_Si                 //Condensed
+    Character 18 To Plhktro_Dc2
+    Character 45 To Plhktro_Pav                //Underline
+    Character 69 To Plhktro_Eee                //Emphasized
+    Character 70 To Plhktro_Fff
+    Character 71 To Plhktro_Ggg                //Double Strike
+    Character 72 To Plhktro_Hhh
+    Character 87 To Plhktro_Www                //Expanded
+
+    Character 126 To Plhktro_Q
+    Character   6 to Plhktro_160  // Compressed high speed mode 160 xarakthres
+
+
+END_PROCEDURE
+
+Procedure Proc_Exl_On
+    Write Plhktro_Esc Plhktro_So
+End_Procedure
+
+Procedure Proc_Con_On
+    //Write Plhktro_Esc Plhktro_q Plhktro_160
+    Write Plhktro_Esc Plhktro_Si
+End_Procedure
+
+Procedure Proc_Con_Off
+    Write Plhktro_Esc Plhktro_Dc2
+End_Procedure
+
+Procedure Proc_U_On
+    Write Plhktro_Esc Plhktro_Pav Plhktro_N11
+End_Procedure
+
+Procedure Proc_U_Off
+    Write Plhktro_Esc Plhktro_Pav Plhktro_N00
+End_Procedure
+
+Procedure Proc_Emf_On
+    Write Plhktro_Esc Plhktro_Eee
+End_Procedure
+
+Procedure Proc_Emf_Off
+    Write Plhktro_Esc Plhktro_Fff
+End_Procedure
+
+Procedure Proc_Ds_On
+    Write Plhktro_Esc Plhktro_Ggg
+End_Procedure
+
+Procedure Proc_Ds_Off
+    Write Plhktro_Esc Plhktro_Hhh
+End_Procedure
+
+Procedure Proc_Exp_On
+    Write Plhktro_Esc Plhktro_Www Plhktro_N11
+End_Procedure
+
+Procedure Proc_Exp_Off
+    Write Plhktro_Esc Plhktro_Www Plhktro_N00
+End_Procedure
+
+Procedure Proc_Normalp
+    Send Proc_Con_Off
+    Send Proc_U_Off
+    Send Proc_Emf_Off
+    Send Proc_Exp_Off
+    Send Proc_Ds_Off
+    //Write Plhktro_Dsi      //Maximum Width Is  80 Cpl
+End_Procedure
+

@@ -1,0 +1,832 @@
+//AB/ Project r3_1:metafores ypoloipon foreon
+//AB/ Object prj is a Report_Project
+//AB/     Set ProjectName to "r3_1:metafores ypoloipon foreon"
+//AB/     Set ProjectFileName to "r3_1.rv"
+
+// Project Object Structure
+//   r3_1 is a ReportViewSub
+//     GroupSub1 is a GroupSub
+//       F_HME_APO is a FormSub
+//       TextBoxSub1 is a TextBoxSub
+//       TextBoxSub2 is a TextBoxSub
+//       f_payresp is a CheckBoxSub
+//     ButtonSub1 is a Button
+//     ButtonSub3 is a ButtonSub
+//     logWQLReport is a WinQLReport
+
+// Register all objects
+Register_Object ButtonSub1
+Register_Object ButtonSub3
+Register_Object F_HME_APO
+Register_Object f_payresp
+Register_Object GroupSub1
+Register_Object logWQLReport
+Register_Object r3_1
+Register_Object TextBoxSub1
+Register_Object TextBoxSub2
+
+
+//AB/ Report View
+
+
+//AB-StoreTopStart
+Use dfallrpt
+Use Docxrhsh.dg
+use docpresp.dg
+use docclients.dg
+
+//AB-StoreTopEnd
+
+//AB-IgnoreStart
+
+Use DFAllEnt.pkg
+Use Group.Sub
+Use Form.Sub
+Use Txtbox.Sub
+Use Chkbox.Sub
+Use Button.Sub
+
+//AB-IgnoreEnd
+
+DEFERRED_VIEW Activate_r3_1 FOR ;
+;
+Object r3_1 is a ReportViewSub
+
+    //AB-StoreTopStart
+                                
+    Property String psModule public ''
+    property integer pierr public 0
+    //AB-StoreTopEnd
+
+    Set Label to "ãú´ò≠¶®· ¨ß¶¢¶Âß‡§ èú¢ò´È§ ©´û §‚ò Æ®„©û"
+    Set Size to 82 288
+    Set Location to 1 9
+
+    //AB-DDOStart
+
+
+    //AB-DDOEnd
+
+    Object GroupSub1 is a GroupSub
+        Set Label to "Ü£/§Âò Ñöö®ò≠È§ ©´û§ §‚ò Æ®„©û "
+        Set Size to 50 203
+        Set Location to 13 7
+        Object F_HME_APO is a FormSub
+            Set Size to 13 69
+            Set Location to 17 119
+            Set Color to clNavy
+            Set TextColor to clYellow
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Form_Datatype Item 0 to Mask_Date_Window
+            Set Prompt_Button_Mode to pb_PromptOn
+            Set Form_Mask Item 0 to "d/M/yyyy"
+
+            //AB-StoreStart
+            set prompt_object to (ocalendar(self))
+            
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // F_HME_APO
+
+        Object TextBoxSub1 is a TextBoxSub
+            Set Label to "ÉÈ©´ú û£/§Âò úöö®ò≠È§ "
+            Set Location to 18 5
+            Set Size to 10 90
+            Set FontWeight to 800
+        End_Object    // TextBoxSub1
+
+        Object TextBoxSub2 is a TextBoxSub
+            Set Label to "ãûõú§†©£Ê™ ¨ß¶¢¶Âß‡§ ¨ßú¨ü.ß¢û®‡£È§"
+            Set Location to 33 6
+            Set Size to 12 138
+            Set FontWeight to 800
+        End_Object    // TextBoxSub2
+
+        Object f_payresp is a CheckBoxSub
+            Set Size to 13 17
+            Set Location to 33 177
+        End_Object    // f_payresp
+
+
+        //AB-StoreStart
+        Function Starthme Returns string
+            Function_return (Value(f_hme_apo(Current_object), 0))
+        End_function
+        
+        Function fpayresp Returns integer
+            Function_return (Select_state(f_payresp(Current_object), 0))
+        End_function
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // GroupSub1
+
+    Object ButtonSub1 is a Button
+
+        //AB-StoreTopStart
+                
+        //AB-StoreTopEnd
+
+        Set Bitmap to "RUNPROG.BMP"
+        Set Size to 18 29
+        Set Location to 17 227
+
+        //AB-StoreStart
+        Procedure OnClick
+            string starthmen
+            integer ibpoid iyear ipayresp ibpoid1
+            get starthme to starthmen
+            get fpayresp to ipayresp
+            if (ipayresp=1) begin
+                Move (Docpresp(Self)) to iBPOID1
+                Send DoProcess      to iBPOID1
+            end
+            Move (Docclients(Self)) to iBPOID
+            Send DoProcess      to iBPOID
+            move (TheYearSegment(starthmen)) to iyear
+            if (iyear le syscurxr.year_year) send info_box 'ä·ü¶™ Ü£/§Âò Ñöö®ò≠È§ !!' 'è¢û®¶≠¶®Âò'
+            else begin
+                Move (Docxrhsh(Self)) to iBPOID
+                Set datefrom of iBPOID to starthmen
+                set psmodule of ibpoid to (psmodule(self))
+                Send DoProcess      to iBPOID
+                if (pierr(self)>0) send info_box 'Éû£†¶¨®öÂò â†§„©ú‡§ ãú´ò≠¶®·™ ´ú¢úÂ‡©ú !!' 'è¢û®¶≠¶®Âò'
+                else send info_box 'É‚§ Å®‚üû°ò§ úöö®ò≠‚™ ß®¶™ úßú•ú®öò©Âò !!' 'è¢û®¶≠¶®Âò'
+            end
+        End_Procedure
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub1
+
+    Object ButtonSub3 is a ButtonSub
+
+        //AB-StoreTopStart
+                                                                                                                                                                                                    
+        //AB-StoreTopEnd
+
+        Set Bitmap to "CANCEL.BMP"
+        Set Size to 18 29
+        Set Location to 41 227
+
+        //AB-StoreStart
+        Procedure OnClick
+            Send Request_Cancel
+        End_Procedure
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub3
+
+
+    //AB-StoreStart
+    Procedure Activate_View Returns Integer
+        String sStr sModule StrDisp
+        Integer rVal
+        Forward Get Msg_Activate_View to rVal
+        Get psMenuModule  Of Main_Menu  to sModule
+        Set psModule                    to sModule
+    
+        // â‡õ†°ò™ ß¶¨ ò≠¶®ò ´¶ constrain ´‡§ ©´¶†Æú†‡§ ´¶¨ view ¶ß‡™ ßò®ò©´ò´†°·
+        // û °†§„©ú†™ ß¶¨ èêÑèÑà §ò úÂ§ò† constrain ò§ò¢¶öò £ú ´¶ °Á°¢‡£ò òß¶
+        // ´¶ ¶ß¶†¶ °ò¢úÂ´ò† ´¶ view. è.ï. ò§ °¢ûüúÂ òß¶ è‡¢„©ú†™/èú¢·´ú™ §ò £û§
+        // ≠òÂ§¶§´ò† ©´ò ßò®ò©´ò´†°· ´ò ctypkin Äö¶®È§ °¢ß....
+    
+    
+        if (smodule = "01");
+             Set Label Of r3_1 to "ãú´ò≠¶®· ¨ß¶¢¶Âß‡§ èú¢ò´È§ ©´û §‚ò Æ®„©û"
+        if (smodule = "02");
+             Set Label Of r3_1 to "ãú´ò≠¶®· ¨ß¶¢¶Âß‡§ è®¶£ûüú¨´È§ ©´û §‚ò Æ®„©û"
+    End_Procedure
+    
+    
+    Object logWQLReport Is A WinQLReport
+    
+    
+    
+        Property Integer ReportReady Public False
+    
+        Set Report_View_id To (Parent(Current_object))
+    
+       // Local Integer Count
+       // local integer CurSortDirection
+    
+    
+         Procedure OnStartPrinting
+    
+         End_procedure // OnStartPrinting
+    
+    
+    End_object
+    
+    Function Starthme Returns integer
+        Function_return (Starthme(groupSub1(Current_object)))
+    End_function // StartNumber
+    
+    Function fpayresp Returns integer
+        Function_return (fpayresp(groupsub1(Current_object)))
+    End_function
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //AB-StoreEnd
+
+CD_End_Object    // r3_1
+
+
+//AB-StoreStart
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//AB-StoreEnd
+
+//AB/ End_Object    // prj

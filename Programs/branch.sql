@@ -1,0 +1,70 @@
+--
+
+IF EXISTS (SELECT * FROM tempdb..sysobjects WHERE id=OBJECT_ID('tempdb..#tmpErrors')) DROP TABLE #tmpErrors
+GO
+CREATE TABLE #tmpErrors (Error int)
+GO
+SET XACT_ABORT ON
+GO
+
+
+BEGIN TRANSACTION
+GO
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
+GO
+
+
+--
+-- Script for dbo.BRANCH
+-- Foreign keys etc. will appear at the end
+--
+
+PRINT 'Updating dbo.BRANCH'
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+
+ALTER TABLE [dbo].[BRANCH]
+ADD
+  [YPOKAT1] [varchar] (50) NULL ,
+  [YPOKAT1A] [varchar] (50) NULL ,
+  [YPOKAT2] [varchar] (50) NULL ,
+  [EDRA1] [varchar] (50) NULL ,
+  [EDRA1A] [varchar] (50) NULL ,
+  [EDRA2] [varchar] (50) NULL
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+
+
+
+
+
+
+
+
+
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+
+IF EXISTS (SELECT * FROM #tmpErrors) ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT>0 BEGIN
+PRINT 'The database update succeeded'
+COMMIT TRANSACTION
+END
+ELSE PRINT 'The database update failed'
+GO
+DROP TABLE #tmpErrors
+GO
+
+
+
+

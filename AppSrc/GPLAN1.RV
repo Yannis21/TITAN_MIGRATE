@@ -1,0 +1,305 @@
+//AB/ Project Gplan1
+//AB/     Object prj is a REPORT_Project
+//AB/         Set ProjectName to "Gplan1"
+//AB/         Set ProjectFileName to "Gplan1.rv"
+
+// Project Object Structure
+//   Gplan1_rpt is a ReportView
+//     oPrintTo is a RadioGroup
+//       oRadio1 is a Radio
+//       oRadio2 is a Radio
+//     oBtnPrint is a Button
+//     oBtnCancel is a Button
+//     RptGplan1 is a WinReport
+
+// Register all objects
+Register_Object Gplan1_rpt
+Register_Object oBtnCancel
+Register_Object oBtnPrint
+Register_Object oPrintTo
+Register_Object oRadio1
+Register_Object oRadio2
+Register_Object RptGplan1
+
+
+//AB/     Report View
+
+
+    //AB-StoreTopStart
+
+    Use DFAllRpt.pkg
+
+    Open Gplan
+
+    /Header
+    Number  Name
+    ----------------------------------------------------------------------------
+    /Body
+    _____  ______________________________
+    /Footer
+    Date printed:  __/__/____
+    /*
+
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use AllentSC
+
+    //AB-IgnoreEnd
+
+    ACTIVATE_VIEW Activate_Gplan1_rpt FOR Gplan1_rpt
+
+    Object Gplan1_rpt is a ReportView
+
+        //AB-StoreTopStart
+
+        //AB-StoreTopEnd
+
+        Set Label to "Gplan1"
+        Set Size to 66 182
+        Set Location to 6 6
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object oPrintTo is a RadioGroup
+            Set Label to "Print to"
+            Set Size to 38 105
+            Set Location to 5 5
+            Set Current_Radio to 0
+            Object oRadio1 is a Radio
+                Set Label to "Preview"
+                Set Size to 10 42
+                Set Location to 12 6
+                Set Status_Help to "Prints the report to screen"
+            End_Object    // oRadio1
+
+            Object oRadio2 is a Radio
+                Set Label to "Printer"
+                Set Size to 10 42
+                Set Location to 24 6
+                Set Status_Help to "Prints the report to printer"
+            End_Object    // oRadio2
+
+        End_Object    // oPrintTo
+
+        Object oBtnPrint is a Button
+            Set Default_State to TRUE
+            Set Label to "Print"
+            Set Status_Help to "Print the Selected report"
+            Set Location to 11 120
+
+            //AB-StoreStart
+            Procedure OnClick
+                Send StartReport
+            End_Procedure
+            //AB-StoreEnd
+
+        End_Object    // oBtnPrint
+
+        Object oBtnCancel is a Button
+            Set Label to "Cancel"
+            Set Status_Help to "Close this Panel"
+            Set Location to 29 120
+
+            //AB-StoreStart
+            Procedure OnClick
+                Send Close_Panel
+            End_Procedure
+            //AB-StoreEnd
+
+        End_Object    // oBtnCancel
+
+
+        //AB-StoreStart
+        // Procedures and functions used by the user interface
+
+        //This function is called by the procedure StartReport
+        Function Print_to_Screen_State Returns Integer
+            Local Integer iRad
+            Get Current_Radio of (oPrintTo(Current_Object)) To iRad
+            Function_Return (iRad=1)
+        End_Function
+
+        // Use this procedure to do print setup
+        Procedure SetupReport
+            send DFPrintSetup to (Report_Object_Id(Current_Object))
+        End_Procedure
+
+        // Use this procedure to start the report
+        Procedure StartReport
+            Local Integer iToPrinter iRepObj
+            Local String sVal
+            Get Report_Object_Id To iRepObj
+
+
+            Get Print_to_Screen_State to iToPrinter
+            If iToPrinter Set OutPut_Device_Mode to PRINT_TO_PRINTER
+            Else Set OutPut_Device_Mode to PRINT_TO_WINDOW
+
+            Send Run_Report to iRepObj
+
+        End_Procedure
+
+
+        // The Report
+        Object RptGplan1 is a WinReport
+
+            //Set the title on the information box (sentinel)
+            Set Report_Title to "Printing Gplan1 Listing"
+
+            //Main File for the report
+            Report_Main_File GPLAN
+
+
+            //Breaks and Index for the report
+            Report_Index By GPLAN.RECNUM
+
+            // Starting_Main_Report should ALWAYS be used!
+            // Setting of margins should be set inside
+            // Starting_Main_Report and after the Forward Get.
+            Function Starting_Main_Report Returns Integer
+                Local Integer iRetVal
+                Forward Get Starting_Main_Report To iRetVal
+                If iRetVal Function_return iRetVal
+                Send DFSetmargins To WinPrintId 1 1 1 1
+            End_Function
+
+            // Selection is a good choice if you are doing a slow
+            // finds like (as) in constrain. The advantage is that the
+            // report could be interupted
+            Function Selection Returns Integer
+                //If ????.???? Eq ???? Function_return RPT_OK
+                //Else Function_return RPT_NOT_SELECT
+            End_Function
+
+
+            Procedure_Section Page_Top
+
+                DFFont "Times New Roman" //  Use Times New Roman size 16
+                DFFontSize 16
+
+                  DFBeginHeader DFPageTop          //Header of type DFPageTop
+
+                    DFHeaderPos   HDR_LEFT         //Write data from left margin in the header
+                    DFHeaderFrame HDR_MARGINS 0.05 //Set the box from margin to margin using size 0.05
+
+                    DFWriteBMP "RPTHEAD.BMP" 0.2 0.5 3.0 0.75 // Write the BMP in the header so it wraps with the header
+
+                    DFFontSize 9
+
+                    //Page number, also se #subpagecount#. MUST be in small letters!
+                    DFWritePos "Page "        17 (FONT_ITALIC+FONT_BOLD)
+                    DFWritePos "#pagecount#"  18 (FONT_ITALIC+FONT_BOLD)
+
+                    DFFontSize 16
+
+                    DFWriteln ""                  // Write data to the header
+                    DFWritelnPos "Gplan1 Listing" 8  (FONT_ITALIC+FONT_BOLD)
+                    DFWriteln ""                  // Write data to the header
+                    DFWriteln ""                  // Write data to the header
+                    DFWriteln ""                  // Write data to the header
+                    DFWriteln ""                  // Write data to the header
+                    DFWriteln ""                  // Write data to the header
+
+                    DFFontSize 9
+
+                    DFWritePos    "Gplan Code"      0.5  (FONT_BOLD)
+                    DFWritePos    "Gplan Descr1"      3.5  (FONT_BOLD)
+                    DFWriteln ""
+                    // Remove comment to display a metric ruler
+                    // Send ShowRuler // displays a ruler for aligning fields
+                  DFEndHeader                     //End and print header
+
+            End_Procedure
+
+
+            //Will only be printet once in a report after page_top
+            //Procedure_Section Report_Header
+            //      DFBeginHeader DFReportHeader
+            //        DFWrite     "Report_Header" (FONT_ITALIC)
+            //      DFEndHeader
+            //End_Procedure
+
+
+            //Page header is printed after Page_Top (Report_Headrer) on each page
+            //Procedure_Section Page_Header
+            //      DFBeginHeader DFPageHeader
+            //        DFWrite     "Page_Header" (FONT_ITALIC)
+            //      DFEndHeader
+            //End_Procedure
+
+
+            //Page title is printed on each page after Page_Header
+            //Procedure_Section Page_Title
+            //      DFBeginHeader DFPageTitle
+            //        DFWrite     "Page_Title" (FONT_ITALIC)
+            //      DFEndHeader
+            //End_Procedure
+
+
+
+            Procedure_Section Body
+
+                // Update the information box (sentinel) for each body record
+                Send Update_Status ("Record" * String(GPLAN.RECNUM))
+
+                DFFont "Arial" //  Use Arial
+                DFFontSize 8
+
+
+                DFWritePos    Gplan.GPLAN_CODE      0.5  (FONT_DEFAULT)
+                DFWritePos    Gplan.GPLAN_DESCR1      3.5  (FONT_DEFAULT)
+                DFWriteln ""
+
+            End_Procedure
+
+            //Report footer is only printed on the last page before Page_Footer
+            //Procedure_Section Report_Footer
+            //      DFBeginHeader DFReportFooter
+            //        DFWrite     "Report_Footer" (FONT_ITALIC)
+            //      DFEndHeader
+            //End_Procedure
+
+
+            //Page footer is printed on each page before Page_Bottom
+            //Procedure_Section Page_Footer
+            //      DFBeginHeader DFPageFooter
+            //        DFWrite     "Page_Footer" (FONT_ITALIC)
+            //      DFEndHeader
+            //End_Procedure
+
+
+
+            Procedure_Section Page_Bottom
+
+                DFFont "Arial" //  Use Arial
+                DFFontSize 9
+
+                  DFBeginHeader DFPageBottom       //Header of type DFPageBottom
+
+                    DFHeaderPos   HDR_CENTER       //Write data in center
+                    DFHeaderFrame HDR_MARGINS 0.07 //Set the box from margin to margin using size 0.07
+
+                    DFWrite     "Report Wizard (beta 0.2.2),  Printed on: " (FONT_ITALIC)
+                    DFWriteln   (RptToday(Current_Object)) (FONT_ITALIC)
+
+                  DFEndHeader                     //End and print header
+
+            End_Procedure
+
+        End_Object    //  RptGplan1
+
+        //AB-StoreEnd
+
+    End_Object    // Gplan1_rpt
+
+
+    //AB-StoreStart
+
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

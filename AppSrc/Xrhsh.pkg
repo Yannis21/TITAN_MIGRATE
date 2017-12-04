@@ -1,0 +1,25 @@
+//------------------------------
+Use SelectXr.Dg
+
+Procedure Epelexe_Xrhsh
+    Integer liCompanyDD liBranchDD liYearDD liYear liModalId
+    String lsCompany lsBranch lsWhatXrhsh
+    Move oSelectYear to liModalId
+    Get ifSelect_Xrhsh Of liModalId to lsWhatXrhsh
+    if (Trim(lsWhatXrhsh)='') Send Exit_Application
+End_Procedure
+
+Procedure Allaxe_Xrhsh
+    Integer rVal liModalId iID
+    If (Close_All_Views(Self,True)=0) Begin
+        Move oSelectYear to liModalId
+        Send Epelexe_Xrhsh
+    End
+End_Procedure
+
+On_Key Key_Ctrl+Key_X Send Allaxe_Xrhsh
+On_Key Key_Alt+Key_X  Send Allaxe_Xrhsh
+
+Send Epelexe_Xrhsh
+//------------------------------
+

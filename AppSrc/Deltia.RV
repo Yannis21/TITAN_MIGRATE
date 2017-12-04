@@ -1,0 +1,1134 @@
+//AB/ Project Deltia:Ektyposh-Btnemp
+//AB/ Object prj is a Report_Project
+//AB/     Set ProjectName to "Deltia:Ektyposh-Btnemp"
+//AB/     Set ProjectFileName to "Deltia.RV"
+
+// Project Object Structure
+//   Deltia is a ReportView
+//     GroupSub1 is a GroupSub
+//       TextBoxSub3 is a TextBoxSub
+//       F_HME_APO is a FormSub
+//     DestRadio is a RadioGroup
+//       WindowRadio is a Radio
+//       PrinterRadio is a Radio
+//     ButtonSub3 is a ButtonSub
+//     ButtonSub4 is a ButtonSub
+//     deltia_BasicReport is a BasicReport
+//       btnemp_DD is a btnemp_DataDictionary
+//       clients_DD is a clients_DataDictionary
+//       ptyppar_DD is a ptyppar_DataDictionary
+//       Syscurxr_DD is a Syscurxr_DataDictionary
+
+// Register all objects
+Register_Object ButtonSub3
+Register_Object ButtonSub4
+Register_Object btnemp_DD
+Register_Object clients_DD
+Register_Object Deltia
+Register_Object DestRadio
+Register_Object deltia_BasicReport
+Register_Object F_HME_APO
+Register_Object GroupSub1
+Register_Object PrinterRadio
+Register_Object ptyppar_DD
+Register_Object Syscurxr_DD
+Register_Object TextBoxSub3
+Register_Object WindowRadio
+
+
+//AB/ Report View
+
+
+//AB-StoreTopStart
+use btnemp.dd
+USE clients.dd
+open item
+open cn
+use syscurxr.dd
+use ptyppar.dd
+use rvideltia.pkg
+//AB-StoreTopEnd
+
+//AB-IgnoreStart
+
+Use DFAllEnt.pkg
+Use Group.Sub
+Use Txtbox.Sub
+Use Form.Sub
+Use Button.Sub
+
+//AB-IgnoreEnd
+
+ACTIVATE_VIEW Activate_Deltia FOR Deltia
+
+Object Deltia is a ReportView
+
+    //AB-StoreTopStart
+    
+    Register_Procedure  StartReport
+    Property integer    piaad       public 0
+    Property integer    piprinter   public 0
+    property integer    new_state
+    property integer    picount     public 0
+    property string     pspar       public ''
+    property date       psdatefrom  public ''
+    property date       psdateto    public 0
+    property integer    pipage      public 0
+    property number     pnvsn       public 0
+    property string     psparast    public ''
+    property integer    pideop      public 0
+    property integer    piprt       public 0
+    property integer    piaaergo    public 0
+    property integer    piaaclient  public 0
+    property number     pnqtyergo   public 0
+    property number     pnqtyclient  public 0
+    //AB-StoreTopEnd
+
+    Set Label to "Ñ°´Áß‡©û Btnemp"
+    Set Size to 92 177
+    Set Location to 6 23
+
+    //AB-DDOStart
+
+
+    //AB-DDOEnd
+
+    Object GroupSub1 is a GroupSub
+        Set Size to 29 169
+        Set Location to 0 3
+        Object TextBoxSub3 is a TextBoxSub
+            Set Label to "Ü£/§Âò Ñ°´Áß‡©û™"
+            Set Auto_Size_State to FALSE
+            Set FontSize to 4 0
+            Set Location to 12 5
+            Set Size to 10 74
+            Set TypeFace to "MS Sans Serif"
+            Set Enabled_State to TRUE
+        End_Object    // TextBoxSub3
+
+        Object F_HME_APO is a FormSub
+
+            //AB-StoreTopStart
+                                                                                                                                
+            //AB-StoreTopEnd
+
+            Set Size to 13 61
+            Set Location to 10 82
+            Set Form_Border Item 0 to Border_Normal
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Form_Datatype Item 0 to Mask_Date_Window
+            Set Form_Mask Item 0 to "d/M/yyyy"
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                
+            //AB-StoreEnd
+
+        End_Object    // F_HME_APO
+
+    End_Object    // GroupSub1
+
+    Object DestRadio is a RadioGroup
+
+        //AB-StoreTopStart
+                                                                                            
+        //AB-StoreTopEnd
+
+        Set Label to "Ñ°´Á&ß‡©û"
+        Set Size to 44 49
+        Set Location to 29 2
+        Object WindowRadio is a Radio
+            Set Size to 13 30
+            Set Location to 12 12
+            Set Bitmap to "screen4.bmp"
+        End_Object    // WindowRadio
+
+        Object PrinterRadio is a Radio
+            Set Size to 10 31
+            Set Location to 30 12
+            Set Bitmap to "PRINT_M1.BMP"
+        End_Object    // PrinterRadio
+
+
+        //AB-StoreStart
+        Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+            Forward Send Notify_Select_State  iNewItem  iOldItem
+            If iNewItem EQ 0 Set Output_Device_Mode  To PRINT_TO_window
+            Else             Set Output_Device_Mode  To PRINT_TO_PRINTER
+        End_Procedure
+        
+        //AB-StoreEnd
+
+    End_Object    // DestRadio
+
+    Object ButtonSub3 is a ButtonSub
+
+        //AB-StoreTopStart
+                                                                                            
+        //AB-StoreTopEnd
+
+        Set Bitmap to "RUNPROG.BMP"
+        Set Size to 18 27
+        Set Location to 36 145
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+        Procedure OnClick
+           Send StartReport
+        End_Procedure
+        
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub3
+
+    Object ButtonSub4 is a ButtonSub
+
+        //AB-StoreTopStart
+                                                                                            
+        //AB-StoreTopEnd
+
+        Set Bitmap to "CANCEL.BMP"
+        Set Size to 18 27
+        Set Location to 58 145
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+        Procedure OnClick
+            Send Request_Cancel
+        End_Procedure
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub4
+
+
+    //AB-StoreStart
+    
+    Procedure StartReport
+          String  FileName
+          set picount to 0
+          if (piprt(self)=1) begin
+             set Output_Device_Mode  To PRINT_TO_PRINTER
+             Set Output_Device_Name  To "Lpt1:"
+          end
+          else begin
+             Make_Temp_File "TXT" FileName
+             Move (".\" - FileName)  To FileName
+             Set Output_Device_Name  To FileName
+          end
+         Send Run_Report  //record
+         if (piprt(self)=0) begin
+             RunProgram background "notepad" FileName
+             EraseFile FileName
+         end
+    End_Procedure   // StartReport
+    
+    
+    Object deltia_BasicReport is a BasicReport
+    
+        Object btnemp_DD is a btnemp_DataDictionary
+           begin_constraints
+            set ordering to 12
+            string spar sdatefrom sdateto ideop
+            Get psdatefrom to sdatefrom
+            get psdateto   to sdateto
+            get pideop     to ideop
+            if (sdatefrom='') move '01/01/1980' to sdatefrom
+            if (sdateto='')   move '31/12/2100' to sdateto
+            get pspar      to spar
+            constrain btnemp.vcompany    eq syscurxr.company_code
+            constrain btnemp.vsiteemf    eq syscurxr.branch_site
+            if (spar<>'') constrain btnemp.vvoucher eq spar
+            Constrain btnemp.vdate between sdatefrom and sdateto
+            constrain btnemp.pms_recr    eq '0'
+            if (ideop=1) constrain btnemp.offer_id eq ''
+           End_Constraints
+    
+        End_Object
+    
+        Object clients_DD is a clients_DataDictionary
+        End_Object
+    
+        Object ptyppar_DD is a ptyppar_DataDictionary
+        End_Object
+    
+        Object Syscurxr_DD is a Syscurxr_DataDictionary
+        End_Object    // Syscurxr_DD
+    
+        Set Server To (btnemp_DD(Current_Object))
+        Report_Main_File btnemp
+    
+        Report_Index By index.3
+        report_breaks btnemp.vclientcode btnemp.vconscode btnemp.vseries btnemp.vsn btnemp.vrow
+        Set Report_Caption to "É†òõ†°ò©Âò ©ú ú•‚¢†•û"
+        Set Report_Title to "Ñ°´Áß‡©û Ñ°°®ú£È§ èò®ò©´ò´†°È§                  "
+    
+        Function Starting_Main_Report Returns Integer
+          local integer iretval
+          blankform totaldeltia_1.1  thru totaldeltia_1.2
+          blankform headerdeltia.1 thru headerdeltia.10
+          Forward Get Starting_Main_Report to iRetval
+          Send Find to (btnemp_dd(self)) First_Record 3
+          Report_Index BY 3
+    
+          set page_end to 69
+          set page_feed  to 69
+          Function_Return iRetval
+        End_Function
+    
+    
+       Procedure_Section Page_Top as Headerdeltia
+          Local Integer iPage  icount
+          date      ddate  datefrom dateto
+          string sora
+          number    nhour nmin ntotal
+          get psdatefrom to datefrom
+          get psdateto to dateto
+          move syscurxr.company_name  to headerdeltia.1
+          move syscurxr.branch_name   to headerdeltia.2
+          move syscurxr.year_descr    to headerdeltia.3
+          SysDate4 dDate nHour nMin
+          Move (nHour+(nMin/100)) to nTotal
+          move (fsConvert_Time_Number_To_String_With_Zeroes(nTotal)) to sora
+          move ddate  to headerdeltia.4
+          move sora   to headerdeltia.5
+          get page_count to icount
+          move icount to headerdeltia.6
+          move datefrom to headerdeltia.7
+          move dateto   to headerdeltia.8
+          move  btnemp.vvoucher to headerdeltia.9
+          clear ptyppar
+          move syscurxr.company_code  to ptyppar.company_code
+          move syscurxr.branch_code   to ptyppar.branch_code
+          move syscurxr.year_year     to ptyppar.year_year
+          move  btnemp.vvoucher       to ptyppar.ptyppar_code
+          find eq ptyppar by index.1
+          if (found=1) move ptyppar.ptyppar_descr to headerdeltia.10
+          else         move ''                    to headerdeltia.10
+       //   insert ':' in headerdeltia.5 at 3
+          OutPut_PageCheck
+       End_Procedure
+    
+       Procedure_Section SubHeader1 as Subheaderdeltia_1
+       End_Procedure
+    
+       Procedure_Section SubHeader2 as Subheaderdeltia_2
+    
+       End_Procedure
+    
+       Procedure_Section SubHeader3 as Subheaderdeltia_3
+       End_Procedure
+    
+       Procedure_Section SubHeader4 as Subheaderdeltia_4
+       End_Procedure
+    
+       Procedure_Section SubHeader5 as Subheaderdeltia_5
+       End_Procedure
+    
+       Procedure_Section  Body as Bodydeltia
+          integer icount
+          if (pnvsn(self)<>btnemp.vsn) begin
+            add 1 to totaldeltia_1.1
+            set pnvsn to btnemp.vsn
+            blankform bodydeltia.1 thru bodydeltia.13
+            output_pagecheck
+          end
+          send update_status ('Ñöö®ò≠„ ' + string(btnemp.vdate) + ":" +  string(btnemp.vsn))
+          print btnemp.vdate        to bodydeltia.1
+          print btnemp.vtime        to bodydeltia.2
+          print btnemp.vsn          to bodydeltia.3
+          print btnemp.vclientcode  to bodydeltia.4
+          clear clients
+          move btnemp.vclientcode   to clients.client_id
+          find eq clients by index.6
+          if (found=1) print clients.client_name to bodydeltia.5
+          print btnemp.vconscode    to bodydeltia.6
+          clear cn
+          move btnemp.vconscode     to cn.cn_code
+          find eq cn by index.5
+          if (found=1) print cn.cn_address to bodydeltia.7
+          print btnemp.vprodcode    to bodydeltia.8
+          print btnemp.vqty         to bodydeltia.9
+          print btnemp.vorderprice  to bodydeltia.10
+          print btnemp.vpumbid      to bodydeltia.11
+          print btnemp.vcarcode     to bodydeltia.12
+          print btnemp.Vzone        to bodydeltia.13
+          clear item
+          move btnemp.vprodcode to item.item_code
+          find eq item by index.5
+          if ((found=1) and (item.wapokat_code<>sysfile.wapokat_etoima)) begin
+             print '' to bodydeltia.4
+             print '' to bodydeltia.5
+             print '' to bodydeltia.6
+             print '' to bodydeltia.7
+          end
+          if (item.wapokat_code=sysfile.wapokat_etoima) begin
+              add Bodydeltia.9          to totaldeltia_1.2
+    //          set pnqtyergo     to (pnqtyergo(self)+btnemp.vqty)
+    //          set pnqtyclient   to (pnqtyclient(self)+btnemp.vqty)
+    //          set piaaergo   to (piaaergo(self)+1)
+    //          set piaaclient to (piaaclient(self)+1)
+    
+          End
+          output_pagecheck
+       End_Procedure
+    
+       Procedure_Section Subtotal5 as Subtotaldeltia_5
+            if (item.wapokat_code=sysfile.wapokat_etoima) begin
+              set pnqtyergo     to (pnqtyergo(self)+btnemp.vqty)
+              set pnqtyclient   to (pnqtyclient(self)+btnemp.vqty)
+              set piaaergo   to (piaaergo(self)+1)
+              set piaaclient to (piaaclient(self)+1)
+          End
+       End_Procedure
+    
+       Procedure_Section Subtotal4 as Subtotaldeltia_4
+       End_Procedure
+    
+       Procedure_Section Subtotal3 as Subtotaldeltia_3
+       End_Procedure
+    
+    
+       Procedure_Section Subtotal2 as Subtotaldeltia_2
+          print (piaaergo(self))  to Subtotaldeltia_2.1
+          print (pnqtyergo(self)) to Subtotaldeltia_2.2
+          output_pagecheck
+          set pnqtyergo to 0
+          set piaaergo  to 0
+       End_Procedure
+    
+       Procedure_Section Subtotal1 as Subtotaldeltia_1
+          print (piaaclient(self))   to Subtotaldeltia_1.1
+          print (pnqtyclient(self))  to Subtotaldeltia_1.2
+    
+          output_pagecheck
+          set pnqtyclient to 0
+          set piaaclient  to 0
+       End_Procedure
+    
+    
+       Procedure_Section  total as totaldeltia_1
+          print         totaldeltia_1.1
+          print         totaldeltia_1.2
+          set pnvsn to 0
+          OutPut_PageCheck
+       end_Procedure
+    
+       Procedure Ending_Report
+          blankform totaldeltia_1.1 thru totaldeltia_1.2
+       End_Procedure
+       Procedure_Section Page_Bottom as Footerdeltia
+       //    OutPut_PageCheck
+       End_Procedure
+    
+    
+    END_OBJECT
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //AB-StoreEnd
+
+End_Object    // Deltia
+
+
+//AB-StoreStart
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+//AB-StoreEnd
+
+//AB/ End_Object    // prj

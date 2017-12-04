@@ -1,0 +1,394 @@
+string gsPath
+get_attribute df_open_path to gsPath
+set_attribute df_open_path to (".;"+gsPath)
+
+// Project Object Structure
+//   WorkspaceSwitcher_vw is a BasicPanel
+//     workspace_cbf is a ComboForm
+//     known_cbf is a ComboForm
+//     path_frm is a Form
+//     switch_btn is a Button
+//     exit_btn is a Button
+//     Textbox1 is a Textbox
+//     oWorkSpaces_ary is a array
+//     oKnownConfig_ary is a array
+//       oAssociatedWkSp_ary is a array
+//       oBitmapPath_ary is a array
+//       oDataPath_ary is a array
+//       oDescription_ary is a array
+//       oFileListPath_ary is a array
+//       oHelpPath_ary is a array
+//       oProgramPath_ary is a array
+
+// Register all objects
+Register_Object exit_btn
+Register_Object known_cbf
+Register_Object oAssociatedWkSp_ary
+Register_Object oBitmapPath_ary
+Register_Object oDataPath_ary
+Register_Object oDescription_ary
+Register_Object oFileListPath_ary
+Register_Object oHelpPath_ary
+Register_Object oKnownConfig_ary
+Register_Object oProgramPath_ary
+Register_Object oWorkSpaces_ary
+Register_Object path_frm
+Register_Object switch_btn
+Register_Object Textbox1
+Register_Object WorkspaceSwitcher_vw
+Register_Object workspace_cbf
+
+
+//Use DFAllEnt.pkg   //only use what you need so that the app is smaller
+use ui
+use dfcmbfrm
+use dfbase
+use msgbox
+
+//ACTIVATE_VIEW Activate_WorkspaceSwitcher_vw FOR WorkspaceSwitcher_vw
+
+//Object WorkspaceSwitcher_vw is a dbView
+Object WorkspaceSwitcher_vw is a basicpanel
+    property string psBranch ""
+    property string psKey ""
+
+    set icon to "switcher.ico"
+    Set Label to "Workspace Switcher"
+    Set Size to 117 213
+    Set Location to 20 30
+    set locate_mode to CENTER_ON_SCREEN
+
+    Object workspace_cbf is a ComboForm
+
+        set entry_state item 0 to false
+        set combo_sort_state to false
+        Set Label to "Workspace:"
+        Set Size to 13 143
+        Set Location to 30 60
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+
+        Procedure Combo_Fill_List
+            integer iObj iCount iLoop
+            string sWorkSpace
+
+            move (oWorkSpaces_ary(self)) to iObj
+            get item_count of iObj to iCount
+            for iLoop from 0 to (iCount-1)
+                get value of iObj item iLoop to sWorkSpace
+                Send Combo_Add_Item sWorkSpace
+            loop
+
+        End_Procedure
+
+        procedure OnChange
+            forward send OnChange
+            send Combo_Fill_List to known_cbf
+        end_procedure
+
+    End_Object    // workspace_cbf
+
+    Object known_cbf is a ComboForm
+
+        set entry_state item 0 to false
+        set combo_sort_state to false
+        Set Label to "Known Configs:"
+        Set Size to 13 143
+        Set Location to 47 60
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+
+        Procedure Combo_Fill_List
+            integer iAssWkSp_obj iKnown_obj iCount iLoop
+            string sWkSp sAssWkSp sConfig
+
+            send combo_delete_data
+
+            get value of workspace_cbf to sWkSp
+
+            move (oAssociatedWkSp_ary(oKnownConfig_ary(self))) to iAssWkSp_obj
+            move (oKnownConfig_ary(self)) to iKnown_obj
+            get item_count of (oKnownConfig_ary(self)) to iCount
+            for iLoop from 0 to (iCount-1)
+                get value of iAssWkSp_obj item iLoop to sAssWkSp
+                if sAssWkSp eq sWkSp begin
+                    get value of iKnown_obj   item iLoop to sConfig
+                    Send Combo_Add_Item sConfig
+                end
+            loop
+
+        End_Procedure
+
+    End_Object    // known_cbf
+
+    Object path_frm is a Form
+        Set Label to "Data Path:"
+        Set Size to 13 143
+        Set Location to 64 60
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+
+        Procedure OnChange
+            string sPath
+            get value to sPath
+            if (trim(sPath)) eq "" set enabled_state of known_cbf to true
+            else set enabled_state of known_cbf to false
+        End_Procedure  //OnChange
+    End_Object    // path_frm
+
+    Object switch_btn is a Button
+        Set Label to "&Switch"
+        Set Default_State to TRUE
+        Set Location to 82 99
+
+        Procedure OnClick
+            integer iAnswer iRoot
+            string sWorkspace sConfig sPath sMsgtxt sBranch sDataPath
+            string sFileListPath sDescription sKey
+
+            //get input
+            get value of workspace_cbf to sWorkspace
+            get value of known_cbf to sConfig
+            get value of path_frm to sPath
+
+            //determine if sPath is valid
+            move (trim(sPath)) to sPath
+            if sPath begin
+                get test_path sPath to sPath
+                if not sPath begin
+                    move ("'" + sPath + "' is not a valid path.  Would you ") to sMsgtxt
+                    move (sMsgTxt + "like to set the workspace to " + sConfig) to sMsgtxt
+                    move (sMsgTxt + " instead?") to sMsgTxt
+                    get yesno_box sMsgTxt to iAnswer
+                    if iAnswer eq mbr_no procedure_return
+                end
+            end
+
+            //change workspace
+            Get_Registry_Root To iRoot sBranch
+            if sPath begin
+                Set_Registry_Root To HKEY_LOCAL_MACHINE (psBranch(self)) //"Software"
+
+                move sPath to sDataPath
+                move (sPath + "\filelist.cfg") to sFileListPath
+                move (sWorkspace + " (" + sPath + ")") to sDescription
+//                move "Data Access Corporation\Visual DataFlex\6\Workspaces" to sKey
+                get psKey to sKey
+
+                Set_Foreign_Profile_String sKey sWorkspace "DataPath" to sDataPath
+                Set_Foreign_Profile_String sKey sWorkspace "FileListPath" to sFileListPath
+                Set_Foreign_Profile_String sKey sWorkspace "Description" to sDescription
+               move ("Workspace: '" + sWorkspace + "' set to: '" + sPath + "'") to sMsgTxt
+            end
+            else if sConfig begin
+               send set_registry_stuff to (oKnownConfig_ary(self)) sConfig
+               move ("Workspace: '" + sWorkspace + "' set to Configuration: '" + sConfig + "'") to sMsgTxt
+            end
+            else move "You must select a Known Configuration or enter a Data Path." to sMsgTxt
+            //put it back the way I found it
+            set_Registry_Root To iRoot (if(sBranch="","SOFTWARE",sBranch)) // there is a bug in the get_registry_root so you need the "SOFTWARE" default here
+
+            send info_box sMsgTxt
+
+        End_Procedure // OnClick
+
+        //this will check to see if the directory exists and
+        //return "" or the valid path w/o the trailing "\"
+        Function test_path string sPath Returns string
+            integer iLen
+
+            move (length(sPath)) to iLen
+            if (right(sPath,1)) eq "\" move (left(sPath,(iLen-1))) to sPath
+            Function_Return sPath
+        End_Function
+
+    End_Object    // switch_btn
+
+    Object exit_btn is a Button
+        Set Label to "E&xit"
+        Set Location to 82 153
+
+        Procedure OnClick
+            abort
+        End_Procedure // OnClick
+    End_Object    // exit_btn
+
+    Object Textbox1 is a Textbox
+        Set Label to "Workspace Switcher"
+        Set FontSize to 20 0
+        Set Location to 7 47
+        Set Size to 10 67
+        Set FontWeight to 600
+    End_Object    // Textbox1
+
+    Object oWorkSpaces_ary is an array
+        procedure load_workspaces
+            string sLine
+            integer iItem
+
+            readln sLine
+            move (trim(sLine)) to sLine
+            while (not(seqeof) and sLine ne "<end_workspaces>")
+                if sLine ne "" begin
+                    get item_count to iItem
+                    set value item iItem to sLine
+                end
+                readln sLine
+                move (trim(sLine)) to sLine
+            loop
+        end_procedure  //load_workspaces
+
+    End_Object //oWorkSpaces_ary
+
+    Object oKnownConfig_ary is an array
+        Object oAssociatedWkSp_ary is an array
+        End_Object  //oAssociatedWkSp_ary
+
+        Object oBitmapPath_ary is an array
+        End_Object  //oBitmapPath_ary
+
+        Object oDataPath_ary is an array
+        End_Object  //oDataPath_ary
+
+        Object oDescription_ary is an array
+        End_Object  //oDescription_ary
+
+        Object oFileListPath_ary is an array
+        End_Object  //oFileListPath_ary
+
+        Object oHelpPath_ary is an array
+        End_Object  //oHelpPath_ary
+
+        Object oProgramPath_ary is an array
+        End_Object  //oProgramPath_ary
+
+        procedure initialize_object
+            send delete_data
+            send delete_data to oAssociatedWkSp_ary
+            send delete_data to oBitmapPath_ary
+            send delete_data to oDataPath_ary
+            send delete_data to oDescription_ary
+            send delete_data to oFileListPath_ary
+            send delete_data to oHelpPath_ary
+            send delete_data to oProgramPath_ary
+        end_procedure  //initialize_object
+
+        procedure set_registry_stuff string sConfig
+            string sValue sBmp sData sDesc sFilelist sHelp sPrg sKey sWkSp
+            integer iCount iLoop iItem
+
+            //find corrosponding item #
+            get item_count to iCount
+            for iLoop from 0 to (iCount - 1)
+                get value item iLoop to sValue
+                if sValue eq sConfig begin
+                    move iLoop to iItem
+                    move (iCount - 1) to iLoop
+                end
+            loop
+
+            //get values
+            get value of oAssociatedWkSp_ary item iItem to sWkSp
+            get value of oBitmapPath_ary     item iItem to sBmp
+            get value of oDataPath_ary       item iItem to sData
+            get value of oDescription_ary    item iItem to sDesc
+            get value of oFileListPath_ary   item iItem to sFilelist
+            get value of oHelpPath_ary       item iItem to sHelp
+            get value of oProgramPath_ary    item iItem to sPrg
+
+            //set registry
+//            move "Data Access Corporation\Visual DataFlex\6\Workspaces" to sKey
+            get psKey of (WorkspaceSwitcher_vw(self)) to sKey
+
+            Set_Foreign_Profile_String sKey sWkSp "BitmapPath"   to sBmp
+            Set_Foreign_Profile_String sKey sWkSp "DataPath"     to sData
+            Set_Foreign_Profile_String sKey sWkSp "Description"  to sDesc
+            Set_Foreign_Profile_String sKey sWkSp "FileListPath" to sFilelist
+            Set_Foreign_Profile_String sKey sWkSp "HelpPath"     to sHelp
+            Set_Foreign_Profile_String sKey sWkSp "ProgramPath"  to sPrg
+        end_procedure  //set_registry_stuff
+
+        procedure load_configs
+            integer iPos iItem
+            string sLine sKey sValue
+
+            readln sLine
+            move (trim(sLine)) to sLine
+            while (not(seqeof) and sLine ne "<end_configurations>")
+                move (pos("=",sLine)) to iPos
+                move (lowercase(trim(left(sLine,(iPos-1))))) to sKey
+                move (trim(right(sLine,((length(sLine))-iPos)))) to sValue
+
+                if sKey eq "configname" begin
+                    get item_count to iItem
+                    set value item iItem to sValue
+                end
+                else if sKey eq "workspace"    ;
+                    set value of oAssociatedWkSp_ary item iItem to sValue
+                else if sKey eq "bitmappath"   ;
+                    set value of oBitmapPath_ary     item iItem to sValue
+                else if sKey eq "datapath"     ;
+                    set value of oDataPath_ary       item iItem to sValue
+                else if sKey eq "description"  ;
+                    set value of oDescription_ary    item iItem to sValue
+                else if sKey eq "filelistpath" ;
+                    set value of oFileListPath_ary   item iItem to sValue
+                else if sKey eq "helppath"     ;
+                    set value of oHelpPath_ary       item iItem to sValue
+                else if sKey eq "programpath"  ;
+                    set value of oProgramPath_ary    item iItem to sValue
+
+                readln sLine
+                move (trim(sLine)) to sLine
+            loop
+        end_procedure  //load_configs
+
+    End_Object //oKnownConfig_ary
+
+    procedure process_fil_file
+        string sLine sType sValue
+        integer iCount iPos
+
+        send initialize_object to oKnownConfig_ary
+        send delete_data to oWorkSpaces_ary
+        direct_input "WkSpSwitch.fil"
+            while [~seqeof]
+                readln sLine
+                move (trim(sLine)) to sLine
+                if sLine eq "<start_workspaces>" send load_workspaces to oWorkSpaces_ary
+                else if sLine eq "<start_configurations>" send load_configs to oKnownConfig_ary
+                else if (pos("=",sLine)) gt 0 Begin
+                    move (pos("=",sLine)) to iPos
+                    move (lowercase(trim(left(sLine,(iPos-1))))) to sType
+                    move (trim(right(sLine,((length(sLine))-iPos)))) to sValue
+                    if (lowercase(sType)) eq "branch" set psBranch to sValue
+                    else if (lowercase(sType)) eq "key" set psKey to sValue
+                End  //
+            loop
+        close_input
+        //check for workspaces
+        get item_count of oWorkSpaces_ary to iCount
+        if iCount eq 0 begin
+            send stop_box "There are no Workspaces defined in the 'WkSpSwitch.fil' file.  You must set up that file before you can use this app."
+            abort
+        end
+        if (psBranch(self)) eq "" Begin
+            send stop_box "There is no Branch defined in the 'WkSpSwitch.fil' file.  You must set up that file before you can use this app."
+            abort
+        End  //
+        if (psKey(self)) eq "" Begin
+            send stop_box "There is no Key defined in the 'WkSpSwitch.fil' file.  You must set up that file before you can use this app."
+            abort
+        End  //
+        send Combo_Fill_List to workspace_cbf
+        send Combo_Fill_List to known_cbf
+    end_procedure //process_fil_file
+
+    on_key key_alt+key_x send keyaction to exit_btn
+    on_key key_alt+key_s send keyaction to switch_btn
+    on_key kcancel send keyaction to exit_btn
+
+End_Object    // WorkspaceSwitcher_vw
+
+send process_fil_file to (WorkspaceSwitcher_vw(self))
+start_ui WorkspaceSwitcher_vw

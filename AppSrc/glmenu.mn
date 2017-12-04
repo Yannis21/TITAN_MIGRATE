@@ -1,0 +1,163 @@
+// MNB-FileStart
+// MNB-HeaderStart
+// MNB-HeaderEnd
+
+DFCreate_Menu Main_Menu                            
+    
+    Property String psMenuModule
+    
+    #INCLUDE File_PM.inc
+
+    DFCreate_Menu "&Š¦š˜¨ ˜©£¦å" View_PopupMenu IS A ViewPopupMenu
+        On_Item "&Š¦š ©« ¡æ ‘®â› ¦"              Send Activate_Gplan_View
+        On_Item ""  
+        On_Item "&„¡«ç§à© Š¦š ©« ¡¦ç ‘®œ›å¦¬"  Send Activate_R150_0
+        On_Item "&„¡«ç§à© Š¦š ©« ¡¦ç ‘®œ›å¦¬ (Basic)"  Send Activate_R056
+    End_Pull_Down // Š¦š ©« ¡æ ‘®â› ¦
+    Set Status_Help To "Š¦š˜¨ ˜©£¦å"
+
+    DFCreate_Menu "&‰ ¤ã©œ ª" View1_PopupMenu IS A ViewPopupMenu
+
+        On_Item "&†£œ¨ã© œª ‰ ¤ã©œ ª"                       Send Activate_Gmove_View //Arthro_l
+        Set Status_Help To "†£œ¨ã© œª ‰ ¤ã©œ ª"
+//        On_Item "&ƒ ˜®œå¨ © Open Items"                     Send Activate_V068 
+//        On_Item ""                                          Send None
+//        Set Status_Help To "‘¬®œ«å©œ ª á¨Ÿ¨à¤"
+        On_Item ""
+        On_Item "&¨æ«¬§˜ €¨Ÿ¨˜ "                           Send Activate_V164
+//        On_Item "&€¡¬¨à« ¡á €¨Ÿ¨˜ "                         Send Activate_V058a
+//        On_Item ""
+//        On_Item "&„¡«¬§à© †£œ¨ã© à¤ ‰ ¤ã©œà¤"               Send Activate_R058
+        
+        Procedure OnInitMenu
+//            Set Shadow_State Item 1 to True
+//            Set Shadow_State Item 3 to True
+//            Set Shadow_State Item 4 to True
+        End_Procedure
+
+    End_Pull_Down // &View
+    Set Status_Help To "‰ ¤ã©œ ª"
+
+    DFCreate_Menu "„¡«¬§é©œ ª - &€§œ ¡¦¤å©œ ª " Report_PopupMenu IS A ViewPopupMenu
+
+        DFCreate_Menu "€§œ ¡¦¤å©œ ª" Disp_PopupMenu IS A ViewPopupMenu
+            On_Item "&€¤˜¢¬« ¡æ ‰˜Ÿ¦¢ ¡æ"        Send Activate_AnalKath1_View
+            On_Item "&ˆ©¦çš ¦ "                 Send Activate_v56v59v60
+
+        End_Pull_Down // ThRep
+        Set Status_Help To "€§œ ¡¦¤å©œ ª"
+            On_Item ""
+
+        DFCreate_Menu "„¡«¬§é©œ ª „¢âš®¦¬" CheckRep_PopupMenu IS A ViewPopupMenu
+            On_Item "&¨æ®œ ¨¦ †£œ¨¦¢æš ¦ (Basic)"               Send Activate_R058
+            On_Item "&€¤˜¢¬« ¡æ ‰˜Ÿ¦¢ ¡æ (Basic) "               Send Activate_R056_1
+            On_Item "&ˆ©¦çš ¦ „¢âš®¦¬ (Basic)"                  Send ElegxoyIso
+            On_Item "œ¨ ¦› ¡ã &”..€. (Basic) "                 Send Activate_r071
+            On_Item "" send none    
+            On_Item "¨æ®œ ¨¦ †£œ¨¦¢æš ¦"                       Send Activate_R157_1
+            On_Item "€¤˜¢¬« ¡æ ‰˜Ÿ¦¢ ¡æ "                       Send Activate_R157_2
+       //     On_Item "ˆ©¦çš ¦ „¢âš®¦¬ "                         Send activate_r157_3
+        End_Pull_Down //
+            
+
+        DFCreate_Menu "‡œà¨£â¤˜ †£œ¨¦¢æš ˜" ThRep_PopupMenu IS A ViewPopupMenu
+
+
+            /////On_Item "&ˆ©¦çš ¦            "  Send TheorimenoIso
+            On_Item "&‚œ¤ ¡æ ‰˜Ÿ¦¢ ¡æ     "  Send TheorimenoKath
+            On_Item "&†£œ¨¦¢æš ˜          "  Send Activate_R058T
+
+
+        End_Pull_Down // ThRep
+        Set Status_Help To "‡œà¨£â¤˜ †£œ¨¦¢æš ˜"
+
+
+    Set Status_Help To "„¡«¬§é©œ ª „¢âš®¦¬"
+    End_Pull_Down // &Report
+    Set Status_Help To "„¡«¬§é©œ ª"
+
+
+    DFCreate_Menu "¦&Ÿ« ¡á €¨®œå˜ - „¨š˜©åœª" HlpFilesRep_PopupMenu IS A ViewPopupMenu
+            on_item "„«˜ ¨œåœª-“§¦¡˜«-•¨ã©œ ª"                    send activate_v3 
+            on_item "ƒ ˜®œå¨ © „©à«œ¨ ¡é¤  ¤á¡à¤"               send activate_types_maint 
+            On_Item ""                                            Send NONE
+            //On_Item "€¢¢˜šã „«˜ ¨å˜ª-&•¨ã©ª\aCtrl+X"                      Send DoChangeYear
+            //Set Status_Help To "€¢¢˜šã „«˜ ¨å˜ª - •¨ã©ª"
+            //On_Item "ƒ ˜®œå¨ © ˜¨˜£â«¨à¤ •&¨ã©œà¤"              Send Activate_V53
+            On_Item "&†£œ¨¦¢æš ˜"                                 Send Activate_Gthhmgio
+            On_Item "†&£œ¨¦£¤åœª †£œ¨¦¢¦šåà¤"                    Send Activate_V063
+            On_Item "&’ç§¦  ‰ ¤ã©œà¤"                             Send Activate_Gtypkin_View
+            On_Item "&‹á©¡œª Š¦š ©« ¡¦ç ‘®œ›å¦¬"                  Send Activate_Gformat
+            on_item "ƒ ˜®œå¨ © „¡«¬§é©œà¤ "                      send activate_Vrep 
+          
+            On_Item ""
+            //On_Item "&€¤« š¨˜­ã Š¦š ©« ¡¦ç ‘®œ›å¦¬  "             Send Activate_v056c
+            //On_Item ""
+//            On_Item "&‘¬¤«ã¨© ¡à› ¡é¤ ¢ ©«é¤"                   Send Activate_Types_Maint
+//            Set Status_Help To "‘¬¤«ã¨© ˜¨®œåà¤ (CodeMast - CodeType)"
+//            On_Item ""                                            Send None
+
+            DFCreate_Menu "„¨š˜©åœª ‚.Š" Works_PopupMenu IS A ViewPopupMenu
+
+                On_Item "&¨ ©« ¡¦§¦å© „šš¨˜­é¤"                    Send Activate_V58U
+                On_Item "&Utilities"                                  Send Activate_GLUTIL
+                On_Item "&‰˜«á©«¨à© œ¨ ¦› ¡ãª ”€"                  Send Activate_v071
+                //On_Item "&‹›œ¤ ©£æª €/€¨ Ÿ£¦ç"                     Send Activate_V058T
+
+            End_Pull_Down // Works
+            Set Status_Help To "„¨š˜©åœª ‚œ¤ ¡ãª Š¦š ©« ¡ãª"
+            
+            //Set Shadow_State Item 10 to True
+            
+    End_Pull_Down //HlpFilesRep
+    Set Status_Help To "¦Ÿ« ¡á €¨®œå˜"
+
+    //#INCLUDE Text_pm.inc
+    #INCLUDE Navi_pm.inc
+    #INCLUDE Prn_pm.inc
+    #INCLUDE Win_pm.inc
+    #INCLUDE Help_pm.inc
+
+End_Menu // Main_Menu
+
+//MNB-StoreStart
+
+//Register_Procedure activate_Gplan_View
+//Register_Procedure activate_R056
+//Register_Procedure Activate_Gmove_View //Arthro_L
+//Register_Procedure Protypo_Arthro
+//Register_Procedure activate_V058A
+//Register_Procedure activate_R058
+//Register_Procedure activate_Analkath1_View
+//Register_Procedure activate_V56V59V60
+//Register_Procedure activate_R056_1
+//Register_Procedure ElegxoyIso
+//Register_Procedure TheorimenoIso
+//Register_Procedure Theorimenokath
+//Register_Procedure activate_R058T
+//Register_Procedure activate_CBY_View
+//Register_Procedure activate_V53
+//Register_Procedure activate_V056
+//Register_Procedure activate_Gtypkin_View
+//Register_Procedure activate_V888
+//Register_Procedure activate_Gformat
+//Register_Procedure activate_V065
+//Register_Procedure activate_V056C
+//Register_Procedure Change_Xrhsh
+//Register_Procedure activate_V58U
+//Register_Procedure activate_V059U
+//Register_Procedure activate_V058T
+//Register_Procedure Activate_Query_vw
+//Register_Procedure Activate_V063
+//Register_Procedure Activate_R059
+//Register_Procedure Activate_V068
+//Register_Procedure Activate_V054
+//Register_Procedure Activate_GLUTIL
+//Register_Procedure Activate_r071
+//Register_Procedure Activate_v071
+
+//Register_Procedure Activate_Types_Maint
+
+//MNB-StoreEnd
+
+Register_Object Client_Area

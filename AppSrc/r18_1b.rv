@@ -1,0 +1,1337 @@
+//AB/ Project r18_1b:polhseis eidon
+//AB/     Object prj is a Report_Project
+//AB/         Set ProjectName to "r18_1b:polhseis eidon"
+//AB/         Set ProjectFileName to "r18_1b.RV"
+
+// Project Object Structure
+//   r18_1b is a ReportView
+//     SortOrderGroup is a RadioGroup
+//       NumberSortRadio is a Radio
+//       NameSortRadio is a Radio
+//       DescAscCheckBox is a CheckBox
+//     GroupSub1 is a GroupSub
+//       Form2 is a Form
+//       F_CODE_APO is a FormSub
+//       F_CODE_EOS is a FormSub
+//       TextBoxSub1 is a TextBoxSub
+//       TextBoxSub2 is a TextBoxSub
+//       Textbox6 is a Textbox
+//       FormSub3 is a FormSub
+//       FormSub4 is a FormSub
+//       FormSub5 is a FormSub
+//     GroupSub3 is a GroupSub
+//       F_ONO_APO is a FormSub
+//       F_ONO_EOS is a FormSub
+//       Textbox1 is a Textbox
+//       Textbox2 is a Textbox
+//     GroupSub4 is a GroupSub
+//       F_HME_APO is a FormSub
+//       F_HME_EOS is a FormSub
+//       Textbox3 is a Textbox
+//       Textbox4 is a Textbox
+//     GroupSub5 is a GroupSub
+//       TextBoxSub25 is a TextBoxSub
+//       FormSub1 is a FormSub
+//       TextBoxSub26 is a TextBoxSub
+//       FormSub2 is a FormSub
+//     DestRadio is a RadioGroup
+//       WindowRadio is a Radio
+//       PrinterRadio is a Radio
+//     dbRadioGroupSub1 is a dbRadioGroupSub
+//       Radio1 is a RadioSub
+//       Radio2 is a RadioSub
+//       Radio3 is a RadioSub
+//     ButtonSub1 is a Button
+//     ButtonSub2 is a ButtonSub
+//     LineControlSub1 is a LineControlSub
+//     polhseis_BasicReport is a BasicReport
+//       Company_DD is a Company_DataDictionary
+//       Branch_DD is a Branch_DataDictionary
+//       Year_DD is a Year_DataDictionary
+//       Ctypkin_DD is a Ctypkin_DataDictionary
+//       Wtypkin_DD is a Wtypkin_DataDictionary
+//       Ptyppar_DD is a Ptyppar_DataDictionary
+//       Pseira_DD is a Pseira_DataDictionary
+//       Clients_DD is a Clients_DataDictionary
+//       Particle_DD is a Particle_DataDictionary
+//       Wapokat_DD is a Wapokat_DataDictionary
+//       Wapomast_DD is a Wapomast_DataDictionary
+//       Wax_DD is a Wax_DataDictionary
+//       Units_DD is a Units_DataDictionary
+//       Witemkat_DD is a Witemkat_DataDictionary
+//       Item_DD is a Item_DataDictionary
+//       Witemx_DD is a Witemx_DataDictionary
+//       Wcmoves_DD is a Wcmoves_DataDictionary
+//       Syscurxr_DD is a Syscurxr_DataDictionary
+//       Cn_DD is a Cn_DataDictionary
+
+// Register all objects
+Register_Object Branch_DD
+Register_Object ButtonSub1
+Register_Object ButtonSub2
+Register_Object Clients_DD
+Register_Object Cn_DD
+Register_Object Company_DD
+Register_Object Ctypkin_DD
+Register_Object DescAscCheckBox
+Register_Object DestRadio
+Register_Object dbRadioGroupSub1
+Register_Object F_CODE_APO
+Register_Object F_CODE_EOS
+Register_Object F_HME_APO
+Register_Object F_HME_EOS
+Register_Object F_ONO_APO
+Register_Object F_ONO_EOS
+Register_Object Form2
+Register_Object FormSub1
+Register_Object FormSub2
+Register_Object FormSub3
+Register_Object FormSub4
+Register_Object FormSub5
+Register_Object GroupSub1
+Register_Object GroupSub3
+Register_Object GroupSub4
+Register_Object GroupSub5
+Register_Object Item_DD
+Register_Object LineControlSub1
+Register_Object NameSortRadio
+Register_Object NumberSortRadio
+Register_Object Particle_DD
+Register_Object PrinterRadio
+Register_Object Pseira_DD
+Register_Object Ptyppar_DD
+Register_Object polhseis_BasicReport
+Register_Object Radio1
+Register_Object Radio2
+Register_Object Radio3
+Register_Object r18_1b
+Register_Object SortOrderGroup
+Register_Object Syscurxr_DD
+Register_Object TextBoxSub1
+Register_Object TextBoxSub2
+Register_Object TextBoxSub25
+Register_Object TextBoxSub26
+Register_Object Textbox1
+Register_Object Textbox2
+Register_Object Textbox3
+Register_Object Textbox4
+Register_Object Textbox6
+Register_Object Units_DD
+Register_Object Wapokat_DD
+Register_Object Wapomast_DD
+Register_Object Wax_DD
+Register_Object Wcmoves_DD
+Register_Object WindowRadio
+Register_Object Witemkat_DD
+Register_Object Witemx_DD
+Register_Object Wtypkin_DD
+Register_Object Year_DD
+
+
+//AB/     Report View
+
+
+    //AB-StoreTopStart
+    Use dfallrpt
+    use company.dd
+    use branch.dd
+    use year.dd
+    Use ctypkin.dd
+    use wtypkin.dd
+    use ptyppar.dd
+    use pseira.dd
+    use particle.dd
+    use wapokat.dd
+    use wapomast.dd
+    use wax.dd
+    use units.dd
+    use witemkat.dd
+    use item.dd
+    use witemx.dd
+    use cn.dd
+    Use pmoves.dd
+    Use syscurxr.dd
+    use rvir18_1b.pkg
+    use wax.sl
+    use sl026a.sl
+    use sl029a.sl
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use DFAllEnt.pkg
+    Use Group.Sub
+    Use Form.Sub
+    Use Txtbox.Sub
+    Use dbRgroup.Sub
+    Use Radio.Sub
+    Use Button.Sub
+    Use Line.Sub
+
+    //AB-IgnoreEnd
+
+    DEFERRED_VIEW Activate_r18_1b FOR ;
+    ;
+    Object r18_1b is a ReportView
+
+        //AB-StoreTopStart
+        property string psdatetor18_1
+        property string psdatefromr18_1
+        property string psapomastr18_1
+        property string psitemfromr18_1
+        property string psitemtor18_1
+        property string psctypkinfromr18_1
+        property string psctypkintor18_1
+        property integer pisubr18_1 public 0
+        property integer epilr18_1 public 0
+        property number pqty public 0
+        property number pekp public 0
+        property number pfpa public 0
+        property number ppay public 0
+        Property String psModule Public ''
+        
+        //AB-StoreTopEnd
+
+        Set Label to "è‡¢„©ú†™ Ñ†õÈ§ / ÑÂõ¶™ (Basic Report)"
+        Set Size to 230 294
+        Set Location to 1 5
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object SortOrderGroup is a RadioGroup
+
+            //AB-StoreTopStart
+            
+            //AB-StoreTopEnd
+
+            Set Label to "â®†´„®†¶ íò•†§Ê£û©û™"
+            Set Size to 55 86
+            Set Location to 155 3
+            Object NumberSortRadio is a Radio
+                Set Label to "âò´· â‡õ†°Ê"
+                Set Size to 10 56
+                Set Location to 12 10
+            End_Object    // NumberSortRadio
+
+            Object NameSortRadio is a Radio
+                Set Label to "âò´· Ñß‡§¨£Âò"
+                Set Size to 10 67
+                Set Location to 24 10
+
+                //AB-StoreStart
+                set enabled_state to false
+                
+                //AB-StoreEnd
+
+            End_Object    // NameSortRadio
+
+            Object DescAscCheckBox is a CheckBox
+                Set Label to "îüÂ§¶¨©ò"
+                Set Size to 10 50
+                Set Location to 37 11
+
+                //AB-StoreStart
+                set enabled_state to false
+                //AB-StoreEnd
+
+            End_Object    // DescAscCheckBox
+
+
+            //AB-StoreStart
+            Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+                Forward Send Notify_Select_State  iNewItem  iOldItem
+              //  Set Sort_IndexR18_1  To (iNewItem + 1)
+            End_Procedure
+            
+            //AB-StoreEnd
+
+        End_Object    // SortOrderGroup
+
+        Object GroupSub1 is a GroupSub
+            Set Label to "Ñß†¢¶ö„ Äß¶ü„°û™-Ñ†õÈ§"
+            Set Size to 65 283
+            Set Location to 1 1
+            Object Form2 is a Form
+                Set Size to 13 63
+                Set Location to 12 61
+                Set Label_Justification_Mode to jMode_Right
+                Set Form_DataType to ascii_window
+                Set Prompt_Button_Mode to pb_PromptOn
+
+                //AB-StoreStart
+                Set Prompt_Object to (wax(Current_object))
+                Procedure Prompt_Callback integer hPrompt
+                    set Export_Column of hPrompt to 0
+                    Set Initial_Column of hPrompt to 0
+                end_procedure
+                
+                
+                procedure onchange
+                    string wrecr
+                    get value of (form2(self)) to wrecr
+                    move wrecr to wax.wax_recr
+                    find eq wax by index.2
+                    if (found) set value of (formsub3(self)) to wax.wax_descr
+                    else set value of (formsub3(self)) to ''
+                end_procedure
+                
+                
+                
+                
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // Form2
+
+            Object F_CODE_APO is a FormSub
+
+                //AB-StoreTopStart
+                
+                //AB-StoreTopEnd
+
+                Set Size to 13 63
+                Set Location to 28 61
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Prompt_Button_Mode to pb_PromptOn
+
+                //AB-StoreStart
+                
+                Set Prompt_Object to (SL22S(Current_object))
+                Procedure Prompt_Callback integer hPrompt
+                    set Export_Column of hPrompt to 0
+                    Set Initial_Column of hPrompt to 0
+                end_procedure
+                
+                procedure onchange
+                    string witem sdescr
+                    get value item 0 to witem
+                    move (fsitem(self,witem)) to sdescr
+                    set value of (formsub4(self)) to sdescr
+                end_procedure
+                
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // F_CODE_APO
+
+            Object F_CODE_EOS is a FormSub
+
+                //AB-StoreTopStart
+                
+                //AB-StoreTopEnd
+
+                Set Size to 13 63
+                Set Location to 44 61
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Prompt_Button_Mode to pb_PromptOn
+
+                //AB-StoreStart
+                
+                Set Prompt_Object to (SL22s(Current_object))
+                Procedure Prompt_Callback integer hPrompt
+                    set Export_Column of hPrompt to 0
+                    Set Initial_Column of hPrompt to 0
+                end_procedure
+                
+                
+                procedure onchange
+                    string witem sdescr
+                    get value item 0 to witem
+                    move (fsitem(self,witem)) to sdescr
+                    set value of (formsub5(self)) to sdescr
+                end_procedure
+                
+                
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // F_CODE_EOS
+
+            Object TextBoxSub1 is a TextBoxSub
+                Set Label to "ÄßÊ â‡õ†°Ê"
+                Set Auto_Size_State to FALSE
+                Set FontSize to 4 0
+                Set Location to 29 5
+                Set Size to 10 44
+                Set Enabled_State to TRUE
+            End_Object    // TextBoxSub1
+
+            Object TextBoxSub2 is a TextBoxSub
+                Set Label to "Ñ‡™ â‡õ†°Ê "
+                Set Auto_Size_State to FALSE
+                Set FontSize to 4 0
+                Set Location to 44 5
+                Set Size to 13 47
+                Set Enabled_State to TRUE
+            End_Object    // TextBoxSub2
+
+            Object Textbox6 is a Textbox
+                Set Label to "Äß¶ü„°û      :"
+                Set Location to 12 5
+                Set Size to 10 33
+            End_Object    // Textbox6
+
+            Object FormSub3 is a FormSub
+                Set Size to 13 143
+                Set Location to 12 127
+                Set Label_Col_Offset to 2
+
+                //AB-StoreStart
+                set enabled_state to false
+                //AB-StoreEnd
+
+            End_Object    // FormSub3
+
+            Object FormSub4 is a FormSub
+                Set Size to 13 143
+                Set Location to 28 127
+                Set Label_Col_Offset to 2
+
+                //AB-StoreStart
+                set enabled_state to false
+                //AB-StoreEnd
+
+            End_Object    // FormSub4
+
+            Object FormSub5 is a FormSub
+                Set Size to 13 143
+                Set Location to 44 127
+                Set Label_Col_Offset to 2
+
+                //AB-StoreStart
+                set enabled_state to false
+                //AB-StoreEnd
+
+            End_Object    // FormSub5
+
+
+            //AB-StoreStart
+            
+            
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // GroupSub1
+
+        Object GroupSub3 is a GroupSub
+            Set Label to "Ñß†¢¶ö„ Ñß‡§¨£Âò™ èú¢ò´È§"
+            Set Size to 40 283
+            Set Location to 44 1
+            Set Visible_State to FALSE
+            Object F_ONO_APO is a FormSub
+                Set Size to 13 211
+                Set Location to 9 60
+                Set Color to clBtnFace
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Prompt_Button_Mode to pb_PromptOn
+                Set Enabled_State to FALSE
+                Set Implicit_Shadow_State to TRUE
+                Set Item_Shadow_State Item 0 to TRUE
+                Set Shadow_State Item 0 to TRUE
+
+                //AB-StoreStart
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // F_ONO_APO
+
+            Object F_ONO_EOS is a FormSub
+                Set Size to 13 211
+                Set Location to 24 60
+                Set Color to clBtnFace
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Prompt_Button_Mode to pb_PromptOn
+                Set Enabled_State to FALSE
+                Set Implicit_Shadow_State to TRUE
+                Set Item_Shadow_State Item 0 to TRUE
+                Set Shadow_State Item 0 to TRUE
+
+                //AB-StoreStart
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // F_ONO_EOS
+
+            Object Textbox1 is a Textbox
+                Set Label to "ÄßÊ é§¶£ò©Âò :"
+                Set Location to 10 5
+                Set Size to 10 53
+            End_Object    // Textbox1
+
+            Object Textbox2 is a Textbox
+                Set Label to "ÑÈ™ é§¶£ò©Âò :"
+                Set Location to 25 4
+                Set Size to 10 53
+            End_Object    // Textbox2
+
+
+            //AB-StoreStart
+            
+            //AB-StoreEnd
+
+        End_Object    // GroupSub3
+
+        Object GroupSub4 is a GroupSub
+            Set Label to "Ñß†¢¶ö„ Ü£ú®/§Âò™ â†§„©ú‡§"
+            Set Size to 49 283
+            Set Location to 74 1
+            Object F_HME_APO is a FormSub
+                Set Size to 13 60
+                Set Location to 8 60
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Form_Datatype Item 0 to Mask_Date_Window
+                Set Prompt_Button_Mode to pb_PromptOn
+                Set Form_Mask Item 0 to "d/M/yyyy"
+
+                //AB-StoreStart
+                set prompt_object to (ocalendar(self))
+                
+                
+                
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // F_HME_APO
+
+            Object F_HME_EOS is a FormSub
+                Set Size to 13 60
+                Set Location to 24 60
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Form_Datatype Item 0 to Mask_Date_Window
+                Set Prompt_Button_Mode to pb_PromptOn
+                Set Form_Mask Item 0 to "d/M/yyyy"
+
+                //AB-StoreStart
+                set prompt_object to (ocalendar(self))
+                
+                
+                
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // F_HME_EOS
+
+            Object Textbox3 is a Textbox
+                Set Label to "ÄßÊ Ü£/§Âò :"
+                Set Location to 10 6
+                Set Size to 10 47
+            End_Object    // Textbox3
+
+            Object Textbox4 is a Textbox
+                Set Label to "Ñ‡™ Ü£§Âò  :"
+                Set Location to 24 5
+                Set Size to 12 45
+            End_Object    // Textbox4
+
+
+            //AB-StoreStart
+            
+            //AB-StoreEnd
+
+        End_Object    // GroupSub4
+
+        Object GroupSub5 is a GroupSub
+            Set Label to "Ñß†¢¶ö„ íÁß‡§ â†§„©ú‡§"
+            Set Size to 29 283
+            Set Location to 125 1
+            Object TextBoxSub25 is a TextBoxSub
+                Set Label to "ÄßÊ âÂ§û©û   :"
+                Set Location to 14 5
+                Set Size to 10 47
+            End_Object    // TextBoxSub25
+
+            Object FormSub1 is a FormSub
+                Set Size to 13 49
+                Set Location to 12 60
+                Set Label_Col_Offset to 2
+                Set Prompt_Button_Mode to pb_PromptOn
+
+                //AB-StoreStart
+                Set Prompt_Object to (sl029a(Current_object))
+                Procedure Prompt_Callback integer hPrompt
+                    set Export_Column of hPrompt to 0
+                    Set Initial_Column of hPrompt to 0
+                end_procedure
+                
+                
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // FormSub1
+
+            Object TextBoxSub26 is a TextBoxSub
+                Set Label to "Ñ‡™ âÂ§û©û   :"
+                Set Location to 12 130
+                Set Size to 10 47
+            End_Object    // TextBoxSub26
+
+            Object FormSub2 is a FormSub
+                Set Size to 13 55
+                Set Location to 10 188
+                Set Label_Col_Offset to 2
+                Set Prompt_Button_Mode to pb_PromptOn
+
+                //AB-StoreStart
+                Set Prompt_Object to (sl029a(Current_object))
+                Procedure Prompt_Callback integer hPrompt
+                    set Export_Column of hPrompt to 0
+                    Set Initial_Column of hPrompt to 0
+                end_procedure
+                
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // FormSub2
+
+
+            //AB-StoreStart
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // GroupSub5
+
+        Object DestRadio is a RadioGroup
+
+            //AB-StoreTopStart
+            
+            //AB-StoreTopEnd
+
+            Set Label to "Ñ°´Á&ß‡©û"
+            Set Size to 51 49
+            Set Location to 158 169
+            Object WindowRadio is a Radio
+                Set Size to 13 30
+                Set Location to 12 12
+                Set Bitmap to "screen4.bmp"
+            End_Object    // WindowRadio
+
+            Object PrinterRadio is a Radio
+                Set Size to 10 31
+                Set Location to 37 12
+                Set Bitmap to "PRINT_M1.BMP"
+            End_Object    // PrinterRadio
+
+
+            //AB-StoreStart
+            
+            //***
+            //*** Procedure: Notify_Select_state
+            //*** Purpose  : Augemented to setup the output destination of the WinQL
+            //***            report. The procedure is sent when the user changes the
+            //***            selection.
+            //***
+            
+            Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+                Forward Send Notify_Select_State  iNewItem  iOldItem
+                If iNewItem Eq 0 ;
+                    Set Output_Device_Mode To WQL_PRINT_TO_WINDOW
+                Else If iNewItem Eq 1;
+                    Set Output_Device_Mode To WQL_PRINT_TO_PRINTER
+            
+            End_Procedure
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // DestRadio
+
+        Object dbRadioGroupSub1 is a dbRadioGroupSub
+            Set Size to 55 64
+            Set Location to 154 99
+            Object Radio1 is a RadioSub
+                Set Label to "åÊ£†©£ò 1"
+                Set Size to 10 46
+                Set Location to 10 5
+
+                //AB-StoreStart
+                set label to syscurxr.c_code0
+                //AB-StoreEnd
+
+            End_Object    // Radio1
+
+            Object Radio2 is a RadioSub
+                Set Label to "åÊ£†©£ò 2"
+                Set Size to 10 46
+                Set Location to 25 5
+
+                //AB-StoreStart
+                set label to syscurxr.c_code00
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // Radio2
+
+            Object Radio3 is a RadioSub
+                Set Label to "åÊ£†©£ò 3"
+                Set Size to 10 46
+                Set Location to 40 5
+
+                //AB-StoreStart
+                set label to syscurxr.c_coder
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // Radio3
+
+
+            //AB-StoreStart
+            Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+                Forward Send Notify_Select_State  iNewItem  iOldItem
+                If iNewItem Eq 0 ;
+                    Set epilr18_1 to 1
+                Else If iNewItem Eq 1;
+                    Set epilr18_1 to 2
+                Else If iNewItem Eq 2 ;
+                    Set epilr18_1 to 3
+            End_Procedure
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // dbRadioGroupSub1
+
+        Object ButtonSub1 is a Button
+
+            //AB-StoreTopStart
+            
+            //AB-StoreTopEnd
+
+            Set Bitmap to "RUNPROG.BMP"
+            Set Size to 18 28
+            Set Location to 162 243
+
+            //AB-StoreStart
+            Procedure OnClick
+                string dateapo dateeos msgstr
+                integer listatus
+                move 0 to listatus
+                Get value of (f_hme_apo(GroupSub4(Self)))    item 0 to dateapo
+                Get value of (f_hme_eos(GroupSub4(Self)))    item 0 to dateeos
+                     if (dateapo ne "") begin
+                       if ((dateapo < syscurxr.year_xrhshfrom) or (dateapo > syscurxr.year_xrhshto)) begin
+                          move "" to msgstr
+                          move 1 to listatus
+                          move "Ü£/§Âú™ Ñß†¢¶ö„™ Ñ°´Ê™ é®Â‡§ ï®„©û™" to msgstr
+                          error 999 msgstr
+            
+                       end
+                     end
+            
+                      if (dateeos ne "") begin
+                       if ((dateeos < syscurxr.year_xrhshfrom) or (dateeos > syscurxr.year_xrhshto)) begin
+                          move "" to msgstr
+                           move 1 to listatus
+                          move "Ü£/§Âú™ Ñß†¢¶ö„™ Ñ°´Ê™ é®Â‡§ ï®„©û™" to msgstr
+                          error 999 msgstr
+                       end
+                      end
+               if (listatus = 0) begin
+                     Send startreport
+               end
+            
+            End_Procedure
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub1
+
+        Object ButtonSub2 is a ButtonSub
+
+            //AB-StoreTopStart
+            
+            //AB-StoreTopEnd
+
+            Set Bitmap to "CANCEL.BMP"
+            Set Size to 18 28
+            Set Location to 188 243
+
+            //AB-StoreStart
+            Procedure OnClick
+                Send Request_Cancel
+            End_Procedure
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub2
+
+        Object LineControlSub1 is a LineControlSub
+            Set Line_Style to lnSINGLE
+            Set Size to 4 306
+            Set Location to 212 -2
+        End_Object    // LineControlSub1
+
+
+        //AB-StoreStart
+        Procedure Activate_View Returns Integer
+            String sStr sModule StrDisp
+            Integer rVal
+            set value of (f_hme_apo(groupsub4(current_object))) to syscurxr.year_xrhshfrom
+            set value of (f_hme_eos(groupsub4(current_object))) to syscurxr.year_xrhshto
+            Forward Get Msg_Activate_View to rVal
+            Get psMenuModule  Of Main_Menu  to sModule
+            Set psModule                    to sModule
+        
+            // â‡õ†°ò™ ß¶¨ ò≠¶®ò ´¶ constrain ´‡§ ©´¶†Æú†‡§ ´¶¨ view ¶ß‡™ ßò®ò©´ò´†°·
+            // û °†§„©ú†™ ß¶¨ èêÑèÑà §ò úÂ§ò† constrain ò§ò¢¶öò £ú ´¶ °Á°¢‡£ò òß¶
+            // ´¶ ¶ß¶†¶ °ò¢úÂ´ò† ´¶ view. è.ï. ò§ °¢ûüúÂ òß¶ è‡¢„©ú†™/èú¢·´ú™ §ò £û§
+            // ≠òÂ§¶§´ò† ©´ò ßò®ò©´ò´†°· ´ò ctypkin Äö¶®È§ °¢ß....
+        
+            Move (gsfCode_mast("MODULE",(psModule(Self)))) to    StrDisp
+            if (smodule = "01");
+                 Set Label Of r18_1b to "è‡¢„©ú†™ Ñ†õÈ§ Ä§· ÑÂõ¶™"
+            if (smodule = "02");
+                 Set Label Of r18_1b to "Äö¶®‚™ Ñ†õÈ§ Ä§· ÑÂõ¶™"
+            if (psmodule(self) = "01");
+                 Set Report_Title of (polhseis_BasicReport(self)) to  "è‡¢„©ú†™ Ñ†õÈ§ / ÑÂõ¶™          "
+            if (psmodule(self) = "02");
+                 Set Report_Title of (polhseis_BasicReport(self)) to  "Äö¶®‚™ Ñ†õÈ§ / ÑÂõ¶™            "
+        
+        
+        
+        End_Procedure
+        
+        
+        Procedure StartReport
+            Integer iOutputDevice
+            String  FileName
+            string lsdatetor18_1
+            string lsdatefromr18_1
+            string lsctypkinfromr18_1
+            string lsctypkintor18_1
+            string lsapomastr18_1
+            string lsitemfromr18_1
+            string lsitemtor18_1
+            integer epil
+            string datehh datemm dateyy dateapo dateeos
+            Get Output_Device_Mode To iOutputDevice
+            If iOutputDevice EQ PRINT_TO_WINDOW Begin
+               Make_Temp_File "TXT" FileName
+               Move (".\" - FileName)  To FileName
+               Set Output_Device_Name  To FileName
+            End
+            Else ;
+            Set Output_Device_Name  To "Lpt1:"
+        
+           // Collection Of selection Criteria from VIEW
+           Get value of (form2(GroupSub1(Self)))        item 0 to lsapomastr18_1
+           Get value of (f_code_apo(GroupSub1(Self)))   item 0 to lsitemfromr18_1
+           Get value of (f_code_eos(GroupSub1(Self)))   item 0 to lsitemtor18_1
+           Get value of (f_hme_apo(GroupSub4(Self)))    item 0 to lsDatefromr18_1
+           Get value of (f_hme_eos(GroupSub4(Self)))    item 0 to lsDatetor18_1
+           Get value of (FormSub1(GroupSub5(Self)))     item 0 to lsctypkinfromr18_1
+           Get value of (FormSub2(GroupSub5(Self)))     item 0 to lsctypkintor18_1
+           set psapomastr18_1     to lsapomastr18_1
+           set psitemfromr18_1    to lsitemfromr18_1
+           set psitemtor18_1      to lsitemtor18_1
+           set psctypkinfromr18_1 to lsctypkinfromr18_1
+           set psctypkintor18_1   to lsctypkintor18_1
+           get epilr18_1 to epil
+           move lsdatetor18_1 to dateeos
+           move lsdatefromr18_1 to dateapo
+           if (dateeos eq 0) begin
+             move 31 to datehh
+             move 12 to datemm
+             move syscurxr.year_year to dateyy
+             Append dateeos datehh
+             append dateeos datemm
+             append dateeos dateyy
+            end
+        
+            if (dateapo eq 0) begin
+              move 01 to datehh
+              move 01 to datemm
+              move syscurxr.year_year to dateyy
+              append dateapo datehh
+              append dateapo "/"
+              append dateapo datemm
+              append dateapo "/"
+              append dateapo dateyy
+           end
+           set psdatefromr18_1    to dateapo
+           set psdatetor18_1      to dateeos
+        //   ------------------------------------------------------------------------------
+           Send Run_Report
+           If iOutputDevice EQ PRINT_TO_WINDOW Begin
+               RunProgram background "notepad" FileName
+               EraseFile FileName
+            End
+        End_Procedure
+        
+        
+        Object polhseis_BasicReport is a BasicReport
+                Object Company_DD is a Company_DataDictionary
+                End_Object    // Company_DD
+        
+                Object Branch_DD is a Branch_DataDictionary
+                    Set DDO_Server to (Company_DD(self))
+                End_Object    // Branch_DD
+        
+                Object Year_DD is a Year_DataDictionary
+                    Set DDO_Server to (Branch_DD(self))
+                End_Object    // Year_DD
+        
+                Object Ctypkin_DD is a Ctypkin_DataDictionary
+                End_Object    // Ctypkin_DD
+        
+                Object Wtypkin_DD is a Wtypkin_DataDictionary
+                End_Object    // Wtypkin_DD
+        
+                Object Ptyppar_DD is a Ptyppar_DataDictionary
+                 Set DDO_Server to (Ctypkin_DD(self))
+                 Set DDO_Server to (Wtypkin_DD(self))
+                End_Object    // Ptyppar_DD
+        
+                Object Pseira_DD is a Pseira_DataDictionary
+                    Set DDO_Server to (Ptyppar_DD(self))
+                end_object
+        
+                Object Clients_DD is a Clients_DataDictionary
+                End_Object    // Clients_DD
+        
+                Object Particle_DD is a Particle_DataDictionary
+                     Set DDO_Server to (Clients_DD(self))
+                     Set DDO_Server to (Ptyppar_DD(self))
+                end_object
+        
+                Object Wapokat_DD is a Wapokat_DataDictionary
+                End_Object    // Wapokat_DD
+        
+                Object Wapomast_DD is a Wapomast_DataDictionary
+                  Set DDO_Server to (Wapokat_DD(self))
+                End_Object    // Wapomast_DD
+        
+                Object Wax_DD is a Wax_DataDictionary
+                  Set DDO_Server to (Wapomast_DD(self))
+                End_Object    // Wax_DD
+        
+                Object Units_DD is a Units_DataDictionary
+                End_Object    // Units_DD
+        
+                Object Witemkat_DD is a Witemkat_DataDictionary
+                End_Object    // Witemkat_DD
+        
+                Object Item_DD is a Item_DataDictionary
+                  Set DDO_Server to (Units_DD(self))
+                  Set DDO_Server to (Witemkat_DD(self))
+                End_Object    // Item_DD
+        
+                Object Witemx_DD is a Witemx_DataDictionary
+                  Set DDO_Server to (Item_DD(self))
+                End_Object    // Witemx_DD
+        
+                Object Wcmoves_DD is a Wcmoves_DataDictionary
+                Set DDO_Server to (Wax_DD(self))
+                Set DDO_Server to (Wtypkin_DD(self))
+                Set DDO_Server to (Witemx_DD(self))
+                Function fiEggrafh_OK Returns Integer
+                    Integer rVal
+                    String sModule
+                    Get psModule to sModule
+                    If ((wcmoves.module_from=smodule)) Move 1 to rVal
+                        Function_Return rVal
+                    End_Function
+                   begin_constraints
+                     string  lsdatetor18_1
+                     string  lsapomastr18_1
+                     string lsctypkinfromr18_1 lsctypkintor18_1
+                     string lsitemfromr18_1 lsitemtor18_1
+                     get psdatetor18_1       to lsdatetor18_1
+                     get psapomastr18_1      to lsapomastr18_1
+                     get psitemfromr18_1     to lsitemfromr18_1
+                     get psitemtor18_1       to lsitemtor18_1
+                     get psctypkinfromr18_1  to lsctypkinfromr18_1
+                     get psctypkintor18_1    to lsctypkintor18_1
+                     constrain wcmoves.module_from  eq (psmodule(self))
+                     Constrain wcmoves.company_code eq syscurxr.company_code
+                     Constrain wcmoves.branch_code  eq syscurxr.branch_code
+                     Constrain wcmoves.year_year    eq syscurxr.year_year
+                     if lsapomastr18_1     ne "" Constrain  wcmoves.wax_recr eq lsapomastr18_1
+                     if lsitemfromr18_1    ne "" Constrain wcmoves.witemx_code ge lsitemfromr18_1
+                     if lsitemtor18_1      ne "" Constrain wcmoves.witemx_code le lsitemtor18_1
+                     if lsdatetor18_1      ne "" Constrain wcmoves.wcmove_hmnia le lsdatetor18_1
+                     if lsctypkinfromr18_1 ne "" Constrain wcmoves.wtypkin_code ge lsctypkinfromr18_1
+                     if lsctypkintor18_1   ne "" Constrain wcmoves.wtypkin_code le lsctypkintor18_1
+                     if ((lsctypkinfromr18_1 eq "") and (lsctypkintor18_1   eq "")) begin
+                             Constrain wcmoves as (fiEggrafh_OK(Self)=1)
+                     End
+                   end_constraints
+        
+                End_Object    // wcmoves_DD
+        
+                Object Syscurxr_DD is a Syscurxr_DataDictionary
+                End_Object    // Syscurxr_DD
+        
+                Object Cn_DD is a Cn_DataDictionary
+                  Set DDO_Server to (Clients_DD(self))
+                End_Object    // cn_DD
+        
+        
+        
+        
+            Set Server To (wcmoves_DD(Current_Object))
+            Report_Index By Index.12
+            report_breaks  wcmoves.wax_recr wcmoves.witemx_code
+        
+            Function Starting_Main_Report Returns Integer
+              Local Integer iRetVal
+              Forward Get Starting_Main_Report to iRetval
+              set page_end to 66
+              set page_feed  to 66
+              Send Find to (wcmoves_dd(self)) First_Record 12
+              Report_Index BY 12
+              SysDate4 Footerr18_1.1
+           End_Function
+        
+           Procedure_Section Page_Top as Headerr18_1
+              Local Integer iPage epil
+              string smodule
+              get epilr18_1 to epil
+              get psmodule to smodule
+              move syscurxr.company_name to headerr18_1.1
+              move syscurxr.branch_name   to headerr18_1.2
+              move syscurxr.year_year       to headerr18_1.3
+              Get Page_Count to headerr18_1.4
+              if (smodule = "01" ) begin
+                 move "è ó ä Ü ë Ñ à ë " to headerr18_1.5
+              end
+              if (smodule = "02" ) begin
+                 move "Ä Ç é ê Ñ ë " to headerr18_1.5
+              end
+               Case Begin
+                    Case (epil = 1)
+                      print syscurxr.c_code0 to headerr18_1.6
+                      Case Break
+        
+                    Case (epil = 2)
+                      print syscurxr.c_code00 to headerr18_1.6
+                      Case Break
+                    Case (epil = 3)
+                      print syscurxr.c_coder to headerr18_1.6
+                     Case Break
+        
+              Case End
+              get psdatefromr18_1 to headerr18_1.7
+              get psdatetor18_1   to headerr18_1.8
+              OutPut_PageCheck
+           End_Procedure
+        
+           Procedure_Section SubHeader1 as Subheaderr18_1
+               print wax.wax_code to subheaderr18_1.1
+               print wax.wax_descr to subheaderr18_1.2
+               output_pagecheck
+           end_procedure
+        
+           Procedure_Section SubHeader2 as Subheaderr18_1a
+               print witemx.witemx_code to subheaderr18_1a.1
+               print witemx.witemx_descr to subheaderr18_1a.2
+               output_pagecheck
+           end_procedure
+        
+           Procedure_Section  Body as Bodyr18_1
+               number qty ekp fpa pay  fnum
+               integer lisub epil
+               string lsdatefromr18_1 lsdatetor18_1 wsw
+               get psdatefromr18_1 to lsdatefromr18_1
+               get psdatetor18_1   to lsdatetor18_1
+        
+             //////////////
+               get epilr18_1 to epil
+               if (wcmoves.wcmove_hmnia lt lsdatefromr18_1) begin
+                   get pqty to qty
+                   get pekp to ekp
+                   get pfpa to fpa
+                   get ppay to pay
+                   if (epil eq 1) begin
+                     add wcmoves.wcmove_qty to qty
+                     add wcmoves.wcmov_discam0 to ekp
+                     add wcmoves.wcmov_vatam0 to fpa
+                     if (psmodule(self) = '01') move ((wcmoves.wcmove_x0  - wcmoves.wcmove_p0)*-1) to fnum
+                     else move (wcmoves.wcmove_x0  - wcmoves.wcmove_p0) to fnum
+                     add fnum to pay
+                   end
+                   if (epil eq 2) begin
+                     add wcmoves.wcmove_qty to qty
+                     add wcmoves.wcmov_discam00 to ekp
+                     add wcmoves.wcmov_vatam00 to fpa
+                     if (psmodule(self) = '01') move ((wcmoves.wcmove_x00  - wcmoves.wcmove_p00)*-1) to fnum
+                     else move (wcmoves.wcmove_x00  - wcmoves.wcmove_p00) to fnum
+                     add fnum to pay
+                   end
+                   if (epil eq 3) begin
+                     add wcmoves.wcmove_qty to qty
+                     add wcmoves.wcmov_discam1 to ekp
+                     add wcmoves.wcmov_vatam1 to fpa
+                     if (psmodule(self) = '01') move ((wcmoves.wcmove_x1  - wcmoves.wcmove_p1)*-1) to fnum
+                     else move (wcmoves.wcmove_x1  - wcmoves.wcmove_p1) to fnum
+                     add fnum to pay
+                   end
+                   set pqty to qty
+                   set pekp to ekp
+                   set pfpa to fpa
+                   set ppay to pay
+        
+               end
+               if (wcmoves.wcmove_hmnia ge lsdatefromr18_1) begin
+                  get pisubr18_1 to lisub
+                  if (lisub = 0) begin
+                      set pisubr18_1 to 1
+                      print "" to bodyr18_1.1
+                      print "" to bodyr18_1.2
+                      move "Ñ° ãú´ò≠¶®·™" to bodyr18_1.4
+                      get pqty to qty
+                      get pekp to ekp
+                      get pfpa to fpa
+                      get ppay to pay
+                      print ""    to bodyr18_1.3
+                      print qty to bodyr18_1.5
+                      print 0     to bodyr18_1.6
+                      print ekp to bodyr18_1.7
+                      print fpa to bodyr18_1.8
+                      print pay to bodyr18_1.9
+                      output_pagecheck
+        
+                  end
+                  get pisubr18_1 to lisub
+                  if (lisub = 1) begin
+                    print wcmoves.wcmove_hmnia to bodyr18_1.1
+                    print wtypkin.wtypkin_descr to bodyr18_1.2
+                    print wcmoves.client_id to bodyr18_1.3
+                    print wcmoves.wcmove_par to bodyr18_1.4
+                    get pqty to qty
+                    get pekp to ekp
+                    get pfpa to fpa
+                    get ppay to pay
+                    if (epil = 1) begin
+                     print wcmoves.wcmove_qty to bodyr18_1.5
+                     print wcmoves.unit_price0 to bodyr18_1.6
+                     print wcmoves.wcmov_discam0 to bodyr18_1.7
+                     print wcmoves.wcmov_vatam0 to bodyr18_1.8
+                     if (psmodule(self) = '01') move ((wcmoves.wcmove_x0  - wcmoves.wcmove_p0)*-1) to fnum
+                     else move (wcmoves.wcmove_x0  - wcmoves.wcmove_p0) to fnum
+                     print fnum to bodyr18_1.9
+                     calc (wcmoves.wcmove_qty + qty) to qty
+                     calc (wcmoves.wcmov_discam0 + ekp) to ekp
+                     calc (wcmoves.wcmov_vatam0 + fpa) to fpa
+                     if (psmodule(self) = '01') move ((wcmoves.wcmove_x0  - wcmoves.wcmove_p0)*-1) to fnum
+                     else move (wcmoves.wcmove_x0  - wcmoves.wcmove_p0) to fnum
+                     calc (fnum + pay) to pay
+                     output_pagecheck
+                   end
+                   if (epil eq 2) begin
+                    print wcmoves.wcmove_hmnia to bodyr18_1.1
+                    print wtypkin.wtypkin_descr to bodyr18_1.2
+                    print wcmoves.client_id to bodyr18_1.3
+                    print wcmoves.wcmove_par to bodyr18_1.4
+                    print wcmoves.wcmove_qty to bodyr18_1.5
+                    print wcmoves.unit_price00 to bodyr18_1.6
+                    print wcmoves.wcmov_discam00 to bodyr18_1.7
+                    print wcmoves.wcmov_vatam00 to bodyr18_1.8
+                    if (psmodule(self) = '01') move ((wcmoves.wcmove_x00  - wcmoves.wcmove_p00)*-1) to fnum
+                    else move (wcmoves.wcmove_x00  - wcmoves.wcmove_p00) to fnum
+                    print fnum to bodyr18_1.9
+                    calc (wcmoves.wcmove_qty + qty) to qty
+                    calc (wcmoves.wcmov_discam00 + ekp) to ekp
+                    calc (wcmoves.wcmov_vatam00 + fpa) to fpa
+                    if (psmodule(self) = '01') move ((wcmoves.wcmove_x00  - wcmoves.wcmove_p00)*-1) to fnum
+                    else move (wcmoves.wcmove_x00  - wcmoves.wcmove_p00) to fnum
+                    calc (fnum + pay) to pay
+                    output_pagecheck
+                   end
+                   if (epil eq 3) begin
+                    print wcmoves.wcmove_hmnia to bodyr18_1.1
+                    print wtypkin.wtypkin_descr to bodyr18_1.2
+                    print wcmoves.client_id to bodyr18_1.3
+                    print wcmoves.wcmove_par to bodyr18_1.4
+                    print wcmoves.wcmove_qty to bodyr18_1.5
+                    print wcmoves.unit_pricer to bodyr18_1.6
+                    print wcmoves.wcmov_discam1 to bodyr18_1.7
+                    print wcmoves.wcmov_vatam1 to bodyr18_1.8
+                    if (psmodule(self) = '01') move ((wcmoves.wcmove_x1  - wcmoves.wcmove_p1)*-1) to fnum
+                    else move (wcmoves.wcmove_x1  - wcmoves.wcmove_p1) to fnum
+                    print fnum to bodyr18_1.9
+                    calc (wcmoves.wcmove_qty + qty) to qty
+                    calc (wcmoves.wcmov_discam1 + ekp) to ekp
+                    calc (wcmoves.wcmov_vatam1 + fpa) to fpa
+                    if (psmodule(self) = '01') move ((wcmoves.wcmove_x1  - wcmoves.wcmove_p1)*-1) to fnum
+                    else move (wcmoves.wcmove_x1  - wcmoves.wcmove_p1) to fnum
+                    calc (fnum + pay) to pay
+                    output_pagecheck
+                   end
+                 end
+        
+                set pqty to qty
+                set pekp to ekp
+                set pfpa to fpa
+                set ppay to pay
+        
+            end
+            End_Procedure
+        
+        
+           Procedure_Section  subtotal2 as subtotalr18_1a
+               number qty ekp fpa pay epil
+               get pqty to qty
+               get pekp to ekp
+               get pfpa to fpa
+               get ppay to pay
+               print qty to SubtotalR18_1a.1
+               print ekp to SubtotalR18_1a.2
+               print fpa to SubtotalR18_1a.3
+               print pay to SubtotalR18_1a.4
+               set pisubr18_1 to 0
+               set pqty to 0
+               set pekp to 0
+               set pfpa to 0
+               set ppay to 0
+               output_pagecheck
+           end_Procedure
+           Procedure_Section  subtotal1 as subtotalr18_1
+               subtotal subtotalr18_1a.1 to SubtotalR18_1.1
+               subtotal subtotalr18_1a.2 to SubtotalR18_1.2
+               subtotal subtotalr18_1a.3 to SubtotalR18_1.3
+               subtotal subtotalr18_1a.4 to SubtotalR18_1.4
+               output_pagecheck
+           end_Procedure
+        
+           Procedure_Section  total as totalr18_1
+               subtotal SubtotalR18_1.1 to totalr18_1.1
+               subtotal SubtotalR18_1.2 to totalr18_1.2
+               subtotal SubtotalR18_1.3 to totalr18_1.3
+               subtotal SubtotalR18_1.4 to totalr18_1.4
+               output_pagecheck
+           end_Procedure
+           Procedure_Section Page_Bottom as Footerr18_1
+           End_Procedure
+        
+        
+           Procedure Ending_Report
+            blankform subtotalr18_1a.1 thru subtotalr18_1a.4
+            blankform subtotalr18_1.1 thru subtotalr18_1.4
+            blankform totalr18_1.1    thru totalr18_1.4
+        
+           End_Procedure
+        
+        
+        End_Object
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    CD_End_Object    // r18_1b
+
+
+    //AB-StoreStart
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

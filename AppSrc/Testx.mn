@@ -1,0 +1,231 @@
+Open Sysfile
+Open Sysrec
+Open Users
+Open UserGrps
+Open Pedia
+Open Views
+Open GrpViews
+Open GrpView0
+Open Arxeia
+Open GrpArx
+Open GrpArx0
+Open GrpOth
+Open GrpOth0
+Open Oth
+
+DFCreate_Menu Main_Menu
+
+  Property String psMenuModule Public ''
+
+    Function Find_User_Rights_In_Menu String asView Returns Integer
+        String  lsView lsLogin
+        Integer liUser  liViews iGroup
+        Move (fsLoginUserID())  to lsLogin
+        Move (Trim(ToOEM(asView))) to lsView
+        //////  /////////////////////////////////////
+        Clear Users
+        Move lsLogin    to Users.Login_ID
+        Find eq Users by Index.1 // Users:Index.1:Users.Login_ID
+        If (Found=1)  Begin
+            Move Users.User_ID  to liUser
+            Move Users.Grp_ID   to iGroup
+        End
+        Else Function_Return 0
+        Clear Views
+        Move (Trim(lsView)) to Views.Menu_Name
+        Find eq Views by Index.2 // Views:Index.2:Views.Menu_Name
+        If (Found=1) Begin
+            Move Views.View_ID to liViews
+            Clear GrpViews
+            Move liUser    to GrpViews.User_ID
+            Move liViews   to GrpViews.View_ID
+            Find Eq GrpViews by Index.1 // GrpViews:Index.1:GrpViews.User_ID+GrpViews.View_ID
+            If (Found=1) Begin // And (liUser=GrpViews.User_ID) And (liViews=GrpViews.View_ID)) Begin
+                Function_Return (GrpViews.Allow_Read<>'1')
+            End
+            Else Begin
+                Clear GrpView0
+                Move iGroup    to GrpView0.Group_ID
+                Move liViews   to GrpView0.View_ID
+                Find eq GrpView0 by Index.1 // GrpView0:Index.1:Group_ID+View_ID
+                If (Found=1) Begin
+                    Function_Return (GrpView0.Allow_Read<>'1')
+                End
+                Else Function_Return 0
+            End
+        End
+        Else Function_Return 0
+    End_Function
+
+    dfcreate_menu "èú¢·´ú™" cust_popupmenu is a ViewPopupMenu_Sec
+
+        on_item "ãû´®È¶ èú¢ò´È§         " send activate_vwclients
+        on_item "ãû´®È¶ Î®ö‡§           " send activate_v041
+        on_item "Ä®ÆúÂ¶ Î®ö‡§ - èú¢ò´È§ " send activate_cn
+        on_item "â†§„©ú†™ èú¢ò´È§       " send activate_vwcmoves
+        on_item "âò®´‚¢¢ò èú¢ò´È§       " send activate_vwkartel
+
+        Procedure OnInitMenu
+            Forward Send OnInitMenu
+            Set psMenuModule    to '01'
+            Move '01'           to gs_Module_Code
+        End_Procedure
+
+    END_PULL_DOWN   //end  of pelates menu
+
+    DFCreate_Menu "Ä©≠·¢ú†ò" Security00 IS A ViewPopupMenu_Sec
+
+        on_item "É†°ò†È£ò´ò é£·õ‡§ ï®û©´È§ ò§ò Tab Page"        Send Activate_GrpTab0
+        on_item "É†°ò†È£ò´ò ï®û©´È§ ò§ò Tab Page"               Send Activate_GrpTab
+        On_Item ''                                              Send None
+        on_item "É†°ò†È£ò´ò é£·õ‡§ ï®û©´È§ ò§ò Activate View"   Send Activate_GrpAct0
+        on_item "É†°ò†È£ò´ò ï®û©´È§ ò§ò Activate View"          Send Activate_GrpAct
+        On_Item ''                                              Send None
+        on_item "É†°ò†È£ò´ò é£·õò™ ï®û©´È§ ò§ò Ñß†¢¶ö„ ãú§¶Á"   Send Activate_GrpView0
+        on_item "É†°ò†È£ò´ò ï®û©´È§ ò§ò Ñß†¢¶ö„ ãú§¶Á"          Send Activate_GrpViews
+        On_Item ''                                              Send None
+        on_item "Group Of Users Rights Per Screen Field - View" Send Activate_GrpOth0
+        on_item "Users Rights Per Screen Field - View"          Send Activate_GrpOth
+        On_Item ''                                              Send None
+        on_item "É†ò°ò†È£ò´ò é£·õò™ ï®û©´È§ ò§ò Ä®ÆúÂ¶ / èúõÂ¶" Send Activate_GrpPed00
+        on_item "É†°ò†È£ò´ò ï®û©´È§ ò§ò Ä®ÆúÂ¶ / èúõÂ¶"         Send Activate_GrpPedia
+        On_Item ''                                              Send None
+        on_item "ï®„©´ú™"                                       Send Activate_Users
+        on_item "é£·õú™ ï®û©´È§"                                Send Activate_UserGrps
+        on_item "í£„£ò´ò ï®û©´È§"                               Send Activate_Departm
+        On_Item ''                                              Send None
+        on_item "Views / Screen Fields"                         Send Activate_Othon
+        On_Item ''                                              Send None
+        on_item "Views"                                         Send Activate_Views
+        on_item "Ä®ÆúÂò"                                        Send Activate_Arxeia
+        on_item "èúõÂò"                                         Send Activate_Pedia
+    End_Pull_Down // Security
+
+    Procedure Check_Rights_On_User_Administration
+        Local integer iCount liInt
+        Local String lsUser lsStr
+        Get Item_Count to iCount
+        Get fsLoginUserID to lsUser
+        Move (trim(lsUser)) to lsUser
+        Clear Users
+        Move lsUser to Users.Login_ID
+        Find eq Users By Index.1 // Users:Index.1:Login_ID
+        Set Shadow_State item (iCount-1) to (Users.Admin_Rights<>'1')
+    End_Procedure
+
+    Procedure Activating
+        Forward Send Activating
+        Send Check_Rights_On_User_Administration
+        Send Enhmerose_Views_File_In_Menu
+        If (Sysfile.Enhm_Arxeia=1) Send Enhmerose_Arxeia_File_In_Menu
+    End_Procedure
+//
+    Procedure OnInitMenu
+        String lsStr
+        Integer liInt iCount
+        Get Item_Count to iCount
+        Send Enhmerose_Views_File_In_Menu
+        Send Check_Rights_On_User_Administration
+
+        For liInt From 0 to (iCount-2)
+          Get Value item liInt to lsStr
+          Move (Trim(lsStr)) to lsStr
+          Set Shadow_State item liInt to (Find_User_Rights_In_Menu(Self,lsStr))
+        Loop
+    End_Procedure
+//
+End_Menu // Main_Menu
+//
+//
+procedure run_pagia
+    chain wait 'C:\VDF6\Develop\Pagia\Programs\test'
+end_procedure
+
+Procedure Enhmerose_Views_File_In_Menu
+    Integer liCount liInt liLastNo iMax
+    String lsStr
+    Get Item_Count Of Main_Menu to liCount
+    Clear Views
+    Move 9999 to Views.View_ID
+    Find lt Views by index.1 // view_id
+    If (Found=1)    Move Views.View_ID  to liLastNo
+    Else            Move 0              to liLastNo
+    For liInt From 0 to (liCount-1)
+        Get Value of Main_Menu item liInt to lsStr
+        Move (Trim(lsStr)) to lsStr
+        If ((lsStr<>'') and (Length(lsStr)>2)) Begin
+            Clear Views
+            Move (ToOEM(lsStr)) to Views.Menu_Name
+            Find eq Views by index.2 // Views.Menu_Name
+            If (NOT(Found)) Begin
+                Move (ToOEM(lsStr)) to Views.Menu_Name
+                If (Trim(Views.Menu_Name)<>'') Begin
+                    Add 1 to liLastNo
+                    Move liLastNo to Views.View_ID
+                    Saverecord Views
+                End
+            End
+        End
+    Loop
+End_Procedure
+//
+Procedure Enhmerose_Pedia_File Integer aiFileNumber
+    Integer iFields iInt iField_Number iErr iWait
+    Integer iField_Length iField_Type  iField_Precision
+    String  sField_Name sFileName
+    Get_Attribute DF_FILE_NUMBER_FIELDS Of aiFileNumber to iFields
+    Get_Attribute DF_FILE_DISPLAY_NAME  Of aiFileNumber To sFileName
+    Move (Trim(sFileName)) to sFileName
+
+    For iInt From 1 to iFields // To recnum (0) ektos
+        Get_Attribute DF_FIELD_NUMBER    Of aiFileNumber iInt to iField_Number
+        Get_Attribute DF_FIELD_LENGTH    Of aiFileNumber iInt to iField_Length
+        Get_Attribute DF_FIELD_NAME      Of aiFileNumber iInt to sField_Name
+        Get_Attribute DF_FIELD_PRECISION Of aiFileNumber iInt to iField_Precision
+        Get_Attribute DF_FIELD_TYPE      Of aiFileNumber iInt to iField_Type
+        Clear Pedia
+        Move aiFileNumber   to Pedia.Arxeio_ID
+        Move iField_Number  to Pedia.Pedio_Number
+        Find eq Pedia By Index.1 //Pedia:Index.1:Arxeio_ID+Pedio_Number
+        If (Not(Found)) Begin
+            Move iField_Length      to Pedia.Pedio_Length
+            Move sField_Name        to Pedia.Pedio_Name
+            Move iField_Precision   to Pedia.Pedio_Precision
+            Move iField_Type        to Pedia.Pedio_Type
+            Move (Trim(Trim(sFileName)+'-'+Trim((String(Pedia.Arxeio_ID)))+'-'+Trim((String(Pedia.Pedio_Number))))) to ;
+                    Pedia.Pedio_Recr
+            Saverecord Pedia
+        End
+    Loop
+End_Procedure
+//
+//
+Procedure Enhmerose_Arxeia_File_In_Menu
+    Local Integer File# Open# File_Number# liInt iMax iWait
+    Local String Physicalname# DisplayName# Logicalname# Rootname#
+    Move 0 To File#
+    Repeat
+      Get_Attribute Df_File_Next_Opened Of File# To File#
+      If (File#) Begin
+        Get_Attribute Df_File_Number Of File# To File_Number#
+            Get_Attribute DF_FILE_LOGICAL_NAME  Of File# To LogicalName#
+            Get_Attribute DF_FILE_DISPLAY_NAME  Of File# To DisplayName#
+            Get_Attribute DF_FILE_PHYSICAL_NAME Of File# To PhysicalName#
+            Get_Attribute DF_FILE_ROOT_NAME     Of File# To RootName#
+            Move (UpperCase(LogicalName#)) to LogicalName#
+            Move (UpperCase(DisplayName#)) to DisplayName#
+            Clear Arxeia
+            Move File_Number# to Arxeia.Arxeio_ID
+            Find eq Arxeia By Index.1 // Arxeio_ID
+            If (NOT(Found)) Begin
+                Move LogicalName# to Arxeia.Arxeio_Name
+                Move Displayname# to Arxeia.Access_Name
+                Saverecord Arxeia
+            End
+            If (File_Number#<>0) Send Enhmerose_Pedia_File File_Number#
+      End
+    Until File# Eq 0
+End_Procedure
+
+Register_Object Client_Area
+

@@ -1,0 +1,260 @@
+//AB/ Project r193_1:ektyposh deop
+//AB/     Object prj is a Report_Project
+//AB/         Set ProjectName to "r193_1:ektyposh deop"
+//AB/         Set ProjectFileName to "R193_1.RV"
+
+// Project Object Structure
+//   r193_1 is a ReportView
+//     DestRadio is a RadioGroup
+//       WindowRadio is a Radio
+//     ButtonSub1 is a Button
+//     ButtonSub3 is a ButtonSub
+//     prom1WQLReport is a crystalreportSubSQL
+
+// Register all objects
+Register_Object ButtonSub1
+Register_Object ButtonSub3
+Register_Object DestRadio
+Register_Object prom1WQLReport
+Register_Object r193_1
+Register_Object WindowRadio
+
+
+//AB/     Report View
+
+
+    //AB-StoreTopStart
+    Use dfallrpt
+    Open sysfile
+    open sysrecw
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use DFAllEnt.pkg
+    Use Button.Sub
+
+    //AB-IgnoreEnd
+
+    ACTIVATE_VIEW Activate_r193_1 FOR r193_1
+
+    Object r193_1 is a ReportView
+
+        //AB-StoreTopStart
+        property string          psdeop  public ''
+        //AB-StoreTopEnd
+
+        Set Label to "Ñ°´Áß‡©û ÉÑéè"
+        Set Size to 48 191
+        Set Location to 6 86
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object DestRadio is a RadioGroup
+
+            //AB-StoreTopStart
+                            
+            //AB-StoreTopEnd
+
+            Set Label to "tz.ektyposh"
+            Set Size to 29 49
+            Set Location to 2 1
+            Object WindowRadio is a Radio
+                Set Size to 13 30
+                Set Location to 12 12
+                Set Bitmap to "screen4.bmp"
+            End_Object    // WindowRadio
+
+
+            //AB-StoreStart
+            set visible_state of (destradio(self)) to false
+            Set Output_Device_Mode To WQL_PRINT_TO_WINDOW
+            
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // DestRadio
+
+        Object ButtonSub1 is a Button
+
+            //AB-StoreTopStart
+                            
+            //AB-StoreTopEnd
+
+            Set Bitmap to "RUNPROG.BMP"
+            Set Size to 18 29
+            Set Location to 6 55
+
+            //AB-StoreStart
+            Procedure OnClick
+               Send Runprom1report To (prom1WQLReport(Current_Object))
+            End_Procedure
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub1
+
+        Object ButtonSub3 is a ButtonSub
+
+            //AB-StoreTopStart
+                            
+            //AB-StoreTopEnd
+
+            Set Bitmap to "CANCEL.BMP"
+            Set Size to 18 29
+            Set Location to 6 89
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            Procedure OnClick
+                Send Request_Cancel
+            End_Procedure
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub3
+
+
+        //AB-StoreStart
+        Object prom1WQLReport Is A crystalreportSubSQL
+             Property Integer ReportReady Public False
+             Set Report_View_id To (Parent(Current_object))
+             set Report_name    To "r193_1.rpt"
+             Procedure OnStartPrinting
+                 Local String  Selection FileName lsdate sitem spay  sdeop sdoy seleipes sjob
+                 local number  nypoprosf npelates ncn
+                 Local Integer FileType Destination SortOrder NumSortFields CurSortField
+                 Local Integer SortDirection ifrom datefrom istadio
+                 Move "" To Selection
+                 move 'JOB' to sjob
+                 move 'PAY_TERMS' to spay
+                 move 'DOY' to sdoy
+                 move 'ELXREOSH' TO seleipes
+                 get psdeop to sdeop
+                 Append Selection "{CODEMAST.TYPE} = "  '"' (SDOY) '"'
+                 Append Selection (If(Selection <> "", " and ", "")) "{CODEMASTL.TYPE} = "  '"' (SDOY) '"'
+                 Append Selection (If(Selection <> "", " and ", "")) "{CODEMASTn.TYPE} = "  '"' (seleipes) '"'
+                 Append Selection (If(Selection <> "", " and ", "")) "{CODEMASTj.TYPE} = "  '"' (sjob) '"'
+                 Append Selection (If(Selection <> "", " and ", "")) "{btnordh.aa_deop} = "  '"' (TRIM(sdeop)) '"'
+                Set SelectionFormula To Selection
+                Send AddSortField "{btnordd.vitem}" PE_SF_ascending SortDirection
+                If Selection Eq "" ;
+                    Set Formula "SelTxt" To ('"' + "NONE" + '"')
+                Else ;
+                    Set Formula "SelTxt" To ('"' + (Replaces('"', Selection, "")) + '"')
+                set formula "fetoima" to (winql_string(sysfile.wapokat_etoima))
+                set formula "fELLEIPES" to (winql_string(sysfile.ELLEIPES))
+                move WQL_PRINT_TO_WINDOW to destination
+                If Destination EQ WQL_PRINT_TO_WINDOW ;
+                    Set ReportReady To False
+                Else ;
+                    Set ReportReady To True
+        
+            End_procedure // OnStartPrinting
+        
+        
+            Procedure Runprom1Report
+                Send Cursor_Wait To (Cursor_Control(Current_Object))
+        //        reread sysrecw
+        //        unlock
+        //        if (sysrecw.wmoves_rec0=1) set Report_name    To "r193_1trans.rpt"
+        //        else                       set Report_name    To "r193_1.rpt"
+                Send Run_report
+                Send Cursor_Ready To (Cursor_Control(Current_Object))
+                If (ReportReady(Current_object)) ;
+                    Send Info_box "WinQL report ready."
+            End_procedure // RunCustReport
+        
+        End_object
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // r193_1
+
+
+    //AB-StoreStart
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

@@ -3,7 +3,7 @@
 
 // File Name : CN.DD
 // Class Name: Cn_DataDictionary
-// Revision  : 101
+// Revision  : 105
 // Version   : 2
 
 Use  Windows           // Basic Definitions
@@ -87,6 +87,7 @@ Class Cn_DataDictionary  is a DataDictionary_Sec
         Property String  psAud_Old_CNAdd        Public ""
         Property String  psAud_Old_Chem         Public ""
         Property String  psAud_Old_CNRecr       Public ""
+        Property Integer piOldExportFlag        Public 0
         //------------------------------------------------
 
     End_procedure
@@ -101,6 +102,7 @@ Class Cn_DataDictionary  is a DataDictionary_Sec
         Set psAud_Old_CNAdd        to CN.CN_Descr
         Set psAud_Old_Chem         to CN.CN_VTicket
         Set psAud_Old_CNRecr       to CN.CN_Recr
+        Set piOldExportFlag         to CN.ExportFlag
         //------------------------------------------------
      End_Procedure   // New_Current_Record
 
@@ -174,6 +176,14 @@ Class Cn_DataDictionary  is a DataDictionary_Sec
         Move Salesmen.Sls_ID         to Cn.Cn_Sls_ID
         Move Constrct.Cnt_ID         to Cn.Cn_Cnt_ID
         Move mhxanik.mhx_id          to Cn.mhxanik_ID
+
+        If (Operation_ORIGIN=Self) Begin
+            If (piOldExportFlag(Self)=0) Begin
+                Move 1      to CN.ExportFlag
+                Move "SEND" to CN.ExportStatus
+            End
+        End
+       
 
         //---------------------------------------------
         // Auditing / Katagrafh allagon

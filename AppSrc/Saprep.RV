@@ -1,0 +1,474 @@
+//AB/ Project Saprep:sap report
+//AB/ Object prj is a Report_Project
+//AB/     Set ProjectName to "Saprep:sap report"
+//AB/     Set ProjectFileName to "Saprep.RV"
+
+// Project Object Structure
+//   Saprep is a ReportViewSub
+//     ButtonSub3 is a ButtonSub
+//     ButtonSub4 is a ButtonSub
+//     RadioGroupSub1 is a RadioGroupSub
+//       RadioSub1 is a RadioSub
+//       RadioSub2 is a RadioSub
+//       TextBoxSub1 is a TextBoxSub
+//       TextBoxSub2 is a TextBoxSub
+//     Sap_BasicReport is a BasicReport
+//       sysrep_DD is a sysrep_DataDictionary
+
+// Register all objects
+Register_Object ButtonSub3
+Register_Object ButtonSub4
+Register_Object RadioGroupSub1
+Register_Object RadioSub1
+Register_Object RadioSub2
+Register_Object Sap_BasicReport
+Register_Object Saprep
+Register_Object sysrep_DD
+Register_Object TextBoxSub1
+Register_Object TextBoxSub2
+
+
+//AB/ Report View
+
+
+//AB-StoreTopStart
+Use dfallrpt.pkg
+use sysrep.dd
+use rvisap.pkg
+open company
+open tmpclsap
+open tmppol
+open tmpaxio
+open tmpapoth
+open tmpanal
+//AB-StoreTopEnd
+
+//AB-IgnoreStart
+
+Use Rptvw.Sub
+Use Button.Sub
+Use Rgroup.Sub
+Use Radio.Sub
+Use Txtbox.Sub
+
+//AB-IgnoreEnd
+
+ACTIVATE_VIEW Activate_Saprep FOR Saprep
+
+Object Saprep is a ReportViewSub
+
+    //AB-StoreTopStart
+    
+    property date    pddate             public ''
+    property string pspath              public ''
+    
+    //AB-StoreTopEnd
+
+    Set Label to "Ñ¢úöÆ¶™ èò®òöÈ£ú§‡§ Ä®ÆúÂ‡§"
+    Set Size to 72 186
+    Set Location to 1 23
+    Set Color to 16744448
+
+    //AB-DDOStart
+
+
+    //AB-DDOEnd
+
+    Object ButtonSub3 is a ButtonSub
+        Set Bitmap to "RUNPROG.BMP"
+        Set Size to 18 27
+        Set Location to 14 91
+        Set Border_Style to Border_StaticEdge
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+        Procedure OnClick
+            send startreport
+        End_Procedure
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub3
+
+    Object ButtonSub4 is a ButtonSub
+        Set Bitmap to "CANCEL.BMP"
+        Set Size to 18 27
+        Set Location to 14 130
+        Set Border_Style to Border_StaticEdge
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+        Procedure OnClick
+            Send Request_Cancel
+        End_Procedure
+        
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub4
+
+    Object RadioGroupSub1 is a RadioGroupSub
+
+        //AB-StoreTopStart
+                                                                                                                                                                                                                                                                        
+        //AB-StoreTopEnd
+
+        Set Label to "Ñ°´Á&ß‡©û"
+        Set Size to 42 78
+        Set Location to 4 3
+        Object RadioSub1 is a RadioSub
+            Set Size to 10 13
+            Set Location to 12 63
+        End_Object    // RadioSub1
+
+        Object RadioSub2 is a RadioSub
+            Set Size to 10 13
+            Set Location to 28 63
+        End_Object    // RadioSub2
+
+        Object TextBoxSub1 is a TextBoxSub
+            Set Label to "éüÊ§û :"
+            Set Auto_Size_State to FALSE
+            Set FontSize to 4 0
+            Set Location to 10 5
+            Set Size to 12 45
+            Set TypeFace to "MS Sans Serif"
+            Set Enabled_State to TRUE
+        End_Object    // TextBoxSub1
+
+        Object TextBoxSub2 is a TextBoxSub
+            Set Label to "Ñ°´¨ß‡´„™ : "
+            Set Auto_Size_State to FALSE
+            Set FontSize to 4 0
+            Set Location to 24 5
+            Set Size to 12 45
+            Set TypeFace to "MS Sans Serif"
+            Set Enabled_State to TRUE
+        End_Object    // TextBoxSub2
+
+
+        //AB-StoreStart
+        Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+            Forward Send Notify_Select_State  iNewItem  iOldItem
+            If iNewItem EQ 0 Set Output_Device_Mode  To PRINT_TO_WINDOW
+            Else             Set Output_Device_Mode  To PRINT_TO_PRINTER
+        End_Procedure
+        //AB-StoreEnd
+
+    End_Object    // RadioGroupSub1
+
+
+    //AB-StoreStart
+    
+    Procedure StartReport
+        String  FileName lsdatetor6_1## lsdatefromr6_1## lsctypkinfromr6_1##
+        string lsctypkintor6_1## limonthr6_1## lscustfromr6_1## lscusttor6_1##
+        integer lizeror6_1## iOutputDevice epil##
+        string datehh## datemm## dateyy## dateapo## dateeos##
+    
+        Get Output_Device_Mode To iOutputDevice
+    
+        If iOutputDevice EQ PRINT_TO_WINDOW Begin
+            Make_Temp_File "TXT" FileName
+            Move (".\" - FileName)  To FileName
+            Set Output_Device_Name  To FileName
+        End
+        Else Set Output_Device_Name  To "Lpt1:"
+    
+        Send Run_Report
+    
+        If iOutputDevice EQ PRINT_TO_WINDOW Begin
+            RunProgram background "notepad" FileName
+            EraseFile FileName
+        End
+    End_Procedure
+    
+    
+    
+    Object Sap_BasicReport is a BasicReport
+    
+      Set Report_Title to "Ñ¢úöÆ¶™ Ñöö®ò≠È§ ASCII Ä®ÆúÂ‡§                   "
+      Set Report_Caption to "Ñ¢úöÆ¶™ Ä®ÆúÂ‡§  "
+    
+      Set Status_Panel_State  to true
+      Set Display_Error_State to True
+    
+      Object sysrep_DD is a sysrep_DataDictionary
+      End_Object    // tmpanal
+    
+      Set Server To (sysrep_dd(Self))
+    
+      //Breaks and Index for the report
+      Report_Index By Index.1
+    
+      Function Starting_Main_Report Returns Integer
+        Integer iIndexRlog
+        Local Integer iRetVal
+        blankform headersap_1.1
+        blankform bodysap_1.1 thru bodysap_1.2
+        blankform totalsap_1.1 thru totalsap_1.10
+        Forward Get Starting_Main_Report to iRetval
+        Send Find to (sysrep_dd(self)) First_Record 1
+      End_Function
+    
+       Procedure_Section Page_Top as Headersap_1
+          date ddate
+          get pddate to ddate
+          print ddate to headersap_1.1
+          OutPut_PageCheck
+      End_Procedure
+    
+      Procedure_Section  Body as Bodysap_1
+      End_procedure
+    
+      Procedure_Section  total as totalsap_1
+        Integer rVal iMhnas iEtos iHmera iNum  Inum1 ierr
+        string stomeas spath shmera smhnas setos  sstr SFILENAME STYPOS
+        date dAPO
+        move 0 to ierr
+        get pspath to spath
+        get pddate to dAPO
+        clear Company
+        move syscurxr.company_code      to Company.company_code
+        find eq company by index.1
+        move Company.company_c_code0    to stomeas
+        Move (TheDaySegment  (dapo))    to iHmera
+        Move (TheMonthSegment(dapo))    to iMhnas
+        Move (TheYearSegment(dapo))     to ietos
+        Move iHmera                     to sHmera
+        Move iMhnas                     to sMhnas
+        Move iEtos                      to sEtos
+        If (Length(sHmera)=1) Insert '0' in sHmera at 1
+        If (Length(sMhnas)=1) Insert '0' in sMhnas at 1
+        //FI1
+        move 0 to inum
+        move 0 to inum1
+        Move (psPath(Self)+Trim(stomeas)+'FI1'+Trim(sEtos)+Trim(sMhnas);
+                +Trim(sHmera)+'.txt')   to sFileName
+         Direct_Input Channel 9 sFileName
+         Readln Channel 9 sStr
+         While (Not(Seqeof))
+             Move (Mid(sstr,2,04))  to stypos
+             move (trim(stypos)) to stypos
+             if (stypos<>'90');
+                Add 1 to iNum
+             Readln Channel 9 sStr
+         Loop
+         Close_Input Channel 9
+         print iNum to totalsap_1.1
+         clear tmpclsap
+         find gt tmpclsap.recnum
+         while (found)
+             Move (trim(tmpclsap.typos))  to stypos
+             move (trim(stypos)) to stypos
+             if (stypos<>'90');
+                Add 1 to iNum1
+             find gt tmpclsap.recnum
+         Loop
+         print iNum1 to totalsap_1.2
+         //FI2
+         MOVE 0 TO INUM
+         move 0 to inum1
+         Move (psPath(Self)+Trim(stomeas)+'FI2'+Trim(sEtos)+Trim(sMhnas);
+                +Trim(sHmera)+'.txt')   to sFileName
+         Direct_Input Channel 9 sFileName
+         Readln Channel 9 sStr
+         While (Not(Seqeof))
+             Move (Mid(sstr,2,04))  to stypos
+             move (trim(stypos)) to stypos
+             if (stypos='01');
+                Add 1 to iNum
+             Readln Channel 9 sStr
+         Loop
+         Close_Input Channel 9
+         print iNum to totalsap_1.3
+         clear tmppol
+         find gt tmppol.recnum
+         while (found)
+             Move (trim(tmppol.typos))  to stypos
+             move (trim(stypos)) to stypos
+             if (stypos='01');
+                Add 1 to iNum1
+             find gt tmppol.recnum
+         Loop
+         print iNum1 to totalsap_1.4
+    
+    
+         //FI3
+         MOVE 0 TO INUM
+         move 0 to inum1
+         Move (psPath(Self)+Trim(stomeas)+'FI3'+Trim(sEtos)+Trim(sMhnas);
+                +Trim(sHmera)+'.txt')   to sFileName
+         Direct_Input Channel 9 sFileName
+         Readln Channel 9 sStr
+         While (Not(Seqeof))
+             Move (Mid(sstr,2,04))  to stypos
+             move (trim(stypos)) to stypos
+             if (stypos='01');
+                Add 1 to iNum
+             Readln Channel 9 sStr
+         Loop
+         Close_Input Channel 9
+         print iNum to totalsap_1.5
+         clear tmpaxio
+         find gt tmpaxio.recnum
+         while (found)
+             Move (trim(tmpaxio.typos))  to stypos
+             move (trim(stypos)) to stypos
+             if (stypos='01');
+                Add 1 to iNum1
+             find gt tmpaxio.recnum
+         Loop
+         print iNum1 to totalsap_1.6
+         //MM1
+         MOVE 0 TO INUM
+         move 0 to inum1
+         Move (psPath(Self)+Trim(stomeas)+'MM1'+Trim(sEtos)+Trim(sMhnas);
+                +Trim(sHmera)+'.txt')   to sFileName
+         Direct_Input Channel 9 sFileName
+         Readln Channel 9 sStr
+         While (Not(Seqeof))
+             Move (Mid(sstr,2,04))  to stypos
+             move (trim(stypos)) to stypos
+             if (stypos='01');
+                Add 1 to iNum
+             Readln Channel 9 sStr
+         Loop
+         Close_Input Channel 9
+         print iNum to totalsap_1.7
+         clear tmpapoth
+         find gt tmpapoth.recnum
+         while (found)
+             Move (trim(tmpapoth.typos))  to stypos
+             move (trim(stypos)) to stypos
+             if (stypos='01');
+                Add 1 to iNum1
+             find gt tmpapoth.recnum
+         Loop
+         print iNum1 to totalsap_1.8
+         //PP2
+         MOVE 0 TO INUM
+         move 0 to inum1
+         Move (psPath(Self)+Trim(stomeas)+'PP2'+Trim(sEtos)+Trim(sMhnas);
+                +Trim(sHmera)+'.txt')   to sFileName
+         Direct_Input Channel 9 sFileName
+         Readln Channel 9 sStr
+         While (Not(Seqeof))
+             Move (Mid(sstr,2,04))  to stypos
+             move (trim(stypos)) to stypos
+             if (stypos='09');
+                Add 1 to iNum
+             Readln Channel 9 sStr
+         Loop
+         Close_Input Channel 9
+         print iNum to totalsap_1.9
+         clear tmpanal
+         find gt tmpanal.recnum
+         while (found)
+             Move (trim(tmpanal.typos))  to stypos
+             move (trim(stypos)) to stypos
+             if (stypos='09');
+                Add 1 to iNum1
+             find gt tmpanal.recnum
+         Loop
+         print iNum1 to totalsap_1.10
+         OutPut_PageCheck
+         if (totalsap_1.1 <> totalsap_1.2) move 1 to ierr
+         if (totalsap_1.3 <> totalsap_1.4) move 2 to ierr
+         if (totalsap_1.5 <> totalsap_1.6) move 3 to ierr
+         if (totalsap_1.7 <> totalsap_1.8) move 4 to ierr
+         if (totalsap_1.9 <> totalsap_1.10) move 5 to ierr
+         if (ierr) begin
+                   if (ierr=1) send info_box 'ÄëìãîóåàÄ ÑÇÇêÄîóå ëíé ÄêïÑàé èÑäÄíóå' 'ëîÄäãÄ'
+              else if (ierr=2) send info_box 'ÄëìãîóåàÄ ÑÇÇêÄîóå ëíé ÄêïÑàé èóäÜëÑóå' 'ëîÄäãÄ'
+              else if (ierr=3) send info_box 'ÄëìãîóåàÄ ÑÇÇêÄîóå ëíé ÄêïÑàé ÑàëèêÄçÑóå' 'ëîÄäãÄ'
+              else if (ierr=4) send info_box 'ÄëìãîóåàÄ ÑÇÇêÄîóå ëíé ÄêïÑàé ÄèéáÜâÜë' 'ëîÄäãÄ'
+              else if (ierr=5) send info_box 'ÄëìãîóåàÄ ÑÇÇêÄîóå ëíé ÄêïÑàé ÄåÄäóëÑóå ' 'ëîÄäãÄ'
+         END
+      End_Procedure
+    
+    
+        Procedure Ending_Report
+        End_Procedure
+    
+    End_Object
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //AB-StoreEnd
+
+End_Object    // Saprep
+
+
+//AB-StoreStart
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+//AB-StoreEnd
+
+//AB/ End_Object    // prj

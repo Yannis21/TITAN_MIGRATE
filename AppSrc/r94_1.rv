@@ -1,0 +1,873 @@
+//AB/ Project r94_1:paraggelies
+//AB/     Object prj is a Report_Project
+//AB/         Set ProjectName to "r94_1:paraggelies"
+//AB/         Set ProjectFileName to "r94_1.rv"
+
+// Project Object Structure
+//   r94_1 is a ReportViewSub
+//     DestRadio is a RadioGroup
+//       WindowRadio is a Radio
+//     ButtonSub1 is a Button
+//     ButtonSub3 is a ButtonSub
+//     parWQLReport is a CrystalReportSubSQL
+
+// Register all objects
+Register_Object ButtonSub1
+Register_Object ButtonSub3
+Register_Object DestRadio
+Register_Object parWQLReport
+Register_Object r94_1
+Register_Object WindowRadio
+
+
+//AB/     Report View
+
+
+    //AB-StoreTopStart
+    Use dfallrpt
+    Use company.dd
+    Use year.dd
+    Use order1.dd
+    Use ordersd.dd
+
+
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use DFAllEnt.pkg
+    Use Button.Sub
+
+    //AB-IgnoreEnd
+
+    ACTIVATE_VIEW Activate_r94_1 FOR r94_1
+
+    Object r94_1 is a ReportViewSub
+
+        //AB-StoreTopStart
+
+
+        property string psrecr
+        //AB-StoreTopEnd
+
+        Set Label to "Ñ°´Áß‡©û èò®òööú¢Âò™"
+        Set Size to 48 177
+        Set Location to 10 167
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object DestRadio is a RadioGroup
+
+            //AB-StoreTopStart
+
+            //AB-StoreTopEnd
+
+            Set Label to "Ñ°´Áß‡©û"
+            Set Size to 29 49
+            Set Location to 2 1
+            Object WindowRadio is a Radio
+                Set Size to 13 30
+                Set Location to 12 12
+                Set Bitmap to "screen4.bmp"
+            End_Object    // WindowRadio
+
+
+            //AB-StoreStart
+            set visible_state of (destradio(self)) to false
+            //***
+            //*** Procedure: Notify_Select_state
+            //*** Purpose  : Augemented to setup the output destination of the WinQL
+            //***            report. The procedure is sent when the user changes the
+            //***            selection.
+            //***
+
+            //Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+            //    Forward Send Notify_Select_State  iNewItem  iOldItem
+            //    If iNewItem Eq 0 ;
+                    Set Output_Device_Mode To WQL_PRINT_TO_WINDOW
+            //    Else If iNewItem Eq 1;
+            //        Set Output_Device_Mode To WQL_PRINT_TO_PRINTER
+            //    Else If iNewItem Eq 2 ;
+            //        Set Output_Device_Mode To WQL_PRINT_TO_FILE
+
+
+            //    Send AdjustFileTypeShadow (iNewItem < 2)
+            //End_Procedure
+
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // DestRadio
+
+        Object ButtonSub1 is a Button
+
+            //AB-StoreTopStart
+
+            //AB-StoreTopEnd
+
+            Set Bitmap to "RUNPROG.BMP"
+            Set Size to 18 29
+            Set Location to 6 55
+
+            //AB-StoreStart
+            Procedure OnClick
+               Send RunparReport To (parWQLReport(Current_Object))
+            End_Procedure
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub1
+
+        Object ButtonSub3 is a ButtonSub
+
+            //AB-StoreTopStart
+
+            //AB-StoreTopEnd
+
+            Set Bitmap to "CANCEL.BMP"
+            Set Size to 18 29
+            Set Location to 6 89
+
+            //AB-StoreStart
+            Procedure OnClick
+                Send Request_Cancel
+            End_Procedure
+
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub3
+
+
+        //AB-StoreStart
+        Object parWQLReport Is A CrystalReportSubSQL
+
+
+
+            Property Integer ReportReady Public False
+                set Report_name    To "r94_1.rpt"
+            Set Report_View_id To (Parent(Current_object))
+
+           // Local Integer Count
+           // local integer CurSortDirection
+
+
+             Procedure OnStartPrinting
+                Local String  Selection FileName smodule lsdate  wrecr
+                Local Integer FileType Destination SortOrder NumSortFields CurSortField
+                Local Integer SortDirection
+                Move "" To Selection
+                Get psMenuModule  Of Main_Menu  to sModule
+                get psrecr to wrecr
+                Append Selection  "{order1.company_code} = " '"' (Trim(syscurxr.company_code)) '"'
+                Append Selection (If(Selection <> "", " and ", "")) "{order1.branch_code} = " '"' (Trim(syscurxr.branch_code)) '"'
+                Append Selection (If(Selection <> "", " and ", "")) "{order1.year_year} = "  '' (syscurxr.year_year) ''
+
+                if wrecr ne 0;
+                   Append Selection (If(Selection <> "", " and ", "")) "{order1.recr} = "  '"' (Trim(wrecr)) '"'
+                //*** Setup the selection formula
+
+
+                  Set SelectionFormula To Selection
+                  Get NSortFields To NumSortFields
+                  For CurSortField From 0 To (NumSortFields - 1)
+                  Send DeleteNthSortField 0
+                  Loop
+
+                 Send AddSortField "{ordersd.clients_code}" PE_SF_ASCENDING
+
+
+                 Set Formula "fmodule" To (winql_string(smodule))
+                 //*** Change the formula so the report reflects the selection. Remove
+                //*** quotes from the formula.
+                If Selection Eq "" ;
+                    Set Formula "SelTxt" To ('"' + "NONE" + '"')
+                Else ;
+                    Set Formula "SelTxt" To ('"' + (Replaces('"', Selection, "")) + '"')
+
+                move WQL_PRINT_TO_WINDOW to destination
+                If Destination EQ WQL_PRINT_TO_WINDOW ;
+                    Set ReportReady To False
+                Else ;
+                    Set ReportReady To True
+
+
+            End_procedure // OnStartPrinting
+
+
+            Procedure RunparReport
+                //*** We will be busy, change the cursor
+                Send Cursor_Wait To (Cursor_Control(Current_Object))
+
+                //*** Run the report
+                Send Run_report
+
+                //*** We are ready, change the cursor
+                Send Cursor_Ready To (Cursor_Control(Current_Object))
+
+                //*** Report you are finsihed for those seetings that do not use the
+                //*** screen
+                If (ReportReady(Current_object)) ;
+                    Send Info_box "WinQL report ready."
+            End_procedure // RunCustReport
+
+        End_object // serviceWQLReport
+
+
+        //***
+        //*** Function: Startservice
+        //*** Purpose : The start customer name
+        //***
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // r94_1
+
+
+    //AB-StoreStart
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

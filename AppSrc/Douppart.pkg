@@ -1,0 +1,231 @@
+        Use sysrecc.dd
+        use areas.dd
+        use country.dd
+        use towns.dd
+        use cities.dd
+        use payresp.dd
+        Use clients.dd
+        use constrct.dd
+        use mhxanik.dd
+        Use yclients.dd
+        use salesmen.dd
+        use cn.dd
+        Use ypoprosf.dd
+        Use camovedd.dd
+        use btnordh.dd
+        Use btnordd.dd
+        use v91.vw
+      Object oDouppart is A BusinessProcessSub
+        set Status_panel_state to false
+        set Display_Error_state to true
+
+        property date pddate        public ''
+        property integer piTxtID    public 0
+        property integer piLathos   public 0
+        property number pnypoprosf  public 0
+        property string pscn        public ''
+
+        Object Country_DD is a Country_DataDictionary
+        End_Object    // Country_DD
+
+        Object Towns_DD is a Towns_DataDictionary
+           Set DDO_Server to (Country_DD(self))
+        End_Object    // Towns_DD
+
+
+        Object Cities_DD is a Cities_DataDictionary
+            Set DDO_Server to (Towns_DD(self))
+        End_Object    // Cities_DD
+
+        Object Areas_DD is a Areas_DataDictionary
+        End_Object    // Areas_DD
+
+        Object Payresp_DD is a Payresp_DataDictionary
+        End_Object    // Payresp_DD
+
+        Object Clients_DD is a Clients_DataDictionary
+            Set DDO_Server to (Cities_DD(self))
+            Set DDO_Server to (Areas_DD(self))
+            Set DDO_Server to (Payresp_DD(self))
+        End_Object    // Clients_DD
+
+        Object Constrct_DD is a Constrct_DataDictionary
+        End_Object    // Constrct_DD
+
+        Object Salesmen_DD is a Salesmen_DataDictionary
+        End_Object    // Salesmen_DD
+
+        Object Mhxanik_DD is a Mhxanik_DataDictionary
+        End_Object    // Mhxanik_DD
+
+        Object Cn_DD is a Cn_DataDictionary
+            Set DDO_Server to (Clients_DD(self))
+            Set DDO_Server to (Constrct_DD(self))
+            Set DDO_Server to (Salesmen_DD(self))
+            Set DDO_Server to (Mhxanik_DD(self))
+
+        End_Object    // Cn_DD
+
+        Object Btnordh_DD is a Btnordh_DataDictionary
+            Set DDO_Server to (Cn_DD(self))
+            Set Constrain_File to Cn.File_Number
+            Send DefineAllExtendedFields
+        End_Object    // Btnordh_DD
+
+        Object Btnordd_DD is a Btnordd_DataDictionary
+            Set DDO_Server to (Btnordh_DD(self))
+            Set Constrain_File to Btnordh.File_Number
+        End_Object    // Btnordd_DD
+
+        Object sysrecc_DD is a sysrecc_DataDictionary
+        End_Object
+
+
+        Object Yclients_DD is a Yclients_DataDictionary
+        end_object
+
+
+        Object Ypoprosf_DD is a Ypoprosf_DataDictionary
+            Set DDO_Server to (Yclients_DD(self))
+            Send DefineAllExtendedFields
+        end_object
+
+        Object Camovedd_DD is a Camovedd_DataDictionary
+            Set DDO_Server to (Ypoprosf_DD(self))
+          //  Set DDO_Server to (Witemx_DD(self))
+            Set Constrain_File to Ypoprosf.File_Number
+            begin_constraints
+               number nypoprosf
+               get pnypoprosf to nypoprosf
+               Constrain camovedd.aa_ypoprosforas eq nypoprosf
+            End_Constraints
+        End_Object    // Camovedd_DD
+
+
+PROCEDURE beg_uppar number aaypoprosf date ddate string scn
+          set pnypoprosf to aaypoprosf
+          set pddate     to ddate
+          set pscn       to scn
+          SEND DOPROCESS
+END_PROCEDURE
+
+Procedure uppar_rec
+    Local Integer listatus licount liclorderddo nypoprosf istatero
+    date          lsenarxh lslhxh lsdate
+    local number  nqty nunitprice ndisc nprice npagiaxrm3 ndiscposo neleiph
+
+    local string  lsaapar sitem  promcode caitemscode spay;
+                  promitem wrecr recr  lscust sclient  aapar lsrecr orecr;
+                  nrecr  lsnomisma srecr scn ssxolia selxr sdeop
+
+
+    send clear to camovedd_dd
+    send clear to ypoprosf_dd
+    send clear to yclients_dd
+    get  pnypoprosf to nypoprosf
+    get pddate      to lsdate
+    get pscn        to scn
+    if (lsdate='') sysdate4 lsdate
+    move nypoprosf to ypoprosf.aa_ypoprosf
+    Send Find  to ypoprosf_dd eq 1
+    if (not(found)) begin
+       set pierr of (v91(self)) to 1
+       procedure_return
+    end
+    get field_current_value of yclients_dd field yclients.codem         to lscust
+    get field_current_value of ypoprosf_dd field ypoprosf.aa_ypoprosf   to lsrecr
+    get field_current_value of ypoprosf_dd field ypoprosf.deop_date     to lsenarxh
+    get field_current_value of ypoprosf_dd field ypoprosf.deop_lhxh     to lslhxh
+    get field_current_value of ypoprosf_dd field ypoprosf.statero       to istatero
+    get field_current_value of ypoprosf_dd field ypoprosf.velxr         to selxr
+    get field_current_value of ypoprosf_dd field ypoprosf.eleiph        to neleiph
+    get field_current_value of ypoprosf_dd field ypoprosf.sxolia        to ssxolia
+    send clear to cn_dd
+    move scn to cn.cn_code
+    send find to cn_dd eq 5
+    if (not(found)) begin
+        set pierr of (v91(self)) to 2
+        procedure_return
+    end
+
+    send clear to btnordh_dd
+    set field_changed_value of btnordh_dd field btnordh.sxolia       to ssxolia
+    set field_changed_value of btnordh_dd field btnordh.deop_date    to lsenarxh
+    set field_changed_value of btnordh_dd field btnordh.deop_lhxh    to lslhxh
+    set field_changed_value of btnordh_dd field btnordh.eleiph       to neleiph
+    set field_changed_value of btnordh_dd field btnordh.statero      to istatero
+    set field_changed_value of btnordh_dd field btnordh.velxr        to selxr
+
+    send request_save to btnordh_dd
+    get field_current_value of btnordh_dd field btnordh.aa_deop      to sdeop
+
+    send Rebuild_constraints to camovedd_dd
+    Send Find  to camovedd_dd first_record 1
+        if (not(found)) begin
+        set pierr of (v91(self)) to 3
+        procedure_return
+    end
+
+    While (found eq 1)
+        get field_current_value of camovedd_dd field camovedd.witemx_code      to sitem
+        get field_current_value of camovedd_dd field camovedd.camovedd_qty     to nqty
+        get field_current_value of camovedd_dd field camovedd.camovedd_unitpr  to nunitprice
+        get field_current_value of camovedd_dd field camovedd.camovedd_net     to nprice
+        get field_current_value of camovedd_dd field camovedd.pcdisc           to ndisc
+        get field_current_value of camovedd_dd field camovedd.posodisc         to ndiscposo
+        get field_current_value of camovedd_dd field camovedd.vpagiaxrm3       to npagiaxrm3
+        send clear to btnordd_dd
+        set field_changed_value of btnordd_dd  field btnordd.vitem             to sitem
+        set field_changed_value of btnordd_dd  field btnordd.vqty              to nqty
+        set field_changed_value of btnordd_dd  field btnordd.vunitprice        to nunitprice
+        set field_changed_value of btnordd_dd  field btnordd.vdisc             to ndisc
+        set field_changed_value of btnordd_dd  field btnordd.vprice            to nprice
+        set field_changed_value of btnordd_dd  field btnordd.vpagiaxrm3        to npagiaxrm3
+        set field_changed_value of btnordd_dd  field btnordd.vdiscposo         to ndiscposo
+        send request_save to btnordd_dd
+        Send UpdateWait to (piTxtID(Self))  ('Ñ§û£‚®‡©û É.Ñ.é.è. £ú úÂõ¶™ '+(String(sitem)))
+    Send Find  to camovedd_dd next_record 1
+    Loop
+    set field_changed_value of ypoprosf_dd field ypoprosf.metasx        to '1'
+    set field_changed_value of ypoprosf_dd field ypoprosf.metasx_date   to lsdate
+    set field_changed_value of ypoprosf_dd field ypoprosf.status        to '3'
+    set field_changed_value of ypoprosf_dd field ypoprosf.deop          to sdeop
+    send request_save to ypoprosf_dd
+
+
+
+    if (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+End_Procedure
+
+Procedure OnProcess
+       send uppar_rec
+End_Procedure
+
+
+ Procedure Start_Process
+         Set piTxtID                         to (Wait(Self))
+         Set Button_State    of (Wait(Self)) to False
+         Set BarVisibleState of (Wait(Self)) to '' False
+         Send Popup                          to (Wait(Self))
+         Set piLathos                        to 0
+         Forward Send Start_Process
+ End_Procedure
+
+    Procedure OnError integer error_info string errMsg
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+    Procedure End_Process
+       Forward Send End_Process
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+
+
+
+
+End_Object
+
+

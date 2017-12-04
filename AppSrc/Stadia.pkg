@@ -1,0 +1,464 @@
+
+Use V185.vw
+Use V182.vw
+
+
+Register_Object v182
+Register_Object v185
+
+
+Object Papari Is A Array
+
+    Property    Integer piLathos Public 0
+    property    integer piTxtID  public 0
+    property    string  psmodule public ''
+
+    Use WAPOKAT.DD
+    Use WAPOMAST.DD
+    Use WAX.DD
+    Use UNITS.DD
+    Use WITEMKAT.DD
+    Use FPA.DD
+    Use ITEM.DD
+    Use WITEMX.DD
+    Use WTYPKIN.DD
+    Use SYSCURXR.DD
+    Use WCMOVES.DD
+    Use WITEMXEN.DD
+    Use WITEMXED.DD
+
+    Object Wapokat_DD is a Wapokat_DataDictionary
+    End_Object    // Wapokat_DD
+
+    Object Wapomast_DD is a Wapomast_DataDictionary
+        Set DDO_Server to (Wapokat_DD(self))
+    End_Object    // Wapomast_DD
+
+    Object Wax_DD is a Wax_DataDictionary
+        Set DDO_Server to (Wapomast_DD(self))
+    End_Object    // Wax_DD
+
+    Object Units_DD is a Units_DataDictionary
+    End_Object    // Units_DD
+
+    Object Witemkat_DD is a Witemkat_DataDictionary
+    End_Object    // Witemkat_DD
+
+    Object Fpa_DD is a Fpa_DataDictionary
+    End_Object    // Fpa_DD
+
+    Object Item_DD is a Item_DataDictionary
+        Set DDO_Server to (Units_DD(self))
+        Set DDO_Server to (Witemkat_DD(self))
+        Set DDO_Server to (Fpa_DD(self))
+    End_Object    // Item_DD
+
+    Object Witemx_DD is a Witemx_DataDictionary
+        Set DDO_Server to (Item_DD(self))
+    End_Object    // Witemx_DD
+
+    Object Wtypkin_DD is a Wtypkin_DataDictionary
+    End_Object    // Wtypkin_DD
+
+    Object Syscurxr_DD is a Syscurxr_DataDictionary
+    End_Object    // Syscurxr_DD
+
+    Object Wcmoves_DD is a Wcmoves_DataDictionary
+        Set DDO_Server to (Wtypkin_DD(self))
+        Set DDO_Server to (Wax_DD(self))
+        Set DDO_Server to (Witemx_DD(self))
+    End_Object    // Wcmoves_DD
+
+Function fsFtiaxe_Wcmoves   String  sWtypkinRecr ;
+                            String  sWitemxRecr  ;
+                            String  sWaxRecr     ;
+                            Date    dHmnia       ;
+                            Number  nPosothta    ;
+                            string  sPerigrafh   ;
+                            string  sgrd         ;
+                            string  sentrecr     ;
+                            number  naxia        ;
+                            string  smodule        Returns String // to WCmoves Recr ß¶¨ ú©‡©ú
+    Integer iErr isClosed iInt iWithDeletion iSign iClient iID
+    Integer iOneWflag iiPartlNO iExitFlag iMustSaveWCmoves
+    Integer iMustSaveCmoves iMustSaveClient iMyf iInt2 iOneCflag iMustSaveClientYpoloipa
+
+    String  ssPtypparDescr ssSeiraDescr sWCmovesRecr sRecr2 ssPtypparDescrShort
+    String  sRecr sParticle_CmovesRecr sCtypkinRecr sCn_Code sSls_ID sCnt_ID sPresp_ID
+    String  sClientRecr sCmovesRecr sNomisma sFlag WtypkinRecr
+    String  sClientID  sParticle_WCmovesRecr switemx  wmodule
+
+    Number  nVatam nGenAm nExtra nPayam nDiscAm nIsotimia nUnitPrice
+    Number  nTotAmBd nTotDiscPms nTotDiscPC nTotAmAd nActualXreosh nActualPistosh
+    Number  nAthr1 nAthr2 nAthr3 nAthr4 nAthr5 nAthr6 nParastXreosh nParastPistosh
+    Number  nPoso nXre nPis nMyf nAthr7 nAthr8 nPosothtaFinal nXreFinal nPisFinal
+
+    Date    dLastPis dLastXre dLastXreParast dLastPisParast
+
+    Number nQtyEisFinal nQtyExFinal nQtyEis nQtyEx
+
+    Indicate Err False
+
+    Send Clear to Wcmoves_DD
+    Move 0 to iOneWflag
+    Move 0 to iMustSaveWCmoves
+    Move 0 to nPosothtaFinal
+    Move 0 to nQtyEis
+    Move 0 to nQtyEx
+    Move 0 to nQtyEisFinal
+    Move 0 to nQtyExFinal
+    Move 0 to nXreFinal
+    Move 0 to nPisFinal
+    Move 1 to iSign // èò§´ò 1
+    Move sgrd to snomisma
+    move naxia to nposo
+    Clear Wflagkin
+    Move sWtypkinRecr           to Wflagkin.Wtypkin_Recr
+
+    Find Gt Wflagkin By Index.5 // Wflagkin:Index.5:Wtypkin_Recr+Flag_Numeric+Wflagkin_Recr
+
+    While ((Found=1) And (sWtypkinRecr=Wflagkin.Wtypkin_Recr))
+        Move 1 to iOneWflag
+        Move Wflagkin.Wflagkin_Flag to sFlag
+        Move (Trim(sFlag)) to sFlag
+
+
+        Case Begin
+            Case (sFlag='1')  // Dhmiourgei Kinhsh
+                Move 1 to iMustSaveWCmoves
+                Case Break
+
+            Case (sFlag='2') // Antistrofh Proshmou
+                Move (nPoso    *iSign*(-1)) to nPoso
+
+                // KAI STHN POSOTHTA ?
+                Move (nPosothta*iSign*(-1)) to nPosothta
+                Case Break
+
+            Case (sFlag='3') // Eisagogh
+                Move (nPoso*iSign)  to nXre
+                Move 0              to nPis
+                Move nPosothta      to nQtyEis
+                Move 0              to nQtyEx
+                Case Break
+            Case (sFlag='4') // Exagogh
+                Move (nPoso*iSign)  to nPis
+                Move 0              to nXre
+                Move nPosothta      to nQtyEx
+                Move 0              to nQtyEis
+                Case Break
+            Case (sFlag='5') // Epireazei Hmeromhnies
+//                                    If (nXre<>0) Begin
+//                                        Move dHmnia to dLastXre
+//                                        Move ''     to dLastPis
+//                                    End
+//                                    Else If (nPis<>0) Begin
+//                                        Move dHmnia to dLastPis
+//                                        Move ''     to dLastXre
+//                                    End
+            Case Break
+            Case (sFlag='6') // Epireazei timh kostous
+            Case Break
+            Case (sFlag='7') // Epireazei timh polhsh
+            Case Break
+
+            Case (sFlag='8') // Epireazei Posothtes
+                Move nQtyEis    to nQtyEisFinal
+                Move nQtyEx     to nQtyExFinal
+            Case Break
+
+            Case (sFlag='9') // Epireazei Axies
+                Move nXre   to nXreFinal
+                Move nPis   to nPisFinal
+            Case Break
+
+            Case (sFlag='10') // Epireazei Anamenomena
+            Case Break
+
+            Case (sFlag='11') // Epireazei Desmeymena
+            Case Break
+
+            Case (sFlag='12') // Xrhsimopoiei timh kostous
+            Case Break
+
+            Case (sFlag='13') // Xrhsimopoiei xondrikh timh polhshs
+            Case Break
+
+            Case (sFlag='14') // Xrhsimopoiei Lianikh timh polhshs
+            Case Break
+
+            Case (sFlag='15') // Xrhsimopoiei timh agoras
+            Case Break
+
+            Case (sFlag='16') // Xrhsimopoiei timh agoras se X.N
+            Case Break
+
+            Case (sFlag='17') // Xrhsimopoiei timh polhshs se X.N
+            Case Break
+
+            Case (sFlag='18') // Xrhsimopoiei timh Antikatastashs
+            Case Break
+
+            Case (sFlag='19') // Posothta lambanetai yp opsin se ypolog MYF
+            Case Break
+
+            Case (sFlag='20') // Epireazei ekkremh Delt. Paralabhs
+            Case Break
+
+            Case (sFlag='21') // Epireazei ekkremh Delt. Apostolhs
+            Case Break
+
+            Case (sFlag='22') // Akyrotikh Kinhsh
+            Case Break
+
+            Case (sFlag='31') // Xrhsimopoieui Tel. Timh Polhshs
+            Case Break
+
+            Case (sFlag='32') // Fysikh apografh
+            Case Break
+
+            Case (sFlag='33') // Ayt ypolog. posothtas apo axia
+            Case Break
+
+            Case (sFlag='34') // Epireazei Mark Up
+            Case Break
+
+        Case End
+        Find Gt Wflagkin By Index.5 // Wflagkin:Index.5:Wtypkin_Recr+Flag_Numeric+Wflagkin_Recr
+    Loop
+
+    If ((iOneWflag) And (iMustSaveWCmoves)) Begin
+
+
+        Send Clear to Wcmoves_DD
+
+        Move sWtypkinRecr to Wtypkin.Wtypkin_Recr
+        Send Find to Wtypkin_DD eq 2 //Wtypkin:Index.2:Wtypkin_Recr
+        If (Not(Found)) Begin
+            if (smodule<>'09') begin
+               Set piLathos of (v185(self)) to 60006 // Wtypkin record not found
+               Procedure_Return
+            end
+            else begin
+               Set piLathos of (v182(Self)) to 60006 // Wtypkin record not found
+               Procedure_Return
+            end
+        End
+
+        Move sWitemxRecr to Witemx.Witemx_Recr
+        Send Find to Witemx_DD eq 2 //Witemx:Index.2:Witemx_Recr
+        If (Not(Found)) Begin
+            if (smodule<>'09') begin
+               Set piLathos  of (v185(self)) to 60106 // Witemx record not found
+               Procedure_Return
+            end
+            else begin
+               Set piLathos of (v182(self)) to 60106 // Wtypkin record not found
+               Procedure_Return
+            end
+        End
+
+        Move sWaxRecr to Wax.Wax_Recr
+        Send Find to Wax_DD eq 2 //Wax:Index.2:Wax_Recr
+        If (Not(Found)) Begin
+            if (smodule<>'09') begin
+               Set piLathos  of (v185(self)) to 60206 // Wax record not found
+               Procedure_Return
+            end
+            else begin
+               Set piLathos of (v182(self)) to 60206 // Wtypkin record not found
+               Procedure_Return
+            end
+
+        End
+
+        If (nXreFinal<>0) Begin
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.wcmove_Axia   to nXreFinal
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.wcmove_x0 ;
+                to (fngConvertPoso(sNomisma,nXreFinal,SysCurXr.C_Code0,dHmnia,nIsotimia))
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.wcmove_x00 ;
+                to (fngConvertPoso(sNomisma,nXreFinal,SysCurXr.C_Code00,dHmnia,nIsotimia))
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.wcmove_x1 ;
+                to (fngConvertPoso(sNomisma,nXreFinal,SysCurXr.C_Coder,dHmnia,nIsotimia))
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.wcmove_x2     to nXreFinal
+
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.wcmove_p0     to 0
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.wcmove_p00    to 0
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.wcmove_p1     to 0
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.wcmove_p2     to 0
+
+        End
+        Else If (nPisFinal<>0) Begin
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.wcmove_Axia   to nPisFinal
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.wcmove_p0 ;
+                to (fngConvertPoso(sNomisma,nPisFinal,SysCurXr.C_Code0,dHmnia,nIsotimia))
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.wcmove_p00 ;
+                to (fngConvertPoso(sNomisma,nPisFinal,SysCurXr.C_Code00,dHmnia,nIsotimia))
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.wcmove_p1 ;
+                to (fngConvertPoso(sNomisma,nPisFinal,SysCurXr.C_Coder,dHmnia,nIsotimia))
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.wcmove_p2     to nPisFinal
+
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.wcmove_x0     to 0
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.wcmove_x00    to 0
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.wcmove_x1     to 0
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.wcmove_x2     to 0
+
+        End
+
+        Set Field_Changed_Value Of WCmoves_DD Field wcmoves.Unit_price0 ;
+            to (fngConvertPoso(sNomisma,nUnitPrice,SysCurXr.C_Code0,dHmnia,nIsotimia))
+        Set Field_Changed_Value Of WCmoves_DD Field wcmoves.Unit_price00 ;
+            to (fngConvertPoso(sNomisma,nUnitPrice,SysCurXr.C_Code00,dHmnia,nIsotimia))
+        Set Field_Changed_Value Of WCmoves_DD Field wcmoves.Unit_priceR ;
+            to (fngConvertPoso(sNomisma,nUnitPrice,SysCurXr.C_CodeR,dHmnia,nIsotimia))
+
+
+//                    If (nQtyEisFinal<>0) Begin
+//                    End
+//                    Else If (nQtyExFinal<>0) Begin
+//                        Move nQtyExFinal    to Wcmoves.Sx_Posothta_Ex
+//                        Move 0              to Wcmoves.Sx_Posothta_Eis
+//                    End
+
+//        If (nQtyEisFinal<>0) Begin
+//            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.Sx_Posothta_Eis to nQtyEisFinal
+//            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.Sx_Posothta_Ex  to 0
+//        End
+//        Else If (nQtyExFinal<>0) Begin
+//            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.Sx_Posothta_Ex  to nQtyExFinal
+//            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.Sx_Posothta_Eis to 0
+//        End
+
+        If (nQtyEisFinal<>0) Begin
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.wcmove_Qty_Eisa to nQtyEisFinal
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.wcmove_Qty_Exa  to 0
+            Set Field_Changed_Value Of WCmoves_DD Field WCmoves.WCmove_Qty      to nQtyEisFinal
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.Sx_Posothta_Eis to nQtyEisFinal
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.Sx_Posothta_Ex  to 0
+        End
+        Else If (nQtyExFinal<>0) Begin
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.wcmove_Qty_Exa  to nQtyExFinal
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.wcmove_Qty_Eisa to 0
+            Set Field_Changed_Value Of WCmoves_DD Field WCmoves.WCmove_Qty      to nQtyExFinal
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.Sx_Posothta_Ex  to nQtyExFinal
+            Set Field_Changed_Value Of WCmoves_DD Field wcmoves.Sx_Posothta_Eis to 0
+        End
+
+        Set Field_Changed_Value Of WCmoves_DD Field WCmoves.WCmove_Hmnia        to dHmnia
+        Set Field_Changed_Value Of WCmoves_DD Field WCmoves.Partl_Recr          to sRecr
+        Set Field_Changed_Value Of WCmoves_DD Field WCmoves.CN_Code             to (Trim(sCN_Code))
+
+
+        // jsjsjsjs 28/01/2001 Hard Coded tou kerata to nomisma eggrafhs
+        Set Field_Changed_Value Of WCmoves_DD Field WCmoves.WCmove_SC_Code2   to sNomisma
+
+        ///////////////////////
+
+        If ((nXreFinal<>0) Or (nPisFinal<>0)) Begin
+            Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_TotAmBd0    ;
+                to (fngConvertPoso(sNomisma,nTotAmBd,SysCurXr.C_Code0,dHmnia,nIsotimia))
+            Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_DiscAm0    ;
+                to (fngConvertPoso(sNomisma,nDiscAm,SysCurXr.C_Code0,dHmnia,nIsotimia))
+            Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_TotAmAd0    ;
+                to (fngConvertPoso(sNomisma,nTotAmAd,SysCurXr.C_Code0,dHmnia,nIsotimia))
+            Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_Vatam0      ;
+                to (fngConvertPoso(sNomisma,nVatam,SysCurXr.C_Code0,dHmnia,nIsotimia))
+            Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_Extra0      ;
+                to (fngConvertPoso(sNomisma,nExtra,SysCurXr.C_Code0,dHmnia,nIsotimia))
+            ///////////////////////
+            Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_TotAmBd00   ;
+                to (fngConvertPoso(sNomisma,nTotAmBd,SysCurXr.C_Code00,dHmnia,nIsotimia))
+            Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_DiscAm00   ;
+                to (fngConvertPoso(sNomisma,nDiscAm,SysCurXr.C_Code00,dHmnia,nIsotimia))
+            Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_TotAmAd00   ;
+                to (fngConvertPoso(sNomisma,nTotAmAd,SysCurXr.C_Code00,dHmnia,nIsotimia))
+            Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_Vatam00     ;
+                to (fngConvertPoso(sNomisma,nVatam,SysCurXr.C_Code00,dHmnia,nIsotimia))
+            Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_Extra00     ;
+                to (fngConvertPoso(sNomisma,nExtra,SysCurXr.C_Code00,dHmnia,nIsotimia))
+            ///////////////////////
+            Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_TotAmBd1    ;
+                to (fngConvertPoso(sNomisma,nTotAmBd,SysCurXr.C_CodeR,dHmnia,nIsotimia))
+            Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_DiscAm1    ;
+                to (fngConvertPoso(sNomisma,nDiscAm,SysCurXr.C_CodeR,dHmnia,nIsotimia))
+            Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_TotAmAd1    ;
+                to (fngConvertPoso(sNomisma,nTotAmAd,SysCurXr.C_CodeR,dHmnia,nIsotimia))
+            Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_Vatam1      ;
+                to (fngConvertPoso(sNomisma,nVatam,SysCurXr.C_CodeR,dHmnia,nIsotimia))
+            Set Field_Changed_Value Of Wcmoves_DD Field Wcmoves.Wcmov_Extra1      ;
+                to (fngConvertPoso(sNomisma,nExtra,SysCurXr.C_CodeR,dHmnia,nIsotimia))
+        End
+        ///////////////////////
+
+        Set Field_Changed_Value Of WCmoves_DD   Field WCmoves.Module_From   to sModule
+        Set Field_Changed_Value Of WCmoves_DD   Field WCmoves.WCmove_Par    to (Trim(sPerigrafh))
+        Set Field_Changed_Value Of Wcmoves_DD   Field Wcmoves.Client_Recr   to sClientRecr
+        Set Field_Changed_Value Of Wcmoves_DD   Field Wcmoves.Client_ID     to sClientID
+        Set Field_Changed_Value Of Wcmoves_DD   Field Wcmoves.partl_recr    to sentrecr
+        Send Request_Save to WCmoves_DD
+        Get Field_Current_Value Of Wcmoves_DD Field Wcmoves.Wcmove_Recr to sRecr
+        Get Field_Current_Value Of Wcmoves_DD Field Wcmoves.Witemx_code to switemx
+        if (smodule<>'09') set pswitemx of (v185(self)) to switemx
+        else               set pswitemx of (v182(self)) to switemx
+        Function_Return sRecr
+    End
+    Function_Return ''
+
+End_Procedure
+
+Function fiDelete_WCmoves_Record String asRecr Integer aiDelete Returns Integer
+    Integer rVal iErr
+    string switemx smodule srecr
+    Indicate Err False
+    get psmodule to smodule
+    Move 0 to rVal
+    Send Clear to WCmoves_DD
+    if (smodule<>'09') begin
+       Move (Trim(asRecr)) to WCmoves.WCmove_Recr
+       Send Find to WCmoves_DD eq 2 //WCmoves:Index.2:WCmoves_Recr
+       If (Found=1) Begin
+         If (aiDelete) Begin
+            Send Request_Delete to WCmoves_DD
+            Move (Err) to iErr
+            If (iErr) Begin
+                Move 60002 to rVal
+                Set piLathos of (v185(self)) to rVal
+            End
+         End
+       End
+
+       Else Begin
+        Move 60003 to rVal
+        If (aiDelete) Set piLathos of (v185(self)) to rVal
+       End
+    end
+    else begin
+       Move (Trim(asRecr)) to WCmoves.partl_Recr
+       move ''             to wcmoves.wcmove_recr
+       Send Find to WCmoves_DD ge 6 //WCmoves:Index.6:partl_Recr + wcmoves_recr
+       while (Found=1)
+         Get Field_Current_Value Of Wcmoves_DD Field Wcmoves.partl_recr to srecr
+         If ((aiDelete) and (srecr=asrecr)) Begin
+            Send Request_Delete to WCmoves_DD
+            Move (Err) to iErr
+            If (iErr) Begin
+                Move 60002 to rVal
+                Set piLathos of (v182(self)) to rVal
+            End
+         end
+       Send Find to WCmoves_DD gt 6
+       loop
+
+    //   Else Begin
+    //    Move 60003 to rVal
+    //    If (aiDelete) Set piLathos of (v182(self)) to rVal
+    //   End
+
+    end
+    Function_Return rVal
+
+End_Function
+
+
+End_Object
+

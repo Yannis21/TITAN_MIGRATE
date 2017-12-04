@@ -1,0 +1,365 @@
+
+// Register all objects
+
+Register_Object Doenhgl
+Register_Object ptyppar.DD
+Register_Object ptypparh.DD
+Register_Object particle.dd
+Register_Object pmoves.dd
+Register_Object WAPOKAT.DD
+Register_Object WAPOMAST.DD
+Register_Object WAX.DD
+Register_Object UNITS.DD
+Register_Object WITEMKAT.DD
+Register_Object FPA.DD
+Register_Object ITEM.DD
+Register_Object WITEMX.DD
+Register_Object PMOVES.DD
+Register_Object SYSCURXR.DD
+Register_Object gtypkin.dd
+Register_Object gplan.dd
+Register_Object gbridgeh.dd
+Register_Object gbridged.dd
+Register_Object sysrecg.dd
+
+
+
+
+
+
+//AB-IgnoreStart
+
+Use Bproces.Sub
+Use DFAllEnt.pkg
+Use PTYPPAR.DD
+Use gbridgeh.DD
+Use gbridged.DD
+use gplan.dd
+use gtypkin.dd
+uSE clients.dd
+Use PARTICLE.DD
+Use WAPOKAT.DD
+Use WAPOMAST.DD
+Use WAX.DD
+Use UNITS.DD
+Use WITEMKAT.DD
+Use FPA.DD
+Use ITEM.DD
+Use WITEMX.DD
+Use PMOVES.DD
+Use PTYPPARH.DD
+Use SYSCURXR.DD
+Use Sysrecg.dd
+//AB-IgnoreEnd
+
+Object Doenhgl is a BusinessProcessSub
+
+    //AB-StoreTopStart
+
+    Property    Integer piError     Public  0
+    property    integer piTxtID     public  0
+    property    integer piLathos    public  0
+
+    property    string  pspar       public ''
+    property    string  psmodule    public ''
+
+    Property    Date    pddate      Public ''
+    Property    String  pirecnum    Public ''
+
+    Set Status_Panel_State  to False
+    Set Display_Error_State to True
+
+    //AB-StoreTopEnd
+
+    Set Size to 82 140
+    Set Location to 72 182
+
+    //AB-DDOStart
+
+    Object Clients_DD is a Clients_DataDictionary
+    End_Object    // Clients_DD
+
+    Object Gbridgeh_DD is a Gbridgeh_DataDictionary
+    End_Object    // Gbridgeh_DD
+
+    Object Gbridged_DD is a Gbridged_DataDictionary
+    End_Object    // Gbridged_DD
+
+    Object Ptyppar_DD is a Ptyppar_DataDictionary
+    End_Object    // Ptyppar_DD
+
+    Object Particle_DD is a Particle_DataDictionary
+        Set DDO_Server to (Ptyppar_DD(self))
+    End_Object    // Particle_DD
+
+    Object Wapokat_DD is a Wapokat_DataDictionary
+    End_Object    // Wapokat_DD
+
+    Object Wapomast_DD is a Wapomast_DataDictionary
+        Set DDO_Server to (Wapokat_DD(self))
+    End_Object    // Wapomast_DD
+
+    Object Wax_DD is a Wax_DataDictionary
+        Set DDO_Server to (Wapomast_DD(self))
+    End_Object    // Wax_DD
+
+    Object Units_DD is a Units_DataDictionary
+    End_Object    // Units_DD
+
+    Object Witemkat_DD is a Witemkat_DataDictionary
+    End_Object    // Witemkat_DD
+
+    Object Fpa_DD is a Fpa_DataDictionary
+    End_Object    // Fpa_DD
+
+    Object Item_DD is a Item_DataDictionary
+        Set DDO_Server to (Units_DD(self))
+        Set DDO_Server to (Witemkat_DD(self))
+        Set DDO_Server to (Fpa_DD(self))
+    End_Object    // Item_DD
+
+    Object Witemx_DD is a Witemx_DataDictionary
+        Set DDO_Server to (Item_DD(self))
+    End_Object    // Witemx_DD
+
+    Object Pmoves_DD is a Pmoves_DataDictionary
+        Set DDO_Server to (Wax_DD(self))
+        Set DDO_Server to (Witemx_DD(self))
+        Set DDO_Server to (Particle_DD(self))
+        Set Constrain_File to Particle.File_Number
+    End_Object    // Pmoves_DD
+
+    Object Ptypparh_DD is a Ptypparh_DataDictionary
+        Set DDO_Server to (Ptyppar_DD(self))
+        Set Constrain_File to Ptyppar.File_Number
+    End_Object    // Ptypparh_DD
+
+    Object Syscurxr_DD is a Syscurxr_DataDictionary
+    End_Object    // Syscurxr_DD
+
+    Object Sysrecg_DD is a Sysrecg_DataDictionary
+    End_Object    // Sysrecg_DD
+
+
+    Procedure Start_Processing
+        String  msgstr srecr spartlaitiol sptypparcode sitema scodegl ssign svcn switemkata
+        String  snomisma sclient sxp smodule saxia sflaggl sfpapol sfpaago switemkatp sitemp
+
+        Number  naxia nqty nsign nisotimia nsn nrow
+        Date    partldate darxh ddate
+        integer ierr irecnum ipartlno igtypkin ivsn iCheck iLast
+
+        get pirecnum to irecnum
+        get pddate   to ddate
+
+        send clear to particle_dd
+        move irecnum to particle.recnum
+        Send Find_By_Recnum to particle_DD particle.File_Number particle.Recnum
+        if (found=1) begin
+            get field_current_value of particle_dd field particle.partl_hmnia   to partldate
+            get field_current_value of particle_dd field particle.partl_no      to ipartlno
+            get field_current_value of particle_dd field particle.nomisma_code  to snomisma
+            get field_current_value of particle_dd field particle.isotimia      to nisotimia
+            get field_current_value of particle_dd field particle.client_id     to sclient
+            get field_current_value of particle_dd field particle.partl_module  to smodule
+            get field_current_value of particle_dd field particle.partl_recr    to srecr
+            clear gbridgeh
+            move syscurxr.company_code to Gbridgeh.company_code
+            move syscurxr.branch_code  to Gbridgeh.branch_code
+            move syscurxr.year_year    to gbridgeh.year_year
+            move smodule               to gbridgeh.module_from
+            move irecnum               to gbridgeh.particle_recnum
+            find eq gbridgeh  by index.1
+            if (found=1) begin
+                move 'ÑÆú† ú§û£ú®‡üúÂ ´¶ ò®ÆúÂ¶ £ú ´¶ ßò®ò©´ò´†°Ê = ' to msgstr
+                append msgstr ipartlno
+                error 4001 msgstr
+            end
+            reread sysrecg
+            Add 1 to SysrecG.Gbridgeh_Rec0
+            Saverecord SysrecG
+            unlock
+            Move SysrecG.Gbridgeh_Rec0 to Gbridgeh.Gbridgeh_Rec0
+            move syscurxr.company_code to Gbridgeh.company_code
+            move syscurxr.branch_code  to Gbridgeh.branch_code
+            move syscurxr.year_year    to gbridgeh.year_year
+            move irecnum               to gbridgeh.particle_recnum
+            get field_current_value of ptyppar_dd field ptyppar.gtypkin_code  to igtypkin
+            get field_current_value of ptyppar_dd field ptyppar.ptyppar_descr to spartlaitiol
+            get field_current_value of ptyppar_dd field ptyppar.ptyppar_code  to sptypparcode
+            move syscurxr.company_code to Gtypkin.company_code
+            move syscurxr.branch_code  to Gtypkin.branch_code
+            move syscurxr.year_year    to gtypkin.year_year
+            move igtypkin              to gtypkin.gtypkin_code
+            find eq gtypkin by index.1
+            if (not(found)) begin
+                move 'Éú§ ô®‚üû°ú ©´û§ Ç.ä ¶ °‡õ†°Ê™ °Â§û©û™ = ' to msgstr
+                append msgstr igtypkin
+                error 4002 msgstr
+            end
+            move gtypkin.gtypkin_recr    to gbridgeh.gtypkin_recr
+            if (ddate='') move partldate to gbridgeh.garticl_hmnia
+            else          move ddate     to gbridgeh.garticl_hmnia
+            move ipartlno                to gbridgeh.garticl_no
+            move spartlaitiol            to gbridgeh.garticl_aitiol
+            move snomisma                to gbridgeh.garticl_c_code2
+            move nisotimia               to gbridgeh.garticl_rate0
+            move smodule                 to gbridgeh.module_from
+            move sptypparcode            to gbridgeh.ptyppar_code
+            move sclient                 to gbridgeh.client_id
+            move (append('',((Trim(SysCurGL.Branch_Site))+;
+                            (Trim(String(Gbridgeh.Gbridgeh_Rec0)))))) to Gbridgeh.Gbridgeh_Recr
+            saverecord gbridgeh
+            Send UpdateWait to (piTxtID(Self))  ('Ñ§û£‚®‡©û £ú ßò®ò©´ò´†°Ê '+(string (ipartlno)))
+        end
+        else begin
+            move 'Éú§ £ß¶®È §ò úßò§ò´¶ß¶üú´ûüÈ ©´¶ ßò®ò©´ò´†°Ê = ' to msgstr
+            append msgstr ipartlno
+            error 4003 msgstr
+        end
+        send rebuild_constraints to pmoves_dd
+        send find to pmoves_dd first_record 3
+        if (not(found)) begin
+            move 'Éú§ ¨ß·®Æú† °Â§û©û Ñ†õÈ§ ©´¶ ßò®ò©´ò´†°Ê = ' to msgstr
+            append msgstr ipartlno
+            error 4003 msgstr
+        end
+        while (found=1)
+            send rebuild_constraints to ptypparh_dd
+            send find to ptypparh_dd first_record 2
+            if (not(found)) error 4004 'Éú§ ô®Â©°‡ Flags ö†ò ä¶ö†©´†°„ ©´Ê èò®ò©´ò´†°Ê !! '
+            while (found=1)
+                get field_current_value of ptypparh_dd field ptypparh.codegl to scodegl
+                get field_current_value of ptypparh_dd field ptypparh.sign   to ssign
+                get field_current_value of ptypparh_dd field ptypparh.xp     to sxp
+                get field_current_value of ptypparh_dd field ptypparh.axia   to saxia
+                get field_current_value of ptypparh_dd field ptypparh.flaggl to sflaggl
+                get field_current_value of fpa_dd field fpa.polhsh_codegl    to sfpapol
+                get field_current_value of fpa_dd field fpa.agora_codegl     to sfpaago
+                get field_current_value of witemkat_dd field witemkat.codeglpol to switemkatp
+                get field_current_value of witemkat_dd field witemkat.codeglago to switemkata
+                get field_current_value of item_dd field item.codeglpol to sitemp
+                get field_current_value of item_dd field item.codeglago to sitema
+
+                clear clients
+                move sclient to clients.client_id
+                find eq clients by index.6
+                if (not(found)) error 4005 'Éú§ £ß¶®È §ò ´¶ß¶üú´ûüÈ ©´¶§ èú¢·´û'
+                if ((sflaggl='01') And (scodegl='')) move clients.client_glcode to scodegl
+
+                replace "@1" in scodegl with (trim(syscurxr.branch_code))
+
+                If (sModule='01') Begin
+                    replace "@2" in scodegl with (trim(switemkatp))
+                    replace '@3' in scodegl with (trim(sfpapol))
+                    replace '@4' in scodegl with (trim(sitemp))
+                End
+                Else If (sModule='02') Begin
+                    replace "@2" in scodegl with (trim(switemkata))
+                    replace '@3' in scodegl with (trim(sfpaago))
+                    replace '@4' in scodegl with (trim(sitema))
+                End
+
+//                     if (smodule='01') replace '@3' in scodegl with (trim(sfpapol))
+//                else if (smodule='02') replace '@3' in scodegl with (trim(sfpaago))
+
+//                     if (smodule='01') replace "@2" in scodegl with (trim(switemkatp))
+//                else if (smodule='02') replace "@2" in scodegl with (trim(switemkata))
+
+//                     if (smodule='01') replace '@4' in scodegl with (trim(sitemp))
+//                else if (smodule='02') replace '@4' in scodegl with (trim(sitema))
+
+
+                Move (Check_log (scodegl)) to iCheck
+                move (check_last(scodegl)) to ilast
+
+                if (icheck) begin
+                    move 'Éú§ ¨ß·®Æú† ¶ ä¶ö/©£Ê™ Ç.ä ©´¶ ßò®ò©´ò´†°Ê = ' to msgstr
+                    append msgstr ipartlno
+                    append msgstr ' ä¶ö/©£Ê™ Ç.ä  = '
+                    append msgstr scodegl
+                    append msgstr ' \n Ñ¢úöÆ¶™ ä¶ö/£¶Á Ç.ä ≠¶®‚ò û °ò´ûö¶®Âò™ Ñ†õÈ§       '
+                    error 4006 msgstr
+                end
+                if (ilast) begin
+                    move 'é °‡õ†°Ê™ ä¶ö/©£¶Á õú§ úÂ§ò† ´ú¢ú¨´òÂ¶¨ ôòü£¶Á ©´¶ ßò®ò©´ò´†°Ê =  ' to msgstr
+                    append msgstr ipartlno
+                    append msgstr ' ä¶ö/©£Ê™ Ç.ä = '
+                    append msgstr scodegl
+                    error 4007 msgstr
+                end
+                if      (saxia='1') move pmoves.pms_ambd       to naxia
+                else if (saxia='2') move pmoves.pms_amaftdisc  to naxia
+                else if (saxia='3') move pmoves.pms_vatam      to naxia
+                else if (saxia='4') move pmoves.pms_payable    to naxia
+                if (naxia=0) begin
+                    move 'Éú§ ¨ß·®Æú† ò•Âò ©´¶ ßò®ò©´ò´†°Ê = ' to msgstr
+                    append msgstr ipartlno
+                    error 4008 msgstr
+                end
+
+                if      (ssign='-') move -1 to nsign
+                else if (ssign='+') move  1 to nsign
+
+                clear gbridged
+                move gbridgeh.gbridgeh_recr to gbridged.gbridgeh_recr
+                move scodegl                to gbridged.ext_gplan_code
+                find eq gbridged by index.1
+
+                if (not(found)) begin
+                    move spartlaitiol               to gbridged.gmove_aitiol
+                    if (sxp='ï') move (naxia*nsign) to gbridged.gmove_x2
+                    else         move (naxia*nsign) to gbridged.gmove_p2
+                    saverecord gbridged
+                end
+                else begin
+                    if (sxp='ï') move ((naxia*nsign)+gbridged.gmove_x2) to gbridged.gmove_x2
+                    else         move ((naxia*nsign)+gbridged.gmove_p2) to gbridged.gmove_p2
+                    saverecord gbridged
+                end
+                send find to ptypparh_dd next_record 2
+            loop
+            send find to pmoves_dd next_record 3
+        loop
+
+        clear particle
+        move srecr to particle.partl_recr
+        find eq particle by index.2
+        if (not(found)) error 4009 'Éú§ £ß¶®È §ò úßò§ò´¶ß¶üú´ûüÈ ©´¶ ßò®ò©´ò´†°Ê'
+
+        If (Trim(Gbridgeh.Gbridgeh_Recr)='') Error 5055 'Éú§ ô®‚üû°ú GbridgeH Recr'
+        move '1'                       to particle.se_logik
+        Move Gbridgeh.Gbridgeh_Recr    to Particle.Pseira_Recr
+        saverecord particle
+
+        if (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+    Procedure OnProcess
+        Send Start_Processing
+    End_Procedure
+
+    Procedure Start_Process
+         Set piTxtID                         to (Wait(Self))
+         Set Button_State    of (Wait(Self)) to False
+         Set BarVisibleState of (Wait(Self)) to '' False
+         Send Popup                          to (Wait(Self))
+         Set piLathos                        to 0
+         Forward Send Start_Process
+    End_Procedure
+
+    Procedure OnError integer error_info string errMsg
+        If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+    Procedure End_Process
+        Forward Send End_Process
+        If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+    //AB-StoreEnd
+
+End_Object    // DoUpTim0
+
+//AB/ End_Object    // prj

@@ -9,4 +9,4 @@ DDSrcPath=.\DdSrc
 HelpPath=.\Help
 ProgramPath=.\Programs
 FileList=.\Data\Filelist.cfg
-Description=TitanMigrate
+Description=TitanUTF

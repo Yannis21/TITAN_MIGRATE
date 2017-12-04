@@ -1,0 +1,50 @@
+Project testrpt
+Object prj is a APP_Project
+
+//AB-StoreTopStart
+Use Workspc.pkg
+
+//  Set date attributes as needed
+Set_Date_Attribute sysdate4_State to (TRUE)
+Set_Date_Attribute Date4_State    to (TRUE)
+Set_Date_Attribute epoch_value    to 30
+
+Object ProgramWorkspace is a WorkspaceSuB
+    Set WorkspaceName to CURRENT$WORKSPACE
+//    Set ModuleName    to 'ProgramName' // Special module name.
+//    Set HelpName      to 'HelpName.hlp'// Please provide the name of your Windows help file.
+End_Object
+
+Use Help_Ids.inc // Developer should provide this file of help context links.
+Use Std_Help.pkg
+
+//Use Connect.dg
+//Send Login
+//
+use dates.utl
+Use SelectXr.Dg
+Send Epelexe_Xrhsh
+string psprecr
+//AB-StoreTopEnd
+
+
+//AB-PanelStoreStart
+Use StdAbout.pkg // Standard "About" package.
+//AB-PanelStoreEnd
+
+    Set psProject_Version to "5.0"
+    Set psButtonBar_Pkg To DFStdBtn.pkg
+    Set psStatusBar_Pkg To DFStdSbr.pkg
+    Set ProjectName to "testrpt"
+    Set ProjectFileName to "testrpt.PRJ"
+    Set GenerateFileName to "testrpt.SRC"
+    Set psProject_Version to "5.0"
+    Set Component To rmhtrb.rv
+
+//AB-StoreStart
+Start_UI
+
+
+//AB-StoreEnd
+
+End_Object    // prj

@@ -1,0 +1,159 @@
+        use bttmp1.dd
+        use clients.dd
+        Use cmoves.DD
+   Object oDotmpyp Is A BusinessProcessSub
+
+        set Status_panel_state to false
+        set Display_Error_state to true
+        property string psdatefrom
+        property string psdateto
+        property string psmodule
+        Property Integer piBarID
+        property integer    piTxtID public 0
+        property integer    pilathos public 0
+
+        Object cmoves_DD is a cmoves_DataDictionary
+            set read_only_state to true
+        End_Object    // caitemsp_DD
+
+        Object clients_DD is a clients_DataDictionary
+            set read_only_state to true
+        End_Object
+
+        Object bttmp1_DD is a bttmp1_DataDictionary
+        End_Object
+
+PROCEDURE beg_tmp string datefrom string dateto string smodule
+          set psdatefrom to datefrom
+          set psdateto to dateto
+          set psmodule to smodule
+          send DOPROCESS
+END_PROCEDURE
+
+Procedure update_rec
+        string wclient## datefrom dateto smodule
+        integer liwcmovesddo## libttmp1ddo##
+
+        number  qty## qtyeisa## x0## x00## x1## tqty##  tqtyeisa## tx0## tx00## tx1##;
+                                p0## p00## p1## tp0## tp00## tp1##
+        get psdatefrom to datefrom
+        get psdateto   to dateto
+        get psmodule   to smodule
+        clear clients
+        move '' to clients.client_id
+        find ge clients by index.6
+        While (found=1)
+        if ((clients.xreosh=0)  and (clients.pistosh=0))  begin
+          if ((smodule='01' and clients.is_client = '1') or (smodule='02' and clients.is_promhtheyths='1')) begin
+           clear bttmp1
+           move clients.client_id      to bttmp1.witemx_code
+           move clients.client_name    to bttmp1.wcmove_par
+           move 0                      to bttmp1.wcmove_x0
+           move 0                      to bttmp1.wcmove_x00
+           move 0                      to bttmp1.wcmove_x1
+           move 0                      to bttmp1.wcmove_p0
+           move 0                      to bttmp1.wcmove_p00
+           move 0                      to bttmp1.wcmove_p1
+           move syscurxr.company_code  to bttmp1.company_code
+           move syscurxr.branch_code   to bttmp1.branch_code
+           move syscurxr.year_year     to bttmp1.year_year
+           move smodule                to bttmp1.module_from
+           saverecord bttmp1
+           Send UpdateWait to (piTxtID(Self))  ('Ešš¨˜­ã Record œ¢á«ž '+(String(bttmp1.witemx_code)))
+          end
+        end
+        find gt clients by index.6
+        Loop
+        clear cmoves
+        move syscurxr.company_code to cmoves.company_code
+        move syscurxr.branch_code  to cmoves.branch_code
+        move syscurxr.year_year    to cmoves.year_year
+        move smodule               to cmoves.module_from
+        move ''                    to cmoves.client_id
+        move datefrom              to cmoves.cmoves_hmnia
+        find ge cmoves by index.13
+        While ((found = 1)  and (syscurxr.company_code = cmoves.company_code);
+                            and (syscurxr.branch_code =  cmoves.branch_code);
+                            and (syscurxr.year_year =    cmoves.year_year);
+                            and (smodule = cmoves.module_from))
+         if ((cmoves.cmoves_hmnia >= datefrom)  and (cmoves.cmoves_hmnia <= dateto)) begin
+           clear bttmp1
+           move cmoves.client_id       to wclient##
+           move cmoves.cmoves_x0       to x0##
+           move cmoves.cmoves_x00      to x00##
+           move cmoves.cmoves_x1       to x1##
+           move cmoves.cmoves_p0       to p0##
+           move cmoves.cmoves_p00      to p00##
+           move cmoves.cmoves_p1       to p1##
+           move syscurxr.company_code           to bttmp1.company_code
+           move syscurxr.branch_code            to bttmp1.branch_code
+           move syscurxr.year_year              to bttmp1.year_year
+           move wclient##                       to bttmp1.witemx_code
+           find eq bttmp1 by index.1
+           if (found = 1) begin
+              reread bttmp1
+              move (bttmp1.wcmove_x0 + x0##) to bttmp1.wcmove_x0
+              move (bttmp1.wcmove_x00 + x00##) to bttmp1.wcmove_x00
+              move (bttmp1.wcmove_x1 + x1##) to bttmp1.wcmove_x1
+              move (bttmp1.wcmove_p0 + p0##)  to bttmp1.wcmove_p0
+              move (bttmp1.wcmove_p00 + p00##) to bttmp1.wcmove_p00
+              move (bttmp1.wcmove_p1 + p1##) to bttmp1.wcmove_p1
+              saverecord bttmp1
+              Send UpdateWait to (piTxtID(Self))  ('Ešš¨˜­ã Record œ¢á«ž '+(String(bttmp1.witemx_code)))
+              unlock
+           end
+           else begin
+              move syscurxr.company_code to bttmp1.company_code
+              move syscurxr.branch_code to  bttmp1.branch_code
+              move syscurxr.year_year to bttmp1.year_year
+              move wclient## to bttmp1.witemx_code
+              clear clients
+              move wclient## to clients.client_id
+              find eq clients by index.6
+              move clients.client_name to bttmp1.wcmove_par
+              move x0## to bttmp1.wcmove_x0
+              move x00## to bttmp1.wcmove_x00
+              move x1## to bttmp1.wcmove_x1
+              move p0## to bttmp1.wcmove_p0
+              move p00## to bttmp1.wcmove_p00
+              move p1## to bttmp1.wcmove_p1
+              move smodule to bttmp1.module_from
+              saverecord bttmp1
+              Send UpdateWait to (piTxtID(Self))  ('Ešš¨˜­ã Record œ¢á«ž'+(String(bttmp1.witemx_code)))
+           end
+       end
+     find gt cmoves by index.13
+     Loop
+     if (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+
+End_Procedure
+
+
+Procedure OnProcess
+    send update_rec
+End_Procedure
+
+
+Procedure Start_Process
+         Set piTxtID                         to (Wait(Self))
+         Set Button_State    of (Wait(Self)) to False
+         Set BarVisibleState of (Wait(Self)) to '' False
+         Send Popup                          to (Wait(Self))
+         Set piLathos                        to 0
+         Forward Send Start_Process
+End_Procedure
+
+Procedure OnError integer error_info string errMsg
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+End_Procedure
+
+
+Procedure End_Process
+            Forward Send End_Process
+            If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+End_Procedure
+
+
+End_Object
+
+

@@ -1,0 +1,227 @@
+
+// Register all objects
+Register_Object syscurxr_DD
+Register_Object Docpresp
+Register_Object payresp_DD
+Register_Object clients_DD
+Register_object cmoves_dd
+Register_Object year_DD
+Register_Object rmetafyp.rv
+
+
+
+//AB-IgnoreStart
+
+Use Bproces.Sub
+Use DFAllEnt.pkg
+use syscurxr.dd
+use payresp.dd
+use clients.dd
+use year.dd
+use cmoves.dd
+
+//AB-IgnoreEnd
+
+Object Dozeroyp is a BusinessProcessSub
+
+    //AB-StoreTopStart
+
+    Property    Integer piError       Public  0
+    property    string  datefrom      public ''
+    property    integer piTxtID       public 0
+    property    integer piLathos      public 0
+    property    string  psclient      public ''
+    property    string  psmodule      public ''
+    property    string  pscode        public ''
+
+    Open SysCurXr
+//    reread syscurxr
+//    unlock
+
+    Set Status_Panel_State to False
+    Set Display_Error_State to True
+
+    //AB-StoreTopEnd
+
+    Set Size to 82 140
+    Set Location to 72 182
+
+    //AB-DDOStart
+
+
+    Object Payresp_DD is a Payresp_DataDictionary
+
+    End_Object    // Payresp_DD
+
+    Object Clients_DD is a clients_DataDictionary
+
+    End_Object    // clients_DD
+
+    Object Cmoves_DD is a cmoves_DataDictionary
+
+    End_Object    // cmoves_DD
+
+
+
+    Object year_DD is a year_DataDictionary
+
+    End_Object    // year_DD
+
+    Object syscurxr_DD is a syscurxr_DataDictionary
+
+    End_Object    // syscurxr
+
+
+    //AB-StoreEnd
+
+
+    //AB-DDOEnd
+
+
+    //AB-StoreStart
+
+    Procedure Start_Processing
+     String  scode smodule spar
+     Number  naxia nx0 np0 nx00 np00 nx1 np1 ndiaf tx0 tp0 tx00 tp00 tx1 tp1 nplafon nofeilh
+     Date    dHmnia
+     string  serr msgstr
+     integer iyear icount nyear ctypkinyear
+ //    reread
+
+    clear year
+    move syscurxr.company_code   to year.company_code
+    move syscurxr.branch_code    to year.branch_code
+    move (syscurxr.year_year)    to year.year_year
+    find eq year by index.1
+    if (not(found)) error 3002 'Éú§ ‚Æú´ú ò§¶Â•ú† §‚ò Æ®„©û ©´¶ ¨ß¶°ò´·©´û£ò !!'
+
+    move year.payresp_plafon    to nplafon
+    move year.payresp_ofeilh    to nofeilh
+     begin_transaction
+     Clear payresp
+     find gt payresp.recnum
+     While (found=1)
+         add 1 to icount
+         move payresp.presp_id      to scode
+         move 0 to payresp.pistosh
+         move 0 to payresp.xreosh
+         move 0 to payresp.ypoloipo
+         move 0 to payresp.overhead
+         // õú§ •‚®‡ ò§ ß®‚ßú† §ò £ûõú§Âù¶¨§ ´ò úß†©≠ò¢„ ß¶©· °ò† ß¶©· òß¶ É.Ä///
+     //    move 0 to payresp.poso_se_apait
+     //    move 0 to payresp.posa_apo_dap
+         move nplafon to payresp.plafon
+         move nofeilh to payresp.orio_syn_ofeilh
+         saverecord payresp
+         Send UpdateWait to (piTxtID(Self))  ('ãûõú§†©£Ê™ ¨ß¶¢.¨ßú¨ü.ß¢û®‡£„™ '+(String(scode)+ ' '+(string(icount))))
+         Find  gt payresp.recnum
+     loop
+     end_transaction
+
+    move year.clients_plafon    to nplafon
+    move year.clients_ofeilh    to nofeilh
+     begin_transaction
+     clear clients
+     find gt clients.recnum
+     While (found=1)
+        move clients.client_id to scode
+        move 0 to clients.pistosh
+        move 0 to clients.xreosh
+        move 0 to clients.ypoloipo
+        move 0 to clients.overhead
+            // õú§ •‚®‡ ò§ ß®‚ßú† §ò £ûõú§Âù¶¨§ ´ò úß†©≠ò¢„ ß¶©· °ò† ß¶©· òß¶ É.Ä///
+        //    move 0 to clients.poso_se_apait
+        //    move 0 to clients.posa_apo_dap
+
+        if (clients.is_client = '1') begin
+            move nplafon to clients.plafon
+            move nofeilh to clients.orio_syn_ofeilh
+        end
+        saverecord clients
+        Send UpdateWait to (piTxtID(Self))  ('ãûõú§†©£Ê™ ¨ß¶¢.î¶®‚ò '+(String(scode)))
+        find gt clients.recnum
+
+     Loop
+     end_transaction
+
+     clear cmoves
+     move syscurxr.company_code to cmoves.company_code
+     move syscurxr.year_year    to cmoves.year_year
+     find ge cmoves by index.14
+     While ((found=1) and (cmoves.company_code=syscurxr.company_code) and ;
+                          (cmoves.year_year=syscurxr.year_year))
+         If (cmoves.branch_code='50') goto next2
+         If (cmoves.branch_code='51') goto next2
+
+         add 1 to icount
+         begin_transaction
+         clear clients
+         move cmoves.client_id to clients.client_id
+         find eq clients by index.6
+         if (not(found)) begin
+            move '' to msgstr
+            move "Éú§ ô®‚üû°ú ©ú £†ò °Â§û©û ¶ èú¢·´û™=" to msgstr
+            append msgstr cmoves.client_id
+            send info_box msgstr 'è¢û®¶≠¶®Âò'
+            goto next2
+         end
+         add cmoves.cmoves_x0  to clients.xreosh
+         add cmoves.cmoves_p0  to clients.pistosh
+         Move (Clients.Xreosh-Clients.Pistosh)   to Clients.Ypoloipo
+         Move (Clients.Plafon-Clients.Ypoloipo)  to Clients.Overhead
+         saverecord clients
+
+         clear payresp
+         move clients.presp_id to payresp.presp_id
+         find eq payresp by index.7
+         if (not(found)) begin
+            move '' to msgstr
+            move 'Éú§ ô®‚üû°ú ©ú £†ò °Â§û©û ¶ ìßúÁü¨§¶™=' to msgstr
+            append msgstr clients.presp_id
+            send info_box msgstr 'è¢û®¶≠¶®Âò'
+            goto next2
+         end
+         add cmoves.cmoves_x0  to payresp.xreosh
+         add cmoves.cmoves_p0  to payresp.pistosh
+         Move (payresp.Xreosh-payresp.Pistosh)   to payresp.Ypoloipo
+         Move (payresp.Plafon-payresp.Ypoloipo)  to payresp.Overhead
+         saverecord payresp
+         end_transaction
+         next2:
+         Send UpdateWait to (piTxtID(Self))  ('Ñ§û£‚®‡©û °Â§û©û™ '+(String(cmoves.recnum)) + '      '+(string(icount)))
+         find gt cmoves by index.14
+
+     Loop
+     if (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+    Procedure OnProcess
+        Send Start_Processing
+    End_Procedure
+
+    Procedure Start_Process
+         Set piTxtID                         to (Wait(Self))
+         Set Button_State    of (Wait(Self)) to False
+         Set BarVisibleState of (Wait(Self)) to '' False
+         Send Popup                          to (Wait(Self))
+         Set piLathos                        to 0
+         Forward Send Start_Process
+    End_Procedure
+
+    Procedure OnError integer error_info string errMsg
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+    Procedure End_Process
+       Forward Send End_Process
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_Procedure
+
+
+    //AB-StoreEnd
+
+End_Object
+
+//AB/ End_Object    // prj

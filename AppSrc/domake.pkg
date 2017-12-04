@@ -1,0 +1,237 @@
+
+        use r26_4.rv
+        use clients.dd
+        use item.dd
+        Use witemcl.dd
+        use iteml.dd
+        use itemd.dd
+        use tempitem.dd
+        use wam.dd
+        use syscurxr.dd
+  Object oDomake is A BusinessProcessSub
+        set Status_panel_state to false
+        set Display_Error_state to true
+
+        Property string  pswax  public ''
+        property string  psitem public ''
+        property number  pnqty  public 0
+        property integer piTxtID public 0
+        property integer piLathos public 0
+
+        Object clients_DD is a clients_DataDictionary
+        End_Object
+
+        Object tempitem_DD is a tempitem_DataDictionary
+        End_Object
+
+        Object item_DD is a item_DataDictionary
+        End_Object
+
+        Object iteml_DD is a iteml_DataDictionary
+        End_Object
+
+        Object itemd_DD is a itemd_DataDictionary
+            Set DDO_Server to (iteml_DD(Current_Object))
+            Set Constrain_File to iteml.File_Number
+            Begin_Constraints
+               string lscode
+               get psitem to lscode
+               constrain itemd.company eq syscurxr.company_code
+               constrain itemd.branch  eq syscurxr.branch_code
+               If Lscode ne "" Constrain itemd.item_code eq Lscode
+            End_Constraints
+        End_Object
+
+        Object wam_DD is a wam_DataDictionary
+        End_Object
+
+        Object witemcl_DD is a witemcl_DataDictionary
+        End_Object
+
+       PROCEDURE New_rec string lsco string lsstore number lnqty
+            set psitem   to lsco
+            set pswax    to lsstore
+            set pnqty    to lnqty
+       SEND DOPROCESS
+END_PROCEDURE
+
+Procedure gr_rec
+        Integer licaitemsDDo liErr licaitemdlddo  licustddo licatypesddo licaitemslDDo ierr
+        integer licaitemsdddo likind licastoredddo liitempromddo litemp01ddo irecnum litemp99ddo
+        number lnqty lnmin lnaxia lnfpa lntot lngtot lnnet lnoqty lnoaxia lnotot lnonet
+        number storemin storeqty qtyform tempqty
+        string lsitem lsmaster lsitemd lsstore lsprom lsitemprom
+        integer frmrecnum
+        get psitem  to lsmaster
+        get pswax   to lsstore
+        get pnqty   to qtyform
+             // Begin_Transaction
+        send clear to iteml_dd
+        //*****************************************************
+
+        move (trim(lsmaster)) to iteml.item_code
+        Send Find   to iteml_dd eq 5
+        if (found = 1) begin
+           send Rebuild_constraints to itemd_DD
+           Send Find  to itemd_dd FIRST_Record 1
+           While (found eq 1)
+              send clear  to tempitem_dd
+              get field_current_value of itemd_dd field itemd.itemd_code   to lsitem
+              clear witemcl
+              move lsitem to witemcl.item_code
+              move '31/12/2100' to witemcl.client_date
+              move 999999999 to witemcl.rec0
+              Find lt witemcl By Index.3
+              if ((found = 1) And (lsitem=witemcl.item_code)) begin
+                   Move witemcl.client_code  to lsprom
+                   move witemcl.client_price to lnaxia
+                   set field_changed_value of tempitem_dd field tempitem.client_id to lsprom
+              end
+              set field_changed_value of tempitem_dd field tempitem.item_code    to lsmaster
+              set field_changed_value of tempitem_dd field tempitem.witemx_code  to lsitem
+              set field_changed_value of tempitem_dd field tempitem.wax_recr     to lsstore
+              get field_current_value of itemd_dd  field itemd.itemd_qty     to lnqty
+              set field_changed_value of tempitem_dd field tempitem.wcmove_axia  to lnaxia
+              set field_changed_value of tempitem_dd field tempitem.wcmove_qty   to (qtyform*lnqty)
+              clear item
+              move lsitem to item.item_code
+              find eq item by index.5
+              move item.item_analysh  to likind
+              move item.item_orio     to storemin
+              if (likind = 2) set field_changed_value of tempitem_dd field tempitem.wcmove_status_e to 1
+              clear wam
+              set field_changed_value of tempitem_dd field tempitem.wcmove_qty_eisa to storemin
+              move syscurxr.company_code to wam.company_code
+              move syscurxr.branch_code  to wam.branch_code
+              move syscurxr.year_year    to wam.year_year
+              move lsstore               to wam.wax_recr
+              move lsitem                to wam.witemx_code
+              move 0                     to wam.wam_rec0
+              Find ge wam by index.3
+              if ((found = 1) and (syscurxr.company_code eq wam.company_code) and;
+                                  (syscurxr.branch_code  eq wam.branch_code)  and;
+                                  (syscurxr.year_year    eq wam.year_year)    and;
+                                  (lsstore               eq wam.wax_recr)     and;
+                                  (lsitem                eq wam.witemx_code)) begin
+                 move wam.wam_qty_apoth  to storeqty
+                 set field_changed_value of tempitem_dd field tempitem.wcmove_qty_exa  to storeqty
+              end
+              send request_save to tempitem_dd
+              Send UpdateWait to (piTxtID(Self))  ('„¤ž£â¨à©ž ©ç¤Ÿœ«¦¬ œå›¦¬ª £œ ˜¤á¢¬©ž '+(String(lsitem)))
+          Send Find  to itemd_dd next_record 1
+          loop
+          /////////////////////////////////////////////////////////////////////////////
+          send Clear to iteml_dd
+          send clear to itemd_dd
+          send clear to tempitem_dd
+          move 1 to tempitem.wcmove_status_e
+          send find to tempitem_dd ge 1
+          While ((found eq 1) and (tempitem.wcmove_status_e = 1))
+              get field_current_value of tempitem_dd field tempitem.recnum      to irecnum
+              get field_current_value of tempitem_dd field tempitem.item_code   to lsmaster
+              get field_current_value of tempitem_dd field tempitem.witemx_code to lsitem
+              get field_current_value of tempitem_dd field tempitem.wcmove_qty  to tempqty
+              move lsitem to iteml.item_code
+              Send Find   to iteml_dd eq 5
+              if (found=1) begin
+                 set psitem to lsitem
+                 send Rebuild_constraints to itemd_dd
+                 Send Find  to itemd_dd FIRST_Record 1
+                 if (not(found)) move 1 to ierr
+                 else            move 0 to ierr
+                 While (found eq 1)
+                    send clear  to tempitem_dd
+                    get field_current_value of itemd_dd field itemd.itemd_code   to lsitemd
+                    get field_current_value of itemd_dd field itemd.itemd_qty    to lnqty
+                    move lsstore               to tempitem.wax_recr
+                    move lsitemd               to tempitem.witemx_code
+                    clear witemcl
+                    move lsitemd to witemcl.item_code
+                    move '31/12/2100' to witemcl.client_date
+                    move 999999999 to witemcl.rec0
+                    Find lt witemcl By Index.3
+                    if ((found = 1) And (lsitemd=witemcl.item_code)) begin
+                        Move witemcl.client_code  to lsprom
+                        move witemcl.client_price to lnaxia
+                        set field_changed_value of tempitem_dd field tempitem.client_id to lsprom
+                    end
+                     set field_changed_value of tempitem_dd field tempitem.item_code    to lsitem
+                     set field_changed_value of tempitem_dd field tempitem.wax_recr     to lsstore
+                     set field_changed_value of tempitem_dd field tempitem.witemx_code  to lsitemd
+                     get field_current_value of itemd_dd  field itemd.itemd_qty     to lnqty
+                     set field_changed_value of tempitem_dd field tempitem.wcmove_axia  to lnaxia
+                     set field_changed_value of tempitem_dd field tempitem.wcmove_qty   to (lnqty*tempqty)
+                     clear item
+                     move lsitemd to item.item_code
+                     find eq item by index.5
+                     move item.item_analysh  to likind
+                     move item.item_orio     to storemin
+                     if (likind = 2) set field_changed_value of tempitem_dd field tempitem.wcmove_status_e to 1
+                     clear wam
+                     move syscurxr.company_code to wam.company_code
+                     move syscurxr.branch_code  to wam.branch_code
+                     move syscurxr.year_year    to wam.year_year
+                     move lsstore               to wam.wax_recr
+                     move lsitemd               to wam.witemx_code
+                     move 0                     to wam.wam_rec0
+
+                     Find ge wam by index.3
+                     if ((found = 1) and (syscurxr.company_code eq wam.company_code) and;
+                                  (syscurxr.branch_code  eq wam.branch_code)  and;
+                                  (syscurxr.year_year    eq wam.year_year)    and;
+                                  (lsstore               eq wam.wax_recr)     and;
+                                  (lsitemd               eq wam.witemx_code)) begin
+                        move wam.wam_qty_apoth  to storeqty
+                        set field_changed_value of tempitem_dd field tempitem.wcmove_qty_eisa to storemin
+                        set field_changed_value of tempitem_dd field tempitem.wcmove_qty_exa  to storeqty
+                     end
+                     send request_save to tempitem_dd
+                     Send UpdateWait to (piTxtID(Self))  ('„¤ž£â¨à©ž ©ç¤Ÿœ«¦¬ œå›¦¬ª £œ ˜¤á¢¬©ž '+(String(lsitemd)))
+                 Send Find  to itemd_dd next_record 1
+                 loop
+             end
+       move irecnum to tempitem.recnum
+       send find to tempitem_dd eq 3
+       if (found = 1 and ierr = 0) send request_delete to tempitem_dd
+       else begin
+          set field_changed_value of tempitem_dd field tempitem.wcmove_status_e to 0
+          send request_save to tempitem_dd
+       end
+
+       send clear to tempitem_dd
+       move 1 to tempitem.wcmove_status_e
+       send find to tempitem_dd ge 1
+       Loop
+      end
+
+    // End_Transaction
+
+End_Procedure
+
+Procedure Start_Process
+         Set piTxtID                         to (Wait(Self))
+         Set Button_State    of (Wait(Self)) to False
+         Set BarVisibleState of (Wait(Self)) to '' False
+         Send Popup                          to (Wait(Self))
+         Set piLathos                        to 0
+         Forward Send Start_Process
+ End_Procedure
+
+ Procedure OnError integer error_info string errMsg
+    If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+ End_Procedure
+
+ Procedure End_Process
+    Forward Send End_Process
+    If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+ End_Procedure
+
+
+
+Procedure OnProcess
+       send gr_rec
+End_Procedure
+
+End_Object
+
+

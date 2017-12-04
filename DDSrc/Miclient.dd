@@ -1,41 +1,215 @@
-Use DataDict.pkg
+//DDB-FileStart
+//DDB-HeaderStart
 
-Open MICLIENT
-Open MICN
-Open MICITIES
-Open MIAREAS
-Open MIPRESP
+// File Name : MICLIENT.DD
+// Class Name: Miclient_DataDictionary
+// Revision  : 0
+// Version   : 2
 
-Register_Object Miclient_sl
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
 
-Class Miclient is a DataDictionary
-    
-    Procedure Construct_Object
-        Forward Send Construct_Object
-        Set Main_file to MICLIENT.File_Number
+Open Miclient
 
-        Set Add_Server_File to MICITIES.File_Number
-        Set Add_Server_File to MIAREAS.File_Number
-        Set Add_Server_File to MIPRESP.File_Number
+//DDB-HeaderEnd
 
-        Set Add_Client_File to MICN.File_Number
+Class Miclient_DataDictionary  is a DataDictionary_sec
 
-        Set Foreign_Field_Option DD_KEYFIELD DD_NOPUT to True
-        Set Foreign_Field_Option DD_KEYFIELD DD_FINDREQ to True
-        Set Foreign_Field_Option DD_INDEXFIELD DD_NOPUT to True
-        Set Foreign_Field_Option DD_DEFAULT DD_DISPLAYONLY to True
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
 
-        Set Field_Prompt_Object Field MICLIENT.CLIENT_ID to Miclient_sl
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
 
-        Set Field_Prompt_Object Field MICLIENT.CLIENT_NAME to Miclient_sl
+        Set Main_File            To Miclient.File_Number
 
-        Set Field_Prompt_Object Field MICLIENT.CLIENT_AFM to Miclient_sl
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
 
-    End_Procedure
+        // Field-based properties.......................
 
-End_Class
+        // Miclient.Company_Code
 
-#IFDEF Is$WebApp
-#ELSE
-Use Miclient.sl
-#ENDIF
+        // Miclient.Branch_Code
+
+        // Miclient.Year_Year
+
+        // Miclient.Custprom_Code
+
+        // Miclient.Client_Id
+
+        // Miclient.Client_Name
+
+        // Miclient.Client_Afm
+
+        // Miclient.Client_Rec0
+
+        // Miclient.Custprom_Recr
+
+        // Miclient.Client_Recr
+
+        // Miclient.Last_Xreosh
+
+        // Miclient.Last_Pistosh
+
+        // Miclient.Last_Order
+
+        // Miclient.Client_Doy
+
+        // Miclient.Client_Address
+
+        // Miclient.Client_City_Id
+
+        // Miclient.Client_Area
+
+        // Miclient.Client_Job
+
+        // Miclient.Client_Respons
+
+        // Miclient.Client_Zipcode
+
+        // Miclient.Client_Phone
+
+        // Miclient.Client_Fax
+
+        // Miclient.Client_Mobile
+
+        // Miclient.Client_Aoh
+
+        // Miclient.Client_Email
+
+        // Miclient.Client_Class
+
+        // Miclient.Client_Details
+
+        // Miclient.Client_Sitew
+
+        // Miclient.Client_Codem
+
+        // Miclient.Client_Categfpa
+
+        // Miclient.Client_Fpa
+
+        // Miclient.Client_Public
+
+        // Miclient.Client_Sn
+
+        // Miclient.Client_Repm
+
+        // Miclient.Client_Active
+
+        // Miclient.Client_Reported
+
+        // Miclient.Client_Pelprom
+
+        // Miclient.Client_Lastupd
+
+        // Miclient.Client_Markexp
+
+        // Miclient.Client_Catjob
+
+        // Miclient.Is_Promhtheyths
+
+        // Miclient.Xreosh
+
+        // Miclient.Pistosh
+
+        // Miclient.Ypoloipo
+
+        // Miclient.Plafon
+
+        // Miclient.Overhead
+
+        // Miclient.Client_Company
+
+        // Miclient.Client_Repmatch
+
+        // Miclient.Client_Hmnia
+
+        // Miclient.Client_Presp
+
+        // Miclient.Client_Locked
+
+        // Miclient.Synolikh_Ofeilh
+
+        // Miclient.Client_Idiot
+
+        // Miclient.Client_Add_No
+
+        // Miclient.Client_Nomos
+
+        // Miclient.Client_Xora
+
+        // Miclient.Polh_Recr
+
+        // Miclient.Presp_Id
+
+        // Miclient.Sum_Pct_Tpcl
+
+        // Miclient.Is_Client
+
+        // Miclient.Sysxetish
+
+        // Miclient.Poso_Se_Apait
+
+        // Miclient.Client_Glcode
+
+        // Miclient.Is_Eksoter
+
+        // Miclient.Is_Xondr
+
+        // Miclient.Orio_Syn_Ofeilh
+
+        // Miclient.Posa_Apo_Dap
+
+        // Miclient.Client_Doybtm
+
+        // Miclient.Posa_Apo_Parag
+
+        // Miclient.Client_Ptyppar
+
+        // Miclient.Client_Seira
+
+        // Miclient.Hpso
+
+        // Miclient.Hpal
+
+        // Miclient.Feregios
+
+        // Miclient.Diakin
+
+        // Miclient.Status
+
+        // Miclient.Anal
+
+        // Miclient.Endoomil
+
+        // Miclient.Npdd
+
+        // Miclient.Sap_Hmnia
+
+        // Miclient.Exportflag
+
+        // Miclient.Exportstatus
+
+        // Miclient.Exportdate
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Miclient_DataDictionary
+//DDB-FileEnd

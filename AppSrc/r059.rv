@@ -1,0 +1,1426 @@
+//AB/ Project R059:Isozygio
+//AB/     Object prj is a Report_Project
+//AB/         Set ProjectName to "R059:Isozygio"
+//AB/         Set ProjectFileName to "r059.rv"
+
+// Project Object Structure
+//   R059 is a ReportViewSub
+//     oPeriodCodeArray is a Set
+//     Syscurgl_DD is a DataDictionary
+//     oSelectGplan is a GroupSub
+//       frmGplan_Code_From is a FormSub
+//       frmGplan_Code_Eos is a FormSub
+//       TextBoxSub1 is a TextBoxSub
+//       TextBoxSub2 is a TextBoxSub
+//     oSelectMonth is a GroupSub
+//       frmPeriod is a ComboFormSub
+//       frmBathmos is a FormSub
+//       TextBoxSub12 is a TextBoxSub
+//       TextBoxSub13 is a TextBoxSub
+//     oSelectAppear is a GroupSub
+//       chkbAppear1 is a CheckBoxSub
+//       chkbAppear2 is a CheckBoxSub
+//       chkbAppear3 is a CheckBoxSub
+//     oSelectDate is a GroupSub
+//       sfrmMonth is a SpinFormSub
+//       sfrmYear is a SpinFormSub
+//       txtMonth is a TextBoxSub
+//       TextBoxSub4 is a TextBoxSub
+//     oSelectPrint is a RadioGroupSub
+//       RadioSub3 is a RadioSub
+//       RadioSub4 is a RadioSub
+//       rdFile is a RadioSub
+//       frmFile is a FormSub
+//     oRunReport_bn is a ButtonSub
+//     oCancel_bn is a ButtonSub
+//     oClear_bn is a ButtonSub
+//     dbGroupSub1 is a dbGroupSub
+//       Syscurgl_Company_Name is a dbFormSub
+//       Syscurgl_Branch_Name is a dbFormSub
+//       Syscurgl_Year_Year is a dbFormSub
+//     Isozygio_BasicReport is a BasicReportSub
+
+// Register all objects
+Register_Object chkbAppear1
+Register_Object chkbAppear2
+Register_Object chkbAppear3
+Register_Object dbGroupSub1
+Register_Object frmBathmos
+Register_Object frmFile
+Register_Object frmGplan_Code_Eos
+Register_Object frmGplan_Code_From
+Register_Object frmPeriod
+Register_Object Isozygio_BasicReport
+Register_Object oCancel_bn
+Register_Object oClear_bn
+Register_Object oPeriodCodeArray
+Register_Object oRunReport_bn
+Register_Object oSelectAppear
+Register_Object oSelectDate
+Register_Object oSelectGplan
+Register_Object oSelectMonth
+Register_Object oSelectPrint
+Register_Object R059
+Register_Object RadioSub3
+Register_Object RadioSub4
+Register_Object rdFile
+Register_Object Syscurgl_Branch_Name
+Register_Object Syscurgl_Company_Name
+Register_Object Syscurgl_DD
+Register_Object Syscurgl_Year_Year
+Register_Object sfrmMonth
+Register_Object sfrmYear
+Register_Object TextBoxSub1
+Register_Object TextBoxSub12
+Register_Object TextBoxSub13
+Register_Object TextBoxSub2
+Register_Object TextBoxSub4
+Register_Object txtMonth
+
+
+//AB/     Report View
+
+
+    //AB-StoreTopStart
+    Use DFAllRpt.pkg
+    Use BasicRpt.Sub
+    open codemast
+    Use COMPANY.DD
+    Use BRANCH.DD
+    Use YEAR.DD
+    Use GTHHMGIO.DD
+    Use GTYPKIN.DD
+    Use GPLAN.DD
+    Use GARTICL.DD
+    Use GMOVE.DD
+    Use GMHNES.DD
+    Use GHMNIES.DD
+    
+    Use rvi059.pkg
+    Use messagex.dg
+    
+    Object oR059Properties is an Array
+        Property Integer piTheorimenoStatus 0
+        Property Integer piWhatToPrint 0
+    End_Object // oR059Properties
+    
+    Use CalcYpol.Inc
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use Rptvw.Sub
+    Use DFAllEnt.pkg
+    Use Group.Sub
+    Use Form.Sub
+    Use Txtbox.Sub
+    Use Cmbfrm.Sub
+    Use Chkbox.Sub
+    Use Spnfrm.Sub
+    Use Rgroup.Sub
+    Use Radio.Sub
+    Use Button.Sub
+    Use dbGroup.Sub
+    Use dbForm.Sub
+
+    Use SysCurGL.dd
+    
+    //AB-IgnoreEnd
+
+    ACTIVATE_VIEW Activate_R059 FOR R059
+
+    Object R059 is a ReportViewSub
+
+        //AB-StoreTopStart
+        Object oPeriodCodeArray is a Set
+        End_Object
+        
+        //AB-StoreTopEnd
+
+        Set Label to "à©¶ùÁö†¶"
+        Set Size to 223 320
+        Set Location to 4 3
+
+        //AB-DDOStart
+
+        Object Syscurgl_DD is a SysCurGL_DataDictionary
+        End_Object    // Syscurgl_DD
+
+
+        //AB-DDOEnd
+
+        Object oSelectGplan is a GroupSub
+            Set Label to "Ñß†¢¶ö„ ä¶öò®†ò©£È§"
+            Set Size to 46 310
+            Set Location to 24 3
+            Object frmGplan_Code_From is a FormSub
+
+                //AB-StoreTopStart
+                                                                                                                                                                                                                                                                        
+                //AB-StoreTopEnd
+
+                Set Size to 13 211
+                Set Location to 10 60
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Prompt_Button_Mode to pb_PromptOn
+                Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+                //AB-StoreStart
+                Set Prompt_Object to (Sl150(Current_object))
+                
+                // this is called by the prompt list upon initialization. This will let us
+                // set special properties for the list's one time use. In this case we
+                // want the intial column and the export column to be name (col 1)
+                Procedure Prompt_Callback integer hPrompt
+                    set Export_Column of hPrompt to 0
+                    Set Initial_Column of hPrompt to 0
+                end_procedure
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // frmGplan_Code_From
+
+            Object frmGplan_Code_Eos is a FormSub
+
+                //AB-StoreTopStart
+                                                                                                                                                                                                                                                                        
+                //AB-StoreTopEnd
+
+                Set Size to 13 211
+                Set Location to 27 60
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Prompt_Button_Mode to pb_PromptOn
+                Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+                //AB-StoreStart
+                Set Prompt_Object to (Sl150(Current_object))
+                
+                // this is called by the prompt list upon initialization. This will let us
+                // set special properties for the list's one time use. In this case we
+                // want the intial column and the export column to be name (col 1)
+                Procedure Prompt_Callback integer hPrompt
+                    set Export_Column of hPrompt to 0
+                    Set Initial_Column of hPrompt to 0
+                end_procedure
+                
+                //AB-StoreEnd
+
+            End_Object    // frmGplan_Code_Eos
+
+            Object TextBoxSub1 is a TextBoxSub
+                Set Label to "ÄßÊ â‡õ†°Ê :"
+                Set Auto_Size_State to FALSE
+                Set FontSize to 4 0
+                Set Location to 12 5
+                Set Size to 10 48
+                Set TypeFace to "MS Sans Serif"
+                Set Enabled_State to TRUE
+            End_Object    // TextBoxSub1
+
+            Object TextBoxSub2 is a TextBoxSub
+                Set Label to "Ñ‡™ â‡õ†°Ê :"
+                Set Auto_Size_State to FALSE
+                Set FontSize to 4 0
+                Set Location to 26 5
+                Set Size to 13 47
+                Set TypeFace to "MS Sans Serif"
+                Set Enabled_State to TRUE
+            End_Object    // TextBoxSub2
+
+        End_Object    // oSelectGplan
+
+        Object oSelectMonth is a GroupSub
+            Set Label to "Ñß†¢¶ö„ èú®†Êõ¶¨ - Åòü£¶Á"
+            Set Size to 48 142
+            Set Location to 72 3
+            Object frmPeriod is a ComboFormSub
+                Set Size to 13 103
+                Set Location to 11 36
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Combo_Sort_State to FALSE
+                Set Entry_State Item 0 to FALSE
+
+                //AB-StoreStart
+                                                                                                                                                                                                                                                                                    
+                //Set Default_Combo_Item to 0
+                Set Entry_State Item 0 to False
+                
+                Procedure Combo_Fill_List
+                    Integer liSetId
+                
+                    Move oPeriodCodeArray to liSetId
+                    Send Delete_Data of liSetId
+                
+                    Clear Codemast
+                    Move "PERIOD" to Codemast.Type
+                    Find gt Codemast by Index.1
+                    While ((found) and Codemast.Type = "PERIOD")
+                        Send Combo_Add_Item Codemast.Description
+                        Send add_element to liSetId Codemast.Code
+                        If (Codemast.Code = "0") Begin
+                            Set Default_Combo_Item to (Item_Count(liSetId)-1)
+                            Set piDefaultPeriod of R059 to (Item_Count(liSetId)-1)
+                        End
+                        Find gt Codemast by Index.1
+                    End
+                End_Procedure // Combo_Fill_List
+                
+                Procedure Combo_Item_Changed
+                    Integer liPeriodCode
+                    Forward Send Combo_Item_Changed
+                    Get FindPeriodCode to liPeriodCode
+                    Set Enabled_State of oSelectDate to (liPeriodCode = 0)
+                End_Procedure // Combo_Item_Changed
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // frmPeriod
+
+            Object frmBathmos is a FormSub
+                Set Size to 13 21
+                Set Location to 27 35
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Form_TypeFace Item 0 to "MS Sans Serif"
+                Set Value Item 0 to "1"
+            End_Object    // frmBathmos
+
+            Object TextBoxSub12 is a TextBoxSub
+                Set Label to "èú®Â¶õ¶™:"
+                Set Auto_Size_State to FALSE
+                Set FontSize to 4 0
+                Set Location to 12 3
+                Set Size to 10 32
+                Set TypeFace to "MS Sans Serif"
+                Set Enabled_State to TRUE
+            End_Object    // TextBoxSub12
+
+            Object TextBoxSub13 is a TextBoxSub
+                Set Label to "Åòü£Ê™:"
+                Set Auto_Size_State to FALSE
+                Set FontSize to 4 0
+                Set Location to 28 3
+                Set Size to 10 26
+                Set TypeFace to "MS Sans Serif"
+                Set Enabled_State to TRUE
+            End_Object    // TextBoxSub13
+
+
+            //AB-StoreStart
+                                                                                                                                                                                                        
+            Function FindPeriodCode Returns Integer
+                Integer liPeriodCode liItemNum liSetId
+            
+                Move oPeriodCodeArray to liSetId
+                Move (combo_item_matching(frmPeriod(Self),(Value(frmPeriod(Self), 0)))) to liItemNum
+                If (liItemNum <> -1) Get Value of oPeriodCodeArray Item liItemNum to liPeriodCode
+                Function_return liPeriodCode
+            End_function // FindPeriodCode
+            
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // oSelectMonth
+
+        Object oSelectAppear is a GroupSub
+            Set Label to "Ñß†¢¶ö„ â®†´û®Â‡§ Ñ£≠·§†©û™"
+            Set Size to 48 166
+            Set Location to 72 147
+            Object chkbAppear1 is a CheckBoxSub
+                Set Label to "ä¶öò®†ò©£¶Â £ú ãûõú§†°Ê ìßÊ¢¶†ß¶"
+                Set Size to 10 134
+                Set Location to 9 6
+            End_Object    // chkbAppear1
+
+            Object chkbAppear2 is a CheckBoxSub
+                Set Label to "ä¶öò®†ò©£¶Â ß¶¨ °†§„üû°ò§ ©´û§ èú®Â¶õ¶"
+                Set Size to 10 153
+                Set Location to 22 6
+            End_Object    // chkbAppear2
+
+            Object chkbAppear3 is a CheckBoxSub
+                Set Label to "ä¶öò®†ò©£¶Â ß¶¨ °†§„üû°ò§ ©´û§ ï®„©û"
+                Set Size to 10 154
+                Set Location to 35 6
+            End_Object    // chkbAppear3
+
+
+            //AB-StoreStart
+                                                                                                                                                                                                        
+            Set Visible_State to False
+            Set Enabled_State to False
+            //AB-StoreEnd
+
+        End_Object    // oSelectAppear
+
+        Object oSelectDate is a GroupSub
+            Set Label to "Ñß†¢¶ö„ ã„§ò - Ñ´¶¨™"
+            Set Size to 28 310
+            Set Location to 123 3
+            Object sfrmMonth is a SpinFormSub
+                Set Size to 13 60
+                Set Location to 10 39
+                Set Maximum_Position to 13
+                Set Minimum_Position to 0
+
+                //AB-StoreStart
+                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                                    
+                //AB-StoreEnd
+
+            End_Object    // sfrmMonth
+
+            Object sfrmYear is a SpinFormSub
+                Set Size to 13 60
+                Set Location to 10 197
+                Set Maximum_Position to 2500
+                Set Minimum_Position to 0
+
+                //AB-StoreStart
+                                                                                                                                                                                                                                                                                    
+                Procedure OnChange
+                    Integer liYearFrom liYearTo liMonthFrom liMonthTo liMonthObjId
+                
+                    Get piXrhshYearFrom   to liYearFrom
+                    Get piXrhshYearTo     to liYearTo
+                    Get piXrhshPeriodFrom to liMonthFrom
+                    Get piXrhshPeriodTo   to liMonthTo
+                
+                    Move sfrmMonth to liMonthObjId
+                    If (Value(Self,0)=liYearFrom) Begin
+                        Set Minimum_Position of liMonthObjId to liMonthFrom
+                        Set Maximum_Position of liMonthObjId to 12
+                        Set Current_Position of liMonthObjId to liMonthFrom
+                        Set Value of liMonthObjId to liMonthFrom
+                    End
+                    If (Value(Self,0)=liYearTo) Begin
+                        Set Minimum_Position of liMonthObjId to 1
+                        Set Maximum_Position of liMonthObjId to liMonthTo
+                        Set Minimum_Position of liMonthObjId to 1
+                        Set Value of liMonthObjId to 1
+                    End
+                    Set Object_Shadow_State of liMonthObjId to ((Value(Self,0)<>liYearTo) and (Value(Self,0)<>liYearFrom))
+                End_Procedure // OnChange
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // sfrmYear
+
+            Object txtMonth is a TextBoxSub
+                Set Label to "ã„§ò™:"
+                Set Auto_Size_State to FALSE
+                Set FontSize to 4 0
+                Set Location to 11 6
+                Set Size to 10 29
+                Set TypeFace to "MS Sans Serif"
+            End_Object    // txtMonth
+
+            Object TextBoxSub4 is a TextBoxSub
+                Set Label to "Ñ´¶™:"
+                Set Auto_Size_State to FALSE
+                Set FontSize to 4 0
+                Set Location to 11 165
+                Set Size to 10 25
+                Set TypeFace to "MS Sans Serif"
+            End_Object    // TextBoxSub4
+
+        End_Object    // oSelectDate
+
+        Object oSelectPrint is a RadioGroupSub
+            Set Label to "Ñ°´Áß‡©û "
+            Set Size to 26 310
+            Set Location to 153 3
+            Object RadioSub3 is a RadioSub
+                Set Label to "éüÊ§û"
+                Set Size to 10 39
+                Set Location to 10 8
+            End_Object    // RadioSub3
+
+            Object RadioSub4 is a RadioSub
+                Set Label to "Ñ°´¨ß‡´„™"
+                Set Size to 10 49
+                Set Location to 10 54
+            End_Object    // RadioSub4
+
+            Object rdFile is a RadioSub
+                Set Label to "Ä®ÆúÂ¶"
+                Set Size to 10 42
+                Set Location to 10 112
+                Set Auto_Size_State to FALSE
+            End_Object    // rdFile
+
+            Object frmFile is a FormSub
+                Set Size to 13 141
+                Set Location to 8 163
+                Set Color to clBtnFace
+                Set Label_Col_Offset to 2
+                Set Enabled_State to FALSE
+                Set Form_TypeFace Item 0 to "MS Sans Serif"
+                Set Item_Shadow_State Item 0 to TRUE
+                Set Shadow_State Item 0 to TRUE
+            End_Object    // frmFile
+
+
+            //AB-StoreStart
+                                                                                                                                                                                                        
+            Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+                Forward Send Notify_Select_State  iNewItem  iOldItem
+                If (iNewItem = 0)   Set Output_Device_Mode  To PRINT_TO_WINDOW
+                Else If (iNewItem = 1) Set Output_Device_Mode  To PRINT_TO_PRINTER
+                Else If (iNewItem = 2) Set Output_Device_Mode  To PRINT_TO_FILE
+                Set Enabled_State of frmFile to (iNewItem = 2)
+            End_Procedure
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // oSelectPrint
+
+        Object oRunReport_bn is a ButtonSub
+            Set Label to "Ñ°´‚¢ú©û (F2)"
+            Set Size to 18 53
+            Set Location to 187 204
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                                                                                                                                                                        
+            Procedure OnClick
+                Send StartReport
+            End_Procedure
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // oRunReport_bn
+
+        Object oCancel_bn is a ButtonSub
+            Set Label to "Ñ•¶õ¶™ (Esc)"
+            Set Size to 18 53
+            Set Location to 187 260
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                                                                                                                                                                        
+            Procedure OnClick
+                Send Request_Cancel
+            End_Procedure
+            
+            //AB-StoreEnd
+
+        End_Object    // oCancel_bn
+
+        Object oClear_bn is a ButtonSub
+            Set Label to "Ä°Á®‡©û (F5)"
+            Set Size to 18 53
+            Set Location to 187 3
+            Set Focus_Mode to Pointer_Only
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                                                                                                                                                                        
+            Set MDI_Container to (R059(Self))
+            
+            Procedure OnClick
+                Delegate Send Request_Clear
+                Forward Send OnClick
+            End_Procedure // OnClick
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // oClear_bn
+
+        Object dbGroupSub1 is a dbGroupSub
+            Set Size to 28 310
+            Set Location to -4 3
+            Object Syscurgl_Company_Name is a dbFormSub
+                Entry_Item Syscurgl.Company_name
+                Set Server to (Syscurgl_DD(self))
+                Set Label to "Ñ´ò†®"
+                Set Size to 13 81
+                Set Location to 9 27
+                Set Color to clBtnFace
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Enabled_State to FALSE
+                Set Form_TypeFace Item 0 to "MS Sans Serif"
+                Set Item_Shadow_State Item 0 to TRUE
+                Set Shadow_State Item 0 to TRUE
+            End_Object    // Syscurgl_Company_Name
+
+            Object Syscurgl_Branch_Name is a dbFormSub
+                Entry_Item Syscurgl.Branch_name
+                Set Server to (Syscurgl_DD(self))
+                Set Label to "ìß¶°"
+                Set Size to 13 106
+                Set Location to 9 140
+                Set Color to clBtnFace
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Enabled_State to FALSE
+                Set Form_TypeFace Item 0 to "MS Sans Serif"
+                Set Item_Shadow_State Item 0 to TRUE
+                Set Shadow_State Item 0 to TRUE
+            End_Object    // Syscurgl_Branch_Name
+
+            Object Syscurgl_Year_Year is a dbFormSub
+                Entry_Item Syscurgl.Year_year
+                Set Server to (Syscurgl_DD(self))
+                Set Label to "ï®„©û"
+                Set Size to 13 29
+                Set Location to 9 275
+                Set Color to clBtnFace
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Enabled_State to FALSE
+                Set Form_TypeFace Item 0 to "MS Sans Serif"
+                Set Item_Shadow_State Item 0 to TRUE
+                Set Shadow_State Item 0 to TRUE
+            End_Object    // Syscurgl_Year_Year
+
+        End_Object    // dbGroupSub1
+
+
+        //AB-StoreStart
+        
+        Property Integer Sort_IndexR059_1  1
+        
+        Property String  psMonthR059 ""
+        Property String  psGplanCode_FromR059 ""
+        Property String  psGplanCode_EosR059 ""
+        Property Integer piBathmosR059 0
+        Property String  psPrnHeader ""
+        
+        
+        //Multicurrency selection Constants
+        Property Integer piSeriesR059 0
+        Property Integer piKeepSectionTogetherR059 0 //All one by one currencies
+        Property integer piState1R059 0
+        Property integer piState2R059 0
+        Property integer piState3R059 0
+        Property integer piekt        0
+        //Program Variables
+        Property Number pnYpolMhnesR059 0
+        Property String psCheckCodeR059 ""
+        Property Number pnSynxrePreviousR059 0
+        Property Number pnSynpistPreviousR059 0
+        Property Integer piWindowIndexKeep 0
+        Property Integer piCondition1 0
+        Property Integer piCondition2 0
+        Property Integer piCondition3 0
+        Property Integer piIndMoyKanei 0
+        Property Integer piTrexousaXrhsh 0
+        Property Integer piXrhshPeriodFrom 0
+        Property Integer piXrhshPeriodTo 0
+        Property Integer piXrhshYearFrom 0
+        Property Integer piXrhshYearTo 0
+        Property Integer piPeriodTrexousasXrhshs 0
+        Property Integer piYearTrexousasXrhshs 0
+        Property Integer piAcceptedYear 0
+        
+        //Variables for Lcheck.Dg
+        Property Integer pnPrintSt 0
+        Property Number pnCounterCheckSystem 0
+        
+        Property Integer piDefaultPeriod 0
+        
+        Function FindPeriodCode Returns Integer
+            Function_return (FindPeriodCode(oSelectMonth(Self)))
+        End_function // FindPeriodCode
+        
+        Procedure ShowLathos
+            send popup to (MessageX(self))
+            set Value of (EditSub1(MessageX(Self))) to "è®¶©¶Æ„ !!!  ìß·®Æú† Ä©¨£≠‡§Âò ©´ò Çú§†°· ëÁ§¶¢ò ´‡§ à©¶ù¨öÂ‡§"
+        End_Procedure // ShowLathos
+        
+        Procedure CheckIsogStartUp Integer anPrintStatus
+            String FileName
+            Integer liRptId
+        
+            Set pnCounterCheckSystem to 0
+        
+            Get Report_Object_Id to liRptId
+            If (liRptId) Send Rebuild_Constraints to liRptId
+        
+            //Set Bar_Maximum_position of (Wait(self)) to 10000
+            //Send DoInitialize_WaitBar to (Wait(Self))
+            Set Button_State of (Wait(Self)) to False
+            Set Horizontal_Justification of (Wait(Self)) to jMode_Left
+            Set BarVisibleState of (Wait(Self))  to "Ñ¢úöÆ¶™ à©¶ù¨öÂ¶¨" False
+            send popup to (Wait(self))
+        
+            Set pnPrintSt to anPrintStatus
+        
+            Set piTheorimenoStatus of oR059Properties to 0
+            Set piTrexousaXrhsh to 0
+        
+            Set piSeriesR059 to 1//Book
+            Set piState1R059 to 0
+        
+            Set piBathmosR059 to 11
+            Set psMonthR059   to 9999
+            Set piAcceptedYear to (piXrhshYearTo(Self))
+        
+            Make_Temp_File "TXT" FileName
+            Move (".\" - FileName)  To FileName
+            Set Output_Device_Name  To FileName
+            Send Run_Report
+            EraseFile FileName
+            //Send DoTerminate_WaitBar to (Wait(Self))
+            send Deactivate to (wait(Self))
+        End_Procedure // CheckIsogStartUp
+        
+        Procedure StartReport
+            Integer iOutputDevice
+            String  FileName
+            String lsDate_ToR059 lsDate_FromR059
+            String lsGplanCode_FromR059 lsGplanCode_EosR059 lsMonthR059
+            Integer liBathmosR059 liCondition1 liCondition2 liCondition3
+            Integer liState1R059 liState2R059 liState3R059 liKeepSectionTogetherR059
+            Integer liRptId lsMonthDescr liMonth liYear
+        
+            Set pnCounterCheckSystem to 0
+        
+            Get Output_Device_Mode To iOutputDevice
+        
+            If iOutputDevice EQ PRINT_TO_WINDOW Begin
+               Make_Temp_File "TXT" FileName
+               Move (".\" - FileName)  To FileName
+               Set Output_Device_Name  To FileName
+            End
+            Else If iOutputDevice EQ PRINT_TO_PRINTER ;
+                Set Output_Device_Name  To "Lpt1:"
+            Else If iOutputDevice EQ PRINT_TO_FILE Begin
+               Get Value of (frmFile(oSelectPrint(Self))) to FileName
+               If (FileName = "") Make_Temp_File "TXT" FileName
+               Move (".\" - FileName)  To FileName
+               Set Output_Device_Name  To FileName
+            End
+        
+           // Collection Of selection Criteria from VIEW
+           Get value of (frmGplan_Code_From(oSelectGplan(Self))) item 0 to lsGplanCode_FromR059
+           Set psGplanCode_FromR059 to lsGplanCode_FromR059
+           Get value of (frmGplan_Code_Eos(oSelectGplan(Self)))  item 0 to lsGplanCode_EosR059
+           Set psGplanCode_EosR059 to lsGplanCode_EosR059
+           //Get value of (sfrmMonth(oSelectDate(Self)))           item 0 to lsDate_FromR059
+           //Get value of (sfrmYear(oSelectDate(Self)))           item 0 to lsDate_ToR059
+        
+           //Get value of (frmPeriod(oSelectMonth(Self)))          item 0 to lsMonthDescr
+           Get FindPeriodCode to lsMonthR059
+           Set piTrexousaXrhsh to (lsMonthR059 = 0)
+           // à©¶ùÁö†¶ ´®‚Æ¶¨©ò™ Æ®„©û™
+           If (lsMonthR059 = 0) Begin
+                Get Value of (sfrmMonth(oSelectDate(Self))) to liMonth
+                Set piPeriodTrexousasXrhshs to liMonth
+                Get Value of (sfrmYear(oSelectDate(Self)))  to liYear
+                Set piYearTrexousasXrhshs to liYear
+                Set psMonthR059 to liMonth
+                Set piAcceptedYear to liYear
+           End
+           Else Begin
+               Set psMonthR059 to lsMonthR059
+               If (lsMonthR059 < 0) Set piAcceptedYear to (piXrhshYearFrom(Self))
+               Else Set piAcceptedYear to (piXrhshYearTo(Self))
+           End
+        
+           Get value of (frmBathmos(oSelectMonth(Self)))          item 0 to liBathmosR059
+           Set piBathmosR059 to liBathmosR059
+        
+           Get checked_State of (chkbAppear1(oSelectAppear(Self)))       item 0 to liCondition1
+           Set piCondition1 to liCondition1
+           Get checked_State of (chkbAppear2(oSelectAppear(Self)))       item 0 to liCondition2
+           Set piCondition2 to liCondition2
+           Get checked_State of (chkbAppear3(oSelectAppear(Self)))       item 0 to liCondition3
+           Set piCondition3 to liCondition3
+        
+            Get Report_Object_Id to liRptId
+            If (liRptId) Send Rebuild_Constraints to liRptId
+        
+            Set pnPrintSt to 0
+        
+            Set psCheckCodeR059 to ""
+            Send Run_Report  //record
+        
+            If iOutputDevice EQ PRINT_TO_WINDOW Begin
+              // Send DoRunEditor FileName
+               RunProgram background "notepad" FileName
+               EraseFile FileName
+            End
+        End_Procedure   // StartReport
+        
+        
+        Object Isozygio_BasicReport is a BasicReportSub
+           Property Integer iIndexR059_1 0
+        
+           Set report_view_id to (Parent(Self))
+           set status_panel_state to False
+           Set report_caption to "É†òõ†°ò©Âò ©ú ú•‚¢†•û             "
+           Set Report_Title to "Ñ°´Áß‡©û à©¶ù¨öÂ¶¨                  "
+        
+         //  if (piKeepSectionTogetherR059(Self) = 1) begin
+         //      set new_page_state to false
+         //  end
+        
+           Set Report_Title to "Ñ°´Áß‡©û à©¶ù¨öÂ¶¨                  "
+        
+           Procedure Constrain
+                String lsGplanCode_FromR059 lsGplanCode_EosR059
+        
+                Forward Send Constrain
+                Get psGplanCode_FromR059 to lsGplanCode_FromR059
+                Get psGplanCode_EosR059  to lsGplanCode_EosR059
+                Constrain Gmhnes.Company_Code eq gs_Selected_Company_Code
+                Constrain Gmhnes.Branch_Code  eq gs_Selected_Branch_Code
+                Constrain Gmhnes.Year_Year    eq gi_Selected_Year
+        
+                if (lsGplanCode_FromR059 <> "") Constrain GMhnes.Gplan_Code      ge lsGplanCode_FromR059
+                if (lsGplanCode_EosR059  <> "") Constrain GMhnes.Gplan_Code      le lsGplanCode_EosR059
+            End_Procedure // Constrain
+        
+            Report_Main_File Gmhnes
+            Report_Index By Index.1
+            Report_breaks Gmhnes.Gplan_Code
+        
+           Function Starting_Report Returns Integer
+                Zero_SubTotals SubtotalR059_1.1 SubtotalR059_1.2 SubtotalR059_1.3
+                Zero_SubTotals SubtotalR059_1.4 SubtotalR059_1.5 SubtotalR059_1.6
+                Zero_SubTotals SubtotalR059_1.7 SubtotalR059_1.8 SubtotalR059_1.9
+                Zero_SubTotals SubtotalR059_1.10 SubtotalR059_1.11 SubtotalR059_1.12
+           End_Function // Starting_Report
+        
+           Function Starting_Main_Report Returns Integer
+              Integer iRetVal lnPrintSt liRepPanelId
+        
+              Get pnPrintSt to lnPrintSt
+              set status_panel_state to (lnPrintSt = 0)
+        
+              Forward Get Starting_Main_Report to iRetval
+              set page_end to 60
+              set page_feed  to 66
+              Set iIndexR059_1 To (Sort_IndexR059_1(Self))
+              Report_Index BY Index.1   // set the sort order
+              BlankForm FooterR059_1
+              If (piTheorimenoStatus(oR059Properties(Self))) Blankform HeaderR059_1.3 //Thru HeaderR059_1.5
+              Else Sysdate4 HeaderR059_1.3 //HeaderR059_1.4 HeaderR059_1.5 // set date for report
+              Get Report_Status_Panel to liRepPanelId
+              Set Button_Text of liRepPanelId to "Ä°Á®‡©û"
+              Function_Return iRetVal
+           End_Function
+        
+           Procedure_Section Page_Top as HeaderR059_1
+              Integer iPage
+              String lsMonthPeriod sstr sdoy mast
+        
+              Get value of (frmPeriod(oSelectMonth(Self))) item 0 to lsMonthPeriod
+              Get Page_Count  To iPage
+              print syscurgl.year_year     to HeaderR059_1.1
+              PRINT (TheMonthName((psMonthR059(Self)),mMonthOnom)) to HeaderR059_1.2   // MHNA
+              move '' to sstr
+              move (append(sstr, (Trim(Syscurgl.Company_Name))   +' '+;
+                                 (Trim(Syscurgl.Branch_Name))))  to sStr
+              print sstr                   to HeaderR059_1.4
+              print iPage                  to HeaderR059_1.5
+              clear codemast
+              move 'JOB'                   to codemast.type
+              move company.company_j_code  to codemast.code
+              find eq codemast by index.1
+              move (trim(codemast.description))   to headerR059_1.6
+              move '' to sstr
+              move (append(sstr, (Trim(company.company_addr))   +' '+;
+                                 (Trim(company.company_poli))))  to sStr
+              move (trim(sstr))   to headerR059_1.7
+              move "DOY"                          to mast
+              move company.company_doy            to sdoy
+              move (gsfcode_mast(mast,sdoy))      to sdoy
+              move '' to sstr
+              move (append(sstr, 'íÜä.' + (trim(company.company_tel)) + ' ' +;
+                                 'Ä.î.ã.' +' '+ (trim(company.company_afm)) + ' ' + ;
+                                 'É.é.ì.' +' '+ (Trim(sdoy))))  to sStr
+              move (trim(sstr))               to headerR059_1.8
+              OutPut_PageCheck
+           End_Procedure
+        
+           Procedure_Section SubHeader1 as SubheaderR059_1
+              Integer iPage
+              If ((gplan.gplan_bathmos=1) or (gplan.gplan_bathmos=2));
+                 set piekt to 1
+              else set piekt to 0
+           End_Procedure  // SubHeader1
+        
+        
+           Procedure_Section  Body as BodyR059_1
+              Number lnCounterCheckSystem
+              Integer liAcceptYear liAcceptedMonth liAcceptGmhnes liTrexon liApografh
+        
+              get piAcceptedYear to liAcceptYear
+              get psMonthR059    to liAcceptedMonth
+              set piSeriesR059   to 1
+              Move (Not((Gmhnes.Gmhnes_YYYY = liAcceptYear) and (Gmhnes.Gmhnes_Period > liAcceptedMonth))) to liAcceptGmhnes
+        
+              if ((Gplan.Gplan_Bathmos <= (piBathmosR059(Self))) and (liAcceptGmhnes)) begin
+        
+                   if (pnPrintSt(Self) = 1) begin
+                       Get pnCounterCheckSystem to lnCounterCheckSystem
+                       Add 1 to lnCounterCheckSystem
+                       Set pnCounterCheckSystem to lnCounterCheckSystem
+                       Send UpdateWait to (Wait(Self)) ("Ñ¢úöÆ¶™ à©¶ù¨öÂ¶¨ : " +        Gplan.Gplan_Code + " - " +      String(Gmhnes.Gmhnes_Period) + " - " +       String(pnCounterCheckSystem(Self)))
+                       //Send Bar_Current_Position to (Wait(Self)) (pnCounterCheckSystem(Self)) 10000 10000 False
+                   end
+                   Else Begin
+                        //Send Update_Status_Page
+                        Send Update_Status ("Ñöö®ò≠‚™: " +       Gmhnes.Gplan_Code * ":"        * String(Gmhnes.Gmhnes_Period)       * ":" * Gmhnes.Gmhnes_Recr )
+                   End
+        
+                   Move ((Gmhnes.Gmhnes_YYYY = liAcceptYear) and (Gmhnes.Gmhnes_Period = liAcceptedMonth)) to liTrexon
+                   Move (Not(liTrexon)) to liApografh
+        
+                   Print Gmhnes.Gplan_Code
+                   Print Gplan.Gplan_Descr1
+        
+        
+                   if (piTheorimenoStatus(oR059Properties(Self)) = 1) begin
+                           //If (Gmhnes.Gmhnes_Period < (psMonthR059(Self))) Begin
+                           If (liApografh) Begin
+                               Print Gmhnes.Gmhnes_sX2        to BodyR059_1.3 //{ points=2} BOOK (Format if needed)
+                               Print Gmhnes.Gmhnes_sP2        to BodyR059_1.4 //{ points=2}
+                           end
+                           else if (liTrexon) begin // if (Gmhnes.Gmhnes_Period = (psMonthR059(Self))) begin
+                               Print Gmhnes.Gmhnes_sX2        to BodyR059_1.7 //{ points=2} BOOK (Format if needed)
+                               Print Gmhnes.Gmhnes_sP2        to BodyR059_1.8 //{ points=2}
+                           end
+                           else begin
+                               Print Gmhnes.Gmhnes_sX2        to BodyR059_1.9 //{ points=2} BOOK (Format if needed)
+                               Print Gmhnes.Gmhnes_sP2        to BodyR059_1.10 //{ points=2}
+                           end
+                       end
+                       Else Begin
+                           If (liApografh) Begin
+                               Print Gmhnes.Gmhnes_sX2        to BodyR059_1.3 //{ points=2} //BOOK (Format if needed)
+                               Print Gmhnes.Gmhnes_sP2        to BodyR059_1.4 //{ points=2}
+                           end
+                           else if (liTrexon) begin
+                               Print Gmhnes.Gmhnes_sX2        to BodyR059_1.7 //{ points=2} BOOK (Format if needed)
+                               Print Gmhnes.Gmhnes_sP2        to BodyR059_1.8 //{ points=2}
+                           end
+                           else begin
+                               Print Gmhnes.Gmhnes_sX2        to BodyR059_1.9 //{ points=2} BOOK (Format if needed)
+                               Print Gmhnes.Gmhnes_sP2        to BodyR059_1.10 //{ points=2}
+                           end
+                       end
+        
+                   end
+        
+        
+           End_Procedure // Body
+        
+        
+           Procedure_Section  Subtotal1 as SubtotalR059_1
+                Integer liCounter
+        
+                print    BodyR059_1.1  to SubtotalR059_1.1
+                Print    BodyR059_1.2  to SubtotalR059_1.2
+        
+                Subtotal BodyR059_1.3  to SubtotalR059_1.3 //{ points=2}
+                Subtotal BodyR059_1.4  to SubtotalR059_1.4 //{ points=2}
+                Subtotal BodyR059_1.7  to SubtotalR059_1.7 //{ points=2}
+                Subtotal BodyR059_1.8  to SubtotalR059_1.8 //{ points=2}
+        
+                Print (SubtotalR059_1.3 + SubtotalR059_1.7) to SubtotalR059_1.9 //{ points=2}
+                Print (SubtotalR059_1.4 + SubtotalR059_1.8) to SubtotalR059_1.10 //{ points=2}
+        
+                if (SubtotalR059_1.3 gt SubtotalR059_1.4) print (SubtotalR059_1.3-SubtotalR059_1.4) to SubtotalR059_1.5
+                Else print 0 to SubtotalR059_1.5
+                if (SubtotalR059_1.4 gt SubtotalR059_1.3) print (SubtotalR059_1.4-SubtotalR059_1.3) to SubtotalR059_1.6
+                Else print 0 to SubtotalR059_1.6
+        
+        
+        
+                //Send CalcMhnes_Ypol (piTheorimenoStatus(oR059Properties(Self))) ;
+                //                    (Integer(psMonthR059(Self))) ;
+                //                    (piAcceptedYear(Self)) ;
+                //                    Gmhnes.Gplan_Code ;
+                //                    (piSeriesR059(Self))
+                //
+                //Set pnSynxrePreviousR059  to (pnSynXreMhnes(oCalcYpol(Self))) //(ImageCalcMhnes.1)
+                //Set pnSynpistPreviousR059 to (pnSynPistMhnes(oCalcYpol(Self))) //(ImageCalcMhnes.2)
+                //Set pnYpolMhnesR059 to ((pnSynxrePreviousR059(Self)) - (pnSynpistPreviousR059(Self)))
+                //
+                //Set pnSynxrePreviousR059  to ((pnSynxrePreviousR059(Self))+SubtotalR059_1.5)
+                //Set pnSynpistPreviousR059 to ((pnSynpistPreviousR059(Self))+SubtotalR059_1.6)
+        
+                //Print (pnSynxrePreviousR059(Self))  to SubtotalR059_1.7 //{ points=2}
+                //Print (pnSynpistPreviousR059(Self)) to SubtotalR059_1.8 //{ points=2}
+        
+                if (SubtotalR059_1.9 gt SubtotalR059_1.10) print (SubtotalR059_1.9-SubtotalR059_1.10) to SubtotalR059_1.11
+                Else print 0 to SubtotalR059_1.11
+                if (SubtotalR059_1.10 gt SubtotalR059_1.9) print (SubtotalR059_1.10-SubtotalR059_1.9) to SubtotalR059_1.12
+                Else print 0 to SubtotalR059_1.12
+        
+                ///
+                if (piCondition1(Self) = 1) begin
+                    if ((SubtotalR059_1.11 = 0) and (SubtotalR059_1.12 = 0)) Set piIndMoyKanei to 0
+                    else Set piIndMoyKanei to 1
+                end
+                else Set piIndMoyKanei to 1
+        
+                if (piCondition2(Self) = 1) begin
+                    if ((SubtotalR059_1.7 <> 0) or (SubtotalR059_1.8 <> 0 )) Set piIndMoyKanei to 1
+                    else Set piIndMoyKanei to 0
+                end
+                if (piCondition3(Self) = 1) begin
+                    if (Gmhnes.Gmhnes_Ghmnorec <> 0) Set piIndMoyKanei to 1
+                    else Set piIndMoyKanei to 0
+                end
+        
+                ///
+                if ((Gplan.Gplan_Bathmos <= (piBathmosR059(Self))) and (piIndMoyKanei(Self) =1)) begin
+                    OutPut_PageCheck
+                    If (piekt(self)=1);
+                      OutPut_PageCheck subheaderr059_1
+                    Set piIndMoyKanei to 0
+        
+                    Set piWindowIndexKeep to Windowindex
+                    For liCounter From 0 to 9
+                        Move liCounter to WindowIndex
+                        if (Gplan.Gplan_Bathmos eq 1 ) begin
+                            Print (SubtotalR059_1.3&+LEVELSR059_1.1&) to LEVELSR059_1.1&
+        
+                        end
+                        if (Gplan.Gplan_Bathmos eq 2 ) begin
+                            Print (SubtotalR059_1.3&+LEVELSR059_2.1&) to LEVELSR059_2.1&
+                        end
+                        if (Gplan.Gplan_Bathmos eq 3 ) begin
+                            Print (SubtotalR059_1.3&+LEVELSR059_3.1&) to LEVELSR059_3.1&
+                        end
+                        if (Gplan.Gplan_Bathmos eq 4 ) begin
+                            Print (SubtotalR059_1.3&+LEVELSR059_4.1&) to LEVELSR059_4.1&
+                        end
+                        if (Gplan.Gplan_Bathmos eq 5 ) begin
+                            Print (SubtotalR059_1.3&+LEVELSR059_5.1&) to LEVELSR059_5.1&
+                        end
+                        if (Gplan.Gplan_Bathmos eq 6 ) begin
+                            Print (SubtotalR059_1.3&+LEVELSR059_6.1&) to LEVELSR059_6.1&
+                        end
+                        if (Gplan.Gplan_Bathmos eq 7 ) begin
+                            Print (SubtotalR059_1.3&+LEVELSR059_7.1&) to LEVELSR059_7.1&
+                        end
+                        if (Gplan.Gplan_Bathmos eq 8 ) begin
+                            Print (SubtotalR059_1.3&+LEVELSR059_8.1&) to LEVELSR059_8.1&
+                        end
+                        if (Gplan.Gplan_Bathmos eq 9 ) begin
+                            Print (SubtotalR059_1.3&+LEVELSR059_9.1&) to LEVELSR059_9.1&
+                        end
+                        if (Gplan.Gplan_Bathmos eq 10 ) begin
+                            Print (SubtotalR059_1.3&+LEVELSR059_10.1&) to LEVELSR059_10.1&
+                        end
+                        if (Gplan.Gplan_Bathmos eq 11 ) begin
+                            Print (SubtotalR059_1.3&+LEVELSR059_11.1&) to LEVELSR059_11.1&
+                        end
+                        if (Gplan.Gplan_Bathmos eq 12 ) begin
+                            Print (SubtotalR059_1.3&+LEVELSR059_12.1&) to LEVELSR059_12.1&
+                        end
+                    loop // For
+                    Get piWindowIndexKeep to WindowIndex
+                end // If
+                BlankForm SubtotalR059_1.1 Thru SubtotalR059_1.12
+           End_Procedure // Subtotal1
+        
+           Procedure_Section  Total as TotalR059_1
+               //OutPut_PageCheck
+               OutPut_PageCheck subheaderr059_1
+               if (piBathmosR059(Self) >= 12) begin
+                  if (levelsr059_12.1 gt levelsr059_12.2) print (levelsr059_12.1 - levelsr059_12.2) to levelsr059_12.3
+                  Else print 0 to levelsr059_12.3
+                  if (levelsr059_12.2 gt levelsr059_12.1) print (levelsr059_12.2 - levelsr059_12.1) to levelsr059_12.4
+                  Else print 0 to levelsr059_12.4
+        
+                  if (levelsr059_12.7 gt levelsr059_12.8) print (levelsr059_12.7 - levelsr059_12.8) to levelsr059_12.9
+                  Else print 0 to levelsr059_12.9
+                  if (levelsr059_12.8 gt levelsr059_12.7) print (levelsr059_12.8 - levelsr059_12.7) to levelsr059_12.10
+                  Else print 0 to levelsr059_12.10
+                  OutPut_PageCheck levelsr059_12
+               end
+               if (piBathmosR059(Self) >= 11) begin
+                  if (levelsr059_11.1 gt levelsr059_11.2) print (levelsr059_11.1 - levelsr059_11.2) to levelsr059_11.3
+                  Else print 0 to levelsr059_11.3
+                  if (levelsr059_11.2 gt levelsr059_11.1) print (levelsr059_11.2 - levelsr059_11.1) to levelsr059_11.4
+                  Else print 0 to levelsr059_11.4
+        
+                  if (levelsr059_11.7 gt levelsr059_11.8) print (levelsr059_11.7 - levelsr059_11.8) to levelsr059_11.9
+                  Else print 0 to levelsr059_11.9
+                  if (levelsr059_11.8 gt levelsr059_11.7) print (levelsr059_11.8 - levelsr059_11.7) to levelsr059_11.10
+                  Else print 0 to levelsr059_11.10
+                  OutPut_PageCheck levelsr059_11
+               end
+               if (piBathmosR059(Self) >= 10) begin
+                  if (levelsr059_10.1 gt levelsr059_10.2) print (levelsr059_10.1 - levelsr059_10.2) to levelsr059_10.3
+                  Else print 0 to levelsr059_10.3
+                  if (levelsr059_10.2 gt levelsr059_10.1) print (levelsr059_10.2 - levelsr059_10.1) to levelsr059_10.4
+                  Else print 0 to levelsr059_10.4
+        
+                  if (levelsr059_10.7 gt levelsr059_10.8) print (levelsr059_10.7 - levelsr059_10.8) to levelsr059_10.9
+                  Else print 0 to levelsr059_10.9
+                  if (levelsr059_10.8 gt levelsr059_10.7) print (levelsr059_10.8 - levelsr059_10.7) to levelsr059_10.10
+                  Else print 0 to levelsr059_10.10
+                  OutPut_PageCheck levelsr059_10
+               end
+               if (piBathmosR059(Self) >= 9)  begin
+                  if (levelsr059_9.1 gt levelsr059_9.2) print (levelsr059_9.1 - levelsr059_9.2) to levelsr059_9.3
+                  Else print 0 to levelsr059_9.3
+                  if (levelsr059_9.2 gt levelsr059_9.1) print (levelsr059_9.2 - levelsr059_9.1) to levelsr059_9.4
+                  Else print 0 to levelsr059_9.4
+        
+                  if (levelsr059_9.7 gt levelsr059_9.8) print (levelsr059_9.7 - levelsr059_9.8) to levelsr059_9.9
+                  Else print 0 to levelsr059_9.9
+                  if (levelsr059_9.8 gt levelsr059_9.7) print (levelsr059_9.8 - levelsr059_9.7) to levelsr059_9.10
+                  Else print 0 to levelsr059_9.10
+                  OutPut_PageCheck levelsr059_9
+               end
+               if (piBathmosR059(Self) >= 8)  begin
+                  if (levelsr059_8.1 gt levelsr059_8.2) print (levelsr059_8.1 - levelsr059_8.2) to levelsr059_8.3
+                  Else print 0 to levelsr059_8.3
+                  if (levelsr059_8.2 gt levelsr059_8.1) print (levelsr059_8.2 - levelsr059_8.1) to levelsr059_8.4
+                  Else print 0 to levelsr059_8.4
+        
+                  if (levelsr059_8.7 gt levelsr059_8.8) print (levelsr059_8.7 - levelsr059_8.8) to levelsr059_8.9
+                  Else print 0 to levelsr059_8.9
+                  if (levelsr059_8.8 gt levelsr059_8.7) print (levelsr059_8.8 - levelsr059_8.7) to levelsr059_8.10
+                  Else print 0 to levelsr059_8.10
+                  OutPut_PageCheck levelsr059_8
+               end
+               if (piBathmosR059(Self) >= 7)  begin
+                  if (levelsr059_7.1 gt levelsr059_7.2) print (levelsr059_7.1 - levelsr059_7.2) to levelsr059_7.3
+                  Else print 0 to levelsr059_7.3
+                  if (levelsr059_7.2 gt levelsr059_7.1) print (levelsr059_7.2 - levelsr059_7.1) to levelsr059_7.4
+                  Else print 0 to levelsr059_7.4
+        
+                  if (levelsr059_7.7 gt levelsr059_7.8) print (levelsr059_7.7 - levelsr059_7.8) to levelsr059_7.9
+                  Else print 0 to levelsr059_7.9
+                  if (levelsr059_7.8 gt levelsr059_7.7) print (levelsr059_7.8 - levelsr059_7.7) to levelsr059_7.10
+                  Else print 0 to levelsr059_7.10
+        
+                  OutPut_PageCheck levelsr059_7
+               end
+               if (piBathmosR059(Self) >= 6)  begin
+                  if (levelsr059_6.1 gt levelsr059_6.2) print (levelsr059_6.1 - levelsr059_6.2) to levelsr059_6.3
+                  Else print 0 to levelsr059_6.3
+                  if (levelsr059_6.2 gt levelsr059_6.1) print (levelsr059_6.2 - levelsr059_6.1) to levelsr059_6.4
+                  Else print 0 to levelsr059_6.4
+        
+                  if (levelsr059_6.7 gt levelsr059_6.8) print (levelsr059_6.7 - levelsr059_6.8) to levelsr059_6.9
+                  Else print 0 to levelsr059_6.9
+                  if (levelsr059_6.8 gt levelsr059_6.7) print (levelsr059_6.8 - levelsr059_6.7) to levelsr059_6.10
+                  Else print 0 to levelsr059_6.10
+        
+                  OutPut_PageCheck levelsr059_6
+               end
+               if (piBathmosR059(Self) >= 5)  begin
+                  if (levelsr059_5.1 gt levelsr059_5.2) print (levelsr059_5.1 - levelsr059_5.2) to levelsr059_5.3
+                  Else print 0 to levelsr059_5.3
+                  if (levelsr059_5.2 gt levelsr059_5.1) print (levelsr059_5.2 - levelsr059_5.1) to levelsr059_5.4
+                  Else print 0 to levelsr059_5.4
+        
+                  if (levelsr059_5.7 gt levelsr059_5.8) print (levelsr059_5.7 - levelsr059_5.8) to levelsr059_5.9
+                  Else print 0 to levelsr059_5.9
+                  if (levelsr059_5.8 gt levelsr059_5.7) print (levelsr059_5.8 - levelsr059_5.7) to levelsr059_5.10
+                  Else print 0 to levelsr059_5.10
+                  OutPut_PageCheck levelsr059_5
+               end
+               if (piBathmosR059(Self) >= 4)  begin
+                  if (levelsr059_4.1 gt levelsr059_4.2) print (levelsr059_4.1 - levelsr059_4.2) to levelsr059_4.3
+                  Else print 0 to levelsr059_4.3
+                  if (levelsr059_4.2 gt levelsr059_4.1) print (levelsr059_4.2 - levelsr059_4.1) to levelsr059_4.4
+                  Else print 0 to levelsr059_4.4
+        
+                  if (levelsr059_4.7 gt levelsr059_4.8) print (levelsr059_4.7 - levelsr059_4.8) to levelsr059_4.9
+                  Else print 0 to levelsr059_4.9
+                  if (levelsr059_4.8 gt levelsr059_4.7) print (levelsr059_4.8 - levelsr059_4.7) to levelsr059_4.10
+                  Else print 0 to levelsr059_4.10
+        
+                  OutPut_PageCheck levelsr059_4
+               end
+               if (piBathmosR059(Self) >= 3)  begin
+                  if (levelsr059_3.1 gt levelsr059_3.2) print (levelsr059_3.1 - levelsr059_3.2) to levelsr059_3.3
+                  Else print 0 to levelsr059_3.3
+                  if (levelsr059_3.2 gt levelsr059_3.1) print (levelsr059_3.2 - levelsr059_3.1) to levelsr059_3.4
+                  Else print 0 to levelsr059_3.4
+        
+                  if (levelsr059_3.7 gt levelsr059_3.8) print (levelsr059_3.7 - levelsr059_3.8) to levelsr059_3.9
+                  Else print 0 to levelsr059_3.9
+                  if (levelsr059_3.8 gt levelsr059_3.7) print (levelsr059_3.8 - levelsr059_3.7) to levelsr059_3.10
+                  Else print 0 to levelsr059_3.10
+                  OutPut_PageCheck levelsr059_3
+               end
+               if (piBathmosR059(Self) >= 2)  begin
+                  if (levelsr059_2.1 gt levelsr059_2.2) print (levelsr059_2.1 - levelsr059_2.2) to levelsr059_2.3
+                  Else print 0 to levelsr059_2.3
+                  if (levelsr059_2.2 gt levelsr059_2.1) print (levelsr059_2.2 - levelsr059_2.1) to levelsr059_2.4
+                  Else print 0 to levelsr059_2.4
+        
+                  if (levelsr059_2.7 gt levelsr059_2.8) print (levelsr059_2.7 - levelsr059_2.8) to levelsr059_2.9
+                  Else print 0 to levelsr059_2.9
+                  if (levelsr059_2.8 gt levelsr059_2.7) print (levelsr059_2.8 - levelsr059_2.7) to levelsr059_2.10
+                  Else print 0 to levelsr059_2.10
+        
+                  OutPut_PageCheck levelsr059_2
+               end
+               if (piBathmosR059(Self) >= 1)  begin
+                    if (levelsr059_1.1 gt levelsr059_1.2) print (levelsr059_1.1 - levelsr059_1.2) to levelsr059_1.3
+                    Else print 0 to levelsr059_1.3
+                    if (levelsr059_1.2 gt levelsr059_1.1) print (levelsr059_1.2 - levelsr059_1.1) to levelsr059_1.4
+                    Else print 0 to levelsr059_1.4
+        
+                    if (levelsr059_1.7 gt levelsr059_1.8) print (levelsr059_1.7 - levelsr059_1.8) to levelsr059_1.9
+                    Else print 0 to levelsr059_1.9
+                    if (levelsr059_1.8 gt levelsr059_1.7) print (levelsr059_1.8 - levelsr059_1.7) to levelsr059_1.10
+                    Else print 0 to levelsr059_1.10
+                    OutPut_PageCheck levelsr059_1
+               end
+               if (pnPrintSt(Self) = 1) begin
+                   if  (LEVELSR059_1.9 <> LEVELSR059_1.10) Send ShowLathos
+                   if  (LEVELSR059_2.9 <> LEVELSR059_2.10) Send ShowLathos
+               end
+        
+           end_Procedure // Total
+        
+        
+        //   Procedure_Section Page_Bottom as FooterR059_1
+        //       if (piKeepSectionTogetherR059(Self) <> 1)  OutPut_PageCheck
+        //   End_Procedure // Page_Bottom
+        
+        
+           Procedure Ending_Report
+               Integer rVal
+        
+               Blankform levelsr059_1.1 thru levelsr059_1.10
+               Blankform levelsr059_2.1 thru levelsr059_2.10
+               Blankform levelsr059_3.1 thru levelsr059_3.10
+               Blankform levelsr059_4.1 thru levelsr059_4.10
+               Blankform levelsr059_5.1 thru levelsr059_5.10
+               Blankform levelsr059_6.1 thru levelsr059_6.10
+               Blankform levelsr059_7.1 thru levelsr059_7.10
+               Blankform levelsr059_8.1 thru levelsr059_8.10
+               Blankform levelsr059_9.1 thru levelsr059_9.10
+               Blankform levelsr059_10.1 thru levelsr059_10.10
+               Blankform levelsr059_11.1 thru levelsr059_11.10
+               Blankform levelsr059_12.1 thru levelsr059_12.10
+        
+           End_Procedure // Ending_Report
+        
+        End_Object // Isozygio_BasicReport
+        
+        Procedure SetTheSpinforms
+            Integer liMonthObjId liYearObjId
+            Integer liMonthFrom liMonthTo liYearFrom liYearTo
+        
+            Move (sfrmMonth(oSelectDate(Self))) to liMonthObjId
+            Move (sfrmYear(oSelectDate(Self)))  to liYearObjId
+        
+            Move (TheMonthSegment(Year.Year_XrhshFrom)) to liMonthFrom
+            Move (TheMonthSegment(Year.Year_XrhshTo))   to liMonthTo
+            Move (TheYearSegment(Year.Year_XrhshFrom)) to liYearFrom
+            Move (TheYearSegment(Year.Year_XrhshTo)) to liYearTo
+        
+            Set piXrhshPeriodFrom   to liMonthFrom
+            Set piXrhshPeriodTo   to liMonthTo
+            Set piXrhshYearFrom to liYearFrom
+            Set piXrhshYearTo to liYearTo
+        
+            Set Minimum_Position of  liYearObjId to liYearFrom
+            Set Maximum_Position of  liYearObjId to liYearTo
+            Set Current_Position of liYearObjId to liYearFrom
+            Set Value of liYearObjId to liYearFrom
+            Set Minimum_Position of liMonthObjId  to liMonthFrom
+            Set Maximum_Position of liMonthObjId  to 12
+            Set Current_Position of liMonthObjId  to liMonthFrom
+            Set Value of liMonthObjId  to liMonthFrom
+            Set Object_Shadow_State of  liYearObjId to (liYearFrom = liYearTo)
+        End_Procedure // SetTheSpinforms
+        
+        Procedure Activate_View Returns Integer
+            Integer Rval liPeriodCode
+            String lsC_Code0 lsC_Code00 lsC_CodeR lsCompany lsBranch
+            Date ldToday
+        
+            Forward Get MSG_Activate_View to Rval
+            If (Not(rVal))  Begin
+        
+                Send SetTheSpinForms
+        
+                Set psPrnHeader to ""
+                if (piWhatToPrint(oR059Properties(Self)) = 1) Begin
+                    Set Label of (R059(Self)) to "à©¶ùÁö†¶ "
+                    Set psPrnHeader to " à ë é Ö ì Ç à é"
+                    Set Enabled_State of (FrmGplan_Code_From(oSelectGplan(Self)))                   to True
+                    Set Enabled_State of (FrmGplan_Code_Eos(oSelectGplan(Self)))                    to True
+                end
+                Else Begin
+                    Set Label of (R059(Self)) to "Çú§†°Ê âòü¶¢†°Ê"
+                    Set psPrnHeader to "ÇENIKO  KÄáéäàâé"
+                    Set Enabled_State of (FrmGplan_Code_From(oSelectGplan(Self)))                   to False
+                    Set Enabled_State of (FrmGplan_Code_Eos(oSelectGplan(Self)))                    to False
+        
+                End
+        
+                Get FindPeriodCode to liPeriodCode
+                Set Enabled_State of oSelectDate to (liPeriodCode = 0)
+                If (liPeriodCode = 0) Begin
+                    Sysdate4 ldToday
+                    Set Value of (sfrmMonth(oSelectDate(Self))) to (TheMonthSegment(ldToday))
+                End
+        
+                if (piTheorimenoStatus(oR059Properties(Self)) = 1) begin
+        
+        
+                    Set Enabled_State of (chkbAppear1(oSelectAppear(Self)))                to False
+                    Set Enabled_State of (chkbAppear2(oSelectAppear(Self)))                to False
+                    Set Enabled_State of (chkbAppear3(oSelectAppear(Self)))                to False
+                end
+                else begin
+        
+                    Set Enabled_State of (chkbAppear1(oSelectAppear(Self)))                to True
+                    Set Enabled_State of (chkbAppear2(oSelectAppear(Self)))                to True
+                    Set Enabled_State of (chkbAppear3(oSelectAppear(Self)))                to True
+                end
+            End
+        
+            Procedure_Return rVal
+        End_Procedure // Activate_View
+        
+        Procedure Request_Clear
+            Integer liPeriodCode liDefaultPeriod
+            Date ldToday
+            String lsDefaultValue
+        
+            Set Value of (frmGplan_Code_From(oSelectGplan(Self))) Item 0 to ""
+            Set Value of (frmGplan_Code_Eos(oSelectGplan(Self)))  Item 0 to ""
+            Set checked_State of (chkbAppear1(oSelectAppear(current_object))) to False
+            Set checked_State of (chkbAppear2(oSelectAppear(current_object))) to False
+            Set checked_State of (chkbAppear3(oSelectAppear(current_object))) to False
+        
+            Get piDefaultPeriod to liDefaultPeriod
+            Get Combo_Value of (frmPeriod(oSelectMonth(Self))) Item liDefaultPeriod to lsDefaultValue
+            Set Value of (frmPeriod(oSelectMonth(Self))) Item 0 to lsDefaultValue
+            //Set Default_Combo_Item of (frmPeriod(oSelectMonth(Self))) to liDefaultPeriod
+            Send SetTheSpinForms
+            Get FindPeriodCode to liPeriodCode
+            Set Enabled_State of oSelectDate to (liPeriodCode = 0)
+            If (liPeriodCode = 0) Begin
+                Sysdate4 ldToday
+                Set Value of (sfrmMonth(oSelectDate(Self))) to (TheMonthSegment(ldToday))
+            End
+            Set value of (frmBathmos(oSelectMonth(Self)))          item 0 to 1
+        //    Set checked_State of (chkbCurr0(oSelectCurr(current_object))) to True
+        //    Set checked_State of (chkbCurr00(oSelectCurr(current_object))) to False
+        //    Set checked_State of (chkbCurrR(oSelectCurr(current_object))) to False
+        //    Set checked_State of (chkbKeepTogether(oSelectCurr(current_object))) to False
+            Send Activate to (frmGplan_Code_From(oSelectGplan(Self)))
+        End_Procedure // Request_Clear
+        
+        //Set Verify_Exit_Msg To Get_No_Confirmation
+        On_Key kSave_Record Send KeyAction to oRunReport_bn
+        On_Key kCancel      Send KeyAction to oCancel_bn
+        On_Key kClear       Send Request_Clear
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // R059
+
+
+    //AB-StoreStart
+            
+    Procedure TheorimenoIso
+        Set piWhatToPrint of oR059Properties to 1
+        Set piTheorimenoStatus of oR059Properties to 1
+        Send Activate_R059
+    End_Procedure // TheorimenoIso
+    
+    Procedure ElegxoyIso
+        Set piWhatToPrint of oR059Properties to 1
+        Set piTheorimenoStatus of oR059Properties to 0
+        Send Activate_R059
+    End_Procedure // ElegxoyIso
+    
+    Procedure TheorimenoKath
+        Set piWhatToPrint of oR059Properties to 2
+        Set piTheorimenoStatus of oR059Properties to 1
+        Send Activate_R059
+    End_Procedure // TheorimenoKath
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

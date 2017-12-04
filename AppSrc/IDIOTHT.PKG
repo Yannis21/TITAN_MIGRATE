@@ -1,0 +1,557 @@
+
+Open Users
+Open UserGrps
+Open Pedia
+Open Arxeia
+Open GrpPedia
+Open GrpPed0
+Open GrpArx
+Open GrpArx0
+Open ViewFlds
+Open Oth
+Open GrpOth
+Open GrpOth0
+Open Departm
+
+
+External_Function32 WNetGetUser "WNetGetUserA" MPR.DLL ;
+    Pointer lpName Pointer lpUser_Name Pointer lpLength Returns DWord
+
+Function Network_User_Name Returns String
+    Local String sName sLength
+    Local Pointer lpName_Addr lpLength_Addr
+    Local Integer iRetval
+    Movestr (Repeat (Character (0), 255)) To sName
+    GetAddress Of sName To lpName_Addr
+    Movestr (DwordToBytes (255)) To sLength
+    GetAddress Of sLength To lpLength_Addr
+    Moveint (WNetGetUser (0, lpName_Addr, lpLength_Addr)) To iRetval
+    If iRetval Eq 0 Function_Return (CString (sName))
+    Else Function_Return "User Unknown"
+End_Function // Network_User_Name
+
+Function fsGetOfficePath Global Returns String
+    String sRegistryKeyPath sRegOfficePath
+    Set_Registry_Root                                                   to HKEY_LOCAL_MACHINE "Software"
+    Move "Microsoft\Office\9.0\Word"                                    to sRegistryKeyPath
+    Get_Foreign_Profile_String sRegistryKeyPath "InstallRoot" "Path"    to sRegOfficePath
+    Move (Trim(sRegOfficePath))                                         to sRegOfficePath
+    If (sRegOfficePath='') Begin
+        Move "Microsoft\Office\8.0\Word"                                to sRegistryKeyPath
+        Get_Foreign_Profile_String sRegistryKeyPath "InstallRoot" "Path" to sRegOfficePath
+        Move (Trim(sRegOfficePath))                                     to sRegOfficePath
+        If (sRegOfficePath='') Begin
+            Move "Microsoft\Office\7.0\Word"                             to sRegistryKeyPath
+            Get_Foreign_Profile_String sRegistryKeyPath "InstallRoot" "Path" to sRegOfficePath
+            Move (Trim(sRegOfficePath))                                     to sRegOfficePath
+            If (sRegOfficePath='') Begin
+                Move "Microsoft\Office\10.0\Word"                                to sRegistryKeyPath
+                Get_Foreign_Profile_String sRegistryKeyPath "InstallRoot" "Path" to sRegOfficePath
+                Move (Trim(sRegOfficePath))                                     to sRegOfficePath
+            End
+        End
+    End
+    Function_Return sRegOfficePath
+End_Procedure
+
+
+Function fsGetLastDir Global Returns String
+    String sRegistryKeyPath sRegDir sUserName
+    Get Network_User_Name to sUserName
+
+    Get_Profile_String "WorkSpaces" "CurrentWorkspace" to sRegistryKeyPath
+    If sRegistryKeyPath eq "" Get WorkspaceName of (ProgramWorkspace(Self)) to sRegistryKeyPath
+    insert "WorkSpaces\" in sRegistryKeyPath at 1
+    Append sRegistryKeyPath  "\" (Module_Name(Self))
+    Append sRegistryKeyPath  "\LastDirUsed\"
+    Append sRegistryKeyPath  (Trim(sUserName))
+    Get_profile_string sRegistryKeyPath "Path" to sRegDir
+    Function_Return sRegDir
+End_Procedure
+
+Function fiPutLastDir Global String asDirectory Returns Integer
+    String sRegistryKeyPath sRegDir sUserName
+    Get Network_User_Name to sUserName
+    Get_Profile_String "WorkSpaces" "CurrentWorkspace" to sRegistryKeyPath
+    If sRegistryKeyPath eq "" Get WorkspaceName of (ProgramWorkspace(Self)) to sRegistryKeyPath
+    insert "WorkSpaces\" in sRegistryKeyPath at 1
+    Append sRegistryKeyPath  "\" (Module_Name(Self))
+    Append sRegistryKeyPath  "\LastDirUsed\"
+    Append sRegistryKeyPath  (Trim(sUserName))
+    Set_profile_string sRegistryKeyPath "Path" to asDirectory
+    Function_Return 0
+End_Procedure
+
+
+Function fsVresExt Global String asFileName Returns String
+    String rVal
+    Integer iPos iLen
+    Move (UpperCase(asFileName)) to asFileName
+    Move (Trim(asFileName)) to asFileName
+    Move 0 to iPos
+    For iLen from 1 to (length(asFileName))
+        If (Mid(asFileName,1,iLen)='.') Move iLen to iPos
+    Loop
+    If (Not(iPos)) Function_Return ''
+    Move (Right(asFileName,(Length(asFileName)-iPos))) to rVal
+    Move (Trim(rVal)) to rVal
+    Function_Return rVal
+End_Function
+
+
+Function fiScreenFieldStatus Global String asViewName String asDbFormName Returns Integer
+    Integer rVal iUser iGroup
+    String  sUser sRecr
+    Move (Trim(asViewName))     to asViewName
+    Move (Trim(asDbFormName))   to asDbFormName
+
+    If ((asViewName<>'') And (asDbFormName<>'')) Begin
+        Get fsLoginUserID to sUser
+        Clear Users
+        Move sUser        to Users.Login_ID
+        Find eq Users by Index.1 // Users:Index.1:Users.Login_ID
+        If (Found=1) Begin
+            Move Users.User_ID  to iUser
+            Move Users.Grp_ID   to iGroup
+            Clear GrpOth
+            Move iUser          to GrpOth.User_ID
+            Move asViewName     to GrpOth.View_Name
+            Move asDbFormName   to GrpOth.Scr_Field_Name
+            Find eq GrpOth by Index.2 // GrpOth:Index.2:User_ID+View_Name+Scr_Field_Name
+            If (Found=1) Begin
+                // rVal=1 ==> NO READ ALLOWED
+                // rVal=2 ==> NO EDIT BUT CAN COPY
+                // rVal=3 ==> NO EDIT AND NO COPY
+                If (GrpOth.Allow_Read <>'1') Move 1 to rVal
+                Else Begin
+                    If (GrpOth.Allow_Change<>'1') Begin
+                        If (GrpOth.Allow_Copy<>'1') Move 3 to rVal
+                        Else                        Move 2 to rVal
+                    End
+                End
+            End
+            Else Begin
+                Clear GrpOth0
+                Move iGroup         to GrpOth0.Group_ID
+                Move asViewName     to GrpOth0.View_Name
+                Move asDbFormName   to GrpOth0.Scr_Field_Name
+
+                Find eq GrpOth0 by Index.2 // GrpOth0:Index.2:Group_ID+View_Name+Scr_Field_Name
+                If (Found=1) Begin
+                    // rVal=1 ==> NO READ ALLOWED
+                    // rVal=2 ==> NO EDIT BUT CAN COPY
+                    // rVal=3 ==> NO EDIT AND NO COPY
+                    If (GrpOth0.Allow_Read <>'1') Move 1 to rVal
+                    Else Begin
+                        If (GrpOth0.Allow_Change<>'1') Begin
+                            If (GrpOth0.Allow_Copy<>'1') Move 3 to rVal
+                            Else                         Move 2 to rVal
+                        End
+                    End
+                End
+                Else Move 0 to rVal
+            End
+        End
+        Else Move 0 to rVal
+    End
+    Function_Return rVal
+End_Function
+
+Function fiFieldStatus Global Integer aiFileNumber Integer aiFieldNumber Returns Integer
+    Integer rVal iUser iGroup
+    String  sUser sRecr
+    If ((aiFileNumber) And (aiFieldNumber)) Begin
+        Get fsLoginUserID to sUser
+        Clear Users
+        Move sUser        to Users.Login_ID
+        Find eq Users by Index.1 // Users:Index.1:Users.Login_ID
+        If (Found=1) Begin
+            Move Users.User_ID  to iUser
+            Move Users.Grp_ID   to iGroup
+            Clear Pedia
+            Move aiFileNumber  to Pedia.Arxeio_ID
+            Move aiFieldNumber to Pedia.Pedio_Number
+            Find eq Pedia By Index.1 // Pedia:Index.1:Arxeio_ID+Pedio_Number
+            If (Found=1) Begin
+                Move (Trim(Pedia.Pedio_Recr))   to sRecr
+                // Find Combination User/File/Field in GRPPEDIA
+                Clear GrpPedia
+                Move iUser                      to GrpPedia.User_ID
+                Move (Trim(sRecr))              to GrpPedia.Pedio_Recr
+                Find eq GrpPedia by Index.4 // GrpPedia:Index.4:Pedio_Recr + User_ID
+                If (Found=1) Begin
+                    // rVal=1 ==> NO READ ALLOWED
+                    // rVal=2 ==> NO EDIT BUT CAN COPY
+                    // rVal=3 ==> NO EDIT AND NO COPY
+                    If (GrpPedia.Allow_Read <>'1') Move 1 to rVal
+                    Else Begin
+                        If (GrpPedia.Allow_Change<>'1') Begin
+                            If (GrpPedia.Allow_Copy<>'1')   Move 3 to rVal
+                            Else                            Move 2 to rVal
+                        End
+                    End
+                End
+                Else Begin
+                    // Find Combination UserGrps/File/Field in GRPPED0
+                    Clear GrpPed0
+                    Move iGroup         to GrpPed0.Group_ID
+                    Move (Trim(sRecr))  to GrpPed0.Pedio_Recr
+                    Find eq GrpPed0 by Index.4 // GrpPed0:Index.4:Pedio_Recr + Group_ID
+                    If (Found=1) Begin
+                        // rVal=1 ==> NO READ ALLOWED
+                        // rVal=2 ==> NO EDIT BUT CAN COPY
+                        // rVal=3 ==> NO EDIT AND NO COPY
+                        If (GrpPed0.Allow_Read <>'1') Move 1 to rVal
+                        Else Begin
+                            If (GrpPed0.Allow_Change<>'1') Begin
+                                If (GrpPed0.Allow_Copy<>'1')   Move 3 to rVal
+                                Else                           Move 2 to rVal
+                            End
+                        End
+                    End
+                End
+            End
+            Else Begin
+                Move 0 to rVal
+            End
+        End
+        Else Begin
+            Move 0 to rVal
+        End
+    End
+    Function_Return rVal
+End_Function
+
+Function fsReturnFileFromPath Global String asFullPath Returns String
+    String rVal lsDirSep
+    Integer iPos iMet iLen iCnt
+    Move (Trim(asFullPath))                 To rVal
+    Move (Sysconf(SYSCONF_DIR_SEPARATOR))   To lsDirSep
+    If (rVal Contains lsDirSep) Begin
+        Move (Length(rVal)) to iLen
+        Move iLen to iCnt
+        While iCnt Gt 0
+            If (Mid(rVal,1,iCnt)=lsDirSep) Begin
+                If (iCnt=iLen) Function_Return asFullPath
+                Else Function_Return (Right(rVal,(iLen-iCnt)))
+            End
+            Decrement iCnt
+        End // While iCnt Gt 0
+    End
+    Else  Function_Return (Trim(asFullPath))
+    Function_Return rVal
+End_Function
+
+Function fsReturnDirectoriesFromPath Global String asFullPath Returns String
+    String rVal lsDirSep
+    Integer iPos iMet iLen iCnt
+    Move (Trim(asFullPath))                 To rVal
+    Move (Sysconf(SYSCOnF_DIR_SEPARATOR))   To lsDirSep
+    If (rVal Contains lsDirSep) Begin
+        Move (Length(rVal)) to iLen
+        Move iLen to iCnt
+        While iCnt Gt 0
+            If (Mid(rVal,1,iCnt)=lsDirSep) Function_Return (Left(rVal,iCnt))
+            Decrement iCnt
+        End // While iCnt Gt 0
+    End
+    Function_Return rVal
+End_Function
+
+//Function fsConvert_Time_Number_To_String_With_Zeroes Global Number anTime Returns String
+//    Local String rVal lsTmp lsOO lsLL
+//    Local Number lnOO lnLL
+
+//    Move '' to lsOO
+//    Move '' to lsLL
+//    Move '' to rVal
+
+//    Move (Integer(anTime))                              to lnOO
+//    ////////////////////////////////////////////
+//    // sos sos sos jsjsjsjsjs yannis 30/03/2000
+//    //If ((lnOO=24) and (lnll=0)) Move 0 to lnOO
+//    ////////////////////////////////////////////
+
+//    Move ((anTime - (Integer(anTime))) * 100)           to lnLL
+
+//    If (lnOO<10) Move (Append(lsOO,'0'+(String(lnOO)))) to lsOO
+//    Else         Move (String(lnOO))                    to lsOO
+//    Move (Trim(lsOO))                                   to lsOO
+
+//    If (lnLL<10) Move (Append(lsLL,'0'+(String(lnLL)))) to lsLL
+//    Else         Move (String(lnLL))                    to lsLL
+//    Move (Trim(lsLL))                                   to lsLL
+
+//    Move (Append(rVal,(lsOO+':'+lsLL))) to rVal
+
+//    Move (Trim(rVal)) to rVal
+
+//    Function_Return rVal
+//End_Function
+
+//Function fnConvert_Minutes_to_Time Global Integer aiMinutes Returns Number
+//    Local Number rVal nOres nLepta
+//    Move (Integer(aiMinutes/60))    to nOres
+//    Move (    Mod(aiMinutes,60))    to nLepta
+//    Move (nOres+(nLepta/100))       to rVal
+//    Function_Return rVal
+//End_Function
+
+//Function fiConvert_Time_to_Minutes Global Number anTime Returns Integer
+//    Local Integer rVal
+//    Move ((Integer(anTime)*60)+((anTime-(Integer(anTime)))*100)) to rVal
+//    Function_Return rVal
+//End_Function
+
+//Function fiConvert_Difference_StartTime_EndTime_to_Minutes Global   Number anStartTime  ;
+//                                                                    Number anEndTime    ;
+//                                                                    Returns Integer
+//    Local Integer rVal iMinStart iMinEnd
+
+//    If (anStartTime >= anEndTime) Add 24 to anEndTime
+
+//    Move ((Integer(anStartTime)*60)+((anStartTime-(Integer(anStartTime)))*100))  to iMinStart
+//    Move ((Integer(anEndTime  )*60)+((anEndTime  -(Integer(anEndTime  )))*100))  to iMinEnd
+//    Move (iMinEnd-iMinStart)                                                     to rVal
+//    Function_Return rVal
+//End_Function
+
+
+//Function fnConvert_Difference_StartTime_EndTime_to_Time Global  Number anStartTime  ;
+//                                                                Number anEndTime    ;
+//                                                                Returns Number
+//    Local Integer iTmp
+//    Local Number  rVal
+
+//    If (anStartTime >= anEndTime) Add 24 to anEndTime
+
+//    Move (fiConvert_Difference_StartTime_EndTime_to_Minutes(anStartTime,anEndTime)) to iTmp
+//    Move (fnConvert_Minutes_to_Time(iTmp))                                          to rVal
+//    Function_Return rVal
+//End_Function
+
+
+Function fsLoginUserID Global Returns String
+    Local String LastLogin# LoginUserid#
+    get_profile_string "WorkSpaces" "CurrentWorkspace" to LastLogin#
+    If LastLogin# eq "" Get WorkspaceName of (ProgramWorkspace(Self)) to LastLogin#
+    insert "WorkSpaces\" in LastLogin# at 1
+    Append LastLogin# "\" (Module_Name(Self)) "\LastLogin"
+    get_profile_string LastLogin# "LoginUserId"  to LoginUserId#
+    Trim LoginUserID# to LoginUserID#
+    If LoginUserId# eq "" Move (Network_User_Name(Current_Object)) to LoginUserId#
+    Function_Return LoginUserID#
+End_Function
+
+Function fiWriteRegistryLastSDFPath Global String asLastPath Returns Integer
+    Integer rVal
+    String  lsCurrentWksp
+    Get_Profile_String "WorkSpaces" "CurrentWorkspace" to lsCurrentWksp
+    If (lsCurrentWksp="") Get WorkspaceName of (ProgramWorkspace(Self)) to lsCurrentWksp
+    Insert "WorkSpaces\" in lsCurrentWksp at 1
+    // Œœ¦ ¡¢œ ›   - Last_SDF_Path -  ¡˜«à ˜§¦ «¦ ©¬š¡œ¡¨ £œ¤¦
+    // workspace §¦¬ ›¦¬¢œ¬¦¬£œ
+    Append lsCurrentWksp "\" (Module_Name(Self)) "\Last_SDF_Path"
+    Set_Profile_String lsCurrentWksp "Path"  to (Trim(asLastPath))
+    Function_Return rVal
+End_Function
+
+
+Function fsReadRegistryLastSDFPath Global Returns String
+    String rVal lsCurrentWksp
+    Get_Profile_String "WorkSpaces" "CurrentWorkspace" to lsCurrentWksp
+    If (lsCurrentWksp="") Get WorkspaceName of (ProgramWorkspace(Self)) to lsCurrentWksp
+    Insert "WorkSpaces\" in lsCurrentWksp at 1
+    // Œœ¦ ¡¢œ ›   - LastParastUsed -  ¡˜«à ˜§¦ «¦ ©¬š¡œ¡¨ £œ¤¦
+    // workspace §¦¬ ›¦¬¢œ¬¦¬£œ
+    Append lsCurrentWksp "\" (Module_Name(Self)) "\Last_SDF_Path"
+    Get_Profile_String lsCurrentWksp "Path"  to rVal
+    Function_Return (Trim(rVal))
+End_Function
+
+
+Function fiWriteRegistryLastMCryptPath Global String asLastPath Returns Integer
+    Integer rVal
+    String  lsCurrentWksp
+    Get_Profile_String "WorkSpaces" "CurrentWorkspace" to lsCurrentWksp
+    If (lsCurrentWksp="") Get WorkspaceName of (ProgramWorkspace(Self)) to lsCurrentWksp
+    Insert "WorkSpaces\" in lsCurrentWksp at 1
+    Append lsCurrentWksp "\" (Module_Name(Self)) "\Last_MCrypt_Path"
+    Set_Profile_String lsCurrentWksp "Path"  to (Trim(asLastPath))
+    Function_Return rVal
+End_Function
+
+
+Function fsReadRegistryLastMCryptPath Global Returns String
+    String rVal lsCurrentWksp
+    Get_Profile_String "WorkSpaces" "CurrentWorkspace" to lsCurrentWksp
+    If (lsCurrentWksp="") Get WorkspaceName of (ProgramWorkspace(Self)) to lsCurrentWksp
+    Insert "WorkSpaces\" in lsCurrentWksp at 1
+    Append lsCurrentWksp "\" (Module_Name(Self)) "\Last_MCrypt_Path"
+    Get_Profile_String lsCurrentWksp "Path"  to rVal
+    Function_Return (Trim(rVal))
+End_Function
+
+Function fiWriteRegistryLastWEBPath Global String asLastPath Returns Integer
+    Integer rVal
+    String  lsCurrentWksp
+    Get_Profile_String "WorkSpaces" "CurrentWorkspace" to lsCurrentWksp
+    If (lsCurrentWksp="") Get WorkspaceName of (ProgramWorkspace(Self)) to lsCurrentWksp
+    Insert "WorkSpaces\" in lsCurrentWksp at 1
+    Append lsCurrentWksp "\" (Module_Name(Self)) "\Last_WEB_Path"
+    Set_Profile_String lsCurrentWksp "Path"  to (Trim(asLastPath))
+    Function_Return rVal
+End_Function
+
+
+Function fsReadRegistryLastWEBPath Global Returns String
+    String rVal lsCurrentWksp
+    Get_Profile_String "WorkSpaces" "CurrentWorkspace" to lsCurrentWksp
+    If (lsCurrentWksp="") Get WorkspaceName of (ProgramWorkspace(Self)) to lsCurrentWksp
+    Insert "WorkSpaces\" in lsCurrentWksp at 1
+    Append lsCurrentWksp "\" (Module_Name(Self)) "\Last_WEB_Path"
+    Get_Profile_String lsCurrentWksp "Path"  to rVal
+    Function_Return (Trim(rVal))
+End_Function
+
+Function fsReadRegistryFEMRootDir Global Returns String
+    String rVal lsCurrentWksp
+    Get_Profile_String "WorkSpaces" "CurrentWorkspace" to lsCurrentWksp
+    If (lsCurrentWksp="") Get WorkspaceName of (ProgramWorkspace(Self)) to lsCurrentWksp
+    Insert "WorkSpaces\" in lsCurrentWksp at 1
+    Append lsCurrentWksp "\FEM"
+    Get_Profile_String lsCurrentWksp "RootDir"  to rVal
+    Function_Return (Trim(rVal))
+End_Function
+
+Function fsReadRegistryFEMDevicePath Global Returns String
+    String rVal lsCurrentWksp
+    Get_Profile_String "WorkSpaces" "CurrentWorkspace" to lsCurrentWksp
+    If (lsCurrentWksp="") Get WorkspaceName of (ProgramWorkspace(Self)) to lsCurrentWksp
+    Insert "WorkSpaces\" in lsCurrentWksp at 1
+    Append lsCurrentWksp "\FEM"
+    Get_Profile_String lsCurrentWksp "DevicePath"  to rVal
+    Function_Return (Trim(rVal))
+End_Function
+
+Function fiWriteRegistryFEMRootDir Global Returns Integer
+    Integer rVal
+    String  lsCurrentWksp
+    Get_Profile_String "WorkSpaces" "CurrentWorkspace" to lsCurrentWksp
+    If (lsCurrentWksp="") Get WorkspaceName of (ProgramWorkspace(Self)) to lsCurrentWksp
+    Insert "WorkSpaces\" in lsCurrentWksp at 1
+    Append lsCurrentWksp "\FEM"
+    Set_Profile_String lsCurrentWksp "RootDir"  to "C:\FEM_ROOT\"
+    Function_Return rVal
+End_Function
+
+Function fiWriteRegistryFEMDevicePath Global Returns Integer
+    Integer rVal
+    String  lsCurrentWksp
+    Get_Profile_String "WorkSpaces" "CurrentWorkspace" to lsCurrentWksp
+    If (lsCurrentWksp="") Get WorkspaceName of (ProgramWorkspace(Self)) to lsCurrentWksp
+    Insert "WorkSpaces\" in lsCurrentWksp at 1
+    Append lsCurrentWksp "\FEM"
+    Set_Profile_String lsCurrentWksp "DevicePath"  to "C:\FEM_ROOT\Device_File1.dat"
+    Function_Return rVal
+End_Function
+
+
+
+
+        Function fiWriteRegistryLastDEDPath Global String asLastPath Returns Integer
+            Integer rVal
+            String  lsCurrentWksp
+            Get_Profile_String "WorkSpaces" "CurrentWorkspace" to lsCurrentWksp
+            If (lsCurrentWksp="") Get WorkspaceName of (ProgramWorkspace(Self)) to lsCurrentWksp
+            Insert "WorkSpaces\" in lsCurrentWksp at 1
+            Append lsCurrentWksp "\" (Module_Name(Self)) "\Last_DED_Path"
+            Set_Profile_String lsCurrentWksp "Path"  to (Trim(asLastPath))
+            Function_Return rVal
+        End_Function
+
+
+        Function fsReadRegistryLastDEDPath Global Returns String
+            String rVal lsCurrentWksp
+            Get_Profile_String "WorkSpaces" "CurrentWorkspace" to lsCurrentWksp
+            If (lsCurrentWksp="") Get WorkspaceName of (ProgramWorkspace(Self)) to lsCurrentWksp
+            Insert "WorkSpaces\" in lsCurrentWksp at 1
+            Append lsCurrentWksp "\" (Module_Name(Self)) "\Last_DED_Path"
+            Get_Profile_String lsCurrentWksp "Path"  to rVal
+            Function_Return (Trim(rVal))
+        End_Function
+
+
+
+Function fig_Is_Admin Global Returns Integer
+    String sUser
+    Integer rVal
+    Get fsLoginUserID to sUser
+    Move (trim(sUser)) to sUser
+    Clear Users
+    Move sUser to Users.Login_ID
+    Find eq Users By Index.1 // Users:Index.1:Login_ID
+    Move Users.Admin_Rights to rVal
+    Function_Return rVal
+End_Function
+
+Function fig_The_User_Group Global Returns Integer
+    String sUser
+    Get fsLoginUserID   to sUser
+    Move (trim(sUser))  to sUser
+    Clear Users
+    Move sUser          to Users.Login_ID
+    Find eq Users By Index.1 // Users:Index.1:Login_ID
+    Clear UserGrps
+    Move Users.Grp_ID   to UserGrps.Grp_ID
+    Find eq UserGrps By Index.1 // UserGrps:Index.1:Grp_ID
+    Function_Return UserGrps.Grp_ID
+End_Function
+
+Function fsg_The_User_Department Global Returns String
+    String sUser
+    Get fsLoginUserID   to sUser
+    Move (trim(sUser))  to sUser
+    Clear Users
+    Move sUser          to Users.Login_ID
+    Find eq Users By Index.1 // Users:Index.1:Login_ID
+    Clear Departm
+    Move Users.Departm_Code   to Departm.Code
+    Find eq Departm By Index.1 // Departm:Index.1:Code
+    Function_Return Departm.Code
+End_Function
+
+
+Function fig_Is_Specific_Admin Global String asUser Returns Integer
+    Integer rVal
+    Move (trim(asUser)) to asUser
+    Clear Users
+    Move asUser to Users.Login_ID
+    Find eq Users By Index.1 // Users:Index.1:Login_ID
+    Move Users.Admin_Rights to rVal
+    Function_Return rVal
+End_Function
+
+Function fig_The_Specific_User_Group Global String asUser Returns Integer
+    Move (trim(asUser))  to asUser
+    Clear Users
+    Move asUser          to Users.Login_ID
+    Find eq Users By Index.1 // Users:Index.1:Login_ID
+    Clear UserGrps
+    Move Users.Grp_ID   to UserGrps.Grp_ID
+    Find eq UserGrps By Index.1 // UserGrps:Index.1:Grp_ID
+    Function_Return UserGrps.Grp_ID
+End_Function
+
+Function fsg_The_Specific_User_Department Global String asUser Returns String
+    Move (trim(asUser))  to asUser
+    Clear Users
+    Move asUser          to Users.Login_ID
+    Find eq Users By Index.1 // Users:Index.1:Login_ID
+    Clear Departm
+    Move Users.Departm_Code   to Departm.Code
+    Find eq Departm By Index.1 // Departm:Index.1:Code
+    Function_Return Departm.Code
+End_Function
+
+

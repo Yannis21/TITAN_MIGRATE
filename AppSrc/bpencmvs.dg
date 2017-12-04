@@ -1,0 +1,1272 @@
+//AB/ Project bpEnCmvs
+//AB/ Object prj is a Dialog_Project
+//AB/     Set ProjectName to "bpEnCmvs"
+//AB/     Set ProjectFileName to "bpEnCmvs.DG"
+//AB/     Set GenerateFileName to "NONAME"
+
+// Project Object Structure
+//   bpEnCmvs is a BusinessProcessSub
+//     Ctypkin_DD is a DataDictionary
+//     Country_DD is a DataDictionary
+//     Towns_DD is a DataDictionary
+//     Cities_DD is a DataDictionary
+//     Payresp_DD is a DataDictionary
+//     Areas_DD is a DataDictionary
+//     Clients_DD is a DataDictionary
+//     Cmoves_DD is a DataDictionary
+//     Cflagkin_DD is a DataDictionary
+//     Wtypkin_DD is a DataDictionary
+//     Ptyppar_DD is a DataDictionary
+//     Nomisma_DD is a DataDictionary
+//     Particle_DD is a DataDictionary
+//     Wapokat_DD is a DataDictionary
+//     Wapomast_DD is a DataDictionary
+//     Wax_DD is a DataDictionary
+//     Units_DD is a DataDictionary
+//     Witemkat_DD is a DataDictionary
+//     Fpa_DD is a DataDictionary
+//     Item_DD is a DataDictionary
+//     Witemx_DD is a DataDictionary
+//     Pmoves_DD is a DataDictionary
+//     Wflagkin_DD is a DataDictionary
+//     Syscurxr_DD is a DataDictionary
+//     Cn_DD is a DataDictionary
+//     Wcmoves_DD is a DataDictionary
+//     Psxetika_DD is a DataDictionary
+//     Witemcl_DD is a DataDictionary
+
+// Register all objects
+Register_Object Areas_DD
+Register_Object bpEnCmvs
+Register_Object Cflagkin_DD
+Register_Object Cities_DD
+Register_Object Clients_DD
+Register_Object Cmoves_DD
+Register_Object Cn_DD
+Register_Object Country_DD
+Register_Object Ctypkin_DD
+Register_Object Fpa_DD
+Register_Object Item_DD
+Register_Object Nomisma_DD
+Register_Object Particle_DD
+Register_Object Payresp_DD
+Register_Object Pmoves_DD
+Register_Object Psxetika_DD
+Register_Object Ptyppar_DD
+Register_Object Syscurxr_DD
+Register_Object Towns_DD
+Register_Object Units_DD
+Register_Object Wapokat_DD
+Register_Object Wapomast_DD
+Register_Object Wax_DD
+Register_Object Wcmoves_DD
+Register_Object Wflagkin_DD
+Register_Object Witemcl_DD
+Register_Object Witemkat_DD
+Register_Object Witemx_DD
+Register_Object Wtypkin_DD
+Register_Object Wam_DD
+Register_Object Sysrecw_DD
+Register_Object PartlFpa_DD
+
+
+
+//AB-StoreTopStart
+
+Use CMOVES.DD
+Use CFLAGKIN.DD
+Use WFLAGKIN.DD
+USE CTYPKIN.DD
+USE PTYPPAR.DD
+USE PSEIRA.DD
+USE CLIENTS.DD
+USE PARTICLE.DD
+USE WAPOKAT.DD
+USE WAPOMAST.DD
+USE WAX.DD
+USE UNITS.DD
+USE WITEMKAT.DD
+USE ITEM.DD
+USE WITEMX.DD
+USE WTYPKIN.DD
+USE SYSCURXR.DD
+USE WCMOVES.DD
+USE SYSCURXR.DD
+USE CN.DD
+USE NOMISMA.DD
+Use Pmoves.DD
+Use FPA.DD
+Use Psxetika.DD
+Use Cities.DD
+Use Country.DD
+Use Towns.DD
+Use Areas.DD
+Use Wam.DD
+Use SysrecW.DD
+Use Witemcl.DD
+Use PartlFpa.DD
+Open Nomisma
+Open Isotimia
+Use bpMkWcm.dg
+
+//AB-StoreTopEnd
+
+//AB-IgnoreStart
+
+Use Bproces.Sub
+Use DFAllEnt.pkg
+
+Use CTYPKIN.DD
+Use COUNTRY.DD
+Use TOWNS.DD
+Use CITIES.DD
+Use PAYRESP.DD
+Use AREAS.DD
+Use CLIENTS.DD
+Use CMOVES.DD
+Use CFLAGKIN.DD
+Use WTYPKIN.DD
+Use PTYPPAR.DD
+Use NOMISMA.DD
+Use PARTICLE.DD
+Use WAPOKAT.DD
+Use WAPOMAST.DD
+Use WAX.DD
+Use UNITS.DD
+Use WITEMKAT.DD
+Use FPA.DD
+Use ITEM.DD
+Use WITEMX.DD
+Use PMOVES.DD
+Use WFLAGKIN.DD
+Use SYSCURXR.DD
+Use CN.DD
+Use WCMOVES.DD
+Use PSXETIKA.DD
+Use WITEMCL.DD
+Use Wam.dd
+Use Sysrecw.DD
+Use PartlFpa.DD
+
+//AB-IgnoreEnd
+
+Object bpEnCmvs is a BusinessProcessSub
+
+    //AB-StoreTopStart
+
+    Property Integer    piExeiPoso              Public  0
+    Property Integer    piEpireazeiXrPi         Public  0
+    Property String     psModule                Public ''
+    Property String     psParticleRecr          Public ''
+    Property String     psCmovesRecr            Public ''
+    Property String     psWCmovesRecr           Public ''
+    Property Integer    piWithDeletion          Public  0
+    Property Integer    piLathos                Public  0
+    Property Integer    piParticleID            Public  0
+    Property Integer    piTxtID                 Public  0
+    Property String     psTxt                   Public ''
+    property integer    pifromtim               Public  0 // An erxete apo ekkremh deltia oxi mynyma
+                                                          // parastatiko ekleise  (georg)
+
+    ////////////////////////////////////////////////////////////
+    /////////// Extra Data Set Needed For Finding //////////////
+    /////////// Incoming Pmove Record             //////////////
+    ////////////////////////////////////////////////////////////
+
+    Set Status_Panel_State to False
+    //Set Allow_Cancel_State  to True
+    Set Display_Error_State to True
+    //Set Process_Title to "               "
+    //Set Status_Log_id to (status_log(Self)) //Use statlog.pkg
+    //Set Status_log_state to True
+
+    //AB-StoreTopEnd
+
+    Set Size to 58 88
+    Set Location to 18 52
+
+    //AB-DDOStart
+
+    Object Ctypkin_DD is a Ctypkin_DataDictionary
+    End_Object    // Ctypkin_DD
+
+    Object Country_DD is a Country_DataDictionary
+    End_Object    // Country_DD
+
+    Object Towns_DD is a Towns_DataDictionary
+        Set DDO_Server to (Country_DD(self))
+    End_Object    // Towns_DD
+
+    Object Cities_DD is a Cities_DataDictionary
+        Set DDO_Server to (Towns_DD(self))
+    End_Object    // Cities_DD
+
+    Object Payresp_DD is a Payresp_DataDictionary
+        Set piCheckPlaf to 0
+    End_Object    // Payresp_DD
+
+    Object Areas_DD is a Areas_DataDictionary
+    End_Object    // Areas_DD
+
+    Object Clients_DD is a Clients_DataDictionary
+        Set DDO_Server to (Cities_DD(self))
+        Set DDO_Server to (Payresp_DD(self))
+        Set DDO_Server to (Areas_DD(self))
+        Set piCheckPlaf to 0
+    End_Object    // Clients_DD
+
+    Object Cmoves_DD is a Cmoves_DataDictionary
+        Set DDO_Server to (Ctypkin_DD(self))
+        Set DDO_Server to (Clients_DD(self))
+        Set piFromBP to 1
+    End_Object    // Cmoves_DD
+
+    Object Cflagkin_DD is a Cflagkin_DataDictionary
+        Set DDO_Server to (Ctypkin_DD(self))
+    End_Object    // Cflagkin_DD
+
+    Object Wtypkin_DD is a Wtypkin_DataDictionary
+    End_Object    // Wtypkin_DD
+
+    Object Ptyppar_DD is a Ptyppar_DataDictionary
+        Set DDO_Server to (Ctypkin_DD(self))
+        Set DDO_Server to (Wtypkin_DD(self))
+
+    End_Object    // Ptyppar_DD
+
+    Object Nomisma_DD is a Nomisma_DataDictionary
+    End_Object    // Nomisma_DD
+
+    Object Fpa_DD is a Fpa_DataDictionary
+    End_Object    // Fpa_DD
+
+    Object Particle_DD is a Particle_DataDictionary
+        Set DDO_Server to (Clients_DD(self))
+        Set DDO_Server to (Ptyppar_DD(self))
+        Set DDO_Server to (Nomisma_DD(self))
+    End_Object    // Particle_DD
+
+    Object Partlfpa_DD is a Partlfpa_DataDictionary
+        Set DDO_Server to (Particle_DD(self))
+        Set DDO_Server to (Fpa_DD(self))
+    End_Object    // Partlfpa_DD
+
+    Object Wapokat_DD is a Wapokat_DataDictionary
+    End_Object    // Wapokat_DD
+
+    Object Wapomast_DD is a Wapomast_DataDictionary
+        Set DDO_Server to (Wapokat_DD(self))
+    End_Object    // Wapomast_DD
+
+    Object Wax_DD is a Wax_DataDictionary
+        Set DDO_Server to (Wapomast_DD(self))
+    End_Object    // Wax_DD
+
+    Object Units_DD is a Units_DataDictionary
+    End_Object    // Units_DD
+
+    Object Witemkat_DD is a Witemkat_DataDictionary
+    End_Object    // Witemkat_DD
+
+    Object Fpa_DD is a Fpa_DataDictionary
+    End_Object    // Fpa_DD
+
+    Object Wam_DD is a Wam_DataDictionary
+    End_Object    // Areas_DD
+
+
+    Object Item_DD is a Item_DataDictionary
+        Set DDO_Server to (Units_DD(self))
+        Set DDO_Server to (Witemkat_DD(self))
+        Set DDO_Server to (Fpa_DD(self))
+    End_Object    // Item_DD
+
+    Object Witemx_DD is a Witemx_DataDictionary
+        Set DDO_Server to (Item_DD(self))
+    End_Object    // Witemx_DD
+
+    Object Pmoves_DD is a Pmoves_DataDictionary
+        Set DDO_Server to (Wax_DD(self))
+        Set DDO_Server to (Witemx_DD(self))
+        Set DDO_Server to (Particle_DD(self))
+        Set Constrain_File to Particle.File_Number
+    End_Object    // Pmoves_DD
+
+    Object Wflagkin_DD is a Wflagkin_DataDictionary
+        Set DDO_Server to (Wtypkin_DD(self))
+    End_Object    // Wflagkin_DD
+
+    Object Syscurxr_DD is a Syscurxr_DataDictionary
+    End_Object    // Syscurxr_DD
+
+    Object Cn_DD is a Cn_DataDictionary
+        Set DDO_Server to (Clients_DD(self))
+    End_Object    // Cn_DD
+
+    Object Wcmoves_DD is a Wcmoves_DataDictionary
+        Set DDO_Server to (Wax_DD(self))
+        Set DDO_Server to (Wtypkin_DD(self))
+        Set DDO_Server to (Witemx_DD(self))
+    End_Object    // Wcmoves_DD
+
+    Object Psxetika_DD is a Psxetika_DataDictionary
+        Set DDO_Server to (Particle_DD(self))
+        Set Constrain_File to Particle.File_Number
+    End_Object    // Psxetika_DD
+
+    Object Witemcl_DD is a Witemcl_DataDictionary
+        Set DDO_Server to (Item_DD(self))
+    End_Object    // Witemcl_DD
+
+
+    //AB-DDOEnd
+
+
+    //AB-StoreStart
+
+
+    Function fiDelete_WCmoves_Record String asRecr Integer aiDelete Returns Integer
+        Integer rVal iErr
+        Move 0 to rVal
+        Send Clear to WCmoves_DD
+        Move asRecr to WCmoves.WCmove_Recr
+        Send Find to WCmoves_DD eq 2 //WCmoves:Index.2:WCmoves_Recr
+        If (Found=1) Begin
+            If (aiDelete) Begin
+                Send UpdateWait to (piTxtID(Self))  ('É†òö®ò≠„ âÂ§û©û™ '+(String(WCmoves.Recnum)))
+                //Set Label Of (piTxtID(Self)) to ((psTxt(self))+'  '+'É†òö®ò≠„ âÂ§û©û™ '+(String(WCmoves.Recnum)))
+                Send Request_Delete to WCmoves_DD
+            End
+        End
+        Else Begin
+            Move 60003 to rVal
+            // If From Deletion and Could not find WCmoves with Particle_WCmoves_Recr set piLathos
+            If (aiDelete) error 6003 "Could not find WCmoves with Particle_WCmoves_Recr"
+        End
+        Function_Return rVal
+    End_Function
+
+    Function fiDelete_Cmoves_Record String asRecr Integer aiDelete Returns Integer
+        Integer rVal iErr
+        Move 0 to rVal
+        Send Clear to Cmoves_DD
+        Move (Trim(asRecr)) to Cmoves.Cmoves_Recr
+        Send Find to Cmoves_DD eq 2 //Cmoves:Index.2:Cmoves_Recr
+        If (Found=1) Begin
+            If (aiDelete) Begin
+                Send UpdateWait to (piTxtID(Self)) ('É†òö®ò≠„ âÂ§û©û™ '+(String(Cmoves.Recnum)))
+                //Set Label Of (piTxtID(Self)) to ((psTxt(self))+'  '+'É†òö®ò≠„ âÂ§û©û™ '+(String(Cmoves.Recnum)))
+                Send Request_Delete to Cmoves_DD
+            End
+        End
+        Else Begin
+            Move 50003 to rVal
+            // If From Deletion and Could not find Cmoves with Particle_Cmoves_Recr set piLathos
+            If (aiDelete) error 5003 "Could not find Cmoves with Particle_Cmoves_Recr"
+
+        End
+        Function_Return rVal
+    End_Function
+
+    Procedure Deal_With_Current_Particle
+        Integer iErr isClosed iInt iWithDeletion iSign iClient iID iMustSaveClientYpoloipa iYpologiseMyf
+        Integer iEpireazeiAxies iMustEnhmWitemcl  iEpireazeiPosothtes iAntistrofhProshmou iDec
+        Integer iOneWflag iiPartlNO iExitFlag iMustSaveWCmoves iMustClearDap iPmsNoOfLines IOLA
+        Integer iMustSaveCmoves iMustSaveClient iMyf iInt2 iOneCflag iLathos iPmsCount Istatuse
+        Integer iMaxDays iAnameneiSxetiko iExeiSxetika iPartlTimol iExeiParakrathsh imustsaveofeilh
+
+        String  ssPtypparDescr ssSeiraDescr sWCmovesRecr sRecr2 ssPtypparDescrShort sSxetikoTim sSxetikoDapTim
+        String  sRecr sParticle_CmovesRecr sCtypkinRecr sCn_Code sSls_ID sCnt_ID sPresp_ID sPmovesRecr SCN
+        String  sClientRecr sCmovesRecr sNomisma sFlag sWtypkinRecr sItem sLocked sParticle_CmovesRecr2
+        String  sWitemxRecr sWaxRecr sClientID sPerigrafh sParticle_WCmovesRecr sParticleRecr;
+                stexnikh
+
+        Number  nVatam nGenAm nExtra nPayam nDiscAm nIsotimia nUnitPrice nGSynolo nPctDisc nPosoDisc
+        Number  nTotAmBd nTotDiscPms nTotDiscPC nTotAmAd nActualXreosh nActualPistosh nClProhg nClTrex
+        Number  nAthr1 nAthr2 nAthr3 nAthr4 nAthr5 nAthr6 nParastXreosh nParastPistosh nParakrathsh
+        Number  nPoso nXre nPis nMyfPoso nPosothta nAthr7 nAthr8 nPosothtaFinal nXreFinal nPisFinal
+
+        Date    dHmnia dLastPis dLastXre dLastXreParast dLastPisParast
+
+        Number nQtyEisFinal nQtyExFinal nQtyEis nQtyEx nTotalFpaGrammhs nTotalFpaParast nqtyreturn nTotalVatPoso
+
+        ////////////////////////////////////////////////////////////////////////////////////////
+        // js 29/01/2002 Ayto aparaithto pleon prin apo kathe diadikasia
+        // dioti an xtyphsei error ektos BP px an diagrapseis mia kenh grammh se
+        // kapoio grid setaretai aytos o indicator true kai sthn synexeia
+        // phdaei kanonika ton kodika o opoios elegxei me 'Move (Err) to iErr
+        // an kapoia diadikasia p.x. Request_Delete egine epityxos kai eno ayth egine
+        // epeidh o indicator exei parameinei setarismnenos apo prohgoymena, tote pairnoume
+        // kakos to mhnyma lathous kai epipleon kai poli basiko DEN paizei h ABORT_TRANSACTION ?
+        Indicate Err False
+        Set piLathos to False
+        ////////////////////////////////////////////////////////////////////////////////////////
+
+        Get piParticleID    to iID
+
+        Get psParticleRecr  to sRecr
+        Move (Trim(sRecr))  to sRecr
+
+
+        Send Clear          to Particle_DD
+        Move sRecr          to Particle.Partl_Recr
+        Send Find to Particle_DD eq 2 // Particle:Index.2:Partl_Recr
+
+
+        If (Found=1) Begin
+
+
+            Get Field_Current_Value Of Particle_DD Field Particle.Total_Vat_Poso    to nTotalVatPoso
+            Get Field_Current_Value Of Particle_DD Field Particle.PARTL_VatAm       to nTotalFpaGrammhs
+            Get Field_Current_Value Of Particle_DD Field Particle.Fpa_On_Total      to nTotalFpaParast
+            Get Field_Current_Value Of Clients_DD  Field Clients.Ypoloipo           to nClProhg
+            Get Field_Current_Value Of Particle_DD Field Particle.PARTL_NOOFLINES   to iPmsNoOfLines
+            Get Field_Current_Value Of Particle_DD Field Particle.Partl_Timol       to iPartlTimol
+            Get Field_Current_Value Of Particle_DD Field Particle.Exei_Sxetika      to iExeiSxetika
+            Get Field_Current_Value Of Particle_DD Field Particle.Partl_Ekleise     to isClosed
+            Get Field_Current_Value Of Particle_DD Field Particle.Cmoves_Recr       to sParticle_CmovesRecr
+            Get Field_Current_Value Of Particle_DD Field Particle.Cms_parak_recr    to sParticle_CmovesRecr2
+            Get Field_Current_Value Of Particle_DD Field Particle.Parakrat_Poso     to nParakrathsh
+            Get Field_Current_Value Of Particle_DD Field Particle.WCmoves_Recr      to sParticle_WCmovesRecr
+            Get Field_Current_Value Of Particle_DD Field Particle.CN_Code           to sCN_Code
+            Get Field_Current_Value Of Particle_DD Field Particle.partl_euro        to iola
+            Move (Trim(sParticle_CmovesRecr))                                       to sParticle_CmovesRecr
+            Move (Trim(sParticle_CmovesRecr2))                                      to sParticle_CmovesRecr2
+            Move (Trim(sParticle_WCmovesRecr))                                      to sParticle_WCmovesRecr
+
+
+            Get Field_Current_Value Of Ptyppar_DD Field Ptyppar.Einai_Paroxh_Yp     to iExeiParakrathsh
+
+            // Ä§ ´¶ record Particle úÆú† flag ¶´† ú†§ò† °¢ú†©£ú§¶ °ò† °ò¢ú†´ò†
+            // ò¨´û û bp ´¶´ú ò¨´¶ ©û£ò†§ú† ß¢™ ß®ìßú† §ò 'ò§¶†•ú†' °ò† §ò
+            // õ†òö®ò≠ú† ´¶ ò§´†©´¶†Æ¶ Cmoves record ´¶ ¶ß¶†¶ ú†Æú ≠´†òÆ´ú†
+            // ¶´ò§ ú†Æú °¢ú†©ú† ´¶ Particle
+            // °òü‡™ úß†©û™ °ò† ¶† ´®Êß¶† ß¢û®‡£„™
+
+            If (isClosed) Begin
+                //////////////////////////////////////////////////////////////////////////
+                // Paradoxh pos an xtypise lathos h diagrafh alla den ekane pote eggrafh
+                // sta arxeia cmoves h wcmoves giati den yphrxe flag poy na leei kane
+                // efggrafh se kapoio apo ayta ta arxeia
+                // (Particle.Cmoves_Recr='') h/kai (Particle.WCmoves_Recr='')
+                // tote den to theoroume lathos kai den koboyme thn synexeia
+                If (Not(sParticle_CmovesRecr=''))  Move (fiDelete_Cmoves_Record (Self,sParticle_CmovesRecr ,1))  to iInt
+                Else                               Move 0 to iInt
+                If (iInt) error 4444 'Éú§ ô®‚üû°ú Cmoves ö†ò õ†òö®ò≠„'
+
+                If (iExeiParakrathsh) Begin
+                    If ((nParakrathsh<>0) And (Not(sParticle_CmovesRecr2='')))  Move (fiDelete_Cmoves_Record (Self,sParticle_CmovesRecr2,1))  to iInt
+                    Else                                                        Move 0 to iInt
+                    If (iInt) error 4445 'Éú§ ô®‚üû°ú Cmoves ßò®ò°®·´û©û™ ö†ò õ†òö®ò≠„'
+                End
+
+
+                Move 0 to iExitFlag
+                Send Find To Pmoves_DD First_Record 3 //Pmoves:Index.3:Pms_Recr
+                While ((Found=1) And (iExitFlag=0))
+                    Get Field_Current_Value Of Pmoves_DD Field Pmoves.Wcmoves_Recr to sRecr2
+                    Move (Trim(sRecr2)) to sRecr2
+                    If (Not(sRecr2='')) Move (fiDelete_WCmoves_Record(Self,sRecr2,1))  to iInt2
+                    Else                Move 0 to iInt2
+                    If (iInt2) Move iInt2 to iExitFlag
+                    Else Begin
+                        Send UpdateWait to (piTxtID(Self)) ('Ñ§û£‚®‡©û âÂ§û©û™ '+(String(Pmoves.Recnum)))
+                        Set Field_Changed_Value Of Pmoves_DD Field Pmoves.Wcmoves_Recr to ''
+                        Send Request_Save to pMoves_DD
+                    End
+                    Send Find To Pmoves_DD Next_Record 3 //Pmoves:Index.3:Pms_Recr
+                    Send UpdateWait to (piTxtID(Self)) ('Ñ§û£‚®‡©û âÂ§û©û™ '+(String(Pmoves.Recnum)))
+                Loop
+
+
+
+                If (iExitFlag) Move iExitFlag to iInt2
+                Else           Move 0 to iInt2
+    //                    If (Not(Particle.WCmoves_Recr='')) Move (fiDelete_WCmoves_Record(Self,sParticle_WCmovesRecr,1))  to iInt2
+    //                    Else Move 0 to iInt2
+                //////////////////////////////////////////////////////////////////////////
+
+
+                If ((Not(iInt)) And (Not(iInt2))) Begin
+                    // Ä§ õú§ Æ´¨ßû©ú ¢òü¶™ °ò´ò ´û§ õ†òö®ò≠û °ò† õ†úö®ò≠ú† ©‡©´ò ´¶ Cmoves °ò† ´¶ Wcmoves record
+                    // ´¶´ú °òüò®†ù¶¨£ú ´¶ Particle òß¶ ©û£·õ†ò Cmoves kai Wcmoves
+                    // °ò† •ú£ò®°ò®¶¨£ú ´¶ record Particle ‡™ ãÜ â¢ú†©´Ê ß¢‚¶§
+                    Set Field_Changed_Value Of Particle_DD Field Particle.Cmoves_Recr       to ''
+                    Set Field_Changed_Value Of Particle_DD Field Particle.WCmoves_Recr      to ''
+                    Set Field_Changed_Value Of Particle_DD Field Particle.Partl_Ekleise     to ''
+                    Set Field_Changed_Value Of Particle_DD Field Particle.Exei_Sxetika      to ''
+                    Set Field_Changed_Value Of Particle_DD Field Particle.Max_Days_Date     to 0
+
+                    // todo: js 11/02/2002
+                    Get Field_Current_Value Of Particle_DD Field Particle.Prohg_Ypol    to nClProhg
+                    Set Field_Changed_Value Of Particle_DD Field Particle.trex_Ypol     to nClProhg
+
+
+                    Send Request_Save to Particle_DD
+                End
+                Else Begin
+                         If (iInt)  error 5111 "Could Not Delete Cmoves to Open Particle"
+                    Else If (iInt2) error 6111 "Could Not Delete WCmoves to Open Particle"
+                End
+
+            End
+            //// IF IS NOT CLOSED (PARTICLE)
+            Else Begin
+                Move (fiDelete_Cmoves_Record(Self,sParticle_CmovesRecr,0))  to iInt
+                If (iInt<>50003) error 5100 "Found Cmoves Record on Open Particle"
+                    ///// An h function epistrepsei otidhpote ektos apo 50003 (Den Vrethike)
+                    ///// tote vrethike cmoves eno den tha eprepe
+
+                If (iExeiParakrathsh) Begin
+                    If ((nParakrathsh<>0) And (Not(sParticle_CmovesRecr2=''))) Begin
+                        Move (fiDelete_Cmoves_Record(Self,sParticle_CmovesRecr2,0))  to iInt
+                        If (iInt<>50003) error 5101 "Found Cmoves Parakrat Record on Open Particle"
+                            ///// An h function epistrepsei otidhpote ektos apo 50003 (Den Vrethike)
+                            ///// tote vrethike cmoves eno den tha eprepe
+                    End
+                End
+
+
+                Integer iiRecn
+                Number nPosoCheck nPosoPlafon
+
+
+                Move 0 to iExitFlag
+                Send Clear To Pmoves_DD
+                Send Find To Pmoves_DD First_Record 3 //Pmoves:Index.2:Pms_Recr
+                While ((Found=1) And (iExitFlag=0))
+                    Get Field_Current_Value Of Pmoves_DD Field Pmoves.Recnum to iiRecn
+                    Move 0 to iInt
+                    Get Field_Current_Value Of Pmoves_DD Field Pmoves.Wcmoves_Recr to sRecr2
+                    Move (Trim(sRecr2)) to sRecr2
+                    If (Not(sRecr2='')) Begin
+                        Move (fiDelete_WCmoves_Record(Self,sRecr2,0))  to iInt
+                        If (iInt<>60003) Move iInt to iExitFlag
+                    End
+                    Send Find To Pmoves_DD Next_Record 3
+                    Send UpdateWait to (piTxtID(Self)) ('Ñ§û£‚®‡©û âÂ§û©û™ '+(String(Pmoves.Recnum)))
+                Loop
+
+                If (iExitFlag) error 6100 "Found WCmoves Record on Open Particle"
+
+                Send Clear to Ctypkin_DD
+                Send Clear to Cflagkin_DD
+                Send Clear to Wtypkin_DD
+                Send Clear to Wflagkin_DD
+                Send Clear to Cmoves_DD
+                Send Clear to WCmoves_DD
+                Send Clear to Clients_DD
+                Send Clear to Pmoves_DD
+
+                Get Field_Current_Value Of Ptyppar_DD  Field Ptyppar.Ctypkin_Recr   to sCtypkinRecr
+                Get Field_Current_Value Of Particle_DD Field Particle.Client_Recr   to sClientRecr
+                Get Field_Current_Value Of Particle_DD Field Particle.Client_ID     to sClientID
+                Get Field_Current_Value Of Particle_DD Field Particle.Nomisma_Code  to sNomisma
+                Move (Trim(sNomisma)) to sNomisma
+
+                move sclientrecr to clients.client_recr
+                Send Find to Clients_DD eq 2 //Clients:Index.2:Client_Recr
+                If (Not(Found)) error 5005 "Client record not found"
+//                Get Field_Current_Value Of Clients_DD Field Clients.Client_Locked to sLocked
+//                If (sLocked='1') error 5014 "é ßú¢·´û™ úÂ§ò† °¢ú†õ‡£‚§¶™"
+                Move sCtypkinRecr to Ctypkin.Ctypkin_Recr
+                Send Find to Ctypkin_DD eq 2 //Ctypkin:Index.2:Client_Recr
+                If (Not(Found)) error 5006 "Ctypkin record not found"
+
+                Move sNomisma to Nomisma.Nomisma_Code
+                Send Find to Nomisma_DD eq 1 //Nomisma:Index.1:Nomisma_Code
+                If (Not(Found)) error 5010 "Nomisma record not found"
+
+                Get Field_Current_Value Of Particle_DD Field Particle.Partl_TotTem      to nPosothta
+
+                Get Field_Current_Value Of Particle_DD Field Particle.Partl_Hmnia       to dHmnia
+
+                Get Field_Current_Value Of Particle_DD Field Particle.Partl_TotAmBd     to nTotAmBd
+                Get Field_Current_Value Of Particle_DD Field Particle.Partl_AMDISCPMS   to nTotDiscPms
+                Get Field_Current_Value Of Particle_DD Field Particle.Partl_TotDiscPC   to nTotDiscPC
+                Move (nTotDiscPms+nTotDiscPC)                                           to nDiscAm
+                Get Field_Current_Value Of Particle_DD Field Particle.Partl_TotAmAd     to nTotAmAd
+                Get Field_Current_Value Of Particle_DD Field Particle.Partl_Vatam       to nVatam
+                Get Field_Current_Value Of Particle_DD Field Particle.Partl_GenAm       to nGenAm
+                Get Field_Current_Value Of Particle_DD Field Particle.Partl_Extra       to nExtra
+                Get Field_Current_Value Of Particle_DD Field Particle.Partl_Payam       to nPoso
+
+                Get Field_Current_Value Of Particle_DD Field Particle.Isotimia          to nIsotimia
+
+                Get Field_Current_Value Of Particle_DD  Field Particle.CN_Code          to sCN_Code
+                Get Field_Current_Value Of Particle_DD  Field Particle.Sls_ID           to sSls_ID
+                Get Field_Current_Value Of Particle_DD  Field Particle.Cnt_ID           to sCnt_ID
+                Get Field_Current_Value Of PayResp_DD   Field PayResp.Presp_ID          to sPresp_ID
+
+                Move 1 to iSign // Always 'Update'
+
+                Move 0              to iOneCflag
+                Move 0              to iMustSaveCmoves
+                Move 0              to iMustSaveClient
+                Move 0              to iMustSaveClientYpoloipa
+                Move 0              to iAntistrofhProshmou
+                Move 0              to iAnameneiSxetiko
+                Move 0              to iMaxDays
+                Move 0              to iMustClearDap
+                Move 0              to nParastXreosh
+                Move 0              to nParastPistosh
+                Move 0              to imustsaveofeilh
+
+                // js 09/01/2003 Enhmerosh myf pedion
+                Move 0              to iMyf
+                Move 0              to nMyfPoso
+                Move (ABS(nTotAmAd)>=Sysfile.Orio_Myf) to iYpologiseMyf
+
+
+                Set piExeiPoso      to 0
+                Set piEpireazeiXrPi to 0
+
+    ///////////////////////////// SOS ///////
+    ///////////////////////////  ENHMEROSH FLAGS APO CFLAGKIN <ARXH>  //////////////////////////////
+    //////////////////////////jsjsjsjsjsjsjsjs
+                Clear Cflagkin
+                Move sCtypkinRecr           to Cflagkin.Ctypkin_Recr
+                Find Gt Cflagkin By Index.5 // Cflagkin:Index.5:Ctypkin_Recr+Flag_Numeric+Cflagkin_Recr
+                While ((Found=1) And (sCtypkinRecr=Cflagkin.Ctypkin_Recr))
+
+                    Move 1 to iOneCflag
+                    Move Cflagkin.Cflagkin_Flag to sFlag
+                    Move (Trim(sFlag)) to sFlag
+                    Send UpdateWait to (piTxtID(Self)) ('Ñ§û£‚®‡©û Flags '+(String(Cflagkin.Recnum)))
+                    //Set Label Of (piTxtID(Self)) to ((psTxt(self))+'  '+'Ñ§û£ú®‡©û Flags '+(String(Cflagkin.Recnum)))
+
+                    Case Begin
+                        Case (sFlag='1')
+                            Move 1 to iMustSaveCmoves
+                          Case Break
+                        Case (sFlag='2') // Antistrofh Proshmou
+                            Move (nPoso*iSign*(-1)) to nPoso
+                            Move 1 to iAntistrofhProshmou
+                          Case Break
+                        Case (sFlag='3') // Epireazei xreoseis
+                            Move (nPoso*iSign)  to nXre
+                            Move 0              to nPis
+                            Set piEpireazeiXrPi to 1
+                          Case Break
+                        Case (sFlag='4') // Epireazei pistoseis
+                            Move (nPoso*iSign)  to nPis
+                            Move 0              to nXre
+                            Set piEpireazeiXrPi to 1
+                          Case Break
+                        Case (sFlag='5') // Epireazei Hmeromhnies
+                            Move 1 to iMustSaveClient
+                            If (nXre<>0) Begin
+                                Move dHmnia to dLastXre
+                                Move dHmnia to dLastXreParast
+                                Move ''     to dLastPis
+                                Move ''     to dLastPisParast
+                            End
+                            Else If (nPis<>0) Begin
+                                Move dHmnia to dLastPis
+                                Move dHmnia to dLastPisParast
+                                Move ''     to dLastXre
+                                Move ''     to dLastXreParast
+                            End
+                          Case Break
+                        Case (sFlag='6') // Epireazei Hmeromhnia teleytaias paraggelias
+                          Case Break
+                        Case (sFlag='7') // Epireazei ekkremh axiografa
+                          Case Break
+                        Case (sFlag='8') // Epireazei Diamartyrhmena
+                          Case Break
+                        Case (sFlag='9') // Epireazei Tziro
+                          Case Break
+                        Case (sFlag='10') // Epireazei Apografh xreoshs
+                          Case Break
+                        Case (sFlag='11') // Epireazei Apografh Pistosh
+                          Case Break
+
+                        //////////////////////////////////////////////////
+                        // js 09/01/2003 Enhmerosh myf pedion
+                        Case (sFlag='12') // Prosthetei se MYF Plythos
+                            If (iYpologiseMyf) Move 1 to iMyf
+                          Case Break
+
+                        Case (sFlag='13') // Prosthetei se MYF Axia
+                            If (iYpologiseMyf) Move nTotAmAd to nMyfPoso
+                          Case Break
+                        //////////////////////////////////////////////////
+
+                        Case (sFlag='14') // Axies se Xeno sma
+                            // Blepe sxetika erothmata sthn arxh ths procedure
+                          Case Break
+                        Case (sFlag='15') // Aytomath dhmiourgia axiografou
+                          Case Break
+                        Case (sFlag='16') // Allagh XreoPistoshs me antistrofh proshmou
+                            If (nXre<>0) Begin
+                                Move (nXre*(-1))    to nPis
+                                Move 0              to nXre
+                            End
+                            Else If (nPis<>0) Begin
+                                Move (nPis*(-1))    to nXre
+                                Move 0              to nPis
+                            End
+                          Case Break
+
+                        //////////////////////////////////////////////////
+                        // js 09/01/2003 Enhmerosh myf pedion
+                        Case (sFlag='17') // Afairei apo Myf plhthos
+                            If (iYpologiseMyf) Move -1 to iMyf
+                          Case Break
+
+                        Case (sFlag='18') // Afairei apo Myf Axia
+                            If (iYpologiseMyf) Move (nTotAmAd*(-1)) to nMyfPoso
+                          Case Break
+                        //////////////////////////////////////////////////
+
+                        Case (sFlag='23') // Athroisths 1
+                            Move (nPoso*iSign) to nAthr1
+                          Case Break
+                        Case (sFlag='24') // Athroisths 2
+                            Move (nPoso*iSign) to nAthr2
+                          Case Break
+                        Case (sFlag='25') // Athroisths 3
+                            Move (nPoso*iSign) to nAthr3
+                          Case Break
+                        Case (sFlag='26') // Athroisths 4
+                            Move (nPoso*iSign) to nAthr4
+                          Case Break
+                        Case (sFlag='27') // Athroisths 5
+                            Move (nPoso*iSign) to nAthr5
+                          Case Break
+                        Case (sFlag='28') // Athroisths 6
+                            Move (nPoso*iSign) to nAthr6
+                          Case Break
+                        Case (sFlag='29') // Athroisths 7
+                            Move (nPoso*iSign) to nAthr7
+                          Case Break
+                        Case (sFlag='30') // Athroisths 8
+                            Move (nPoso*iSign) to nAthr8
+                          Case Break
+                        Case (sFlag='50') // Anamenei sxetika
+                            Move 1 to iAnameneiSxetiko
+                            Move Ctypkin.Max_Days_Sx_Par to iMaxDays
+                          Case Break
+
+                        Case (sFlag='66') // ephreazei synolikh ofeilh forea
+                            Move 1 to iMustSaveofeilh
+                        Case Break
+
+
+                        Case (sFlag='80')
+                            // Katharisma, gia to sxetiko timologio pou akyronetai
+                            // sta sxetika deltia apostolhs tou timologiou
+                            Move 1 to iMustClearDap
+                          Case Break
+
+
+                        Case (sFlag='99') // Enhmeronei Ypoloipa
+                            Move 1 to iMustSaveClientYpoloipa
+                        Case Break
+
+
+                    Case End
+                    Find Gt Cflagkin By Index.5 // Cflagkin:Index.5:Ctypkin_Recr+Flag_Numeric+Cflagkin_Recr
+                Loop
+
+
+
+                If ((iOneCflag) And (iMustSaveCmoves)) Begin
+
+                    If (nXre<>0) Begin
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_Axia   to nXre
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_x0 ;
+                            to (fngConvertPoso(sNomisma,nXre,SysCurXr.C_Code0,dHmnia,nIsotimia))
+                        Move (fngConvertPoso(sNomisma,nXre,SysCurXr.C_Code0,dHmnia,nIsotimia)) to nParastXreosh
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_x00 ;
+                            to (fngConvertPoso(sNomisma,nXre,SysCurXr.C_Code00,dHmnia,nIsotimia))
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_x1 ;
+                            to (fngConvertPoso(sNomisma,nXre,SysCurXr.C_CodeR,dHmnia,nIsotimia))
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_x2     to nXre
+
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_p0     to 0
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_p00    to 0
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_p1     to 0
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_p2     to 0
+                        Move 0 to nParastPistosh
+                    End
+                    Else If (nPis<>0) Begin
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_Axia   to nPis
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_p0 ;
+                            to (fngConvertPoso(sNomisma,nPis,SysCurXr.C_Code0,dHmnia,nIsotimia))
+                        Move (fngConvertPoso(sNomisma,nPis,SysCurXr.C_Code0,dHmnia,nIsotimia)) to nParastPistosh
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_p00 ;
+                            to (fngConvertPoso(sNomisma,nPis,SysCurXr.C_Code00,dHmnia,nIsotimia))
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_p1 ;
+                            to (fngConvertPoso(sNomisma,nPis,SysCurXr.C_CodeR,dHmnia,nIsotimia))
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_p2     to nPis
+
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_x0     to 0
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_x00    to 0
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_x1     to 0
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_x2     to 0
+                        Move 0 to nParastXreosh
+                    End
+
+                    // js 24/05/2002
+                    Set piExeiPoso to ((nXre+nPis)<>0)
+
+                    If ((piEpireazeiXrPi(Self)=1) And (piExeiPoso(Self)=0)) Begin
+                        Send Request_Assign to Particle_DD
+                        error 7755 'í¶ ßò®ò©´ò´†°Ê ß®‚ßú† §ò ‚Æú† ß¶©Ê'
+                    End
+
+                    Set Field_Changed_Value Of Cmoves_DD    Field Cmoves.Cmoves_Hmnia   to dHmnia
+                    Set Field_Changed_Value Of Cmoves_DD    Field Cmoves.Partl_Recr     to sRecr
+
+                    //////////////////////////////////////
+                    // js 09/01/2003 Enhmerosh myf pedion
+                    Set Field_Changed_Value Of Cmoves_DD    Field Cmoves.CMOVES_YN_MYF   to iMyf
+                    // Cmoves.CMOVES_YN_MYF = Krataei to plhthos ton timologion ef'oson
+                    //                        katharo poso >= Sysfile.Orio_Myf
+                    // 0=Den symmetexei  1=Symmetexei  -1=Symmetexei arnhtika
+                    Set Field_Changed_Value Of Cmoves_DD    Field Cmoves.CMOVES_MYF_AXIA to nMyfPoso
+                    // Cmoves.CMOVES_MYF_AXIA = Krataei thn axia ton timologion ef'oson
+                    //                          katharo poso >= Sysfile.Orio_Myf
+                    // 0=Den symmetexei   x Poso=Symmetexei   -x Poso=Symmetexei arnhtika
+                    //////////////////////////////////////
+
+
+                    // Ñ§©‡£·´‡©û ßú®†ö®ò≠„™ ©´¶ ctypkin 04/02/2001 js
+                    Get Field_Current_Value Of Ptyppar_DD   Field Ptyppar.Ptyppar_Descr to ssPtypparDescr
+                    Get Field_Current_Value Of Ptyppar_DD   Field Ptyppar.Ptyppar_Abrev to ssPtypparDescrShort
+                    Get Field_Current_Value Of Particle_DD  Field Particle.Pseira_Seira to ssSeiraDescr
+                    Get Field_Current_Value Of Particle_DD  Field Particle.Partl_No     to iiPartlNO
+                    Move '' to sPerigrafh
+                    Move (Append(sPerigrafh,('*'+(Trim(ssPtypparDescrShort))+'  '+ ;
+                                            (Trim(ssSeiraDescr))+ '  '+ (String(iiPartlNo))+ '*'))) to sPerigrafh
+                    //
+                    Set Field_Changed_Value Of Cmoves_DD    Field Cmoves.Cmoves_Par     to (Trim(sPerigrafh))
+
+                    Set Field_Changed_Value Of Cmoves_DD    Field Cmoves.Cmoves_SC_Code2 to sNomisma
+
+
+                    // 05/09/2001
+                    If (iAntistrofhProshmou=1)  Move (-1) to iSign
+                    Else                        Move   1  to iSign
+                    // 05/09/2001
+
+                    ///////////////////////
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_TotAmBd0    ;
+                        to ((fngConvertPoso(sNomisma,nTotAmBd,SysCurXr.C_Code0,dHmnia,nIsotimia))*iSign)
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_DiscAm0    ;
+                        to ((fngConvertPoso(sNomisma,nDiscAm,SysCurXr.C_Code0,dHmnia,nIsotimia))*iSign)
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_TotAmAd0    ;
+                        to ((fngConvertPoso(sNomisma,nTotAmAd,SysCurXr.C_Code0,dHmnia,nIsotimia))*iSign)
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_Vatam0      ;
+                        to ((fngConvertPoso(sNomisma,nTotalVatPoso,SysCurXr.C_Code0,dHmnia,nIsotimia))*iSign)
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_Extra0      ;
+                        to ((fngConvertPoso(sNomisma,nExtra,SysCurXr.C_Code0,dHmnia,nIsotimia))*iSign)
+                    ///////////////////////
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_TotAmBd00   ;
+                        to ((fngConvertPoso(sNomisma,nTotAmBd,SysCurXr.C_Code00,dHmnia,nIsotimia))*iSign)
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_DiscAm00   ;
+                        to ((fngConvertPoso(sNomisma,nDiscAm,SysCurXr.C_Code00,dHmnia,nIsotimia))*iSign)
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_TotAmAd00   ;
+                        to ((fngConvertPoso(sNomisma,nTotAmAd,SysCurXr.C_Code00,dHmnia,nIsotimia))*iSign)
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_Vatam00     ;
+                        to ((fngConvertPoso(sNomisma,nTotalVatPoso,SysCurXr.C_Code00,dHmnia,nIsotimia))*iSign)
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_Extra00     ;
+                        to ((fngConvertPoso(sNomisma,nExtra,SysCurXr.C_Code00,dHmnia,nIsotimia))*iSign)
+                    ///////////////////////
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_TotAmBd1    ;
+                        to ((fngConvertPoso(sNomisma,nTotAmBd,SysCurXr.C_CodeR,dHmnia,nIsotimia))*iSign)
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_DiscAm1    ;
+                        to ((fngConvertPoso(sNomisma,nDiscAm,SysCurXr.C_CodeR,dHmnia,nIsotimia))*iSign)
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_TotAmAd1    ;
+                        to ((fngConvertPoso(sNomisma,nTotAmAd,SysCurXr.C_CodeR,dHmnia,nIsotimia))*iSign)
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_Vatam1      ;
+                        to ((fngConvertPoso(sNomisma,nTotalVatPoso,SysCurXr.C_CodeR,dHmnia,nIsotimia))*iSign)
+                    Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_Extra1      ;
+                        to ((fngConvertPoso(sNomisma,nExtra,SysCurXr.C_CodeR,dHmnia,nIsotimia))*iSign)
+                    ///////////////////////
+
+                    Set Field_Changed_Value Of Cmoves_DD   Field Cmoves.Module_From   to (psModule(Self))
+                    get field_current_value of clients_dd field clients.recnum to iclient
+
+                    If (iClient) Begin
+                        If (iMustSaveClientYpoloipa =1)  Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Enhm_Ypol_Pel    to '1'
+                        If (iMustSaveClient         =1)  Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Enhm_Hmnies_Pel  to '1'
+                        If (iMustSaveOfeilh         =1)  Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Enhm_ofeilh      to '1'
+                    End
+                    Else error 5011 "Client record not found for saving flags"
+
+                    Set Field_Changed_Value Of Cmoves_DD    Field Cmoves.Presp_ID     to sPresp_ID
+                    Set Field_Changed_Value Of Cmoves_DD    Field Cmoves.Sls_ID       to sSls_ID
+                    Set Field_Changed_Value Of Cmoves_DD    Field Cmoves.Cnt_ID       to sCnt_ID
+                    Set Field_Changed_Value Of Cmoves_DD    Field Cmoves.Cn_Code      to sCn_Code
+
+
+                    Send Request_Save to Cmoves_DD
+                    Send UpdateWait to (piTxtID(Self)) ('Ñ§û£‚®‡©û â†§û©û™ '+(String(Cmoves.Recnum)))
+
+
+                    Get Field_Current_Value Of Cmoves_DD Field Cmoves.Cmoves_Recr to sCmovesRecr
+                    If (Trim(sCmovesRecr)='') error 5008 "Saved Cmoves but dont have Recr"
+
+                    Set Field_Changed_Value Of Particle_DD Field Particle.Cmoves_Recr to (Trim(sCmovesRecr))
+
+
+                    // Make 2nd record for parakrathsh
+                    If ( (iExeiParakrathsh) And (nParakrathsh<>0)) Begin
+                        Send Clear to Cmoves_DD
+
+                        Get Field_Current_Value Of Ptyppar_DD  Field Ptyppar.Ctypkin_Recr   to sCtypkinRecr
+                        Get Field_Current_Value Of Particle_DD Field Particle.Client_Recr   to sClientRecr
+                        Get Field_Current_Value Of Particle_DD Field Particle.Client_ID     to sClientID
+                        Get Field_Current_Value Of Particle_DD Field Particle.Nomisma_Code  to sNomisma
+                        Move (Trim(sNomisma)) to sNomisma
+
+                        move sclientrecr to clients.client_recr
+                        Send Find to Clients_DD eq 2 //Clients:Index.2:Client_Recr
+                        If (Not(Found)) error 5016 "Client record not found"
+
+//                        Get Field_Current_Value Of Clients_DD Field Clients.Client_Locked to sLocked
+//                        If (sLocked='1') error 5017 "é ßú¢·´û™ úÂ§ò† °¢ú†õ‡£‚§¶™"
+
+                        Move sCtypkinRecr to Ctypkin.Ctypkin_Recr
+                        Send Find to Ctypkin_DD eq 2 //Ctypkin:Index.2:Client_Recr
+                        If (Not(Found)) error 5018 "Ctypkin record not found After Parakrat"
+
+                        If (iAntistrofhProshmou=1)  Move (-1) to iSign
+                        Else                        Move   1  to iSign
+
+                        // 1. Oi kinhseis ths parakrathshs einai anapodes apo thn kanonikh eggrafh
+                        If (nPis<>0) Begin
+                            Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_Axia   to nParakrathsh
+                            Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_x0 ;
+                                to ((fngConvertPoso(sNomisma,nParakrathsh,SysCurXr.C_Code0,dHmnia,nIsotimia))*iSign)
+                            Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_x00 ;
+                                to ((fngConvertPoso(sNomisma,nParakrathsh,SysCurXr.C_Code00,dHmnia,nIsotimia))*iSign)
+                            Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_x1 ;
+                                to ((fngConvertPoso(sNomisma,nParakrathsh,SysCurXr.C_CodeR,dHmnia,nIsotimia))*iSign)
+                            Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_x2     to nParakrathsh
+
+                            Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_p0     to 0
+                            Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_p00    to 0
+                            Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_p1     to 0
+                            Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_p2     to 0
+                        End
+                        Else If (nXre<>0) Begin
+                            Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_Axia   to nParakrathsh
+                            Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_p0 ;
+                                to ((fngConvertPoso(sNomisma,nParakrathsh,SysCurXr.C_Code0,dHmnia,nIsotimia))*iSign)
+                            Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_p00 ;
+                                to ((fngConvertPoso(sNomisma,nParakrathsh,SysCurXr.C_Code00,dHmnia,nIsotimia))*iSign)
+                            Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_p1 ;
+                                to ((fngConvertPoso(sNomisma,nParakrathsh,SysCurXr.C_CodeR,dHmnia,nIsotimia))*iSign)
+                            Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_p2     to nParakrathsh
+
+                            Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_x0     to 0
+                            Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_x00    to 0
+                            Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_x1     to 0
+                            Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_x2     to 0
+                        End
+
+                        Set Field_Changed_Value Of Cmoves_DD    Field Cmoves.Cmoves_Hmnia   to dHmnia
+                        Set Field_Changed_Value Of Cmoves_DD    Field Cmoves.Partl_Recr     to sRecr
+
+                        // Ñ§©‡£·´‡©û ßú®†ö®ò≠„™ ©´¶ ctypkin 04/02/2001 js
+                        Get Field_Current_Value Of Ptyppar_DD   Field Ptyppar.Ptyppar_Descr to ssPtypparDescr
+                        Get Field_Current_Value Of Ptyppar_DD   Field Ptyppar.Ptyppar_Abrev to ssPtypparDescrShort
+                        Get Field_Current_Value Of Particle_DD  Field Particle.Pseira_Seira to ssSeiraDescr
+                        Get Field_Current_Value Of Particle_DD  Field Particle.Partl_No     to iiPartlNO
+                        Move '' to sPerigrafh
+                        Move (Append(sPerigrafh,('*'+(Trim(ssPtypparDescrShort))+'  '+ ;
+                                                (Trim(ssSeiraDescr))+ '  '+ (String(iiPartlNo))+ '*'))) to sPerigrafh
+                        //
+                        Set Field_Changed_Value Of Cmoves_DD    Field Cmoves.Cmoves_Par     to (Trim(sPerigrafh))
+
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmoves_SC_Code2   to sNomisma
+
+
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_TotAmBd0    ;
+                            to ((fngConvertPoso(sNomisma,nParakrathsh,SysCurXr.C_Code0,dHmnia,nIsotimia))*iSign)
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_DiscAm0    ;
+                            to ((fngConvertPoso(sNomisma,0,SysCurXr.C_Code0,dHmnia,nIsotimia))*iSign)
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_TotAmAd0    ;
+                            to ((fngConvertPoso(sNomisma,nParakrathsh,SysCurXr.C_Code0,dHmnia,nIsotimia))*iSign)
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_Vatam0      ;
+                            to ((fngConvertPoso(sNomisma,0,SysCurXr.C_Code0,dHmnia,nIsotimia))*iSign)
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_Extra0      ;
+                            to ((fngConvertPoso(sNomisma,0,SysCurXr.C_Code0,dHmnia,nIsotimia))*iSign)
+                        ///////////////////////
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_TotAmBd00   ;
+                            to ((fngConvertPoso(sNomisma,nParakrathsh,SysCurXr.C_Code00,dHmnia,nIsotimia))*iSign)
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_DiscAm00   ;
+                            to ((fngConvertPoso(sNomisma,0,SysCurXr.C_Code00,dHmnia,nIsotimia))*iSign)
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_TotAmAd00   ;
+                            to ((fngConvertPoso(sNomisma,nParakrathsh,SysCurXr.C_Code00,dHmnia,nIsotimia))*iSign)
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_Vatam00     ;
+                            to ((fngConvertPoso(sNomisma,0,SysCurXr.C_Code00,dHmnia,nIsotimia))*iSign)
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_Extra00     ;
+                            to ((fngConvertPoso(sNomisma,0,SysCurXr.C_Code00,dHmnia,nIsotimia))*iSign)
+                        ///////////////////////
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_TotAmBd1    ;
+                            to ((fngConvertPoso(sNomisma,nParakrathsh,SysCurXr.C_CodeR,dHmnia,nIsotimia))*iSign)
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_DiscAm1    ;
+                            to ((fngConvertPoso(sNomisma,0,SysCurXr.C_CodeR,dHmnia,nIsotimia))*iSign)
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_TotAmAd1    ;
+                            to ((fngConvertPoso(sNomisma,nParakrathsh,SysCurXr.C_CodeR,dHmnia,nIsotimia))*iSign)
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_Vatam1      ;
+                            to ((fngConvertPoso(sNomisma,0,SysCurXr.C_CodeR,dHmnia,nIsotimia))*iSign)
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Cmove_Extra1      ;
+                            to ((fngConvertPoso(sNomisma,0,SysCurXr.C_CodeR,dHmnia,nIsotimia))*iSign)
+                        ///////////////////////
+
+                        Set Field_Changed_Value Of Cmoves_DD   Field Cmoves.Module_From   to (psModule(Self))
+
+                        get field_current_value of clients_dd field clients.recnum to iclient
+
+                        If (iClient) Begin
+                            If (iMustSaveClientYpoloipa =1)  Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Enhm_Ypol_Pel    to '1'
+                            If (iMustSaveClient         =1)  Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Enhm_Hmnies_Pel  to '1'
+                            If (iMustSaveOfeilh         =1)  Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Enhm_ofeilh      to '1'
+                        End
+                        Else error 5013 "Client record not found for saving flags parakrat"
+
+                        Set Field_Changed_Value Of Cmoves_DD    Field Cmoves.Presp_ID     to sPresp_ID
+                        Set Field_Changed_Value Of Cmoves_DD    Field Cmoves.Sls_ID       to sSls_ID
+                        Set Field_Changed_Value Of Cmoves_DD    Field Cmoves.Cnt_ID       to sCnt_ID
+
+                        Send Request_Save to Cmoves_DD
+                        Send UpdateWait to (piTxtID(Self)) ('Ñ§û£‚®‡©û â†§û©û™ '+(String(Cmoves.Recnum)))
+
+                        Get Field_Current_Value Of Cmoves_DD Field Cmoves.Cmoves_Recr to sCmovesRecr
+                        If (Trim(sCmovesRecr)='') error 5015 "Saved Cmoves Parakrat but dont have Recr"
+                        Set Field_Changed_Value Of Particle_DD Field Particle.Cms_Parak_recr to (Trim(sCmovesRecr))
+
+                    End
+
+                End
+                Else Begin
+                    Send Clear to Cmoves_DD
+                End
+
+
+                Move sCtypkinRecr to Ctypkin.Ctypkin_Recr
+                Send Find to Ctypkin_DD eq 2 //Ctypkin:Index.2:Ctypkin_Recr
+                If (Not(Found)) error 6306 "Ctypkin record not found"
+
+    ///////////////////////////// SOS ///////
+    ///////////////////////////  ENHMEROSH FLAGS APO CFLAGKIN <TELOS>  //////////////////////////////
+    //////////////////////////jsjsjsjsjsjsjsjs
+
+
+
+
+
+    ///////////////////////////// SOS ///////
+    ///////////////////////////  ENHMEROSH FLAGS APO WFLAGKIN <ARXH>  //////////////////////////////
+    //////////////////////////jsjsjsjsjsjsjsjs
+                Move 0 to iPmsCount
+
+                Send Find To Pmoves_DD First_Record 3 // Pmoves:Index.2:Pms_Recr
+                While (Found=1)
+                    Add 1 to iPmsCount
+                    Send UpdateWait to (piTxtID(Self)) ('Ñ§û£‚®‡©û âÂ§û©û™ '+(String(Pmoves.Recnum)))
+
+                    Get Field_Current_Value Of Pmoves_DD    Field Pmoves.Partl_Hmnia    to dHmnia
+                    Get Field_Current_Value Of Pmoves_DD    Field Pmoves.Pms_UnitPrice  to nUnitPrice
+                    Get Field_Current_Value Of Pmoves_DD    Field Pmoves.Pms_Qty        to nPosothta
+
+                    Get Field_Current_Value Of Pmoves_DD    Field Pmoves.Pms_AmBd       to nTotAmBd
+                    Get Field_Current_Value Of Pmoves_DD    Field Pmoves.Pms_Discam     to nDiscAm
+                    Get Field_Current_Value Of Pmoves_DD    Field Pmoves.Pms_AmaftDisc  to nTotAmAd
+                    Get Field_Current_Value Of Pmoves_DD    Field Pmoves.Pms_Vatam      to nVatam
+                    Get Field_Current_Value Of Pmoves_DD    Field Pmoves.Pms_Payable    to nPoso
+                    Get Field_Current_Value Of Pmoves_DD    Field Pmoves.Pms_Recr       to sPmovesRecr
+                    Get Field_Current_Value Of Ptyppar_DD   Field Ptyppar.Wtypkin_Recr  to sWtypkinRecr
+                    Get Field_Current_Value Of Pmoves_DD    Field Pmoves.Witemx_Recr    to sWitemxRecr
+                    Get Field_Current_Value Of Pmoves_DD    Field Pmoves.Wax_Recr       to sWaxRecr
+                    Get Field_Current_Value Of Pmoves_DD    Field Pmoves.pms_status_e   to Istatuse
+                    Get Field_Current_Value Of Pmoves_DD    Field Pmoves.btnl2_recr     to stexnikh
+                    Get Field_Current_Value Of Pmoves_DD    Field Pmoves.cn_code        to scn
+
+                    IF ((pmoves.witemkat_code='03') and (pmoves.ptyppar_code='099') and (stexnikh='') and (pmoves.pms_status_e<>1));
+                        error 4782 'Éú§ ìß·®Æú† ©ú Ñ´¶†£¶ è®¶†Ê§ íúÆ§.è®¶õ†òö®ò≠„'
+
+
+                    Set piLathos        Of bpMkWcm to  0
+                    Set piTxtID         Of bpMkWcm to  (piTxtID(Self))
+                    Set psModule        Of bpMkWcm to  (psModule(Self))
+                    Set psWTypkinRecr   Of bpMkWcm to  sWTypkinRecr
+                    Set psWitemxRecr    Of bpMkWcm to  sWitemxRecr
+                    Set psWaxRecr       Of bpMkWcm to  sWaxRecr
+                    Set psClientID      Of bpMkWcm to  sClientID
+                    Set psPmovesRecr    Of bpMkWcm to  sPmovesRecr
+                    if (iola<>1)        Set psCnCode        Of bpMkWcm to  sCn_Code
+                    else                Set psCnCode        Of bpMkWcm to  sCn
+                    Set pnPosothta      Of bpMkWcm to  nPosothta
+                    Set pnTimhMonados   Of bpMkWcm to  nUnitPrice
+                    Set pnPosoDisc      Of bpMkWcm to  nDiscAm
+                    Set pistatuse       Of bpMkWcm to  istatuse
+                    Set pstexnikh       Of bpMkWcm to  stexnikh
+                    Set pstexnikhdiakin Of bpMkWcm to  ''
+
+
+                    ////////////////////////////////////////////////////////////////////////
+                    // SOS js 11/04/2011 Gia Titana Patras pou timologei
+                    // ena pelath sygkentrotika 1 fora ton mhna kai prepei to fpa na ypologizetai sto synolo
+                    ////////////////////////////////////////////////////////////////////////
+                    If (particle.partl_euro=1) Begin
+                        If (iPmsNoOfLines=iPmsCount) ;
+                             Set pnPosoFpa  Of bpMkWcm to (nVatam+(nTotalFpaParast-nTotalFpaGrammhs))
+                        Else Set pnPosoFpa  Of bpMkWcm to nVatam
+                    End
+                    Else Begin
+                        ////////////////////////////////////////////////////////////////////////
+                        // SOS js 21/05/2003 DIAXEIRISH FPA
+                        ////////////////////////////////////////////////////////////////////////
+                        If (Sysfile.Fpa_On_Total=1) Begin
+                            If (iPmsNoOfLines=iPmsCount) ;
+                                 Set pnPosoFpa  Of bpMkWcm to (nVatam+(nTotalFpaParast-nTotalFpaGrammhs))
+                            Else Set pnPosoFpa  Of bpMkWcm to nVatam
+                        End
+                        Else     Set pnPosoFpa  Of bpMkWcm to  nVatam
+                        ////////////////////////////////////////////////////////////////////////
+                        // SOS js 21/05/2003 DIAXEIRISH FPA
+                        ////////////////////////////////////////////////////////////////////////
+                    End
+
+
+                    Set pdHmnia        Of bpMkWcm to  dHmnia
+                    Set psWCmovesRecr  Of bpMkWcm to  ''
+                    Set psNomisma      Of bpMkWcm to  sNomisma
+                    Set psParticleRecr Of bpMkWcm to  (psParticleRecr(Self))
+                    Set psPerigrafh    Of bpMkWcm to  sPerigrafh
+                    Set piFromKinApoth Of bpMkWcm to  0
+
+                    Send DoProcess              to bpMkWcm
+                    Get piLathos    Of bpMkWcm  to iLathos
+
+                    If (iLathos) Begin
+                        If (iLathos<>90008) error 5561 'èò®¶¨©†·©´û°ú ©≠·¢£ò ©´û§ Bpmkwcm'
+                    End
+
+                    If (iLathos<>90008) Begin
+                       Get fsCurrent_WCmoves_Recr Of bpMkWcm to sWCmovesRecr
+                       If (Trim(sWCmovesRecr)='') error 6008 "Saved WCmoves but dont have Recr"
+                       Set Field_Changed_Value Of Pmoves_DD Field Pmoves.WCmoves_Recr to sWCmovesRecr
+                       Send Request_Save to Pmoves_DD
+                       Send Clear to Wcmoves_DD
+                    End
+
+                    Send Find To Pmoves_DD Next_Record 3 // Pmoves:Index.2:Pms_Recr
+                Loop
+
+                Move sWtypkinRecr to Wtypkin.Wtypkin_Recr
+                Send Find to Wtypkin_DD eq 2 //Wtypkin:Index.2:Wtypkin_Recr
+                If (Not(Found)) error 6307 'Wtypkin record not found'
+
+                If ((iAnameneiSxetiko=1) And (iPartlTimol<>1)) Begin
+                    If (iMaxDays=0) Move 30 to iMaxDays
+                    Set Field_Changed_Value Of Particle_DD Field Particle.Exei_Sxetika   to '1'
+                    Set Field_Changed_Value Of Particle_DD Field Particle.Max_Days_Date  to (dHmnia+iMaxDays)
+                End
+
+                Set Field_Changed_Value Of Particle_DD Field Particle.Partl_Ekleise     to '1'
+
+                Send Request_Save to Particle_DD
+
+                // js 13/02/2002 Enhmerosh parastatikou me neo ypoloipo pelath
+                Get Field_Current_Value Of Clients_DD  Field Clients.Ypoloipo   to nClProhg
+                Set Field_Changed_Value Of Particle_DD Field Particle.trex_Ypol to nClProhg
+                Send Request_Save to Particle_DD
+
+                If (piLathos(Self)<>0) error 9999 'èò®¶¨©†·©´û°ú ·ö§‡©´¶ ¢·ü¶™'
+
+            End
+
+           // END_TRANSACTION
+
+            Code_Continue:
+
+         //   If (piLathos(Self)<>0) Begin
+
+              //  If (Trim(psParticleRecr(Self))<>'') Begin
+              //      Send Clear to Particle_DD
+              //      Move (psParticleRecr(Self)) to Particle.Partl_Recr
+              //      Send Request_Find to Particle_DD Eq Particle.File_number 2
+              //  End
+
+              //  Procedure_Return
+           // End
+
+        End
+        Else error 5001 'Initially Passed Particle Recr Not Found'
+        If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+    End_procedure
+
+    Procedure OnProcess
+        If (psModule(Self)='') error 5999 "Business Process Called without setting psModule property"
+        If (Trim(psParticleRecr(Self))<>'') Begin
+
+//            Send DoExceptFile to ghoFileModeInfo Cmoves.File_Number
+//            Send DoExceptFile to ghoFileModeInfo Wcmoves.File_Number
+//            Send DoExceptFile to ghoFileModeInfo Particle.File_Number
+//            Send DoExceptFile to ghoFileModeInfo Pmoves.File_Number
+//            Send DoExceptFile to ghoFileModeInfo WitemCl.File_Number
+////            Send DoExceptFile to ghoFileModeInfo PartlFpa.File_Number
+////            Send DoExceptFile to ghoFileModeInfo Wam.File_Number
+////            Send DoExceptFile to ghoFileModeInfo Sysrecw.File_Number
+////            Send DoExceptFile to ghoFileModeInfo Witemx.File_Number
+////            Send DoExceptFile to ghoFileModeInfo Clients.File_Number
+////            Send DoExceptFile to ghoFileModeInfo PayResp.File_Number
+////            Send DoExceptFile to ghoFileModeInfo Pseira.File_Number
+//            //
+//            Send DoSetFileModeToReadOnly to ghoFileModeInfo
+//            //
+            Send Deal_With_Current_Particle
+            //
+//            If (ghoFileModeInfo) Send DoRestoreFileModeInfo to ghoFileModeInfo
+//            //
+//            Set Smart_Filemode_State Of Cmoves_DD   to True
+//            Set Smart_Filemode_State Of WCmoves_DD  to True
+//            Set Smart_Filemode_State Of Particle_DD to True
+//            Set Smart_Filemode_State Of Pmoves_DD   to True
+//            Set Smart_Filemode_State Of Witemcl_DD  to True
+////            Set Smart_Filemode_State Of partlFpa_DD to True
+////            Set Smart_Filemode_State Of Wam_DD      to True
+////            Set Smart_Filemode_State Of SysrecW_DD  to True
+////            Set Smart_Filemode_State Of Witemx_DD   to True
+////            Set Smart_Filemode_State Of Clients_DD  to True
+////            Set Smart_Filemode_State Of Payresp_DD  to True
+////            Set Smart_Filemode_State Of Pseira_DD   to True
+//            //
+
+        End
+        Else error 5000 'No Initial Particle recr is passed'
+    End_Procedure
+
+    Procedure Start_Process
+        Set piTxtID                         to (Wait(Self))
+        Set Button_State    of (Wait(Self)) to False
+        Set BarVisibleState of (Wait(Self)) to '' False
+        Send Popup                          to (Wait(Self))
+        Set piLathos                        to 0
+        Forward Send Start_Process
+    End_Procedure
+
+    Procedure End_Process
+        Forward Send End_Process
+        If (piTxtID(Self)<>0) Send Deactivate   to (piTxtID(Self))
+    End_Procedure
+
+    //AB-StoreEnd
+
+End_Object    // bpEnCmvs
+
+
+//AB-StoreStart
+
+
+
+//AB-StoreEnd
+
+//AB/ End_Object    // prj

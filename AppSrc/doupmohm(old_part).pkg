@@ -1,0 +1,37 @@
+
+//
+//            [Finderr] Set Field_Changed_Value of liCmhnesDDo FIELD CMhnes.CMhnes_mhnas   to liMhnas
+//
+//
+//            //euresh hmnias. An den uparxei eggrafh, dhmiourgoume nea me thn yparxousa timh
+//            Send Clear to liCHmniesDDo
+//            Move liCHmnies_Hmnia to CHmnies.CHmnies_Hmnia
+//            Send Find to liChmniesDDo eq 1 //company_code+branch_code+year_year+custprom_code+cmhnes_mhnas+chmnies_hmnia
+//
+//            [Finderr]  Set field_changed_value of liCHmniesDDo FIELD CHmnies.CHmnies_Hmnia to ldHmnia
+//                                                                        // !!!!!!poia Hmnia bF or AF
+//
+//            //Backout-change values before delete
+//            if liBackout eq 1
+//                Begin
+//                    get field_current_value of liCHmniesDDo FIELD Chmnies.CHmnies_Sx0   to nOldX0
+//                    get field_current_value of liCHmniesDDo FIELD Chmnies.CHmnies_Sp0   to nOldP0
+//
+//                    Set field_changed_value of liCHmniesDDo FIELD Chmnies.CHmnies_Sx0   to (nOldX0 - lnX0_BFBpo)
+//                    Set field_changed_value of liCHmniesDDo FIELD Chmnies.CHmnies_Sp0   to (nOldP0 - lnP0_BFBpo)
+//
+//                    Send Request_Save to liCHmniesDDo
+//                End
+//
+//            //update-change values before save
+//            if liUpdate eq 1
+//                Begin
+//                    get field_current_value of liCHmniesDDo FIELD Chmnies.CHmnies_Sx0   to nOldX0
+//                    get field_current_value of liCHmniesDDo FIELD Chmnies.CHmnies_Sp0   to nOldP0
+//
+//                    Set field_changed_value of liChmniesDDo FIELD Chmnies.CHmnies_Sx0   to (nOldX0 + lnX0_AFBpo)
+//                    Set field_changed_value of liChmniesDDo FIELD Chmnies.CHmnies_Sp0   to (nOldP0 + lnP0_AFBpo)
+//
+//                    Send Request_Save to liCHmniesDDo
+//                End
+

@@ -1,0 +1,1071 @@
+//AB/ Project R30_4 :transport
+//AB/     Object prj is a Report_Project
+//AB/         Set ProjectName to "R30_4 :transport"
+//AB/         Set ProjectFileName to "r30_4.rv"
+
+// Project Object Structure
+//   R30_4 is a ReportView
+//     DestRadio is a RadioGroup
+//       WindowRadio is a Radio
+//       PrinterRadio is a Radio
+//       FileRadio is a Radio
+//     FileTypeGroup is a Group
+//       FileNameForm is a Form
+//         New_dialog is a SaveAsdialog
+//       TypeCombo is a ComboForm
+//       ApplyExtCheckBox is a CheckBox
+//       TextBoxSub25 is a TextBoxSub
+//       TextBoxSub26 is a TextBoxSub
+//     ButtonSub1 is a Button
+//     ButtonSub3 is a ButtonSub
+//     frmcount is a TextBoxSub
+//     itemsdWQLReport is a WinQLReport
+
+// Register all objects
+Register_Object ApplyExtCheckBox
+Register_Object ButtonSub1
+Register_Object ButtonSub3
+Register_Object DestRadio
+Register_Object FileNameForm
+Register_Object FileRadio
+Register_Object FileTypeGroup
+Register_Object frmcount
+Register_Object itemsdWQLReport
+Register_Object New_dialog
+Register_Object PrinterRadio
+Register_Object R30_4
+Register_Object TextBoxSub25
+Register_Object TextBoxSub26
+Register_Object TypeCombo
+Register_Object WindowRadio
+
+
+//AB/     Report View
+
+
+    //AB-StoreTopStart
+    Use dfallrpt
+    use dotrans.pkg
+    
+    
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use DFAllEnt.pkg
+    Use Txtbox.Sub
+    Use Button.Sub
+
+    //AB-IgnoreEnd
+
+    DEFERRED_VIEW Activate_R30_4 FOR ;
+    ;
+    Object R30_4 is a ReportView
+
+        //AB-StoreTopStart
+                                
+        #replace itemsd_number 0
+        
+        //AB-StoreTopEnd
+
+        Set Label to "‹œ«˜­¦¨á data €§æ ‘¬¤œ¨šœå¦ ©œ „£§¦¨ ¡æ "
+        Set Size to 106 290
+        Set Location to 6 6
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object DestRadio is a RadioGroup
+
+            //AB-StoreTopStart
+                                                                                                                                                                                                                        
+            //AB-StoreTopEnd
+
+            Set Label to "„¡«ç§à©ž"
+            Set Size to 60 49
+            Set Location to 1 1
+            Object WindowRadio is a Radio
+                Set Size to 13 27
+                Set Location to 12 12
+                Set Bitmap to "screen4.bmp"
+            End_Object    // WindowRadio
+
+            Object PrinterRadio is a Radio
+                Set Size to 10 31
+                Set Location to 30 12
+                Set Bitmap to "PRINT_M1.BMP"
+            End_Object    // PrinterRadio
+
+            Object FileRadio is a Radio
+                Set Size to 10 29
+                Set Location to 47 12
+                Set Bitmap to "FILE16.BMP"
+            End_Object    // FileRadio
+
+
+            //AB-StoreStart
+                                                                                                                                                                                                                        
+            //***
+            //*** Procedure: Notify_Select_state
+            //*** Purpose  : Augemented to setup the output destination of the WinQL
+            //***            report. The procedure is sent when the user changes the
+            //***            selection.
+            //***
+            
+            Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+                Forward Send Notify_Select_State  iNewItem  iOldItem
+                If iNewItem Eq 0 ;
+                    Set Output_Device_Mode To WQL_PRINT_TO_WINDOW
+                Else If iNewItem Eq 1;
+                    Set Output_Device_Mode To WQL_PRINT_TO_PRINTER
+                Else If iNewItem Eq 2 ;
+                    Set Output_Device_Mode To WQL_PRINT_TO_FILE
+            
+            
+                Send AdjustFileTypeShadow (iNewItem < 2)
+            End_Procedure
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // DestRadio
+
+        Object FileTypeGroup is a Group
+
+            //AB-StoreTopStart
+                                                                                                                                                                                                                        
+            //AB-StoreTopEnd
+
+            Set Label to "€¤˜­¦¨á €¨®œå¦¬"
+            Set Size to 58 169
+            Set Location to 4 54
+            Object FileNameForm is a Form
+
+                //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                                        
+                //AB-StoreTopEnd
+
+                Set Size to 13 133
+                Set Location to 10 33
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Prompt_Button_Mode to pb_PromptOn
+
+                //AB-StoreStart
+                //*** Default item value
+                Set Value item 0 to "progrlst.doc"
+                
+                Procedure Prompt
+                    Local String  SelectedFile
+                    Local String  Extension
+                    Local String  Filter
+                    Local Integer Type
+                    Local Integer Selected
+                
+                    //*** Setup initial file name
+                    Get Value Item 0 To SelectedFile
+                    If SelectedFile Eq "" Begin
+                        Get WQLFileExt To Extension
+                        Move ("progrlst" + Extension) To SelectedFile
+                    End
+                
+                    //*** Create a filter for the save as dialog
+                    Move "" To Filter
+                    Get WQLFileTYpe To Type
+                    If Type Eq WQL_WordWinType ;
+                        Append Filter "Word for Windows (*.doc)|*.doc"
+                    If ((Type Eq WQL_Xls2Type) Or (Type Eq WQL_Xls3Type) Or (Type Eq WQL_Xls4Type) Or (Type Eq WQL_Xls5Type)) ;
+                        Append Filter "Excel (*.xls)|*.xls"
+                    If Type Eq WQL_RichTextFormatType ;
+                        Append Filter "Rich Text (*.rtf)|*.rtf"
+                    If Type Eq WQL_TextType ;
+                        Append Filter "Text (*.txt)|*.txt"
+                    If Type Eq WQL_RecordType ;
+                        Append Filter "Record Style (*.rec)|*.rec"
+                    If Type Eq WQL_CommaSeparatedType ;
+                        Append Filter "Comma Separated Values (*.csv)|*.csv"
+                    If Type Eq WQL_DIFType ;
+                        Append Filter "Data Interchange Format (*.dif)|*.dif"
+                    Append Filter "|All Files|*.*"
+                
+                    //*** Create a save as dialog
+                    Object New_dialog Is A SaveAsdialog
+                        //*** Setup title
+                        Set Dialog_Caption        To "Item report export to disk, give file name"
+                        Set Filter_String         To Filter
+                        Set Hidereadonly_State    To True
+                        Set Overwriteprompt_State To True
+                        Set Showfiletitle_State   To True
+                        Set File_Title            To SelectedFile
+                    End_object // New_dialog
+                
+                    //*** Start the save as dialog
+                    Get Show_Dialog Of (New_dialog(Current_object)) To Selected
+                    If Selected Begin
+                        Get File_Name Of (New_Dialog(Current_object)) To SelectedFile
+                        Set Value Item 0 To SelectedFile
+                    End
+                
+                    //*** Destroy the save as dialog
+                    Send Request_Destroy_object To (New_dialog(Current_object))
+                End_procedure // Start_Prompt
+                
+                //***
+                //*** Function: FileName
+                //*** Purpose : Returns the name of the file to export to
+                //***
+                
+                Function FileName Returns String
+                    Local String  SelectedFile
+                
+                    //*** Get file name
+                    Get Value Item 0 To SelectedFile
+                    If SelectedFile Eq "" ;
+                        Move "progrlst.doc" To SelectedFile
+                
+                    Function_return SelectedFile
+                End_function // FileName
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // FileNameForm
+
+            Object TypeCombo is a ComboForm
+
+                //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                                        
+                //AB-StoreTopEnd
+
+                Set Size to 13 133
+                Set Location to 29 33
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+
+                //AB-StoreStart
+                //*** Make sure the user picks a list item and cannot enter information
+                Set Entry_state Item 0 To False
+                
+                //*** Show list unsorted. This must be done because we raly on the order of the
+                //*** list to determine the type of the file. (See FileType function)
+                Set Combo_Sort_State To False
+                
+                //***
+                //*** Procedure: Combo_Fill_list
+                //*** Purpose  : Augemebnted to fill the list with export file types.
+                //***
+                
+                Procedure Combo_Fill_List
+                    Send Combo_Add_item "Word for Windows"
+                    Send Combo_Add_Item "Excel 2.1"
+                    Send Combo_Add_Item "Excel 3.0"
+                    Send Combo_Add_Item "Excel 4.0"
+                    Send Combo_Add_Item "Excel 5.0"
+                    Send Combo_Add_Item "Rich Text"
+                    Send Combo_Add_Item "Text"
+                    Send Combo_Add_Item "Record Style"
+                    Send Combo_Add_Item "Comma Separated"
+                    Send Combo_Add_Item "Data Interchage Format (DIF)"
+                End_procedure // Combo_Fill_List
+                
+                
+                //***
+                //*** Function: FileType
+                //*** Purpose : Type to export to
+                //***
+                
+                Function FileType Returns Integer
+                    Local String  FileTypeName
+                    Local Integer FileTypeValue
+                    Local Integer SelectedItem
+                
+                    Get Value Item 0 To FileTypeName
+                    Get Combo_Item_Matching FileTypeName To SelectedItem
+                    Move WQL_TextType To FileTypeValue
+                    If SelectedItem Ne -1 Begin
+                        If SelectedItem Eq 0 Move WQL_WordWinType        To FileTypeValue
+                        If SelectedItem Eq 1 Move WQL_Xls2Type           To FileTypeValue
+                        If SelectedItem Eq 2 Move WQL_Xls3Type           To FileTypeValue
+                        If SelectedItem Eq 3 Move WQL_Xls4Type           To FileTypeValue
+                        If SelectedItem Eq 4 Move WQL_Xls5Type           To FileTypeValue
+                        If SelectedItem Eq 5 Move WQL_RichTextFormatType To FileTypeValue
+                        If SelectedItem Eq 6 Move WQL_TextType           To FileTypeValue
+                        If SelectedItem Eq 7 Move WQL_RecordType         To FileTypeValue
+                        If SelectedItem Eq 8 Move WQL_CommaSeparatedType To FileTypeValue
+                        If SelectedItem Eq 9 Move WQL_DIFType            To FileTypeValue
+                    End
+                
+                    Function_return FileTypeValue
+                End_function // FileType
+                
+                
+                //***
+                //*** Function: FileExt
+                //*** Purpose : Extension for the type to export to
+                //***
+                
+                Function FileExt Returns String
+                    Local String  FileTypeExt
+                    Local Integer FileTypeValue
+                
+                    Get FileType To FileTypeValue
+                    If FileTypeValue Eq WQL_WordWinType        Move ".doc" To FileTypeExt
+                    If FileTypeValue Eq WQL_Xls2Type           Move ".xls" To FileTypeExt
+                    If FileTypeValue Eq WQL_Xls3Type           Move ".xls" To FileTypeExt
+                    If FileTypeValue Eq WQL_Xls4Type           Move ".xls" To FileTypeExt
+                    If FileTypeValue Eq WQL_Xls5Type           Move ".xls" To FileTypeExt
+                    If FileTypeValue Eq WQL_RichTextFormatType Move ".rtf" To FileTypeExt
+                    If FileTypeValue Eq WQL_TextType           Move ".txt" To FileTypeExt
+                    If FileTypeValue Eq WQL_RecordType         Move ".rec" To FileTypeExt
+                    If FileTypeValue Eq WQL_CommaSeparatedType Move ".csv" To FileTypeExt
+                    If FileTypeValue Eq WQL_DIFType            Move ".dif" To FileTypeExt
+                
+                    Function_return FileTypeExt
+                End_function // FileExt
+                
+                
+                
+                //***
+                //*** Procedure: OnCloseUp
+                //*** Purpose  : Augemented to auto,matically change the extension of the
+                //***            filename
+                //***
+                
+                Procedure OnChange
+                    Local String  OldName
+                    Local String  Extension
+                    Local Integer ChangeExt
+                
+                    Get ChangeExtension To ChangeExt
+                    If ChangeExt Begin
+                        Get WQLFileName To OldName
+                        Get FileExt To Extension
+                        Set WQLFileName To (Left(OldName, (Pos(".", Oldname) - 1)) + Extension)
+                    End
+                End_procedure // OnChange
+                
+                //AB-StoreEnd
+
+            End_Object    // TypeCombo
+
+            Object ApplyExtCheckBox is a CheckBox
+
+                //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                                        
+                //AB-StoreTopEnd
+
+                Set Label to "Apply combo extension"
+                Set Size to 10 89
+                Set Location to 47 33
+
+                //AB-StoreStart
+                //*** Apply extensions by default
+                Set Select_state Item 0 To True
+                //AB-StoreEnd
+
+            End_Object    // ApplyExtCheckBox
+
+            Object TextBoxSub25 is a TextBoxSub
+                Set Label to "Ž¤¦£˜:"
+                Set FontSize to 4 0
+                Set Location to 10 6
+                Set Size to 10 25
+                Set Enabled_State to TRUE
+            End_Object    // TextBoxSub25
+
+            Object TextBoxSub26 is a TextBoxSub
+                Set Label to "’ç§¦ª:"
+                Set FontSize to 4 0
+                Set Location to 31 5
+                Set Size to 10 25
+                Set Enabled_State to TRUE
+            End_Object    // TextBoxSub26
+
+
+            //AB-StoreStart
+                                                                                                                                                                                                                        
+                                                                                                                                                                                                                        
+                                                                                                                                                                                                                        
+                                                                                                                                                                                                                        
+            Function WQLFileName Returns String
+                Function_return (FileName(FileNameForm(Current_object)))
+            End_function // WQLFIleName
+            
+            Procedure Set WQLFileName String NewName
+                Set Value Of (FileNameForm(Current_object)) Item 0 To NewName
+            End_procedure // Set WQLFIleName
+            
+            
+            //***
+            //*** Function: WQLFIleType
+            //*** Purpose : The extension type of the file to export to
+            //***
+            
+            Function WQLFileType Returns Integer
+                Function_return (FileType(TypeCombo(Current_object)))
+            End_function // WQLFIleType
+            
+            
+            //***
+            //*** Function: WQLFIleExt
+            //*** Purpose : The extension type of the file to export to
+            //***
+            
+            Function WQLFileExt Returns Integer
+                Function_return (FileExt(TypeCombo(Current_object)))
+            End_function // WQLFIleExt
+            
+            
+            
+            //***
+            //*** Function: ChangeExtension
+            //*** Purpose : Must extension be dynamically updated?
+            //***
+            
+            Function ChangeExtension Returns Integer
+                Function_return (Select_state(ApplyExtCheckBox(Current_object), 0))
+            End_function // ChangeExtension
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // FileTypeGroup
+
+        Object ButtonSub1 is a Button
+
+            //AB-StoreTopStart
+            
+            //AB-StoreTopEnd
+
+            Set Bitmap to "RUNPROG.BMP"
+            Set Size to 18 28
+            Set Location to 7 227
+
+            //AB-StoreStart
+            Procedure onClick
+                local integer libpoid
+                move (oDotrans(current_object)) to liBpoid
+                send new_rec to libpoid
+                send info_box 'ž „§œ¥œ¨š˜©å˜ ’œ¢œåà©œ ' '¢ž¨¦­¦¨å˜'
+            
+            End_Procedure
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub1
+
+        Object ButtonSub3 is a ButtonSub
+
+            //AB-StoreTopStart
+                                                                                                                                                                                                                        
+            //AB-StoreTopEnd
+
+            Set Bitmap to "CANCEL.BMP"
+            Set Size to 18 28
+            Set Location to 44 228
+
+            //AB-StoreStart
+            Procedure OnClick
+                Send Request_Cancel
+            End_Procedure
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub3
+
+        Object frmcount is a TextBoxSub
+            Set Label to "'"
+            Set Location to 79 136
+            Set Size to 13 17
+        End_Object    // frmcount
+
+
+        //AB-StoreStart
+        Object itemsdWQLReport Is A WinQLReport
+        
+               Property Integer ReportReady Public False
+        
+        
+            Set Report_View_id To (Parent(Current_object))
+            Procedure OnStartPrinting
+                local string  lscatypes sitem
+                Local String  Startmovess
+                Local String  Endmovess
+                Local integer Starthmen
+                Local integer Endhmen
+                Local String  Selection
+                Local String  FileName
+                Local string  StartmovesNumber
+                Local integer posoths
+                Local Integer FileType
+                Local Integer Destination
+                Local Integer SortOrder
+                Local Integer NumSortFields
+                Local Integer CurSortField
+                Local Integer SortDirection
+                local string  startstores
+                Move "" To Selection
+        
+              //*** Setup new sort order
+                Get NSortFields To NumSortFields
+                For CurSortField From 0 To (NumSortFields - 1)
+                Send DeleteNthSortField 0
+                Loop
+        
+                Get Output_Destination To Destination
+                If ((Destination Eq WQL_PRINT_TO_FILE) Or (Destination Eq WQL_PRINT_TO_MAPI)) Begin
+                    Get WQLFileName To FileName
+                    Get WQLFileType To FileType
+        
+                    Set ExportFileName   To FileName
+                    Set ExportFormatType To FileType
+                End
+                //*** Setup the report if ready property
+                If Destination EQ WQL_PRINT_TO_WINDOW ;
+                    Set ReportReady To False
+                Else ;
+                    Set ReportReady To True
+            End_procedure // OnStartPrinting
+        
+            Procedure RunitemsdReport
+                //*** We will be busy, change the cursor
+                Send Cursor_Wait To (Cursor_Control(Current_Object))
+        
+                //*** Run the report
+                Send Run_report
+        
+                //*** We are ready, change the cursor
+                Send Cursor_Ready To (Cursor_Control(Current_Object))
+        
+                //*** Report you are finsihed for those seetings that do not use the
+                //*** screen
+                If (ReportReady(Current_object)) ;
+                    Send Info_box "WinQL report ready."
+            End_procedure // RunCustReport
+        
+        End_object
+        
+        
+        
+        Procedure AdjustFileTypeShadow Integer NewState
+            Set Object_Shadow_State Of (FileTypeGroup(Current_Object)) To NewState
+        End_procedure // AdjustFileTypeShadow
+        
+        
+        
+        Function WQLFileName Returns String
+            Function_return (WQLFileName(FileTypeGroup(Current_object)))
+        End_function // WQLFIleName
+        
+        
+        //***
+        //*** Function: WQLFIleType
+        //*** Purpose : The type of the file to export to
+        //***
+        
+        Function WQLFileType Returns Integer
+            Function_return (WQLFileType(FileTypeGroup(Current_object)))
+        End_function // WQLFIleType
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    CD_End_Object    // R30_4
+
+
+    //AB-StoreStart
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

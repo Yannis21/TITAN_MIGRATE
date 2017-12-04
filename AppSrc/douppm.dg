@@ -1,0 +1,83 @@
+
+// Register all objects
+Register_Object Bttempa_DD
+Register_Object Douppm
+Register_Object pmoves_DD
+//AB-IgnoreStart
+
+Use Bproces.Sub
+Use DFAllEnt.pkg
+use bttempa.dd
+Use pmoves.DD
+
+//AB-IgnoreEnd
+
+Object Douppm is a BusinessProcessSub
+
+    //AB-StoreTopStart
+
+
+    Set Status_Panel_State to False
+    //Set Allow_Cancel_State  to True
+    Set Display_Error_State to True
+
+    //AB-StoreTopEnd
+
+    Set Size to 82 140
+    Set Location to 72 182
+
+    //AB-DDOStart
+
+    Object bttempa_DD is a bttempa_DataDictionary
+    End_Object    // Units_DD
+
+    Object pmoves_DD is a pmoves_DataDictionary
+    End_Object    // Witemkat_DD
+
+
+   //AB-DDOEnd
+
+
+    //AB-StoreStart
+
+    Procedure Start_Processing
+     string  lspmoves_recr warticle
+     send Clear to Bttempa_dd
+       Send Find  to (bttempa_dd(current_object)) FIRST_Record 1
+       While (found = 1)
+             Get Field_Current_Value Of Bttempa_DD Field Bttempa.pms_recr to lspmoves_recr
+             Get Field_Current_Value Of Bttempa_DD Field Bttempa.article_recr to warticle
+             send clear to pmoves_dd
+             move (trim(lspmoves_recr)) to pmoves.pms_recr
+             find eq pmoves by index.2
+             if (found = 1 and pmoves.pms_recr = lspmoves_recr) begin
+                  reread pmoves
+                  move warticle to pmoves.btarticle_recr
+                  saverecord pmoves
+                  unlock
+             end
+           Send Find  to (bttempa_dd(current_object)) next_Record 1
+       Loop
+    End_Procedure
+
+
+    Procedure OnProcess
+        Send Start_Processing
+    End_Procedure
+
+    Procedure OnError integer error_info string errMsg
+    End_Procedure
+
+    Procedure Start_Process
+        Forward Send Start_Process
+    End_Procedure
+
+    Procedure End_Process
+        Forward Send End_Process
+    End_Procedure
+
+    //AB-StoreEnd
+
+End_Object    // DoUpTim0
+
+//AB/ End_Object    // prj

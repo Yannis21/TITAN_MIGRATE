@@ -1,0 +1,636 @@
+//AB/ Project renhypol:enhmerosh SAP ME YPOLOIPA 31-12
+//AB/ Object prj is a Report_Project
+//AB/     Set ProjectName to "renhypol:enhmerosh SAP ME YPOLOIPA 31-12"
+//AB/     Set ProjectFileName to "renhypol.RV"
+
+// Project Object Structure
+//   renhypol is a ReportViewSub
+//     cSyDateForm1 is a cSyDateForm
+//     ButtonSub3 is a ButtonSub
+//     TextBoxSub1 is a TextBoxSub
+//     FormSub2 is a FormSub
+//     btnMess is a ButtonSub
+//     TextBoxSub2 is a TextBoxSub
+//     frmPath is a FormSub
+//     enhypol_BasicReport is a BasicReport
+//       Cmoves_DD is a Cmoves_DataDictionary
+
+// Register all objects
+Register_Object ButtonSub3
+Register_Object btnMess
+Register_Object Cmoves_DD
+Register_Object cSyDateForm1
+Register_Object enhypol_BasicReport
+Register_Object FormSub2
+Register_Object frmPath
+Register_Object renhypol
+Register_Object TextBoxSub1
+Register_Object TextBoxSub2
+
+
+//AB/ Report View
+
+
+//AB-StoreTopStart
+Use dfallrpt.pkg
+OPEN CLIENTS
+Use cmoves.DD
+OPEN TMPPOL
+open syscurxr
+open company
+open branch
+open sysfile
+
+//AB-StoreTopEnd
+
+//AB-IgnoreStart
+
+Use Rptvw.Sub
+Use cSyDateForm.Pkg
+Use Button.Sub
+Use Txtbox.Sub
+Use Form.Sub
+
+//AB-IgnoreEnd
+
+ACTIVATE_VIEW Activate_renhypol FOR renhypol
+
+Object renhypol is a ReportViewSub
+
+    //AB-StoreTopStart
+    property integer pierr              public 0
+    Property Integer Sort_IndexRlog     Public 1
+    property integer pipayresp          public 0
+    property integer picount            public 0
+    property string  psmodule           public ''
+    property date    pddate             public ''
+    property number  px0                public 0
+    property number  pp0                public 0
+    property number  px00               public 0
+    property number  pp00               public 0
+    property number  px1                public 0
+    property number  pp1                public 0
+    property string  pseteria           public ''
+    //AB-StoreTopEnd
+
+    Set Label to "ãú´ò≠¶®· ¨ß¶¢¶Âß‡§ ö†ò SAP 31-12-2004 "
+    Set Size to 142 300
+    Set Location to 7 12
+    Set Color to 13540467
+
+    //AB-DDOStart
+
+
+    //AB-DDOEnd
+
+    Object cSyDateForm1 is a cSyDateForm
+        Set Size to 13 66
+        Set Location to 6 117
+        Set Label_Col_Offset to 2
+        Set Label_Justification_Mode to jMode_Right
+        Set Form_Mask Item 0 to "dd/MM/yyyy"
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+        set prompt_object to (ocalendar(self))
+        //AB-StoreEnd
+
+    End_Object    // cSyDateForm1
+
+    Object ButtonSub3 is a ButtonSub
+
+        //AB-StoreTopStart
+                
+        //AB-StoreTopEnd
+
+        Set Bitmap to "RUNPROG.BMP"
+        Set Size to 20 23
+        Set Location to 10 237
+        Set Border_Style to Border_StaticEdge
+        Set Focus_Mode to Pointer_Only
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+                
+        Set TooltipValue to 'Ñ§ò®•û õ†òõ†°ò©Âò™'
+        
+        Procedure OnClick
+            String StartHmen sModule sMess
+            Integer ibpoid iYear iPayResp ibpoid1 iChkAkyr iYes
+        
+            get value           of csydateform1 to starthmen
+            get psModule                        to sModule
+        
+            If (StartHmen='') Begin
+                Send Stop_Box 'Éú§ ß¢û°´®¶¢¶ö„©ò´ú û£ú®¶£û§Âò úöö®ò≠È§' 'ë≠·¢£ò 1001'
+                Send Activate to cSyDateForm1
+                Procedure_Return
+            End
+            zerofile tmppol
+            if (not(err)) BEGIN
+                send startreport
+                send output_ypol
+            end
+            else;
+                send info_box 'ë≠·¢£ò °ò´· ´¶§ £ûõú§†©£Ê Ä®ÆúÂ¶¨ TMPPOL' 'è¢û®¶≠¶®Âò'
+            indicate err false
+            Set Label Of btnMess to ''
+        End_Procedure
+        
+        Procedure output_ypol
+            Number  nPoso
+            Integer iDecs iLen iInt Imet ipos idiafora
+            Integer rVal iMhnas iEtos iHmera
+            String  sPoso sHmnia sid sMhnas sHmera sBranch sFileName setos scomp stomeas
+            string skeno spath
+            Date    dapo
+            get pddate to  dapo
+            clear Company
+            move syscurxr.company_code to Company.company_code
+            find eq company by index.1
+            move Company.company_c_code0 to stomeas
+            move Company.sap_path to spath
+        //    move syscurxr.branch_code       to sbranch
+            move (Trim(sPath)+'\') to spath
+            Move (TheDaySegment  (dapo))  to iHmera
+            Move (TheMonthSegment(dapo))  to iMhnas
+            Move (TheYearSegment(dapo))   to ietos
+            Move iHmera                   to sHmera
+            Move iMhnas                   to sMhnas
+            Move iEtos                    to sEtos
+            If (Length(sHmera)=1) Insert '0' in sHmera at 1
+            If (Length(sMhnas)=1) Insert '0' in sMhnas at 1
+            Move (sPath+Trim(stomeas)+'FI0'+Trim(sEtos)+Trim(sMhnas)+Trim(sHmera)+'.txt') to sFileName
+            EraseFile sFileName
+            Append_Output Channel 7 sFileName
+            clear TmpPol
+            find gt Tmppol by index.1
+            while (found)
+                Write   Channel 7 (Pad(Trim(Tmppol.typos)                 ,  2))
+                Write   Channel 7 (Pad(tmppol.etairia                     ,  4))
+                Write   Channel 7 (Pad(trim(tmppol.perioxh)               ,  4))
+                Write   Channel 7 (Pad(tmppol.code                         ,10))
+                Move (ROUnD_number(tmppol.axia,2))     to nPoso
+                move nposo to sposo
+                Move (Trim(sPoso))                      to sPoso
+                Move (Pos('.',sPoso))   to iPos
+                Move (Length(sPoso))    to iLen
+                Move (iLen-iPos)       to iDiafora
+                If (Pos('.',sPoso)=0) Append sPoso '.00'
+                Else Begin
+                // An exei mono 1 dekadiko prepei na prosthesoume ena '0' sto telos
+                If (iDiafora=1) Move (Append(sPoso,'0')) to sPoso
+                End
+                Move (Replace('.',sPoso,'')) to sPoso
+                Move (Length(sPoso))                    to iLen
+                For iInt From 1 to (20-iLen)
+                    Move (Insert(" ", sPoso,1))         to sPoso
+                Loop
+                Write   Channel 7 (Pad(sPoso                                ,20))
+                Move (ROUnD_number(tmppol.qty,2))     to nPoso
+                move nposo to sposo
+                Move (Trim(sPoso))                      to sPoso
+                Move (Pos('.',sPoso))   to iPos
+                Move (Length(sPoso))    to iLen
+                Move (iLen-iPos)       to iDiafora
+                If (Pos('.',sPoso)=0) Append sPoso '.00'
+                Else Begin
+                // An exei mono 1 dekadiko prepei na prosthesoume ena '0' sto telos
+                If (iDiafora=1) Move (Append(sPoso,'0')) to sPoso
+                End
+                Move (Replace('.',sPoso,'')) to sPoso
+                Move (Length(sPoso))                    to iLen
+                For iInt From 1 to (20-iLen)
+                    Move (Insert(" ", sPoso,1))         to sPoso
+                Loop
+                //**************************************
+                Write   Channel 7 (Pad(sPoso                                ,20))
+                Write   Channel 7 (Pad(tmppol.name                          ,12))
+                Writeln Channel 7
+                find gt Tmppol by index.1
+            Loop
+            Close_Output Channel 7
+        
+        End_Procedure
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub3
+
+    Object TextBoxSub1 is a TextBoxSub
+        Set Label to "ÉÈ©´ú û£/§Âò ö†ò ´†™ úöö®ò≠‚™ ß¶¨ üò Ñ•òÆü¶Á§ ö†ò Ñ†©òö‡ö„ ©´¶ SAP"
+        Set Color to 13540467
+        Set TextColor to clNavy
+        Set Location to 4 6
+        Set Size to 41 105
+        Set Justification_Mode to jMode_Center
+        Set TypeFace to "MS Sans Serif"
+    End_Object    // TextBoxSub1
+
+    Object FormSub2 is a FormSub
+        Set Size to 5 268
+        Set Location to 58 0
+        Set Color to clRed
+        Set Label_Col_Offset to 2
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+                                                                                                                                                                                                                                                                                        
+        Set Enabled_State   to False
+        Set Color           to clRed
+        
+        //AB-StoreEnd
+
+    End_Object    // FormSub2
+
+    Object btnMess is a ButtonSub
+        Set Size to 14 114
+        Set Location to 68 78
+        Set Border_Style to Border_StaticEdge
+        Set Focus_Mode to NonFocusable
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+        Procedure OnClick
+        
+        End_Procedure // OnClick
+        //AB-StoreEnd
+
+    End_Object    // btnMess
+
+    Object TextBoxSub2 is a TextBoxSub
+        Set Label to "Path SAP"
+        Set Location to 108 3
+        Set Size to 10 32
+        Set TypeFace to "MS Sans Serif"
+    End_Object    // TextBoxSub2
+
+    Object frmPath is a FormSub
+
+        //AB-StoreTopStart
+                                                                                                                                                                                        
+        //AB-StoreTopEnd
+
+        Set Size to 13 223
+        Set Location to 108 40
+        Set Color to 13540467
+        Set Label_Col_Offset to 2
+        Set Prompt_Button_Mode to pb_PromptOn
+        Set Enabled_State to FALSE
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+        Set Item_Shadow_State Item 0 to TRUE
+        Set Shadow_State Item 0 to TRUE
+
+        //AB-StoreStart
+                                                                                                                                                                                        
+                                                                                                                                                                                        
+                                                                                                                                                                                        
+                                                                                                                                                                                        
+                                                                                                                                                                                        
+                                                                                                                                                                                        
+        //AB-StoreEnd
+
+    End_Object    // frmPath
+
+
+    //AB-StoreStart
+    
+    Set Output_Device_Name to None
+    
+    
+    Procedure Activate_View Returns Integer
+        String sStr sModule StrDisp
+        Integer rVal
+        set value of csydateform1 to '31/12/2004'
+        CLEAR company
+        move syscurxr.company_code to company.company_code
+        find eq company by index.1
+        if (found);
+            set value of frmpath to company.sap_path
+        else;
+            set value of frmpath to ''
+        set pseteria to company.COMPANY_C_CODE0
+        Forward Get Msg_Activate_View to rVal
+    End_Procedure
+    
+    Procedure StartReport
+        Local Integer iOutputDevice
+        Local String  FileName
+        local date ddate
+        Get value of csydateform1 item 0 to ddate
+        set pddate to ddate
+        SEND RUN_REPORT
+    End_Procedure   // StartReport
+    
+    
+    Object enhypol_BasicReport is a BasicReport
+    
+        Set Report_Title to "Ñ•òö‡ö„ ìß¶¢¶Âß‡§ ö†ò SAP                   "
+        Set Report_Caption to "É†òõ†°ò©Âò ©ú Ñ•‚¢†•û "
+    
+    
+        Object Cmoves_DD is a Cmoves_DataDictionary
+             date dapo deos
+             move syscurxr.year_xrhshfrom  to dapo
+             move syscurxr.year_xrhshto    to deos
+             set ordering to 3
+             begin_constraints
+                constrain cmoves.cmoves_hmnia Between dapo And deos
+                constrain cmoves AS ((CMOVES.BRANCH_CODE<>'50') AND (CMOVES.BRANCH_CODE<>'51'))
+             end_constraints
+        End_Object    // Cmoves_DD
+    
+        Set Server To (cmoves_dd(Current_Object))
+    
+        //Breaks and Index for the report
+        Report_Index By Index.13
+        Report_breaks cmoves.company_code cmoves.branch_code  cmoves.client_id
+        Function Starting_Main_Report Returns Integer
+          Local Integer iRetVal
+          Forward Get Starting_Main_Report to iRetval
+          send rebuild_constraints to cmoves_dd
+          Send Find to (cmoves_dd(self)) First_Record 13
+        End_Function
+    
+        Procedure_Section subheader1
+    
+        End_Procedure
+    
+        Procedure_Section subheader2
+            set px00 to 0
+            set pp00 to 0
+            set px0 to 0
+            set pp0 to 0
+        End_Procedure
+    
+        Procedure_Section subheader3
+            set px0 to 0
+            set pp0 to 0
+        End_Procedure
+    
+        Procedure_Section  Body
+            String  scode smodule spar serr sid
+            Number  nx0 np0 nx00 np00 nx1 np1 ndiaf tx0 tp0 tx00 tp00 tx1 tp1
+            Date    dHmnia
+            integer iyear icount nyear ctypkinyear
+            get px0    to nx0
+            get pP0    to nP0
+            send update_status ('èú¢·´û™' + string(cmoves.cmoves_hmnia) + ":" +  string(cmoves.client_id))
+            add cmoves.cmoves_x0     to nx0
+            add cmoves.cmoves_p0     to np0
+            set px0    to nx0
+            set pP0    to nP0
+     End_Procedure
+    
+        Procedure_Section subTOTAL3
+             Number  naxia nx0 np0 nx00 np00 nx1 np1 ndiaf tx0 tp0 tx00 tp00 tx1 tp1
+             string segkatastash sperioxh scode  sid
+             date ddate
+             integer ikod
+             get pddate to ddate
+             get px0    to nx0
+             get px1    to nx1
+             get px00   to nx00
+             get pp0    to np0
+             get pp1    to np1
+             get pp00   to np00
+             if ((nx0 <> 0) or (np0 <>0)) begin
+                if (nx0 > np0) begin
+                   move (nx0 - np0) to nx0
+                   move 0           to np0
+                end
+                else begin
+                   move (np0-nx0)   to np0
+                   move 0           to nx0
+                end
+                move Sysfile.Client_Digits to Ikod
+                add 3 to ikod
+                clear branch
+                move Cmoves.company_code    to branch.company_code
+                move cmoves.branch_code     to branch.branch_code
+                find eq branch by index.1
+                move branch.egkatastash     to sperioxh
+                clear tmppol
+                move 'FI0'          to tmppol.onoma
+                move '01'           to tmppol.typos
+                move (pseteria(self))  TO tmppol.etairia
+                move sperioxh       to tmppol.perioxh
+                move segkatastash   to tmppol.egkatastash
+                move (trim(cmoves.client_id)) to scode
+                MOVE SCODE TO Tmppol.name
+                Move (Right(scode, Ikod))               To scode
+                move (replaces('.',scode,'')) to scode
+                insert '01' in scode at 1
+                if (Sysfile.Client_Digits<6);
+                    insert '0' in scode at 5
+                move '' to sid
+    
+               //an ßú¢·´ú™ ©¨ö°ú§´®‡´°· SAP ´Ê´ú ©´¶§ ò®†ü£Ê ´¶¨ 99999
+                RELATE CMOVES
+             //   if (clients.is_xondr<>'1') begin
+             //       left scode to sid 4
+             //       append sid '999999'
+             //       move (trim(sid)) to scode
+             //   end
+                move (trim(scode))        to Tmppol.code
+                move ddate to tmppol.hmnia
+                move nx0 to   tmppol.axia
+                move np0 to   tmppol.qty
+                if ((nx0<>0) or  (np0<>0)) begin
+                   add nx0     to nx1
+                   add np0     to np1
+                   add nx0     to nx00
+                   add np0     to np00
+    
+                   set px00   to nx00
+                   set pp00   to np00
+                   set pX1    to nX1
+                   set pp1    to np1
+                   saverecord tmppol
+                end
+             End
+        End_Procedure
+    
+    
+        Procedure_Section subtotal2
+            Number  naxia nx0 np0 nx00 np00 nx1 np1 ndiaf tx0 tp0 tx00 tp00 tx1 tp1
+            string segkatastash sperioxh sId
+            date ddate
+            integer icode
+            get pddate to ddate
+            get px00   to nx00
+            get pp00   to np00
+            clear branch
+            move Cmoves.company_code    to branch.company_code
+            move cmoves.branch_code     to branch.branch_code
+            find eq branch by index.1
+            move branch.egkatastash     to sperioxh
+            clear tmppol
+            move 'FI0'          to tmppol.onoma
+            move '90'           to tmppol.typos
+            move (pseteria(self))  TO tmppol.etairia
+            move sperioxh       to tmppol.perioxh
+            move segkatastash   to tmppol.egkatastash
+    
+            move nx00 to   tmppol.axia
+            move np00 to   tmppol.qty
+            if ((nx00<>0) or (np00<>0)) BEGIN
+                 saverecord tmppol
+            eND
+        End_Procedure
+    
+        Procedure_Section subtotal1
+            Number  naxia nx0 np0 nx00 np00 nx1 np1 ndiaf tx0 tp0 tx00 tp00 tx1 tp1
+            string segkatastash sperioxh sId
+            date ddate
+            integer icode
+            get pddate to ddate
+            get px1   to nx1
+            get pp1   to np1
+            clear branch
+            clear tmppol
+            move 'FI0'          to tmppol.onoma
+            move '91'           to tmppol.typos
+            move (pseteria(self))  TO tmppol.etairia
+            move nx1 to   tmppol.axia
+            move np1 to   tmppol.qty
+            if ((nx1<>0) or (np1<>0)) BEGIN
+                    saverecord tmppol
+            eND
+        End_Procedure
+    
+    
+        Procedure Ending_Report
+    
+            set px0    to 0
+            set px1    to 0
+            set px00   to 0
+            set pp0    to 0
+            set pp1    to 0
+            set pp00   to 0
+        End_Procedure
+    End_Object
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //AB-StoreEnd
+
+End_Object    // renhypol
+
+
+//AB-StoreStart
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//AB-StoreEnd
+
+//AB/ End_Object    // prj

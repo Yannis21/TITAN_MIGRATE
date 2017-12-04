@@ -1,0 +1,2506 @@
+//AB/ Project StoixEmp
+//AB/ Object prj is a Report_Project
+//AB/     Set ProjectName to "StoixEmp"
+//AB/     Set ProjectFileName to "StoixEmp.rv"
+
+// Project Object Structure
+//   StoixEmp is a ReportViewSub
+//     RadioGroupSub1 is a RadioGroupSub
+//       Radio1 is a RadioSub
+//       Radio2 is a RadioSub
+//       Radio3 is a RadioSub
+//       TextBoxSub28 is a TextBoxSub
+//     GroupSub1 is a GroupSub
+//       F_CODE_APO is a FormSub
+//       TextBoxSub1 is a TextBoxSub
+//       FormSub3 is a FormSub
+//     GroupSub3 is a GroupSub
+//       TextBoxSub25 is a TextBoxSub
+//       frmYear is a FormSub
+//       TextBoxSub26 is a TextBoxSub
+//       frmMonth is a FormSub
+//       frmMonthLekt is a FormSub
+//       frmPolhths is a FormSub
+//       frmPolhthsDescr is a FormSub
+//       frmYpeyth is a FormSub
+//       frmYpeythDescr is a FormSub
+//       TextBoxSub1 is a TextBoxSub
+//       TextBoxSub2 is a TextBoxSub
+//       FormSub1 is a FormSub
+//       Textbox1 is a Textbox
+//       Form2 is a FormSub
+//       chkMhden is a CheckBoxSub
+//       chkApokripsi is a CheckBoxSub
+//     ButtonSub1 is a Button
+//       oPinakas is a Array
+//     FCP_ProgressBar1 is a FCP_ProgressBar
+//     RadioGroupSub2 is a RadioGroupSub
+//       Radio1 is a RadioSub
+//       Radio2 is a RadioSub
+//       Radio3 is a RadioSub
+//       ButtonSub1 is a ButtonSub
+//     btnMess is a ButtonSub
+//     ReportEmporias is a CrystalReportSubSQL
+//     ReportMakeHpalRecords is a CrystalReportSubSQL
+//     ReportMakeTzirosRecords is a CrystalReportSubSQL
+//     ReportMakeAxioRecords is a CrystalReportSubSQL
+//     ReportMakeOfeilhRecords is a CrystalReportSubSQL
+//     ReportMakeexoflRecords is a CrystalReportSubSQL
+//     ReportMakepaliaAxioRecords is a CrystalReportSubSQL
+
+// Register all objects
+Register_Object ButtonSub1
+Register_Object btnMess
+Register_Object chkApokripsi
+Register_Object chkMhden
+Register_Object F_CODE_APO
+Register_Object FCP_ProgressBar1
+Register_Object Form2
+Register_Object FormSub1
+Register_Object FormSub3
+Register_Object frmMonth
+Register_Object frmMonthLekt
+Register_Object frmPolhths
+Register_Object frmPolhthsDescr
+Register_Object frmYear
+Register_Object frmYpeyth
+Register_Object frmYpeythDescr
+Register_Object GroupSub1
+Register_Object GroupSub3
+Register_Object oPinakas
+Register_Object Radio1
+Register_Object Radio2
+Register_Object Radio3
+Register_Object RadioGroupSub1
+Register_Object RadioGroupSub2
+Register_Object ReportEmporias
+Register_Object ReportMakeAxioRecords
+Register_Object ReportMakeexoflRecords
+Register_Object ReportMakeHpalRecords
+Register_Object ReportMakeOfeilhRecords
+Register_Object ReportMakepaliaAxioRecords
+Register_Object ReportMakeTzirosRecords
+Register_Object StoixEmp
+Register_Object TextBoxSub1
+Register_Object TextBoxSub2
+Register_Object TextBoxSub25
+Register_Object TextBoxSub26
+Register_Object TextBoxSub28
+Register_Object Textbox1
+
+
+//AB/ Report View
+
+
+//AB-StoreTopStart
+Use dfallrpt
+Use syscurxr.dd
+Use sl100.sl
+use sl007.sl
+open clients
+use hmgio.sl
+use slrep.sl
+open sysrep
+Use sl111.sl
+Use sl108.sl
+Open Rptmp
+Open Clients
+Open Cmoves
+Open Wcmoves
+Open Particle
+Open Barticl
+Open Btypkin
+Open Ctypkin
+Open Bmove
+Open Baxiokat
+Open Baxio
+Use sl002.sl
+
+//AB-StoreTopEnd
+
+//AB-IgnoreStart
+
+Use Rptvw.Sub
+Use Rgroup.Sub
+Use Radio.Sub
+Use Txtbox.Sub
+Use Group.Sub
+Use Form.Sub
+Use DFAllEnt.pkg
+Use Chkbox.Sub
+Use FCP_ProgressBar.PKG
+Use Button.Sub
+
+//AB-IgnoreEnd
+
+ACTIVATE_VIEW Activate_StoixEmp FOR StoixEmp
+
+Object StoixEmp is a ReportViewSub
+
+    //AB-StoreTopStart
+                    
+    Property String  psModule       Public ''
+    property integer Epil           public 0
+    property integer piWhat         public 0
+    property integer piWhere        public 0
+    property string  psBranch       public ''
+    property string  psRep          public ''
+    Property Integer piPoios        Public 0
+    property string  psClientID     public ''
+    property string  psPrespID      public ''
+    property string  psSlsID        public ''
+    property string  psClientName   public ''
+    property string  psPrespName    public ''
+    property string  psSlsName      public ''
+    property integer piepidika      public 0
+    
+    //AB-StoreTopEnd
+
+    Set Label to "Management Information System  - é†°¶§¶£†°·"
+    Set Size to 234 455
+    Set Location to 4 19
+    Set Color to 10859729
+
+    //AB-DDOStart
+
+
+    //AB-DDOEnd
+
+    Object RadioGroupSub1 is a RadioGroupSub
+        Set Size to 66 151
+        Set Location to 1 3
+        Set Color to 10859729
+        Object Radio1 is a RadioSub
+            Set Label to "èú¢·´ú™"
+            Set Size to 10 53
+            Set Location to 10 5
+            Set Color to 10859729
+        End_Object    // Radio1
+
+        Object Radio2 is a RadioSub
+            Set Label to "è‡¢û´‚™"
+            Set Size to 10 54
+            Set Location to 10 87
+            Set Color to 10859729
+        End_Object    // Radio2
+
+        Object Radio3 is a RadioSub
+            Set Label to "ìß. è¢û®‡£È§"
+            Set Size to 10 65
+            Set Location to 25 5
+            Set Color to 10859729
+        End_Object    // Radio3
+
+        Object TextBoxSub28 is a TextBoxSub
+
+            //AB-StoreTopStart
+                                                
+            //AB-StoreTopEnd
+
+            Set Label to "Ä§ õú§ úß†¢úöúÂ ©¨ö°ú°®†£‚§¶™ ìß. è¢û® ´Ê´ú ´ò ú°´¨ß‡´†°· üò ôö¶Á§ ò§ò ìß. è¢û®‡£È§ °ò† ¶Æ† ò§ò èú¢·´û"
+            Set Color to 10859729
+            Set TextColor to clYellow
+            Set Location to 37 5
+            Set Size to 25 143
+            Set Justification_Mode to jMode_Left
+            Set TypeFace to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                
+            Set TextColor to clYellow
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // TextBoxSub28
+
+
+        //AB-StoreStart
+                                        
+        Procedure Notify_Select_State integer iToItem integer iFromItem
+        //    If (iToItem=0) Begin
+        //        Set Enabled_State Of (F_Code_Apo(GroupSub1(Self))) to True
+        //        Set Enabled_State Of (frmPolhths(GroupSub3(Self))) to False
+        //        Set Enabled_State Of (frmYpeyth (GroupSub3(Self))) to False
+        //    End
+        //    Else If (iToItem=1) Begin
+        //        Set Enabled_State Of (F_Code_Apo(GroupSub1(Self))) to False
+        //        Set Enabled_State Of (frmPolhths(GroupSub3(Self))) to True
+        //        Set Enabled_State Of (frmYpeyth (GroupSub3(Self))) to False
+        //    End
+        //    Else If (iToItem=2) Begin
+        //        Set Enabled_State Of (F_Code_Apo(GroupSub1(Self))) to False
+        //        Set Enabled_State Of (frmPolhths(GroupSub3(Self))) to False
+        //        Set Enabled_State Of (frmYpeyth (GroupSub3(Self))) to True
+        //    End
+            Set piPoios to iToItem
+        End_Procedure
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // RadioGroupSub1
+
+    Object GroupSub1 is a GroupSub
+        Set Label to "Ñß†¢¶ö„ î¶®‚ò"
+        Set Size to 28 283
+        Set Location to 1 158
+        Set Color to 10859729
+        Object F_CODE_APO is a FormSub
+
+            //AB-StoreTopStart
+                                                            
+            //AB-StoreTopEnd
+
+            Set Size to 13 65
+            Set Location to 10 60
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Prompt_Button_Mode to pb_PromptOn
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                            
+            Set Prompt_Object to (SL100(Current_object))
+            
+            Procedure Prompt_Callback integer hPrompt
+                set Export_Column of hPrompt to 0
+                Set Initial_Column of hPrompt to 0
+            end_procedure
+            
+            procedure onchange
+                String sclient
+                Get value item 0 to sClient
+                Set psClientID to sClient
+                Move (fsclient(Self,sclient)) to sclient
+                set value of (formsub3(self)) to sclient
+                Set psClientName to sClient
+            end_procedure
+            
+            procedure prompt
+                Set psModule Of (sl100(Self)) to (psModule(Self))
+                Forward Send Prompt
+            end_procedure
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // F_CODE_APO
+
+        Object TextBoxSub1 is a TextBoxSub
+            Set Label to "ÄßÊ â‡õ†°Ê :"
+            Set Auto_Size_State to FALSE
+            Set Color to 10859729
+            Set FontSize to 4 0
+            Set Location to 11 5
+            Set Size to 10 44
+            Set TypeFace to "MS Sans Serif"
+            Set Enabled_State to TRUE
+        End_Object    // TextBoxSub1
+
+        Object FormSub3 is a FormSub
+            Set Size to 13 152
+            Set Location to 10 127
+            Set Color to 10859729
+            Set Label_Col_Offset to 2
+            Set Enabled_State to FALSE
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+            set enabled_state to false
+            //AB-StoreEnd
+
+        End_Object    // FormSub3
+
+
+        //AB-StoreStart
+        Function StartNumber Returns string
+            Function_return (Value(f_code_apo(Current_object), 0))
+        End_function
+        
+        //AB-StoreEnd
+
+    End_Object    // GroupSub1
+
+    Object GroupSub3 is a GroupSub
+        Set Label to "Ñß†¢¶ö„ Ñ´¶¨™/ã„§ò, è‡¢û´„ && ìß. è¢û®‡£È§"
+        Set Size to 148 283
+        Set Location to 36 158
+        Set Color to 10859729
+        Object TextBoxSub25 is a TextBoxSub
+            Set Label to "è‡¢û´„™"
+            Set Auto_Size_State to FALSE
+            Set Color to 10859729
+            Set FontSize to 4 0
+            Set Location to 42 7
+            Set Size to 10 31
+            Set TypeFace to "MS Sans Serif"
+            Set Enabled_State to TRUE
+        End_Object    // TextBoxSub25
+
+        Object frmYear is a FormSub
+            Set Size to 13 40
+            Set Location to 24 7
+            Set Label_Col_Offset to 2
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                            
+            //        Procedure OnChange
+            //            Set piYear  to (Value(Self,0))
+            //        End_Procedure
+            
+            //AB-StoreEnd
+
+        End_Object    // frmYear
+
+        Object TextBoxSub26 is a TextBoxSub
+            Set Label to "ìß. è¢û®‡£È§"
+            Set Auto_Size_State to FALSE
+            Set Color to 10859729
+            Set FontSize to 4 0
+            Set Location to 66 7
+            Set Size to 13 50
+            Set TypeFace to "MS Sans Serif"
+            Set Enabled_State to TRUE
+        End_Object    // TextBoxSub26
+
+        Object frmMonth is a FormSub
+            Set Size to 13 28
+            Set Location to 24 98
+            Set Label_Col_Offset to 2
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                            
+            Procedure OnChange
+                //Set piMonth to (Value(Self,0))
+                Set Value Of frmMonthLekt Item 0 to ;
+                    (TheMonthName(Value(Self,0),mMonthOnom))
+            End_Procedure
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // frmMonth
+
+        Object frmMonthLekt is a FormSub
+            Set Size to 13 109
+            Set Location to 24 132
+            Set Color to 10859729
+            Set Label_Col_Offset to 2
+            Set Enabled_State to FALSE
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+        End_Object    // frmMonthLekt
+
+        Object frmPolhths is a FormSub
+
+            //AB-StoreTopStart
+                                                            
+            //AB-StoreTopEnd
+
+            Set Size to 13 83
+            Set Location to 52 7
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Prompt_Button_Mode to pb_PromptOn
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                            
+            Set Prompt_Object to (sl108(Current_object))
+            Procedure Prompt_Callback integer hPrompt
+                set Export_Column  of hPrompt to 0
+                Set Initial_Column of hPrompt to 0
+            end_procedure
+            
+            procedure onchange
+                string sclient
+                get value item 0    to sclient
+                Set psSlsID         to sClient
+                Move (fsSalesmen(Self,sclient))         to sclient
+                set value of (frmPolhthsDescr(self))    to sclient
+                Set psSlsName to sClient
+            end_procedure
+            
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // frmPolhths
+
+        Object frmPolhthsDescr is a FormSub
+            Set Size to 13 143
+            Set Location to 52 98
+            Set Color to 10859729
+            Set Label_Col_Offset to 2
+            Set Enabled_State to FALSE
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+            set enabled_state to false
+            //AB-StoreEnd
+
+        End_Object    // frmPolhthsDescr
+
+        Object frmYpeyth is a FormSub
+
+            //AB-StoreTopStart
+                                                            
+            //AB-StoreTopEnd
+
+            Set Size to 13 83
+            Set Location to 79 7
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Prompt_Button_Mode to pb_PromptOn
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                            
+            Set Prompt_Object to (sl111(Current_object))
+            
+            Procedure Prompt_Callback integer hPrompt
+                set Export_Column  of hPrompt to 0
+                Set Initial_Column of hPrompt to 0
+            end_procedure
+            
+            procedure onchange
+                string sclient
+                get value item 0    to sclient
+                Set psPrespID       to sClient
+                Move (fsPayresp(Self,sclient))      to sclient
+                set value of (frmYpeythDescr(self)) to sclient
+                Set psPrespName to sClient
+            end_procedure
+            
+            
+            
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // frmYpeyth
+
+        Object frmYpeythDescr is a FormSub
+            Set Size to 13 143
+            Set Location to 79 98
+            Set Color to 10859729
+            Set Label_Col_Offset to 2
+            Set Enabled_State to FALSE
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+            set enabled_state to false
+            //AB-StoreEnd
+
+        End_Object    // frmYpeythDescr
+
+        Object TextBoxSub1 is a TextBoxSub
+            Set Label to "Ñ´¶™"
+            Set Color to 10859729
+            Set Location to 13 7
+            Set Size to 10 19
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub1
+
+        Object TextBoxSub2 is a TextBoxSub
+            Set Label to "í®‚Æ¶§ ã„§ò™"
+            Set Color to 10859729
+            Set Location to 13 98
+            Set Size to 10 49
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub2
+
+        Object FormSub1 is a FormSub
+            Set Size to 13 83
+            Set Location to 104 7
+            Set Label_Col_Offset to 2
+            Set Prompt_Button_Mode to pb_PromptOn
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                            
+                                                            
+            Set Visible_State to False
+            Set Enabled_State to False
+            
+            
+            Set Prompt_Object to (sl002(Current_object))
+            
+            Procedure Prompt_Callback integer hPrompt
+                set Export_Column of hPrompt to 0
+                Set Initial_Column of hPrompt to 0
+            end_procedure
+            
+            procedure onchange
+                string sbranch
+                get value item 0 to sbranch
+                clear branch
+                move syscurxr.company_code to branch.company_code
+                move sbranch               to branch.branch_code
+                find eq branch by index.1
+                if (found=1) set value of (form2(self)) to branch.branch_name
+                else         set value of (form2(self)) to ''
+            end_procedure
+            
+            
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // FormSub1
+
+        Object Textbox1 is a Textbox
+            Set Label to "ìß¶°/£ò"
+            Set Color to 10859729
+            Set Location to 94 7
+            Set Size to 10 31
+            Set TypeFace to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                            
+            Set Visible_State to False
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // Textbox1
+
+        Object Form2 is a FormSub
+            Set Size to 13 143
+            Set Location to 103 99
+            Set Color to 10859729
+            Set Enabled_State to FALSE
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+                                                            
+            Set Visible_State to False
+            Set Enabled_State to False
+            
+            //AB-StoreEnd
+
+        End_Object    // Form2
+
+        Object chkMhden is a CheckBoxSub
+            Set Label to "èú¢·´ú™ £ú 0  ÜèÄä && Üèëé"
+            Set Size to 10 109
+            Set Location to 125 8
+            Set Color to 10859729
+        End_Object    // chkMhden
+
+        Object chkApokripsi is a CheckBoxSub
+            Set Label to "ï‡®†™ õû£†¶¨®öÂò ú° ´‡§ ß®‡´‚®‡§ ´‡§ 8 úöö®ò≠È§/ßú¢·´û"
+            Set Size to 10 225
+            Set Location to 135 8
+            Set Color to 10859729
+            Set Checked_State to TRUE
+        End_Object    // chkApokripsi
+
+
+        //AB-StoreStart
+                                        
+        Function fsPolhths Returns string
+            Function_return (Value(frmPolhths(Current_object), 0))
+        End_function
+        
+        Function fsYpeyth Returns string
+            Function_return (Value(frmYpeyth(Current_object), 0))
+        End_function
+        
+        Function fiYear Returns Integer
+            Function_return (Value(frmYear(Current_object), 0))
+        End_function
+        
+        Function fiMonth Returns Integer
+            Function_return (Value(frmMonth(Current_object), 0))
+        End_function
+        
+        Function fsMonth Returns String
+            Function_return (Value(frmMonthLekt(Current_object), 0))
+        End_function
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // GroupSub3
+
+    Object ButtonSub1 is a Button
+
+        //AB-StoreTopStart
+        
+        Object oPinakas is a Array
+        End_Object
+        
+        Function fiStoxosHpal String asCode Integer aiFlag Returns Integer
+            If (aiFlag=0) Begin
+                Clear Clients
+                Move asCode to Clients.Client_ID
+                Find Eq Clients By Index.6
+                Function_Return Clients.Hpal
+            End
+            Else Begin
+                Clear Payresp
+                Move asCode to Payresp.Presp_ID
+                Find Eq Payresp By Index.7
+                Function_Return Payresp.Stoxos_Ipal
+            End
+        End_Function
+        
+        Function fiStoxosHpso String asCode Integer aiFlag Returns Integer
+            If (aiFlag=0) Begin
+                Clear Clients
+                Move asCode to Clients.Client_ID
+                Find Eq Clients By Index.6
+                Function_Return Clients.Hpso
+            End
+            Else Begin
+                Clear Payresp
+                Move asCode to Payresp.Presp_ID
+                Find Eq Payresp By Index.7
+                Function_Return Payresp.Stoxos_Ipso
+            End
+        End_Function
+        
+        Function fsClientPayResp String asCode Returns String
+            Clear Clients
+            Move asCode to Clients.Client_ID
+            Find Eq Clients By Index.6
+            Function_Return (Trim(Clients.Presp_ID))
+        End_Function
+        
+        //AB-StoreTopEnd
+
+        Set Bitmap to "RUNPROG.BMP"
+        Set Size to 18 28
+        Set Location to 198 410
+
+        //AB-StoreStart
+        
+        //Set TooltipValue to "åúò Ñßú•ú®öò©Âò °ò† òß¶´ú¢‚©£ò´ò"
+        
+        Procedure OnClick
+            Integer iYearTo iMonthTo iYearFrom iMonthFrom iBranch iDeikths iApokripsi iDeikths2
+            Date    dHmniaApo dHmniaEos dHmnia
+            String  sCompany sBranch sClientID s1  nOfeilh nAnoixtos iHpal sVal sName
+            String  iHpso sPrespID sClientID2
+            integer ihmgio iYes iFS iCount
+            Number  n1
+        
+            Get Value Of (FormSub1(GroupSub3(Self)))    to sBranch
+            Move (Trim(sBranch))                        to sBranch
+            Set psBranch                                to sBranch
+        
+            Move SyscurXR.Company_Code                  to sCompany
+            Get fiYear  Of GroupSub3                    to iYearTo
+            Get fiMonth Of GroupSub3                    to iMonthTo
+            Move iMonthTo                               to iMonthFrom
+            Move (iYearTo-1)                            to iYearFrom
+        
+            // Basikoi elegxoi data entry filtra epiloghs
+            If ((iMonthTo<1) Or (iMonthTo>12)) Begin
+                Send Stop_Box 'äò§üò©£‚§û úß†¢¶ö„ £„§ò' 'è®¶©¶Æ„'
+                Send Activate to (frmMonth(GroupSub3(Self)))
+                Procedure_Return
+            End
+            If ((iYearTo<2002) Or (iYearTo>2100)) Begin
+                Send Stop_Box 'äò§üò©£‚§û úß†¢¶ö„ ‚´¶¨™' 'è®¶©¶Æ„'
+                Send Activate to (frmyear(GroupSub3(Self)))
+                Procedure_Return
+            End
+            If (psClientID(Self)<>'') Begin
+                Clear Clients
+                Move (psClientID(Self)) to Clients.Client_ID
+                Find Eq Clients By Index.6
+                If (Not(Found)) Begin
+                    Send Stop_Box 'Ä§Áßò®°´¶™ èú¢·´û™' 'è®¶©¶Æ„'
+                    Send Activate to (f_code_apo(GroupSub1(Self)))
+                    Procedure_Return
+                End
+            End
+            If (psSlsID(Self)<>'') Begin
+                Clear Salesmen
+                Move (psSlsID(Self)) to Salesmen.Sls_ID
+                Find Eq Salesmen By Index.4
+                If (Not(Found)) Begin
+                    Send Stop_Box 'Ä§Áßò®°´¶™ è‡¢û´„™' 'è®¶©¶Æ„'
+                    Send Activate to (frmPolhths(GroupSub3(Self)))
+                    Procedure_Return
+                End
+            End
+            If (psPrespID(Self)<>'') Begin
+                Clear Payresp
+                Move (psPrespID(Self)) to Payresp.Presp_ID
+                Find Eq Payresp By Index.7
+                If (Not(Found)) Begin
+                    Send Stop_Box 'Ä§Áßò®°´¶™ ¨ßúÁü¨§¶™ ß¢û®‡£È§' 'è®¶©¶Æ„'
+                    Send Activate to (frmYpeyth(GroupSub3(Self)))
+                    Procedure_Return
+                End
+            End
+        //
+            Zerofile Rptmp
+            Erasefile "c:\hpal.txt"
+            Erasefile "c:\rptmp3.txt"
+            Erasefile "c:\rptmp3ax.txt"
+            Erasefile "c:\rptmp3di.txt"
+        Erasefile "c:\rptmp3dN.txt"
+            Erasefile "c:\rptmp4.txt"
+            Erasefile "c:\rptmp5.txt"
+            Erasefile "c:\rptmp6.txt"
+            Move (DateCompose(TheDaySegment(EndOfMonth  (iMonthTo  ,iYearTo  )),iMonthTo  ,iYearTo  )) to dHmniaEos
+            Move (DateCompose(TheDaySegment(BeginOfMonth(iMonthFrom,iYearFrom)),iMonthFrom,iYearFrom)) to dHmniaApo
+        
+            Get Checked_State Of (chkApokripsi(GroupSub3(Self))) to iApokripsi
+        
+            If (Not(iApokripsi)) Begin
+                // Make all records to keep all the rows for each client
+                // or for 1 client
+                If (piPoios(Self)=0) Begin
+                    If (psClientID(Self)<>'') Begin
+                        Clear Clients
+                        Move (psClientID(Self)) to Clients.Client_ID
+                        Find Eq Clients By Index.6
+                        If (Not(Found)) Begin
+                            Send Stop_Box 'Ä§Áßò®°´¶™ èú¢·´û™' 'è®¶©¶Æ„'
+                            Procedure_Return
+                        End
+                        For iCount From 1 to 8
+                            Clear Rptmp
+                            Move sCompany               to Rptmp.Company_Code
+                            Move sBranch                to Rptmp.Branch_Code
+                            Move Clients.Client_ID      to Rptmp.ID1
+                            Move iCount                 to Rptmp.Seira
+                            Move Clients.Client_Name    to Rptmp.Name1
+                            Move Clients.Hpso           to Rptmp.Stoxos_Hpso
+                            Move Clients.Hpal           to Rptmp.Stoxos_Hpal
+                            Saverecord Rptmp
+                        Loop
+                    End
+                    Else Begin
+                        File_Size Clients                   to iFS
+                        Set piMinimum   Of FCP_ProgressBar1 to 1
+                        Set piMaximum   Of FCP_ProgressBar1 to iFS
+                        Set piAdvanceBy Of FCP_ProgressBar1 to 1
+                        Set Label Of BtnMess to 'è®¶ú´¶†£ò©Âò Ê¢‡§ ´‡§ úöö®ò≠È§'
+                        Clear Clients
+                        Move 1 to Clients.Is_Client
+                        Find Gt Clients By Index.7
+                        While ((Found) And (Clients.Is_Client=1))
+                            Send DoAdvance Of FCP_ProgressBar1
+                            For iCount From 1 to 8
+                                Clear Rptmp
+                                Move sCompany               to Rptmp.Company_Code
+                                Move sBranch                to Rptmp.Branch_Code
+                                Move Clients.Client_ID      to Rptmp.ID1
+                                Move iCount                 to Rptmp.Seira
+                                Move Clients.Client_Name    to Rptmp.Name1
+                                Move Clients.Hpso           to Rptmp.Hpso
+                                Move Clients.Hpal           to Rptmp.Hpal
+                                Saverecord Rptmp
+                            Loop
+                            Find Gt Clients By Index.7
+                        Loop
+                    End
+                End
+                Else If (piPoios(Self)=1) Begin
+                    If (psSlsID(Self)<>'') Begin
+                        Clear Salesmen
+                        Move (psSlsID(Self)) to Salesmen.SLS_ID
+                        Find Eq Salesmen By Index.4
+                        If (Not(Found)) Begin
+                            Send Stop_Box 'Ä§Áßò®°´¶™ è‡¢û´„™' 'è®¶©¶Æ„'
+                            Procedure_Return
+                        End
+        //                For iCount From 1 to 8
+        //                    Clear Rptmp
+        //                    Move sCompany           to Rptmp.Company_Code
+        //                    Move sBranch            to Rptmp.Branch_Code
+        //                    Move Salesmen.Sls_ID    to Rptmp.ID1
+        //                    Move iCount             to Rptmp.Seira
+        //                    Move Salesmen.Sls_Name  to Rptmp.Name1
+        //                    Saverecord Rptmp
+        //                Loop
+                    End
+                    Else Begin
+        //                File_Size Salesmen                  to iFS
+        //                Set piMinimum   Of FCP_ProgressBar1 to 1
+        //                Set piMaximum   Of FCP_ProgressBar1 to iFS
+        //                Set piAdvanceBy Of FCP_ProgressBar1 to 1
+        //                Set Label Of BtnMess to 'è®¶ú´¶†£ò©Âò Ê¢‡§ ´‡§ úöö®ò≠È§'
+        //                Clear Salesmen
+        //                Find Gt Salesmen.Recnum
+        //                While (Found)
+        //                    Send DoAdvance Of FCP_ProgressBar1
+        //                    For iCount From 1 to 8
+        //                        Clear Rptmp
+        //                        Move sCompany          to Rptmp.Company_Code
+        //                        Move sBranch           to Rptmp.Branch_Code
+        //                        Move Salesmen.Sls_ID   to Rptmp.ID1
+        //                        Move iCount            to Rptmp.Seira
+        //                        Move Salesmen.Sls_Name to Rptmp.Name1
+        //                        Saverecord Rptmp
+        //                    Loop
+        //                    Find Gt Salesmen.Recnum
+        //                Loop
+                    End
+                End
+                Else Begin
+                    If (psPrespID(Self)<>'') Begin
+                        Clear Payresp
+                        Move (psPrespID(Self)) to Payresp.Presp_ID
+                        Find Eq Payresp By Index.7
+                        If (Not(Found)) Begin
+                            Send Stop_Box 'Ä§Áßò®°´¶™ ìß. è¢û®‡£È§' 'è®¶©¶Æ„'
+                            Procedure_Return
+                        End
+        //                For iCount From 1 to 8
+        //                    Clear Rptmp
+        //                    Move sCompany           to Rptmp.Company_Code
+        //                    Move sBranch            to Rptmp.Branch_Code
+        //                    Move Payresp.Presp_ID   to Rptmp.ID1
+        //                    Move iCount             to Rptmp.Seira
+        //                    Move Payresp.Presp_Name to Rptmp.Name1
+        //                    Saverecord Rptmp
+        //                Loop
+                    End
+                    Else Begin
+                        File_Size Payresp                   to iFS
+                        Set piMinimum   Of FCP_ProgressBar1 to 1
+                        Set piMaximum   Of FCP_ProgressBar1 to iFS
+                        Set piAdvanceBy Of FCP_ProgressBar1 to 1
+                        Set Label Of BtnMess to 'è®¶ú´¶†£ò©Âò Ê¢‡§ ´‡§ úöö®ò≠È§'
+                        Clear Payresp
+                        Find Gt Payresp.Recnum
+                        While (Found)
+                            Send DoAdvance Of FCP_ProgressBar1
+                            For iCount From 1 to 8
+                                Clear Rptmp
+                                Move sCompany           to Rptmp.Company_Code
+                                Move sBranch            to Rptmp.Branch_Code
+                                Move Payresp.Presp_ID   to Rptmp.ID1
+                                Move iCount             to Rptmp.Seira
+                                Move Payresp.Presp_Name to Rptmp.Name1
+                                Saverecord Rptmp
+                            Loop
+                            Find Gt Payresp.Recnum
+                        Loop
+                    End
+                End
+            End
+        
+        
+        ///////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////
+            Set Label Of BtnMess to 'ìß¶¢¶ö†©£¶Â ÜèÄä / Üèëé'
+            Send Run_Report to ReportMakeHpalRecords
+        
+        
+            Direct_Input Channel 9 'C:\Hpal.txt'
+            Send Delete_Data to oPinakas
+        
+            While (Not(Seqeof))
+                Read    Channel 9 sClientID iHpso iHpal nOfeilh nAnoixtos
+                If (Trim(sClientID)='') Goto Telos_Edo
+        
+                // 17/02/2004
+                // Ellhnikoi Xarakthres mesa sto ID
+                If (Sysfile.version_Number='1') Move (ToOEM (sClientID)) to sClientID2
+                Else Move sClientID to sClientID2
+        
+                // Gemizei to array apo 0-12 Hpso & 13-25 Hpal
+                For iDeikths From 0 to 29
+                    Read    Channel 9 s1
+                    Set Array_Value Of (oPinakas(Self)) Item iDeikths to s1
+                Loop
+        //
+                // Make record 7 for Hpal (Array 13-25)
+                Clear Rptmp
+                Move sCompany  to Rptmp.Company_Code
+                Move sBranch   to Rptmp.Branch_Code
+                Move sClientID2 to Rptmp.ID1
+                Move 7         to Rptmp.Seira
+                Find Eq Rptmp By Index.1
+                Move iHpso      to Rptmp.Hpso
+                Move iHpal      to Rptmp.Hpal
+                Move nAnoixtos  to Rptmp.Anoixtos
+                Move nOfeilh    to Rptmp.Ofeilh
+        
+                For iDeikths From 13 to 25
+                    Get Array_Value Of (oPinakas(Self)) Item iDeikths to n1
+                    Move (iDeikths-13)  to FieldIndex
+                    Move (Round_Number(n1,0)) to Rptmp.Mhnas_Trex&
+                Loop
+        
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,sClientID2)) to Rptmp.name1
+                Else                                            Move (fsClient (Self,sClientID2)) to Rptmp.name1
+        
+                If (Trim(Rptmp.name1)='') Begin
+                    If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,sClientID)) to Rptmp.name1
+                    Else                                            Move (fsClient (Self,sClientID)) to Rptmp.name1
+                End
+        
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) Begin
+                    Move (fiStoxosHpso(Self,sClientID2,1)) to Rptmp.Stoxos_Hpso
+                    Move (fiStoxosHpal(Self,sClientID2,1)) to Rptmp.Stoxos_Hpal
+                End
+                Else Begin
+                    Move (fiStoxosHpso(Self,sClientID2,0)) to Rptmp.Stoxos_Hpso
+                    Move (fiStoxosHpal(Self,sClientID2,0)) to Rptmp.Stoxos_Hpal
+                End
+        
+                Saverecord Rptmp
+                Set Label Of BtnMess to ('ìß¶¢¶ö†©£¶Â ÜèÄä / Üèëé'+'  '+String(rptmp.recnum))
+        //
+                // Make record 8 for Hpso (Array 0-12)
+                Clear Rptmp
+                Move sCompany  to Rptmp.Company_Code
+                Move sBranch   to Rptmp.Branch_Code
+                Move sClientID2 to Rptmp.ID1
+                Move 8         to Rptmp.Seira
+                Find Eq Rptmp By Index.1
+                Move iHpso      to Rptmp.Hpso
+                Move iHpal      to Rptmp.Hpal
+                Move nAnoixtos  to Rptmp.Anoixtos
+                Move nOfeilh    to Rptmp.Ofeilh
+                For iDeikths From 0 to 12
+                    Get Array_Value Of (oPinakas(Self)) Item iDeikths to n1
+                    Move iDeikths  to FieldIndex
+                    Move (Round_Number(n1,0)) to Rptmp.Mhnas_Trex&
+                Loop
+        
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,sClientID2)) to Rptmp.name1
+                Else                                            Move (fsClient (Self,sClientID2)) to Rptmp.name1
+                If (Trim(Rptmp.name1)='') Begin
+                    If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,sClientID)) to Rptmp.name1
+                    Else                                            Move (fsClient (Self,sClientID)) to Rptmp.name1
+                End
+        
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) Begin
+                    Move (fiStoxosHpso(Self,sClientID2,1)) to Rptmp.Stoxos_Hpso
+                    Move (fiStoxosHpal(Self,sClientID2,1)) to Rptmp.Stoxos_Hpal
+                End
+                Else Begin
+                    Move (fiStoxosHpso(Self,sClientID2,0)) to Rptmp.Stoxos_Hpso
+                    Move (fiStoxosHpal(Self,sClientID2,0)) to Rptmp.Stoxos_Hpal
+                End
+                Saverecord Rptmp
+        
+        
+                // Make record 2 pedia anoixtou +30 +60 +90 90+ (Array 26-29)
+                Clear Rptmp
+                Move sCompany  to Rptmp.Company_Code
+                Move sBranch   to Rptmp.Branch_Code
+                Move sClientID2 to Rptmp.ID1
+                Move 2         to Rptmp.Seira
+                Find Eq Rptmp By Index.1
+        
+                For iDeikths From 26 to 29
+                    Get Array_Value Of (oPinakas(Self)) Item iDeikths to n1
+                    Move (iDeikths-26)  to FieldIndex
+                    Move (Round_Number(n1,2)) to Rptmp.A30&
+                Loop
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,sClientID2)) to Rptmp.name1
+                Else                                            Move (fsClient (Self,sClientID2)) to Rptmp.name1
+                If (Trim(Rptmp.name1)='') Begin
+                    If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,sClientID)) to Rptmp.name1
+                    Else                                            Move (fsClient (Self,sClientID)) to Rptmp.name1
+                End
+        
+                Saverecord Rptmp
+        
+                Set Label Of BtnMess to ('ìß¶¢¶ö†©£¶Â ÜèÄä / Üèëé'+'  '+String(rptmp.recnum))
+                Readln  Channel 9
+                Send Delete_Data to oPinakas
+            Loop
+            Telos_Edo:
+            Close_Input Channel 9 'C:\Hpal.txt'
+        
+        
+        ////////////////////////////////////////////////////////////////////////
+        //////////////////// Tziros kai M3 /////////////////////////////////////
+            Set Label Of BtnMess to 'ìß¶¢¶ö†©£¶Â íùÂ®¶¨ °ò† °¨ô†°È§'
+        //    Send Run_Report to ReportMakeTzirosRecords
+            Send Delete_Data to oPinakas
+        
+            Direct_Input Channel 9 'C:\rptmp3.txt'
+        
+            While (Not(Seqeof))
+                Read    Channel 9 sClientID sName
+                If (Trim(sClientID)='') Goto Telos_Edo2
+        
+                // 17/02/2004
+                // Ellhnikoi Xarakthres mesa sto ID
+                If (Sysfile.version_Number='1') Move (ToOEM (sClientID)) to sClientID2
+                Else Move sClientID to sClientID2
+        
+                Send Delete_Data to oPinakas
+        
+                // Gemizei to array apo 0-12 Tziros & 13-25 M3
+                For iDeikths From 0 to 25
+                    Read    Channel 9 s1
+                    Set Array_Value Of (oPinakas(Self)) Item iDeikths to s1
+                Loop
+                // Ayta ta 2 read einai gia ta lektika ton synolon
+                Read    Channel 9 s1 s1
+                // Gemizei to array apo 26-38 Syn Tzirou & 39-51 Syn M3
+                For iDeikths From 26 to 51
+                    Read    Channel 9 s1
+                    Set Array_Value Of (oPinakas(Self)) Item iDeikths to s1
+                Loop
+        
+        
+                // Make record 1 for M3 (Array 13-25)
+                Clear Rptmp
+                Move sCompany  to Rptmp.Company_Code
+                Move sBranch   to Rptmp.Branch_Code
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) ;
+                     Move (fsClientPayResp(Self,sClientID2)) to Rptmp.ID1
+                Else Move sClientID2                         to Rptmp.ID1
+                Move 1         to Rptmp.Seira
+                Find Eq Rptmp By Index.1
+        
+                For iDeikths From 13 to 25
+                    Get Array_Value Of (oPinakas(Self)) Item iDeikths to n1
+                    Move (iDeikths-13)  to FieldIndex
+                    Move (Round_Number(n1,1)) to Rptmp.Mhnas_Trex&
+                Loop
+        
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,(fsClientPayResp(Self,sClientID2)))) to Rptmp.name1
+                Else                                            Move (fsClient (Self,sClientID2)) to Rptmp.name1
+                If (Trim(Rptmp.name1)='') Begin
+                    If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,sClientID)) to Rptmp.name1
+                    Else                                            Move (fsClient (Self,sClientID)) to Rptmp.name1
+                End
+        
+                Saverecord Rptmp
+        
+                Set Label Of BtnMess to ('ìß¶¢¶ö†©£¶Â íùÂ®¶¨ °ò† °¨ô†°È§'+'  '+String(Rptmp.Recnum))
+        
+        
+                // Make record 6 for Tziros (Array 0-12)
+                Clear Rptmp
+                Move sCompany  to Rptmp.Company_Code
+                Move sBranch   to Rptmp.Branch_Code
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) ;
+                     Move (fsClientPayResp(Self,sClientID2)) to Rptmp.ID1
+                Else Move sClientID2                         to Rptmp.ID1
+                Move 6         to Rptmp.Seira
+                Find Eq Rptmp By Index.1
+                For iDeikths From 0 to 12
+                    Get Array_Value Of (oPinakas(Self)) Item iDeikths to n1
+                    Move iDeikths  to FieldIndex
+                    Move (Round_Number(n1,2)) to Rptmp.Mhnas_Trex&
+                Loop
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,(fsClientPayResp(Self,sClientID2)))) to Rptmp.name1
+                Else                                            Move (fsClient (Self,sClientID2)) to Rptmp.name1
+                If (Trim(Rptmp.name1)='') Begin
+                    If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,sClientID)) to Rptmp.name1
+                    Else                                            Move (fsClient (Self,sClientID)) to Rptmp.name1
+                End
+        
+                Saverecord Rptmp
+        
+                Set Label Of BtnMess to ('ìß¶¢¶ö†©£¶Â íùÂ®¶¨ °ò† °¨ô†°È§'+'  '+String(Rptmp.Recnum))
+                Readln  Channel 9
+            Loop
+            Telos_Edo2:
+        
+        
+            // Make Synola record 1 for M3 (Array 39-51)
+            Clear Rptmp
+        
+            Move sCompany                                  to Rptmp.Company_Code
+            Move sBranch                                   to Rptmp.Branch_Code
+            Move '99999999'                                 to Rptmp.ID1
+            Move 1                                          to Rptmp.Seira
+            Find Eq Rptmp By Index.1
+            For iDeikths From 39 to 51
+                Get Array_Value Of (oPinakas(Self)) Item iDeikths to n1
+                Move (iDeikths-39)  to FieldIndex
+                Move (Round_Number(n1,1)) to Rptmp.Mhnas_Trex&
+            Loop
+            Move 'óó6ˇëÁ§¶¢ò è‡¢„©ú†™ ã3'                  to Rptmp.name1
+            Saverecord Rptmp
+        
+        
+            // Make Synola record 6 for Tziros (Array 26-38)
+            Clear Rptmp
+        
+            Move sCompany                                  to Rptmp.Company_Code
+            Move sBranch                                   to Rptmp.Branch_Code
+            Move '99999999'                                 to Rptmp.ID1
+            Move 6                                          to Rptmp.Seira
+            Find Eq Rptmp By Index.1
+            For iDeikths From 26 to 38
+                Get Array_Value Of (oPinakas(Self)) Item iDeikths to n1
+                Move (iDeikths-26)  to FieldIndex
+                Move (Round_Number(n1,2)) to Rptmp.Mhnas_Trex&
+            Loop
+            Move 'óó6ˇëÁ§¶¢ò íùÂ®¶¨'                        to Rptmp.name1
+            Saverecord Rptmp
+            Close_Input Channel 9 'C:\rptmp3.txt'
+        
+        
+        
+        ////////////////////////////////////////////////////////////////////////
+        //////make record 3 aksiografon/////////////
+            Set Label Of BtnMess to 'ìß¶¢¶ö†©£¶Â Ñ†©ß®ò°´‚‡§ Ä•†¶ö®·≠‡§'
+            Set Report_Name     of ReportMakeAxioRecords to "rptmp3ax.rpt"
+            Set ExportFileName  of ReportMakeAxioRecords to "c:\rptmp3ax.txt"
+            Set piEpidika       of ReportMakeAxioRecords to 0
+            Send Run_Report to ReportMakeAxioRecords
+            Send Delete_Data to oPinakas
+        
+            Direct_Input Channel 9 'C:\rptmp3ax.txt'
+        
+            //
+        
+            While (Not(Seqeof))
+                Read    Channel 9 sClientID sName
+                If (Trim(sClientID)='') Goto Telos_Edo3
+            // 17/02/2004
+            // Ellhnikoi Xarakthres mesa sto ID
+            If (Sysfile.version_Number='1') Move (ToOEM (sClientID)) to sClientID2
+            Else Move sClientID to sClientID2
+        
+                Send Delete_Data to oPinakas
+        
+                // Gemizei to array apo 0-12 aksiografa
+                For iDeikths From 0 to 12
+                    Read    Channel 9 s1
+                    Set Array_Value Of (oPinakas(Self)) Item iDeikths to s1
+                Loop
+                // Ayta ta 2 read einai gia ta lektika ton synolon
+                Read    Channel 9 s1 s1
+                // Gemizei to array apo 13-25 Syn aksiografon
+                For iDeikths From 13 to 25
+                    Read    Channel 9 s1
+                    Set Array_Value Of (oPinakas(Self)) Item iDeikths to s1
+                Loop
+        
+        
+                // Make record 3 for aksiografa (Array 0-12)
+                Clear Rptmp
+        
+                Move sCompany  to Rptmp.Company_Code
+                Move sBranch   to Rptmp.Branch_Code
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) ;
+                     Move (fsClientPayResp(Self,sClientID2)) to Rptmp.ID1
+                Else Move sClientID2                         to Rptmp.ID1
+                Move 3         to Rptmp.Seira
+                Find Eq Rptmp By Index.1
+                For iDeikths From 0 to 12
+                    Get Array_Value Of (oPinakas(Self)) Item iDeikths to n1
+                    Move iDeikths   to FieldIndex
+                    Move (Round_Number(n1,2)) to Rptmp.Mhnas_Trex&
+                Loop
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,(fsClientPayResp(Self,sClientID2)))) to Rptmp.name1
+                Else                                            Move (fsClient (Self,sClientID2)) to Rptmp.name1
+                If (Trim(Rptmp.name1)='') Begin
+                    If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,sClientID)) to Rptmp.name1
+                    Else                                            Move (fsClient (Self,sClientID)) to Rptmp.name1
+                End
+        
+                Saverecord Rptmp
+        
+                Set Label Of BtnMess to ('ìß¶¢¶ö†©£¶Â Ñ†©ß®ò°´‚‡§ Ä•†¶ö®·≠‡§'+'  '+String(Rptmp.Recnum))
+                Readln  Channel 9
+            loop
+            Telos_Edo3:
+        
+        
+            // Make Synola record 3 for aksiografa synola (Array 13-25)
+            Clear Rptmp
+        
+            Move sCompany                                  to Rptmp.Company_Code
+            Move sBranch                                   to Rptmp.Branch_Code
+            Move '99999999'                                to Rptmp.ID1
+            Move 3                                         to Rptmp.Seira
+            Find Eq Rptmp By Index.1
+            For iDeikths From 13 to 25
+                Get Array_Value Of (oPinakas(Self)) Item iDeikths to n1
+                Move (iDeikths-13)  to FieldIndex
+                Move (Round_Number(n1,2)) to Rptmp.Mhnas_Trex&
+            Loop
+            Move 'óó3ˇëÁ§¶¢ò Ñ†©ß®ò°´‚‡§ Ä•†¶ö®·≠‡§'       to Rptmp.name1
+            Saverecord Rptmp
+            Close_Input Channel 9 'C:\rptmp3ax.txt'
+        
+        
+        /////////////////////////////////////////
+        //// Make record 4 Ñß†õÂ°‡§ aksiografon
+        //// O pragmatikos kodikas epidikon me mia nea logikh pou analyetai parakato
+        //// paizei sto epomeno report (rptmp3dN & Rptmp3diNew.rpt)
+        //// Kratame omos ton palio kodika ton epidikon os exei giati etsi prepei
+        //// na paixei gia ta record typou 2 kai 5 xoris na peiraxtei tipota
+        
+            Erasefile "c:\rptmp3di.txt"
+            Set Label Of BtnMess to 'ìß¶¢¶ö†©£¶Â ÑßÂõ†°‡§ Ä•†¶ö®·≠‡§'
+            Set Report_Name     of ReportMakeAxioRecords to "rptmp3di.rpt"
+            Set ExportFileName  of ReportMakeAxioRecords to "c:\rptmp3di.txt"
+            Set piEpidika       of ReportMakeAxioRecords to 1
+            Send Run_Report to ReportMakeAxioRecords
+            Send Delete_Data to oPinakas
+        
+            Direct_Input Channel 9 'C:\rptmp3di.txt'
+        
+            While (Not(Seqeof))
+                Read    Channel 9 sClientID sName
+                If (Trim(sClientID)='') Goto Telos_Edo3_1
+        
+            // 17/02/2004
+            // Ellhnikoi Xarakthres mesa sto ID
+            If (Sysfile.version_Number='1') Move (ToOEM (sClientID)) to sClientID2
+            Else Move sClientID to sClientID2
+                Send Delete_Data to oPinakas
+        
+                // Gemizei to array apo 0-14 aksiografa
+                For iDeikths From 0 to 14
+                    Read    Channel 9 s1
+                    Set Array_Value Of (oPinakas(Self)) Item iDeikths to s1
+                Loop
+                // Ayta ta 2 read einai gia ta lektika ton synolon
+                Read    Channel 9 s1 s1
+                // Gemizei to array apo 15-27 Syn aksiografon
+                For iDeikths From 15 to 27
+                    Read    Channel 9 s1
+                    Set Array_Value Of (oPinakas(Self)) Item iDeikths to s1
+                Loop
+        
+                // SOS prosthikh ton epidikon sta record typou 2 (An. Logar) & 5 (Syn. Ofeilh)
+                // gia na piasoume ta diamartyrimena axiografa me arnhtikh pistosh
+                // h opoia prepei na prostethei thetika s' ayta ta records
+                Clear Rptmp
+                Move sCompany  to Rptmp.Company_Code
+                Move sBranch   to Rptmp.Branch_Code
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) ;
+                     Move (fsClientPayResp(Self,sClientID2)) to Rptmp.ID1
+                Else Move sClientID2                         to Rptmp.ID1
+                Move 2         to Rptmp.Seira
+                Find Eq Rptmp By Index.1
+                For iDeikths From 0 to 12
+                    Get Array_Value Of (oPinakas(Self)) Item iDeikths to n1
+                    Move iDeikths   to FieldIndex
+                    Add (Round_Number(n1,2)) to Rptmp.Mhnas_Trex&
+                Loop
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,(fsClientPayResp(Self,sClientID2)))) to Rptmp.name1
+                Else                                            Move (fsClient (Self,sClientID2)) to Rptmp.name1
+                If (Trim(Rptmp.name1)='') Begin
+                    If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,sClientID)) to Rptmp.name1
+                    Else                                            Move (fsClient (Self,sClientID)) to Rptmp.name1
+                End
+        
+                Saverecord Rptmp
+        
+        
+                Clear Rptmp
+                Move sCompany  to Rptmp.Company_Code
+                Move sBranch   to Rptmp.Branch_Code
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) ;
+                     Move (fsClientPayResp(Self,sClientID2)) to Rptmp.ID1
+                Else Move sClientID2                         to Rptmp.ID1
+                Move 5         to Rptmp.Seira
+                Find Eq Rptmp By Index.1
+                For iDeikths From 0 to 12
+                    Get Array_Value Of (oPinakas(Self)) Item iDeikths to n1
+                    Move iDeikths   to FieldIndex
+                    Add (Round_Number(n1,2)) to Rptmp.Mhnas_Trex&
+                Loop
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,(fsClientPayResp(Self,sClientID2)))) to Rptmp.name1
+                Else                                            Move (fsClient (Self,sClientID2)) to Rptmp.name1
+                If (Trim(Rptmp.name1)='') Begin
+                    If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,sClientID)) to Rptmp.name1
+                    Else                                            Move (fsClient (Self,sClientID)) to Rptmp.name1
+                End
+        
+                Saverecord Rptmp
+        
+                Set Label Of BtnMess to ('ìß¶¢¶ö†©£¶Â ÑßÂõ†°‡§ Ä•†¶ö®·≠‡§'+'  '+String(Rptmp.Recnum))
+                Readln  Channel 9
+            loop
+            Telos_Edo3_1:
+        
+            Close_Input Channel 9 'C:\rptmp3di.txt'
+        
+        ////////////////////////////////////////////////////////////////////////
+        //// Neos kodikas & report gia ta epidika
+        //// me thn nea logikh tou Btypkin.Gtypkin_Code
+        //// to opoio an exei timh 0 tote ola doyleyoun opos prepei,
+        //// an exei timh 1 tote DEN lamvanetai yp opsin to poso
+        //// kai an exei timh 2 tote to poso tou axiografou erxetai arnhtika
+        //// Edo asxoloumaste MONO me to record 4 ton epidikon
+        /////////////////////////////////////////////////////////////////////////
+            Erasefile "c:\rptmp3dN.txt"
+            Set Label Of BtnMess to 'ìß¶¢¶ö†©£¶Â ÑßÂõ†°‡§ Ä•†¶ö®·≠‡§'
+            Set Report_Name     of ReportMakeAxioRecords to "rptmp3diNew.rpt"
+            Set ExportFileName  of ReportMakeAxioRecords to "c:\rptmp3dN.txt"
+            Set piEpidika       of ReportMakeAxioRecords to 1
+            Send Run_Report to ReportMakeAxioRecords
+            Send Delete_Data to oPinakas
+        
+            Direct_Input Channel 9 'C:\rptmp3dN.txt'
+        
+            While (Not(Seqeof))
+                Read    Channel 9 sClientID sName
+                If (Trim(sClientID)='') Goto Telos_Edo3N_1
+            // 17/02/2004
+            // Ellhnikoi Xarakthres mesa sto ID
+            If (Sysfile.version_Number='1') Move (ToOEM (sClientID)) to sClientID2
+            Else Move sClientID to sClientID2
+        
+                Send Delete_Data to oPinakas
+        
+                // Gemizei to array apo 0-14 aksiografa
+                For iDeikths From 0 to 14
+                    Read    Channel 9 s1
+                    Set Array_Value Of (oPinakas(Self)) Item iDeikths to s1
+                Loop
+                // Ayta ta 2 read einai gia ta lektika ton synolon
+                Read    Channel 9 s1 s1
+                // Gemizei to array apo 15-27 Syn aksiografon
+                For iDeikths From 15 to 27
+                    Read    Channel 9 s1
+                    Set Array_Value Of (oPinakas(Self)) Item iDeikths to s1
+                Loop
+        
+                // Make record 4 for úß†õ†°ò aksiografa (Array 0-12) +2 gia synola epit/synal
+                Clear Rptmp
+        
+                Move sCompany  to Rptmp.Company_Code
+                Move sBranch   to Rptmp.Branch_Code
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) ;
+                     Move (fsClientPayResp(Self,sClientID2)) to Rptmp.ID1
+                Else Move sClientID2                         to Rptmp.ID1
+                Move 4         to Rptmp.Seira
+                Find Eq Rptmp By Index.1
+                For iDeikths From 0 to 14
+                    Get Array_Value Of (oPinakas(Self)) Item iDeikths to n1
+                    If (iDeikths>12) Begin
+                        If (iDeikths=13) Add (Round_Number(n1,2)) to Rptmp.Epid_Epitag
+                        Else             Add (Round_Number(n1,2)) to Rptmp.Epid_Synal
+                    End
+                    Else Begin
+                        Move iDeikths   to FieldIndex
+                        Move (Round_Number(n1,2)) to Rptmp.Mhnas_Trex&
+                    End
+                Loop
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,(fsClientPayResp(Self,sClientID2)))) to Rptmp.name1
+                Else                                            Move (fsClient (Self,sClientID2)) to Rptmp.name1
+                If (Trim(Rptmp.name1)='') Begin
+                    If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,sClientID)) to Rptmp.name1
+                    Else                                            Move (fsClient (Self,sClientID)) to Rptmp.name1
+                End
+        
+                Saverecord Rptmp
+        
+        
+                Set Label Of BtnMess to ('ìß¶¢¶ö†©£¶Â ÑßÂõ†°‡§ Ä•†¶ö®·≠‡§'+'  '+String(Rptmp.Recnum))
+                Readln  Channel 9
+            loop
+            Telos_Edo3N_1:
+        
+            // Make Synola record 4 for aksiografa synola (Array 13-25)
+            Clear Rptmp
+            Move sCompany                                  to Rptmp.Company_Code
+            Move sBranch                                   to Rptmp.Branch_Code
+            Move '99999999'                                to Rptmp.ID1
+            Move 4                                         to Rptmp.Seira
+            Find Eq Rptmp By Index.1
+            For iDeikths From 15 to 27
+                Get Array_Value Of (oPinakas(Self)) Item iDeikths to n1
+                Move (iDeikths-15)  to FieldIndex
+                Move (Round_Number(n1,2)) to Rptmp.Mhnas_Trex&
+            Loop
+            Move 'óó4ˇëÁ§¶¢ò ÑßÂõ†°‡§ Ä•†¶ö®·≠‡§'          to Rptmp.name1
+            Saverecord Rptmp
+        
+            Close_Input Channel 9 'C:\rptmp3dN.txt'
+        
+        ////////////////////////////////////////////////////////////////////////
+        //////////////////// Anoixtos Logar + Syn. Ofeilh///////////////////////
+        
+            Set Label Of BtnMess to 'è®¶ú´¶†£ò©Âò Ä§¶†Æ´¶Á ä¶ö/£¶Á && ë¨§. é≠ú†¢„™'
+            Send Run_Report to ReportMakeOfeilhRecords
+            Send Delete_Data to oPinakas
+        
+            Direct_Input Channel 9 'C:\rptmp4.txt'
+        
+            While (Not(Seqeof))
+                Read    Channel 9 sClientID sName
+                If (Trim(sClientID)='') Goto Telos_Edo4
+            // 17/02/2004
+            // Ellhnikoi Xarakthres mesa sto ID
+            If (Sysfile.version_Number='1') Move (ToOEM (sClientID)) to sClientID2
+            Else Move sClientID to sClientID2
+        
+                Send Delete_Data to oPinakas
+                // Gemizei to array apo 0-12 An.Logariasmos
+                For iDeikths From 0 to 12
+                    Read    Channel 9 s1
+                    Set Array_Value Of (oPinakas(Self)) Item iDeikths to s1
+                Loop
+        
+        
+                // Make record 2 and 5 for Anoixtos Logariasmos and Syn Ofeilh (Array 0-12)
+                // Mono oi xreoseis kai oi pistoseis apo kykloma cmoves.
+                // (oi kinhseis axiografon erxontai se allo paso)
+                Clear Rptmp
+                Move sCompany  to Rptmp.Company_Code
+                Move sBranch   to Rptmp.Branch_Code
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) ;
+                     Move (fsClientPayResp(Self,sClientID2)) to Rptmp.ID1
+                Else Move sClientID2                         to Rptmp.ID1
+                Move 2         to Rptmp.Seira
+                Find Eq Rptmp By Index.1
+                For iDeikths From 0 to 12
+                    Get Array_Value Of (oPinakas(Self)) Item iDeikths to n1
+                    Move iDeikths  to FieldIndex
+                    Add (Round_Number(n1,2)) to Rptmp.Mhnas_Trex&
+                Loop
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,(fsClientPayResp(Self,sClientID2)))) to Rptmp.name1
+                Else                                            Move (fsClient (Self,sClientID2)) to Rptmp.name1
+                If (Trim(Rptmp.name1)='') Begin
+                    If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,sClientID)) to Rptmp.name1
+                    Else                                            Move (fsClient (Self,sClientID)) to Rptmp.name1
+                End
+        
+                Saverecord Rptmp
+        
+        
+                Clear Rptmp
+                Move sCompany  to Rptmp.Company_Code
+                Move sBranch   to Rptmp.Branch_Code
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) ;
+                     Move (fsClientPayResp(Self,sClientID2)) to Rptmp.ID1
+                Else Move sClientID2                         to Rptmp.ID1
+                Move 5         to Rptmp.Seira
+                Find Eq Rptmp By Index.1
+                For iDeikths From 0 to 12
+                    Get Array_Value Of (oPinakas(Self)) Item iDeikths to n1
+                    Move iDeikths  to FieldIndex
+                    Add (Round_Number(n1,2)) to Rptmp.Mhnas_Trex&
+                Loop
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,(fsClientPayResp(Self,sClientID2)))) to Rptmp.name1
+                Else                                            Move (fsClient (Self,sClientID2)) to Rptmp.name1
+                If (Trim(Rptmp.name1)='') Begin
+                    If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,sClientID)) to Rptmp.name1
+                    Else                                            Move (fsClient (Self,sClientID)) to Rptmp.name1
+                End
+        
+                Saverecord Rptmp
+        
+        
+                Set Label Of BtnMess to ('è®¶ú´¶†£ò©Âò Ä§¶†Æ´¶Á ä¶ö/£¶Á && ë¨§. é≠ú†¢„™'+'  '+String(Rptmp.Recnum))
+                Readln  Channel 9
+            Loop
+            Telos_Edo4:
+        
+        
+            // Make Synola record 2 for Ä§.ä¶öò®
+            Clear Rptmp
+        
+            Move sCompany                                  to Rptmp.Company_Code
+            Move sBranch                                   to Rptmp.Branch_Code
+            Move '99999999'                                to Rptmp.ID1
+            Move 2                                         to Rptmp.Seira
+            Find Eq Rptmp By Index.1
+            Move 'óó2ˇëÁ§¶¢ò Ä§¶†Æ´¶Á ä¶öò®†ò©£¶Á'        to Rptmp.name1
+            Saverecord Rptmp
+        
+            Close_Input Channel 9 'C:\rptmp4.txt'
+        
+        
+        
+        ////////////////////////////////////////////////////////////////////////
+        //////////////////// É†ò£¶®≠‡©û Anoixtos Logar + Syn. Ofeilh///////////////////////
+        
+            Set Label Of BtnMess to 'É†ò£Ê®≠‡©û Ä§¶†Æ´¶Á ä¶ö/£¶Á && ë¨§. é≠ú†¢„™'
+            Send Run_Report to ReportmakeexoflRecords
+            Send Delete_Data to oPinakas
+        
+            Direct_Input Channel 9 'C:\rptmp5.txt'
+        
+            While (Not(Seqeof))
+                Read    Channel 9 sClientID sName
+                If (Trim(sClientID)='') Goto Telos_Edo5
+            // 17/02/2004
+            // Ellhnikoi Xarakthres mesa sto ID
+            If (Sysfile.version_Number='1') Move (ToOEM (sClientID)) to sClientID2
+            Else Move sClientID to sClientID2
+        
+                Send Delete_Data to oPinakas
+                // Gemizei to array apo 0-12 exoflhmena
+                For iDeikths From 0 to 25
+                    Read    Channel 9 s1
+                    Set Array_Value Of (oPinakas(Self)) Item iDeikths to s1
+                Loop
+        
+                // H proth dodekada periexei ta posa apo ta exoflhmena axiografa
+                // kai prepei na afairethei to poso ayto apo ta records typou
+                // 2 kai 5
+                Clear Rptmp
+                Move sCompany  to Rptmp.Company_Code
+                Move sBranch   to Rptmp.Branch_Code
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) ;
+                     Move (fsClientPayResp(Self,sClientID2)) to Rptmp.ID1
+                Else Move sClientID2                         to Rptmp.ID1
+                Move 2         to Rptmp.Seira
+                Find Eq Rptmp By Index.1
+                For iDeikths From 0 to 12
+                    Get Array_Value Of (oPinakas(Self)) Item iDeikths to n1
+                    Move iDeikths  to FieldIndex
+                    Sub (Round_Number(n1,2)) From Rptmp.Mhnas_Trex&
+                Loop
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,(fsClientPayResp(Self,sClientID2)))) to Rptmp.name1
+                Else                                            Move (fsClient (Self,sClientID2)) to Rptmp.name1
+                If (Trim(Rptmp.name1)='') Begin
+                    If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,sClientID)) to Rptmp.name1
+                    Else                                            Move (fsClient (Self,sClientID)) to Rptmp.name1
+                End
+        
+                Saverecord Rptmp
+        
+        
+               Clear Rptmp
+        
+               Move sCompany  to Rptmp.Company_Code
+               Move sBranch   to Rptmp.Branch_Code
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) ;
+                     Move (fsClientPayResp(Self,sClientID2)) to Rptmp.ID1
+                Else Move sClientID2                         to Rptmp.ID1
+               Move 5         to Rptmp.Seira
+               Find Eq Rptmp By Index.1
+               For iDeikths From 0 to 12
+                   Get Array_Value Of (oPinakas(Self)) Item iDeikths to n1
+                   Move iDeikths  to FieldIndex
+                    Sub (Round_Number(n1,2)) From Rptmp.Mhnas_Trex&
+               Loop
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,(fsClientPayResp(Self,sClientID2)))) to Rptmp.name1
+                Else                                            Move (fsClient (Self,sClientID2)) to Rptmp.name1
+                If (Trim(Rptmp.name1)='') Begin
+                    If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,sClientID)) to Rptmp.name1
+                    Else                                            Move (fsClient (Self,sClientID)) to Rptmp.name1
+                End
+        
+                Saverecord Rptmp
+        
+        
+                // kai h deyterh 12da periexei ta anexoflhta ta opoia prepei na
+                // afairethoun mono apo ta records typou 2 (Anoixtou Logariasmou)
+                Clear Rptmp
+                Move sCompany  to Rptmp.Company_Code
+                Move sBranch   to Rptmp.Branch_Code
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) ;
+                     Move (fsClientPayResp(Self,sClientID2)) to Rptmp.ID1
+                Else Move sClientID2                         to Rptmp.ID1
+                Move 2         to Rptmp.Seira
+                Find Eq Rptmp By Index.1
+                For iDeikths From 13 to 25
+                    Get Array_Value Of (oPinakas(Self)) Item iDeikths to n1
+                    Move (iDeikths-13)  to FieldIndex
+                    Sub (Round_Number(n1,2)) From Rptmp.Mhnas_Trex&
+                Loop
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,(fsClientPayResp(Self,sClientID2)))) to Rptmp.name1
+                Else                                            Move (fsClient (Self,sClientID2)) to Rptmp.name1
+                If (Trim(Rptmp.name1)='') Begin
+                    If ((piPoios(Self)=2) And (psPrespID(Self)='')) Move (fsPayResp(Self,sClientID)) to Rptmp.name1
+                    Else                                            Move (fsClient (Self,sClientID)) to Rptmp.name1
+                End
+        
+                Saverecord Rptmp
+        
+        
+                Set Label Of BtnMess to ('ìß¶¢¶ö†©£¶Â Ä§¶†Æ´¶Á ä¶ö/£¶Á && ë¨§. é≠ú†¢„™'+'  '+String(Rptmp.Recnum))
+                Readln  Channel 9
+            Loop
+        
+            Telos_Edo5:
+        
+        
+        
+        //////////////////////////////////////////
+                Number nTotal
+                Clear Rptmp
+        
+                Move sCompany  to Rptmp.Company_Code
+                Move sBranch   to Rptmp.Branch_Code
+                Move 5         to Rptmp.Seira
+                Find Gt Rptmp By Index.6
+                While ((Found=1) And (Rptmp.Company_Code=sCompany) And (Rptmp.Branch_Code=sBranch) And (Rptmp.Seira=5))
+                    Set Label Of BtnMess to ('è®¶ú´¶†£ò©Âò ë¨§Ê¢‡§'+'  '+String(Rptmp.Recnum))
+                    Move 12 to iCount
+                    For iDeikths2 From 0 to 12
+                        Move 0 to nTotal
+                        For iDeikths From iDeikths2 to iCount
+                            Move iDeikths  to FieldIndex
+                            Add Rptmp.Mhnas_Trex& to nTotal
+                        Loop
+        
+                        Move iDeikths2  to FieldIndex
+                        Move nTotal to Rptmp.Mhnas_Trex&
+                    Loop
+                    Saverecord Rptmp
+                    Find Gt Rptmp By Index.6
+                Loop
+        
+        
+            Close_Input Channel 9 'C:\rptmp5.txt'
+        
+        
+        
+        //////////////////////////////////////////////////////////////////////////
+        ////////É†·ôò©£ò ¢ûÆü‚§´‡§ ò•†¶ö®·≠‡§ ö†ò ¨ß¶¢¶ö†©£Ê ë¨§¶¢†°„™ é≠ú†¢„™////
+            Set Label Of BtnMess to 'ìß¶¢¶ö†©£¶Â äû•·§´‡§ Ä•†¶ö®·≠‡§'
+            Set Report_Name     of ReportMakepaliaAxioRecords to "rptmp6.rpt"
+            Set ExportFileName  of ReportMakepaliaAxioRecords to "c:\rptmp6.txt"
+            Send Run_Report to ReportMakepaliaAxioRecords
+            Send Delete_Data to oPinakas
+            Direct_Input Channel 9 'C:\rptmp6.txt'
+        //
+            While (Not(Seqeof))
+                Read    Channel 9 sClientID sName
+                If (Trim(sClientID)='') Goto Telos_Edo6
+            // 17/02/2004
+            // Ellhnikoi Xarakthres mesa sto ID
+            If (Sysfile.version_Number='1') Move (ToOEM (sClientID)) to sClientID2
+            Else Move sClientID to sClientID2
+        
+                Send Delete_Data to oPinakas
+        
+                // Gemizei to array apo 0-12 aksiografa
+                For iDeikths From 0 to 12
+                    Read    Channel 9 s1
+                    Set Array_Value Of (oPinakas(Self)) Item iDeikths to s1
+                Loop
+        
+                // Ñßû®úò©£Ê™ record 5 ë¨§¶¢†°„™ ¶≠ú†¢„™ (Array 0-12)
+                // Prosoxh to array einai antestrameno (apo to report)
+                // 0=-12 1=-11 2=-10....11=-1 12=Trexon
+        
+                Clear Rptmp
+        
+                Move sCompany                                   to Rptmp.Company_Code
+                Move sBranch                                    to Rptmp.Branch_Code
+                If ((piPoios(Self)=2) And (psPrespID(Self)='')) ;
+                     Move (fsClientPayResp(Self,sClientID2)) to Rptmp.ID1
+                Else Move sClientID2                         to Rptmp.ID1
+                Move 5                                          to Rptmp.Seira
+                Find Eq Rptmp By Index.1
+        
+                Integer isStarted iFrom
+                Move 0 to isStarted
+                For iDeikths2 From 0 to 12
+                    Get Array_Value Of (oPinakas(Self)) Item iDeikths2 to n1
+                    If (n1<>0) Begin
+                        Move 1 to isStarted
+                    End
+                    If (isStarted) Begin
+                        Move 0 to nTotal
+                        For iDeikths From (iDeikths2+1) to 12
+                            Get Array_Value Of (oPinakas(Self)) Item iDeikths to n1
+                            Add n1 to nTotal
+                        Loop
+                        If ((12-iDeikths2)<>0) Begin
+                            // Den Peirazoume ton trexonta mhna
+                            Move (12-iDeikths2) to FieldIndex
+                            Add nTotal to Rptmp.Mhnas_Trex&
+                        End
+                    End
+                Loop
+                Saverecord Rptmp
+        
+                Set Label Of BtnMess to ('ìß¶¢¶ö†©£¶Â Ñ†©ß®ò°´‚‡§ Ä•†¶ö®·≠‡§'+'  '+String(Rptmp.Recnum))
+                Readln  Channel 9
+            loop
+            Telos_Edo6:
+            Close_Input Channel 9 'C:\rptmp6.txt'
+        
+        
+            // Calc ©¨§¶¢ò for ë¨§¶¢†°û ¶≠ú†¢û
+            Send Delete_Data to (oPinakas(Self))
+            Clear Rptmp
+            Move sCompany   to Rptmp.Company_Code
+            Move sBranch    to Rptmp.Branch_Code
+            Move 5          to Rptmp.Seira
+            Find Gt Rptmp By Index.6
+            While ((Found=1) And (Rptmp.Company_Code=sCompany) And (Rptmp.Branch_Code=sBranch) And (Rptmp.Seira=5))
+                Set Label Of BtnMess to ('ìß¶¢¶ö†©£¶Â ë¨§Ê¢‡§'+'  '+String(Rptmp.Recnum))
+                For iDeikths From 0 to 12
+                    Move iDeikths  to FieldIndex
+                    Get Array_Value Of (oPinakas(Self)) Item iDeikths to n1
+                    Set Array_Value Of (oPinakas(Self)) Item iDeikths to (Rptmp.Mhnas_Trex&+n1)
+                Loop
+                Find Gt Rptmp By Index.6
+            Loop
+        
+            Clear Rptmp
+        
+            Move sCompany                                  to Rptmp.Company_Code
+            Move sBranch                                   to Rptmp.Branch_Code
+            Move '99999999'                                to Rptmp.ID1
+            Move 5                                         to Rptmp.Seira
+            Find Eq Rptmp By Index.1
+            For iDeikths From 0 to 12
+                Get Array_Value Of (oPinakas(Self)) Item iDeikths to n1
+                Move iDeikths  to FieldIndex
+                Move n1 to Rptmp.Mhnas_Trex&
+            Loop
+            Move 'óó5ˇëÁ§¶¢ò ë¨§¶¢†°„™ é≠ú†¢„™'          to Rptmp.name1
+            Saverecord Rptmp
+        
+        
+        
+        /////////////////////////////////////////////////////////////////
+        /////// Telos olon ton report pou xrhsimopoihthikan /////////////
+        /////// gia na vgaloume ta epimerous apotelesmata   /////////////
+        /////////////////////////////////////////////////////////////////
+        
+            Send RunemporReport  to (ReportEmporias(current_object))
+            Set Label Of BtnMess to ''
+        
+        End_Procedure // OnClick
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub1
+
+    Object FCP_ProgressBar1 is a FCP_ProgressBar
+        Set Size to 13 249
+        Set Location to 202 158
+
+        //AB-StoreStart
+                                        
+        Set piBarColor1 to clAqua
+        Set pbPercent   to False
+        Set pbSmooth    to true
+        Set pbVertical  to False
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // FCP_ProgressBar1
+
+    Object RadioGroupSub2 is a RadioGroupSub
+        Set Size to 149 151
+        Set Location to 66 3
+        Set Color to 10859729
+        Object Radio1 is a RadioSub
+            Set Label to "ë´¶†ÆúÂò Ñ£ß¶®Âò™"
+            Set Size to 10 79
+            Set Location to 10 5
+            Set Color to 10859729
+        End_Object    // Radio1
+
+        Object Radio2 is a RadioSub
+            Set Label to "É†òÆ®¶§†°Ê ÜèÄä/Üèëé"
+            Set Size to 10 103
+            Set Location to 25 5
+            Set Color to 10859729
+        End_Object    // Radio2
+
+        Object Radio3 is a RadioSub
+            Set Label to "Ä§·¢¨©û Ä§. ä¶öò®/£¶Á. && ë¨§. é≠ú†¢."
+            Set Size to 10 143
+            Set Location to 40 5
+            Set Color to 10859729
+        End_Object    // Radio3
+
+        Object ButtonSub1 is a ButtonSub
+            Set Label to "ButtonSub1"
+            Set Bitmap to "print_m.bmp"
+            Set Size to 18 23
+            Set Location to 127 124
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                            
+            Set TooltipValue to "íú¢ú¨´òÂò òß¶´ú¢‚©£ò´ò Æ‡®Â™ §‚ò úßú•ú®öò©Âò"
+            
+            Procedure OnClick
+                Send RunemporReport  to (ReportEmporias(current_object))
+            End_Procedure // OnClick
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub1
+
+
+        //AB-StoreStart
+                                        
+        Procedure Notify_Select_State integer iToItem integer iFromItem
+            Set piWhat to (iToItem+1)
+        End_Procedure
+        
+        // If you set Current_radio you must set this after the
+        // radio objects have been created AND after Notify_select_State has been
+        // created. i.e. Set in bottom-code at end!!
+        //Set Current_Radio to 0
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // RadioGroupSub2
+
+    Object btnMess is a ButtonSub
+        Set Size to 13 249
+        Set Location to 188 158
+        Set Border_Style to Border_Normal
+        Set Focus_Mode to NonFocusable
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+        Procedure OnClick
+        
+        End_Procedure // OnClick
+        //AB-StoreEnd
+
+    End_Object    // btnMess
+
+
+    //AB-StoreStart
+                    
+    Procedure Activate_View Returns Integer
+        Integer rVal iYear iMonth
+        Date    dHmnia
+        String  sModule
+        Sysdate dHmnia
+        Forward Get Msg_Activate_View   to rVal
+        Get psMenuModule  Of Main_Menu  to sModule
+        Set psModule                    to sModule
+        Move (TheMonthSegment(dHmnia))  to iMonth
+        Move (TheYearSegment (dHmnia))  to iYear
+        Set Value Of (frmYear (GroupSub3(Self)))   Item 0 to iYear
+        Set Value Of (frmMonth(GroupSub3(Self)))   Item 0 to iMonth
+        Procedure_Return rVal
+    End_Procedure
+    
+    Object ReportEmporias is a CrystalReportSubSQL
+    
+        Property Integer piTiTrexei Public 0
+    
+        Set Report_View_id      to (Parent(Self))
+        Set Output_Destination  to WQL_PRINT_TO_WINDOW
+    
+        Procedure OnStartPrinting
+            Date    dHmniaEos
+            String  Selection sHmgio sbranch
+            String  sClientName sPrespName sSlsName
+            String  sClientID sPrespID sSlsID
+            Integer iMhden iYearTo iMonthTo
+    
+            Get fiYear  Of GroupSub3  to iYearTo
+            Get fiMonth Of GroupSub3  to iMonthTo
+            Move (DateCompose(TheDaySegment(EndOfMonth  (iMonthTo  ,iYearTo  )),iMonthTo  ,iYearTo  )) to dHmniaEos
+    
+            Get psClientID          to sClientID
+            Get psClientName        to sClientName
+            Get psSlsID             to sSlsID
+            Get psSlsName           to sSlsName
+            Get psPrespID           to sPrespID
+            Get psPrespName         to sPrespName
+    
+            Get Checked_State Of (chkMhden(GroupSub3(StoixEmp(Self)))) Item 0 to iMhden
+    
+            If (sSlsID<>'') Begin
+                Set Formula 'fPolhths'      to (Winql_String(Trim(sSlsID)))
+                Move (Replaces('"',sSlsName,'')) to sSlsName
+                Move (Replaces("'",sSlsName,'')) to sSlsName
+                Set Formula 'fPolhthsDescr' to (Winql_String(Trim(sSlsName)))
+            End
+            If (sPrespID<>'') Begin
+                Set Formula 'fYpeyth'      to (Winql_String(Trim(sPrespID)))
+                Move (Replaces('"',sPrespName,'')) to sPrespName
+                Move (Replaces("'",sPrespName,'')) to sPrespName
+                Set Formula 'fYpeythDescr' to (Winql_String(Trim(sPrespName)))
+            End
+            Get psbranch to sbranch
+    
+            Set Formula 'HmniaEos' to (WinQl_Date(dHmniaEos))
+            Set Formula 'Mhdenikous'  to (Winql_Integer(iMhden))
+    
+        End_procedure // OnStartPrinting
+    
+        Procedure RunemporReport
+            Send Cursor_Wait To (Cursor_Control(Current_Object))
+                 if (piwhat(self)=1) Set Report_Name         to "Rptmp1.rpt"
+            else if (piwhat(self)=2) Set Report_Name         to "Rptmp2.rpt"
+            else if (piwhat(self)=3) Set Report_Name         to "Hpalpel.rpt"
+            Set piTiTrexei to (piWhat(Self))
+            Send Run_report
+            Send Cursor_Ready To (Cursor_Control(Current_Object))
+        End_procedure // Runempor
+    End_Object
+    
+    Object ReportMakeHpalRecords is a CrystalReportSubSQL
+        Set Report_Name     to "Hpal0_For_New.rpt"
+        Set Report_View_id  to (Parent(Self))
+    //    Set Output_Destination          to WQL_PRINT_TO_WINDOW
+        Set Output_Destination          to WQL_PRINT_TO_FILE
+        Set ExportFileName              to "c:\hpal.txt"
+        Set UseReportNumberFormat_State to True
+        Set ExportFormatType            to WQL_CommaSeparatedType
+        Set FieldDelimiter              to ","
+        Set StringDelimiter             to '"'
+        Set UseReportDateFormat_State   To True
+    
+        Procedure OnStartPrinting
+    
+            local string  lscatypes Startnumbern Startnamen Endnamen
+            Local Date    Starthmen Endhmen
+            Local string  sstr  Selection FileName slabel shmgio sPolhths sYpeyth
+            local integer FileType Destination SortOrder starttypkinn iMhden iYearTo iMonthTo iWhat
+            Local Integer NumSortFields CurSortField SortDirection wdate fepil iMhnas iEtos iPoios
+            date apo eos ddate dHmniaEos
+            string flysh1 flysh2 sbranch sPolhthsDescr sYpeythDescr
+    
+            Get fiYear  Of GroupSub3  to iYearTo
+            Get fiMonth Of GroupSub3  to iMonthTo
+            Move (DateCompose(TheDaySegment(EndOfMonth  (iMonthTo  ,iYearTo  )),iMonthTo  ,iYearTo  )) to dHmniaEos
+    
+            Get fsPolhths           to sPolhths
+            Get fsYpeyth            to sYpeyth
+            Move (Trim(sYpeyth))    to sYpeyth
+            Move (Trim(sPolhths))   to sPolhths
+    
+            Get Value Of (frmPolhthsDescr(GroupSub3(StoixEmp(Self)))) Item 0 to sPolhthsDescr
+            Get Value Of (frmYpeythDescr (GroupSub3(StoixEmp(Self)))) Item 0 to sYpeythDescr
+            Get Checked_State Of (chkMhden(GroupSub3(StoixEmp(Self)))) Item 0 to iMhden
+    
+            get psbranch to sbranch
+    
+            Move "" To Selection
+            Append Selection (If(Selection <> "", " and ", ""))"{cmoves.company_code} = " '"' (Trim(syscurxr.company_code)) '"'
+            if (sbranch<>'') Append Selection (If(Selection <> "", " and ", ""))"{cmoves.branch_code} = " '"' (Trim(sbranch)) '"'
+    
+            Append Selection (If(Selection <> "", " and ", "")) "{cmoves.cmoves_axia} <> " '' (0) ''
+    
+            Get StartNumber To StartNumbern
+    
+            If (Trim(StartNumbern)) ne "" ;
+              Append Selection (If(Selection <> "", " and ", "")) "{cmoves.client_id} = " '"' (Trim(startnumbern)) '"'
+    
+            Append Selection (If(Selection <> "", " and ", "")) "{cmoves.cmoves_hmnia} <= " (winql_date(dHmniaEos))
+    
+            // Gia to etos 2003 theloume kai tis kinhseis apografhs eno gia
+            // ta ypoloipa eth DEN ta theloume
+    
+            Get piPoios Of StoixEmp  to iPoios
+                 If (iPoios=0) Append Selection (If(Selection <> "", " and ", "")) "{cmoves.client_id} <> ''"
+            Else If (iPoios=1) Append Selection (If(Selection <> "", " and ", "")) "{cmoves.sls_id} <> ''"
+            Else If (iPoios=2) Append Selection (If(Selection <> "", " and ", "")) "{cmoves.presp_id} <> ''"
+    
+            if (sPolhths<>'') Append Selection (If(Selection <> "", " and ", ""))"{cmoves.SLS_ID} = "   (Winql_String(sPolhths))  //'"' (Trim(sPolhths)) '"'
+            if (sYpeyth <>'') Append Selection (If(Selection <> "", " and ", ""))"{cmoves.PRESP_ID} = " (Winql_String(sYpeyth))  //'"' (Trim(sYpeyth)) '"'
+    
+            get  psModule to flysh1
+            move "04" to flysh2
+            Move '' to sStr
+            Move (Append(sStr,(flysh1+flysh2))) to sStr
+            Move (Trim(sStr)) to sStr
+            Append Selection (If(Selection <> "", " and ", "")) "InStr('" sStr "',{cmoves.module_from})<>0"
+            Append Selection (If(Selection <> "", " and ", "")) ;
+                  "If (Year({CMOVES.CMOVES_HMNIA})<>2003) Then If ({CMOVES.CTYPKIN_CODE}<> '101' And {CMOVES.CTYPKIN_CODE}<> '102' And {CMOVES.CTYPKIN_CODE}<> '201' And {CMOVES.CTYPKIN_CODE}<> '202') Then True Else False Else True"
+    
+            get  epil to fepil
+            Set Formula 'fForeas'   to (Winql_String(iPoios+1))
+            Set Formula 'MhnasEos'  to (Winql_Number(iMonthTo))
+            Set Formula 'EtosEos'   to (Winql_Number(iYearTo))
+            Set Formula 'HmniaEos'  to (winql_date(dHmniaEos))
+            Set SelectionFormula To Selection
+    
+            If ((iPoios=2) And (sYpeyth='')) Set Formula 'fforeas'  to (Winql_Number(1))
+            Else                             Set Formula 'fforeas'  to (Winql_Number(0))
+        End_procedure // OnStartPrinting
+    
+    End_Object
+    
+    
+    Object ReportMakeTzirosRecords is a CrystalReportSubSQL
+        Set Report_Name     to "rptmp3.rpt"
+        Set Report_View_id  to (Parent(Self))
+    //    Set Output_Destination          to WQL_PRINT_TO_WINDOW
+        Set Output_Destination          to WQL_PRINT_TO_FILE
+        Set ExportFileName              to "c:\rptmp3.txt"
+        Set UseReportNumberFormat_State to True
+        Set ExportFormatType            to WQL_CommaSeparatedType
+        Set FieldDelimiter              to ","
+        Set StringDelimiter             to '"'
+        Set UseReportDateFormat_State   To True
+    
+        Procedure OnStartPrinting
+    
+            local string  lscatypes Startnumbern Startnamen Endnamen
+            Local Date    Starthmen Endhmen
+            Local string  sstr  Selection FileName slabel shmgio sPolhths sYpeyth
+            local integer FileType Destination SortOrder starttypkinn iMhden iYearTo iMonthTo
+            Local Integer NumSortFields CurSortField SortDirection wdate fepil iMhnas iEtos iPoios
+            date apo eos ddate dHmniaEos dHmniaApo
+            string flysh1 flysh2 sbranch sPolhthsDescr sYpeythDescr
+    
+            Get fiYear  Of GroupSub3  to iYearTo
+            Get fiMonth Of GroupSub3  to iMonthTo
+    
+            Move (DateCompose(TheDaySegment(EndOfMonth(iMonthTo,(iYearTo))),iMonthTo,(iYearTo)))        to dHmniaEos
+            Move (DateCompose(TheDaySegment(BeginOfMonth(iMonthTo,(iYearTo-1))),iMonthTo,(iYearTo-1)))  to dHmniaApo
+    
+            Get fsPolhths           to sPolhths
+            Get fsYpeyth            to sYpeyth
+            Move (Trim(sYpeyth))    to sYpeyth
+            Move (Trim(sPolhths))   to sPolhths
+    
+            Get Value Of (frmPolhthsDescr(GroupSub3(StoixEmp(Self)))) Item 0 to sPolhthsDescr
+            Get Value Of (frmYpeythDescr (GroupSub3(StoixEmp(Self)))) Item 0 to sYpeythDescr
+            Get Checked_State Of (chkMhden(GroupSub3(StoixEmp(Self)))) Item 0 to iMhden
+    
+            get psbranch to sbranch
+            Move "" To Selection
+            Append Selection (If(Selection <> "", " and ", ""))"{wcmoves.company_code} = " '"' (Trim(syscurxr.company_code)) '"'
+    //        if (sbranch<>'') Append Selection (If(Selection <> "", " and ", ""))"{wcmoves.branch_code} = " '"' (Trim(sbranch)) '"'
+    
+            Get piPoios Of StoixEmp  to iPoios
+                 If (iPoios=0) Append Selection (If(Selection <> "", " and ", "")) "{wcmoves.client_id} <> ''"
+            Else If (iPoios=1) Append Selection (If(Selection <> "", " and ", "")) "{wcmoves.sls_id} <> ''"
+            Else If (iPoios=2) Append Selection (If(Selection <> "", " and ", "")) "{wcmoves.presp_id} <> ''"
+    
+            Get StartNumber To StartNumbern
+    
+            If (Trim(StartNumbern)) ne "" ;
+              Append Selection (If(Selection <> "", " and ", "")) "{wcmoves.client_id} = " '"' (Trim(startnumbern)) '"'
+    
+    
+            Append Selection (If(Selection <> "", " and ", "")) "{wcmoves.wcmove_hmnia} >= " (winql_date(dHmniaApo))
+            Append Selection (If(Selection <> "", " and ", "")) "{wcmoves.wcmove_hmnia} <= " (winql_date(dHmniaEos))
+    
+            if (sPolhths<>'') Append Selection (If(Selection <> "", " and ", ""))"{wcmoves.SLS_ID} = " '"' (Trim(sPolhths)) '"'
+            if (sYpeyth <>'') Append Selection (If(Selection <> "", " and ", ""))"{wcmoves.PRESP_ID} = " '"' (Trim(sYpeyth)) '"'
+    
+            get  psModule to flysh1
+            Append Selection (If(Selection <> "", " and ", ""))"{wcmoves.Module_From} = " '"' (Trim(flysh1)) '"'
+    
+    
+            Set Formula 'fMhnas'  to (Winql_Number(iMonthTo))
+            Set Formula 'fEtos'   to (Winql_Number(iYearTo))
+            Set Formula 'fForeas' to (Winql_String(iPoios+1))
+            Set SelectionFormula To Selection
+    
+        End_procedure // OnStartPrinting
+    
+    End_Object
+    
+    Object ReportMakeAxioRecords is a CrystalReportSubSQL
+        Set Report_View_id  to (Parent(Self))
+    //    Set Output_Destination          to WQL_PRINT_TO_WINDOW
+        Set Output_Destination          to WQL_PRINT_TO_FILE
+        Set UseReportNumberFormat_State to True
+        Set ExportFormatType            to WQL_CommaSeparatedType
+        Set FieldDelimiter              to ","
+        Set StringDelimiter             to '"'
+        Set UseReportDateFormat_State   To True
+    
+        Procedure OnStartPrinting
+    
+            local string  lscatypes Startnumbern Startnamen Endnamen stext
+            Local Date    Starthmen Endhmen
+            Local string  sstr  Selection FileName slabel shmgio sPolhths sYpeyth sone
+            local integer FileType Destination SortOrder starttypkinn iMhden iYearTo iMonthTo
+            Local Integer NumSortFields CurSortField SortDirection wdate fepil iMhnas iEtos iPoios
+            date apo eos ddate dHmniaEos dHmniaApo
+            string flysh1 flysh2 sbranch sPolhthsDescr sYpeythDescr
+            local integer iepidika
+    
+            get piepidika to iepidika
+            move  1 to sone
+            Get piPoios Of StoixEmp  to iPoios
+    
+            Get fiYear  Of GroupSub3  to iYearTo
+            Get fiMonth Of GroupSub3  to iMonthTo
+    
+            Move (DateCompose(TheDaySegment(beginOfMonth(iMonthTo,(iYearTo))),iMonthTo,(iYearTo)))        to ddate
+            Move (DateCompose(TheDaySegment(endOfMonth(iMonthTo,(iYearTo))),iMonthTo,(iYearTo)))          to dhmniaeos
+            Move (DateCompose(TheDaySegment(BeginOfMonth(iMonthTo,(iYearTo-1))),iMonthTo,(iYearTo-1)))    to dHmniaApo
+    
+            Get fsPolhths           to sPolhths
+            Get fsYpeyth            to sYpeyth
+            Move (Trim(sYpeyth))    to sYpeyth
+            Move (Trim(sPolhths))   to sPolhths
+    
+            Get Value Of (frmPolhthsDescr(GroupSub3(StoixEmp(Self)))) Item 0 to sPolhthsDescr
+            Get Value Of (frmYpeythDescr (GroupSub3(StoixEmp(Self)))) Item 0 to sYpeythDescr
+            Get Checked_State Of (chkMhden(GroupSub3(StoixEmp(Self)))) Item 0 to iMhden
+    
+            Move "" To Selection
+            Append Selection (If(Selection <> "", " and ", ""))"{baxio.company_code} = " '"' (Trim(syscurxr.company_code)) '"'
+            if (sbranch<>'') Append Selection (If(Selection <> "", " and ", ""))"{baxio.branch_code} = " '"' (Trim(sbranch)) '"'
+            Append Selection (If(Selection <> "", " and ", ""))"{btypkin.btypkin_anti_xp} = 2"
+    
+    
+            // 12/02/2004 KOBONTAI OI DESMEYMENES EPITAGES
+            // kapoies palies epitages tou 01.A5.23111 me lanthasmena flags
+            // vgazoun anoixto kai synolikh apo thn prosthiki 13469... apo
+            // diamartyrimenes epitages.
+            // Aytes tis gyrname se status 5 kai tis kovoume
+            Append Selection (If(Selection <> "", " and ", ""))"{baxio.BAXIO_STATUS} <> 5 "
+            //
+    
+            if (iepidika=0) begin
+                Append Selection (If(Selection <> "", " and ", ""))"{btypkin.btypkin_sign} = 1"
+                Append Selection (If(Selection <> "", " and ", ""))"{baxio.BAXIO_PLACE} <> 2 "
+                Append Selection (If(Selection <> "", " and ", "")) "{baxio.baxio_hmnial} >= " (winql_date(ddate))
+            end
+            else begin
+                Append Selection (If(Selection <> "", " and ", ""))"{baxio.BAXIO_status} = 3 "
+                Append Selection (If(Selection <> "", " and ", "")) "{baxio.baxio_hmnial} >= " (winql_date(dhmniaapo))
+                Append Selection (If(Selection <> "", " and ", "")) "{baxio.baxio_hmnial} <= " (winql_date(dhmniaeos))
+            end
+    
+            Append Selection (If(Selection <> "", " and ", "")) "{barticl.barticl_hmnia} <= " (winql_date(dhmniaeos))
+    
+            Append Selection (If(Selection <> "", " and ", ""))"{barticl.barticl_ekleise} = " '"' (Trim(sone)) '"'
+            move '#1#2#10#' to stext
+            Append Selection (If(Selection <> "", " and ", "")) "InStr('" stext "',('#'+TOTEXT ({baxio.baxiokat_code},0)+'#'))<>0"
+    
+    
+                 If (iPoios=0) Append Selection (If(Selection <> "", " and ", "")) "{baxio.baxio_code_in} <> ''"
+            Else If (iPoios=1) Append Selection (If(Selection <> "", " and ", "")) "{bmove.sls_id} <> ''"
+            Else If (iPoios=2) Append Selection (If(Selection <> "", " and ", "")) "{bmove.presp_id} <> ''"
+    
+            Get StartNumber To StartNumbern
+    
+            If (Trim(StartNumbern)) ne "" ;
+                Append Selection (If(Selection <> "", " and ", "")) "{baxio.baxio_code_in} = " '"' (Trim(startnumbern)) '"'
+    
+    
+            if (sPolhths<>'') Append Selection (If(Selection <> "", " and ", ""))"{bmove.SLS_ID} = " '"' (Trim(sPolhths)) '"'
+            if (sYpeyth <>'') Append Selection (If(Selection <> "", " and ", ""))"{bmove.PRESP_ID} = " '"' (Trim(sYpeyth)) '"'
+    
+    
+            Set Formula 'fMhnas'  to (Winql_Number(iMonthTo))
+            Set Formula 'fEtos'   to (Winql_Number(iYearTo))
+            Set Formula 'fForeas' to (Winql_String(iPoios+1))
+            Set SelectionFormula To Selection
+    
+        End_procedure // OnStartPrinting
+    
+    End_Object
+    
+    
+    //  RPTMP4.TXT
+    // 'è®¶ú´¶†£ò©Âò Ä§¶†Æ´¶Á ä¶ö/£¶Á && ë¨§. é≠ú†¢„™'
+    // Mazeyei oles tis xreoseis apo Cmoves
+    // + tis pistoseis apo Cmoves pou DEN
+    // proerxontai apo axiografa
+    Object ReportMakeOfeilhRecords is a CrystalReportSubSQL
+        Set Report_Name     to "rptmp4.rpt"
+        Set Report_View_id  to (Parent(Self))
+    //    Set Output_Destination          to WQL_PRINT_TO_WINDOW
+        Set Output_Destination          to WQL_PRINT_TO_FILE
+        Set ExportFileName              to "c:\rptmp4.txt"
+        Set UseReportNumberFormat_State to True
+        Set ExportFormatType            to WQL_CommaSeparatedType
+        Set FieldDelimiter              to ","
+        Set StringDelimiter             to '"'
+        Set UseReportDateFormat_State   To True
+    
+        Procedure OnStartPrinting
+    
+            local string  lscatypes Startnumbern Startnamen Endnamen
+            Local Date    Starthmen Endhmen
+            Local string  sstr  Selection FileName slabel shmgio sPolhths sYpeyth
+            local integer FileType Destination SortOrder starttypkinn iMhden iYearTo iMonthTo iWhat
+            Local Integer NumSortFields CurSortField SortDirection wdate fepil iMhnas iEtos iPoios
+            date apo eos ddate dHmniaEos
+            string flysh1 flysh2 sbranch sPolhthsDescr sYpeythDescr
+    
+            Get fiYear  Of GroupSub3  to iYearTo
+            Get fiMonth Of GroupSub3  to iMonthTo
+            Move (DateCompose(TheDaySegment(EndOfMonth  (iMonthTo  ,iYearTo  )),iMonthTo  ,iYearTo  )) to dHmniaEos
+    
+            Get fsPolhths           to sPolhths
+            Get fsYpeyth            to sYpeyth
+            Move (Trim(sYpeyth))    to sYpeyth
+            Move (Trim(sPolhths))   to sPolhths
+    
+            Get Value Of (frmPolhthsDescr(GroupSub3(StoixEmp(Self)))) Item 0 to sPolhthsDescr
+            Get Value Of (frmYpeythDescr (GroupSub3(StoixEmp(Self)))) Item 0 to sYpeythDescr
+            Get Checked_State Of (chkMhden(GroupSub3(StoixEmp(Self)))) Item 0 to iMhden
+    
+            get psbranch to sbranch
+            Move "" To Selection
+            Append Selection (If(Selection <> "", " and ", ""))"{cmoves.company_code} = " '"' (Trim(syscurxr.company_code)) '"'
+            if (sbranch<>'') Append Selection (If(Selection <> "", " and ", ""))"{cmoves.branch_code} = " '"' (Trim(sbranch)) '"'
+    
+            Append Selection (If(Selection <> "", " and ", "")) "{cmoves.cmoves_axia} <> " '' (0) ''
+    
+            Get StartNumber To StartNumbern
+    
+            If (Trim(StartNumbern)) ne "" ;
+              Append Selection (If(Selection <> "", " and ", "")) "{cmoves.client_id} = " '"' (Trim(startnumbern)) '"'
+    
+            Append Selection (If(Selection <> "", " and ", "")) "{cmoves.cmoves_hmnia} <= " (winql_date(dHmniaEos))
+    
+    
+            Get piPoios Of StoixEmp  to iPoios
+                 If (iPoios=0) Append Selection (If(Selection <> "", " and ", "")) "{cmoves.client_id} <> ''"
+            Else If (iPoios=1) Append Selection (If(Selection <> "", " and ", "")) "{cmoves.sls_id} <> ''"
+            Else If (iPoios=2) Append Selection (If(Selection <> "", " and ", "")) "{cmoves.presp_id} <> ''"
+    
+    
+            if (sPolhths<>'') Append Selection (If(Selection <> "", " and ", ""))"{cmoves.SLS_ID} = " '"' (Trim(sPolhths)) '"'
+            if (sYpeyth <>'') Append Selection (If(Selection <> "", " and ", ""))"{cmoves.PRESP_ID} = " '"' (Trim(sYpeyth)) '"'
+    
+            get  psModule to flysh1
+            Append Selection (If(Selection <> "", " and ", ""))"{cmoves.Module_From} = " '"' (Trim(flysh1)) '"'
+    
+            Set Formula 'fMhnas'  to (Winql_Number(iMonthTo))
+            Set Formula 'fEtos'   to (Winql_Number(iYearTo))
+            Set Formula 'fForeas' to (Winql_String(iPoios+1))
+            Set SelectionFormula To Selection
+    
+        End_procedure // OnStartPrinting
+    
+    End_Object
+    
+    // RPTMP5.TXT
+    // É†ò£¶®≠‡©û Anoixtos Logar + Syn. Ofeilh
+    // Ta exoflhmena axiografa afairountai apo tis
+    // eggrafes 2 (An.Log) kai 5 (Syn.Ofeil)
+    // Ta Anexoflhta afairountai mono apo tis
+    // eggrafes 2 (An. Log)
+    Object ReportMakeexoflRecords is a CrystalReportSubSQL
+        Set Report_Name     to "rptmp5.rpt"
+        Set Report_View_id  to (Parent(Self))
+    //    Set Output_Destination          to WQL_PRINT_TO_WINDOW
+        Set Output_Destination          to WQL_PRINT_TO_FILE
+        Set ExportFileName              to "c:\rptmp5.txt"
+        Set UseReportNumberFormat_State to True
+        Set ExportFormatType            to WQL_CommaSeparatedType
+        Set FieldDelimiter              to ","
+        Set StringDelimiter             to '"'
+        Set UseReportDateFormat_State   To True
+    
+        Procedure OnStartPrinting
+    
+            local string  lscatypes Startnumbern Startnamen Endnamen
+            Local Date    Starthmen Endhmen
+            Local string  sstr  Selection FileName slabel shmgio sPolhths sYpeyth
+            local integer FileType Destination SortOrder starttypkinn iMhden iYearTo iMonthTo iWhat
+            Local Integer NumSortFields CurSortField SortDirection wdate fepil iMhnas iEtos iPoios
+            date apo eos ddate dHmniaEos
+            string flysh1 flysh2 sbranch sPolhthsDescr sYpeythDescr
+    
+            Get fiYear  Of GroupSub3  to iYearTo
+            Get fiMonth Of GroupSub3  to iMonthTo
+            Move (DateCompose(TheDaySegment(EndOfMonth  (iMonthTo  ,iYearTo  )),iMonthTo  ,iYearTo  )) to dHmniaEos
+    
+    
+            Get fsPolhths           to sPolhths
+            Get fsYpeyth            to sYpeyth
+            Move (Trim(sYpeyth))    to sYpeyth
+            Move (Trim(sPolhths))   to sPolhths
+    
+            Get Value Of (frmPolhthsDescr(GroupSub3(StoixEmp(Self)))) Item 0 to sPolhthsDescr
+            Get Value Of (frmYpeythDescr (GroupSub3(StoixEmp(Self)))) Item 0 to sYpeythDescr
+            Get Checked_State Of (chkMhden(GroupSub3(StoixEmp(Self)))) Item 0 to iMhden
+    
+            get psbranch to sbranch
+            Move "" To Selection
+            Append Selection (If(Selection <> "", " and ", ""))"{bmove.company_code} = " '"' (Trim(syscurxr.company_code)) '"'
+            if (sbranch<>'') Append Selection (If(Selection <> "", " and ", ""))"{bmove.branch_code} = " '"' (Trim(sbranch)) '"'
+    
+            Get StartNumber To StartNumbern
+    
+            If (Trim(StartNumbern)) ne "" ;
+              Append Selection (If(Selection <> "", " and ", "")) "{cmoves.client_id} = " '"' (Trim(startnumbern)) '"'
+    
+            Append Selection (If(Selection <> "", " and ", "")) "{bmove.barticl_hmnia} <= " (winql_date(dHmniaEos))
+            Append Selection (If(Selection <> "", " and ", ""))"{btypkin.btypkin_anti_xp} = 2"
+    
+            Append Selection (If(Selection <> "", " and ", ""))"{baxio.BAXIO_status} <> 3 "
+    
+            // 12/02/2004 KOBONTAI OI DESMEYMENES EPITAGES
+            // kapoies palies epitages tou 01.A5.23111 me lanthasmena flags
+            // vgazoun anoixto kai synolikh apo thn prosthiki 13469... apo
+            // diamartyrimenes epitages.
+            // Aytes tis gyrname se status 5 kai tis kovoume
+            Append Selection (If(Selection <> "", " and ", ""))"{baxio.BAXIO_STATUS} <> 5 "
+            //
+    
+    
+            Get piPoios Of StoixEmp  to iPoios
+                 If (iPoios=0) Append Selection (If(Selection <> "", " and ", "")) "{cmoves.client_id} <> ''"
+            Else If (iPoios=1) Append Selection (If(Selection <> "", " and ", "")) "{cmoves.sls_id} <> ''"
+            Else If (iPoios=2) Append Selection (If(Selection <> "", " and ", "")) "{cmoves.presp_id} <> ''"
+    
+            if (sPolhths<>'') Append Selection (If(Selection <> "", " and ", ""))"{cmoves.SLS_ID} = " '"' (Trim(sPolhths)) '"'
+            if (sYpeyth <>'') Append Selection (If(Selection <> "", " and ", ""))"{cmoves.PRESP_ID} = " '"' (Trim(sYpeyth)) '"'
+    
+    
+            Append Selection (If(Selection <> "", " and ", "")) "{bmove.barticl_hmnia} <= " (winql_date(dHmniaEos))
+    
+    
+    
+            clear branch
+            move syscurxr.company_code to branch.company_code
+            move sbranch               to branch.branch_code
+            find eq branch by index.1
+    
+            get  psModule to flysh1
+            Append Selection (If(Selection <> "", " and ", ""))"{cmoves.Module_From} = " '"' (Trim(flysh1)) '"'
+    
+            Set Formula 'fMhnas'  to (Winql_Number(iMonthTo))
+            Set Formula 'fEtos'   to (Winql_Number(iYearTo))
+            Set Formula 'fForeas' to (Winql_String(iPoios+1))
+            Set SelectionFormula To Selection
+    
+        End_procedure // OnStartPrinting
+    
+    End_Object
+    
+    Object ReportMakepaliaAxioRecords is a CrystalReportSubSQL
+        Set Report_View_id  to (Parent(Self))
+    //    Set Output_Destination          to WQL_PRINT_TO_WINDOW
+        Set Output_Destination          to WQL_PRINT_TO_FILE
+        Set UseReportNumberFormat_State to True
+        Set ExportFormatType            to WQL_CommaSeparatedType
+        Set FieldDelimiter              to ","
+        Set StringDelimiter             to '"'
+        Set UseReportDateFormat_State   To True
+    
+        Procedure OnStartPrinting
+    
+            local string  lscatypes Startnumbern Startnamen Endnamen stext
+            Local Date    Starthmen Endhmen
+            Local string  sstr  Selection FileName slabel shmgio sPolhths sYpeyth sone
+            local integer FileType Destination SortOrder starttypkinn iMhden iYearTo iMonthTo
+            Local Integer NumSortFields CurSortField SortDirection wdate fepil iMhnas iEtos iPoios
+            date apo eos ddate dHmniaEos dHmniaApo
+            string flysh1 flysh2 sbranch sPolhthsDescr sYpeythDescr
+            local integer iepidika
+    
+            get piepidika to iepidika
+            move  1 to sone
+            Get piPoios Of StoixEmp  to iPoios
+    
+            Get fiYear  Of GroupSub3  to iYearTo
+            Get fiMonth Of GroupSub3  to iMonthTo
+    
+            Move (DateCompose(TheDaySegment(beginOfMonth(iMonthTo,(iYearTo))),iMonthTo,(iYearTo)))        to ddate
+            Move (DateCompose(TheDaySegment(endOfMonth(iMonthTo,(iYearTo))),iMonthTo,(iYearTo)))          to dhmniaeos
+            Move (DateCompose(TheDaySegment(BeginOfMonth(iMonthTo,(iYearTo-1))),iMonthTo,(iYearTo-1)))    to dHmniaApo
+    
+            Get fsPolhths           to sPolhths
+            Get fsYpeyth            to sYpeyth
+            Move (Trim(sYpeyth))    to sYpeyth
+            Move (Trim(sPolhths))   to sPolhths
+    
+            Get Value Of (frmPolhthsDescr(GroupSub3(StoixEmp(Self)))) Item 0 to sPolhthsDescr
+            Get Value Of (frmYpeythDescr (GroupSub3(StoixEmp(Self)))) Item 0 to sYpeythDescr
+            Get Checked_State Of (chkMhden(GroupSub3(StoixEmp(Self)))) Item 0 to iMhden
+    
+            Move "" To Selection
+            Append Selection (If(Selection <> "", " and ", ""))"{baxio.company_code} = " '"' (Trim(syscurxr.company_code)) '"'
+            if (sbranch<>'') Append Selection (If(Selection <> "", " and ", ""))"{baxio.branch_code} = " '"' (Trim(sbranch)) '"'
+            Append Selection (If(Selection <> "", " and ", ""))"{btypkin.btypkin_anti_xp} = 2"
+            Append Selection (If(Selection <> "", " and ", ""))"{btypkin.btypkin_sign} = 1"
+    
+            Append Selection (If(Selection <> "", " and ", ""))"{baxio.BAXIO_PLACE} <> 2 "
+    
+            Append Selection (If(Selection <> "", " and ", "")) "{baxio.baxio_hmnial} <= " (winql_date(dhmniaeos))
+            Append Selection (If(Selection <> "", " and ", "")) "{barticl.barticl_hmnia} <= " (winql_date(dhmniaeos))
+    
+            Append Selection (If(Selection <> "", " and ", ""))"{barticl.barticl_ekleise} = " '"' (Trim(sone)) '"'
+            move '#1#2#10#' to stext
+            Append Selection (If(Selection <> "", " and ", "")) "InStr('" stext "',('#'+TOTEXT ({baxio.baxiokat_code},0)+'#'))<>0"
+    
+    
+                 If (iPoios=0) Append Selection (If(Selection <> "", " and ", "")) "{baxio.baxio_code_in} <> ''"
+            Else If (iPoios=1) Append Selection (If(Selection <> "", " and ", "")) "{bmove.sls_id} <> ''"
+            Else If (iPoios=2) Append Selection (If(Selection <> "", " and ", "")) "{bmove.presp_id} <> ''"
+    
+            Get StartNumber To StartNumbern
+    
+            If (Trim(StartNumbern)) ne "" ;
+                Append Selection (If(Selection <> "", " and ", "")) "{baxio.baxio_code_in} = " '"' (Trim(startnumbern)) '"'
+    
+    
+            if (sPolhths<>'') Append Selection (If(Selection <> "", " and ", ""))"{bmove.SLS_ID} = " '"' (Trim(sPolhths)) '"'
+            if (sYpeyth <>'') Append Selection (If(Selection <> "", " and ", ""))"{bmove.PRESP_ID} = " '"' (Trim(sYpeyth)) '"'
+    
+    
+            Set Formula 'fMhnas'  to (Winql_Number(iMonthTo))
+            Set Formula 'fEtos'   to (Winql_Number(iYearTo))
+            Set Formula 'fForeas' to (Winql_String(iPoios+1))
+            Set SelectionFormula To Selection
+    
+        End_procedure // OnStartPrinting
+    
+    End_Object
+    
+    
+    
+    Function Startname Returns String
+        Function_return (Startname(groupSub3(Current_object)))
+    End_function // StartCustomer
+    
+    Function Starthme Returns integer
+        Function_return (Starthme(groupSub3(Current_object)))
+    End_function // StartNumber
+    
+    Function fsPolhths Returns string
+        Function_return (fsPolhths(groupSub3(Current_object)))
+    End_function
+    
+    Function fsYpeyth Returns string
+        Function_return (fsYpeyth(groupSub3(Current_object)))
+    End_function
+    
+    Function Endname Returns String
+        Function_return (Endname(groupSub3(Current_object)))
+    End_function // StartCustomer
+    
+    Function StartNumber Returns string
+        Function_return (StartNumber(groupSub1(Current_object)))
+    End_function // StartNumber
+    
+    
+    
+    //AB-StoreEnd
+
+End_Object    // StoixEmp
+
+
+//AB-StoreStart
+
+//AB-StoreEnd
+
+//AB/ End_Object    // prj

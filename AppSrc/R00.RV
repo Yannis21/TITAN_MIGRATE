@@ -1,0 +1,826 @@
+//AB/ Project R00:ektyposh ektypotikon
+//AB/ Object prj is a Report_Project
+//AB/     Set ProjectName to "R00:ektyposh ektypotikon"
+//AB/     Set ProjectFileName to "R00.RV"
+
+// Project Object Structure
+//   r00 is a ReportViewSub
+//     DestRadio is a RadioGroup
+//       WindowRadio is a Radio
+//     ButtonSub1 is a Button
+//     ButtonSub3 is a ButtonSub
+//     parWQLReport is a CrystalReportSubSQL
+
+// Register all objects
+Register_Object ButtonSub1
+Register_Object ButtonSub3
+Register_Object DestRadio
+Register_Object parWQLReport
+Register_Object r00
+Register_Object WindowRadio
+
+
+//AB/ Report View
+
+
+//AB-StoreTopStart
+Use dfallrpt
+
+
+
+//AB-StoreTopEnd
+
+//AB-IgnoreStart
+
+Use DFAllEnt.pkg
+Use Button.Sub
+
+//AB-IgnoreEnd
+
+ACTIVATE_VIEW Activate_r00 FOR r00
+
+Object r00 is a ReportViewSub
+
+    //AB-StoreTopStart
+
+    //AB-StoreTopEnd
+
+    Set Label to "„¡«ç§à©ž „¡«¬§à« ¡é¤"
+    Set Size to 48 177
+    Set Location to 10 167
+
+    //AB-DDOStart
+
+
+    //AB-DDOEnd
+
+    Object DestRadio is a RadioGroup
+
+        //AB-StoreTopStart
+
+        //AB-StoreTopEnd
+
+        Set Label to "„¡«ç§à©ž"
+        Set Size to 29 49
+        Set Location to 2 1
+        Object WindowRadio is a Radio
+            Set Size to 13 30
+            Set Location to 12 12
+            Set Bitmap to "screen4.bmp"
+        End_Object    // WindowRadio
+
+
+        //AB-StoreStart
+        set visible_state of (destradio(self)) to false
+        Set Output_Device_Mode To WQL_PRINT_TO_WINDOW
+
+
+
+
+
+        //AB-StoreEnd
+
+    End_Object    // DestRadio
+
+    Object ButtonSub1 is a Button
+
+        //AB-StoreTopStart
+
+        //AB-StoreTopEnd
+
+        Set Bitmap to "RUNPROG.BMP"
+        Set Size to 18 29
+        Set Location to 6 55
+
+        //AB-StoreStart
+        Procedure OnClick
+           Send RunparReport To (parWQLReport(Current_Object))
+        End_Procedure
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub1
+
+    Object ButtonSub3 is a ButtonSub
+
+        //AB-StoreTopStart
+
+        //AB-StoreTopEnd
+
+        Set Bitmap to "CANCEL.BMP"
+        Set Size to 18 29
+        Set Location to 6 89
+
+        //AB-StoreStart
+        Procedure OnClick
+            Send Request_Cancel
+        End_Procedure
+
+
+
+
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub3
+
+
+    //AB-StoreStart
+    Object parWQLReport Is A CrystalReportSubSQL
+        Property Integer ReportReady Public False
+        set Report_name    To "r00.rpt"
+        Set Report_View_id To (Parent(Current_object))
+
+         Procedure OnStartPrinting
+            Local String  Selection FileName smodule lsdate  wrecr
+            Local Integer FileType Destination SortOrder NumSortFields CurSortField
+            Local Integer SortDirection
+            local number nhmgio
+            Move "" To Selection
+            Set SelectionFormula To Selection
+            Get NSortFields To NumSortFields
+            For CurSortField From 0 To (NumSortFields - 1)
+            Send DeleteNthSortField 0
+            Loop
+            move 1 to sortdirection
+            Send AddSortField "{sysrep.view}" SortDirection
+            If Selection Eq "" ;
+                Set Formula "SelTxt" To ('"' + "NONE" + '"')
+            Else ;
+                Set Formula "SelTxt" To ('"' + (Replaces('"', Selection, "")) + '"')
+            move WQL_PRINT_TO_WINDOW to destination
+            If Destination EQ WQL_PRINT_TO_WINDOW ;
+                Set ReportReady To False
+            Else ;
+                Set ReportReady To True
+        End_procedure // OnStartPrinting
+        Procedure RunparReport
+            Send Cursor_Wait To (Cursor_Control(Current_Object))
+            Send Run_report
+            Send Cursor_Ready To (Cursor_Control(Current_Object))
+            If (ReportReady(Current_object)) ;
+                Send Info_box "WinQL report ready."
+        End_procedure // RunCustReport
+
+    End_object
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //AB-StoreEnd
+
+End_Object    // r00
+
+
+//AB-StoreStart
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//AB-StoreEnd
+
+//AB/ End_Object    // prj

@@ -1,0 +1,323 @@
+// 23/07/1998 SPY
+
+Use DFMainBt  // dfMain_ButtonBar
+Use Dates.utl
+
+Register_Object CalendarEz
+Register_Procedure Activate_Sort_Vw
+Register_Procedure DoPrintScreen
+
+Procedure doPopupCalendar
+    Send request_popup to (Popup_calendar(Self))
+End_Procedure
+
+Procedure doRebuild
+    Send Activate_Sort_Vw To (Client_Area(Main(Self)))
+End_Procedure
+
+Procedure doExit_Application
+    send Exit_Application to desktop
+End_Procedure
+
+Procedure DoRefresh_Grids
+    Integer liObj
+    
+    Move (Focus(Desktop)) to liObj
+    If (Base_class(liObj) = list_class) Send beginning_of_data to liObj
+End_Procedure
+
+Procedure DoPopupCalc
+    Runprogram background "Calc.exe"
+End_Procedure
+
+Procedure DoPopupSetup
+    string sRunPath
+    get_profile_string "workspaces\ad" "dfparamspath" to sRunPath
+    append sRunPath "\dfparams"
+    send DoRunApplication sRunPath
+End_Procedure
+
+Object oMyWinPrint is an DF_PRINTER
+    Procedure DFPrint
+        Integer iRetVal
+        Get DFGetPrintDialogFlags To iRetVal
+        If iRetVal Begin
+            Send DFPrintDoc
+            Send DFClearDoc
+        End
+    End_Procedure
+    Move Current_Object to WinPrintId
+End_Object
+
+
+Procedure DoPrint
+    Send DfPrint to (oMyWinPrint(Self))
+End_Procedure
+
+Procedure DoShowPropertiesPage
+   If (Close_All_Views(Self,True)=0) Send Activate_View to (piPropertiesObjectId(self))
+End_Procedure
+
+   //  Button bar object.
+//
+Object Tool_Bar is a ToolBar     
+    
+    Property Integer piOutputDestination Public 0
+
+    Send ImageList_Add 'bgn.bmp'      // 0
+    Send ImageList_Add 'end.bmp'      // 1
+    Send ImageList_Add 'next.bmp'     // 2
+    Send ImageList_Add 'prev.bmp'     // 3
+    Send ImageList_Add 'clr.bmp'      // 4
+    Send ImageList_Add 'clra.bmp'     // 5
+    Send ImageList_Add 'calend.bmp'   // 6
+    Send ImageList_Add 'Abfile.bmp'   // 7
+    Send ImageList_Add 'Dbexplor.bmp' // 8
+    Send ImageList_Add 'Ddb_find.bmp' // 9
+    Send ImageList_Add 'Abup.bmp'     // 10
+    Send ImageList_Add 'Arrow2.bmp'   // 11
+    Send ImageList_Add 'Save1.bmp'    // 12
+    Send ImageList_Add 'Exitm.bmp'    // 13
+    Send ImageList_Add 'include.bmp'  // 14
+    Send ImageList_Add 'Zoom_m1.bmp'  // 15
+    Send ImageList_Add 'Zoom2mg.bmp'  // 16
+    Send ImageList_Add 'DbeRefrh.Bmp' // 17
+    Send ImageList_Add 'calc1.bmp'    // 18
+    Send ImageList_Add 'print_m0.bmp' // 19
+    Send ImageList_Add 'Abcodeed.bmp' // 20
+    Send ImageList_Add 'vuur.bmp'     // 21
+    //Send ImageList_Add 'wmsui329.bmp' // 22
+
+    send Add_button (ico_user+0) msg_beginning_of_data
+    Send Add_ToolTip "€¨®ã €¨®œå¦¬ (Ctrl+Home)"
+    Set  Status_Help To '¨å©¡œ  «¤ ¨é« „šš¨˜­ã (Ctrl+Home)'
+
+    send Add_button (ico_user+3) msg_find_previous
+    Send Add_ToolTip "¨¦š¦ç£œ¤ „šš¨˜­ã (F7)"
+    Set  Status_Help To '¨å©¡œ  «¤ ¨¦š¦ç£œ¤ „šš¨˜­ã (F7)'
+
+    send Add_button (ico_user+10) msg_find_GE
+    Send Add_ToolTip "€¤˜ã«© (F9)"
+    Set  Status_Help To '¨å©¡œ  «¤ „šš¨˜­ã á©œ  «à¤ ‘«¦ ®œåà¤ (F9)'
+
+    send Add_button (ico_user+2) msg_find_next
+    Send Add_ToolTip "„§æ£œ¤ „šš¨˜­ã (F8)"
+    Set  Status_Help To '¨å©¡œ  «¤ „§æ£œ¤ „šš¨˜­ã (F8)'
+
+    send Add_button (ico_user+1) msg_end_of_data
+    Send Add_ToolTip "’â¢¦ª €¨®œå¦¬ (Ctrl+End)"
+    Set  Status_Help To '¨å©¡œ  «¤ ’œ¢œ¬«˜å˜ „šš¨˜­ã (Ctrl+End)'
+
+    send Add_space
+
+    send Add_button ico_std_find msg_prompt
+    Send Add_ToolTip "Šå©«˜ (F4)"
+    Set  Status_Help To '‹§¦¨œåª ¤˜ ›œåª æ¢œª « ª › ˜Ÿâ© £œª œ§ ¢¦šâª (F4)'
+
+    send Add_button (ico_User+15) msg_zoom
+    Send Add_ToolTip "Z¦¦£ (Alt+F9)"
+    Set  Status_Help To '‹§¦¨œåª ¤˜ ›œåª §¨æ©Ÿœ«œª §¢¨¦­¦¨åœª (Alt+F9)'
+
+    send Add_button (ico_user+6) msg_doPopupCalendar
+    Send Add_ToolTip "†£œ¨¦¢æš ¦"
+    Set  Status_Help To "†£œ¨¦¢æš ¦ ƒ ˜Ÿâ© £¦ £æ¤¦ ©œ §œ›å˜-†£œ¨¦£¤åœª"
+
+    send Add_space
+
+    send Add_button (ico_user+4) msg_request_clear
+    Send Add_ToolTip "€¡ç¨à© (F5)"
+    Set  Status_Help To '€¡ç¨à© «¨â®¦¬©˜ª œšš¨˜­ãª / ¨æ©Ÿœ© ¤â˜ª œšš¨˜­ãª (F5)'
+
+    send Add_button (ico_user+5) msg_request_clear_all
+    Send Add_ToolTip "¢ ¡ã €¡ç¨à© (Ctrl+F5)"
+    Set  Status_Help To '¢ ¡ã ˜¡ç¨à© «à¤ ›œ›¦£â¤à¤ ©«¤ æ¯ §¦¬ › ˜®œ ¨åœ«˜  ¦ ®¨ã©«ª (Ctrl+F5)'
+
+    send Add_button (ico_user+17) msg_DoRefresh_Grids
+    Send Add_ToolTip "€¤˜¤âà© ƒœ›¦£â¤à¤ (Ctrl+Home)"
+    Set  Status_Help To '€¤˜¤œé¤œ  «˜ ›œ›¦£â¤˜ ©«˜ Grids (Ctrl+Home)'
+
+    send Add_space
+
+    send Add_button ico_std_filesave msg_request_save
+    Send Add_ToolTip "„šš¨˜­ã+€¡ç¨à© (F2)"
+    Set  Status_Help To '‘éœ  «¤ «¨â®¦¬©˜ œšš¨˜­ã ©«¦ ˜¨®œå¦ (F2)'
+
+    send Add_button ico_std_delete msg_request_delete
+    Send Add_ToolTip "ƒ ˜š¨˜­ã (Shift+F2)"
+    Set  Status_Help To 'ƒ ˜š¨á­œ  «¤ «¨â®¦¬©˜ œšš¨˜­ã ˜§æ «¦ ˜¨®œå¦ (Shift+F2)'
+
+    send Add_button (ico_user+12) msg_request_save_no_clear
+    Send Add_ToolTip "„šš¨˜­ã (F12)"
+    Set  Status_Help To '‘éœ  «¤ «¨â®¦¬©˜ œšš¨˜­ã ©«¦ ˜¨®œå¦ ®à¨åª ¤˜ ¡˜Ÿ˜¨åœ  «˜ ›œ›¦£â¤˜ (F12)'
+
+    send Add_space
+
+    send Add_button ico_std_cut msg_cut
+    Send Add_ToolTip "€§¦¡¦§ã"
+    Set  Status_Help To "€§¦¡æ§«œ  «¦ œ§ ¢œš£â¤¦ ¡¦££á«  ¡˜  «¦ ¡¨˜«áœ  ©«¦ Clipboard"
+
+    send Add_button ico_std_copy msg_copy
+    Send Add_ToolTip "€¤« š¨˜­ã"
+    Set  Status_Help To "€¤« š¨á­œ  «¦ œ§ ¢œš£â¤¦ ¡¦££á«  ¡˜  «¦ ¡¨˜«áœ  ©«¦ Clipboard"
+
+    send Add_button ico_std_paste msg_paste
+    Send Add_ToolTip "„ ©˜šàšã"
+    Set  Status_Help To "„ ©ášœ  §œ¨ œ®æ£œ¤˜ ˜§æ «¦ Clipboard"
+
+    //send Add_button (ico_user+19) msg_DoPrint
+    send Add_button ICO_STD_PRINT msg_DoPrint
+    Send Add_ToolTip "„¡«ç§à©"
+    Set  Status_Help To "„¡«¬§é©œ ª ‰œ £â¤à¤"
+
+    send Add_space              
+
+    //send Add_button (ico_user+20) msg_DoPrintScreen
+    send Add_button ICO_STD_PRINTPRE msg_DoPrintScreen
+    Send Add_ToolTip "„¡«ç§à© ¦Ÿæ¤ª"
+    Set  Status_Help To "„¡«ç§à© ¦Ÿæ¤ª ©«¦ Clipboard ã ©«¦¤ „¡«à§à«ã"
+    
+    Object oOutputSelector Is A ComboFormSub
+       Set Entry_State Item 0 to FALSE
+       Set Combo_Sort_State to FALSE
+       Set GuiLocation to 1 480
+       Set Size to 14 55
+       Set Status_Help to "„§â¢œ¥œ §¦¬ Ÿ˜ šå¤œ   œ¡«ç§à© «ª ¦Ÿæ¤ª"
+       Set Focus_Mode to Pointer_Only
+       Set Skip_State to True
+       
+       Procedure Combo_Fill_List
+       
+           Send Combo_Add_Item '„¡«¬§à«ãª'
+           Send Combo_Add_Item 'Clipboard'
+       
+       End_Procedure
+       
+       Procedure OnChange
+           String liValue
+           
+           Get Value Item 0 to liValue 
+           If (Combo_Value(Self,0) = liValue) Set piOutputDestination to 0
+           Else If (Combo_Value(Self,1) = liValue) Set piOutputDestination to 1
+       End_Procedure
+       
+    End_Object   // oReportSelector
+    
+    For WindowIndex from 1 to 12
+        send Add_space              
+    Loop
+
+    send Add_button (ico_user+7) msg_DoRebuild
+    Send Add_ToolTip "„§ › æ¨Ÿà© á©ª ƒœ›¦£â¤à¤"
+    Set  Status_Help To "€¤˜¡˜«˜©¡œ¬ã «à¤ ˆndexes (Reindex) ¡˜  ¡˜Ÿ˜¨ ©£æª «¦¬ª (CleanUp) ˜¤ ®¨œ áœ«˜ "
+
+    send Add_button (ico_user+18) msg_DoPopupCalc
+    Send Add_ToolTip "€¨ Ÿ£¦£®˜¤ã"
+    Set  Status_Help To ""
+
+    send Add_button (ico_user+21) msg_DoPopupSetup
+    Send Add_ToolTip "Setup Client"
+    Set  Status_Help To "Machine Settings Network Parameter"
+
+    send Add_space
+
+    send Add_button ico_std_properties msg_DoShowPropertiesPage
+    Send Add_ToolTip "ˆ› æ««œª"
+    Set  Status_Help To "ˆ› æ««œª ¡˜  ®˜¨˜¡«¨ ©« ¡á «ª œ­˜¨£¦šãª"
+
+    send Add_button ico_std_help msg_Help_On_Topic
+    Send Add_ToolTip "¦ãŸœ ˜ (F1)"
+    Set  Status_Help To "‰¢ã© ©¬©«ã£˜«¦ª ™¦Ÿœå˜ª (F1)"
+
+    send Add_space
+
+    send Add_button (ico_user+13) msg_Exit_Application
+    Send Add_ToolTip "„¥¦›¦ª (Alt+F4)"
+    Set  Status_Help To "„¥¦›¦ ˜§æ „­˜¨£¦šã (Alt+F4)"
+
+    Procedure DoPrintScreen
+        Integer iVoid aiWhereTo
+        
+        Get piOutputDestination to aiWhereTo
+        If (aiWhereTo = 0) Send Print_Screen to Desktop ""
+        Else If (aiWhereTo = 1) Move (Keybd_Event(VK_SNAPSHOT, 0, 0, 0)) To iVoid
+    End_Procedure
+
+
+    Procedure Redirect_Button_Message integer Itm
+        Integer msg# liObj liCls
+        
+        Get Message   item itm  to Msg#
+        If (Msg_DoRebuild = Msg#)  Send DoRebuild
+        Else If (msg_Help_On_Topic = Msg#) Send Help_On_Topic
+        Else If (msg_Exit_Application = Msg#) Send Exit_Application
+        Else If (msg_DoPopupCalc = Msg#) Send DoPopupCalc
+        Else If (msg_DoPrintScreen = Msg#) Send DoPrintScreen
+        Else If (msg_DoShowPropertiesPage = Msg#) Send DoShowPropertiesPage
+        Else If (msg_DoPopupSetup = Msg#) Send DoPopupSetup
+        Else Forward Send Redirect_Button_Message Itm
+    End_Procedure // Redirect_Message
+
+    Procedure DoChangeToolBarIcon Integer iItem Integer iImageIndex
+        Integer hoClient
+        
+        Delegate Get Client_Id To hoClient
+        Delegate Set Client_Id To 0
+        //----Changes the Icon
+        //Set Toolbar_State To False
+        //Set Form_Image_Index Item iItem To iImageIndex
+        //Set Toolbar_State To True
+        //----Changes the Shadow_State
+        Set Shadow_State Item iItem To iImageIndex
+        Delegate Set Client_Id To hoClient
+    End_Procedure // DoChangeToolBarIcon
+
+    Procedure Page_Object Integer iState
+      Integer hoCurrentObject
+      
+      Forward Send Page_Object iState
+      Move (Self) to hoCurrentObject
+      Send Add_Focus To (oOutputSelector(SELF)) hoCurrentObject
+    End_Procedure   // Page_Object
+
+    
+    Procedure Page Integer iState
+        Forward Send Page iState
+        Set Shadow_State Item 40 to (piPropertiesObjectId(Main_Menu(Self))=0)
+        If iState Begin
+             //Set Timer_Active_State Of (oToolBarTimer (Self)) To True
+        End
+    End_Procedure
+    
+//    Object oToolBarTimer Is A DfTimer
+//        Procedure OnTimer
+//           Local Integer hoFocus bIsDeo bState hoToolBar bIsModal
+//           
+//           Get Focus To hoFocus
+//           If hoFocus Gt Desktop Begin
+//                Get Is_Function Get_Modal_State hoFocus Dftrue To bIsModal
+//                // **WvA: 11-10-1999, we should not check the DEO object any more if 
+//                //                    if it is a modal panel, this could throw up error messages.
+//                If (bIsModal = DfFalse) Begin
+//                  Get Is_Function Get_DEO_Object hoFocus Dftrue To bIsDeo
+//                End
+//                Move (bIsDeo = Dffalse Or bIsModal = Dftrue) To bState
+//                Move (Parent (Self)) To hoToolBar
+//                If (pbToolbarWasDisabled (hoToolBar)) Ne bState Begin
+//                   Set pbToolbarWasDisabled Of hoToolBar To bState
+//                   Set Shadow_State Of hoToolBar Item 0 To bState
+//                   Set Shadow_State Of hoToolBar Item 1 To bState
+//                   Set Shadow_State Of hoToolBar Item 2 To bState
+//                   Set Shadow_State Of hoToolBar Item 3 To bState
+//                   Set Shadow_State Of hoToolBar Item 5 To bState
+//                   Set Shadow_State Of hoToolBar Item 6 To bState
+//                   Set Shadow_State Of hoToolBar Item 7 To bState
+//                   Set Shadow_State Of hoToolBar Item 9 To bState
+//                   Set Shadow_State Of hoToolBar Item 10 To bState
+//                End
+//           End
+//       End_Procedure // OnTimer
+//   End_Object // oToolBarTimer
+   
+End_Object
+
+

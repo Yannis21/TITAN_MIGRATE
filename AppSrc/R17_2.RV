@@ -1,0 +1,1516 @@
+//AB/ Project R17_2:karteles eidon
+//AB/     Object prj is a Report_Project
+//AB/         Set ProjectName to "R17_2:karteles eidon"
+//AB/         Set ProjectFileName to "R17_2.RV"
+
+// Project Object Structure
+//   R17_2 is a ReportViewSub
+//     GroupSub1 is a GroupSub
+//       frapoapo is a FormSub
+//       Frkathapo is a FormSub
+//       FormSub4 is a FormSub
+//       TextBoxSub11 is a TextBoxSub
+//       TextBoxSub13 is a TextBoxSub
+//       TextBoxSub14 is a TextBoxSub
+//       fritemapo is a FormSub
+//       fritemeos is a FormSub
+//       LineControlSub2 is a LineControlSub
+//       FormSub6 is a FormSub
+//       FormSub7 is a FormSub
+//       TextBoxSub15 is a TextBoxSub
+//       FormSub9 is a FormSub
+//     GroupSub2 is a GroupSub
+//       FormSub1 is a FormSub
+//       FormSub2 is a FormSub
+//       TextBoxSub3 is a TextBoxSub
+//       TextBoxSub4 is a TextBoxSub
+//     RadioGroupSub5 is a RadioGroupSub
+//       Radio5 is a RadioSub
+//       Radio6 is a RadioSub
+//       Radio7 is a RadioSub
+//     RadioGroupSub4 is a RadioGroupSub
+//       RadioSub3 is a RadioSub
+//       RadioSub4 is a RadioSub
+//       TextBoxSub9 is a TextBoxSub
+//       TextBoxSub10 is a TextBoxSub
+//     LineControlSub1 is a LineControlSub
+//     ButtonSub1 is a ButtonSub
+//     ButtonSub2 is a ButtonSub
+//     GroupSub3 is a GroupSub
+//       FormSub10 is a FormSub
+//       FormSub11 is a FormSub
+//     karteles_BasicReport is a BasicReport
+//       Wapokat_DD is a Wapokat_DataDictionary
+//       Wapomast_DD is a Wapomast_DataDictionary
+//       Wax_DD is a Wax_DataDictionary
+//       Units_DD is a Units_DataDictionary
+//       Witemkat_DD is a Witemkat_DataDictionary
+//       Item_DD is a Item_DataDictionary
+//       Witemx_DD is a Witemx_DataDictionary
+//       Wtypkin_DD is a Wtypkin_DataDictionary
+//       Hmgiow_DD is a Hmgiow_DataDictionary
+//       Hmwtyp_DD is a Hmwtyp_DataDictionary
+//       wcmoves_dd is a wcmoves_datadictionary
+
+// Register all objects
+Register_Object ButtonSub1
+Register_Object ButtonSub2
+Register_Object FormSub1
+Register_Object FormSub10
+Register_Object FormSub11
+Register_Object FormSub2
+Register_Object FormSub4
+Register_Object FormSub6
+Register_Object FormSub7
+Register_Object FormSub9
+Register_Object Frkathapo
+Register_Object frapoapo
+Register_Object fritemapo
+Register_Object fritemeos
+Register_Object GroupSub1
+Register_Object GroupSub2
+Register_Object GroupSub3
+Register_Object Hmgiow_DD
+Register_Object Hmwtyp_DD
+Register_Object Item_DD
+Register_Object karteles_BasicReport
+Register_Object LineControlSub1
+Register_Object LineControlSub2
+Register_Object R17_2
+Register_Object Radio5
+Register_Object Radio6
+Register_Object Radio7
+Register_Object RadioGroupSub4
+Register_Object RadioGroupSub5
+Register_Object RadioSub3
+Register_Object RadioSub4
+Register_Object TextBoxSub10
+Register_Object TextBoxSub11
+Register_Object TextBoxSub13
+Register_Object TextBoxSub14
+Register_Object TextBoxSub15
+Register_Object TextBoxSub3
+Register_Object TextBoxSub4
+Register_Object TextBoxSub9
+Register_Object Units_DD
+Register_Object Wapokat_DD
+Register_Object Wapomast_DD
+Register_Object Wax_DD
+Register_Object Witemkat_DD
+Register_Object Witemx_DD
+Register_Object Wtypkin_DD
+Register_Object wcmoves_dd
+
+
+//AB/     Report View
+
+
+    //AB-StoreTopStart
+    use Wapokat.DD
+    use Wapomast.DD
+    use wtypkin.dd
+    use syscurxr.dd
+    Use Hmgiow.dd
+    Use Hmwtyp.dd
+    use hmgiow.sl
+    use wax.sl
+    use wcmoves.dd
+    use sl17.sl
+    use sl024.sl
+    use Item.DD
+    use witemx.dd
+    Use Hmgiow.dd
+    Use Hmwtyp.dd
+    use hmgiow.sl
+    
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use Rptvw.Sub
+    Use Group.Sub
+    Use Form.Sub
+    Use Txtbox.Sub
+    Use Line.Sub
+    Use Rgroup.Sub
+    Use Radio.Sub
+    Use Button.Sub
+
+    //AB-IgnoreEnd
+
+    ACTIVATE_VIEW Activate_R17_2 FOR R17_2
+
+    Object R17_2 is a ReportViewSub
+
+        //AB-StoreTopStart
+        
+        property string  psdateto
+        property string  psdatefrom
+        property string  psitemfrom
+        property string  psitemto
+        property string  psapo
+        property string  pswaxfrom
+        property string  pswitemkatfrom
+        
+        
+        property integer piepil public 0
+        Property String  psModule Public ''
+        
+        property number  ktotambd0 public 0
+        property number  kdiscam0  public 0
+        property number  kextra0   public 0
+        property number  kqtyeisa  public 0
+        property number  kqtyexa   public 0
+        property number  kx0       public 0
+        property number  kp0       public 0
+        
+        property number  htotambd0 public 0
+        property number  hdiscam0  public 0
+        property number  hextra0   public 0
+        property number  hqtyeisa  public 0
+        property number  hqtyexa   public 0
+        property number  hx0       public 0
+        property number  hp0       public 0
+        
+        property number  ttotambd0 public 0
+        property number  tdiscam0  public 0
+        property number  textra0   public 0
+        property number  tqtyeisa  public 0
+        property number  tqtyexa   public 0
+        property number  tx0       public 0
+        property number  tp0       public 0
+        property integer pihmgio   public 0
+        //AB-StoreTopEnd
+
+        Set Label to "„¡«ç§à©ž ‰˜¨«â¢˜ª „ ›é¤"
+        Set Size to 250 292
+        Set Location to 2 11
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object GroupSub1 is a GroupSub
+            Set Label to "„§ ¢¦šã ‰¨ «ž¨åà¤"
+            Set Size to 78 278
+            Set Location to 1 3
+            Object frapoapo is a FormSub
+
+                //AB-StoreTopStart
+                                                                                                                                                                                                                                                
+                //AB-StoreTopEnd
+
+                Set Size to 13 58
+                Set Location to 10 94
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Prompt_Button_Mode to pb_PromptOn
+                Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+                //AB-StoreStart
+                Set Prompt_Object to (wax(Current_object))
+                
+                procedure onchange
+                    string wrecr
+                    get value of (frapoapo(self)) to wrecr
+                    move wrecr to wax.wax_recr
+                    find eq wax by index.2
+                    if (found);
+                        set value of (formsub4(self)) to wax.wax_descr
+                    else;
+                        set value of (formsub4(self)) to ''
+                end_procedure
+                
+                procedure prompt
+                    set pimustconstrain of (wax(self)) to 1
+                    set pscompany of (wax(self)) to syscurxr.company_code
+                    set psbranch of (wax(self)) to syscurxr.branch_code
+                    set piyear of (wax(self)) to syscurxr.year_year
+                    set pswapokat of (wax(self)) to ''
+                    forward send prompt
+                end_procedure
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // frapoapo
+
+            Object Frkathapo is a FormSub
+                Set Size to 13 58
+                Set Location to 26 94
+                Set Label_Col_Offset to 2
+                Set Prompt_Button_Mode to pb_PromptOn
+                Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+                //AB-StoreStart
+                Set Prompt_Object to (sl024(Current_object))
+                Procedure Prompt_Callback integer hPrompt
+                    set Export_Column of hPrompt to 0
+                    Set Initial_Column of hPrompt to 0
+                
+                end_procedure
+                
+                procedure onchange
+                    string scode
+                    get value of (frkathapo(self)) to scode
+                    move scode to witemkat.witemkat_code
+                    find eq witemkat by index.1
+                    if (found)set value of (formsub9(self)) to witemkat.witemkat_descr
+                    else      set value of (formsub9(self)) to ''
+                end_procedure
+                //AB-StoreEnd
+
+            End_Object    // Frkathapo
+
+            Object FormSub4 is a FormSub
+                Set Size to 13 120
+                Set Location to 10 155
+                Set Label_Col_Offset to 2
+                Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+                //AB-StoreStart
+                set enabled_state to false
+                //AB-StoreEnd
+
+            End_Object    // FormSub4
+
+            Object TextBoxSub11 is a TextBoxSub
+                Set Label to "€§¦Ÿã¡ž"
+                Set Auto_Size_State to FALSE
+                Set FontSize to 4 0
+                Set Location to 11 5
+                Set Size to 10 53
+                Set TypeFace to "MS Sans Serif"
+                Set Enabled_State to TRUE
+            End_Object    // TextBoxSub11
+
+            Object TextBoxSub13 is a TextBoxSub
+                Set Label to "€§æ „å›¦ª"
+                Set Auto_Size_State to FALSE
+                Set FontSize to 4 0
+                Set Location to 48 5
+                Set Size to 10 85
+                Set TypeFace to "MS Sans Serif"
+                Set Enabled_State to TRUE
+            End_Object    // TextBoxSub13
+
+            Object TextBoxSub14 is a TextBoxSub
+                Set Label to "„éª „å›¦ª"
+                Set Auto_Size_State to FALSE
+                Set FontSize to 4 0
+                Set Location to 62 5
+                Set Size to 13 85
+                Set TypeFace to "MS Sans Serif"
+                Set Enabled_State to TRUE
+            End_Object    // TextBoxSub14
+
+            Object fritemapo is a FormSub
+
+                //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                //AB-StoreTopEnd
+
+                Set Size to 13 59
+                Set Location to 46 93
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Prompt_Button_Mode to pb_PromptOn
+                Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+                //AB-StoreStart
+                Set Prompt_Object to (sl17(current_object))
+                Procedure Prompt_Callback integer hPrompt
+                    set Export_Column of hPrompt to 0
+                    Set Initial_Column of hPrompt to 0
+                
+                end_procedure
+                
+                procedure onchange
+                    string witem sdescr
+                    get value item 0 to witem
+                    move (fsitem(self,witem)) to sdescr
+                    set value of (formsub6(self)) to sdescr
+                end_procedure
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // fritemapo
+
+            Object fritemeos is a FormSub
+
+                //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                //AB-StoreTopEnd
+
+                Set Size to 13 59
+                Set Location to 62 93
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Prompt_Button_Mode to pb_PromptOn
+                Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+                //AB-StoreStart
+                Set Prompt_Object to (sl17(current_object))
+                Procedure Prompt_Callback integer hPrompt
+                    set Export_Column of hPrompt to 0
+                    Set Initial_Column of hPrompt to 0
+                
+                end_procedure
+                
+                procedure onchange
+                    string witem sdescr
+                    get value item 0 to witem
+                    move (fsitem(self,witem)) to sdescr
+                    set value of (formsub7(self)) to sdescr
+                end_procedure
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // fritemeos
+
+            Object LineControlSub2 is a LineControlSub
+                Set Line_Style to lnSINGLE
+                Set Size to 2 276
+                Set Location to 43 1
+            End_Object    // LineControlSub2
+
+            Object FormSub6 is a FormSub
+                Set Size to 13 119
+                Set Location to 47 155
+                Set Label_Col_Offset to 2
+                Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+                //AB-StoreStart
+                set enabled_state to false
+                //AB-StoreEnd
+
+            End_Object    // FormSub6
+
+            Object FormSub7 is a FormSub
+                Set Size to 13 119
+                Set Location to 62 155
+                Set Label_Col_Offset to 2
+                Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+                //AB-StoreStart
+                set enabled_state to false
+                //AB-StoreEnd
+
+            End_Object    // FormSub7
+
+            Object TextBoxSub15 is a TextBoxSub
+                Set Label to "‰˜«žš¦¨å˜ „å›¦¬ª"
+                Set Auto_Size_State to FALSE
+                Set FontSize to 4 0
+                Set Location to 26 5
+                Set Size to 10 63
+                Set TypeFace to "MS Sans Serif"
+                Set Enabled_State to TRUE
+            End_Object    // TextBoxSub15
+
+            Object FormSub9 is a FormSub
+                Set Size to 13 120
+                Set Location to 26 155
+                Set Label_Col_Offset to 2
+                Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+                //AB-StoreStart
+                set enabled_state to false
+                //AB-StoreEnd
+
+            End_Object    // FormSub9
+
+        End_Object    // GroupSub1
+
+        Object GroupSub2 is a GroupSub
+            Set Label to "„§ ¢¦šã †£œ¨¦£ž¤å˜ª ‰ ¤ã©œà¤"
+            Set Size to 28 280
+            Set Location to 80 1
+            Object FormSub1 is a FormSub
+
+                //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                //AB-StoreTopEnd
+
+                Set Size to 13 65
+                Set Location to 10 60
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Prompt_Button_Mode to pb_PromptOn
+                Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+                //AB-StoreStart
+                set Form_Datatype item 0 to mask_date_window
+                set prompt_object to (ocalendar(self))
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // FormSub1
+
+            Object FormSub2 is a FormSub
+
+                //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                //AB-StoreTopEnd
+
+                Set Size to 13 68
+                Set Location to 10 200
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+                Set Prompt_Button_Mode to pb_PromptOn
+                Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+                //AB-StoreStart
+                set Form_Datatype item 0 to mask_date_window
+                set prompt_object to (ocalendar(self))
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // FormSub2
+
+            Object TextBoxSub3 is a TextBoxSub
+                Set Label to "€§æ †£/¤å˜ :"
+                Set Auto_Size_State to FALSE
+                Set FontSize to 4 0
+                Set Location to 11 6
+                Set Size to 10 40
+                Set TypeFace to "MS Sans Serif"
+                Set Enabled_State to TRUE
+            End_Object    // TextBoxSub3
+
+            Object TextBoxSub4 is a TextBoxSub
+                Set Label to "„àª †£¤å˜  :"
+                Set Auto_Size_State to FALSE
+                Set FontSize to 4 0
+                Set Location to 11 149
+                Set Size to 10 47
+                Set TypeFace to "MS Sans Serif"
+                Set Enabled_State to TRUE
+            End_Object    // TextBoxSub4
+
+        End_Object    // GroupSub2
+
+        Object RadioGroupSub5 is a RadioGroupSub
+            Set Size to 25 127
+            Set Location to 148 0
+            Object Radio5 is a RadioSub
+                Set Size to 10 26
+                Set Location to 10 5
+
+                //AB-StoreStart
+                set label to syscurxr.c_code0
+                //AB-StoreEnd
+
+            End_Object    // Radio5
+
+            Object Radio6 is a RadioSub
+                Set Size to 10 32
+                Set Location to 10 44
+
+                //AB-StoreStart
+                set label to syscurxr.c_code00
+                //AB-StoreEnd
+
+            End_Object    // Radio6
+
+            Object Radio7 is a RadioSub
+                Set Size to 10 32
+                Set Location to 10 87
+
+                //AB-StoreStart
+                set label to syscurxr.c_coder
+                //AB-StoreEnd
+
+            End_Object    // Radio7
+
+
+            //AB-StoreStart
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+            Procedure Notify_Select_State integer iToItem integer iFromItem
+                Forward Send Notify_Select_State  itoitem  ifromitem
+                If itoItem Eq 0 ;
+                    Set piepil to 1
+                Else If itoitem Eq 1;
+                    Set piepil to 2
+                Else If itoItem Eq 2 ;
+                    Set piepil to 3
+                //for augmentation
+            End_Procedure
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // RadioGroupSub5
+
+        Object RadioGroupSub4 is a RadioGroupSub
+
+            //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+            //AB-StoreTopEnd
+
+            Set Label to "„¡«ç&§à©ž"
+            Set Size to 42 78
+            Set Location to 188 1
+            Object RadioSub3 is a RadioSub
+                Set Size to 10 13
+                Set Location to 12 63
+            End_Object    // RadioSub3
+
+            Object RadioSub4 is a RadioSub
+                Set Size to 10 13
+                Set Location to 28 63
+            End_Object    // RadioSub4
+
+            Object TextBoxSub9 is a TextBoxSub
+                Set Label to "ŽŸæ¤ž :"
+                Set Auto_Size_State to FALSE
+                Set FontSize to 4 0
+                Set Location to 10 5
+                Set Size to 12 45
+                Set TypeFace to "MS Sans Serif"
+                Set Enabled_State to TRUE
+            End_Object    // TextBoxSub9
+
+            Object TextBoxSub10 is a TextBoxSub
+                Set Label to "„¡«¬§à«ãª : "
+                Set Auto_Size_State to FALSE
+                Set FontSize to 4 0
+                Set Location to 24 5
+                Set Size to 12 45
+                Set TypeFace to "MS Sans Serif"
+                Set Enabled_State to TRUE
+            End_Object    // TextBoxSub10
+
+
+            //AB-StoreStart
+            Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+                Forward Send Notify_Select_State  iNewItem  iOldItem
+                If iNewItem EQ 0 Set Output_Device_Mode  To PRINT_TO_WINDOW
+                Else             Set Output_Device_Mode  To PRINT_TO_PRINTER
+            End_Procedure
+            //AB-StoreEnd
+
+        End_Object    // RadioGroupSub4
+
+        Object LineControlSub1 is a LineControlSub
+            Set Line_Style to lnSINGLE
+            Set Size to 2 288
+            Set Location to 114 0
+        End_Object    // LineControlSub1
+
+        Object ButtonSub1 is a ButtonSub
+
+            //AB-StoreTopStart
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+            //AB-StoreTopEnd
+
+            Set Label to "„¥¦›¦ª "
+            Set Size to 18 53
+            Set Location to 212 81
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            Procedure OnClick
+                Send Request_Cancel
+            End_Procedure
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub1
+
+        Object ButtonSub2 is a ButtonSub
+
+            //AB-StoreTopStart
+            
+            //AB-StoreTopEnd
+
+            Set Label to "„¡«â¢œ©ž"
+            Set Size to 18 53
+            Set Location to 192 81
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            Procedure OnClick
+                #INCLUDE rvir17_2b.pkg
+                integer listatus ihmgio
+                string dateapo dateeos msgstr apo
+                move 0 to listatus
+                Get value of (formsub1(GroupSub2(Self)))    item 0 to dateapo
+                Get value of (formsub2(GroupSub2(Self)))    item 0 to dateeos
+                Get value of (formsub10(GroupSub3(Self)))   item 0 to ihmgio
+                if (ihmgio = 0) begin
+                      move "" to msgstr
+                      move 1 to listatus
+                      move "‘­á¢£˜ !! ƒâ¤ „§ ¢â¥˜«œ †£œ¨¦¢æš ¦ !!" to msgstr
+                      error 999 msgstr
+                end
+                if (dateapo ne "") begin
+                   if ((dateapo < syscurxr.year_xrhshfrom) or (dateapo > syscurxr.year_xrhshto)) begin
+                      move "" to msgstr
+                      move 1 to listatus
+                      move "†£/¤åœª „§ ¢¦šãª „¡«æª Ž¨åà¤ •¨ã©žª" to msgstr
+                      error 999 msgstr
+                   end
+                end
+            
+                if (dateeos ne "") begin
+                   if ((dateeos < syscurxr.year_xrhshfrom) or (dateeos > syscurxr.year_xrhshto)) begin
+                      move "" to msgstr
+                      move 1 to listatus
+                      move "†£/¤åœª „§ ¢¦šãª „¡«æª Ž¨åà¤ •¨ã©žª" to msgstr
+                      error 999 msgstr
+                   end
+                end
+                if (listatus=0) begin
+                     Send startreport
+                end
+            
+            End_Procedure
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub2
+
+        Object GroupSub3 is a GroupSub
+            Set Label to "„§ ¢¦šã †£œ¨¦¢¦šå¦¬"
+            Set Size to 29 279
+            Set Location to 115 1
+            Object FormSub10 is a FormSub
+                Set Size to 13 47
+                Set Location to 9 93
+                Set Label_Col_Offset to 2
+                Set Prompt_Button_Mode to pb_PromptOn
+                Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+                //AB-StoreStart
+                Set Prompt_Object to (hmgiow(Current_object))
+                Set Numeric_Mask Item 0 to 2 0 '*, '
+                Procedure Prompt
+                    Forward Send prompt
+                End_procedure
+                
+                Procedure Prompt_Callback integer hPrompt
+                    set Export_Column of hPrompt    to    0
+                    Set Initial_Column of hPrompt   to    0
+                end_procedure
+                
+                procedure onchange
+                    string whmgio
+                    get value item 0 to whmgio
+                    move whmgio to hmgiow.hmgiow_code
+                    find eq hmgiow by index.1
+                    if (found);
+                        set value of (formsub11(self)) to hmgiow.hmgiow_descr
+                    else;
+                        set value of (formsub11(self)) to ''
+                end_procedure
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                //AB-StoreEnd
+
+            End_Object    // FormSub10
+
+            Object FormSub11 is a FormSub
+                Set Size to 13 133
+                Set Location to 9 143
+                Set Label_Col_Offset to 2
+                Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+                //AB-StoreStart
+                set enabled_state to false
+                //AB-StoreEnd
+
+            End_Object    // FormSub11
+
+        End_Object    // GroupSub3
+
+
+        //AB-StoreStart
+        
+        
+        Procedure Activate_View Returns Integer
+            Integer rVal
+            String sModule
+            set value of (formsub1(groupsub2(current_object))) to syscurxr.year_xrhshfrom
+            set value of (formsub2(groupsub2(current_object))) to syscurxr.year_xrhshto
+            Forward Get Msg_Activate_View to rVal
+            Procedure_Return rVal
+        End_procedure
+        
+        
+        Procedure StartReport
+            Integer iOutputDevice
+            String  FileName datefrom dateto itemfrom itemto waxfrom witemkatfrom
+            integer iepil iHmgio
+        
+            Get Output_Device_Mode To iOutputDevice
+            If iOutputDevice EQ PRINT_TO_WINDOW Begin
+               Make_Temp_File "TXT" FileName
+               Move ("c:\" - FileName)  To FileName
+               Set Output_Device_Name  To FileName
+            End
+            Else ;
+            Set Output_Device_Name  To "Lpt1:"
+        
+           // Collection Of selection Criteria from VIEW
+           Get value of (fritemapo(GroupSub1(Self)))     item 0 to itemfrom
+           Get value of (fritemeos(GroupSub1(Self)))     item 0 to itemto
+           Get value of (frapoapo(GroupSub1(Self)))      item 0 to waxfrom
+           Get value of (FormSub1(GroupSub2(Self)))      item 0 to Datefrom
+           Get value of (FormSub2(GroupSub2(Self)))      item 0 to dateto
+           Get value of (frkathapo(GroupSub1(Self)))     item 0 to witemkatfrom
+           Get value of (FormSub10(GroupSub3(Self)))     item 0 to iHmgio //HMGIO
+           set psitemfrom          to itemfrom
+           set psitemto            to itemto
+           set pswaxfrom           to waxfrom
+           set pswitemkatfrom      to witemkatfrom
+           get piepil              to iepil
+           set pihmgio             to iHmgio
+           set psdatefrom          to datefrom
+           set psdateto            to dateto
+        //   ------------------------------------------------------------------------------
+        
+           Send Run_Report
+           If iOutputDevice EQ PRINT_TO_WINDOW Begin
+               RunProgram background "notepad" FileName
+               EraseFile FileName
+            End
+        End_Procedure
+        
+        
+        Object karteles_BasicReport is a BasicReport
+        
+           Set Report_Title to "‰˜¨«â¢œª „ ›é¤                   "
+        
+            Object Wapokat_DD is a Wapokat_DataDictionary
+            End_Object    // Wapokat_DD
+        
+            Object Wapomast_DD is a Wapomast_DataDictionary
+               Set DDO_Server to (Wapokat_DD(self))
+            End_Object    // Wapomast_DD
+        
+            Object Wax_DD is a Wax_DataDictionary
+                Set DDO_Server to (Wapomast_DD(self))
+            End_Object    // Wax_DD
+        
+            Object Units_DD is a Units_DataDictionary
+            End_Object    // Units_DD
+        
+            Object Witemkat_DD is a Witemkat_DataDictionary
+            End_Object    // Witemkat_DD
+        
+            Object Item_DD is a Item_DataDictionary
+                Set DDO_Server to (Units_DD(self))
+                Set DDO_Server to (Witemkat_DD(self))
+            End_Object    // Item_DD
+        
+            Object Witemx_DD is a Witemx_DataDictionary
+                Set DDO_Server to (Item_DD(self))
+            End_Object    // Witemx_DD
+        
+            Object Wtypkin_DD is a Wtypkin_DataDictionary
+            End_Object    // Wtypkin_DD
+        
+        
+            Object Hmgiow_DD is a Hmgiow_DataDictionary
+            End_Object    // Hmgiow_DD
+        
+            Object Hmwtyp_DD is a Hmwtyp_DataDictionary
+               Set DDO_Server to (wtypkin_DD(Self))
+               Set DDO_Server to (Hmgiow_DD(Self))
+               Begin_Constraints
+                   Integer iHmgio
+                   get piHmgio    to iHmgio
+                   if iHmgio ne 0 Constrain Hmwtyp.Hmgiow_code eq iHmgio
+                End_Constraints
+            End_Object    // HmCtyp_DD
+        
+        
+        
+           object wcmoves_dd is A wcmoves_datadictionary
+             Property String psRecr Public ''
+             Set DDO_Server to (Wax_DD(self))
+             Set DDO_Server to (Witemx_DD(self))
+        
+        
+            Function fiMasKanei Returns Integer
+                Integer rVal
+                If Wcmoves.Wtypkin_Recr In (psRecr(Self)) Move 1 to rVal
+                Else Move 0 to rval
+                Function_Return rVal
+            End_Function
+        
+            begin_constraints
+               String  datefrom dateto itemfrom itemto waxfrom witemkatfrom
+               integer iepil
+               get psdatefrom     to datefrom
+               get psdateto       to dateto
+               if (datefrom='') move '01/01/1980' to datefrom
+               if (dateto='')   move '31/12/2100' to dateto
+               get psitemfrom     to itemfrom
+               get psitemto       to itemto
+               get pswaxfrom      to waxfrom
+               get pswitemkatfrom to witemkatfrom
+               if ((itemfrom<>'') and (waxfrom='')) set ordering to 10
+               else set ordering to 12
+               Constrain wcmoves.company_code eq syscurxr.company_code
+               Constrain wcmoves.branch_code  eq syscurxr.branch_code
+               Constrain wcmoves.year_year    eq syscurxr.year_year
+               move (trim(waxfrom))  to waxfrom
+               move (trim(itemfrom)) to itemfrom
+               move (trim(itemto))   to itemto
+               if waxfrom      ne "" Constrain wcmoves.wax_recr     eq waxfrom
+               if itemfrom     ne "" Constrain wcmoves.witemx_code  ge itemfrom
+               if itemto       ne "" Constrain wcmoves.witemx_code  le itemto
+               if datefrom     ne "" Constrain wcmoves.wcmove_hmnia ge datefrom
+               if dateto       ne "" Constrain wcmoves.wcmove_hmnia le dateto
+               if witemkatfrom ne "" Constrain wcmoves.witemkat_code eq witemkatfrom
+               Constrain Wcmoves As (fiMasKanei(self)=1)
+            end_constraints
+           end_object
+        
+            Set Server To (wcmoves_DD(Current_Object))
+            Report_Main_File wcmoves
+            Report_Index BY Index.12 // €§¦Ÿã¡ž + „å›¦ª + †£/¤å˜
+            report_breaks wcmoves.wax_recr wcmoves.witemx_code
+        
+            Report_Index BY Index.3
+            Function Starting_Main_Report Returns Integer
+              Local Integer iRetVal
+              Local String sStr
+              Move '' to sStr
+              Forward Get Starting_Main_Report to iRetval
+              set page_end to 60
+              set page_feed  to 66
+        
+              Send Rebuild_Constraints to Hmwtyp_DD
+              Send Find to Hmwtyp_dd First_Record 1
+              While (Found)
+                    Append sStr Hmwtyp.wtypkin_recr ','
+                    Send Find to Hmwtyp_dd Next_Record 1
+              Loop
+              Set psRecr of Wcmoves_DD to sStr
+        
+            End_Function
+        
+            Procedure_Section Page_Top as Headerr17_1
+              Local Integer iPage ihmgio iepil
+              string lsvalue
+              date ddate
+              sysdate4 ddate
+              get piepil to iepil
+              Get Page_Count to headerr17_1.1
+              move syscurxr.company_name to headerr17_1.2
+              move syscurxr.branch_name  to headerr17_1.3
+              move syscurxr.year_year    to headerr17_1.4
+              move (trim(hmgiow.hmgiow_descr)) to  headerr17_1.5
+              case Begin
+                    Case (iepil = 1)
+                      print syscurxr.c_code0 to headerr17_1.6
+                      Case Break
+                    Case (iepil = 2)
+                      print syscurxr.c_code00 to headerr17_1.6
+                      Case Break
+                    Case (iepil = 3)
+                      print syscurxr.c_coder to headerr17_1.6
+                     Case Break
+              Case End
+              move ddate          to headerr17_1.7
+              get psdatefrom      to headerr17_1.8
+              get psdateto        to headerr17_1.9
+              OutPut_PageCheck
+        
+            End_Procedure
+        
+        
+            Procedure_Section SubHeader1 as SubheaderR17_1
+                move wax.wax_code             to subheaderr17_1.1
+                move wax.wax_descr            to subheaderr17_1.2
+                if (pswitemkatfrom(self)<>'')begin
+                  move witemkat.witemkat_code   to subheaderr17_1.3
+                  move witemkat.witemkat_descr  to subheaderr17_1.4
+                end
+                else blankform subheaderr17_1.3 thru subheaderr17_1.4
+                output_pagecheck
+            end_procedure
+        
+            Procedure_Section SubHeader2 as SubheaderR17_2
+              move witemx.witemx_code       to subheaderr17_2.1
+              move witemx.witemx_descr      to subheaderr17_2.2
+              output_pagecheck
+            end_procedure
+        
+            Procedure_Section  Body as BodyR17_1
+                Integer iHmgio iepil
+                number   ntotambd0 ndiscam0 nqtyeisa nqtyexa nx0 np0
+                get ktotambd0 to ntotambd0
+                get kdiscam0  to ndiscam0
+                get kqtyeisa  to nqtyeisa
+                get kqtyexa   to nqtyexa
+                get kx0       to nx0
+                get kp0       to np0
+                get piepil to iepil
+                send update_status ('„å›¦ª' + ":" + string(wcmoves.item_code))
+                print wcmoves.wcmove_hmnia to bodyr17_1.1
+                print wcmoves.wcmove_par to bodyr17_1.2
+                print wcmoves.client_id to bodyr17_1.3
+                if (wcmoves.client_id<>'') begin
+                   clear clients
+                   move wcmoves.client_recr to clients.client_recr
+                   find eq clients by index.2
+                   if (found=1) move clients.client_name to bodyr17_1.4
+                end
+                else blankform bodyr17_1.3 thru bodyr17_1.4
+                print '' to bodyr17_1.5
+                if (iepil=1) begin
+                   if ((wcmoves.wcmove_qty_eisa <> 0)or(wcmoves.wcmove_x0  <> 0)) begin
+                       print wcmoves.unit_price0 to bodyr17_1.6
+                       print wcmoves.wcmov_totamad0 to bodyr17_1.7
+                       print ''  to bodyr17_1.8
+                       print wcmoves.wcmove_qty to bodyr17_1.9
+                       print wcmoves.wcmove_x0 to bodyr17_1.10
+                       if (wcmoves.wcmove_qty_eisa=0) begin
+                          print wcmoves.sx_posothta_eis to bodyr17_1.9
+                          print wcmoves.unit_price0 to bodyr17_1.6
+                       end
+                       if (wcmoves.wcmove_x0=0) begin
+                          print wcmoves.wcmo_totamad0 to bodyr17_1.7
+                          print ''  to bodyr17_1.8
+                          print wcmoves.wcmov_x0      to bodyr17_1.10
+                          print wcmoves.unit_pric0 to bodyr17_1.6
+                       end
+                       add   wcmoves.wcmov_totamad0 to ntotambd0
+                       add   wcmoves.wcmov_discam0  to ndiscam0
+                       add   wcmoves.wcmove_qty     to nqtyeisa
+                       add   wcmoves.wcmove_x0      to nx0
+                       print 0 to bodyr17_1.11
+                       print 0 to bodyr17_1.12
+                   end
+                   if ((wcmoves.wcmove_qty_exa <> 0)or (wcmoves.wcmove_p0 <> 0)) begin
+                       print wcmoves.unit_price0 to bodyr17_1.6
+                       print wcmoves.wcmov_totamad0 to bodyr17_1.7
+                       print ''  to bodyr17_1.8
+                       print 0 to bodyr17_1.9
+                       print 0 to bodyr17_1.10
+                       print wcmoves.wcmove_qty to bodyr17_1.11
+                       print wcmoves.wcmove_p0 to bodyr17_1.12
+        
+                       if (wcmoves.wcmove_qty_exa=0) begin
+                          print wcmoves.sx_posothta_ex to bodyr17_1.11
+                          print wcmoves.unit_price0 to bodyr17_1.6
+                       end
+                       if (wcmoves.wcmove_p0=0) begin
+                          print wcmoves.wcmo_totamad0 to bodyr17_1.7
+                          print ''  to bodyr17_1.8
+                          print wcmoves.wcmov_p0      to bodyr17_1.12
+                          print wcmoves.unit_pric0 to bodyr17_1.6
+                       end
+        
+                       add   wcmoves.wcmov_totamad0 to ntotambd0
+                       add   wcmoves.wcmov_discam0  to ndiscam0
+                       add   wcmoves.wcmove_qty     to nqtyexa
+                       add   wcmoves.wcmove_p0      to np0
+                   end
+                   output_pagecheck
+                end
+                if (iepil=2) begin
+                    if ((wcmoves.wcmove_qty_eisa <> 0) or (wcmoves.wcmove_x00 <>0)) begin
+                       print wcmoves.unit_price00 to bodyr17_1.6
+                       print wcmoves.wcmov_totamad00 to bodyr17_1.7
+                       print '' to  bodyr17_1.8
+                       print wcmoves.wcmove_qty to bodyr17_1.9
+                       print wcmoves.wcmove_x00 to bodyr17_1.10
+                       print 0 to bodyr17_1.11
+                       print 0 to bodyr17_1.12
+        
+                       if (wcmoves.wcmove_qty_eisa=0) begin
+                          print wcmoves.sx_posothta_eis to bodyr17_1.9
+                          print wcmoves.unit_price0 to bodyr17_1.6
+                       end
+                       if (wcmoves.wcmove_x00=0) begin
+                          print wcmoves.wcmo_totamad00 to bodyr17_1.7
+                          print ''  to bodyr17_1.8
+                          print wcmoves.wcmov_x00      to bodyr17_1.10
+                          print wcmoves.unit_pric0     to bodyr17_1.6
+                       end
+        
+                       add   wcmoves.wcmov_totamad00 to ntotambd0
+                       add   wcmoves.wcmov_discam00  to ndiscam0
+                       add   wcmoves.wcmove_qty      to nqtyeisa
+                       add   wcmoves.wcmove_x00      to nx0
+                    end
+                    if ((wcmoves.wcmove_qty_exa <> 0) or (wcmoves.wcmove_p00 <>0)) begin
+                       print wcmoves.unit_price00 to bodyr17_1.6
+                       print wcmoves.wcmov_totamad00 to bodyr17_1.7
+                       print '' to bodyr17_1.8
+                       print 0 to bodyr17_1.9
+                       print 0 to bodyr17_1.10
+                       print wcmoves.wcmove_qty to bodyr17_1.11
+                       print wcmoves.wcmove_p00 to bodyr17_1.12
+                       if (wcmoves.wcmove_qty_exa=0) begin
+                          print wcmoves.sx_posothta_ex to bodyr17_1.11
+                          print wcmoves.unit_price00 to bodyr17_1.6
+                       end
+                       if (wcmoves.wcmove_p00=0) begin
+                          print wcmoves.wcmo_totamad00 to bodyr17_1.7
+                          print ''  to bodyr17_1.8
+                          print wcmoves.wcmov_p00      to bodyr17_1.12
+                          print wcmoves.unit_pric00    to bodyr17_1.6
+                       end
+                       add   wcmoves.wcmov_totamad00 to ntotambd0
+                       add   wcmoves.wcmov_discam00  to ndiscam0
+                       add   wcmoves.wcmove_qty      to nqtyexa
+                       add   wcmoves.wcmove_p00      to np0
+                    end
+                    output_pagecheck
+                end
+                if (iepil=3) begin
+                    if ((wcmoves.wcmove_qty_eisa <> 0) or (wcmoves.wcmove_x1 <>0)) begin
+                       print wcmoves.unit_pricer to bodyr17_1.6
+                       print wcmoves.wcmov_totamad1 to bodyr17_1.7
+                       print '' to bodyr17_1.8
+                       print wcmoves.wcmove_qty to bodyr17_1.9
+                       print wcmoves.wcmove_x1 to bodyr17_1.10
+                       print 0 to bodyr17_1.11
+                       print 0 to bodyr17_1.12
+                       if (wcmoves.wcmove_qty_eisa=0) begin
+                          print wcmoves.sx_posothta_eis to bodyr17_1.9
+                          print wcmoves.unit_pricer to bodyr17_1.6
+                       end
+                       if (wcmoves.wcmove_x1=0) begin
+                          print wcmoves.wcmo_totamad1 to bodyr17_1.7
+                          print ''  to bodyr17_1.8
+                          print wcmoves.wcmov_x1      to bodyr17_1.10
+                          print wcmoves.unit_pricr     to bodyr17_1.6
+                       end
+        
+                       add   wcmoves.wcmov_totamad1  to ntotambd0
+                       add   wcmoves.wcmov_discam1   to ndiscam0
+                       add   wcmoves.wcmove_qty      to nqtyeisa
+                       add   wcmoves.wcmove_x1       to nx0
+                    end
+                    if ((wcmoves.wcmove_qty_exa <> 0) or (wcmoves.wcmove_p1<>0)) begin
+                       print wcmoves.unit_pricer to bodyr17_1.6
+                       print wcmoves.wcmov_totamad1 to bodyr17_1.7
+                       print '' to bodyr17_1.8
+                       print 0 to bodyr17_1.9
+                       print 0 to bodyr17_1.10
+                       print wcmoves.wcmove_qty to bodyr17_1.11
+                       print wcmoves.wcmove_p1 to bodyr17_1.12
+                       if (wcmoves.wcmove_qty_exa=0) begin
+                          print wcmoves.sx_posothta_ex to bodyr17_1.11
+                          print wcmoves.unit_pricer to bodyr17_1.6
+                       end
+                       if (wcmoves.wcmove_p1=0) begin
+                          print wcmoves.wcmo_totamad1 to bodyr17_1.7
+                          print ''  to bodyr17_1.8
+                          print wcmoves.wcmov_p1      to bodyr17_1.12
+                          print wcmoves.unit_pricr    to bodyr17_1.6
+                       end
+        
+                       add   wcmoves.wcmov_totamad1  to ntotambd0
+                       add   wcmoves.wcmov_discam1   to ndiscam0
+                       add   wcmoves.wcmove_qty      to nqtyexa
+                       add   wcmoves.wcmove_p1       to np0
+                    end
+                    output_pagecheck
+                end
+                set ktotambd0 to ntotambd0
+                set kdiscam0  to ndiscam0
+                set kqtyeisa  to nqtyeisa
+                set kqtyexa   to nqtyexa
+                set kx0       to nx0
+                set kp0       to np0
+            End_Procedure
+        
+            Procedure_Section  subtotal2 as subtotalr17_2
+               number   ntotambd0 ndiscam0  nqtyeisa nqtyexa nx0 np0
+               number   nhtotambd0 nhdiscam0  nhqtyeisa nhqtyexa nhx0 nhp0
+               get ktotambd0 to ntotambd0
+               get kdiscam0  to ndiscam0
+               get kqtyeisa  to nqtyeisa
+               get kqtyexa   to nqtyexa
+               get kx0       to nx0
+               get kp0       to np0
+        
+               get htotambd0 to nhtotambd0
+               get hdiscam0  to nhdiscam0
+               get hqtyeisa  to nhqtyeisa
+               get hqtyexa   to nhqtyexa
+               get hx0       to nhx0
+               get hp0       to nhp0
+               blankform subtotalr17_2.1
+               print ntotambd0      to Subtotalr17_2.2
+               print ''       to Subtotalr17_2.3
+               print nqtyeisa       to Subtotalr17_2.4
+               print nx0            to Subtotalr17_2.5
+               print nqtyexa        to Subtotalr17_2.6
+               print np0            to Subtotalr17_2.7
+        
+               add ntotambd0        to nhtotambd0
+               add ndiscam0         to nhdiscam0
+               add nqtyeisa         to nhqtyeisa
+               add nx0              to nhx0
+               add nqtyexa          to nhqtyexa
+               add np0              to nhp0
+        
+               set htotambd0 to nhtotambd0
+               set hdiscam0  to nhdiscam0
+               set hqtyeisa  to nhqtyeisa
+               set hqtyexa   to nhqtyexa
+               set hx0       to nhx0
+               set hp0       to nhp0
+        
+               set ktotambd0 to 0
+               set kdiscam0  to 0
+               set kqtyeisa  to 0
+               set kqtyexa   to 0
+               set kx0       to 0
+               set kp0       to 0
+               output_pagecheck
+        
+            end_procedure
+        
+            Procedure_Section  subtotal1 as subtotalr17_1
+                number   ntotambd0 ndiscam0  nqtyeisa nqtyexa nx0 np0
+                number   nhtotambd0 nhdiscam0 nhqtyeisa nhqtyexa nhx0 nhp0
+                get htotambd0 to ntotambd0
+                get hdiscam0  to ndiscam0
+                get hqtyeisa  to nqtyeisa
+                get hqtyexa   to nqtyexa
+                get hx0       to nx0
+                get hp0       to np0
+        
+                get ttotambd0 to nhtotambd0
+                get tdiscam0  to nhdiscam0
+                get tqtyeisa  to nhqtyeisa
+                get tqtyexa   to nhqtyexa
+                get tx0       to nhx0
+                get tp0       to nhp0
+        
+                blankform              subtotalr17_1.1
+                print ntotambd0        to subtotalr17_1.2
+                print ''         to subtotalr17_1.3
+                print nqtyeisa         to subtotalr17_1.4
+                print nx0              to subtotalr17_1.5
+                print nqtyexa          to subtotalr17_1.6
+                print np0              to subtotalr17_1.7
+        
+                add ntotambd0        to nhtotambd0
+                add ndiscam0         to nhdiscam0
+                add nqtyeisa         to nhqtyeisa
+                add nx0              to nhx0
+                add nqtyexa          to nhqtyexa
+                add np0              to nhp0
+        
+                set ttotambd0 to nhtotambd0
+                set tdiscam0  to nhdiscam0
+                set tqtyeisa  to nhqtyeisa
+                set tqtyexa   to nhqtyexa
+                set tx0       to nhx0
+                set tp0       to nhp0
+        
+                set htotambd0 to 0
+                set hdiscam0  to 0
+                set hqtyeisa  to 0
+                set hqtyexa   to 0
+                set hx0       to 0
+                set hp0       to 0
+                output_pagecheck
+        
+            end_Procedure
+        
+        
+            Procedure_Section  total as totalr17_1
+                number   ntotambd0 ndiscam0 nqtyeisa nqtyexa nx0 np0
+                get ttotambd0 to ntotambd0
+                get tdiscam0  to ndiscam0
+                get tqtyeisa  to nqtyeisa
+                get tqtyexa   to nqtyexa
+                get tx0       to nx0
+                get tp0       to np0
+        
+                blankform           totalr17_1.1
+                print ntotambd0  to totalr17_1.2
+                print ''   to totalr17_1.3
+                print nqtyeisa   to totalr17_1.4
+                print nx0        to totalr17_1.5
+                print nqtyexa    to totalr17_1.6
+                print np0        to totalr17_1.7
+        
+                set ttotambd0 to 0
+                set tdiscam0  to 0
+                set tqtyeisa  to 0
+                set tqtyexa   to 0
+                set tx0       to 0
+                set tp0       to 0
+                output_pagecheck
+        
+            end_Procedure
+        
+            Procedure_Section Page_Bottom as Footerr17_1
+              output_pagecheck
+            End_Procedure
+        
+        
+            Procedure Ending_Report
+              blankform bodyr17_1.1 thru bodyr17_1.12
+              blankform subtotalr17_2.1 thru subtotalr17_2.7
+              blankform subtotalr17_1.1 thru subtotalr17_1.7
+              blankform totalr17_1.1    thru totalr17_1.7
+            End_Procedure
+        
+        End_Object
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // R17_2
+
+
+    //AB-StoreStart
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

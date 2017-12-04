@@ -1,0 +1,521 @@
+//AB/ Project TestLists2
+//AB/     Object prj is a View_Project
+//AB/         Set ProjectName to "TestLists2"
+//AB/         Set ProjectFileName to "TestLists.VW"
+//AB/         Set GenerateFileName to "NONAME"
+
+// Project Object Structure
+//   FormulaLists is a dbViewSub
+//     FormlArr_DD1 is a FormlArr_DataDictionary
+//     FormlArr_DD2 is a FormlArr_DataDictionary
+//     FormlArr_DD3 is a FormlArr_DataDictionary
+//     FormlArr_DD4 is a FormlArr_DataDictionary
+//     FormlArr_DD5 is a FormlArr_DataDictionary
+//     FormlArr_DD6 is a FormlArr_DataDictionary
+//     FormlArr_DD7 is a FormlArr_DataDictionary
+//     FormlArr_DD8 is a FormlArr_DataDictionary
+//     FormlArr_DD9 is a FormlArr_DataDictionary
+//     dblistSub1 is a dbListSub
+//     dblistSub2 is a dbListSub
+//     dblistSub3 is a dbListSub
+//     dblistSub4 is a dbListSub
+//     dblistSub5 is a dbListSub
+//     dblistSub6 is a dbListSub
+//     dblistSub7 is a dbListSub
+//     dblistSub8 is a dbListSub
+//     dblistSub9 is a dbListSub
+//     frmKey is a FormSub
+
+// Register all objects
+Register_Object dblistSub1
+Register_Object dblistSub2
+Register_Object dblistSub3
+Register_Object dblistSub4
+Register_Object dblistSub5
+Register_Object dblistSub6
+Register_Object dblistSub7
+Register_Object dblistSub8
+Register_Object dblistSub9
+Register_Object FormlArr_DD1
+Register_Object FormlArr_DD2
+Register_Object FormlArr_DD3
+Register_Object FormlArr_DD4
+Register_Object FormlArr_DD5
+Register_Object FormlArr_DD6
+Register_Object FormlArr_DD7
+Register_Object FormlArr_DD8
+Register_Object FormlArr_DD9
+Register_Object FormulaLists
+Register_Object frmKey
+
+
+//AB/     AppBuild VIEW
+
+
+    //AB-StoreTopStart
+                    
+    Open FormlArr
+    Use FormlArr.DD
+    
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use dbView.Sub
+    Use dbList.Sub
+    Use Form.Sub
+
+    //AB-IgnoreEnd
+
+    ACTIVATE_VIEW Activate_FormulaLists FOR FormulaLists
+
+    Object FormulaLists is a dbViewSub
+
+        //AB-StoreTopStart
+                
+        Property Integer psCode1    Public 0
+        Property Integer psCode2    Public 0
+        Property Integer psCode3    Public 0
+        Property Integer psCode4    Public 0
+        Property Integer psCode5    Public 0
+        Property Integer psCode6    Public 0
+        Property Integer psCode7    Public 0
+        Property Integer psCode8    Public 0
+        Property Integer psCode9    Public 0
+        
+        Object FormlArr_DD1 is a FormlArr_DataDictionary
+            Begin_Constraints
+                Constrain FormlArr.FormArr_ID Eq (psCode1(Self))
+            End_Constraints
+        End_Object
+        
+        Object FormlArr_DD2 is a FormlArr_DataDictionary
+            Begin_Constraints
+                Constrain FormlArr.FormArr_ID Eq (psCode2(Self))
+            End_Constraints
+        End_Object
+        
+        Object FormlArr_DD3 is a FormlArr_DataDictionary
+            Begin_Constraints
+                Constrain FormlArr.FormArr_ID Eq (psCode3(Self))
+            End_Constraints
+        End_Object
+        
+        Object FormlArr_DD4 is a FormlArr_DataDictionary
+            Begin_Constraints
+                Constrain FormlArr.FormArr_ID Eq (psCode4(Self))
+            End_Constraints
+        End_Object
+        
+        Object FormlArr_DD5 is a FormlArr_DataDictionary
+            Begin_Constraints
+                Constrain FormlArr.FormArr_ID Eq (psCode5(Self))
+            End_Constraints
+        End_Object
+        
+        Object FormlArr_DD6 is a FormlArr_DataDictionary
+            Begin_Constraints
+                Constrain FormlArr.FormArr_ID Eq (psCode6(Self))
+            End_Constraints
+        End_Object
+        
+        Object FormlArr_DD7 is a FormlArr_DataDictionary
+            Begin_Constraints
+                Constrain FormlArr.FormArr_ID Eq (psCode7(Self))
+            End_Constraints
+        End_Object
+        
+        Object FormlArr_DD8 is a FormlArr_DataDictionary
+            Begin_Constraints
+                Constrain FormlArr.FormArr_ID Eq (psCode8(Self))
+            End_Constraints
+        End_Object
+        
+        Object FormlArr_DD9 is a FormlArr_DataDictionary
+            Begin_Constraints
+                Constrain FormlArr.FormArr_ID Eq (psCode9(Self))
+            End_Constraints
+        End_Object
+        
+        
+        //AB-StoreTopEnd
+
+        Set Label to "Formula Array - Multiple Constrained lists"
+        Set Size to 418 505
+        Set Location to 20 33
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object dblistSub1 is a dbListSub
+            Set Ordering to 5
+            Set Size to 110 150
+            Set Location to 30 16
+            Set Wrap_State to TRUE
+
+            Begin_Row
+                Entry_Item Formlarr.Formarr_id
+                Entry_Item Formlarr.Formarr_array
+                Entry_Item Formlarr.Formarr_descr
+            End_Row
+
+            Set Form_Width    item 0 to 32
+            Set Header_Label  item 0 to "CT"
+            
+            Set Form_Width    item 1 to 29
+            Set Header_Label  item 1 to "PT"
+            
+            Set Form_Width    item 2 to 83
+            Set Header_Label  item 2 to "PT Desc"
+            
+
+            //AB-StoreStart
+                                                                        
+            Set Server to (FormlArr_DD1(self))
+            
+            //AB-StoreEnd
+
+        End_Object    // dblistSub1
+
+        Object dblistSub2 is a dbListSub
+
+            //AB-StoreTopStart
+                                                                        
+            //AB-StoreTopEnd
+
+            Set Ordering to 5
+            Set Size to 110 150
+            Set Location to 30 174
+            Set Wrap_State to TRUE
+
+            Begin_Row
+                Entry_Item Formlarr.Formarr_id
+                Entry_Item Formlarr.Formarr_array
+                Entry_Item Formlarr.Formarr_descr
+            End_Row
+
+            Set Form_Width    item 0 to 32
+            Set Header_Label  item 0 to "CT"
+            
+            Set Form_Width    item 1 to 29
+            Set Header_Label  item 1 to "PT"
+            
+            Set Form_Width    item 2 to 83
+            Set Header_Label  item 2 to "PT Desc"
+            
+
+            //AB-StoreStart
+                                                                        
+            Set Server to (FormlArr_DD2(self))
+            
+            //AB-StoreEnd
+
+        End_Object    // dblistSub2
+
+        Object dblistSub3 is a dbListSub
+
+            //AB-StoreTopStart
+                                                                        
+            //AB-StoreTopEnd
+
+            Set Ordering to 5
+            Set Size to 110 150
+            Set Location to 30 333
+            Set Wrap_State to TRUE
+
+            Begin_Row
+                Entry_Item Formlarr.Formarr_id
+                Entry_Item Formlarr.Formarr_array
+                Entry_Item Formlarr.Formarr_descr
+            End_Row
+
+            Set Form_Width    item 0 to 32
+            Set Header_Label  item 0 to "CT"
+            
+            Set Form_Width    item 1 to 29
+            Set Header_Label  item 1 to "PT"
+            
+            Set Form_Width    item 2 to 83
+            Set Header_Label  item 2 to "PT Desc"
+            
+
+            //AB-StoreStart
+                                                                        
+            Set Server to (FormlArr_DD3(self))
+            
+            //AB-StoreEnd
+
+        End_Object    // dblistSub3
+
+        Object dblistSub4 is a dbListSub
+
+            //AB-StoreTopStart
+                            
+            //AB-StoreTopEnd
+
+            Set Ordering to 5
+            Set Size to 110 150
+            Set Location to 149 16
+            Set Wrap_State to TRUE
+
+            Begin_Row
+                Entry_Item Formlarr.Formarr_id
+                Entry_Item Formlarr.Formarr_array
+                Entry_Item Formlarr.Formarr_descr
+            End_Row
+
+            Set Form_Width    item 0 to 32
+            Set Header_Label  item 0 to "CT"
+            
+            Set Form_Width    item 1 to 29
+            Set Header_Label  item 1 to "PT"
+            
+            Set Form_Width    item 2 to 83
+            Set Header_Label  item 2 to "PT Desc"
+            
+
+            //AB-StoreStart
+                            
+            Set Server to (FormlArr_DD4(self))
+            
+            //AB-StoreEnd
+
+        End_Object    // dblistSub4
+
+        Object dblistSub5 is a dbListSub
+
+            //AB-StoreTopStart
+                            
+            //AB-StoreTopEnd
+
+            Set Ordering to 5
+            Set Size to 110 150
+            Set Location to 149 174
+            Set Wrap_State to TRUE
+
+            Begin_Row
+                Entry_Item Formlarr.Formarr_id
+                Entry_Item Formlarr.Formarr_array
+                Entry_Item Formlarr.Formarr_descr
+            End_Row
+
+            Set Form_Width    item 0 to 32
+            Set Header_Label  item 0 to "CT"
+            
+            Set Form_Width    item 1 to 29
+            Set Header_Label  item 1 to "PT"
+            
+            Set Form_Width    item 2 to 83
+            Set Header_Label  item 2 to "PT Desc"
+            
+
+            //AB-StoreStart
+                            
+            Set Server to (FormlArr_DD5(self))
+            
+            //AB-StoreEnd
+
+        End_Object    // dblistSub5
+
+        Object dblistSub6 is a dbListSub
+
+            //AB-StoreTopStart
+                            
+            //AB-StoreTopEnd
+
+            Set Ordering to 5
+            Set Size to 110 150
+            Set Location to 148 333
+            Set Wrap_State to TRUE
+
+            Begin_Row
+                Entry_Item Formlarr.Formarr_id
+                Entry_Item Formlarr.Formarr_array
+                Entry_Item Formlarr.Formarr_descr
+            End_Row
+
+            Set Form_Width    item 0 to 32
+            Set Header_Label  item 0 to "CT"
+            
+            Set Form_Width    item 1 to 29
+            Set Header_Label  item 1 to "PT"
+            
+            Set Form_Width    item 2 to 83
+            Set Header_Label  item 2 to "PT Desc"
+            
+
+            //AB-StoreStart
+                            
+            Set Server to (FormlArr_DD6(self))
+            
+            //AB-StoreEnd
+
+        End_Object    // dblistSub6
+
+        Object dblistSub7 is a dbListSub
+
+            //AB-StoreTopStart
+                            
+            //AB-StoreTopEnd
+
+            Set Ordering to 5
+            Set Size to 110 150
+            Set Location to 270 16
+            Set Wrap_State to TRUE
+
+            Begin_Row
+                Entry_Item Formlarr.Formarr_id
+                Entry_Item Formlarr.Formarr_array
+                Entry_Item Formlarr.Formarr_descr
+            End_Row
+
+            Set Form_Width    item 0 to 32
+            Set Header_Label  item 0 to "CT"
+            
+            Set Form_Width    item 1 to 29
+            Set Header_Label  item 1 to "PT"
+            
+            Set Form_Width    item 2 to 83
+            Set Header_Label  item 2 to "PT Desc"
+            
+
+            //AB-StoreStart
+                            
+            Set Server to (FormlArr_DD7(self))
+            
+            //AB-StoreEnd
+
+        End_Object    // dblistSub7
+
+        Object dblistSub8 is a dbListSub
+
+            //AB-StoreTopStart
+                            
+            //AB-StoreTopEnd
+
+            Set Ordering to 5
+            Set Size to 110 150
+            Set Location to 270 174
+            Set Wrap_State to TRUE
+
+            Begin_Row
+                Entry_Item Formlarr.Formarr_id
+                Entry_Item Formlarr.Formarr_array
+                Entry_Item Formlarr.Formarr_descr
+            End_Row
+
+            Set Form_Width    item 0 to 32
+            Set Header_Label  item 0 to "CT"
+            
+            Set Form_Width    item 1 to 29
+            Set Header_Label  item 1 to "PT"
+            
+            Set Form_Width    item 2 to 83
+            Set Header_Label  item 2 to "PT Desc"
+            
+
+            //AB-StoreStart
+                            
+            Set Server to (FormlArr_DD8(self))
+            
+            //AB-StoreEnd
+
+        End_Object    // dblistSub8
+
+        Object dblistSub9 is a dbListSub
+
+            //AB-StoreTopStart
+                            
+            //AB-StoreTopEnd
+
+            Set Ordering to 5
+            Set Size to 110 150
+            Set Location to 270 333
+            Set Wrap_State to TRUE
+
+            Begin_Row
+                Entry_Item Formlarr.Formarr_id
+                Entry_Item Formlarr.Formarr_array
+                Entry_Item Formlarr.Formarr_descr
+            End_Row
+
+            Set Form_Width    item 0 to 32
+            Set Header_Label  item 0 to "CT"
+            
+            Set Form_Width    item 1 to 29
+            Set Header_Label  item 1 to "PT"
+            
+            Set Form_Width    item 2 to 83
+            Set Header_Label  item 2 to "PT Desc"
+            
+
+            //AB-StoreStart
+                            
+            Set Server to (FormlArr_DD9(self))
+            
+            //AB-StoreEnd
+
+        End_Object    // dblistSub9
+
+        Object frmKey is a FormSub
+            Set Size to 13 465
+            Set Location to 6 16
+            Set Label_Col_Offset to 2
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+        End_Object    // frmKey
+
+
+        //AB-StoreStart
+                
+        Procedure Activate_View Returns Integer
+            Integer rVal
+            Forward Get Msg_Activate_View to rVal
+            Set psCode1 to "0"
+            Set psCode2 to "1"
+            Set psCode3 to "2"
+            Set psCode4 to "3"
+            Set psCode5 to "4"
+            Set psCode6 to "5"
+            Set psCode7 to "6"
+            Set psCode8 to "7"
+            Set psCode9 to ""
+            Send Rebuild_Constraints Of (FormlArr_DD1(Self))
+            Send Rebuild_Constraints Of (FormlArr_DD2(Self))
+            Send Rebuild_Constraints Of (FormlArr_DD3(Self))
+            Send Rebuild_Constraints Of (FormlArr_DD4(Self))
+            Send Rebuild_Constraints Of (FormlArr_DD5(Self))
+            Send Rebuild_Constraints Of (FormlArr_DD6(Self))
+            Send Rebuild_Constraints Of (FormlArr_DD7(Self))
+            Send Rebuild_Constraints Of (FormlArr_DD8(Self))
+            Send Rebuild_Constraints Of (FormlArr_DD9(Self))
+            Send beginning_Of_Data of (dblistSub1(Self)) true
+            Send beginning_Of_Data of (dblistSub2(Self)) true
+            Send beginning_Of_Data of (dblistSub3(Self)) true
+            Send beginning_Of_Data of (dblistSub4(Self)) true
+            Send beginning_Of_Data of (dblistSub5(Self)) true
+            Send beginning_Of_Data of (dblistSub6(Self)) true
+            Send beginning_Of_Data of (dblistSub7(Self)) true
+            Send beginning_Of_Data of (dblistSub8(Self)) true
+            Send beginning_Of_Data of (dblistSub9(Self)) true
+            Procedure_return rVal
+        End_Procedure
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // FormulaLists
+
+
+    //AB-StoreStart
+                    
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

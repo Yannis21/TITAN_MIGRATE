@@ -1,0 +1,62 @@
+//DDB-FileStart
+//DDB-HeaderStart
+
+// File Name : TMPSAP.DD
+// Class Name: Tmpsap_DataDictionary
+// Revision  : 4
+// Version   : 2
+
+Use  Windows           // Basic Definitions
+Use  DataDict          // DataDictionary Class Definition
+Use  DDvalTbl          // Validation Table Class Definitions
+
+Open Tmpsap
+
+//DDB-HeaderEnd
+
+Class Tmpsap_DataDictionary  is a DataDictionary_sec
+
+    // Define_Fields:
+    // This procedure is used to set up all data-dictionary rules.
+
+    Procedure Define_Fields
+        Forward Send Define_Fields
+        //DDB-Generated-Code-Location
+        //DDB-DefineFieldStart
+
+        Set Main_File            To Tmpsap.File_Number
+
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+
+        // Field-based properties.......................
+
+        // Tmpsap.Date
+        Set Field_Mask_Type        Field Tmpsap.Date To MASK_DATE_WINDOW
+
+        // Tmpsap.Apestalei
+        Set Field_Checkbox_Values  Field Tmpsap.Apestalei To "1"  "0"
+        Set Field_Class_Name       Field Tmpsap.Apestalei To "dbCheckBoxSub"
+
+        // Tmpsap.Kleidomeno
+        Set Field_Checkbox_Values  Field Tmpsap.Kleidomeno To "1"  "0"
+        Set Field_Class_Name       Field Tmpsap.Kleidomeno To "dbCheckBoxSub"
+
+        //DDB-DefineFieldEnd
+    End_Procedure    // Define_Fields
+
+    // Field_Defaults:
+    // This procedure is used to establish default field values.
+
+    Procedure Field_Defaults
+        Forward Send Field_Defaults
+        //DDB-Generated-Code-Location
+        //DDB-FieldDefaultStart
+        Set Field_Changed_Value   Field Tmpsap.Apestalei To 0
+        Set Field_Changed_Value   Field Tmpsap.Kleidomeno To 0
+        //DDB-FieldDefaultEnd
+    End_Procedure    // Field_Defaults
+
+End_Class    // Tmpsap_DataDictionary
+//DDB-FileEnd

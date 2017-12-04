@@ -3,7 +3,7 @@
 
 // File Name : CN.DD
 // Class Name: Cn_DataDictionary
-// Revision  : 102
+// Revision  : 106
 // Version   : 2
 
 Use  Windows           // Basic Definitions
@@ -78,15 +78,16 @@ Class Cn_DataDictionary  is a DataDictionary_Sec
     Procedure Construct_Object
         Forward Send Construct_Object
         //------------------------------------------------
-        // Properties gia na kraththoun oi palies times
-        // ton pedion Ef' oson to Sysfile.Use_Audit pedio
+        // Properties gia na kraththoun oi palies times 
+        // ton pedion Ef' oson to Sysfile.Use_Audit pedio 
         // einai 1     js 03/12/2007
-        //------------------------------------------------
+        //------------------------------------------------  
         Property Integer piCreateNew            Public  0
         Property String  psAud_Old_CN           Public ""
         Property String  psAud_Old_CNAdd        Public ""
         Property String  psAud_Old_Chem         Public ""
         Property String  psAud_Old_CNRecr       Public ""
+        Property Integer piOldExportFlag        Public 0
         //------------------------------------------------
 
     End_procedure
@@ -94,13 +95,14 @@ Class Cn_DataDictionary  is a DataDictionary_Sec
     Procedure New_Current_Record  Integer iOldRec  Integer iNewRec
         Forward Send New_Current_Record  iOldRec iNewRec
         //------------------------------------------------
-        // Properties gia na kraththoun oi palies times
+        // Properties gia na kraththoun oi palies times 
         // ton pedion js 03/12/2007
         //------------------------------------------------
         Set psAud_Old_CN           to CN.CN_Code
         Set psAud_Old_CNAdd        to CN.CN_Descr
         Set psAud_Old_Chem         to CN.CN_VTicket
         Set psAud_Old_CNRecr       to CN.CN_Recr
+        Set piOldExportFlag         to CN.ExportFlag
         //------------------------------------------------
      End_Procedure   // New_Current_Record
 
@@ -108,9 +110,9 @@ Class Cn_DataDictionary  is a DataDictionary_Sec
         //---------------------------------------------
         // Auditing / Katagrafh allagon
         String  sUser sText sTime sMin sHour sSec
-        Date    dDate  Shmer
+        Date    dDate  Shmer 
         Integer iMin iHour iSec iLen
-        Sysdate dDate iHour iMin iSec
+        Sysdate dDate iHour iMin iSec 
         Move iHour  to sHour
         Move iMin   to sMin
         Move iSec   to sSec
@@ -118,8 +120,8 @@ Class Cn_DataDictionary  is a DataDictionary_Sec
         If (Length(sMin )=1) Insert "0" in sMin  at 1
         If (Length(sSec )=1) Insert "0" in sSec  at 1
         Move (Trim(sHour)+":"+Trim(sMin)+"."+Trim(sSec)) to sTime
-
-        // Auditing / Diagrafh
+        
+        // Auditing / Diagrafh 
         If ((Sysfile.Use_Audit=1) And (Operation_Mode=MODE_DELETING) And (OPERATION_ORIGIN=Self)) Begin
             Get fsLoginUserID to sUser
             clear gmove
@@ -138,11 +140,11 @@ Class Cn_DataDictionary  is a DataDictionary_Sec
             Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
                                                 to Gmove.Gmove_Recr
             Move (Trim(sUser))                  to Gmove.Login_ID
-            Move dDate                          to Gmove.Hmnia_Metabolhs
+            Move dDate                          to Gmove.Hmnia_Metabolhs    
             Move sTime                          to Gmove.Ora_Metabolhs
-
-            Move CN.CN_Recr                     to Gmove.Partl_Recr
-            Move CN.CN_Recr                     to Gmove.Pms_Recr
+            
+            Move CN.CN_Recr                     to Gmove.Partl_Recr          
+            Move CN.CN_Recr                     to Gmove.Pms_Recr          
 
             Move (psAud_Old_CN    (Self))       to Gmove.Prev_CN
             Move (psAud_Old_CNAdd (Self))       to Gmove.Prev_CN_Addr
@@ -175,18 +177,20 @@ Class Cn_DataDictionary  is a DataDictionary_Sec
         Move Constrct.Cnt_ID         to Cn.Cn_Cnt_ID
         Move mhxanik.mhx_id          to Cn.mhxanik_ID
 
-        //If (Operation_ORIGIN=Self) Begin
-        //    Move 1      to CN.ExportFlag
-        //    Move "SEND" to CN.ExportStatus
-        //End
-
+//        If (Operation_ORIGIN=Self) Begin
+//            If (piOldExportFlag(Self)=0) Begin
+//                Move 1      to CN.ExportFlag
+//                Move "SEND" to CN.ExportStatus
+//            End
+//        End
+       
 
         //---------------------------------------------
         // Auditing / Katagrafh allagon
         String  sUser sText sTime sMin sHour sSec
-        Date    dDate  Shmer
+        Date    dDate  Shmer 
         Integer iMin iHour iSec iLen
-        Sysdate dDate iHour iMin iSec
+        Sysdate dDate iHour iMin iSec 
         Move iHour  to sHour
         Move iMin   to sMin
         Move iSec   to sSec
@@ -194,7 +198,7 @@ Class Cn_DataDictionary  is a DataDictionary_Sec
         If (Length(sMin )=1) Insert "0" in sMin  at 1
         If (Length(sSec )=1) Insert "0" in sSec  at 1
         Move (Trim(sHour)+":"+Trim(sMin)+"."+Trim(sSec)) to sTime
-
+        
         // Auditing / Dhmiourgia - Diorthosh
         If ((Sysfile.Use_Audit=1)  And (Operation_ORIGIN=Self)) Begin
             Get fsLoginUserID to sUser
@@ -215,29 +219,29 @@ Class Cn_DataDictionary  is a DataDictionary_Sec
                 Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
                                                     to Gmove.Gmove_Recr
                 Move (Trim(sUser))                  to Gmove.Login_ID
-                Move dDate                          to Gmove.Hmnia_Metabolhs
+                Move dDate                          to Gmove.Hmnia_Metabolhs    
                 Move sTime                          to Gmove.Ora_Metabolhs
 
-                Move CN.CN_Recr                 to Gmove.Partl_Recr
-                Move CN.CN_Recr                 to Gmove.Pms_Recr
+                Move CN.CN_Recr                 to Gmove.Partl_Recr          
+                Move CN.CN_Recr                 to Gmove.Pms_Recr          
 
                 Move CN.CN_Code                 to Gmove.Cur_CN
                 Move CN.CN_Descr                to Gmove.Cur_CN_Addr
                 Move CN.CN_VTicket              to Gmove.Cur_CN_Prosth
                 Move "ƒž£ ¦¬¨šå˜ ¤â¦¬ ë¨š¦¬"    to Gmove.Gmove_Aitiol
-                Move "N" to Gmove.Eidos_Metabolhs
+                Move "N" to Gmove.Eidos_Metabolhs  
                 saverecord gmove
                 Set piCreateNew to 0
             End
-            Else If ((Operation_Mode=MODE_SAVING) And (piCreateNew(Self)<>1) And (OPERATION_ORIGIN=Self)) Begin
+            Else If ((Operation_Mode=MODE_SAVING) And (piCreateNew(Self)<>1) And (OPERATION_ORIGIN=Self)) Begin                                
                 Integer isChanged
                 Move 0 to isChanged
-
+                
                      If (psAud_Old_CN   (Self)<>CN.CN_Code   ) Move 1 to isChanged
                 Else If (psAud_Old_CNAdd(Self)<>CN.CN_Descr  ) Move 1 to isChanged
                 Else If (psAud_Old_Chem (Self)<>CN.CN_VTicket) Move 1 to isChanged
-
-                If (isChanged>0) Begin
+                
+                If (isChanged>0) Begin  
                     clear gmove
                     move syscurxr.company_code  to gmove.company_code
                     move syscurxr.branch_code   to gmove.branch_code
@@ -254,11 +258,11 @@ Class Cn_DataDictionary  is a DataDictionary_Sec
                     Move (Append('',((Trim(SysCurxr.Branch_Site))+(Trim(String(Gmove.Gmove_Rec0)))))) ;
                                                         to Gmove.Gmove_Recr
                     Move (Trim(sUser))                  to Gmove.Login_ID
-                    Move dDate                          to Gmove.Hmnia_Metabolhs
+                    Move dDate                          to Gmove.Hmnia_Metabolhs    
                     Move sTime                          to Gmove.Ora_Metabolhs
-                    Move CN.CN_Recr                     to Gmove.Partl_Recr
-                    Move CN.CN_Recr                     to Gmove.Pms_Recr
-                    //--
+                    Move CN.CN_Recr                     to Gmove.Partl_Recr          
+                    Move CN.CN_Recr                     to Gmove.Pms_Recr          
+                    //--                                
                     Move CN.CN_Code                     to Gmove.Cur_CN
                     Move CN.CN_Descr                    to Gmove.Cur_CN_Addr
                     Move CN.CN_VTicket                  to Gmove.Cur_CN_Prosth
@@ -300,8 +304,8 @@ Class Cn_DataDictionary  is a DataDictionary_Sec
         Set Main_File            To Cn.File_Number
         Set Cascade_Delete_State To FALSE
 
-        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
-        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
         Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
 
         // Child (Client) file structure................
@@ -337,7 +341,7 @@ Class Cn_DataDictionary  is a DataDictionary_Sec
         // Cn.Client_Id
 
         // Cn.Cn_Code
-        Set Field_Options          Field Cn.Cn_Code To DD_AUTOFIND    DD_NOPUT
+        Set Field_Options          Field Cn.Cn_Code To DD_AUTOFIND    DD_NOPUT      
         Set Field_Prompt_Object    Field Cn.Cn_Code To (sl041(Self))
         Set Key_Field_State        Field Cn.Cn_Code To TRUE
 
@@ -513,7 +517,7 @@ Class Cn_DataDictionary  is a DataDictionary_Sec
 
     // Field_Defaults:
     // This procedure is used to establish default field values.
-
+          
     Procedure Field_Defaults
         Forward Send Field_Defaults
         //DDB-Generated-Code-Location

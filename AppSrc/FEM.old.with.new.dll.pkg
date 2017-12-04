@@ -1,0 +1,148 @@
+///////////////////////////////////////////////
+// Ginetai #Include sto Program //
+///////////////////////////////////////////////
+Use Idiotht.pkg
+
+Integer igC
+String  sgC sgFull sgRootDir sgDevicePath
+Move 0 to igC
+
+Move (fsReadRegistryFEMRootDir   ()) To sgRootDir
+Move (fsReadRegistryFEMDevicePath()) To sgDevicePath
+
+// An den yparxoun ta settings sto registry (apo Setup Egkatastashs)
+// Tote ta ftiaxnoume me ex orismou C:\FEM_ROOT\ & C:\FEM_ROOT\Device_File1.dat
+// mesa apo tis 2 parakato functions (sto Idiotht.pkg)
+If (Trim(sgRootDir)   ='') Get fiWriteRegistryFEMRootDir    to iGC
+If (Trim(sgDevicePath)='') Get fiWriteRegistryFEMDevicePath to iGC
+//
+
+// ** START ** Function ths forologikhs ektypotikhs mhxanhs
+External_Function32 FSL_Command "FSL_Command" SynthexFES.dll;
+                    String  sBaseDir    ;
+                    String  sCommand    ;
+                    String  sDevFile    ;
+                    String  sParam1     ;
+                    String  sParam2     ;
+                    Returns Integer
+
+External_Function32 FSL_SignDocument "FSL_SignDocument" SynthexFES.dll;
+                    String  sDevFile    ;
+                    String  sParam      ;
+                    String  sResult     ;
+                    Returns Integer
+// ** END ** Function ths forologikhs ektypotikhs mhxanhs
+
+
+// ** START ** Gemisma global string me escape xarakthron gia afairesh tous apo to ascii ths forologikhs
+Move '' to sgC
+For igC From 1 to 254
+    If ((igC<32) Or ((igC>175) And (igC<224)) Or (igC>240)) Begin
+        Move (Append(sgC,Character(igC))) to sgC
+    End
+Loop
+// ** END ** Gemisma escape xarakthron gia afairesh tous apo to ascii ths forologikhs
+
+
+Function fiEtoimaseTaAscii Returns Integer
+    Integer iFileExist iii iii2 isOK
+    String  sLine sLine2 sLetter sLetter2
+    // 1. Check if file was outputed (C:\##Parast.txt)
+    Get Get_File_Exists 'C:\##Parast.txt' to iFileExist
+    If (Not(iFileExist)) Function_Return 12556
+
+    // 2. Check if file is outputed but empty
+    Direct_Input Channel 7 "C:\##Parast.txt"
+    If (Seqeof) Begin
+        Close_Input Channel 7
+        Function_Return 12557
+    End
+
+    // 3. Strip file from escape sequences
+    Direct_Output Channel 9 "C:\##Parast0.txt"
+    Repeat
+        Readln Channel 7 sLine
+        For iii From 1 to (Length(sgC))
+            Move (Replaces((Mid(sgC,1,iii)),sLine,' ')) to sLine
+        Loop
+        Writeln Channel 9 sLine
+    Until (Seqeof)
+    Close_Input Channel 7
+    Close_Output Channel 9
+
+    // 4. Check if new ascii without escape
+    //    sequences is outputed (C:\##Parast0.txt)
+    Get Get_File_Exists 'C:\##Parast0.txt' to iFileExist
+    If (Not(iFileExist)) Function_Return 12558
+
+    // 5. Check if new file is outputed but empty
+    Direct_Input Channel 7 "C:\##Parast0.txt"
+    If (Seqeof) Begin
+        Close_Input Channel 7
+        Function_Return 12559
+    End
+
+    // 6. Convert file to ELOT
+    Direct_Output Channel 9 "C:\##Parast1.txt"
+    Repeat
+        Readln Channel 7        sLine
+        Move (ToAnsi(sLine)) to sLine2
+        Writeln Channel 9       sLine2
+    Until (Seqeof)
+    Close_Input  Channel 7
+    Close_Output Channel 9
+
+    // 7. Check if converted ELOT ascii is outputed (C:\##Parast1.txt)
+    Get Get_File_Exists 'C:\##Parast1.txt' to iFileExist
+    If (Not(iFileExist)) Function_Return 12560
+
+    // 8. Check if converted ELOT ascii is NOT Empty
+    Direct_Input Channel 7 "C:\##Parast1.txt"
+    If (Seqeof) Begin
+        Close_Output Channel 7
+        Function_Return 12561
+    End
+    Close_Output Channel 7
+
+    Function_Return 1 // Everything OK
+End_function
+
+Function fiPareYpografh Returns String
+    Integer iFileExist iii iii2 isOK
+    String  sLine sLine2 sLetter sLetter2
+    Move 0 to isOK
+
+    Move (FSL_Command(sgRootDir,'SIGN',sgDevicePath ,'C:\##Parast1.txt','C:\##Signature.txt')) to isOK
+    If (isOK<>0) Function_Return ''
+
+    Direct_Input Channel 7 'C:\##Signature.txt'
+    If (Seqeof) Function_Return '12562'
+    Readln Channel 7 sLine
+    Move (Trim(sLine)) to sLine
+    If (Length(sLine)<>77) Function_Return '12563'
+
+    EraseFile "C:\##Parast*.txt"
+    EraseFile "C:\##Signature.txt"
+
+    Function_return (Trim(sLine))
+End_function
+
+Function fiVgaleZ Returns Integer
+    Integer isOK
+    Move 0 to isOK
+    Move (FSL_Command(sgRootDir,'Z',sgDevicePath ,'','')) to isOK
+    Function_return isOK
+    // 0= ok
+End_function
+
+Function fiShowCTL Returns Integer
+    Integer isOK
+    Move 0 to isOK
+    Move (FSL_Command(sgRootDir,'CTL',sgDevicePath ,'','')) to isOK
+    Function_return isOK
+    // 0= ok
+End_function
+
+Use RptVwFem.Sub
+Use BasrpFem.Sub
+

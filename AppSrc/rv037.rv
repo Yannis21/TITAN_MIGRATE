@@ -1,0 +1,2148 @@
+//AB/ Project rv037:Baxio Reports
+//AB/ Object prj is a Report_Project
+//AB/     Set ProjectName to "rv037:Baxio Reports"
+//AB/     Set ProjectFileName to "RV037.RV"
+
+// Project Object Structure
+//   rv037 is a ReportViewSub
+//     oBaxio_Query is a Baxio_Query
+//     Btypkin_DD is a DataDictionary
+//     Baxiokat_DD is a DataDictionary
+//     Syscurxr_DD is a DataDictionary
+//     dblstBaxiokat is a dbListSub
+//     dbLstBtypkin is a dbListSub
+//     oSetStatus is a Set
+//     oSelStatus_bn is a ButtonSub
+//     oInvertStatus_bn is a ButtonSub
+//     oSetStatusCode is a Set
+//     olstStatus is a ListSub
+//     oSetPlace is a Set
+//     oSelPlace_bn is a ButtonSub
+//     oInvertPlace_bn is a ButtonSub
+//     oSetPlaceCode is a Set
+//     olstPlace is a ListSub
+//     oSetBank is a Set
+//     oSelBank_bn is a ButtonSub
+//     oInvertBank_bn is a ButtonSub
+//     oSetBankCode is a Set
+//     olstBank is a ListSub
+//     GrpHmnia is a GroupSub
+//       frmApoHmnial is a FormSub
+//       frmEosHmnial is a FormSub
+//     grpParalhpths is a GroupSub
+//       frmGlCode is a FormSub
+//       frmCust is a FormSub
+//       frmProm is a FormSub
+//       otxtGLCode is a TextBoxSub
+//       otxtCust is a TextBoxSub
+//       otxtProm is a TextBoxSub
+//     ordGrpSort is a RadioGroupSub
+//       rdByHmnial is a RadioSub
+//       rdByHmniap is a RadioSub
+//       rdByCode is a RadioSub
+//     rdgSelectPrint is a RadioGroupSub
+//       rdScreen is a RadioSub
+//       rdPrinter is a RadioSub
+//       rdFile is a RadioSub
+//       frmFile is a FormSub
+//     dbGrpYear is a dbGroupSub
+//       Company_Company_Name is a dbFormSub
+//       Branch_Branch_Name is a dbFormSub
+//       Year_Year_Year is a dbFormSub
+//       otxtCompany is a TextBoxSub
+//       otxtBranch is a TextBoxSub
+//       otxtYear is a TextBoxSub
+//     oClear_bn is a ButtonSub
+//     oQuery_bn is a ButtonSub
+//     oPrint_bn is a ButtonSub
+//     otxtBaxiokat is a TextBoxSub
+//     otxtBtypkin is a TextBoxSub
+//     otxtStatus is a TextBoxSub
+//     otxtPlace is a TextBoxSub
+//     otxtBank is a TextBoxSub
+//     otxtSelStatus is a TextBoxSub
+//     otxtSelPlace is a TextBoxSub
+//     otxtSelBank is a TextBoxSub
+//     oEdit_bn is a ButtonSub
+//     Baxio_BasicReport is a BasicReportSub
+
+// Register all objects
+Register_Object Baxio_BasicReport
+Register_Object Baxiokat_DD
+Register_Object Branch_Branch_Name
+Register_Object Btypkin_DD
+Register_Object Company_Company_Name
+Register_Object dbGrpYear
+Register_Object dbLstBtypkin
+Register_Object dblstBaxiokat
+Register_Object frmApoHmnial
+Register_Object frmCust
+Register_Object frmEosHmnial
+Register_Object frmFile
+Register_Object frmGlCode
+Register_Object frmProm
+Register_Object GrpHmnia
+Register_Object grpParalhpths
+Register_Object oBaxio_Query
+Register_Object oClear_bn
+Register_Object oEdit_bn
+Register_Object oInvertBank_bn
+Register_Object oInvertPlace_bn
+Register_Object oInvertStatus_bn
+Register_Object olstBank
+Register_Object olstPlace
+Register_Object olstStatus
+Register_Object oPrint_bn
+Register_Object oQuery_bn
+Register_Object ordGrpSort
+Register_Object oSelBank_bn
+Register_Object oSelPlace_bn
+Register_Object oSelStatus_bn
+Register_Object oSetBank
+Register_Object oSetBankCode
+Register_Object oSetPlace
+Register_Object oSetPlaceCode
+Register_Object oSetStatus
+Register_Object oSetStatusCode
+Register_Object otxtBank
+Register_Object otxtBaxiokat
+Register_Object otxtBranch
+Register_Object otxtBtypkin
+Register_Object otxtCompany
+Register_Object otxtCust
+Register_Object otxtGLCode
+Register_Object otxtPlace
+Register_Object otxtProm
+Register_Object otxtSelBank
+Register_Object otxtSelPlace
+Register_Object otxtSelStatus
+Register_Object otxtStatus
+Register_Object otxtYear
+Register_Object rdByCode
+Register_Object rdByHmnial
+Register_Object rdByHmniap
+Register_Object rdFile
+Register_Object rdgSelectPrint
+Register_Object rdPrinter
+Register_Object rdScreen
+Register_Object rv037
+Register_Object Syscurxr_DD
+Register_Object Year_Year_Year
+
+
+//AB/ Report View
+
+
+//AB-StoreTopStart
+Use DFAllRpt.pkg
+Use BasicRpt.Sub
+
+Use Baxioqry.cls
+Use Baxio.pkg
+Use Baxio.DD
+Use Rvi037.pkg
+//Use cEditSub
+//Use testedit.vw
+
+Open Barticl
+Open "tmpB001" as tmpB001
+//AB-StoreTopEnd
+
+//AB-IgnoreStart
+
+Use Rptvw.Sub
+Use DFAllEnt.pkg
+Use dbList.Sub
+Use Button.Sub
+Use List.Sub
+Use Group.Sub
+Use Form.Sub
+Use Txtbox.Sub
+Use Rgroup.Sub
+Use Radio.Sub
+Use dbGroup.Sub
+Use dbForm.Sub
+
+Use BTYPKIN.DD
+Use BAXIOKAT.DD
+Use SYSCURXR.DD
+
+//AB-IgnoreEnd
+
+DEFERRED_VIEW Activate_rv037 FOR ;
+;
+Object rv037 is a ReportViewSub
+
+    //AB-StoreTopStart
+    Property Integer piLastItem     -1
+    Property Integer piSortByIndex   0
+    Property Integer piSeries        0
+    
+    Function RecUsed Integer aiFile_Number Returns Integer
+        Integer liRecUsed
+        Get_Attribute DF_FILE_RECORDS_USED of aiFile_Number to liRecUsed
+        Function_Return liRecUsed
+    End_Function // RecUsed
+    
+    Function Find_Descr String asCode Integer aiSetCodeId Integer aiListId Returns String
+        Integer liSetCodeId liItem liListId
+        String lsDescr
+        Move aiSetCodeId to liSetCodeId
+        Move aiListId    to liListId
+        Get Find_Element of liSetCodeId asCode to liItem
+        If (liItem <> -1) Get Value of liListId Item liItem to lsDescr
+        Function_Return (ToOem(lsDescr))
+    End_Function // Find_Descr
+    
+    Object oBaxio_Query is a Baxio_Query
+    
+       //hook procedure
+       Procedure Zero_Temporary_Files
+           Zerofile tmpB001
+       End_Procedure //zero_temporary_files
+    
+       //hook procedure
+       Procedure Initialize Integer aiMustZero_Temporary_Files
+           String lsBanks
+           Forward Send Initialize aiMustZero_Temporary_Files
+           Get Find_BankSelections to lsBanks
+           Set psBanks      to lsBanks
+           Set psSeparator  to "-"
+       End_Procedure //initialize
+    
+       //hook procedure
+       Procedure Update_Temporary_Files
+           Date ldHmniap ldHmniap2 ldDate
+           Integer libArticlNo libArticlNo2 liBtypkinCode liBtypkinCode2 liLastBtypkinCode
+           String lsBtypkinAbr lsBtypkinAbr2 lsSeira lsSeira2
+           Integer liSortBy
+    
+           Forward Send Update_Temporary_Files
+           Send Update_Status (;
+                                (String(Baxio.Recnum))+ " "+;
+                                (String(Baxio.Baxiokat_Code))+" "+;
+                                (String(Baxio.Baxio_status))+" "+;
+                                (String(Baxio.Baxio_place))+" "+;
+                                (String(Baxio.Baxio_no));
+                               )
+    
+           Get piSortByIndex to liSortBy
+    
+           If (Baxio.Baxio_Fpar_In <>'') Begin
+               Clear Barticl
+    
+               // jsjsjs 29/01/2001
+               // Move Baxio.Baxio_Fpar_In to Barticl.Barticl_Rec0
+               Move Baxio.Baxio_Fpar_In to Barticl.Barticl_Recr
+               Find eq Barticl by Index.2 //Barticl:Index.2:Barticl_Recr
+               Move Barticl.Barticl_Hmnia to ldHmniap
+               Move Barticl.Barticl_No    to libArticlNo
+               Move Barticl.Btypkin_Code  to liBtypkinCode
+               Clear Btypkin
+               Move Barticl.Btypkin_Recr  to Btypkin.Btypkin_Recr
+               Find eq Btypkin by Index.2 // Btypkin:Index.2:Btypkin_Recr
+               [Found] Begin
+                    Move Btypkin.Btypkin_Abr    to lsBtypkinAbr
+                    Move Btypkin.Btypkin_Seira  to lsSeira
+               End
+           End
+           If (Baxio.Baxio_Lpar<>'') Begin
+               Clear Barticl
+    
+               // jsjsjs 29/01/2001
+               //Move Baxio.Baxio_Lpar to Barticl.Barticl_Rec0
+               Move Baxio.Baxio_Lpar to Barticl.Barticl_Recr
+    
+               Find eq Barticl by Index.2 //Barticl:Index.2:Barticl_Rec0
+               Move Barticl.Barticl_Hmnia to ldHmniap2
+               Move Barticl.Barticl_No    to libArticlNo2
+               Move Barticl.Btypkin_Code  to liBtypkinCode2
+               Clear Btypkin
+               Move Barticl.Btypkin_Recr  to Btypkin.Btypkin_Recr
+               Find eq Btypkin by Index.2 // Btypkin:Index.2:Btypkin_Recr
+               [Found] Begin
+                    Move Btypkin.Btypkin_Abr    to lsBtypkinAbr2
+                    Move Btypkin.Btypkin_Seira  to lsSeira2
+               End
+           End
+           Else If (Baxio.Baxio_Fpar_Out <>'') Begin
+               Move Baxio.Baxio_Fpar_Out to Barticl.Barticl_Recr
+               Find eq Barticl by Index.2 //Barticl:Index.2:Barticl_Recr
+               Move Barticl.Barticl_Hmnia to ldHmniap2
+               Move Barticl.Barticl_No    to libArticlNo2
+               Move Barticl.Btypkin_Code  to liBtypkinCode2
+               Clear Btypkin
+               Move Barticl.Btypkin_Recr  to Btypkin.Btypkin_Recr
+               Find eq Btypkin by Index.2 // Btypkin:Index.2:Btypkin_Recr
+               [Found] Begin
+                    Move Btypkin.Btypkin_Abr    to lsBtypkinAbr2
+                    Move Btypkin.Btypkin_Seira  to lsSeira2
+               End
+           End
+    
+           Clear tmpB001
+           Move Baxio.Baxio_Hmnial   to TmpB001.Hmnia_Lixis
+           Move ldHmniap             to TmpB001.Hmniap
+           Move ldHmniap2            to TmpB001.Hmniap2
+           Move lsBtypkinAbr         to TmpB001.Btypkin_Abr
+           Move lsBtypkinAbr2        to TmpB001.Btypkin_Abr2
+           Move lsSeira              to TmpB001.Seira
+           Move lsSeira2             to TmpB001.Seira2
+                If (liSortBy =1) Move TmpB001.Hmnia_Lixis   to ldDate
+           Else If (liSortBy =2) Move TmpB001.Hmniap        to ldDate
+           Move (TheYearSegment(ldDate))  to TmpB001.YYYY
+           Move (TheMonthSegment(ldDate)) to TmpB001.Month
+           Move Baxio.Baxio_Code     to TmpB001.Baxio_Code
+           Move Baxio.Baxiokat_Code  to TmpB001.Baxiokat_Code
+           Move Baxio.Baxio_Banka    to TmpB001.Banka_Code
+           Move liBtypkinCode        to TmpB001.Btypkin_Code
+           Move liBtypkinCode2       to TmpB001.Btypkin_Code2
+           Get Find_Descr (Trim(Baxio.Baxio_Banka)) (oSetBankCode(Self)) (olstBank(Self)) to TmpB001.Banka_Name
+           Move liBarticlNo          to TmpB001.Barticl_No
+           Move Baxio.Baxio_Fpar_In  to TmpB001.Baxio_Fpar_In
+           Move Baxio.Baxio_Code_In  to TmpB001.Baxio_Code_In
+           Move Baxio.Baxio_Epon_In  to TmpB001.Baxio_Epon_In
+           Move liBarticlNo2         to TmpB001.Barticl_No2
+           Move Baxio.Baxio_Fpar_Out to TmpB001.Baxio_Fpar_Out
+           Move Baxio.Baxio_Code_Out to TmpB001.Baxio_Code_Out
+           Move Baxio.Baxio_Epon_Out to TmpB001.Baxio_Epon_Out
+           Move Baxio.Baxio_No       to TmpB001.Baxio_No
+           Move Baxio.Baxio_V2       to TmpB001.Axia
+           Move Baxio.Baxio_V0       to TmpB001.Axia0
+           Move Baxio.Baxio_V00      to TmpB001.Axia00
+           Move Baxio.Baxio_VR       to TmpB001.AxiaR
+           Move Baxio.Baxio_Status   to TmpB001.Baxio_Status
+           Get Find_Descr (Trim(Baxio.Baxio_Status)) (oSetStatusCode(Self)) (olstStatus(Self)) to TmpB001.Status_Descr
+           Move Baxio.Baxio_Place    to TmpB001.Baxio_Place
+           Get Find_Descr (Trim(Baxio.Baxio_Place)) (oSetPlaceCode(Self)) (olstPlace(Self))    to TmpB001.Place_Descr
+           Saverecord TmpB001
+    
+       End_Procedure //update_temporary_files
+    
+    End_Object //obaxio_query
+    
+    Procedure Fill_List Integer aiValidTable Integer aiListId Integer aiMsgId Integer aiSetCodeId
+        Integer liValidTableId liItem iMax liListId liMsgId liSetCodeId
+    
+        If (Num_Arguments > 0) Begin
+            Move aiValidTable to liValidTableId
+            If (Num_Arguments > 1) Move aiListId     to liListId
+            If (Num_Arguments > 2) Move aiMsgId      to liMsgId
+            If (Num_Arguments > 3) Move aiSetCodeId  to liSetCodeId
+        End
+        If (liValidTableId) Begin
+            Get Data_Item_Count of liValidTableId to iMax
+            If (Not(iMax)) Begin
+                Send Fill_List to liValidTableId
+                Get Data_Item_Count of liValidTableId to iMax
+            End
+        End
+        Decrement iMax
+    
+        For liItem From 0 to iMax
+            If (liListId) send add_item to liListId liMsgId ;
+                                                    (ToAnsi(Data_Description(liValidTableId,liItem)))
+            If (liSetCodeId) Send Add_Element to liSetCodeId (Data_Value(liValidTableId,liItem))
+        Loop // End For
+        //send sort_items ascending
+    End_Procedure // Fill_List
+    
+    //AB-StoreTopEnd
+
+    Set Label to "Reports Ä•†¶ö®·≠‡§"
+    Set Size to 290 518
+    Set Location to 0 0
+
+    //AB-DDOStart
+
+    Object Btypkin_DD is a Btypkin_DataDictionary
+
+        //AB-StoreStart
+        
+        Procedure OnConstrain
+            Constrain Btypkin Relates to Year
+        End_Procedure // OnConstrain
+        
+        Set Field_Options Field Btypkin.Btypkin_Code  to DD_DisplayOnly
+        Set Field_Options Field Btypkin.Btypkin_Descr to DD_DisplayOnly
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // Btypkin_DD
+
+    Object Baxiokat_DD is a Baxiokat_DataDictionary
+
+        //AB-StoreStart
+        
+        Set Field_Options Field Baxiokat.Baxiokat_Code  to DD_DisplayOnly
+        Set Field_Options Field Baxiokat.Baxiokat_Descr to DD_DisplayOnly
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // Baxiokat_DD
+
+    Object Syscurxr_DD is a Syscurxr_DataDictionary
+    End_Object    // Syscurxr_DD
+
+
+    //AB-DDOEnd
+
+    Object dblstBaxiokat is a dbListSub
+        Set Main_File to Baxiokat.File_Number
+        Set Server to (Baxiokat_DD(self))
+        Set Size to 77 247
+        Set Location to 43 5
+        Set Color to 15263976
+        Set CurrentCellColor to 14205112
+        Set Highlight_Row_State to FALSE
+        Set Auto_Index_State to FALSE
+        Set Auto_Column_State to FALSE
+        Set Move_Value_Out_State to FALSE
+        Set Auto_Export_State to FALSE
+        Set Auto_Shadow_State to FALSE
+        Set Find_Search_State to FALSE
+        Set Select_Mode to Multi_Select
+
+        Begin_Row
+            Entry_Item Baxiokat.Recnum
+            Entry_Item Baxiokat.Baxiokat_code
+            Entry_Item Baxiokat.Baxiokat_descr
+        End_Row
+
+        Set Form_Width    item 0 to 26
+        Set Header_Label  item 0 to "# 0"
+        
+        Set Form_Width    item 1 to 42
+        Set Header_Label  item 1 to "Ñ†õ¶™"
+        
+        Set Form_Width    item 2 to 172
+        Set Header_Label  item 2 to "èú®†ö®ò≠„"
+        
+
+        //AB-StoreStart
+        
+        Procedure Select_All_Baxiokat Integer aiItem
+            Integer liSelId liSelected liItem
+        
+            If (NUM_ARGUMENTS > 0) Move aiItem to liItem
+            Get Selected_Items to liSelId
+        
+            If (Item_Count(liSelId)) Begin
+                Send Delete_Data to liSelId
+            End
+            Else Begin
+        
+                Clear Baxiokat
+                Find gt Baxiokat by Recnum
+                While [Found]
+                    Add 1 to liSelected
+                    Set Array_Value of liSelId Item (Item_Count(liSelId)) to Baxiokat.Recnum
+                    Find gt Baxiokat by Recnum
+                End // While
+        
+            End
+            Send Beginning_Of_Data
+            Set Header_Label Item 0 to ("# " + String(liSelected))
+        End_Procedure // Select_All_Baxiokat
+        
+        //***************** Predefined Procedures and Functions Section **************
+        
+        Procedure Header_notification integer mode integer aiItem
+            If mode eq  HD_NOTIFY_MOUSE_CLICK ;
+                Send Select_All_Baxiokat aiItem
+            Else ;
+                forward send header_notification mode aiItem
+        End_procedure // Header_notification
+        
+        Procedure End_Of_Data
+            Forward Send End_Of_Data
+            Send Down_Row
+        End_Procedure // End_Of_Data
+        
+        Procedure Beginning_Of_Data
+            Forward Send Beginning_Of_Data
+            Send Up_Row
+        End_Procedure // Beginning_Of_Data
+        
+        Procedure Select_Toggling Integer aiItem Integer aiState
+            Integer liSelCount
+            Forward Send Select_Toggling aiItem aiState
+            Get Select_Count to liSelCount
+            Set Header_Label Item 0 to ("# " + String(liSelCount))
+        End_Procedure //Select_Toggling
+        
+        Set Column_Shadow_State Item 1 to True
+        Set Column_Shadow_State Item 2 to True
+        Set header_justification_mode Item 0 to JMODE_CENTER
+        
+        On_Key key_Ctrl+Key_A       Send Select_All_Baxiokat    Private
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // dblstBaxiokat
+
+    Object dbLstBtypkin is a dbListSub
+        Set Main_File to Btypkin.File_Number
+        Set Server to (Btypkin_DD(self))
+        Set Size to 77 247
+        Set Location to 43 263
+        Set Color to 15263976
+        Set CurrentCellColor to 14205112
+        Set Highlight_Row_State to FALSE
+        Set Auto_Index_State to FALSE
+        Set Auto_Column_State to FALSE
+        Set Move_Value_Out_State to FALSE
+        Set Auto_Export_State to FALSE
+        Set Auto_Shadow_State to FALSE
+        Set Find_Search_State to FALSE
+        Set Select_Mode to Multi_Select
+
+        Begin_Row
+            Entry_Item Btypkin.Recnum
+            Entry_Item Btypkin.Btypkin_code
+            Entry_Item Btypkin.Btypkin_descr
+        End_Row
+
+        Set Form_Width    item 0 to 26
+        Set Header_Label  item 0 to "# 0"
+        
+        Set Form_Width    item 1 to 42
+        Set Header_Label  item 1 to "âÂ§û©û"
+        
+        Set Form_Width    item 2 to 172
+        Set Header_Label  item 2 to "èú®†ö®ò≠„"
+        
+
+        //AB-StoreStart
+        
+        Procedure Select_All_Btypkin Integer aiItem
+            Integer liSelId liSelected liItem
+        
+            If (NUM_ARGUMENTS > 0) Move aiItem to liItem
+            Get Selected_Items to liSelId
+        
+            If (Item_Count(liSelId)) Begin
+                Send Delete_Data to liSelId
+            End
+            Else Begin
+                Clear Btypkin
+                Move SysCurXr.Company_Code to Btypkin.Company_Code
+                Move SysCurXr.Branch_Code  to Btypkin.Branch_Code
+                Move SysCurXr.Year_Year    to Btypkin.Year_Year
+                Find gt Btypkin by Index.1 //Btypkin:Index.1:Company_Code-Branch_Code-Year_Year-Btypkin_Code
+                While ((Found = 1) and ;
+                       (SysCurXr.Company_Code = Btypkin.Company_Code) and ;
+                       (SysCurXr.Branch_Code  = Btypkin.Branch_Code) and ;
+                       (SysCurXr.Year_Year    = Btypkin.Year_Year))
+                    Add 1 to liSelected
+                    Set Array_Value of liSelId Item (Item_Count(liSelId)) to Btypkin.Recnum
+                    Find gt Btypkin by Index.1 //Btypkin:Index.1:Company_Code-Branch_Code-Year_Year-Btypkin_Code
+                End // While
+            End
+            Send Beginning_Of_Data
+            Set Header_Label Item 0 to ("# " + String(liSelected))
+        End_Procedure // Select_All_Btypkin
+        
+        On_Key key_Ctrl+Key_A       Send Select_All_Btypkin    Private
+        
+        //***************** Predefined Procedures and Functions Section **************
+        
+        Procedure Header_notification integer mode integer aiItem
+            If mode eq  HD_NOTIFY_MOUSE_CLICK ;
+                Send Select_All_Btypkin aiItem
+            Else ;
+                forward send header_notification mode aiItem
+        End_procedure // Header_notification
+        
+        Procedure End_Of_Data
+            Forward Send End_Of_Data
+            Send Down_Row
+        End_Procedure // End_Of_Data
+        
+        Procedure Beginning_Of_Data
+            Forward Send Beginning_Of_Data
+            Send Up_Row
+        End_Procedure // Beginning_Of_Data
+        
+        Procedure Select_Toggling Integer aiItem Integer aiState
+            Integer liSelCount
+            Forward Send Select_Toggling aiItem aiState
+            Get Select_Count to liSelCount
+            Set Header_Label Item 0 to ("# " + String(liSelCount))
+        End_Procedure //Select_Toggling
+        
+        Set Column_Shadow_State Item 1 to True
+        Set Column_Shadow_State Item 2 to True
+        Set header_justification_mode Item 0 to JMODE_CENTER
+        
+        Set Enabled_State to False
+        Set Visible_State to False
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // dbLstBtypkin
+
+    Object oSetStatus is a Set
+        Set Location to 206 89
+        Set Size to 17 18
+    End_Object    // oSetStatus
+
+    Object oSelStatus_bn is a ButtonSub
+        Set Label to ""
+        Set Bitmap to "Select16.bmp"
+        Set Size to 17 17
+        Set Location to 228 5
+        Set Focus_Mode to Pointer_Only
+
+        //AB-StoreStart
+        Procedure OnClick
+            Integer liStatusId liSelectCount liValidTableId liSetId
+            Get olstStatus      to liStatusId
+            Get Baxio_Status_VT to liValidTableId
+            Get oSetStatus      to liSetId
+            Delegate Get Select_All liStatusId liValidTableId liSetId to liSelectCount
+            set value of otxtselstatus to ('Ñß†¢úö£‚§ú™' + " - " + string(liselectcount)) 
+            Set Bitmap to (If((liSelectCount),"Clra.bmp","Select16.bmp"))
+            set tooltipvalue to (if((liselectcount),'Äß¶úß†¢¶ö„ Ê¢‡§ ´‡§ °ò´ò©´·©ú‡§','Ñß†¢¶ö„ Ê¢‡§ ´‡§ °ò´ò©´·©ú‡§')) 
+            Forward Send OnClick
+        End_Procedure // OnClick
+        
+        set tooltipvalue to "Ñß†¢¶ö„ Ê¢‡§ ´‡§ Status" 
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // oSelStatus_bn
+
+    Object oInvertStatus_bn is a ButtonSub
+        Set Label to "¯[Î"
+        Set Bitmap to "Undo.bmp"
+        Set Size to 17 17
+        Set Location to 228 25
+        Set Focus_Mode to Pointer_Only
+
+        //AB-StoreStart
+        Procedure OnClick
+            Integer liStatusId liSelectCount liStatusbnId liValidTableId liSetId
+        
+            Get olstStatus      to liStatusId
+            Get oSelStatus_bn   to liStatusbnId
+            Get Baxio_Status_VT to liValidTableId
+            Get oSetStatus      to liSetId
+            Delegate Get Invert_All liStatusId liValidTableId liSetId to liSelectCount
+            set value of otxtselstatus to ('Ñß†¢úö£‚§ú™' + " - " + string(liselectcount)) 
+            Set Bitmap of liStatusbnId to (If((liSelectCount),"Clra.bmp","Select16.bmp"))
+            set tooltipvalue of listatusbnid to (if((liselectcount),'Äß¶úß†¢¶ö„ Ê¢‡§ ´‡§ °ò´ò©´·©ú‡§','Ñß†¢¶ö„ Ê¢‡§ ´‡§ °ò´ò©´·©ú‡§')) 
+            Forward Send OnClick
+        End_Procedure // OnClick
+        
+        set tooltipvalue to "Ä§ò©´®¶≠„ ´‡§ úß†¢úö£‚§‡§ úöö®ò≠È§" 
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // oInvertStatus_bn
+
+    Object oSetStatusCode is a Set
+        Set Location to 118 88
+    End_Object    // oSetStatusCode
+
+    Object olstStatus is a ListSub
+        Set Size to 93 91
+        Set Location to 132 5
+        Set Color to 15263976
+        Set Label_Col_Offset to 0
+        Set Label_Row_Offset to 1
+        Set Border_Style to BORDER_NORMAL
+        Set Label_Justification_Mode to jMode_Top
+        Set Select_Mode to Multi_Select
+
+        //AB-StoreStart
+        
+        Send Fill_List (Baxio_Status_VT(Self)) Self msg_None (oSetStatusCode(Self))
+        
+        On_Key key_Ctrl+Key_A       Send KeyAction to oSelStatus_bn
+        On_Key key_Ctrl+Key_I       Send KeyAction to oInvertStatus_bn
+        
+        Procedure Select_Toggling Integer aiItem Integer aiState
+            Integer liSelCount liValidTableId liSetId liItem rVal liButtonId bShiftState
+        
+            Get DFKeyState VK_SHIFT   to bShiftState
+            Forward Send Select_Toggling aiItem aiState
+            If (bShiftState) Delegate Send Override_Default_Behavior Self
+            Get Baxio_Status_VT to liValidTableId
+            Get oSetStatus      to liSetId
+            Get Current_Item to liItem
+            Delegate Get FillSet_While_Toggling Self liValidTableId liSetId liItem to rVal
+            Get Select_Count to liSelCount
+            set value of otxtselstatus to ('Ñß†¢úö£‚§ú™' + " - " + string(liselcount)) 
+            Get oSelStatus_bn   to liButtonId
+            Set Bitmap of liButtonId to (If((liSelCount),"Clra.bmp","Select16.bmp"))
+            set tooltipvalue of libuttonid to (if((liselcount),'Äß¶úß†¢¶ö„ Ê¢‡§ ´‡§ °ò´ò©´·©ú‡§','Ñß†¢¶ö„ Ê¢‡§ ´‡§ °ò´ò©´·©ú‡§')) 
+        End_Procedure //Select_Toggling
+        
+        Procedure mouse_down integer item_num integer char_pos
+            Integer bShiftState
+        
+            Get DFKeyState VK_SHIFT   to bShiftState
+            Forward Send mouse_down item_num char_pos
+            If (Not(bShiftState)) Set piLastItem to (Current_Item(Self))
+        End_Procedure // mouse_down
+        
+        Procedure OnKillFocus
+            Set piLastItem to -1
+        End_Procedure // OnKillFocus
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // olstStatus
+
+    Object oSetPlace is a Set
+        Set Location to 204 217
+        Set Size to 17 18
+    End_Object    // oSetPlace
+
+    Object oSelPlace_bn is a ButtonSub
+        Set Label to "?7?"
+        Set Bitmap to "Select16.bmp"
+        Set Size to 17 17
+        Set Location to 228 110
+        Set Focus_Mode to Pointer_Only
+
+        //AB-StoreStart
+        Procedure OnClick
+            Integer liPlaceId liSelectCount liValidTableId liSetId
+            Get olstPlace            to liPlaceId
+            Get Baxio_Baxio_Place_VT to liValidTableId
+            Get oSetPlace            to liSetId
+            Delegate Get Select_All liPlaceId liValidTableId liSetId to liSelectCount
+            set value of otxtselplace to ('Ñß†¢úö£‚§ú™' + " - " + string(liselectcount)) 
+            Set Bitmap to (If((liSelectCount),"Clra.bmp","Select16.bmp"))
+            set tooltipvalue to (if((liselectcount),'Äß¶úß†¢¶ö„ Ê¢‡§ ´‡§ °ò´ò©´·©ú‡§','Ñß†¢¶ö„ Ê¢‡§ ´‡§ °ò´ò©´·©ú‡§')) 
+            Forward Send OnClick
+        End_Procedure // OnClick
+        
+        set tooltipvalue to "Ñß†¢¶ö„ Ê¢‡§ ´‡§ úöö®ò≠È§" 
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // oSelPlace_bn
+
+    Object oInvertPlace_bn is a ButtonSub
+        Set Label to "Îá˙"
+        Set Bitmap to "Undo.bmp"
+        Set Size to 17 17
+        Set Location to 228 130
+        Set Focus_Mode to Pointer_Only
+
+        //AB-StoreStart
+        Procedure OnClick
+            Integer liPlaceId liSelectCount liPlacebnId liValidTableId liSetId
+        
+            Get olstPlace            to liPlaceId
+            Get oSelPlace_bn         to liPlacebnId
+            Get Baxio_Baxio_Place_VT to liValidTableId
+            Get oSetPlace            to liSetId
+            Delegate Get Invert_All liPlaceId liValidTableId liSetId to liSelectCount
+            set value of otxtselplace to ('Ñß†¢úö£‚§ú™' + " - " + string(liselectcount)) 
+            Set Bitmap of liPlacebnId to (If((liSelectCount),"Clra.bmp","Select16.bmp"))
+            set tooltipvalue of liplacebnid to (if((liselectcount),'Äß¶úß†¢¶ö„ Ê¢‡§ ´‡§ °ò´ò©´·©ú‡§','Ñß†¢¶ö„ Ê¢‡§ ´‡§ °ò´ò©´·©ú‡§')) 
+            Forward Send OnClick
+        End_Procedure // OnClick
+        
+        set tooltipvalue to "Ä§ò©´®¶≠„ ´‡§ úß†¢úö£‚§‡§ úöö®ò≠È§" 
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // oInvertPlace_bn
+
+    Object oSetPlaceCode is a Set
+        Set Location to 118 210
+    End_Object    // oSetPlaceCode
+
+    Object olstPlace is a ListSub
+        Set Size to 93 109
+        Set Location to 132 110
+        Set Color to 15263976
+        Set Label_Col_Offset to 0
+        Set Label_Row_Offset to 1
+        Set Border_Style to BORDER_NORMAL
+        Set Label_Justification_Mode to jMode_Top
+        Set Select_Mode to Multi_Select
+
+        //AB-StoreStart
+        
+        Send Fill_List (Baxio_Baxio_Place_VT(Self)) Self msg_None (oSetPlaceCode(Self))
+        
+        On_Key key_Ctrl+Key_A       Send KeyAction to oSelPlace_bn    Private
+        On_Key key_Ctrl+Key_I       Send KeyAction to oInvertPlace_bn Private
+        
+        Procedure Select_Toggling Integer aiItem Integer aiState
+            Integer liSelCount liValidTableId liSetId liItem rVal liButtonId bShiftState
+        
+            Get DFKeyState VK_SHIFT   to bShiftState
+            Forward Send Select_Toggling aiItem aiState
+            If (bShiftState) Delegate Send Override_Default_Behavior Self
+            Get Baxio_Baxio_Place_VT to liValidTableId
+            Get oSetPlace      to liSetId
+            Get Current_Item to liItem
+            Delegate Get FillSet_While_Toggling Self liValidTableId liSetId liItem to rVal
+            Get Select_Count to liSelCount
+            set value of otxtselplace to ('Ñß†¢úö£‚§ú™' + " - " + string(liselcount)) 
+            Get oSelPlace_bn   to liButtonId
+            Set Bitmap of liButtonId to (If((liSelCount),"Clra.bmp","Select16.bmp"))
+            set tooltipvalue of libuttonid to (if((liselcount),'Äß¶úß†¢¶ö„ Ê¢‡§ ´‡§ °ò´ò©´·©ú‡§','Ñß†¢¶ö„ Ê¢‡§ ´‡§ °ò´ò©´·©ú‡§')) 
+        End_Procedure //Select_Toggling
+        
+        Procedure mouse_down integer item_num integer char_pos
+            Integer bShiftState
+        
+            Get DFKeyState VK_SHIFT   to bShiftState
+            Forward Send mouse_down item_num char_pos
+            If (Not(bShiftState)) Set piLastItem to (Current_Item(Self))
+        End_Procedure // mouse_down
+        
+        Procedure OnKillFocus
+            Set piLastItem to -1
+        End_Procedure // OnKillFocus
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // olstPlace
+
+    Object oSetBank is a Set
+        Set Location to 202 319
+        Set Size to 17 18
+    End_Object    // oSetBank
+
+    Object oSelBank_bn is a ButtonSub
+        Set Label to "Îá˙"
+        Set Bitmap to "Select16.bmp"
+        Set Size to 17 17
+        Set Location to 228 235
+        Set Focus_Mode to Pointer_Only
+
+        //AB-StoreStart
+        Procedure OnClick
+            Integer liBankId liSelectCount liValidTableId liSetId
+            Get olstBank             to liBankId
+            Get Baxio_Baxio_Bank_VT  to liValidTableId
+            Get oSetBank             to liSetId
+            Delegate Get Select_All liBankId liValidTableId liSetId to liSelectCount
+            set value of otxtselbank to ('Ñß†¢úö£‚§ú™' + " - " + string(liselectcount)) 
+            Set Bitmap to (If((liSelectCount),"Clra.bmp","Select16.bmp"))
+            set tooltipvalue to (if((liselectcount),'Äß¶úß†¢¶ö„ Ê¢‡§ ´‡§ °ò´ò©´·©ú‡§','Ñß†¢¶ö„ Ê¢‡§ ´‡§ °ò´ò©´·©ú‡§')) 
+            Forward Send OnClick
+        End_Procedure // OnClick
+        
+        set tooltipvalue to "Ñß†¢¶ö„ Ê¢‡§ ´‡§ úöö®ò≠È§" 
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // oSelBank_bn
+
+    Object oInvertBank_bn is a ButtonSub
+        Set Label to "Îá˙"
+        Set Bitmap to "Undo.bmp"
+        Set Size to 17 17
+        Set Location to 228 255
+        Set Focus_Mode to Pointer_Only
+
+        //AB-StoreStart
+        Procedure OnClick
+            Integer liBankId liSelectCount liBankbnId liValidTableId liSetId
+        
+            Get olstBank             to liBankId
+            Get oSelBank_bn          to liBankbnId
+            Get Baxio_Baxio_Bank_VT  to liValidTableId
+            Get oSetBank             to liSetId
+            Delegate Get Invert_All liBankId liValidTableId liSetId to liSelectCount
+            set value of otxtselbank to ('Ñß†¢úö£‚§ú™' + " - " + string(liselectcount)) 
+            Set Bitmap of liBankbnId to (If((liSelectCount),"Clra.bmp","Select16.bmp"))
+            set tooltipvalue of libankbnid to (if((liselectcount),'Äß¶úß†¢¶ö„ Ê¢‡§ ´‡§ °ò´ò©´·©ú‡§','Ñß†¢¶ö„ Ê¢‡§ ´‡§ °ò´ò©´·©ú‡§')) 
+            Forward Send OnClick
+        End_Procedure // OnClick
+        
+        set tooltipvalue to "Ä§ò©´®¶≠„ ´‡§ úß†¢úö£‚§‡§ úöö®ò≠È§" 
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // oInvertBank_bn
+
+    Object oSetBankCode is a Set
+        Set Location to 119 312
+    End_Object    // oSetBankCode
+
+    Object olstBank is a ListSub
+        Set Size to 93 90
+        Set Location to 132 234
+        Set Color to 15263976
+        Set Label_Col_Offset to 0
+        Set Label_Row_Offset to 1
+        Set Border_Style to BORDER_NORMAL
+        Set Label_Justification_Mode to jMode_Top
+        Set Select_Mode to Multi_Select
+
+        //AB-StoreStart
+        
+        Send Fill_List (Baxio_Baxio_Bank_VT(Self)) Self msg_None (oSetBankCode(Self))
+        
+        On_Key key_Ctrl+Key_A       Send KeyAction to oSelBank_bn    Private
+        On_Key key_Ctrl+Key_I       Send KeyAction to oInvertBank_bn Private
+        
+        Procedure Select_Toggling Integer aiItem Integer aiState
+            Integer liSelCount liValidTableId liSetId liItem rVal liButtonId bShiftState
+        
+            Get DFKeyState VK_SHIFT   to bShiftState
+            Forward Send Select_Toggling aiItem aiState
+            If (bShiftState) Delegate Send Override_Default_Behavior Self
+            Get Baxio_Baxio_Bank_VT to liValidTableId
+            Get oSetBank      to liSetId
+            Get Current_Item to liItem
+            Delegate Get FillSet_While_Toggling Self liValidTableId liSetId liItem to rVal
+            Get Select_Count to liSelCount
+            set value of otxtselbank to ('Ñß†¢úö£‚§ú™' + " - " + string(liselcount)) 
+            Get oSelBank_bn   to liButtonId
+            Set Bitmap of liButtonId to (If((liSelCount),"Clra.bmp","Select16.bmp"))
+            set tooltipvalue of libuttonid to (if((liselcount),'Äß¶úß†¢¶ö„ Ê¢‡§ ´‡§ °ò´ò©´·©ú‡§','Ñß†¢¶ö„ Ê¢‡§ ´‡§ °ò´ò©´·©ú‡§')) 
+        End_Procedure //Select_Toggling
+        
+        Procedure mouse_down integer item_num integer char_pos
+            Integer bShiftState
+        
+            Get DFKeyState VK_SHIFT   to bShiftState
+            Forward Send mouse_down item_num char_pos
+            If (Not(bShiftState)) Set piLastItem to (Current_Item(Self))
+        End_Procedure // mouse_down
+        
+        Procedure OnKillFocus
+            Set piLastItem to -1
+        End_Procedure // OnKillFocus
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // olstBank
+
+    Object GrpHmnia is a GroupSub
+        Set Label to "Ü£ú®¶£û§Âò ¢„•û™"
+        Set Size to 31 177
+        Set Location to 119 333
+        Object frmApoHmnial is a FormSub
+            Set Label to "Äß¶:"
+            Set Size to 13 58
+            Set Location to 13 27
+            Set Label_Col_Offset to 20
+            Set Form_Datatype Item 0 to Mask_Date_Window
+            Set Prompt_Button_Mode to pb_PromptOn
+            Set Form_Mask Item 0 to "d/M/yyyy"
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            
+            Set Prompt_Object to (Popup_Calendar(Self))
+            
+            Procedure Exiting
+                Date ldApoHmnial ldEosHmnial
+            
+                Get Value to ldApoHmnial
+                Get Value of frmEosHmnial to ldEosHmnial
+                If (ldApoHmnial > ldEosHmnial) Set Value of frmEosHmnial to ldApoHmnial
+                Forward Send Exiting
+            End_Procedure // Exiting
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // frmApoHmnial
+
+        Object frmEosHmnial is a FormSub
+            Set Label to "Ñ‡™:"
+            Set Size to 13 58
+            Set Location to 13 112
+            Set Label_Col_Offset to 20
+            Set Form_Datatype Item 0 to Mask_Date_Window
+            Set Prompt_Button_Mode to pb_PromptOn
+            Set Form_Mask Item 0 to "d/M/yyyy"
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            
+            Set Prompt_Object to (Popup_Calendar(Self))
+            
+            Procedure Exiting
+                Date ldApoHmnial ldEosHmnial
+            
+                Get Value of frmApoHmnial to ldApoHmnial
+                Get Value to ldEosHmnial
+                If (ldApoHmnial > ldEosHmnial) Set Value of frmApoHmnial to ldEosHmnial
+                Forward Send Exiting
+            End_Procedure // Exiting
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // frmEosHmnial
+
+    End_Object    // GrpHmnia
+
+    Object grpParalhpths is a GroupSub
+        Set Label to "èò®ò¢„ß´û™"
+        Set Size to 55 177
+        Set Location to 151 333
+        Object frmGlCode is a FormSub
+            Set Size to 13 112
+            Set Location to 9 60
+            Set Color to clBtnFace
+            Set Label_Col_Offset to 2
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+        End_Object    // frmGlCode
+
+        Object frmCust is a FormSub
+            Set Size to 13 112
+            Set Location to 23 60
+            Set Color to clBtnFace
+            Set Label_Col_Offset to 2
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+        End_Object    // frmCust
+
+        Object frmProm is a FormSub
+            Set Size to 13 112
+            Set Location to 38 60
+            Set Color to clBtnFace
+            Set Label_Col_Offset to 2
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+        End_Object    // frmProm
+
+        Object otxtGLCode is a TextBoxSub
+            Set Label to "â‡õ†°Ê™ Ç.ä.:"
+            Set Location to 9 7
+            Set Size to 13 49
+        End_Object    // otxtGLCode
+
+        Object otxtCust is a TextBoxSub
+            Set Label to "èú¢·´û™"
+            Set Location to 23 7
+            Set Size to 13 49
+        End_Object    // otxtCust
+
+        Object otxtProm is a TextBoxSub
+            Set Label to "è®¶£ûüú¨´„™"
+            Set Location to 38 7
+            Set Size to 13 49
+        End_Object    // otxtProm
+
+
+        //AB-StoreStart
+        
+        Set Visible_State to False
+        //AB-StoreEnd
+
+    End_Object    // grpParalhpths
+
+    Object ordGrpSort is a RadioGroupSub
+        Set Label to "íò•†§Ê£û©û Å·©ú†"
+        Set Size to 62 93
+        Set Location to 211 333
+        Object rdByHmnial is a RadioSub
+            Set Label to "Ü£/§Âò ä„•û™"
+            Set Size to 10 84
+            Set Location to 10 4
+        End_Object    // rdByHmnial
+
+        Object rdByHmniap is a RadioSub
+            Set Label to "Ü£/§Âò™ èò®ò¢òô„™"
+            Set Size to 10 84
+            Set Location to 25 4
+        End_Object    // rdByHmniap
+
+        Object rdByCode is a RadioSub
+            Set Label to "â‡õ†°¶Á Ä•†¶ö®·≠¶¨"
+            Set Size to 10 84
+            Set Location to 40 4
+            Set Auto_Size_State to FALSE
+
+            //AB-StoreStart
+            
+            Set Enabled_State to False
+            Set Visible_State to False
+            //AB-StoreEnd
+
+        End_Object    // rdByCode
+
+
+        //AB-StoreStart
+        
+        Procedure Notify_Select_State integer iToItem integer iFromItem
+            //for augmentation
+            Case Begin
+                Case (iToItem = 0)
+                    Set piSortByIndex to 1
+                    Case Break
+                Case (iToItem = 1)
+                    Set piSortByIndex to 2
+                    Case Break
+                Case (iToItem = 2)
+                    Set piSortByIndex to 3
+                    Case Break
+            Case End
+        End_Procedure // Notify_Select_State
+        
+        // If you set Current_radio you must set this after the
+        // radio objects have been created AND after Notify_select_State has been
+        // created. i.e. Set in bottom-code at end!!
+        //Set Current_Radio to 0
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // ordGrpSort
+
+    Object rdgSelectPrint is a RadioGroupSub
+        Set Label to "Ñ°´Á&ß‡©û"
+        Set Size to 26 318
+        Set Location to 247 5
+        Object rdScreen is a RadioSub
+            Set Label to "éüÊ§û :"
+            Set Size to 10 36
+            Set Location to 11 6
+        End_Object    // rdScreen
+
+        Object rdPrinter is a RadioSub
+            Set Label to "Ñ°´¨ß‡´„™ : "
+            Set Size to 10 49
+            Set Location to 11 54
+        End_Object    // rdPrinter
+
+        Object rdFile is a RadioSub
+            Set Label to "Ä®ÆúÂ¶"
+            Set Size to 10 37
+            Set Location to 11 117
+            Set Auto_Size_State to FALSE
+        End_Object    // rdFile
+
+        Object frmFile is a FormSub
+            Set Size to 13 155
+            Set Location to 9 158
+            Set Color to clBtnFace
+            Set Label_Col_Offset to 2
+            Set Enabled_State to FALSE
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+        End_Object    // frmFile
+
+
+        //AB-StoreStart
+        Procedure Notify_Select_State  Integer iNewItem  Integer iOldItem
+            If iNewItem EQ 0     Set Output_Device_Mode  To PRINT_TO_WINDOW
+            Else If iNewItem EQ 1   Set Output_Device_Mode  To PRINT_TO_PRINTER
+            Else If iNewItem EQ 2   Set Output_Device_Mode  To PRINT_TO_FILE
+            Set Enabled_State of frmFile to (iNewItem = 2)
+        End_Procedure
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // rdgSelectPrint
+
+    Object dbGrpYear is a dbGroupSub
+        Set Size to 26 506
+        Set Location to 1 4
+        Object Company_Company_Name is a dbFormSub
+            Entry_Item Syscurxr.Company_name
+            Set Server to (Syscurxr_DD(self))
+            Set Size to 13 146
+            Set Location to 9 44
+            Set Color to clBtnFace
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Enabled_State to FALSE
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+        End_Object    // Company_Company_Name
+
+        Object Branch_Branch_Name is a dbFormSub
+            Entry_Item Syscurxr.Branch_name
+            Set Server to (Syscurxr_DD(self))
+            Set Size to 13 146
+            Set Location to 9 244
+            Set Color to clBtnFace
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Enabled_State to FALSE
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+        End_Object    // Branch_Branch_Name
+
+        Object Year_Year_Year is a dbFormSub
+            Entry_Item Syscurxr.Year_year
+            Set Server to (Syscurxr_DD(self))
+            Set Size to 13 64
+            Set Location to 8 436
+            Set Color to clBtnFace
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Enabled_State to FALSE
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // Year_Year_Year
+
+        Object otxtCompany is a TextBoxSub
+            Set Label to "Ñ´ò†®úÂò"
+            Set Auto_Size_State to FALSE
+            Set TextColor to clNavy
+            Set FontSize to 4 0
+            Set Location to 10 7
+            Set Size to 10 29
+            Set FontWeight to 800
+            Set Justification_Mode to jMode_Right
+            Set TypeFace to "MS Sans Serif"
+            Set Enabled_State to TRUE
+        End_Object    // otxtCompany
+
+        Object otxtBranch is a TextBoxSub
+            Set Label to "ìß¶°/£ò :"
+            Set Auto_Size_State to FALSE
+            Set TextColor to clNavy
+            Set FontSize to 4 0
+            Set Location to 10 204
+            Set Size to 10 31
+            Set FontWeight to 800
+            Set Justification_Mode to jMode_Right
+            Set TypeFace to "MS Sans Serif"
+            Set Enabled_State to TRUE
+        End_Object    // otxtBranch
+
+        Object otxtYear is a TextBoxSub
+            Set Label to "ï®„©û :          "
+            Set Auto_Size_State to FALSE
+            Set TextColor to clNavy
+            Set FontSize to 4 0
+            Set Location to 10 404
+            Set Size to 10 24
+            Set FontWeight to 800
+            Set Justification_Mode to jMode_Right
+            Set TypeFace to "MS Sans Serif"
+            Set Enabled_State to TRUE
+        End_Object    // otxtYear
+
+    End_Object    // dbGrpYear
+
+    Object oClear_bn is a ButtonSub
+        Set Label to "Ä°Á®‡©û (F5)"
+        Set Size to 14 75
+        Set Location to 227 435
+        Set Focus_Mode to Pointer_Only
+
+        //AB-StoreStart
+        
+        Set MDI_Container to (rv037(Self))
+        
+        Procedure OnClick
+            Delegate Send Request_Clear
+            Forward Send OnClick
+        End_Procedure // OnClick
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // oClear_bn
+
+    Object oQuery_bn is a ButtonSub
+        Set Label to "É†òõ†°ò©Âò (F2)"
+        Set Size to 14 75
+        Set Location to 258 435
+        Set Focus_Mode to Pointer_Only
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+        
+        Set MDI_Container to (rv037(Self))
+        
+        Procedure OnClick
+            Delegate Send DoRunQuery
+            Forward Send OnClick
+        End_Procedure //onclick
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // oQuery_bn
+
+    Object oPrint_bn is a ButtonSub
+        Set Label to "íú¢ú¨´òÂò ú°´Áß‡©û"
+        Set Size to 14 75
+        Set Location to 243 435
+        Set Focus_Mode to Pointer_Only
+
+        //AB-StoreStart
+        
+        Set MDI_Container to (rv037(Self))
+        
+        Procedure OnClick
+            Send StartReport
+            Forward Send OnClick
+        End_Procedure // OnClick
+        
+        Set Enabled_State to (RecUsed(Self,TmpB001.File_Number))
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // oPrint_bn
+
+    Object otxtBaxiokat is a TextBoxSub
+        Set Label to "Ñß†¢¶ö„ ´Áß‡§ ò•†¶ö®·≠¶¨"
+        Set TextColor to clNavy
+        Set Location to 31 5
+        Set Size to 10 98
+        Set FontWeight to 600
+    End_Object    // otxtBaxiokat
+
+    Object otxtBtypkin is a TextBoxSub
+        Set Label to "Ñß†¢¶ö„ ´ú¢ú¨´òÂò™ °Â§û©û™"
+        Set TextColor to clNavy
+        Set Location to 31 263
+        Set Size to 10 102
+        Set FontWeight to 600
+
+        //AB-StoreStart
+        
+        Set Visible_State to False
+        //AB-StoreEnd
+
+    End_Object    // otxtBtypkin
+
+    Object otxtStatus is a TextBoxSub
+        Set Label to "Ñß†¢¶ö„ °ò´·©´ò©û™"
+        Set Auto_Size_State to FALSE
+        Set TextColor to clNavy
+        Set Location to 119 5
+        Set Size to 10 71
+        Set FontWeight to 600
+        Set Justification_Mode to jMode_Left
+    End_Object    // otxtStatus
+
+    Object otxtPlace is a TextBoxSub
+        Set Label to "åò ú¨®Â©°ú´ò† ©ú"
+        Set TextColor to clNavy
+        Set Location to 119 110
+        Set Size to 10 63
+        Set FontWeight to 600
+    End_Object    // otxtPlace
+
+    Object otxtBank is a TextBoxSub
+        Set Label to "Ñß†¢¶ö„ ´®·ßúùò™"
+        Set TextColor to clNavy
+        Set Location to 119 234
+        Set Size to 10 62
+        Set FontWeight to 600
+    End_Object    // otxtBank
+
+    Object otxtSelStatus is a TextBoxSub
+        Set Label to "Ñß†¢úö£‚§ú™ - 0"
+        Set Location to 231 44
+        Set Size to 10 59
+    End_Object    // otxtSelStatus
+
+    Object otxtSelPlace is a TextBoxSub
+        Set Label to "Ñß†¢úö£‚§ú™ - 0"
+        Set Location to 232 148
+        Set Size to 10 76
+    End_Object    // otxtSelPlace
+
+    Object otxtSelBank is a TextBoxSub
+        Set Label to "Ñß†¢úö£‚§ú™ - 0"
+        Set Location to 231 275
+        Set Size to 10 57
+    End_Object    // otxtSelBank
+
+    Object oEdit_bn is a ButtonSub
+        Set Label to "Editor"
+        Set Size to 14 75
+        Set Location to 210 435
+
+        //AB-StoreStart
+        Procedure OnClick
+        //    Send New_Window "I:\HOMEWIN.DEV\EASYWARE.VIS\GL\DATA\1111.txt"
+        //    Send Activate_testedit to (Client_Area(Main(Self)))
+        //    Send CodeMaxOpenFile to (otestedit(testedit(self))) "I:\HOMEWIN.DEV\EASYWARE.VIS\GL\DATA\1111.txt"
+        End_Procedure // OnClick
+        
+        Set Enabled_State to False
+        Set Visible_State to False
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // oEdit_bn
+
+
+    //AB-StoreStart
+    
+    Function Find_BaxiokatCode Integer liBaxiokatRec Returns Integer
+        Integer liBaxiokatCode
+        Clear Baxiokat
+        Move liBaxiokatRec to Baxiokat.Recnum
+        Find eq Baxiokat by Recnum
+        [Found] Move Baxiokat.Baxiokat_Code to liBaxiokatCode
+        Function_Return liBaxiokatCode
+    End_Function // Find_BaxiokatCode
+    
+    Function Find_BtypkinCode Integer liBtypkinRec Returns Integer
+        Integer liBtypkinCode
+        Clear Btypkin
+        Move liBtypkinRec to Btypkin.Recnum
+        Find eq Btypkin by Recnum
+        [Found] Move Btypkin.Btypkin_Code to liBtypkinCode
+        Function_Return liBtypkinCode
+    End_Function // Find_BtypkinCode
+    
+    Function Find_BaxiokatDescr Integer liBaxiokatRec Returns Integer
+        String lsBaxiokatDescr
+        Clear Baxiokat
+        Move liBaxiokatRec to Baxiokat.Recnum
+        Find eq Baxiokat by Recnum
+        [Found] Move Baxiokat.Baxiokat_Descr to lsBaxiokatDescr
+        Function_Return lsBaxiokatDescr
+    End_Function // Find_BaxiokatDescr
+    
+    Function Find_BtypkinDescr Integer liBtypkinRec Returns Integer
+        String lsBtypkinDescr
+        Clear Btypkin
+        Move liBtypkinRec to Btypkin.Recnum
+        Find eq Btypkin by Recnum
+        [Found] Move Btypkin.Btypkin_Descr to lsBtypkinDescr
+        Function_Return lsBtypkinDescr
+    End_Function // Find_BtypkinDescr
+    
+    Function Find_BankSelections Returns String
+        Integer liSelBankId liListBankId liItem
+        String lsBankSelected lsCode
+        Move oSetBank   to liSelBankId
+        Move olstStatus to liListBankId
+        If (Item_Count(liListBankId) = (Item_Count(liSelBankId))) Function_Return lsBankSelected
+        If (Item_Count(liSelBankId)) Move "-" to lsBankSelected
+        For liItem From 0 to (Item_Count(liSelBankId)-1)
+            Get Value of liSelBankId Item liItem to lsCode
+            Move (lsBankSelected + (Trim(lsCode)) + "-") to lsBankSelected
+        Loop
+        Function_Return lsBankSelected
+    End_Function // Find_BankSelections
+    
+    Function Find_BtypkinSelections Returns String
+        Integer liSelBtypkinId liRec0 liItem
+        String lsBtypkinSelected lsRecr
+        Get Selected_Items of dblstBtypkin  to liSelBtypkinID
+        If (Item_Count(liSelBtypkinId)) Move "-" to lsBtypkinSelected
+        For liItem From 0 to (Item_Count(liSelBtypkinId)-1)
+            Get Value of liSelBtypkinId Item liItem to liRec0
+            Move (lsBtypkinSelected + (String(Find_BtypkinCode(Self,liRec0))) + "-") to lsBtypkinSelected
+        Loop
+        Function_Return lsBtypkinSelected
+    End_Function // Find_BtypkinSelections
+    
+    
+    Procedure Override_Default_Behavior Integer aiListId
+        Integer liItem liCur liMax liLastItem liMin
+        Get piLastItem of aiListId to liLastItem
+        If (liLastItem = (-1)) Procedure_Return
+        Get Current_Item of aiListId to liCur
+        If (liCur > liLastItem) Begin
+            Move liLastItem to liMin
+            Move liCur to liMax
+        End
+        Else Begin
+            Move liLastItem to liMax
+            Move liCur to liMin
+        End
+        For liItem From 0 to (Item_Count(aiListId)-1)
+            Set Select_State of aiListId Item liItem to (If(((liItem >= liMin) and ( liItem <=liMax)),True,False))
+        Loop
+    End_Procedure // Override_Default_Behavior
+    
+    Procedure Fill_Set Integer aiValidTable Integer aiListId Integer aiSetId Integer bState Integer aiItem
+        Integer liValidTableId liCurItem liSetId liItem
+        Move aiValidTable to liValidTableId
+        Move aiSetId      to liSetId
+        Move aiItem       to liCurItem
+        If (bState) Send Add_Element    to liSetId (Data_Value(liValidTableId,aiItem))
+        Else        Send Remove_Element to liSetId (Data_Value(liValidTableId,aiItem))
+    End_Procedure // Fill_Set
+    
+    Function FillSet_While_Toggling Integer aiListId Integer aiValidTable Integer aiSetId Integer aiItem Returns Integer
+        Integer liSelectCount liItem bState bCtrlState bShiftState
+        Get DFKeyState VK_CONTROL to bCtrlState
+        Get DFKeyState VK_SHIFT   to bShiftState
+        If ((Not(bCtrlState)) or (bShiftState)) Send Delete_Data to aiSetId
+        If (Not(bShiftState)) Begin
+            Move aiItem      to liItem
+            Get Select_State of aiListId liItem to bState
+            Send Fill_Set aiValidTable aiListId aiSetId bState liItem
+        End
+        Else Begin
+            For liItem From 0 to (Item_Count(aiListId)-1)
+                Get Select_State of aiListId liItem to bState
+                Send Fill_Set aiValidTable aiListId aiSetId bState liItem
+            Loop
+        End
+        Get Select_Count of aiListId to liSelectCount
+        Function_Return liSelectCount
+    End_Function // FillSet_While_Toggling
+    
+    Function Select_All Integer aiListId Integer aiValidTable Integer aiSetId Returns Integer
+        Integer liSelectCount liItem
+        If (aiListId <= 0) Function_Return
+        Get Select_Count of aiListId to liSelectCount
+        For liItem From 0 to (Item_Count(aiListId)-1)
+            Set Select_State of aiListId liItem to (If((liSelectCount),False,True))
+            Send Fill_Set aiValidTable aiListId aiSetId (If((liSelectCount),False,True)) liItem
+        Loop
+        Get Select_Count of aiListId to liSelectCount
+        Set Current_Item of aiListId to 0
+        Function_Return liSelectCount
+    End_Function // Select_All
+    
+    Function Invert_All Integer aiListId Integer aiValidTable Integer aiSetId Returns Integer
+        Integer liSelectCount liItem
+        If (aiListId <= 0) Function_Return
+        Get Select_Count of aiListId to liSelectCount
+        For liItem From 0 to (Item_Count(aiListId)-1)
+            Set Select_State of aiListId liItem to (1-(Select_State(aiListId,liItem)))
+            Send Fill_Set aiValidTable aiListId aiSetId (Select_State(aiListId,liItem)) liItem
+        Loop
+        Get Select_Count of aiListId to liSelectCount
+        Function_Return liSelectCount
+    End_Function // Invert_All
+    
+    Function Error_Selection Returns Integer
+        Integer liSelectCount
+        String lsMessage
+        Get Select_Count of dblstBaxiokat to liSelectCount
+        If (Not(liSelectCount)) Begin
+            move "Ñß†¢‚•´ú ´Áß¶ Ä•†¶ö®·≠¶¨ !" to lsmessage 
+            Send Activate to dblstBaxiokat
+        End
+        Else Begin
+            Get Select_Count of olstStatus to liSelectCount
+            If (Not(liSelectCount)) Begin
+                move "Ñß†¢‚•´ú °ò´·©´ò©û ò•†¶ö®·≠¶¨ !" to lsmessage 
+                Send Activate to olstStatus
+            End
+            Else Begin
+                Get Select_Count of olstPlace to liSelectCount
+                If (Not(liSelectCount)) Begin
+                    move "Ñß†¢‚•´ú ß¶¨ ß®‚ßú† §ò ô®Â©°ú´ò† ´¶ ò•†Êö®ò≠¶ !" to lsmessage 
+                    Send Activate to olstPlace
+                End
+            End
+        End
+        if (lsmessage <> "") send stop_box lsmessage "è¢û®¶≠¶®Âò" 
+        Function_Return liSelectCount
+    End_Function // Error_Selection
+    
+    Procedure DoRunQuery
+        Integer liQueryId
+        Date    ldBaxio_Hmnial_Apo ldBaxio_Hmnial_Eos
+        Integer liTemp liSelectCount
+        Integer liSelBaxioID liBaxiokatCount liBaxiokatRec liBaxiokat_Code
+        Integer liSelStatusID liStatusCount liBaxio_Status
+        Integer liSelPlaceID liPlaceCount liBaxio_Place
+        String  lsBankCode lsLast_Btypkin_Code lsYear_Recr
+        Integer liLast_Btypkin_Code
+        Get Error_Selection to liSelectCount
+        If (Not(liSelectCount)) Procedure_Return
+    
+        // jsjsjs 29/01/2001
+        Move SysCurXr.Year_Recr to lsYear_Recr
+        //Get Field_Current_Value of (Year_dd(Self)) Field Year.Year_Recr to lsYear_Recr
+    
+        Get Value of (frmApoHmnial(GrpHmnia(Self))) Item 0 to ldBaxio_Hmnial_Apo
+        Get Value of (frmEosHmnial(GrpHmnia(Self))) Item 0 to ldBaxio_Hmnial_Eos
+        Move (oBaxio_Query(Self)) to liQueryId
+        //£ûõú§†©£Ê™ temporary_file & non-indexed properties
+        Send Initialize to liQueryId TRUE
+        Get Find_BtypkinSelections to lsLast_Btypkin_Code
+        Send Start_Status to liQueryId
+        Get Selected_Items of dblstBaxiokat to liSelBaxioID
+        Get oSetStatus                      to liSelStatusID
+        Get oSetPlace                       to liSelPlaceID
+        For liBaxiokatCount From 0 to (Item_Count(liSelBaxioID)-1)
+            Get Value of liSelBaxioID Item liBaxiokatCount to liBaxiokatRec
+            Get Find_Baxiokatcode liBaxiokatRec to liBaxiokat_Code
+            For liStatusCount From 0 to (Item_Count(liSelStatusID)-1)
+                Get Value of liSelStatusID Item liStatusCount to liBaxio_Status
+                For liPlaceCount From 0 to (Item_Count(liSelPlaceID)-1)
+                    Get Value of liSelPlaceID Item liPlaceCount to liBaxio_Place
+                    Get Baxio_Single_Scan_By_Index5 of (oBaxio_Query(Self));
+                                                      lsYear_Recr ;
+                                                      liBaxiokat_Code;
+                                                      liBaxio_Status;
+                                                      liBaxio_Place;
+                                                      liLast_Btypkin_Code;
+                                                      ldBaxio_Hmnial_Apo;
+                                                      ldBaxio_Hmnial_Eos to liTemp
+                    If (liTemp <> 0) Begin
+                        Send End_Status to liQueryId
+                        Procedure_Return
+                    End
+                Loop // Place
+            Loop // Status
+    
+        Loop // Biaxiokat
+        Send End_Status to liQueryId
+        Send StartReport
+    End_Procedure // DoRunQuery
+    
+    Procedure StartReport
+        Integer iOutputDevice liRptId liRecs
+        String  FileName
+        Get RecUsed TmpB001.File_Number to liRecs
+        Set Enabled_State of oPrint_Bn to (liRecs <> 0)
+        If (liRecs = 0) Procedure_Return
+    
+        Get Output_Device_Mode To iOutputDevice
+    
+        If iOutputDevice EQ PRINT_TO_WINDOW Begin
+           Make_Temp_File "TXT" FileName
+           Move (".\" - FileName)  To FileName
+           Set Output_Device_Name  To FileName
+        End
+        Else If iOutputDevice EQ PRINT_TO_PRINTER Begin
+           If (Year.Year_Printer <> "") Set Output_Device_Name  To Year.Year_Printer
+           Else Set Output_Device_Name  To "Lpt1:"
+        End
+        Else If iOutputDevice EQ PRINT_TO_FILE Begin
+           Get Value of (frmFile(rdgSelectPrint (Self))) Item 0 to FileName
+           If (FileName = "") Begin
+                Make_Temp_File "TXT" FileName
+                Move (".\" - FileName)  To FileName
+           End
+           Set Output_Device_Name  To FileName
+        End
+    
+        Get Report_Object_Id to liRptId
+        If (liRptId) Send Rebuild_Constraints to liRptId
+    
+        send Run_Report
+    
+        If iOutputDevice EQ PRINT_TO_WINDOW Begin
+           //Send KeyAction to oEdit_bn
+           //Send DoRunEditor FileName "Empor"
+           RunProgram background "NotePad" FileName
+           EraseFile FileName
+        End
+    End_Procedure   // StartReport
+    
+    Object Baxio_BasicReport is a BasicReportSub
+       Set report_view_id to (Parent(Self))
+       Set Report_Caption to "Report Ä•†¶ö®·≠‡§"
+       set report_title to "Ñ°´Áß‡©û Report" 
+       Report_Main_File TmpB001
+       Report_breaks TmpB001.YYYY TmpB001.Month
+    
+       Procedure Constrain
+       End_Procedure // Constrain
+    
+       Procedure Read_Selections
+           Integer liMaxSel liCurRadio liSel
+           Date ldBaxio_Hmnial_Apo ldBaxio_Hmnial_Eos
+           Integer liSetStatusId liSetPlaceId liSetBankId liSelStatusId liSelPlaceId liSelBankId
+           Integer liBaxiokatId liBtypkinId liSelBaxiokatId liSelBtypkinId
+           String lsBaxiokat lsBtypkin lsBank lsStatus lsPlace lsSortBy
+           Integer liSetStatusCodeId liSetPlaceCodeId liSetBankCodeId
+           Integer liBaxiokatRecs liBtypkinRecs liAll
+    
+           Get RecUsed Baxiokat.File_Number to liBaxiokatRecs
+           Get RecUsed Btypkin.File_Number  to liBtypkinRecs
+    
+           BlankForm Choises1_037.1 THRU Choises1_037.3
+           BlankForm Choises037.1 THRU Choises037.4
+    
+           Move dblstBaxiokat     to liBaxiokatId
+           Move dblstBtypkin      to liBtypkinId
+           Move olstStatus        to liSetStatusId
+           Move olstPlace         to liSetPlaceId
+           Move olstBank          to liSetBankId
+    
+           Move oSetStatusCode    to liSetStatusCodeId
+           Move oSetPlaceCode     to liSetPlaceCodeId
+           Move oSetBankCode      to liSetBankCodeId
+    
+           Get Selected_Items of liBaxiokatId to liSelBaxiokatId
+           Get Selected_Items of liBtypkinId  to liSelBtypkinId
+           Move oSetStatus        to liSelStatusId
+           Move oSetPlace         to liSelPlaceId
+           Move oSetBank          to liSelBankId
+    
+           if (select_count(libaxiokatid)  = libaxiokatrecs)  move "é¢ò" to lsbaxiokat 
+           If ((Select_Count(liBtypkinId )  = liBtypkinRecs) or;
+               (select_count(libtypkinid) = 0)) move "é¢ò" to lsbtypkin 
+           if (select_count(lisetstatusid) = (item_count(lisetstatusid))) move "é¢ò" to lsstatus 
+           if (select_count(lisetplaceid)  = (item_count(lisetplaceid)))  move "é¢ò" to lsplace 
+           If ((Select_Count(liSetBankId)  = (Item_Count(liSetBankId))) or ;
+               (select_count(lisetbankid) = 0)) move "é¢ò" to lsbank 
+    
+           move ((lsbaxiokat = 'é¢ò') and ; 
+                 ("é¢ò" = lsbtypkin) and ; 
+                 ("é¢ò" = lsstatus) and ; 
+                 ("é¢ò" = lsplace) and ; 
+                 ("é¢ò" = lsbank)) to liall 
+    
+           If (Select_Count(liBaxiokatId) > liMaxSel)  Move (Select_Count(liBaxiokatId)) to liMaxSel
+           //If (Select_Count(liBtypkinId ) > liMaxSel)  Move   (Select_Count(liBtypkinId )) to liMaxSel
+           If (Select_Count(liSetStatusId) > liMaxSel) Move (Select_Count(liSetStatusId)) to liMaxSel
+           If (Select_Count(liSetPlaceId) > liMaxSel)  Move (Select_Count(liSetPlaceId)) to liMaxSel
+           If (Select_Count(liSetBankId) > liMaxSel)   Move (Select_Count(liSetBankId)) to liMaxSel
+    
+           Get Current_Radio of ordGrpSort to liCurRadio
+           Get radio_value of ordGrpSort Item liCurRadio to lsSortBy
+           Get Value of (frmApoHmnial(GrpHmnia(Self))) Item 0 to ldBaxio_Hmnial_Apo
+           Get Value of (frmEosHmnial(GrpHmnia(Self))) Item 0 to ldBaxio_Hmnial_Eos
+    
+           Print lsSortBy              to Choises1_037.1
+           Print ldBaxio_Hmnial_Apo    to Choises1_037.2
+           Print ldBaxio_Hmnial_Eos    to Choises1_037.3
+           Output Choises1_037
+    
+           For liSel From 0 to (liMaxSel-1)
+               if (lsbaxiokat <> 'é¢ò') begin 
+                   Get Value of liSelBaxiokatId Item liSel to lsBaxiokat
+                   Get Find_BaxiokatDescr (Integer(lsBaxiokat)) to lsBaxiokat
+                   Print lsBaxiokat to Choises037.1
+               End
+               Else Begin
+                   if (lisel = 0) print "é¢¶†" to choises037.1 
+                   Else BlankForm                Choises037.1
+               End
+               if (lsbtypkin  <> 'é¢ò') begin 
+                   Get Value of liSelBtypkinId  Item liSel to lsBtypkin
+                   Get Find_BtypkinCode (Integer(lsBtypkin)) to lsBtypkin
+                   //Print lsBtypkin to Choises037.5
+               End
+               Else Begin
+                   //if (lisel = 0) print "é¢ò" to choises037.5 
+                   //Else BlankForm                Choises037.5
+               End
+               if (lsstatus   <> 'é¢ò') begin 
+                   Get Value of liSelStatusId   Item liSel to lsStatus
+                   Get Find_Descr lsStatus liSetStatusCodeId liSetStatusId to lsStatus
+                   Print lsStatus to Choises037.2
+               End
+               Else Begin
+                   if (lisel = 0) print "é¢ú™" to choises037.2 
+                   Else BlankForm                Choises037.2
+               End
+               if (lsplace   <> 'é¢ò')  begin 
+                   Get Value of liSelPlaceId    Item liSel to lsPlace
+                   Get Find_Descr lsPlace liSetPlaceCodeId liSetPlaceId to lsPlace
+                   Print lsPlace to Choises037.3
+               End
+               Else Begin
+                   if (lisel = 0) print "é¢ò" to choises037.3 
+                   Else BlankForm                Choises037.3
+               End
+               if (lsbank   <> 'é¢ò')   begin 
+                   Get Value of liSelBankId     Item liSel to lsBank
+                   Get Find_Descr lsBank liSetBankCodeId liSetBankId to lsBank
+                   Print lsBank to Choises037.4
+               End
+               Else Begin
+                   if (lisel = 0) print "é¢ú™" to choises037.4 
+                   Else BlankForm                Choises037.4
+               End
+               If (((liAll) and (liSel=0)) or (Not(liAll))) Output Choises037
+           Loop
+    
+       End_Procedure //Read_Selections
+    
+    
+       Function Starting_Report Returns Integer
+            Zero_SubTotals BodyRHelp037.1
+            Zero_SubTotals BodyR037.6
+            Zero_SubTotals SubTotalR2_037.3 SubTotalR2_037.4
+            Zero_SubTotals TotalR037.1 TotalR037.2
+       End_Function // Starting_Report
+    
+       Function Starting_Main_Report Returns Integer
+          Integer iRetVal
+          Integer iIndexR037 liRepPanelId
+          Forward Get Starting_Main_Report to iRetval
+    
+          Get piSortByIndex to iIndexR037
+          Report_Index BY iIndexR037    // set the sort order
+          Blankform FooterR037.1
+          Blankform BodyR037.1 THRU BodyR037.22
+          Sysdate4  HeaderR037.4 HeaderR037.5 HeaderR037.6 // set date for report
+          Get Report_Status_Panel to liRepPanelId
+          set button_text of lireppanelid to "&Ä°Á®‡©û" 
+          //Set page_feed to  // default -2
+          Set page_end  to 63 // default 59
+          Function_Return iRetval
+       End_Function
+    
+       Procedure_Section Page_Top as HeaderR037
+          Integer iPage
+    
+          Get Page_Count  To iPage
+          print Company.Company_Name to HeaderR037.1
+          print Branch.Branch_Name   to HeaderR037.2
+          print Year.Year_Descr      to HeaderR037.3
+    
+          Print iPage                to HeaderR037.7
+          OutPut_PageCheck
+          If (iPage = 1) Send Read_Selections
+       End_Procedure
+    
+       Procedure_Section Page_Title as TitleR037
+          Integer iPage
+    
+          Get Page_Count  To iPage
+          OutPut_PageCheck
+       End_Procedure
+    
+       Procedure_Section SubHeader2 as SubHeader2_037
+    
+         Print TmpB001.Month     to SubHeader2_037.1
+         Print TmpB001.YYYY      to SubHeader2_037.2
+       End_Procedure // SubTotal2
+    
+       Procedure_Section  Body as BodyR037
+    
+         send update_status ('Ñöö®ò≠„' + string(tmpb001.recnum) + " : " + trim(tmpb001.baxio_code) * string(tmpb001.baxiokat_code)) 
+    
+         Print TmpB001.Baxio_Code        to BodyR037.1
+         Print TmpB001.Hmnia_Lixis       to BodyR037.2
+         Print TmpB001.Banka_Code        to BodyR037.3
+         Print TmpB001.Banka_Name        to BodyR037.4
+         Print TmpB001.Baxio_No          to BodyR037.5
+         if (piSeries(Self) = 0) Print TmpB001.Axia          to BodyR037.6 //{ points=2} BOOK // 10
+         if (piSeries(Self) = 1) Print TmpB001.Axia0         to BodyR037.6 //{ points=2} BOOK // 10
+         if (piSeries(Self) = 2) Print TmpB001.Axia00        to BodyR037.6 //{ points=2} BOOK // 10
+         if (piSeries(Self) = 3) Print TmpB001.AxiaR         to BodyR037.6 //{ points=2} BOOK // 10
+         Print TmpB001.Status_Descr      to BodyR037.7
+         Print TmpB001.Place_Descr       to BodyR037.8
+    
+         Print TmpB001.Hmniap            to BodyR037.9
+         Print TmpB001.Baxio_Code_In     to BodyR037.10
+         Print TmpB001.Baxio_Epon_In     to BodyR037.11
+    
+         If (TmpB001.Btypkin_Code <> 0) Print TmpB001.Btypkin_Code  to BodyR037.12
+         Else                           BlankForm                      BodyR037.12
+         If (TmpB001.Btypkin_Abr <> "") Print TmpB001.Btypkin_Abr   to BodyR037.13
+         Else                           BlankForm                      BodyR037.13
+         If (TmpB001.Seira <> "")       Print TmpB001.Seira         to BodyR037.14
+         Else                           BlankForm                      BodyR037.14
+         If (TmpB001.Barticl_No <> 0)   Print TmpB001.Barticl_No    to BodyR037.15
+         Else                           BlankForm                      BodyR037.15
+    
+         Print TmpB001.Hmniap2           to BodyR037.16
+         Print TmpB001.Baxio_Code_Out    to BodyR037.17
+         Print TmpB001.Baxio_Epon_Out    to BodyR037.18
+    
+         If (TmpB001.Btypkin_Code2 <> 0) Print TmpB001.Btypkin_Code2 to BodyR037.19
+         Else                            BlankForm                      BodyR037.19
+         If (TmpB001.Btypkin_Abr2 <> "") Print TmpB001.Btypkin_Abr2  to BodyR037.20
+         Else                            BlankForm                      BodyR037.20
+         If (TmpB001.Seira2 <> "")       Print TmpB001.Seira2        to BodyR037.21
+         Else                            BlankForm                      BodyR037.21
+         If (TmpB001.Barticl_No2 <> 0)   Print TmpB001.Barticl_No2   to BodyR037.22
+         Else                            BlankForm                      BodyR037.22
+    
+         Print 1                         to BodyRHelp037.1
+         OutPut_PageCheck
+       End_Procedure   // Body
+    
+       Procedure_Section SubTotal1 as SubtotalR1_037
+    
+       End_Procedure // SubTotal1
+    
+       Procedure_Section SubTotal2 as SubtotalR2_037
+    
+         Print (TheMonthName(SubHeader2_037.1,mMonthGen))    to SubTotalR2_037.1
+         Print SubHeader2_037.2    to SubTotalR2_037.2
+         Subtotal BodyR037.6       to SubTotalR2_037.3 //{ points=2}
+         Subtotal BodyRHelp037.1   to SubTotalR2_037.4
+         OutPut_PageCheck
+       End_Procedure // SubTotal2
+    
+       Procedure_Section  Total as TotalR037
+         Integer iRec
+    
+         Get rec_count to iRec
+         Subtotal SubtotalR2_037.3  to TotalR037.1 //{ points=2}
+         Print iRec                 to TotalR037.2
+         OutPut_PageCheck
+    
+       End_Procedure  // Total
+    
+    
+       Procedure_Section Page_Bottom as FooterR037
+    //       if (piKeepSectionTogether(self) <> 1)  OutPut_PageCheck
+       End_Procedure // Page_Bottom
+    
+    
+       Procedure Ending_Report
+           Integer rVal
+           Blankform TotalR037.1 THRU TotalR037.2
+           Blankform SubtotalR2_037.1 THRU SubtotalR2_037.4
+           Blankform BodyR037.1  THRU BodyR037.22
+           Blankform SubHeader2_037.1 THRU SubHeader2_037.2
+           // Ñßò§ò≠¶®· ´‡§ Buffers
+           Get fiRefindYear to rVal
+       End_Procedure
+    
+    End_Object // Åoves_BasicReport
+    
+    //***************** Predefined Procedures and Functions Section **************
+    
+    Procedure Request_Clear_All
+        Forward Send Request_Clear_all
+        Send DoRefindYear Self (Year_DD(Self))
+    End_Procedure // Request_Clear_All
+    
+    Procedure Request_Clear
+        Integer liListId liValidTableId liSetId liSelectCount
+    
+        Send Delete_Data to (Selected_Items(dblstBaxiokat(Self)))
+        Send Beginning_Of_Data to dblstBaxiokat
+        Send Delete_Data to (Selected_Items(dblstBtypkin(Self)))
+        Send Beginning_Of_Data to dblstBtypkin
+    
+        Get olstStatus      to liListId
+        Get Baxio_Status_VT to liValidTableId
+        Get oSetStatus      to liSetId
+        Get Select_Count of liListId to liSelectCount
+        If (liSelectCount) Get Select_All liListId liValidTableId liSetId to liSelectCount
+        Set Current_Item of liListId to 0
+    
+        Get olstPlace             to liListId
+        Get Baxio_Baxio_Place_VT  to liValidTableId
+        Get oSetPlace             to liSetId
+        Get Select_Count of liListId to liSelectCount
+        If (liSelectCount) Get Select_All liListId liValidTableId liSetId to liSelectCount
+        Set Current_Item of liListId to 0
+    
+        Get olstBank             to liListId
+        Get Baxio_Baxio_Bank_VT  to liValidTableId
+        Get oSetBank             to liSetId
+        Get Select_Count of liListId to liSelectCount
+        If (liSelectCount) Get Select_All liListId liValidTableId liSetId to liSelectCount
+        Set Current_Item of liListId to 0
+    
+        Set Value of (frmApoHmnial(GrpHmnia(Self))) Item 0 to ""
+        Set Value of (frmEosHmnial(GrpHmnia(Self))) Item 0 to ""
+        Set Value of (frmGlCode(grpParalhpths(Self))) Item 0 to ""
+        Set Value of (frmCust(grpParalhpths(Self))) Item 0 to ""
+        Set Value of (frmProm(grpParalhpths(Self))) Item 0 to ""
+        Set Current_Radio of ordGrpSort to 0
+        Send Activate to dblstBaxiokat
+    End_Procedure // Request_Clear
+    
+    On_Key kSave_Record        Send KeyAction to oQuery_Bn
+    On_Key key_F2              Send KeyAction to oQuery_Bn
+    On_Key kCancel             Send Request_Cancel
+    On_Key kClear              Send Request_Clear
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //AB-StoreEnd
+
+CD_End_Object    // rv037
+
+
+//AB-StoreStart
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//AB-StoreEnd
+
+//AB/ End_Object    // prj

@@ -1,0 +1,235 @@
+//AB/ Project TheorX
+//AB/     Object prj is a Dialog_Project
+//AB/         Set ProjectName to "TheorX"
+//AB/         Set ProjectFileName to "TheorX.Dg"
+
+// Project Object Structure
+//   TheorX is a BasicPanelSub
+//     frmSynXrePro is a FormSub
+//     frmSynPistPro is a FormSub
+//     FrmSelida is a FormSub
+//     oPrint_bn is a ButtonSub
+//     oExit_bn is a ButtonSub
+//     otxtSynXre is a TextBoxSub
+//     otxtSynPist is a TextBoxSub
+//     otxtPage is a TextBoxSub
+//     otxtHeader is a TextBoxSub
+
+// Register all objects
+Register_Object FrmSelida
+Register_Object frmSynPistPro
+Register_Object frmSynXrePro
+Register_Object oExit_bn
+Register_Object oPrint_bn
+Register_Object otxtHeader
+Register_Object otxtPage
+Register_Object otxtSynPist
+Register_Object otxtSynXre
+Register_Object TheorX
+
+
+    //AB-IgnoreStart
+
+    Use Panel.Sub
+    Use Form.Sub
+    Use Button.Sub
+    Use Txtbox.Sub
+
+
+    //AB-IgnoreEnd
+
+    Object TheorX is a BasicPanelSub
+
+        //AB-StoreTopStart
+        Property Integer piInvokingReportId 0
+
+        //AB-StoreTopEnd
+
+        Set Caption_Bar to FALSE
+        Set Sysmenu_Icon to FALSE
+        Set Minimize_Icon to FALSE
+        Set Size to 111 180
+        Set Location to 39 21
+        Set Exit_Application_Local_State to TRUE
+        Set Modal_State to TRUE
+        Set Popup_State to TRUE
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object frmSynXrePro is a FormSub
+            Set Size to 13 85
+            Set Location to 26 89
+            Set Color to clBtnFace
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Form_Datatype Item 0 to Mask_Numeric_Window
+            Set Enabled_State to FALSE
+            Set Form_Mask Item 0 to ",*.*"
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // frmSynXrePro
+
+        Object frmSynPistPro is a FormSub
+            Set Size to 13 85
+            Set Location to 42 89
+            Set Color to clBtnFace
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Form_Datatype Item 0 to Mask_Numeric_Window
+            Set Enabled_State to FALSE
+            Set Form_Mask Item 0 to ",*.*"
+            Set Item_Shadow_State Item 0 to TRUE
+            Set Shadow_State Item 0 to TRUE
+
+            //AB-StoreStart
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // frmSynPistPro
+
+        Object FrmSelida is a FormSub
+            Set Size to 13 36
+            Set Location to 58 89
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Form_Datatype Item 0 to Mask_Numeric_Window
+            Set Form_Margin Item 0 to 6
+            Set Form_Mask Item 0 to "######"
+            Set Value Item 0 to "1"
+
+            //AB-StoreStart
+
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // FrmSelida
+
+        Object oPrint_bn is a ButtonSub
+            Set Label to "Ñ&°´Áß‡©û"
+            Set Default_State to TRUE
+            Set Size to 14 87
+            Set Location to 74 89
+
+            //AB-StoreStart
+
+            Procedure Onclick
+                Set piInvokingReportId to 0
+                Send Deactivate to (TheorX(Self))
+            End_Procedure // Onclick
+
+
+
+
+
+
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // oPrint_bn
+
+        Object oExit_bn is a ButtonSub
+            Set Label to "&Ñ•¶õ¶™"
+            Set Size to 14 87
+            Set Location to 89 89
+
+            //AB-StoreStart
+
+            Procedure Onclick
+                Integer liInvokingReportId
+                Get piInvokingReportId to liInvokingReportId
+                If (liInvokingReportId) Begin
+                    //Send RPT_END to liInvokingReportId
+                    //Set Cancelled_State of liInvokingReportId to True
+                    Set piReportCancelled of liInvokingReportId to True
+                End
+                Set piInvokingReportId to 0
+                Send Deactivate to (TheorX(Self))
+            End_Procedure // Onclick
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //AB-StoreEnd
+
+        End_Object    // oExit_bn
+
+        Object otxtSynXre is a TextBoxSub
+            Set Label to "ë¨§¶¢†°„ ï®‚‡©û :"
+            Set Auto_Size_State to FALSE
+            Set FontSize to 4 0
+            Set Location to 26 3
+            Set Size to 13 82
+            Set Enabled_State to TRUE
+        End_Object    // otxtSynXre
+
+        Object otxtSynPist is a TextBoxSub
+            Set Label to "ë¨§¶¢†°„ èÂ©´‡©û :"
+            Set Auto_Size_State to FALSE
+            Set FontSize to 4 0
+            Set Location to 42 3
+            Set Size to 13 82
+            Set Enabled_State to TRUE
+        End_Object    // otxtSynPist
+
+        Object otxtPage is a TextBoxSub
+            Set Label to "ëú¢Âõò Ñ°´Áß‡©û™ :"
+            Set Auto_Size_State to FALSE
+            Set FontSize to 4 0
+            Set Location to 57 3
+            Set Size to 13 82
+            Set Enabled_State to TRUE
+        End_Object    // otxtPage
+
+        Object otxtHeader is a TextBoxSub
+            Set Label to "ëÁ§¶¢ò è®¶ûö¶Á£ú§û™ èú®†Êõ¶¨"
+            Set Auto_Size_State to FALSE
+            Set Color to clAqua
+            Set FontSize to 4 0
+            Set Location to 3 3
+            Set Size to 13 171
+            Set Border_Style to Border_ClientEdge
+            Set Justification_Mode to jMode_Center
+            Set Enabled_State to TRUE
+        End_Object    // otxtHeader
+
+
+        //AB-StoreStart
+
+        Set Locate_Mode to Center_On_Screen
+
+        On_Key Key_Alt+Key_K Send KeyAction to oPrint_bn
+        On_Key Key_Alt+Key_E Send KeyAction to oExit_bn
+        On_Key KCancel       Send KeyAction to oExit_bn
+
+
+        //AB-StoreEnd
+
+    End_Object    // TheorX
+
+//AB/     End_Object    // prj

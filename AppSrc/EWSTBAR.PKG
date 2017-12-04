@@ -1,0 +1,44 @@
+
+Use dfMainSt.pkg
+
+Object oStatusBarSub Is a StatusBar
+
+    Use DFTimer // DfTimer Manager Must Have a WindowHandle
+
+    Property Integer piStdPanes Public (PaneCount(Self))
+
+    Set Value     Item 1 to "„§ ¢¦šã:"
+    Set PaneWidth item 1 to 50
+
+    Send AddPane 55  ""        sbLOWERED
+    Send AddPane 70  ""        sbLOWERED
+    Send AddPane 55  ""        sbLOWERED
+
+    Procedure pTimer
+        String lsDay lsHour lsHH lsMM lsSS
+        Integer liStdPanes lbState
+
+        Get piStdPanes to liStdPanes
+        Sysdate lsDay lsHH lsMM lsSS
+        If (Length(lsHH)=1) Insert "0" In lsHH At 1
+        If (Length(lsMM)=1) Insert "0" In lsMM At 1
+        If (Length(lsSS)=1) Insert "0" In lsSS At 1
+        Move (lsHH+":"+lsMM+":"+lsSS) to lsHour
+        Get Simple_state to lbState
+        If  Not (lbState) Begin
+            Set Value Item liStdPanes     to lsHour
+            Set Value Item (liStdPanes+1) to lsDay
+        End
+    End_Procedure // pTimer
+
+
+    Object oTimerObj Is A DFTimer
+
+        Set Timeout to 1000
+        Set Timer_Active_State to TRUE
+        Set Timer_Object to (oStatusBarSub(Current_Object))
+        Set Timer_Message to pTimer
+
+    End_Object // oTimerOdj
+
+End_Object // oStatusBarSub

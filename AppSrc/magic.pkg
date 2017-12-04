@@ -1,0 +1,30 @@
+
+Procedure prMagic
+
+    Local integer server# Err# File# Field# Typ Dummy itm#
+    Local string Itm_val FileVal
+
+    Move 0 To itm#
+
+    Get Server to Server#
+    If Server# Send Refind_records to Server#
+    // Get data_file to filenumber  // oops - no itm#
+    Get data_file  item itm# to file#
+    Get data_field item itm# to Field#
+    Move File#  to Filenumber
+    Move Field# to FieldIndex
+    if not status Indirect_file  Move 1 to Err# // no record, error
+    Else Begin // if we have a current record, make sure it is right
+       Move Indirect_File.Recnum to FileVal
+       Get Value Item Itm# to Itm_Val // the value on the screen
+       Field_Def File# Field# to Typ Dummy
+       // if field type is Numeric (1) check for numeric equality
+       // we need to do numeric checks because the internal value
+       // of a number is sometimes "1" and sometimes "1.0000"
+       If Typ eq 1 Move (Number(Itm_Val)<>Number(FileVal)) to err#
+       Else        Move (Itm_Val<>FileVal) to err#
+    End
+//******************************************************************
+
+End_Procedure
+

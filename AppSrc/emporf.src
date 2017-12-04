@@ -1,0 +1,149 @@
+Use AllEntSc
+
+#REPLACE CURRENT$WORKSPACE   "empor"
+Register_Object Client_Area
+
+//AB-StoreTopStart
+Use Workspc.pkg
+
+//  Set date attributes as needed
+Set_Date_Attribute sysdate4_State to (TRUE)
+Set_Date_Attribute Date4_State    to (TRUE)
+Set_Date_Attribute epoch_value    to 30
+
+Object ProgramWorkspace is a WorkspaceSUB
+    Set WorkspaceName to CURRENT$WORKSPACE
+//    Set ModuleName    to 'ProgramName' // Special module name.
+//    Set HelpName      to 'HelpName.hlp'// Please provide the name of your Windows help file.
+End_Object
+
+
+Use Help_Ids.inc // Developer should provide this file of help context links.
+Use Std_Help.pkg
+
+// General Functions-Procedures and Variables
+Use Globals.Inc
+
+Use Dates.Utl
+
+// Create-Edit-Delete Records only if the field m_code = gs_Module_Code
+
+Use SelectXr.Dg
+Send Epelexe_Xrhsh
+
+//AB-StoreTopEnd
+
+
+Object Main is a Panelsub
+    Set Label To "EMPOR final"
+
+    DFCreate_Menu Main_Menu
+        #include File_PM.inc    // file pulldown menu
+
+        DFCreate_Menu "&View" ViewPopupMenu is a ViewPopupMenu
+            On_Item "&Ptyppar\aCtrl+1" Send Activate_Ptyppar
+            On_Item "&Cflagkin\aCtrl+2" Send Activate_Cflagkin
+            On_Item "&Particle\aCtrl+3" Send Activate_Particle
+        End_Pull_down
+        Set Status_Help To "Available Views"
+
+        DFCreate_Menu "&Report" ReportPopupMenu is a ViewPopupMenu
+            On_Item "&RMHTRB:EKTYP-TIMOLOGIO\aCtrl+4" Send Activate_Rmhtrb
+        End_Pull_down
+        Set Status_Help To "Available Reports"
+
+        #include Navi_pm.inc    // Naviation pulldown menu
+        #include win_PM.inc     // Window of available views
+        #include Helpa_PM.inc   // help pulldown menu w/ About
+    End_Menu
+
+    Use DFStdBtn.pkg //  Tool-Bar object.
+
+    Object Client_Area is a AppClientAreasub
+
+        //AB-ClientStoreTopStart
+        //Integer piCurrentYearRec0 gi_Selected_Year_Rec0
+        //String gs_Module_Code
+
+        Open Nomisma
+        Open Isotimia
+
+        Function fngConvertPoso Global String asNomismaCodeApo Number anPoso ;
+                                       String asNomismaCodeSe  Date   adHmnia  Returns Number
+            Number rVal
+            Integer iApo_Einai_Euro_Zone iApo_Einai_DRX iApo_Einai_Euro
+            Integer iSe_Einai_Euro_Zone  iSe_Einai_DRX  iSe_Einai_Euro
+
+            If (asNomismaCodeApo=asNomismaCodeSe) Function_Return anPoso
+
+            Clear Nomisma
+            Move (Trim(asNomismaCodeApo)) to Nomisma.Nomisma_Code
+            Find eq Nomisma By Index.1 // Nomisma:Index.1:Nomisma_Code
+            Move Nomisma.Euro_Zone  to iApo_Einai_Euro_Zone
+            Move Nomisma.Einai_DRX  to iApo_Einai_DRX
+            Move Nomisma.Einai_EURO to iApo_Einai_Euro
+
+            Clear Nomisma
+            Move (Trim(asNomismaCodeSe)) to Nomisma.Nomisma_Code
+            Find eq Nomisma By Index.1 // Nomisma:Index.1:Nomisma_Code
+            Move Nomisma.Euro_Zone  to iSe_Einai_Euro_Zone
+            Move Nomisma.Einai_DRX  to iSe_Einai_DRX
+            Move Nomisma.Einai_EURO to iSe_Einai_Euro
+
+            Case Begin
+                Case     ((iApo_Einai_Euro_Zone)  And     (iSe_Einai_Euro_Zone))
+                    Case Break
+
+                Case     ((iApo_Einai_Euro_Zone)  And (NOT(iSe_Einai_Euro_Zone)))
+                    Case Break
+
+                Case ((NOT(iApo_Einai_Euro_Zone)) And     (iSe_Einai_Euro_Zone))
+                    Case Break
+
+                Case ((NOT(iApo_Einai_Euro_Zone)) And (NOT(iSe_Einai_Euro_Zone)))
+                    Case Break
+
+            Case End
+
+            Function_Return rVal
+        End_Function
+
+
+        //AB-ClientStoreTopEnd
+
+        //  Include all views
+
+        //  Include all reports
+        Use rmhtrb.rv
+        Use Ptyppar.VW
+        Use Cflagkin.vw
+        Use Particle.VW
+
+        //AB-ClientStoreStart
+
+        //AB-ClientStoreEnd
+
+
+    End_Object  // Client_Area
+
+    On_Key Key_Ctrl+Key_1 Send Activate_Ptyppar To Client_Area
+    On_Key Key_Ctrl+Key_2 Send Activate_Cflagkin To Client_Area
+    On_Key Key_Ctrl+Key_3 Send Activate_Particle To Client_Area
+    On_Key Key_Ctrl+Key_4 Send Activate_Rmhtrb To Client_Area
+
+    Use DFStdSbr.pkg //  Status-Bar object.
+
+    //AB-PanelStoreStart
+    Use StdAbout.pkg // Standard "About" package.
+    //AB-PanelStoreEnd
+
+
+End_Object
+
+
+//AB-StoreStart
+Start_UI
+
+
+//AB-StoreEnd
+

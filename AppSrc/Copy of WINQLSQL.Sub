@@ -1,0 +1,387 @@
+Use CrystalReport.pkg
+
+Define PE_SUBREPORT_NAME_LEN       for 128
+
+Type PESubreportInfo
+  Field PESubreportInfo.structSize as Word
+  Field PESubreportInfo.name       as Char PE_SUBREPORT_NAME_LEN
+  Field PESubreportInfo.NLinks     as Short
+  Field PESubreportInfo.IsOnDemand as Short
+End_Type // PESubreportInfo
+
+
+External_Function PEGetNSections "PEGetNSections" CRPE32.DLL ;
+  Integer printJob ;
+  Returns Integer
+
+External_Function PEGetSectionCode "PEGetSectionCode" CRPE32.DLL ;
+  Integer printJob ;
+  Integer sectionN ;
+  Returns Integer
+
+External_Function PECloseSubreport "PECloseSubreport" CRPE32.DLL ;
+  Integer printJob ;
+  Returns Integer
+
+External_Function PEGetNSubreportsInSection "PEGetNSubreportsInSection" CRPE32.DLL ;
+  Integer printJob ;
+  Integer sectionCode ;
+  Returns Integer
+
+External_Function PEGetNthSubreportInSection "PEGetNthSubreportInSection" CRPE32.DLL ;
+  Integer printJob ;
+  Integer sectionCode ;
+  Integer subreportN ;
+  Returns Integer
+
+External_Function PEGetSubreportInfo "PEGetSubreportInfo" CRPE32.DLL ;
+  Integer printJob ;
+  Integer subreportHandle ;
+  Pointer subreportInfo ;
+  Returns Integer
+
+External_Function PEOpenSubreport "PEOpenSubreport" CRPE32.DLL ;
+  Integer parentJob ;
+  Pointer subreportName ;
+  Returns Integer
+
+
+Type PEWindowOptions
+  Field PEWindowOptions.StructSize As Word
+  Field PEWindowOptions.hasGroupTree As Word
+  Field PEWindowOptions.canDrillDown As Word
+  Field PEWindowOptions.hasNavigationControls As Word
+  Field PEWindowOptions.hasCancelButton As Word
+  Field PEWindowOptions.hasPrintButton As Word
+  Field PEWindowOptions.hasExportButton As Word
+  Field PEWindowOptions.hasZoomControl As Word
+  Field PEWindowOptions.hasCloseButton As Word
+  Field PEWindowOptions.hasProgressControls As Word
+  Field PEWindowOptions.hasSearchButton As Word
+  Field PEWindowOptions.hasPrintSetupButton As Word
+  Field PEWindowOptions.hasRefreshButton As Word
+End_Type // PEWindowOptions
+
+External_Function32 PESetWindowOptions "PESetWindowOptions" CRPE32.DLL ;
+  Integer printJob pointer Options Returns Integer
+
+Class CrystalReportSubSQL Is A CrystalReport
+
+    Procedure Construct_Object
+        Forward send Construct_Object
+        // Everything on except hasGroupTree by default
+        property integer hasGroupTree 0
+        property integer canDrillDown 1
+        property integer hasNavigationControls 1
+        property integer hasCancelButton 1
+        property integer hasPrintButton 1
+        property integer hasExportButton 1
+        property integer hasZoomControl 1
+        property integer hasCloseButton 1
+        property integer hasProgressControls 1
+        property integer hasSearchButton 1
+        property integer hasPrintSetupButton 1
+        property integer hasRefreshButton 1
+
+        Set WindowStyle To (WS_MAXIMIZE iOr WS_OVERLAPPEDWINDOW)
+    End_Procedure // Construct_Object
+
+    Procedure OutputToWindow String sTitle Integer iLeft Integer iTop Integer iWidth Integer iHeight Integer iStyle Handle hParent
+        Integer iPrintJob iResult
+        String sPEWindowOptions
+        Pointer pPeWindowOptions
+
+        Get PrintJob To iPrintJob
+        FillType PEWindowOptions with 0     to sPEWindowOptions
+        put PEWindowOptions_Size            to sPEWindowOptions at PEWindowOptions.StructSize
+        put (hasGroupTree(self))            to sPEWindowOptions at PEWindowOptions.hasGroupTree
+        put (canDrillDown(self))            to sPEWindowOptions at PEWindowOptions.canDrillDown
+        put (hasNavigationControls(self))   to sPEWindowOptions at PEWindowOptions.hasNavigationControls
+        put (hasCancelButton(self))         to sPEWindowOptions at PEWindowOptions.hasCancelButton
+        put (hasPrintButton(self))          to sPEWindowOptions at PEWindowOptions.hasPrintButton
+        put (hasExportButton(self))         to sPEWindowOptions at PEWindowOptions.hasExportButton
+        put (hasZoomControl(self))          to sPEWindowOptions at PEWindowOptions.hasZoomControl
+        put (hasCloseButton(self))          to sPEWindowOptions at PEWindowOptions.hasCloseButton
+        put (hasProgressControls(self))     to sPEWindowOptions at PEWindowOptions.hasProgressControls
+        put (hasSearchButton(self))         to sPEWindowOptions at PEWindowOptions.hasSearchButton
+        put (hasPrintSetupButton(self))     to sPEWindowOptions at PEWindowOptions.hasPrintSetupButton
+        put (hasRefreshButton(self))        to sPEWindowOptions at PEWindowOptions.hasrefreshButton
+        GetAddress of sPEWindowOptions      to pPEWindowOptions
+        Move (PESetWindowOptions(iPrintJob, pPEWindowOptions)) to iResult
+        Forward Send OutputToWindow sTitle iLeft iTop iWidth iHeight iStyle hParent
+    End_Procedure // OutputToWindow
+
+    Procedure Set TmpFileDir String aDir
+        String lsCurrWspc lsDir
+
+//        If (ghoWorkSpace <> 0) Begin
+//            Get WorkSpaceName of ghoWorkSpace to lsCurrWspc
+//            Insert "WorkSpaces\" in lsCurrWspc at 1
+//            Get_Profile_String lsCurrWspc aDir to lsDir
+//            Set Report_Data_Path to lsDir
+//        End
+    End_Procedure
+
+    Procedure DoWinQLReport
+        // This can be used when reports must be able to run in different data directories
+        Set TmpFileDir to "TmpFileDir"
+        Forward Send DoWinQLReport
+    End_Procedure
+
+
+  Function NSections Returns Integer
+    Integer iPrintJob iResult
+
+    Get PrintJob To iPrintJob
+    Move (PEGetNSections(iPrintJob)) To iResult
+    Move (Low(iResult)) To iResult
+    Function_Return iResult
+  End_Function // NSections
+
+  Function SectionCode Integer iSectionN Returns Integer
+    Integer iPrintJob iResult
+
+    Get PrintJob To iPrintJob
+    Move (PEGetSectionCode(iPrintJob,iSectionN)) To iResult
+    Move (Low(iResult)) To iResult
+    Function_Return iResult
+  End_Function // SectionCode
+
+  Function CloseSubreport Integer iSubreport Returns Integer
+    Integer iResult
+
+    Move (PECloseSubreport(iSubreport)) To iResult
+    Function_Return iResult
+  End_Function // CloseSubreport
+
+  Function NSubreportsInSection Integer iSectionCode Returns Integer
+    Integer iPrintJob iResult
+
+    Get PrintJob To iPrintJob
+    Move (PEGetNSubreportsInSection(iPrintJob,iSectionCode)) To iResult
+    Move (Low(iResult)) To iResult
+    Function_Return iResult
+  End_Function // nSubreportsInSection
+
+  Function NthSubreportInSection Integer iSectionCode Integer iSubreportN Returns Integer
+    Integer iPrintJob iResult
+
+    Get PrintJob To iPrintJob
+    Move (PEGetNthSubreportInSection(iPrintJob,iSectionCode,iSubreportN)) To iResult
+    Function_Return iResult
+  End_Function // NthSubreportInSection
+
+  Function SubreportName Integer iSubreportHandle Returns String
+    String sPESubreportInfo sResult
+    Pointer pPESubreportInfo
+    Integer iPrintJob iResult
+
+    ZeroType PESubreportInfo To sPESubreportInfo
+    Put PESubreportInfo_Size To sPESubreportInfo at PESubreportInfo.structSize
+    GetAddress Of sPESubreportInfo to pPESubreportInfo
+
+    Get PrintJob To iPrintJob
+    Move (PEGetsubreportInfo(iPrintJob,iSubreportHandle,pPESubreportInfo)) To iResult
+    If iResult GetBuff_String From sPESubreportInfo at PESubreportInfo.name To sResult
+    Function_Return (ToOEM(sResult))
+  End_Function // SubreportName
+
+  Function SubreportNLinks Integer iSubreportHandle Returns Integer
+    String sPESubreportInfo
+    Pointer pPESubreportInfo
+    Integer iPrintJob iResult
+
+    ZeroType PESubreportInfo To sPESubreportInfo
+    Put PESubreportInfo_Size To sPESubreportInfo at PESubreportInfo.structSize
+    GetAddress Of sPESubreportInfo to pPESubreportInfo
+
+    Get PrintJob To iPrintJob
+    Move (PEGetsubreportInfo(iPrintJob,iSubreportHandle,pPESubreportInfo)) To iResult
+    If iResult GetBuff From sPESubreportInfo at PESubreportInfo.NLinks To iResult
+    Function_Return iResult
+  End_Function // SubreportNLinks
+
+  Function SubreportIsOnDemand Integer iSubreportHandle Returns Integer
+    String sPESubreportInfo
+    Pointer pPESubreportInfo
+    Integer iPrintJob iResult
+
+    ZeroType PESubreportInfo To sPESubreportInfo
+    Put PESubreportInfo_Size To sPESubreportInfo at PESubreportInfo.structSize
+    GetAddress Of sPESubreportInfo to pPESubreportInfo
+
+    Get PrintJob To iPrintJob
+    Move (PEGetsubreportInfo(iPrintJob,iSubreportHandle,pPESubreportInfo)) To iResult
+    If iResult GetBuff From sPESubreportInfo at PESubreportInfo.IsOnDemand To iResult
+    Function_Return iResult
+  End_Function // SubreportIsOnDemand
+
+  Function OpenSubReport String sSubreport Returns Integer
+    Integer iPrintJob iResult
+    Pointer pSubreport
+
+    Get PrintJob To iPrintJob
+    GetAddress Of sSubreport To pSubreport
+    Move (PEOpenSubreport(iPrintJob,pSubreport)) To iResult
+    Move (Low(iResult)) To iResult
+    Function_Return iResult
+  End_Function // OpenSubReport
+
+  Function NTablesInSubreport Integer iSubreportHandle Returns Integer
+    Local Integer iResult
+
+    Move (PEGetNTables(iSubreportHandle)) To iResult
+    Move (Low(iResult)) To iResult
+    Function_Return iResult
+  End_Function // NTablesInSubreport
+
+  Function NthTableLocationInSubreport Integer iSubreportHandle Integer iTableN Returns String
+    Local String sPETableLocation sReturn
+    Local Pointer pPETableLocation
+    Local Integer iResult
+
+    FillType PETableLocation With 0 To sPETableLocation
+    Put PETableLocation_Size To sPETableLocation At PETableLocation.StructSize
+    GetAddress Of sPETableLocation To pPETableLocation
+    Move (PEGetNthTableLocation(iSubreportHandle,iTableN,pPETableLocation)) To iResult
+    If iResult GetBuff_String From sPETableLocation At PETableLocation.Location To sReturn
+    Function_Return (ToOEM(sReturn))
+  End_Function // NthTableLocationInSubreport
+
+  Procedure Set NthTableLocationInSubreport Integer iSubreportHandle Integer iTableN String sLocation
+    Local String sPETableLocation
+    Local Pointer pPETableLocation
+    Local Integer iResult
+
+    Move (ToANSI(sLocation+Character(0))) To sLocation
+    FillType PETableLocation With 0 To sPETableLocation
+    Put PETableLocation_Size To sPETableLocation At PETableLocation.StructSize
+    Put_String sLocation To sPETableLocation At PETableLocation.Location
+    GetAddress Of sPETableLocation To pPETableLocation
+    Move (PESetNthTableLocation(iSubreportHandle,iTableN,pPETableLocation)) To iResult
+  End_Procedure // Set NthTableLocationInSubreport
+
+
+    // This hook procedure is called after the print job has been opened.
+    Procedure OnInitializeReport
+    ////// SOS Na ginei xana OnInitializeReport ///////////
+
+        Integer iTables iMax iCount iType
+        String  sLocation sLocation2 sPath DirSep
+        String  sNewPath sNewLocation sDataPath sMyLocation
+
+        Integer lnSections lnSubreports lnTables iPrintJob iPath
+        Integer iSection iCode iSubreport iTable iNumPaths bExists
+        Handle hSubreport
+        String sTable sSubreport sTempFilePath
+        Boolean bCheckforTempfile bTemp
+
+        //Forward Send OnInitializeReport
+
+        Open Company
+        Open Syscurxr
+
+        Clear Company
+        Move SyscurXr.Company_Code to Company.Company_Code
+        Find Eq Company By Index.1
+
+        If ((Found) And (Company.Company_C_CodeR='')) Procedure_Return
+        String  sActualSQL
+        String  sActualTemp
+        String  sOldSQL
+        String  sOldTemp
+        String  sServerName
+        String  sDatabaseName
+        String  sUserID
+
+        Move Company.Company_C_CodeR    to sServerName          // ODBC sto 1o pedio
+        Move Company.Company_C_CodER    to sActualSQL           // Database sto 2o pedio
+        Move Company.Company_C_CodER    to sDatabaseName        // Database sto 2o pedio
+
+        Move 'SMS'              to sOldSQL
+        Move 'C:\Dns_tmp\'      to sOldTemp
+
+
+        Move 'C:\Dns_tmp\'      to sActualTemp
+
+        Move (Trim(sActualSQL   )) to sActualSQL
+        Move (Trim(sActualTemp  )) to sActualTemp
+        Move (Trim(sOldSQL      )) to sOldSQL
+        Move (Trim(sOldTemp     )) to sOldTemp
+        Move (Trim(sServerName  )) to sServerName
+        Move (Trim(sDatabaseName)) to sDatabaseName
+        Move (Trim(sUserID      )) to sUserID
+
+        Move (Sysconf(SYSCONF_DIR_SEPARATOR)) To DirSep
+
+        Get NTables To iMax
+        Decrement iMax
+        Get Report_Data_Path                                    To sPath
+        If Not (Right(sPath,1)) Eq DirSep Move (sPath-DirSep)   To sPath
+        For iCount From 0 To iMax
+            Get NthTableLocation iCount         To sLocation
+            Get Report_Base_File_Name sLocation To sLocation2
+            Get NthTableDBType           iCount to iType
+
+            // An einai type 1 topiko
+            //               2=SQL
+            If (iType=2) Begin
+                If (sLocation contains sOldSQL) Begin
+                    Move (Replace(sOldSQL,sLocation,sActualSQL))    to sLocation
+                    Set NthTableLocation iCount                     to (Trim(sLocation))
+                End
+            End
+            Else If (iType=1) Begin
+                If (sLocation contains sOldTemp) Begin
+                    Move (Replace(sOldTemp,sLocation,sActualTemp))  to sLocation
+                    Set NthTableLocation iCount                     to (Trim(sLocation))
+                End
+            End
+            Set nthTableLogOnServerName     iCount to sServerName     0
+            Set nthTableLogOnDataBaseName   iCount to sDatabaseName   0
+            Set nthTableLogOnUserID         iCount to sUserID         0 // 'sa'     0
+        Loop // For iCount From 0 To iMax
+
+        // Set the location of the tables for the subreports
+        Get NSections To lnSections
+        For iSection From 0 To (lnSections-1)
+            Get SectionCode iSection To iCode
+            Get NSubreportsInSection iCode To lnSubreports
+            For iSubreport From 0 To (lnSubreports-1)
+                Get NthSubreportInSection iCode iSubreport To hSubreport
+                Get SubreportName hSubreport To sSubreport
+                Get OpenSubreport sSubreport To iPrintJob
+                Get NTablesInSubreport iPrintJob To lnTables
+                For iTable From 0 To (lnTables-1)
+                    Get NthTableLocationInSubreport iPrintJob iTable To sTable
+                    If (sTable contains sOldSQL) Begin
+                            Move '' to sLocation
+                            Move (Replace(sOldSQL,sTable,sActualSQL)) to sLocation
+                            Set NthTableLocationInSubreport iPrintJob iTable To (Trim(sLocation))
+                            Set nthTableLogOnServerName     iTable to sServerName     0
+                            Set nthTableLogOnDataBaseName   iTable to sDatabaseName   0
+                            Set nthTableLogOnUserID         iTable to sUserID         0 // 'sa'     0
+                    End
+                Loop // For iTable From 0 To nTables
+            Loop // For iSubreport From 0 To nSubreports
+        Loop // For iSection From 0 To (iSections-1)
+
+    End_Procedure // OnInitializeReport
+
+
+    // This hook procedure is called just before a print job is closed.
+    Procedure OnDeInitializeReport
+        Forward Send OnDEInitializeReport
+    End_Procedure // OnDeInitializeReport
+
+    // This hook procedure is called just before a the print job is started.
+    Procedure OnStartPrinting
+        Forward Send OnStartPrinting
+    End_Procedure // OnStartPrinting
+
+    // This hook procedure is called just after a print job has finished.
+    Procedure OnStopPrinting
+        Forward Send OnStopPrinting
+    End_Procedure // OnStopPrinting
+End_Class // CrystalReportSubSQL
+

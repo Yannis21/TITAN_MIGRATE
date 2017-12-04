@@ -1,0 +1,137 @@
+//*************************************************************************
+//*
+//*  Copyright (c) 2001 Data Access Corporation, Miami Florida,
+//*  All rights reserved.
+//*  DataFlex is a registered trademark of Data Access Corporation.
+//*
+//*************************************************************************
+//*
+//*  Module Name:
+//*      CharTranslate.pkg
+//*
+//*  Creator:
+//*      SF
+//*
+//*
+//*  Purpose:
+//*      Various global functions to translate OEM to UTF.
+//*
+//*************************************************************************
+
+Use Windows.pkg
+
+#REPLACE CP_ACP                    0           // default to ANSI code page
+#REPLACE CP_OEMCP                  1           // default to OEM  code page
+#REPLACE CP_MACCP                  2           // default to MAC  code page
+#REPLACE CP_THREAD_ACP             3           // current thread's ANSI code page
+#REPLACE CP_SYMBOL                 42          // SYMBOL translations
+#REPLACE CP_UTF7                   65000       // UTF-7 translation
+#REPLACE CP_UTF8                   65001       // UTF-8 translation
+
+External_Function32 MultiByteToWideChar "MultiByteToWideChar" kernel32.dll;
+    DWORD dwCodePage;
+    DWORD dwFlags;
+    Pointer pMultiByteStr;
+    Integer cbMultiByte;
+    Pointer pWideStr;
+    Integer cchWideChar;
+    Returns Integer
+
+External_Function32 WideCharToMultiByte "WideCharToMultiByte" kernel32.dll;
+    DWORD dwCodePage;
+    DWORD dwFlags;
+    Pointer pWideStr;
+    Integer cchWideChar;
+    Pointer pMultiByteStr;
+    Integer cbMultiByte;
+    Pointer pDefaultChar;
+    Pointer pUsedDefaultChar;
+    Returns Integer
+
+//dwCodePage = Multi Byte Code Page to convert from
+//pMultiBuf  = Pointer to Multi Byte string
+//iLen       = Length in bytes of Multi Byte string
+//ppWideBuf  = Contents of ppWideBuf contains a pointer to the destination buffer on return
+Function MultiToWideBuffer Global DWORD dwCodePage Address pMultiBuf Integer iLen Address ppWideBuf Returns Integer
+    Integer iWideSize
+    Integer iVoid
+    Address pWideBuf
+    Move (MultiByteToWideChar(dwCodePage,0,pMultiBuf,iLen,0,0)) to iWideSize
+    If (iWideSize=0);
+        Function_Return 0
+    Move (Alloc((iWideSize+1)*2)) to pWideBuf
+    If (pWideBuf=0);
+        Function_Return 0
+    Move (MultiByteToWideChar(dwCodePage,0,pMultiBuf,iLen,pWideBuf,iWideSize)) to iWideSize
+    If (iWideSize=0) ;
+        Move (Free(pWideBuf)) to iVoid
+    else begin
+        Move (StoreW(pWideBuf,(iWideSize*2),0)) to iVoid
+        Move (StoreDW(ppWideBuf,0,pWideBuf)) to iVoid
+    end
+    Function_Return iWideSize
+End_Function
+
+//dwCodePage = Multi Byte Code Page to convert to
+//pWideBuf   = Pointer to Wide Character string
+//iLen       = Length in characters of Wide Character string
+//ppMultiBuf = Contents of ppMultiBuf contains a pointer to the destination buffer on return
+Function WideToMultiBuffer Global DWORD dwCodePage Address pWideBuf Integer iLen Address ppMultiBuf Returns Integer
+    Integer iMultiSize
+    Address pMultiBuf
+    Integer iVoid
+    Move (WideCharToMultiByte(dwCodePage,0,pWideBuf,iLen,0,0,0,0)) to iMultiSize
+    If (iMultiSize=0);
+        Function_Return 0
+    Move (Alloc(iMultiSize+1)) to pMultiBuf
+    If (pMultiBuf=0);
+        Function_Return 0
+    Move (WideCharToMultiByte(dwCodePage,0,pWideBuf,iLen,pMultiBuf,iMultiSize,0,0)) to iMultiSize
+    If (iMultiSize=0) ;
+        Move (Free(pMultiBuf)) to iVoid
+    else begin
+        Move (StoreC(pMultiBuf,iMultiSize,0)) to iVoid
+        Move (StoreDW(ppMultiBuf,0,pMultiBuf)) to iVoid
+    end
+    Function_Return iMultiSize
+End_Function
+
+//Converts a UTF-8 string to OEM
+//pUtf8Buf   = Pointer to UTF-8 string
+//iLen       = Length of UTF-8 string in bytes
+//Returns pointer to OEM string, use free() to deallocate buffer when it's no longer needed
+Function Utf8ToOemBuffer Global Address pUtf8Buf Integer iLen Returns Address
+    Address pWideBuf
+    Address pOemBuf
+    Integer iWideBufLen
+    Integer iMultiBufLen
+    Integer iVoid
+    Move 0 to pWideBuf
+    Move 0 to pOemBuf
+    Move (MultiToWideBuffer(CP_UTF8,pUtf8Buf,iLen,AddressOf(pWideBuf))) to iWideBufLen
+    If (iWideBufLen=0);
+        Function_Return 0
+    Move (WideToMultiBuffer(CP_OEMCP,pWideBuf,iWideBufLen,AddressOf(pOemBuf))) to iMultiBufLen
+    Move (Free(pWideBuf)) to iVoid
+    Function_Return pOemBuf
+End_Function
+
+//Converts a OEM string to UTF-8
+//pOemBuf    = Pointer to OEM string
+//iLen       = Length of OEM string in bytes
+//Returns pointer to UTF-8 string, use free() to deallocate buffer when it's no longer needed
+Function OemToUtf8Buffer Global Address pOemBuf Integer iLen Returns Address
+    Address pWideBuf
+    Address pUtf8Buf
+    Integer iWideBufLen
+    Integer iMultiBufLen
+    Integer iVoid
+    Move 0 to pWideBuf
+    Move 0 to pUtf8Buf
+    Move (MultiToWideBuffer(CP_OEMCP,pOemBuf,iLen,AddressOf(pWideBuf))) to iWideBufLen
+    If (iWideBufLen=0);
+        Function_Return 0
+    Move (WideToMultiBuffer(CP_UTF8,pWideBuf,iWideBufLen,AddressOf(pUtf8Buf))) to iMultiBufLen
+    Move (Free(pWideBuf)) to iVoid
+    Function_Return pUtf8Buf
+End_Function

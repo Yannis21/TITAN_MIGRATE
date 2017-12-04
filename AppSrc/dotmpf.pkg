@@ -1,0 +1,153 @@
+
+   Object oDotmpf Is A BusinessProcessSub
+
+        set Status_panel_state to false
+        set Display_Error_state to true
+        property string psdatefrom
+        property string psdateto
+        property string psapomast
+        Property Integer piBarID
+        property integer    piTxtID public 0
+        property integer    pilathos public 0
+
+        open wcmoves
+        open bttmp1
+
+PROCEDURE beg_tmp string datefrom string dateto string apomast
+          set psapomast to apomast
+          set psdatefrom to datefrom
+          set psdateto to dateto
+          send DOPROCESS
+END_PROCEDURE
+
+Procedure update_rec
+        string witemx## wapomast##
+        integer liwcmovesddo## libttmp1ddo##  sw icount
+        string ddate
+        number  qty## qtyeisa## x0## x00## x1## tqty##  tqtyeisa## tx0## tx00## tx1##;
+                                p0## p00## p1## tp0## tp00## tp1##
+        string datefrom dateto apomast
+        get psdatefrom to datefrom
+        get psdateto   to dateto
+        get psapomast  to apomast
+        if (datefrom = '') move '01/01/1980' to datefrom
+        if (dateto   = '') move '01/01/2100' to dateto
+   //     Send DoExceptFile to ghoFileModeInfo bttmp1.File_Number
+   //     Send DoSetFileModeToReadOnly to ghoFileModeInfo
+
+        clear wcmoves
+        move  syscurxr.company_code to wcmoves.company_code
+        move  syscurxr.branch_code  to wcmoves.branch_code
+        move  syscurxr.year_year    to wcmoves.year_year
+        move  apomast               to wcmoves.wax_recr
+        find  ge wcmoves by index.12
+        While ((found) and (syscurxr.company_code   eq wcmoves.company_code) and;
+                           (syscurxr.branch_code    eq wcmoves.branch_code)   and;
+                           (syscurxr.year_year      eq wcmoves.year_year))
+
+           move 0 to sw
+           if (apomast <> '') begin
+             if ( (wcmoves.wax_recr    eq apomast)  and;
+               (wcmoves.wcmove_hmnia ge datefrom) and;
+               (wcmoves.wcmove_hmnia le dateto) ) move 1 to sw
+           end
+           if (apomast ='') begin
+              if ( (wcmoves.wcmove_hmnia ge datefrom) and;
+               (wcmoves.wcmove_hmnia le dateto) ) move 1 to sw
+
+           end
+           if (sw = 1 ) begin
+           clear bttmp1
+           add 1 to icount
+           move  wcmoves.wax_recr        to wapomast##
+           move  wcmoves.witemx_code     to witemx##
+           move  wcmoves.wcmove_qty_exa  to qty##
+           move  wcmoves.wcmove_qty_eisa to qtyeisa##
+           move  wcmoves.wcmove_x0       to x0##
+           move  wcmoves.wcmove_x00      to x00##
+           move  wcmoves.wcmove_x1       to x1##
+           move  wcmoves.wcmove_p0       to p0##
+           move  wcmoves.wcmove_p00      to p00##
+           move  wcmoves.wcmove_p1       to p1##
+           move syscurxr.company_code           to bttmp1.company_code
+           move syscurxr.branch_code            to bttmp1.branch_code
+           move syscurxr.year_year              to bttmp1.year_year
+           move wapomast##                      to bttmp1.wax_recr
+           move witemx##                        to bttmp1.witemx_code
+           Find Eq Bttmp1 By Index.1
+           if (found = 1) begin
+              move bttmp1.wcmove_qty_exa  to tqty##
+              move bttmp1.wcmove_qty_eisa to tqtyeisa##
+              move bttmp1.wcmove_x0       to tx0##)
+              move bttmp1.wcmove_x00      to tx00##
+              move bttmp1.wcmove_x1       to tx1##
+              move bttmp1.wcmove_p0       to tp0##)
+              move bttmp1.wcmove_p00      to tp00##
+              move bttmp1.wcmove_p1       to tp1##
+              reread bttmp1
+              move (tqty## + qty##)       to bttmp1.wcmove_qty_exa
+              move (tx0## + x0##)         to bttmp1.wcmove_x0
+              move (tx00## + x00##)       to bttmp1.wcmove_x00
+              move (tx1## + x1##)         to bttmp1.wcmove_x1
+              move (tqtyeisa## + qtyeisa##) to bttmp1.wcmove_qty_eisa
+              move (tp0## + p0##)         to bttmp1.wcmove_p0
+              move (tp00## + p00##)       to bttmp1.wcmove_p00
+              move (tp1## + p1##)         to bttmp1.wcmove_p1
+              saverecord bttmp1
+              Send UpdateWait to (piTxtID(Self))  ('Ešš¨˜­ã „å›¦¬ª '+(String(witemx##))+' ' + (string(icount)))
+              unlock
+           end
+           else begin
+              move syscurxr.company_code  to bttmp1.company_code
+              move syscurxr.branch_code   to bttmp1.branch_code
+              move syscurxr.year_year     to bttmp1.year_year
+              move wapomast##             to bttmp1.wax_recr
+              move witemx##               to bttmp1.witemx_code
+              move qty##                  to bttmp1.wcmove_qty_exa
+              move x0##                   to bttmp1.wcmove_x0
+              move x00##                  to bttmp1.wcmove_x00
+              move x1##                   to bttmp1.wcmove_x1
+              move qtyeisa##              to bttmp1.wcmove_qty_eisa
+              move p0##                   to bttmp1.wcmove_p0
+              move p00##                  to bttmp1.wcmove_p00
+              move p1##                   to bttmp1.wcmove_p1
+              saverecord bttmp1
+              Send UpdateWait to (piTxtID(Self))  ('Ešš¨˜­ã „å›¦¬ª '+(String(witemx##))+' ' + (string(icount)))
+           end
+        end
+     find gt wcmoves by index.12
+     Loop
+     //If (ghoFileModeInfo) Send DoRestoreFileModeInfo to ghoFileModeInfo
+     if (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+End_Procedure
+
+Procedure OnProcess
+    send update_rec
+End_Procedure
+
+Procedure Start_Process
+         Set piTxtID                         to (Wait(Self))
+         Set Button_State    of (Wait(Self)) to False
+         Set BarVisibleState of (Wait(Self)) to '' False
+         Send Popup                          to (Wait(Self))
+         Set piLathos                        to 0
+         Forward Send Start_Process
+End_Procedure
+
+Procedure OnError integer error_info string errMsg
+       If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+End_Procedure
+
+
+Procedure End_Process
+            Forward Send End_Process
+            If (piTxtID(Self)<>0) Send Deactivate to (piTxtID(Self))
+End_Procedure
+
+
+
+
+
+End_Object
+
+

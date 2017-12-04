@@ -1,0 +1,113 @@
+Project EMPOR final
+Object prj is a APP_Project
+
+//AB-StoreTopStart
+Use Workspc.pkg
+
+//  Set date attributes as needed
+Set_Date_Attribute sysdate4_State to (TRUE)
+Set_Date_Attribute Date4_State    to (TRUE)
+Set_Date_Attribute epoch_value    to 30
+
+Object ProgramWorkspace is a WorkspaceSUB
+    Set WorkspaceName to CURRENT$WORKSPACE
+//    Set ModuleName    to 'ProgramName' // Special module name.
+//    Set HelpName      to 'HelpName.hlp'// Please provide the name of your Windows help file.
+End_Object
+
+
+Use Help_Ids.inc // Developer should provide this file of help context links.
+Use Std_Help.pkg
+
+// General Functions-Procedures and Variables
+Use Globals.Inc
+
+Use Dates.Utl
+
+// Create-Edit-Delete Records only if the field m_code = gs_Module_Code
+
+Use SelectXr.Dg
+Send Epelexe_Xrhsh
+
+//AB-StoreTopEnd
+
+
+//AB-PanelStoreStart
+Use StdAbout.pkg // Standard "About" package.
+//AB-PanelStoreEnd
+
+
+//AB-ClientStoreStart
+
+//AB-ClientStoreEnd
+
+
+//AB-ClientStoreTopStart
+//Integer piCurrentYearRec0 gi_Selected_Year_Rec0
+//String gs_Module_Code
+
+Open Nomisma
+Open Isotimia
+
+Function fngConvertPoso Global String asNomismaCodeApo Number anPoso ;
+                               String asNomismaCodeSe  Date   adHmnia  Returns Number
+    Number rVal
+    Integer iApo_Einai_Euro_Zone iApo_Einai_DRX iApo_Einai_Euro
+    Integer iSe_Einai_Euro_Zone  iSe_Einai_DRX  iSe_Einai_Euro
+
+    If (asNomismaCodeApo=asNomismaCodeSe) Function_Return anPoso
+
+    Clear Nomisma
+    Move (Trim(asNomismaCodeApo)) to Nomisma.Nomisma_Code
+    Find eq Nomisma By Index.1 // Nomisma:Index.1:Nomisma_Code
+    Move Nomisma.Euro_Zone  to iApo_Einai_Euro_Zone
+    Move Nomisma.Einai_DRX  to iApo_Einai_DRX
+    Move Nomisma.Einai_EURO to iApo_Einai_Euro
+
+    Clear Nomisma
+    Move (Trim(asNomismaCodeSe)) to Nomisma.Nomisma_Code
+    Find eq Nomisma By Index.1 // Nomisma:Index.1:Nomisma_Code
+    Move Nomisma.Euro_Zone  to iSe_Einai_Euro_Zone
+    Move Nomisma.Einai_DRX  to iSe_Einai_DRX
+    Move Nomisma.Einai_EURO to iSe_Einai_Euro
+
+    Case Begin
+        Case     ((iApo_Einai_Euro_Zone)  And     (iSe_Einai_Euro_Zone))
+            Case Break
+
+        Case     ((iApo_Einai_Euro_Zone)  And (NOT(iSe_Einai_Euro_Zone)))
+            Case Break
+
+        Case ((NOT(iApo_Einai_Euro_Zone)) And     (iSe_Einai_Euro_Zone))
+            Case Break
+
+        Case ((NOT(iApo_Einai_Euro_Zone)) And (NOT(iSe_Einai_Euro_Zone)))
+            Case Break
+
+    Case End
+
+    Function_Return rVal
+End_Function
+
+
+//AB-ClientStoreTopEnd
+
+    Set psProject_Version to "5.0"
+    Set psButtonBar_Pkg To DFStdBtn.pkg
+    Set psStatusBar_Pkg To DFStdSbr.pkg
+    Set ProjectName to "EMPOR final"
+    Set ProjectFileName to "EMPORF.PRJ"
+    Set GenerateFileName to "EMPORF.SRC"
+    Set psProject_Version to "5.0"
+    Set Component To rmhtrb.rv
+    Set Component To Ptyppar.VW
+    Set Component To Cflagkin.vw
+    Set Component To Particle.VW
+
+//AB-StoreStart
+Start_UI
+
+
+//AB-StoreEnd
+
+End_Object    // prj

@@ -1,0 +1,155 @@
+
+Function fsgCode_W_Zeroes Global Integer aiCode Integer aiPlaces Returns String
+    String rVal
+    Integer iLength iInt
+    Move aiCode to rVal
+    Move (trim(rVal)) to rVal
+    For iInt From 1 to (aiPlaces-(Length(rVal)))
+        Move (Insert('0',rVal,1)) to rVal
+    Loop
+    Function_Return rVal
+End_Function
+
+Function fsgCode_n_Zeroes Global number aiCode Integer aiPlaces Returns String
+    String rVal
+    Integer iLength iInt ipos
+    Move aiCode to rVal
+    Move (trim(rVal)) to rVal
+    MOVE (aiPlaces-(Length(rVal))) to ipos
+    For iInt From 1 to ipos
+        Move (Insert('0',rVal,1)) to rVal
+    Loop
+    Function_Return rVal
+End_Function
+
+//‚ ˜ §œ› ˜ Numeric £œ«˜™¢ž«¦¬ £ã¡¦¬ª, £œ ž ®à¨åª ›œ¡˜› ¡á  JS
+Function Sfi_All_Numbers Global Number anValue Integer aiLengthAkeraios Integer aiLengthDekadika Returns String
+
+    String  lsRetval lsValue lsAkeraios lsDekadika
+    Integer liInt liInteger iTimes iStart
+    Number  lnDecimals
+
+    Move (Integer(anValue))                                         to liInteger
+    Move (Round(AnValue-(Integer(anValue))*(10^aiLengthDekadika)))  to lnDecimals
+
+    Move liInteger              to lsAkeraios
+    Move lnDecimals             to lsDekadika
+    Move (Trim(lsAkeraios))     to lsAkeraios
+    Move (Trim(lsDekadika))     to lsDekadika
+
+    Move (Length(lsAkeraios)) to iStart
+    For iTimes From iStart to (aiLengthAkeraios-1)
+        Insert "0" in lsAkeraios at 1
+    Loop
+    Move (Trim(lsAkeraios)) to lsAkeraios
+
+    Move (Length(lsDekadika)) to iStart
+
+    // JS 29/09/2006 Bug sta dekadika ean einai ".03" gia paradeigma
+    // eperne to 3 mono epeidh einai numeric, kai epestrefe "30"
+    If (iStart=1) Begin
+        Move (Insert("0",lsDekadika,1)) to lsDekadika
+        Move (Length(lsDekadika))       to iStart
+    End
+    // JS 29/09/2006
+
+    For iTimes From iStart to (aiLengthDekadika-1)
+        Move (Append(lsDekadika,"0")) to lsDekadika
+    Loop
+    Move (Trim(lsDekadika)) to lsDekadika
+
+    If (aiLengthDekadika=0) Move '' to lsDekadika
+    Move '' to lsRetVal
+    Move (Pad((lsAkeraios-lsDekadika),(aiLengthAkeraios+aiLengthDekadika))) to lsRetval
+    Function_Return lsRetval
+End_Function //sfi_All_Numbers  ‚ ˜ §œ› ˜ Numeric £œ«˜™¢ž«¦¬ £ã¡¦¬ª
+              //                 £œ ž ®à¨åª ›œ¡˜› ¡á (JS)
+
+Open Codemast
+Function gsfCode_Mast Global String lsType String lsValue Returns String
+         Clear Codemast
+         Move lsType  to Codemast.Type
+         Move lsValue to Codemast.Code
+         Find Eq Codemast by Index.1 //type+code
+         Function_Return Codemast.Description
+End_Function //code_mast
+
+Function fsConvert_Time_Number_To_String_With_Zeroes Global Number anTime Returns String
+    Local String rVal lsTmp lsOO lsLL
+    Local Number lnOO lnLL
+
+    Move '' to lsOO
+    Move '' to lsLL
+    Move '' to rVal
+
+    Move (Integer(anTime))                              to lnOO
+
+    Move ((anTime - (Integer(anTime))) * 100)           to lnLL
+
+    If (lnOO<10) Move (Append(lsOO,'0'+(String(lnOO)))) to lsOO
+    Else         Move (String(lnOO))                    to lsOO
+    Move (Trim(lsOO))                                   to lsOO
+
+    If (lnLL<10) Move (Append(lsLL,'0'+(String(lnLL)))) to lsLL
+    Else         Move (String(lnLL))                    to lsLL
+    Move (Trim(lsLL))                                   to lsLL
+
+    Move (Append(rVal,(lsOO+':'+lsLL))) to rVal
+
+    Move (Trim(rVal)) to rVal
+
+    Function_Return rVal
+End_Function
+
+Function fnConvert_Minutes_to_Time Global Integer aiMinutes Returns Number
+    Local Number rVal nOres nLepta
+    Move (Integer(aiMinutes/60))    to nOres
+    Move (    Mod(aiMinutes,60))    to nLepta
+    Move (nOres+(nLepta/100))       to rVal
+    Function_Return rVal
+End_Function
+
+Function fiConvert_Time_to_Minutes Global Number anTime Returns Integer
+    Local Integer rVal
+    Move ((Integer(anTime)*60)+((anTime-(Integer(anTime)))*100)) to rVal
+    Function_Return rVal
+End_Function
+
+Function fiConvert_Difference_StartTime_EndTime_to_Minutes Global   Number anStartTime  ;
+                                                                    Number anEndTime    ;
+                                                                    Returns Integer
+    Local Integer rVal iMinStart iMinEnd
+
+    If (anStartTime >= anEndTime) Add 24 to anEndTime
+
+    Move ((Integer(anStartTime)*60)+((anStartTime-(Integer(anStartTime)))*100))  to iMinStart
+    Move ((Integer(anEndTime  )*60)+((anEndTime  -(Integer(anEndTime  )))*100))  to iMinEnd
+    Move (iMinEnd-iMinStart)                                                     to rVal
+    Function_Return rVal
+End_Function
+
+
+Function fnConvert_Difference_StartTime_EndTime_to_Time Global  Number anStartTime  ;
+                                                                Number anEndTime    ;
+                                                                Returns Number
+    Local Integer iTmp
+    Local Number  rVal
+
+    If (anStartTime >= anEndTime) Add 24 to anEndTime
+
+    Move (fiConvert_Difference_StartTime_EndTime_to_Minutes(anStartTime,anEndTime)) to iTmp
+    Move (fnConvert_Minutes_to_Time(iTmp))                                          to rVal
+    Function_Return rVal
+End_Function
+
+Function fsStripTextFieldFromEnter Global String asStr Returns String
+    String sEnter
+    Move '' to sEnter
+    Move (Trim(asStr)) to asStr
+    Append sEnter (Character(13)) (Character(10))
+    Move (Replaces(sEnter,asStr,' ')) to asStr
+    Function_return (Trim(asStr))
+End_function
+
+Use Wait.DG
+

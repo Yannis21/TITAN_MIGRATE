@@ -1,0 +1,1014 @@
+//AB/ Project r17_1:metafores ypolipon eidon apothkhs
+//AB/ Object prj is a Report_Project
+//AB/     Set ProjectName to "r17_1:metafores ypolipon eidon apothkhs"
+//AB/     Set ProjectFileName to "r17_1.RV"
+
+// Project Object Structure
+//   r17_1 is a ReportViewSub
+//     GroupSub1 is a GroupSub
+//       F_HME_APO is a FormSub
+//       TextBoxSub2 is a TextBoxSub
+//       f_apo_apo is a FormSub
+//       FormSub2 is a FormSub
+//       TextBoxSub4 is a TextBoxSub
+//     ButtonSub1 is a ButtonSub
+//     btnMess is a ButtonSub
+//     TextBoxSub3 is a TextBoxSub
+//     chkAkyr is a CheckBoxSub
+//     FormSub3 is a FormSub
+//     Wapokat_DD is a Wapokat_DataDictionary
+//     Wapomast_DD is a Wapomast_DataDictionary
+//     Wax_DD is a Wax_DataDictionary
+//     Units_DD is a Units_DataDictionary
+//     Witemkat_DD is a Witemkat_DataDictionary
+//     Fpa_DD is a Fpa_DataDictionary
+//     Item_DD is a Item_DataDictionary
+//     Witemx_DD is a Witemx_DataDictionary
+//     Wtypkin_DD is a Wtypkin_DataDictionary
+//     Wcmoves_DD is a Wcmoves_DataDictionary
+//     witemxWQLReport is a WinQLReport
+
+// Register all objects
+Register_Object ButtonSub1
+Register_Object btnMess
+Register_Object chkAkyr
+Register_Object F_HME_APO
+Register_Object FormSub2
+Register_Object FormSub3
+Register_Object Fpa_DD
+Register_Object f_apo_apo
+Register_Object GroupSub1
+Register_Object Item_DD
+Register_Object r17_1
+Register_Object TextBoxSub2
+Register_Object TextBoxSub3
+Register_Object TextBoxSub4
+Register_Object Units_DD
+Register_Object Wapokat_DD
+Register_Object Wapomast_DD
+Register_Object Wax_DD
+Register_Object Wcmoves_DD
+Register_Object Witemkat_DD
+Register_Object Witemx_DD
+Register_Object Wtypkin_DD
+Register_Object witemxWQLReport
+
+
+//AB/ Report View
+
+
+//AB-StoreTopStart
+Use dfallrpt
+use wax.sl
+
+//AB-StoreTopEnd
+
+//AB-IgnoreStart
+
+Use Rptvw.Sub
+Use Group.Sub
+Use Form.Sub
+Use Txtbox.Sub
+Use Button.Sub
+Use Chkbox.Sub
+
+//AB-IgnoreEnd
+
+DEFERRED_VIEW Activate_r17_1 FOR ;
+;
+Object r17_1 is a ReportViewSub
+
+    //AB-StoreTopStart
+                            
+    property integer pierr public 0
+    
+    //AB-StoreTopEnd
+
+    Set Label to "ãú´ò≠¶®· ¨ß¶¢¶Âß‡§ Ñ†õÈ§  ©´û §‚ò Æ®„©û"
+    Set Size to 140 271
+    Set Location to 6 8
+    Set Color to 13540467
+
+    //AB-DDOStart
+
+
+    //AB-DDOEnd
+
+    Object GroupSub1 is a GroupSub
+        Set Size to 81 195
+        Set Location to 2 5
+        Set Color to 13540467
+        Object F_HME_APO is a FormSub
+            Set Size to 13 69
+            Set Location to 17 118
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Form_Datatype Item 0 to Mask_Date_Window
+            Set Prompt_Button_Mode to pb_PromptOn
+            Set Form_Mask Item 0 to "d/M/yyyy"
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            set prompt_object to (ocalendar(self))
+            
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // F_HME_APO
+
+        Object TextBoxSub2 is a TextBoxSub
+            Set Label to "Äß¶üû°ú¨´†°Ê™ ïÈ®¶™"
+            Set Color to 13540467
+            Set Location to 43 13
+            Set Size to 12 79
+            Set FontWeight to 800
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub2
+
+        Object f_apo_apo is a FormSub
+            Set Size to 13 69
+            Set Location to 42 118
+            Set Label_Col_Offset to 2
+            Set Prompt_Button_Mode to pb_PromptOn
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            Set Prompt_Object to (wax(Current_object))
+            
+            Procedure Prompt_Callback integer hPrompt
+                set Export_Column of hPrompt to 0
+                Set Initial_Column of hPrompt to 0
+            end_procedure
+            
+            procedure onchange
+                string swax
+                get value of (f_apo_apo(self)) to swax
+                open wax
+                move swax to wax.wax_recr
+                find eq wax by index.2
+                if (found) set value of (formsub2(self)) to wax.wax_descr
+                else       set value of (formsub2(self)) to ''
+            end_procedure
+            
+            //AB-StoreEnd
+
+        End_Object    // f_apo_apo
+
+        Object FormSub2 is a FormSub
+            Set Size to 13 184
+            Set Location to 59 5
+            Set Color to 13540467
+            Set Label_Col_Offset to 2
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            set enabled_state to false
+            //AB-StoreEnd
+
+        End_Object    // FormSub2
+
+        Object TextBoxSub4 is a TextBoxSub
+            Set Label to "ÉÈ©´ú û£/§Âò ö†ò ´†™ úöö®ò≠‚™ ß¶¨ üò õû£†¶¨®öûü¶Á§ ©´û§ §úò Æ®„©û"
+            Set Color to 13540467
+            Set TextColor to clNavy
+            Set Location to 12 5
+            Set Size to 25 107
+            Set Justification_Mode to jMode_Center
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub4
+
+
+        //AB-StoreStart
+        Function Starthme Returns string
+            Function_return (Value(f_hme_apo(Current_object), 0))
+        End_function
+        
+        Function StarTwax Returns string
+            Function_return (Value(f_apo_apo(Current_object), 0))
+        End_function
+        
+        //AB-StoreEnd
+
+    End_Object    // GroupSub1
+
+    Object ButtonSub1 is a ButtonSub
+
+        //AB-StoreTopStart
+        
+        Use Dowxrhsh.dg
+        
+        //AB-StoreTopEnd
+
+        Set Bitmap to "RUNPROG.BMP"
+        Set Size to 20 23
+        Set Location to 6 235
+        Set Border_Style to Border_StaticEdge
+        Set Focus_Mode to Pointer_Only
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+        
+        Procedure OnClick
+            string starthmen startwaxn smess
+            integer ibpoid iyear ichkAkyr IYES
+        
+            get starthme                        to starthmen
+            get startwax                        to startwaxn
+            move (TheYearSegment(starthmen))    to iyear
+            Get Checked_State Of chkAkyr        to iChkAkyr
+        
+            If (StartHmen='') Begin
+                Send Stop_Box 'Éú§ ß¢û°´®¶¢¶ö„©ò´ú û£ú®¶£û§Âò úöö®ò≠È§' 'ë≠·¢£ò 1001'
+                Send Activate to (f_hme_apo(GroupSub1(Self)))
+                Procedure_Return
+            End
+        
+            Move (TheYearSegment(starthmen)) to iYear
+        
+            If ((iYear LE syscurxr.year_year) and (ichkakyr<>1)) Begin
+                Send Stop_Box 'Ñ©≠ò¢£‚§û û£ú®¶£û§Âò úöö®ò≠È§' 'ë≠·¢£ò 1002'
+                Send Activate to (f_hme_apo(GroupSub1(Self)))
+                Procedure_Return
+            End
+            If (startwaxn='') Begin
+                Send Stop_Box 'Éú§ úß†¢‚•ò´ú òß¶üû°ú¨´†°Ê ÆÈ®¶' 'ë≠·¢£ò 1003'
+                Send Activate to (f_apo_apo(GroupSub1(Self)))
+                Procedure_Return
+            End
+            // check if wax recr exists
+            Clear Wax
+            Move startwaxn to Wax.Wax_Recr
+            Find Eq Wax By Index.2
+            If (Not(Found)) Begin
+                Send Stop_Box 'Ä§Áßò®°´¶™ òß¶üû°ú¨´†°Ê™ ÆÈ®¶™' 'ë≠·¢£ò 1004'
+                Send Activate to (f_apo_apo(GroupSub1(Self)))
+                Procedure_Return
+            End
+        
+        
+            If (iChkAkyr) Begin
+                Move '' to sMess
+                Append sMess 'ÑÂ©´ú ô‚ôò†¶† ¶´† ü‚¢ú´ú §ò ò°¨®È©ú´ú' '\n´û§ õ†òõ†°ò©Âò £ú´ò≠¶®·™ ¨ß¶¢¶Âß‡§ ´û™ ' StartHmen
+                Get YesNo_Box sMess to iYes
+                If (iYes=MBR_NO) Procedure_Return
+                String sCtyp
+                Begin_Transaction
+                    Send Clear      to WCmoves_DD
+                    Move StartHmen  to WCmoves.WCmove_Hmnia
+                    Move '300'      to WCmoves.Wtypkin_Code
+                    Send Find       to WCmoves_DD Gt 9
+                    While ((Found) And (WCmoves.WCmove_Hmnia=StartHmen) And (WCmoves.Wtypkin_Code='300'))
+                        Set Label Of btnMess to (Trim(WCmoves.WCmove_Hmnia)+' '+String(WCmoves.Recnum))
+                        If ((Wcmoves.Wax_Recr=startwaxn) And (WCmoves.Company_Code=SysCurXr.Company_Code) And (WCmoves.Branch_Code=SysCurXr.Branch_Code)) Send Request_Delete to WCmoves_DD
+                        Send Find to WCmoves_DD GT 9
+                    Loop
+                End_Transaction
+                Set Label Of btnMess to ''
+            End
+            Else Begin
+                Get YesNo_Box 'åò •ú°†§„©ú† û õ†òõ†°ò©Âò £ú´ò≠¶®·™ ¨ß¶¢¶Âß‡§ ?' to iYes
+                If (iYes=MBR_NO) Procedure_Return
+                Move (Dowxrhsh(Self)) to iBPOID
+                Set datefrom of iBPOID to starthmen
+                set waxfrom  of ibpoid to startwaxn
+                Send DoProcess      to iBPOID
+                     if (pierr(self)=1) send info_box 'Ü õ†òõ†°ò©Âò £ú´ò≠¶®·™ ¨ß¶¢¶Âß‡§ õ†ò°Êßû°ú.\nÅ®‚üû°ú ÑÂõ¶™ £ú ò®§û´†°„ ß¶©Ê´û´ò' 'ë≠·¢£ò 1005'
+                else if (pierr(self)=2) send info_box 'Ü õ†òõ†°ò©Âò £ú´ò≠¶®·™ ¨ß¶¢¶Âß‡§ õ†ò°Êßû°ú.\nÉú§ £ß¶®È §ò úßò§ò´¶ß¶üú´ûüÈ ©´¶ ò®ÆúÂ¶' 'ë≠·¢£ò 1006'
+                else send info_box 'é† úöö®ò≠‚™ òß¶ö®ò≠„™ ¶¢¶°¢û®Èüû°ò§' 'è¢û®¶≠¶®Âò'
+            end
+            set pierr to 0
+        End_Procedure
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // ButtonSub1
+
+    Object btnMess is a ButtonSub
+        Set Size to 14 193
+        Set Location to 106 3
+        Set Border_Style to Border_StaticEdge
+        Set Focus_Mode to NonFocusable
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+        Procedure OnClick
+        
+        End_Procedure // OnClick
+        //AB-StoreEnd
+
+    End_Object    // btnMess
+
+    Object TextBoxSub3 is a TextBoxSub
+        Set Label to "Ä°Á®‡©û É†òõ†°ò©Âò™"
+        Set Transparent_State to TRUE
+        Set TextColor to clLime
+        Set FontSize to 12 4
+        Set Location to 105 199
+        Set Size to 18 42
+        Set FontWeight to 600
+        Set Justification_Mode to jMode_Center
+        Set TypeFace to "MS Sans Serif"
+    End_Object    // TextBoxSub3
+
+    Object chkAkyr is a CheckBoxSub
+        Set Size to 8 9
+        Set Location to 109 251
+        Set Color to 7302102
+    End_Object    // chkAkyr
+
+    Object FormSub3 is a FormSub
+        Set Size to 5 268
+        Set Location to 94 0
+        Set Color to clRed
+        Set Label_Col_Offset to 2
+        Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+        //AB-StoreStart
+                                                
+        Set Enabled_State   to False
+        Set Color           to clRed
+        
+        //AB-StoreEnd
+
+    End_Object    // FormSub3
+
+
+    //AB-StoreStart
+                            
+    ////////////////////////////////////////////
+    // Omada DD gia thn akyrosh ths diadikasia
+    // metaforas ypoloipon
+    ////////////////////////////////////////////
+    Object Wapokat_DD is a Wapokat_DataDictionary
+    End_Object    // Wapokat_DD
+    Object Wapomast_DD is a Wapomast_DataDictionary
+        Set DDO_Server to (Wapokat_DD(self))
+    End_Object    // Wapomast_DD
+    Object Wax_DD is a Wax_DataDictionary
+        Set DDO_Server to (Wapomast_DD(self))
+        set piMustNOTConstrain to 1
+        Procedure Update
+        End_Procedure   // Update
+        Procedure Creating
+        End_Procedure   // Creating
+    End_Object    // Wax_DD
+    Object Units_DD is a Units_DataDictionary
+    End_Object    // Units_DD
+    Object Witemkat_DD is a Witemkat_DataDictionary
+    End_Object    // Witemkat_DD
+    Object Fpa_DD is a Fpa_DataDictionary
+    End_Object    // Fpa_DD
+    Object Item_DD is a Item_DataDictionary
+        Set DDO_Server to (Units_DD(self))
+        Set DDO_Server to (Witemkat_DD(self))
+        Set DDO_Server to (Fpa_DD(self))
+    End_Object    // Item_DD
+    Object Witemx_DD is a Witemx_DataDictionary
+        Set DDO_Server to (Item_DD(self))
+        set piMustNOTConstrain to 1
+        Procedure Update
+        End_Procedure   // Update
+        Procedure Creating
+        End_Procedure   // Creating
+    End_Object    // Witemx_DD
+    Object Wtypkin_DD is a Wtypkin_DataDictionary
+        set piMustNOTConstrain to 1
+        Procedure Update
+        End_Procedure   // Update
+        Procedure Creating
+        End_Procedure   // Creating
+    End_Object    // Wtypkin_DD
+    Object Wcmoves_DD is a Wcmoves_DataDictionary
+        Set DDO_Server to (Wtypkin_DD(self))
+        Set DDO_Server to (Wax_DD(self))
+        Set DDO_Server to (Witemx_DD(self))
+        set pifromxrhsh to 1
+    End_Object    // Wcmoves_DD
+    ////////////////////////////////////////////
+    ////////////////////////////////////////////
+    
+    
+    Object witemxWQLReport Is A WinQLReport
+        Property Integer ReportReady Public False
+        Set Report_View_id To (Parent(Current_object))
+    
+        Procedure OnStartPrinting
+        End_procedure // OnStartPrinting
+    End_object
+    
+    Function Starthme Returns integer
+        Function_return (Starthme(groupSub1(Current_object)))
+    End_function // StartNumber
+    
+    Function Startwax Returns integer
+        Function_return (Startwax(groupSub1(Current_object)))
+    End_function // StartNumber
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //AB-StoreEnd
+
+CD_End_Object    // r17_1
+
+
+//AB-StoreStart
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+//AB-StoreEnd
+
+//AB/ End_Object    // prj

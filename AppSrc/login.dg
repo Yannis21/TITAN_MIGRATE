@@ -1,0 +1,227 @@
+//AB/ Project Login Dialog
+//AB/     Object prj is a Dialog_Project
+//AB/         Set ProjectName to "Login Dialog"
+//AB/         Set ProjectFileName to "Login.DG"
+//AB/         Set GenerateFileName to "NONAME"
+
+// Project Object Structure
+//   oLoginMain is a ModalPanel
+//     oBox is a Container3d
+//       oLoginName is a Form
+//       oLoginPassword is a Form
+//     oLogin_Btn is a Button
+//     oCancel_Btn is a Button
+
+// Register all objects
+Register_Object oBox
+Register_Object oCancel_Btn
+Register_Object oLogin_Btn
+Register_Object oLoginMain
+Register_Object oLoginName
+Register_Object oLoginPassword
+
+
+
+    //AB-StoreTopStart
+    // * this function get the current windows login name *
+    External_Function32 WNetGetUser "WNetGetUserA" MPR.DLL ;
+        Pointer lpName Pointer lpUser_Name Pointer lpLength Returns DWord
+    
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+
+    //AB-IgnoreEnd
+
+
+    //AB-IgnoreEnd
+
+    Object oLoginMain is a ModalPanel
+
+        //AB-StoreTopStart
+        Set Minimize_Icon to False
+        Set Locate_Mode to Center_On_Screen
+        Property Integer piLoginValid Public False
+        //AB-StoreTopEnd
+
+        Set Label to "Login Dialog"
+        Set Bitmap to "PassWord.Bmp"
+        Set Size to 100 241
+        Set Location to 26 79
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object oBox is a Container3d
+            Set Size to 57 186
+            Set Location to 4 43
+            Set Border_Style to Border_StaticEdge
+            Object oLoginName is a Form
+                Set Label to "Login ID (Anything):"
+                Set Size to 13 100
+                Set Location to 10 73
+                Set Status_Help to "Login Name (Anything)."
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+
+                //AB-StoreStart
+                Set Capslock_State to True
+                
+                Function User_Name Returns String
+                    Local String sName sLength
+                    Local Pointer lpName_Addr lpLength_Addr
+                    Local Integer iRetval
+                
+                    Movestr (Repeat (Character (0), 255)) To sName
+                    GetAddress Of sName To lpName_Addr
+                    Movestr (DwordToBytes (255)) To sLength
+                    GetAddress Of sLength To lpLength_Addr
+                
+                    Moveint (WNetGetUser (0, lpName_Addr, lpLength_Addr)) To iRetval
+                
+                    If iRetval Eq 0 Function_Return (CString (sName))
+                    Else Function_Return "User Unknown"
+                End_Function // Remac_User_Name
+                
+                Procedure Default_User_Name
+                     //Local String sUser
+                     //Move (User_Name(Self)) to sUser
+                    Local String sName sLength
+                    Local Pointer lpName_Addr lpLength_Addr
+                    Local Integer iRetval
+                
+                    Movestr (Repeat (Character (0), 255)) To sName
+                    GetAddress Of sName To lpName_Addr
+                    Movestr (DwordToBytes (255)) To sLength
+                    GetAddress Of sLength To lpLength_Addr
+                
+                    Moveint (WNetGetUser (0, lpName_Addr, lpLength_Addr)) To iRetval
+                    Set Value Item 0 to sName
+                    //If iRetval Eq 0 Function_Return (CString (sName))
+                    //Else Function_Return "User Unknown"
+                End_Procedure
+                
+                //*******************************************************
+                //*  determine if you want to default the user or not.  *
+                //*  If you don't want it to default than comment out   *
+                //*  the following line.                                *
+                //*******************************************************
+                Send Default_User_Name
+                
+                //AB-StoreEnd
+
+            End_Object    // oLoginName
+
+            Object oLoginPassword is a Form
+                Set Label to "Password (DISD):"
+                Set Size to 13 100
+                Set Location to 34 73
+                Set Status_Help to "The Password is:  DISD"
+                Set Label_Col_Offset to 2
+                Set Label_Justification_Mode to jMode_Right
+
+                //AB-StoreStart
+                Set PassWord_State Item 0 to True
+                
+                //AB-StoreEnd
+
+            End_Object    // oLoginPassword
+
+
+            //AB-StoreStart
+            Function fLoginName Returns String
+                 Function_Return (Value(oLoginName((Self)), 0))
+            End_Function
+            
+            Function fLoginPassword Returns String
+                 Function_Return (Value(oLoginPassWord((Self)), 0))
+            End_Function
+            
+            //AB-StoreEnd
+
+        End_Object    // oBox
+
+        Object oLogin_Btn is a Button
+            Set Label to "&Login"
+            Set Location to 67 76
+
+            //AB-StoreStart
+            Set Default_State To True // Enter = Login
+
+            Procedure OnClick
+                 Local String sLoginName sLoginPassword
+            
+                 Get fLoginName     to sLoginName
+                 Get fLoginPassword to sLoginPassword
+            
+                 If (((Trim(sLoginName)) <> '') and ((Trim(sLoginPassword)) <> '')) Begin
+                      // * put your login stuff here - file lookup (whatever) *
+                      // * I just want the word "DISD" *
+                      Move (UpperCase(sLoginPassword)) to sLoginPassword
+                      If ((Trim(sLoginPassWord)) = "DISD") Begin
+                           Set piLoginValid to 1
+                      End
+                 End
+                 Send Close_Panel
+            End_Procedure
+            //AB-StoreEnd
+
+        End_Object    // oLogin_Btn
+
+        Object oCancel_Btn is a Button
+            Set Label to "&Cancel"
+            Set Location to 67 142
+
+            //AB-StoreStart
+            Procedure OnClick
+                 System
+            End_Procedure
+            //AB-StoreEnd
+
+        End_Object    // oCancel_Btn
+
+
+        //AB-StoreStart
+        On_Key Key_Alt+Key_L Send OnClick To oLogin_Btn
+        On_Key Key_Alt+Key_C Send OnClick To oCancel_Btn
+
+        Function fLoginName Returns String
+             Function_Return (fLoginName(oBox(Self)))
+        End_Function
+        
+        Function fLoginPassword Returns String
+             Function_Return (fLoginPassword(oBox(Self)))
+        End_Function
+        
+        //**************************************************
+        //*  The plogincheck procedure is used to called   *
+        //*  from the main program and is used to get to   *
+        //*  the login dialog.  If the login dialog is     *
+        //*  called fromt he main program there are some   *
+        //*  security holes that will allow the user to    *
+        //*  by pass the login (example:  they click the   *
+        //*  close button (X).
+        //**************************************************
+        Procedure pLoginCheck
+             Local Integer iLoginOK
+        
+             Set piLoginValid to 0
+             Send Popup_Modal
+             Get piLoginValid to iLoginOK
+             If (iLoginOK) Procedure_Return
+             Else System
+        End_Procedure
+        
+        //AB-StoreEnd
+
+    End_Object    // oLoginMain
+
+
+    //AB-StoreStart
+    
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

@@ -1,0 +1,719 @@
+//AB/ Project rMetafNoErg
+//AB/     Object prj is a Report_Project
+//AB/         Set ProjectName to "rMetafNoErg"
+//AB/         Set ProjectFileName to "rMetafNoErg.RV"
+
+// Project Object Structure
+//   rMetafNoErg is a ReportViewSub
+//     cSyDateForm1 is a cSyDateForm
+//     ButtonSub3 is a ButtonSub
+//     TextBoxSub1 is a TextBoxSub
+//     TextBoxSub2 is a TextBoxSub
+//     f_payresp is a CheckBoxSub
+//     TextBoxSub3 is a TextBoxSub
+//     chkAkyr is a CheckBoxSub
+//     TextBoxSub4 is a TextBoxSub
+//     FormSub2 is a FormSub
+//     btnMess is a ButtonSub
+//     Areas_DD is a Areas_DataDictionary
+//     Payresp_DD is a Payresp_DataDictionary
+//     syscurxr_DD is a syscurxr_DataDictionary
+//     Country_DD is a Country_DataDictionary
+//     Towns_DD is a Towns_DataDictionary
+//     Ctypkin_DD is a Ctypkin_DataDictionary
+//     Cities_DD is a Cities_DataDictionary
+//     Clients_DD is a Clients_DataDictionary
+//     Cmoves_DD is a Cmoves_DataDictionary
+//     metafyp_BasicReport is a BasicReport
+//       Areas_DD is a Areas_DataDictionary
+//       Payresp_DD is a Payresp_DataDictionary
+//       syscurxr_DD is a syscurxr_DataDictionary
+//       Country_DD is a Country_DataDictionary
+//       Towns_DD is a Towns_DataDictionary
+//       Ctypkin_DD is a Ctypkin_DataDictionary
+//       Cities_DD is a Cities_DataDictionary
+//       Clients_DD is a Clients_DataDictionary
+//       Cmoves_DD is a Cmoves_DataDictionary
+//       Cmovesa_DD is a Cmovesa_DataDictionary
+
+// Register all objects
+Register_Object Areas_DD
+Register_Object ButtonSub3
+Register_Object btnMess
+Register_Object Cities_DD
+Register_Object Clients_DD
+Register_Object Cmoves_DD
+Register_Object Cmovesa_DD
+Register_Object Country_DD
+Register_Object Ctypkin_DD
+Register_Object chkAkyr
+Register_Object cSyDateForm1
+Register_Object FormSub2
+Register_Object f_payresp
+Register_Object metafyp_BasicReport
+Register_Object Payresp_DD
+Register_Object rMetafNoErg
+Register_Object syscurxr_DD
+Register_Object TextBoxSub1
+Register_Object TextBoxSub2
+Register_Object TextBoxSub3
+Register_Object TextBoxSub4
+Register_Object Towns_DD
+
+
+//AB/     Report View
+
+
+    //AB-StoreTopStart
+    Use dfallrpt.pkg
+    use areas.dd
+    use country.dd
+    use towns.dd
+    use payresp.dd
+    Use cities.DD
+    Use clients.DD
+    Use ctypkin.DD
+    Use cmoves.DD
+    USE CMOVESA.DD
+    USE SYSCURXR.DD
+    use docpresp.dg
+    use docclients.dg
+    OPEN CN
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use Rptvw.Sub
+    Use cSyDateForm.Pkg
+    Use Button.Sub
+    Use Txtbox.Sub
+    Use Chkbox.Sub
+    Use Form.Sub
+
+    //AB-IgnoreEnd
+
+    ACTIVATE_VIEW Activate_rMetafNoErg FOR rMetafNoErg
+
+    Object rMetafNoErg is a ReportViewSub
+
+        //AB-StoreTopStart
+        property integer pierr              public 0
+        Property Integer Sort_IndexRlog     Public 1
+        property integer pipayresp          public 0
+        property integer picount            public 0
+        property string  psmodule           public ''
+        property date    pddate             public ''
+        property number  px0                public 0
+        property number  pp0                public 0
+        property number  px00               public 0
+        property number  pp00               public 0
+        property number  px1                public 0
+        property number  pp1                public 0
+        
+        //AB-StoreTopEnd
+
+        Set Label to "ãú´ò≠¶®· ¨ß¶¢¶Âß‡§ ßò®ò°ò£ß´¶§´ò™ °†§„©ú†™ Æ‡®Â™ ‚®öò"
+        Set Size to 113 308
+        Set Location to 9 10
+        Set Color to 8555487
+
+        //AB-DDOStart
+
+
+        //AB-DDOEnd
+
+        Object cSyDateForm1 is a cSyDateForm
+            Set Size to 13 66
+            Set Location to 6 117
+            Set Label_Col_Offset to 2
+            Set Label_Justification_Mode to jMode_Right
+            Set Form_Mask Item 0 to "dd/MM/yyyy"
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            set prompt_object to (ocalendar(self))
+            //AB-StoreEnd
+
+        End_Object    // cSyDateForm1
+
+        Object ButtonSub3 is a ButtonSub
+
+            //AB-StoreTopStart
+                    
+            //AB-StoreTopEnd
+
+            Set Bitmap to "RUNPROG.BMP"
+            Set Size to 20 23
+            Set Location to 2 236
+            Set Border_Style to Border_StaticEdge
+            Set Focus_Mode to Pointer_Only
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                    
+            Set TooltipValue to 'Ñ§ò®•û õ†òõ†°ò©Âò™'
+            
+            Procedure OnClick
+                String StartHmen sModule sMess
+                Integer ibpoid iYear iPayResp ibpoid1 iChkAkyr iYes
+            
+                get value           of csydateform1 to starthmen
+                Get checked_State   of f_payresp    to ipayresp
+                Get checked_State   of chkAkyr      to iChkAkyr
+                get psModule                        to sModule
+            
+                If (StartHmen='') Begin
+                    Send Stop_Box 'Éú§ ß¢û°´®¶¢¶ö„©ò´ú û£ú®¶£û§Âò úöö®ò≠È§' 'ë≠·¢£ò 1001'
+                    Send Activate to cSyDateForm1
+                    Procedure_Return
+                End
+            
+                Move (TheYearSegment(starthmen)) to iYear
+                If (iYear Lt syscurxr.year_year) Begin
+                    Send Stop_Box 'Ñ©≠ò¢£‚§û û£ú®¶£û§Âò úöö®ò≠È§' 'ë≠·¢£ò 1002'
+                    Send Activate to cSyDateForm1
+                    Procedure_Return
+                End
+                If ((sModule<>'01') And (sModule<>'02')) Begin
+                    Send Stop_Box 'ä·ü¶™ ©´¶ Module °¨°¢È£ò´¶™' 'ë≠·¢£ò 1003'
+                    Send Activate to cSyDateForm1
+                    Procedure_Return
+                End
+            
+                If (iChkAkyr) Begin
+                    Move '' to sMess
+                    Append sMess 'ÑÂ©´ú ô‚ôò†¶† ¶´† ü‚¢ú´ú §ò ò°¨®È©ú´ú' '\n´û§ õ†òõ†°ò©Âò £ú´ò≠¶®·™ ¨ß¶¢¶Âß‡§ ´û™ ' StartHmen
+                    Get YesNo_Box sMess to iYes
+                    If (iYes=MBR_NO) Procedure_Return
+                    String sCtyp
+                    Begin_Transaction
+                        Send Clear      to Cmoves_DD
+                        Move StartHmen  to Cmoves.Cmoves_Hmnia
+                        Send Find       to Cmoves_DD Gt 3
+                        While ((Found) And (Cmoves.Cmoves_Hmnia=StartHmen))
+                            Set Label Of btnMess to (Trim(Cmoves.Cmoves_Hmnia)+' '+String(Cmoves.Recnum))
+                                 If ((sModule='01') And (Cmoves.Ctypkin_Code='101') And (Cmoves.Company_Code=SysCurXr.Company_Code) And (Cmoves.Branch_Code=SysCurXr.Branch_Code)) Send Request_Delete to Cmoves_DD
+                            Else If ((sModule='01') And (Cmoves.Ctypkin_Code='102') And (Cmoves.Company_Code=SysCurXr.Company_Code) And (Cmoves.Branch_Code=SysCurXr.Branch_Code)) Send Request_Delete to Cmoves_DD
+                            Else If ((sModule='02') And (Cmoves.Ctypkin_Code='201') And (Cmoves.Company_Code=SysCurXr.Company_Code) And (Cmoves.Branch_Code=SysCurXr.Branch_Code)) Send Request_Delete to Cmoves_DD
+                            Else If ((sModule='02') And (Cmoves.Ctypkin_Code='202') And (Cmoves.Company_Code=SysCurXr.Company_Code) And (Cmoves.Branch_Code=SysCurXr.Branch_Code)) Send Request_Delete to Cmoves_DD
+                            Send Find to Cmoves_DD GT 3
+                        Loop
+                    End_Transaction
+                End
+                Else Begin
+                    indicate err false
+                    Get YesNo_Box 'åò •ú°†§„©ú† û õ†òõ†°ò©Âò £ú´ò≠¶®·™ ¨ß¶¢¶Âß‡§ ?' to iYes
+                    If (iYes=MBR_NO) Procedure_Return
+                 //   Begin_Transaction
+                        If ((iPayresp=1) And (sModule='01')) Begin
+                            Move (Docpresp(Self))   to iBPOID1
+                            Send DoProcess          to iBPOID1
+                            Move (Docclients(Self)) to iBPOID
+                            Set psModule Of iBPOID  to sModule
+                            Send DoProcess          to iBPOID
+                        End
+            
+                        If (sModule='02') begin
+                           Move (Docclients(Self)) to iBPOID
+                           Set psModule Of iBPOID  to sModule
+                           Send DoProcess          to iBPOID
+                        End
+                    begin_transaction
+                        Send StartReport
+                    End_Transaction
+                End
+                if (not(err)) send info_box 'É†òõ†°ò©Âò é¢¶°¢û®Èüû°ú' 'è¢û®¶≠¶®Âò'
+                else send info_box          'èò®¶¨©†·©´û°ú °·ß¶†¶ ¢·ü¶™ ©´û§ É†òõ†°ò©Âò' 'è¢û®¶≠¶®Âò'
+                Set Label Of btnMess to ''
+            End_Procedure
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            //AB-StoreEnd
+
+        End_Object    // ButtonSub3
+
+        Object TextBoxSub1 is a TextBoxSub
+            Set Label to "ÉÈ©´ú û£/§Âò ö†ò ´†™ úöö®ò≠‚™ ß¶¨ üò õû£†¶¨®öûü¶Á§ ©´û§ §úò Æ®„©û"
+            Set Color to 8555487
+            Set Location to 4 6
+            Set Size to 25 107
+            Set Justification_Mode to jMode_Center
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub1
+
+        Object TextBoxSub2 is a TextBoxSub
+            Set Label to "ãûõú§†©£Ê™ ¨ß¶¢¶Âß‡§ ìßú¨ü. è¢û®‡£È§ && î¶®‚‡§"
+            Set Color to 8555487
+            Set Location to 32 16
+            Set Size to 10 186
+            Set FontWeight to 800
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub2
+
+        Object f_payresp is a CheckBoxSub
+            Set Size to 8 9
+            Set Location to 38 251
+            Set Color to clWindowText
+        End_Object    // f_payresp
+
+        Object TextBoxSub3 is a TextBoxSub
+            Set Label to "åò ´®‚•ú† ãéåé 1 ≠¶®ò, ö†ò ´¶  ß®È´¶ ¨ß¶°ò´·©´û£ò"
+            Set Color to 8555487
+            Set Location to 43 16
+            Set Size to 10 186
+            Set FontWeight to 800
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub3
+
+        Object chkAkyr is a CheckBoxSub
+            Set Size to 8 9
+            Set Location to 73 251
+            Set Color to 7302102
+        End_Object    // chkAkyr
+
+        Object TextBoxSub4 is a TextBoxSub
+            Set Label to "Ä°Á®‡©û É†òõ†°ò©Âò™"
+            Set Transparent_State to TRUE
+            Set Color to 8555487
+            Set FontSize to 12 4
+            Set Location to 69 183
+            Set Size to 18 44
+            Set FontWeight to 600
+            Set Justification_Mode to jMode_Center
+            Set TypeFace to "MS Sans Serif"
+        End_Object    // TextBoxSub4
+
+        Object FormSub2 is a FormSub
+            Set Size to 5 268
+            Set Location to 58 0
+            Set Color to clRed
+            Set Label_Col_Offset to 2
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+                                                                                                                                                                                                                
+            Set Enabled_State   to False
+            Set Color           to clRed
+            
+            //AB-StoreEnd
+
+        End_Object    // FormSub2
+
+        Object btnMess is a ButtonSub
+            Set Size to 14 159
+            Set Location to 70 16
+            Set Border_Style to Border_StaticEdge
+            Set Focus_Mode to NonFocusable
+            Set Form_TypeFace Item 0 to "MS Sans Serif"
+
+            //AB-StoreStart
+            Procedure OnClick
+            
+            End_Procedure // OnClick
+            //AB-StoreEnd
+
+        End_Object    // btnMess
+
+
+        //AB-StoreStart
+        
+        Set Output_Device_Name to None
+        
+        ////////////////////////////////////////////
+        // Omada DD gia thn akyrosh ths diadikasia
+        // metaforas ypoloipon
+        ////////////////////////////////////////////
+        Object Areas_DD is a Areas_DataDictionary
+        End_Object
+        Object Payresp_DD is a Payresp_DataDictionary
+        End_Object
+        Object syscurxr_DD is a syscurxr_DataDictionary
+        End_Object
+        Object Country_DD is a Country_DataDictionary
+        End_Object
+        Object Towns_DD is a Towns_DataDictionary
+            Set DDO_Server to (Country_DD(self))
+        End_Object
+        Object Ctypkin_DD is a Ctypkin_DataDictionary
+            set piMustNOTConstrain to 1
+            Procedure Update
+            End_Procedure
+            Procedure Creating
+            End_Procedure
+        End_Object
+        Object Cities_DD is a Cities_DataDictionary
+            Set DDO_Server to (Towns_DD(self))
+        End_Object
+        Object Clients_DD is a Clients_DataDictionary
+            Set DDO_Server to (Cities_DD(self))
+            Set DDO_Server to (Payresp_DD(self))
+            Set DDO_Server to (Areas_DD(self))
+        End_Object
+        Object Cmoves_DD is a Cmoves_DataDictionary
+            Set DDO_Server to (Ctypkin_DD(self))
+            Set DDO_Server to (Clients_DD(self))
+            set pifromxrhsh to 1
+            set pifrombp    to 1
+        End_Object
+        ////////////////////////////////////////////
+        ////////////////////////////////////////////
+        
+        
+        
+        Procedure Activate_View Returns Integer
+            String sStr sModule StrDisp
+            Integer rVal
+        
+            Forward Get Msg_Activate_View to rVal
+        
+            Move '01'       to sModule
+            Set psModule    to sModule
+        
+            // â‡õ†°ò™ ß¶¨ ò≠¶®ò ´¶ constrain ´‡§ ©´¶†Æú†‡§ ´¶¨ view ¶ß‡™ ßò®ò©´ò´†°·
+            // û °†§„©ú†™ ß¶¨ èêÑèÑà §ò úÂ§ò† constrain ò§ò¢¶öò £ú ´¶ °Á°¢‡£ò òß¶
+            // ´¶ ¶ß¶†¶ °ò¢úÂ´ò† ´¶ view. è.ï. ò§ °¢ûüúÂ òß¶ è‡¢„©ú†™/èú¢·´ú™ §ò £û§
+            // ≠òÂ§¶§´ò† ©´ò ßò®ò©´ò´†°· ´ò ctypkin Äö¶®È§ °¢ß....
+        
+            Move (gsfCode_mast("MODULE",(psModule(Self)))) to    StrDisp
+        
+            if (smodule = "01");
+                 Set Label Of rMetafNoErg to ("ãú´ò≠¶®· ¨ß¶¢¶Âß‡§ èú¢ò´È§"+ ' '+(trim(syscurxr.branch_name)))
+            if (smodule = "02");
+                 Set Label Of rMetafNoErg to ("ãú´ò≠¶®· ¨ß¶¢¶Âß‡§ è®¶£ûüú¨´È§"+' ' +(trim(syscurxr.branch_name)))
+        
+              if (psmodule(self) = "01");
+                 Set Report_Title of (metafyp_BasicReport(self)) to  "ãú´ò≠¶®· ¨ß¶¢¶Âß‡§ èú¢ò´È§         "
+            if (psmodule(self) = "02");
+                 Set Report_Title of (metafyp_BasicReport(self)) to  "ãú´ò≠¶®· ¨ß¶¢¶Âß‡§ è®¶£ûüú¨´È§          "
+        
+        End_Procedure
+        
+        Procedure StartReport
+            Local Integer iOutputDevice ipayresp
+            Local String  FileName
+            local date ddate
+            Get value of csydateform1 item 0 to ddate
+            set pddate to ddate
+            Get value of f_payresp  item 0 to ipayresp
+            set pipayresp to ipayresp
+            SEND RUN_REPORT
+        End_Procedure   // StartReport
+        
+        
+        Object metafyp_BasicReport is a BasicReport
+        
+            Set Report_Title to "ãú´ò≠¶®· ¨ß¶¢¶Âß‡§                                  "
+            Set Report_Caption to "É†òõ†°ò©Âò ©ú Ñ•‚¢†•û                             "
+            Object Areas_DD is a Areas_DataDictionary
+            End_Object    // Areas_DD
+        
+            Object Payresp_DD is a Payresp_DataDictionary
+            End_Object    // Payresp_DD
+        
+            Object syscurxr_DD is a syscurxr_DataDictionary
+            End_Object    // syscurxr
+        
+            Object Country_DD is a Country_DataDictionary
+            End_Object    // Country_DD
+        
+            Object Towns_DD is a Towns_DataDictionary
+                Set DDO_Server to (Country_DD(self))
+            End_Object    // Towns_DD
+        
+            Object Ctypkin_DD is a Ctypkin_DataDictionary
+                set piMustNOTConstrain to 1
+        
+                Procedure Update
+                End_Procedure
+        
+                Procedure Creating
+                End_Procedure
+            End_Object    // Ctypkin_DD
+        
+            Object Cities_DD is a Cities_DataDictionary
+                Set DDO_Server to (Towns_DD(self))
+            End_Object    // Cities_DD
+        
+            Object Clients_DD is a Clients_DataDictionary
+                Set DDO_Server to (Cities_DD(self))
+                Set DDO_Server to (Payresp_DD(self))
+                Set DDO_Server to (Areas_DD(self))
+            End_Object    // Clients_DD
+        
+            Object Cmoves_DD is a Cmoves_DataDictionary
+                Set DDO_Server to (Ctypkin_DD(self))
+                Set DDO_Server to (Clients_DD(self))
+                set pifromxrhsh to 1
+                set pifrombp    to 1
+            End_Object    // Cmoves_DD
+        
+            Object Cmovesa_DD is a Cmovesa_DataDictionary
+                //AB-StoreStart
+                Begin_Constraints
+                    date ddate
+                    string smodule
+                    get psmodule to smodule
+                    set ordering to 13
+                    constrain cmovesa.company_code eq syscurxr.company_code
+                    constrain cmovesa.branch_code  eq syscurxr.branch_code
+                    constrain cmovesa.year_year    eq syscurxr.year_year
+                    constrain cmovesa.module_from  eq smodule
+                End_Constraints
+            end_object
+            Set Server To (cmovesa_dd(Current_Object))
+        
+            //Breaks and Index for the report
+            Report_Index By Index.11
+            Report_breaks cmovesa.company_code cmovesa.branch_code cmovesa.module_from cmovesa.client_id cmovesa.cn_code
+            Function Starting_Main_Report Returns Integer
+              REREAD SYSCURXR
+              UNLOCK
+              Integer iIndexRlog
+              Local Integer iRetVal
+              Forward Get Starting_Main_Report to iRetval
+              send rebuild_constraints to cmovesa_dd
+              Send Find to (cmovesa_dd(self)) First_Record 13
+            End_Function
+        
+            Procedure_Section subheader1
+                integer ino
+                move 0 to ino
+            End_Procedure
+        
+            Procedure_Section subheader2
+            End_Procedure
+        
+            Procedure_Section subheader3
+            End_Procedure
+        
+            Procedure_Section subheader4
+            End_Procedure
+        
+            Procedure_Section subheader5
+            End_Procedure
+            Procedure_Section  Body
+                String  scode smodule spar serr
+                Number  naxia nx0 np0 nx00 np00 nx1 np1 ndiaf tx0 tp0 tx00 tp00 tx1 tp1
+                Date    dHmnia
+                integer iyear icount nyear ctypkinyear
+                get px0    to nx0
+                get px1    to nx1
+                get px00   to nx00
+                get pp0    to np0
+                get pp1    to np1
+                get pp00   to np00
+                add cmovesa.cmoves_x0     to nx0
+                add cmovesa.cmoves_p0     to np0
+                add cmovesa.cmoves_x00    to nx00
+                add cmovesa.cmoves_p00    to np00
+                add cmovesa.cmoves_x1     to nx1
+                add cmovesa.cmoves_p1     to np1
+                set px0    to nx0
+                set px1    to nx1
+                set px00   to nx00
+                set pp0    to np0
+                set pp1    to np1
+                set pp00   to np00
+            End_Procedure
+        
+            Procedure_Section subTOTAL5
+        
+                 Number  naxia nx0 np0 nx00 np00 nx1 np1 ndiaf tx0 tp0 tx00 tp00 tx1 tp1
+                 integer icount
+                 string smodule spar msgstr SID scn
+                 date ddate
+                 get psmodule to smodule
+                 get pddate to ddate
+                 add 1 to icount
+                 get px0    to nx0
+                 get px1    to nx1
+                 get px00   to nx00
+                 get pp0    to np0
+                 get pp1    to np1
+                 get pp00   to np00
+                 if ((nx0 <> 0) or (np0 <>0)) begin
+                    if (nx0 > np0) begin
+                       move (nx0 - np0) to nx0
+                       move (nx00-np00) to nx00
+                       move (nx1-np1)   to nx1
+                       move 0           to np0
+                       move 0           to np00
+                       move 0           to np1
+                    end
+                    else begin
+                       move (np0-nx0)   to np0
+                       move (np00-nx00) to np00
+                       move (np1-nx1)   to np1
+                       move 0           to nx0
+                       move 0           to nx00
+                       move 0           to nx1
+                    end
+        
+                    send clear to cmoves_dd
+                    move cmovesa.client_id to clients.client_id
+                    send find to clients_dd eq 6
+                    if (not(found)) error 2999 'Éú§ ô®Â©°‡ èú¢·´û'
+        
+                    move (trim(syscurxr.company_code))      to ctypkin.company_code
+                    move (trim(syscurxr.branch_code))       to ctypkin.branch_code
+                    move (TheYearSegment(ddate))            to ctypkin.year_year
+                    if ((smodule = '01') and (nx0 <> 0)) move '101' to ctypkin.ctypkin_code
+                    if ((smodule = '01') and (np0 <> 0)) move '102' to ctypkin.ctypkin_code
+                    if ((smodule = '02') and (nx0 <> 0)) move '201' to ctypkin.ctypkin_code
+                    if ((smodule = '02') and (np0 <> 0)) move '202' to ctypkin.ctypkin_code
+                    send find to ctypkin_dd eq 1
+                    if (found=1) begin
+        
+                        if (cmovesa.cn_code='') goto PROSPER1
+        
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_x0 to nx0
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_p0 to np0
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_x00 to nx00
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_p00 to np00
+                        if (nx0>np0) set field_changed_value of cmoves_dd field cmoves.cmoves_axia to nx0
+                        else if (np0>nx0) set field_changed_value of cmoves_dd field cmoves.cmoves_axia to np0
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_x1 to nx1
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_p1 to np1
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_hmnia to ddate
+                        move 'ãú´ò≠.¨ß¶¢¶Âß‡§ ' to spar
+                        append spar ddate
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_par to spar
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_sc_code2 to 'EUR'
+                        set field_changed_value of cmoves_dd field cmoves.cmoves_M_code to smodule
+                        set field_changed_value of cmoves_dd field cmoves.Module_from to smodule
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Enhm_Ypol_Pel    to '1'
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.Enhm_Hmnies_Pel  to '1'
+                        set field_changed_value of cmoves_dd field cmoves.cn_code to cmovesa.cn_code
+                        set field_changed_value of cmoves_dd field cmoves.cn_recr to cmovesa.cn_recr
+                        set field_changed_value of cmoves_dd field cmoves.sls_id  to cmovesa.sls_id
+                        set field_changed_value of cmoves_dd field cmoves.presp_id to cmovesa.presp_id
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.cnt_id   to cmovesa.cnt_id
+                        Set Field_Changed_Value Of Cmoves_DD Field Cmoves.mhxanik_id to cmovesa.mhxanik_id
+                        send request_save to cmoves_dd
+                    end
+                      MOVE cmovesa.client_id to sid
+                      MOVE cmovesa.cn_code to scn
+                      send update_status ('Ñöö®ò≠„   ' + string(sid) + " : " + string(scn))
+                      PROSPER1:
+                      set px0  to 0
+                      set px1  to 0
+                      set px00 to 0
+                      set pp0  to 0
+                      set pp1  to 0
+                      set pp00 to 0
+                 end
+            End_Procedure
+        
+        
+            Procedure_Section subtotal4
+               integer ino
+               move 0 to ino
+            End_Procedure
+        
+        
+            Procedure_Section subtotal3
+               integer ino
+               move 0 to ino
+            End_Procedure
+        
+            Procedure_Section subtotal2
+               integer ino
+               move 0 to ino
+            End_Procedure
+        
+            Procedure_Section subtotal1
+               integer ino
+               move 0 to ino
+            End_Procedure
+        
+        End_Object
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-StoreEnd
+
+    End_Object    // rMetafNoErg
+
+
+    //AB-StoreStart
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

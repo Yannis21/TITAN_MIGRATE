@@ -1,0 +1,2729 @@
+Compiling Program: L:\Vdf6\Develop\Empor\AppSrc\abt1.src
+Memory Available: 2147483647
+1>Use AllEntSc
+Using pre-compiled package ALLENTSC
+INCLUDING FILE: ALLENTSC.PKI
+30325>
+30325>Use Workspc.pkg
+30325>
+30325>//  Set date attributes as needed
+30325>Set_Date_Attribute sysdate4_State to (TRUE)
+30326>Set_Date_Attribute Date4_State to (TRUE)
+30327>Set_Date_Attribute epoch_value to 30
+30328>
+30328>Object ProgramWorkspace is a Workspace
+30330>    Set WorkspaceName to 'empor'
+30331>End_Object
+30332>
+30332>Use Help_Ids.inc // Developer should provide this file of help context links.
+INCLUDING FILE: HELP_IDS.INC
+30332>>>// Help_ids.inc
+30332>>>//
+30332>>>// Context ids for the order entry system. This uses
+30332>>>// help file ordentry.hlp.
+30332>>>//
+30332>>>// This is a sample version. YOU must supply
+30332>>>// the ID values
+30332>>>
+30332>>>//  Generic Context Ids
+30332>>>//
+30332>>>
+30332>>>// It is expected that file-names ids will be the same as their
+30332>>>// filenumber.
+30332>>>
+30332>>>
+30332>>>//  View and selection-list specific context ids
+30332>>>//
+30332>>>//..........add view, object, selection-list ids here....
+30332>Use Std_Help.pkg
+INCLUDING FILE: STD_HELP.PKG
+30332>>>// STD_HELP.PKG
+30332>>>//
+30332>>>// Global Help Object
+30332>>>//
+30332>>>//  Creates all Help Support required to access WINDOWs help system
+30332>>>//  with DataFlex. Creates a global object named Help_Object.
+30332>>>//
+30332>>>//  9/19/97 JJT - Modified to define stadnard help Ids if they are undefined
+30332>>>
+30332>>>use DFHlpSys // Context Sensitive Help Support
+30332>>>
+30332>>>
+30332>>>// This file needs to be provided by the developer. It will contain
+30332>>>// symbolic replacements for the ID integer values used to access the
+30332>>>// the windows help file's topics.
+30332>>>//
+30332>>>use Help_ids.inc
+30332>>>
+30332>>>// If the following are not defined in help_ids.inc,
+30332>>>//  create default 0 values for them
+30332>>>Define GeneralHelpId    for    0
+30332>>>Define KeysHelpId       for    0
+30332>>>Define FileHelpId       for    0
+30332>>>Define ErrorHelpId      for    0  // probably not used in VDF
+30332>>>Define IndexHelpId      for    0  // probably not used in VDF
+30332>>>
+30332>>>object Help_Object is a HelpSystem // global help object
+30334>>>
+30334>>>   Set Help_Id_General to GeneralHelpId    // these should all be defined
+30335>>>   Set Help_Id_Index   to IndexHelpId      // in help_ids.inc.
+30336>>>   Set Help_Id_Keys    to KeysHelpId       //
+30337>>>   Set Help_Id_Files   to FileHelpId       //
+30338>>>   Set Help_Id_Errors  to ErrorHelpId      //
+30339>>>
+30339>>>end_object
+30340>
+30340>Object Main is a Panel
+30342>    Set Label To "Testing View: Hmgio:Hmerologia kai kinhseis"
+30343>
+30343>    DFCreate_Menu Main_Menu
+INCLUDING FILE: FILE_PM.INC
+30346>>//************************************************************************
+30346>>//
+30346>>//* Copyright (c) 1997 Data Access Corporation, Miami Florida,
+30346>>//* All rights reserved.
+30346>>//* DataFlex is a registered trademark of Data Access Corporation.
+30346>>//*
+30346>>//*
+30346>>//*  Module Name:
+30346>>//*      FILE_PM.INC
+30346>>//*
+30346>>//*  Creator:
+30346>>//*        LS, MAZ, JJT(changed for windaf)
+30346>>//*
+30346>>//*  Date:
+30346>>//*      November 31, 1992
+30346>>//*      10/28/94 03:17 pm - JJT windaf chagges
+30346>>//*
+30346>>//*  Purpose:
+30346>>//*         package for creating generic record_pull_down object for entry
+30346>>//*             object actions(assumed to be used as first pull down menu,
+30346>>//*             hence EXIT option as last item)
+30346>>//*
+30346>>//*************************************************************************
+30346>>// JJT - Modified to shadow items if not a DEO OR if no server
+30346>>//*************************************************************************
+30346>>
+30346>>
+30346>>Object oMyWinPrint is an DF_PRINTER
+30348>>
+30348>>    Procedure DFPrint
+30350>>        Local Integer iRetVal
+30351>>
+30351>>        Get DFGetPrintDialogFlags To iRetVal
+30352>>
+30352>>        If iRetVal Begin
+30354>>            Send DFPrintDoc
+30355>>            Send DFClearDoc
+30356>>        End
+30356>>>
+30356>>    End_Procedure
+30357>>    Move Current_Object to WinPrintId
+30358>>End_Object
+30359>>
+30359>>Register_Procedure Set piPropertiesObjectId
+30359>>Register_Function piPropertiesObjectId Returns Integer
+30359>>
+30359>>Register_Function Close_All_Views Integer bWith_Confirmation Returns Integer
+30359>>
+30359>>DFCreate_Menu "&„šš¨˜­âª" File_Menu is a DEOPopupMenu
+30363>>    On_Item "&€¡ç¨à©ž/Add\aF5" send Request_Clear
+30364>>        Set Status_Help To '‰˜Ÿ˜¨åœ  «ž¤ «¨â®¦¬©˜ œšš¨˜­ã'
+30365>>
+30365>>    On_Item "&Super €¡ç¨à©ž\aCtrl+F5" send Request_Clear_All
+30366>>        Set Status_Help To '‰˜Ÿ˜¨åœ  æ¢˜ «˜ ›œ›¦£â¤˜ ˜§æ «ž¤ æ¯ž'
+30367>>
+30367>>    On_Item "&ƒ ˜š¨˜­ã\aShift+F2" send Request_Delete
+30368>>        Set Status_Help To 'ƒ ˜š¨á­œ  «ž¤ «¨â®¦¬©˜ œšš¨˜­ã'
+30369>>
+30369>>    On_Item "&€¤˜ã«ž©ž\aF9" send Find_GE
+30370>>        Set Status_Help To '¨å©¡œ  £ á œšš¨˜­ã'
+30371>>
+30371>>    On_Item "&„§æ£œ¤¦\aF8" send Find_Next
+30372>>        Set Status_Help To '¨å©¡œ  «ž¤ œ§æ£œ¤ž œšš¨˜­ã'
+30373>>
+30373>>    On_Item "&¨¦žš¦ç£œ¤¦\aF7" send Find_Previous
+30374>>        Set Status_Help To '¨å©¡œ  «ž¤ §¨¦žš¦ç£œ¤ž œšš¨˜­ã'
+30375>>
+30375>>    //On_Item "Super ˜¤˜ã«ž©ž\aShift+F9" send Superfind
+30375>>    //    Set Status_Help To 'Super_˜¤˜ã«ž©ž £ áª œšš¨˜­ãª'
+30375>>
+30375>>    //On_Item "Super œ§æ£œ¤¦\aShift+F8" send Superfind_Next
+30375>>    //    Set Status_Help To 'Super_˜¤˜ã«ž©ž œ§æ£œ¤žª œšš¨˜­ãª'
+30375>>
+30375>>    //On_Item "Super §¨¦žš¦ç£œ¤¦\aShift+F7" send Superfind_Previous
+30375>>    //    Set Status_Help To 'Super_˜¤˜ã«ž©ž §¨¦žš¦ç£œ¤žª œšš¨˜­ãª'
+30375>>
+30375>>    On_Item "&¨é«¦\aCtrl+Home" send Beginning_Of_Data
+30376>>        Set Status_Help To '¨å©¡œ  «ž¤ §¨é«ž œšš¨˜­ã'
+30377>>
+30377>>    On_Item "’œ&¢œ¬«˜å¦\aCtrl+End" send End_Of_Data
+30378>>        Set Status_Help To '¨å©¡œ  «ž¤ «œ¢œ¬«˜¢å˜ œšš¨˜­ã'
+30379>>
+30379>>    On_Item "&„šš¨˜­ž\aF2" send Request_Save
+30380>>        Set Status_Help To '‘éœ  «ž¤ «¨â®¦¬©˜ œšš¨˜­ã'
+30381>>
+30381>>    On_Item "" send NONE
+30382>>
+30382>>    //on_item   "çŸ£ ©ž œ¡«ç§à©žª  "  Send Activate_oPrnSetup to (client_area(current_object))
+30382>>    on_item   "çŸ£ ©ž œ¡«ç§à©žª  "  send DFPrintSetup       to (oWinPrint(Self))
+30383>>    Set Status_Help To "çŸ£ ©ž œ¡«ç§à©žª"
+30384>>    on_item   "„¡«ç§à©ž           "  send DFPrint            to (oMyWinPrint(Self))
+30385>>    Set Status_Help To "„¡«ç§à©ž œšš¨á­¦¬"
+30386>>
+30386>>    On_Item "" send NONE
+30387>>
+30387>>    On_Item "&ˆ› ¦«ž«œª\aAlt+I" send DoShowProperties to Self
+30388>>    Set Status_Help To '‰˜Ÿ¦¨ ©£æª ˆ› ¦«ã«à¤ «žª œ­˜¨£¦šãª'
+30389>>
+30389>>    On_Item "" send NONE
+30390>>
+30390>>    On_Item "„&¥¦›¦ª\aAlt+F4" send Exit_Application to desktop
+30391>>        Set Status_Help To 'š˜å¤œ  ˜§¦ «ž¤ œ­˜¨£¦šã'
+30392>>
+30392>>    Procedure DoShowProperties
+30394>>        If (Close_All_Views(Self,True)=0) Send Activate_View to (piPropertiesObjectId(self))
+30397>>    End_Procedure
+30398>>
+30398>>    On_Key Key_Alt+Key_I Send DoShowProperties
+30399>>
+30399>>    //  When ever the menu [pulldown] is initialized, check/set
+30399>>    //  the state of its items.
+30399>>    //
+30399>>    Procedure OnInitMenu
+30401>>        Local integer Obj# IsDeo Changed NoIndex File# Field# Srvr Itm
+30402>>        Local integer IsDeoControl lId liClId
+30402>>        Get Focus to Obj#
+30403>>        Get is_Function Get_DEO_Object Obj# TRUE to IsDeo
+30404>>        If IsDeo Get Server of obj# to Srvr          // invoking data-set
+30407>>        If (isDeo AND Srvr) Begin
+30409>>            // returns T if object in question is a DEO control object (i.e.
+30409>>            // understands the data_file, data_field messages).
+30409>>            Get is_Function Get_DEO_Control_Object Obj# False to IsDeoControl
+30410>>            Get Should_Save of Obj# to changed  // changed file?
+30411>>            If IsDEOControl Begin
+30413>>                Get data_file of Obj# to file#
+30414>>                Get data_field of Obj# to field#
+30415>>                Move ( File#=0 OR ;                    (Field_Main_Index(Srvr,File#,Field#)=-1) ;                    ) to NoIndex             // has a find index?
+30416>>            End
+30416>>>
+30416>>            Else ;                Move 1 to NoIndex
+30418>>            Set Shadow_state item 0  to False
+30419>>            Set Shadow_state item 1  to False
+30420>>            Set Shadow_state item 2  to (Current_record(Srvr)=0)
+30421>>            Set Shadow_state item 3  to NoIndex
+30422>>            Set Shadow_state item 4  to NoIndex
+30423>>            Set Shadow_state item 5  to NoIndex
+30424>>            Set Shadow_state item 6  to NoIndex
+30425>>            Set Shadow_state item 7  to NoIndex
+30426>>            Set Shadow_state item 8  to (Should_Save(Srvr)=0)
+30427>>         //   Set Shadow_state item 9  to NoIndex
+30427>>         //   Set Shadow_state item 10  to NoIndex
+30427>>         //   Set Shadow_state item 11 to NoIndex
+30427>>         //   Set Shadow_state item 12 to (Should_Save(Srvr)=0)
+30427>>        End
+30427>>>
+30427>>        Else Begin
+30428>>            for itm from 0 to 8 //11
+30434>>>
+30434>>                set shadow_State item itm to TRUE
+30435>>            Loop
+30436>>>
+30436>>        End
+30436>>>
+30436>>        Set Shadow_State Item 13 to (piPropertiesObjectId(Self)=0)
+30437>>    End_Procedure
+30438>>
+30438>>    Register_Procedure Activate_oPrnSetup
+30438>>
+30438>>End_Pull_Down
+30440>>Set Status_Help to "€¤˜ã«ž©ž, „šš¨˜­ã, ƒ ˜š¨˜­ã, €¡ç¨à©ž ›œ›¦£â¤à¤ ã â¥¦›¦ª ˜§¦ «ž¤ œ­˜¨£¦šã"
+30441>
+30441>        DFCreate_Menu "&View" ViewPopupMenu is a ViewPopupMenu
+30445>            On_Item "&Hmgio:Hmerologia kai kinhseis\aCtrl+1" Send Activate_Hmgio
+30446>        End_Pull_down
+30448>        Set Status_Help To "Available Views"
+30449>
+INCLUDING FILE: NAVI_PM.INC
+30449>>Use DFDEOMnu
+30449>>
+30449>>DFCreate_Menu "&Navigation" NAVIGATE_Menu is a DEOPopupMenu
+30453>>    On_Item "&Next Area\aF6"            send Switch_Next_Area
+30454>>        Set Status_Help To  'Move to Next Area'
+30455>>
+30455>>    On_Item "&Previous Area\aShift+F6"  send Switch_Prior_Area
+30456>>        Set Status_Help To  'Move to Previous Area'
+30457>>
+30457>>    On_Item "N&ext View\aAlt+F6"        send Switch_Next_View
+30458>>        Set Status_Help To  'Move to Next View'
+30459>>
+30459>>    On_Item "P&revious View\aCtrl+F6"   send Switch_Prior_View
+30460>>        Set Status_Help To  'Move to Previous View'
+30461>>
+30461>>    On_Item ""                          send none
+30462>>
+30462>>    On_Item "&List\aF4"               send Prompt
+30463>>        Set Status_Help To  'Show Selection Lists'
+30464>>
+30464>>    On_Item "&Zoom\aAlt+F9"             send Zoom
+30465>>        Set Status_Help To  'Show Zoom'
+30466>>
+30466>>    Procedure OnInitMenu
+30468>>        Local integer Obj# IsDeo Itm prmpt zm isDeoControl
+30469>>        Get Focus to Obj#
+30470>>        Get is_Function Get_DEO_Object Obj# TRUE to IsDeo
+30471>>        If IsDeo Begin
+30473>>            Get is_Function Get_DEO_Control_Object Obj# False to IsDeoControl
+30474>>            If IsDeoControl Begin
+30476>>                Get Prompt_Object of Obj# to Prmpt
+30477>>                Get Zoom_Object of Obj# to zm
+30478>>            End
+30478>>>
+30478>>            Set Shadow_state item 0  to False
+30479>>            Set Shadow_state item 1  to False
+30480>>            Set Shadow_state item 2  to False
+30481>>            Set Shadow_state item 3  to False
+30482>>            Set Shadow_state item 5  to (Prmpt=0)
+30483>>            Set Shadow_state item 6  to (Zm=0)
+30484>>        End
+30484>>>
+30484>>        Else Begin
+30485>>            for itm from 0 to 6
+30491>>>
+30491>>                set shadow_State item itm to TRUE
+30492>>            Loop
+30493>>>
+30493>>        End
+30493>>>
+30493>>    End_Procedure
+30494>>
+30494>>End_Pull_Down
+30496>>Set Status_Help to "Navigation in different areas of the screen"
+30497>>
+INCLUDING FILE: WIN_PM.INC
+30497>>DFCreate_Menu "&Window" Window_Menu
+30501>>    Set select_mode to Multi_Select
+30502>>    // normal number of items in pulldown (w/ no active views)
+30502>>    property integer std_item_count public 0
+30504>>
+30504>>    DFCreate_Menu "&Preferences" Display_Options_Menu
+30508>>        Set select_mode to Multi_Select
+30509>>        On_Item "&ToolBar"        Send Toggle_Toolbar             To Self
+30510>>        On_Item "&StatusBar"      Send Toggle_Statusbar           To Self
+30511>>        On_Item "&Arrange Icons"  Send Toggle_Auto_Arrange_Icons  To Self
+30512>>
+30512>>        //  When ever the menu [pulldown] is initialized, check/set
+30512>>        //  the state of its items.
+30512>>        //
+30512>>        Procedure OnInitMenu
+30514>>            local integer bState
+30515>>
+30515>>            Get ToolBar_State to bState
+30516>>            Set Select_State Item 0 to bState
+30517>>            if  bState   Set Status_Help Item 0 To '' //'Hide the ToolBar'
+30520>>            Else         Set Status_Help Item 0 to '' //'Show the ToolBar'
+30522>>
+30522>>            Get Statusbar_State to bState
+30523>>            Set Select_State Item 1 to bState
+30524>>            if  bState  Set Status_Help Item 1 To ''// 'Hide the StatusBar'
+30527>>            Else        Set Status_Help Item 1 to ''// 'Show the StatusBar'
+30529>>
+30529>>            Get Auto_Arrange_Icons_State to bState
+30530>>            Set Select_State Item 2 to bState
+30531>>            if  bState  Set Status_Help Item 2 To '' //'Hide AutoArrange Icons'
+30534>>            Else        Set Status_Help Item 2 to '' //'Show AutoArrange Icons'
+30536>>
+30536>>        End_procedure
+30537>>
+30537>>
+30537>>    End_Pull_Down
+30539>>    Set Status_Help                                           To '' //"Enable Toolbar, StatusBar, and AutoArrange Icons options"
+30540>>
+30540>>    On_Item ""
+30541>>
+30541>>    On_Item "&Cascade" send Cascade_Windows                   To Self
+30542>>        Set Status_Help                                       To ''
+30543>>
+30543>>    On_Item "Tile &Horizontally" send Tile_Windows_Horizontal To Self
+30544>>        Set Status_Help                                       To ''
+30545>>
+30545>>    On_Item "Tile &Vertically" send Tile_Windows_Vertical     To Self
+30546>>        Set Status_Help                                       To ''
+30547>>
+30547>>    On_Item ""
+30548>>
+30548>>    On_Item "Minimize all" send Minimize_all_Windows          To Current_Object
+30549>>        Set Status_Help                                       To ''
+30550>>
+30550>>    On_Item "&Restore all" send Restore_all_Windows           To Current_Object
+30551>>        Set Status_Help                                       To ''
+30552>>
+30552>>    On_Item ""
+30553>>
+30553>>    On_Item "&Arrange Icons" send Arrange_Icons               To Current_Object
+30554>>        Set Status_Help                                       To ''
+30555>>
+30555>>    // set this to the number of items in the menu with no views.
+30555>>    Set Std_item_count to (item_count(current_object))
+30556>>
+30556>>    // add all active views to the end of the menu
+30556>>    Procedure OnInitMenu
+30558>>        local integer iStdCnt iNumCnt hVw hCl iCount
+30559>>        Local string sLbl
+30559>>        //*** Remove all old view items
+30559>>        Get Item_count     to iNumCnt
+30560>>        get Std_item_count to iStdCnt
+30561>>        For iCount from 1  to (iNumCnt - iStdCnt)
+30567>>>
+30567>>            Send Delete_item iStdCnt
+30568>>        Loop
+30569>>>
+30569>>
+30569>>        Move iStdcnt to iNumCnt
+30570>>        get Client_id to hCl // object id of client area
+30571>>        If hCl Begin
+30573>>           Get Next_Mdi_Dialog of hcl TRUE to hVw // find first view
+30574>>           While hVw
+30578>>              if (Active_state(hVw)) Begin
+30580>>                 if iNumCnt eq iStdCnt Begin // if first view, add separator
+30582>>                    send add_item 0 ''
+30583>>                    increment iNumCnt
+30584>>                 end
+30584>>>
+30584>>                 Get Label of hVw to sLbl // caption bar (name) of view
+30585>>                 // note that all views understand the message activate_view.
+30585>>                 send add_item msg_activate_view sLbl // set message, value and destination
+30586>>                 set aux_value item iNumcnt to hVw
+30587>>                 // if this is the focus view, mark it.
+30587>>                 If (current_scope(desktop)=hVw and View_mode(hVw)<>VIEWMODE_ICONIZE) ;                     set select_state item iNumCnt to True
+30590>>                 // create status help
+30590>>                 Set Status_help item iNumCnt to ("Make this view (" - trim(sLbl) - ") the active window.")
+30591>>                 increment iNumCnt
+30592>>              end
+30592>>>
+30592>>              Get Next_Mdi_Dialog of hcl FALSE to hVw // find next
+30593>>           End
+30594>>>
+30594>>        End
+30594>>>
+30594>>    End_Procedure // OnInitMenu
+30595>>
+30595>>End_Pull_Down
+30597>>Set Status_Help to ''
+INCLUDING FILE: HELP_PM.INC
+30598>>//************************************************************************
+30598>> //
+30598>> //* Copyright (c) 1994 Data Access Corporation, Miami Florida,
+30598>> //* All rights reserved.
+30598>> //* DataFlex is a registered trademark of Data Access Corporation.
+30598>> //*
+30598>> //*
+30598>> //*  Module Name:
+30598>> //*      HELP_PM.INC
+30598>> //*
+30598>> //*  Purpose:
+30598>> //*      include file for creating generic help_pull_down object
+30598>> //*
+30598>> //*  Quick review of Help message which can be sent to help system
+30598>> //*
+30598>> //*   MESSAGE                   HELP TYPE
+30598>> //*   -----------------         -----------------------------
+30598>> //*   Extended_Help             Context (id or keyword) help
+30598>> //*   Help_For_Help             Windows standard help system
+30598>> //*   Help_Index                Index list
+30598>> //*   Keys_Help                 Keys
+30598>> //*   File_Help                 Help on current file field
+30598>> //*   Error_Help                Help on error (lastErr)
+30598>> //*   Help_on_topic             Display help topic selector
+30598>> //*   Help                      F1 Help - Currently extended Help
+30598>>//*************************************************************************
+30598>>
+30598>>
+30598>>Register_Procedure Activate_TipOfDay
+30598>>Register_Procedure Init_DocFile
+30598>>
+30598>>       String gs_Module_Code
+30598>>
+30598>>DFCreate_Menu "&¦ãŸœ ˜" Help_Menu
+30602>>//    on_item "&Context Help"          send Extended_Help
+30602>>//        Set Status_Help To "Show Context sensitive help."
+30602>>
+30602>>//    on_item "&Files Help"            send File_Help
+30602>>//        Set Status_Help To "Show Files help."
+30602>>
+30602>>//    on_item "&Keys Help"             send Keys_Help
+30602>>//        Set Status_Help To "Show Keys help."
+30602>>
+30602>>//    on_item "&Index"                 send Help_Index
+30602>>//        Set Status_Help To "Show Help Index."
+30602>>
+30602>>//    on_item "&Search for Help on..." send Help_on_topic
+30602>>//        Set Status_Help To "Search for help on a particular subject."
+30602>>
+30602>>//    on_item "&How to Use Help"       send Help_For_Help
+30602>>//        Set Status_Help To "Help on Help. How to use the Help system."
+30602>>
+30602>>//    on_item "" send NONE
+30602>>
+30602>>    DFCreate_Menu "Online &Documents" Docs_Menu
+30606>>
+30606>>        On_Item  "Documentation" send Init_DocFile
+30607>>        Set Status_Help To "Šœ «¦¬¨šåœª Module ˜¨˜šàšãª."
+30608>>
+30608>>        Procedure OnInitMenu
+30610>>            Case Begin
+30610>>                Case (gs_Module_Code = "01")
+30612>>                    Set Value Item 0 to "Manual ‚.Š¦š ©« ¡ãª"
+30613>>                    Case Break
+30614>>                Case (gs_Module_Code = "90")
+30617>>                    Set Value Item 0 to "Manual Media"
+30618>>                    Case Break
+30619>>                Case (gs_Module_Code = "91")
+30622>>                    Set Value Item 0 to "Manual ˜¨˜šàšãª"
+30623>>                    Case Break
+30624>>                Case (gs_Module_Code = "92")
+30627>>                    Set Value Item 0 to "Manual Easyview"
+30628>>                    Case Break
+30629>>                Case Else
+30629>>                    Set Shadow_State Item 0 to True
+30630>>            Case End
+30630>>        End_Procedure
+30631>>
+30631>>    end_pull_down
+30633>>    Set Status_Help To "„š®œ ¨å› ¦ Šœ «¦¬¨šå˜ª «¦¬ module"
+30634>>
+30634>>    on_item "" send NONE
+30635>>
+30635>>    On_Item "&Tips «žª ž£â¨˜ª" send Activate_TipOfDay
+30636>>        Set Status_Help To "†£œ¨ã© œª §¢ž¨¦­¦¨åœª."
+30637>>
+30637>>    on_item "" send NONE
+30638>>
+30638>>    on_item "&¢ž¨¦­¦¨åœª"                 send Activate_About
+30639>>        Set Status_Help To "¢ž¨¦­¦¨åœª š ˜ «¦ §¨æš¨˜££˜."
+30640>>
+30640>>
+30640>>end_pull_down
+30642>>Set Status_Help to "¨æ©™˜©ž ©œ §¢ž¨¦­¦¨åœª š ˜ œ¡£áŸž©ž ¡˜  ®¨ž© £¦§¦åž©ž «žª œ­˜¨£¦šãª"
+30643>>
+30643>    End_Menu
+30645>
+30645>    Use DFStdBtn.pkg
+INCLUDING FILE: DFSTDBTN.PKG
+30645>>>// 07/23/96 JJT - New Class names
+30645>>>// 10/03/97 KCR - removed leading separator
+30645>>>
+30645>>>Use DFMainBt  // dfMain_ButtonBar
+INCLUDING FILE: DFMAINBT.PKG
+30645>>>>>//-------------------------------------------------------------------------
+30645>>>>>// DFMainBt.pkg - DfMain_ButtonBar class
+30645>>>>>//
+30645>>>>>//
+30645>>>>>// 07/23/96 JJT - New Class names
+30645>>>>>//-------------------------------------------------------------------------
+30645>>>>>
+30645>>>>>Use DfPanel // dfapp_buttonbar
+30645>>>>>
+30645>>>>>Class ToolBar is a AppToolBar
+30646>>>>>
+30646>>>>>    Function Is_Function Integer MsgId Integer ObjId Integer DelegateFg Returns Integer
+30647>>>>>      Local integer rval MainObj#
+30648>>>>>      Get Main_Panel_id to MainObj#
+30649>>>>>      If (ObjId>Desktop AND MainObj#) ;         Get Is_Function of MainObj# MsgId ObjId DelegateFg to rVal
+30652>>>>>      Function_Return rVal
+30653>>>>>    End_Function
+30654>>>>>
+30654>>>>>    Procedure Redirect_Button_Message integer Itm
+30655>>>>>         Local integer Msg# Aux# rval Understood
+30656>>>>>         If (Shadow_State(Current_Object,itm)) Procedure_Return
+30659>>>>>         Get Message   item itm  to Msg#
+30660>>>>>         Get Aux_Value item itm  to Aux#
+30661>>>>>         If Msg# Begin
+30663>>>>>           If Aux# eq 0 Begin
+30665>>>>>              Get Focus to Aux#
+30666>>>>>              Get Is_Function Get_DEO_Object Aux# TRUE to Understood
+30667>>>>>              If Not Understood Move 0 to Aux#
+30670>>>>>           End
+30670>>>>>>
+30670>>>>>           If Aux# Get Msg# of Aux# to rval
+30673>>>>>           Procedure_return rval
+30674>>>>>         end
+30674>>>>>>
+30674>>>>>    End_Procedure // Redirect_Message
+30675>>>>>
+30675>>>>>End_Class
+30676>>>>>
+30676>>>>>
+30676>>>
+30676>>>//  Button bar object.
+30676>>>
+30676>>>Object Tool_Bar is a ToolBar
+30678>>>
+30678>>>    Send ImageList_Add 'bgn.bmp'   // 0
+30679>>>    Send ImageList_Add 'end.bmp'   // 1
+30680>>>    Send ImageList_Add 'next.bmp'  // 2
+30681>>>    Send ImageList_Add 'prev.bmp'  // 3
+30682>>>    Send ImageList_Add 'clr.bmp'   // 4
+30683>>>    Send ImageList_Add 'clra.bmp'  // 5
+30684>>>
+30684>>>    send Add_button (ico_user+0) msg_beginning_of_data
+30685>>>    Send Add_ToolTip "Beginning of file"
+30686>>>    Set  Status_Help To 'Find the First record (Ctrl+Home)'
+30687>>>
+30687>>>    send Add_button (ico_user+3) msg_find_previous
+30688>>>    Send Add_ToolTip "Find Previous"
+30689>>>    Set  Status_Help To 'Find the Previous record (F7)'
+30690>>>
+30690>>>    send Add_button (ico_user+2) msg_find_next
+30691>>>    Send Add_ToolTip "Find Next"
+30692>>>    Set  Status_Help To 'Find the Next record (F8)'
+30693>>>
+30693>>>    send Add_button (ico_user+1) msg_end_of_data
+30694>>>    Send Add_ToolTip "End of File"
+30695>>>    Set  Status_Help To 'Find the Last record (Ctrl+End)'
+30696>>>
+30696>>>    Send Add_space
+30697>>>
+30697>>>    send Add_button ico_std_find msg_prompt
+30698>>>    Send Add_ToolTip "Prompt"
+30699>>>    Set  Status_Help To 'Show available selections (F4)'
+30700>>>
+30700>>>    send Add_button (ico_user+4) msg_request_clear
+30701>>>    Send Add_ToolTip "Clear"
+30702>>>    Set  Status_Help To 'Clear current record / Add a new record (F5)'
+30703>>>
+30703>>>    send Add_button (ico_user+5) msg_request_clear_all
+30704>>>    Send Add_ToolTip "Clear All"
+30705>>>    Set  Status_Help To 'Clear all data from view (Ctrl+F5)'
+30706>>>
+30706>>>    send Add_space
+30707>>>
+30707>>>    send Add_button ico_std_filesave msg_request_save
+30708>>>    Send Add_ToolTip "Save"
+30709>>>    Set  Status_Help To 'Save the current record (F2)'
+30710>>>
+30710>>>    send Add_button ico_std_delete msg_request_delete
+30711>>>    Send Add_ToolTip "Delete"
+30712>>>    Set  Status_Help To 'Delete the current record (Shift+F2)'
+30713>>>
+30713>>>    send Add_space
+30714>>>
+30714>>>    send Add_button ico_std_cut msg_cut
+30715>>>    Send Add_ToolTip "Cut"
+30716>>>    Set  Status_Help to "Cuts the selection and puts it on the Clipboard"
+30717>>>
+30717>>>    send Add_button ico_std_copy msg_copy
+30718>>>    Send Add_ToolTip "Copy"
+30719>>>    Set  Status_Help to "Copies the selection and puts it on the Clipboard"
+30720>>>
+30720>>>    send Add_button ico_std_paste msg_paste
+30721>>>    Send Add_ToolTip "Paste"
+30722>>>    Set  Status_Help to "Inserts Clipboard contents"
+30723>>>
+30723>>>End_Object
+30724>>>
+30724>
+30724>    Object Client_Area IS A AppClientArea
+30726>
+30726>        Use Hmgio.VW
+INCLUDING FILE: HMGIO.VW
+30726>>>//AB/ Project Hmgio:Hmerologia kai kinhseis
+30726>>>//AB/ Object prj is a View_Project
+30726>>>//AB/     Set ProjectName to "Hmgio:Hmerologia kai kinhseis"
+30726>>>//AB/     Set ProjectFileName to "Hmgio.VW"
+30726>>>//AB/     Set GenerateFileName to "NONAME"
+30726>>>
+30726>>>// Project Object Structure
+30726>>>//   Hmgio is a dbViewSub
+30726>>>//     Ctypkin_DD is a DataDictionary
+30726>>>//     Syscurxr_DD is a DataDictionary
+30726>>>//     Hmgio_DD is a DataDictionary
+30726>>>//     Hmctyp_DD is a DataDictionary
+30726>>>//     Hmgio_Hmgio_Code is a dbFormSub
+30726>>>//     Hmgio_Hmgio_Descr is a dbFormSub
+30726>>>//     Hmgio_Hmgio_Module is a dbComboFormSub
+30726>>>//     Hmctyp_ is a dbGridSub
+30726>>>//     TextBoxSub1 is a TextBoxSub
+30726>>>//     TextBoxSub2 is a TextBoxSub
+30726>>>//     dbGroupSub1 is a dbGroupSub
+30726>>>//       Company_Company_Name is a dbFormSub
+30726>>>//       Branch_Branch_Name is a dbFormSub
+30726>>>//       Year_Year_Year is a dbFormSub
+30726>>>//       TextBoxSub3 is a TextBoxSub
+30726>>>//       TextBoxSub4 is a TextBoxSub
+30726>>>//       TextBoxSub5 is a TextBoxSub
+30726>>>//     btnEktyposh is a ButtonSub
+30726>>>
+30726>>>// Register all objects
+30726>>>Register_Object Branch_Branch_Name
+30726>>>Register_Object btnEktyposh
+30726>>>Register_Object Company_Company_Name
+30726>>>Register_Object Ctypkin_DD
+30726>>>Register_Object dbGroupSub1
+30726>>>Register_Object Hmctyp_
+30726>>>Register_Object Hmctyp_DD
+30726>>>Register_Object Hmgio
+30726>>>Register_Object Hmgio_DD
+30726>>>Register_Object Hmgio_Hmgio_Code
+30726>>>Register_Object Hmgio_Hmgio_Descr
+30726>>>Register_Object Hmgio_Hmgio_Module
+30726>>>Register_Object Syscurxr_DD
+30726>>>Register_Object TextBoxSub1
+30726>>>Register_Object TextBoxSub2
+30726>>>Register_Object TextBoxSub3
+30726>>>Register_Object TextBoxSub4
+30726>>>Register_Object TextBoxSub5
+30726>>>Register_Object Year_Year_Year
+30726>>>
+30726>>>
+30726>>>//AB/ AppBuild VIEW
+30726>>>
+30726>>>
+30726>>>//AB-StoreTopStart
+30726>>>Use sl007.sl
+INCLUDING FILE: SL007.SL
+30726>>>>>//AB/ Project Ctypkin : sl007
+30726>>>>>//AB/ Object prj is a Lookup_Project
+30726>>>>>//AB/     Set ProjectName to "Ctypkin : sl007"
+30726>>>>>//AB/     Set ProjectFileName to "sl007.SL"
+30726>>>>>//AB/     Set GenerateFileName to "NONAME"
+30726>>>>>
+30726>>>>>// Project Object Structure
+30726>>>>>//   sl007 is a dbModalPanelSub
+30726>>>>>//     Ctypkin_DD is a DataDictionary
+30726>>>>>//     oSelList is a dbListSub
+30726>>>>>//     oOK_bn is a ButtonSub
+30726>>>>>//     oCancel_bn is a ButtonSub
+30726>>>>>//     oSearch_bn is a ButtonSub
+30726>>>>>
+30726>>>>>// Register all objects
+30726>>>>>Register_Object Ctypkin_DD
+30726>>>>>Register_Object oCancel_bn
+30726>>>>>Register_Object oOK_bn
+30726>>>>>Register_Object oSearch_bn
+30726>>>>>Register_Object oSelList
+30726>>>>>Register_Object sl007
+30726>>>>>
+30726>>>>>
+30726>>>>>//AB-IgnoreStart
+30726>>>>>
+30726>>>>>Use DFAllEnt.pkg
+30726>>>>>Use dbList.Sub
+30726>>>>>Use Button.Sub
+30726>>>>>
+30726>>>>>
+30726>>>>>Use CTYPKIN.DD
+INCLUDING FILE: CTYPKIN.DD
+30726>>>>>>>//DDB-FileStart
+30726>>>>>>>//DDB-HeaderStart
+30726>>>>>>>
+30726>>>>>>>// File Name : CTYPKIN.DD
+30726>>>>>>>// Class Name: Ctypkin_DataDictionary
+30726>>>>>>>// Revision  : 70
+30726>>>>>>>// Version   : 2
+30726>>>>>>>
+30726>>>>>>>Use  Windows           // Basic Definitions
+30726>>>>>>>Use  DataDict          // DataDictionary Class Definition
+30726>>>>>>>Use  DDvalTbl          // Validation Table Class Definitions
+30726>>>>>>>
+30726>>>>>>>Open Ctypkin
+INCLUDING FILE: CTYPKIN.FD
+30728>>>>>>>Open Cmoves
+INCLUDING FILE: CMOVES.FD
+30730>>>>>>>Open Cflagkin
+INCLUDING FILE: CFLAGKIN.FD
+30732>>>>>>>Open Ptypparl
+INCLUDING FILE: PTYPPARL.FD
+30734>>>>>>>Open Ptyppar
+INCLUDING FILE: PTYPPAR.FD
+30736>>>>>>>Open Hmctyp
+INCLUDING FILE: HMCTYP.FD
+30738>>>>>>>Open Cmovesa
+INCLUDING FILE: CMOVESA.FD
+30740>>>>>>>Open Sysrecc
+INCLUDING FILE: SYSRECC.FD
+30742>>>>>>>Open Syscurxr
+INCLUDING FILE: SYSCURXR.FD
+30744>>>>>>>
+30744>>>>>>>//DDB-HeaderEnd
+30744>>>>>>>//DDB-ValidationStart
+30744>>>>>>>
+30744>>>>>>>Register_Object Ctypkin_Ctypkin_Module_VT
+30744>>>>>>>
+30744>>>>>>>Object Ctypkin_Ctypkin_Module_VT  is a CodeValidationTable
+30746>>>>>>>    Set Type_Value        To "MODULE"
+30747>>>>>>>    //DDB-ValidationCustomStart
+30747>>>>>>>    //DDB-ValidationCustomEnd
+30747>>>>>>>End_Object   // Ctypkin_Ctypkin_Module_VT
+30748>>>>>>>//DDB-ValidationEnd
+30748>>>>>>>//DDB-SelectionStart
+30748>>>>>>>//DDB/ ExternalSelectionList sl007  sl007.SL
+30748>>>>>>>Register_Object sl007
+30748>>>>>>>//DDB-SelectionEnd
+30748>>>>>>>
+30748>>>>>>>Class Ctypkin_DataDictionary  is a DataDictionary
+30749>>>>>>>         
+30749>>>>>>>    Procedure Construct_Object
+30750>>>>>>>        Forward Send Construct_Object
+30752>>>>>>>        Property Integer piMustNOTConstrain Public 0
+30753>>>>>>>    End_Procedure
+30754>>>>>>>
+30754>>>>>>>    Procedure Save_Main_File
+30755>>>>>>>        If (Operation_Origin<>Self) Begin
+30757>>>>>>>            If Ctypkin.Recnum Eq 0 Procedure_Return
+30760>>>>>>>        End
+30760>>>>>>>>
+30760>>>>>>>        Forward Send Save_Main_File
+30762>>>>>>>    End_Procedure
+30763>>>>>>>
+30763>>>>>>>     Procedure Creating
+30764>>>>>>>        Forward Send Creating
+30766>>>>>>>        // Insert Code Here
+30766>>>>>>>        Move (Append('',((Trim(SysCurXR.Branch_Site))+;                          (Trim(String(Ctypkin.Ctypkin_Rec0)))))) to Ctypkin.Ctypkin_Recr
+30767>>>>>>>    End_Procedure   // Creating
+30768>>>>>>>
+30768>>>>>>>
+30768>>>>>>>    // Define_Fields:
+30768>>>>>>>    // This procedure is used to set up all data-dictionary rules.
+30768>>>>>>>
+30768>>>>>>>    Procedure Define_Fields
+30769>>>>>>>        Forward Send Define_Fields
+30771>>>>>>>        //DDB-Generated-Code-Location
+30771>>>>>>>        //DDB-DefineFieldStart
+30771>>>>>>>
+30771>>>>>>>        Set Main_File            To Ctypkin.File_Number
+30772>>>>>>>        Set Cascade_Delete_State To FALSE
+30773>>>>>>>
+30773>>>>>>>        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+30774>>>>>>>        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+30775>>>>>>>        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+30776>>>>>>>
+30776>>>>>>>        // Child (Client) file structure................
+30776>>>>>>>        Send Add_Client_File  Cmoves.File_Number
+30777>>>>>>>        Send Add_Client_File  Cflagkin.File_Number
+30778>>>>>>>        Send Add_Client_File  Ptypparl.File_Number
+30779>>>>>>>        Send Add_Client_File  Ptyppar.File_Number
+30780>>>>>>>        Send Add_Client_File  Hmctyp.File_Number
+30781>>>>>>>        Send Add_Client_File  Cmovesa.File_Number
+30782>>>>>>>
+30782>>>>>>>        // External (System) file structure.............
+30782>>>>>>>        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+30783>>>>>>>        Send Add_System_File  Syscurxr.File_Number  DD_LOCK_ON_ALL
+30784>>>>>>>
+30784>>>>>>>        Define_Auto_Increment  Sysrecc.Ctypkin_Rec0  To Ctypkin.Ctypkin_Rec0
+30787>>>>>>>
+30787>>>>>>>        // Field-based properties.......................
+30787>>>>>>>
+30787>>>>>>>        // Ctypkin.Company_Code
+30787>>>>>>>
+30787>>>>>>>        // Ctypkin.Branch_Code
+30787>>>>>>>
+30787>>>>>>>        // Ctypkin.Year_Year
+30787>>>>>>>
+30787>>>>>>>        // Ctypkin.Ctypkin_Code
+30787>>>>>>>        Set Field_Options          Field Ctypkin.Ctypkin_Code To DD_AUTOFIND   
+30788>>>>>>>        Set Field_Prompt_Object    Field Ctypkin.Ctypkin_Code To (sl007(Self))
+30789>>>>>>>        Set Key_Field_State        Field Ctypkin.Ctypkin_Code To TRUE
+30790>>>>>>>
+30790>>>>>>>        // Ctypkin.Ctypkin_Rec0
+30790>>>>>>>
+30790>>>>>>>        // Ctypkin.Ctypkin_Recr
+30790>>>>>>>
+30790>>>>>>>        // Ctypkin.Year_Recr
+30790>>>>>>>
+30790>>>>>>>        // Ctypkin.Ctypkin_Descr
+30790>>>>>>>        Set Field_Prompt_Object    Field Ctypkin.Ctypkin_Descr To (sl007(Self))
+30791>>>>>>>
+30791>>>>>>>        // Ctypkin.Ctypkin_Anti
+30791>>>>>>>
+30791>>>>>>>        // Ctypkin.Ctypkin_Flags
+30791>>>>>>>
+30791>>>>>>>        // Ctypkin.Ctypkin_Module
+30791>>>>>>>        Set Field_Value_Table      Field Ctypkin.Ctypkin_Module To (Ctypkin_Ctypkin_Module_VT(Self))
+30792>>>>>>>
+30792>>>>>>>        // Ctypkin.Open_Item
+30792>>>>>>>
+30792>>>>>>>        // Ctypkin.Check_Overhead
+30792>>>>>>>
+30792>>>>>>>        // Ctypkin.Max_Days_Sx_Par
+30792>>>>>>>
+30792>>>>>>>        // Ctypkin.Singular
+30792>>>>>>>
+30792>>>>>>>        // Ctypkin.Sub
+30792>>>>>>>
+30792>>>>>>>        // Ctypkin.Subreport
+30792>>>>>>>
+30792>>>>>>>        //DDB-DefineFieldEnd
+30792>>>>>>>    End_Procedure    // Define_Fields
+30793>>>>>>>
+30793>>>>>>>    // Field_Defaults:
+30793>>>>>>>    // This procedure is used to establish default field values.
+30793>>>>>>>
+30793>>>>>>>    Procedure Field_Defaults
+30794>>>>>>>        Forward Send Field_Defaults
+30796>>>>>>>        //DDB-Generated-Code-Location
+30796>>>>>>>        //DDB-FieldDefaultStart
+30796>>>>>>>        //DDB-FieldDefaultEnd
+30796>>>>>>>    End_Procedure    // Field_Defaults
+30797>>>>>>>
+30797>>>>>>>End_Class    // Ctypkin_DataDictionary
+30798>>>>>>>//DDB-Selection-pkg-Start
+30798>>>>>>>
+30798>>>>>>>Use sl007.SL         // sl007
+30798>>>>>>>
+30798>>>>>>>//DDB-Selection-pkg-End
+30798>>>>>>>//DDB-FileEnd
+30798>>>>>
+30798>>>>>//AB-IgnoreEnd
+30798>>>>>
+30798>>>>>Object sl007 is a dbModalPanelSub
+30800>>>>>
+30800>>>>>    //AB-StoreTopStart
+30800>>>>>    Property String psModule Public ''
+30802>>>>>    
+30802>>>>>    //AB-StoreTopEnd
+30802>>>>>
+30802>>>>>    Set Label to "‰ ¤ã©œ ª    "
+30803>>>>>    Set Size to 148 350
+30804>>>>>    Set Location to 4 7
+30805>>>>>    Set Exit_Application_Local_State to FALSE
+30806>>>>>    Set Modal_State to FALSE
+30807>>>>>
+30807>>>>>    //AB-DDOStart
+30807>>>>>
+30807>>>>>    Object Ctypkin_DD is a Ctypkin_DataDictionary
+30809>>>>>
+30809>>>>>        //AB-StoreStart
+30809>>>>>                                
+30809>>>>>        Begin_Constraints
+30811>>>>>            If (psModule(sl007(Self))<>'') Constrain Ctypkin.Ctypkin_Module eq (psModule(sl007(Self)))
+30815>>>>>        End_Constraints
+30818>>>>>        
+30818>>>>>        
+30818>>>>>        
+30818>>>>>        
+30818>>>>>        //AB-StoreEnd
+30818>>>>>
+30818>>>>>    End_Object    // Ctypkin_DD
+30819>>>>>
+30819>>>>>    Set Main_DD to (Ctypkin_DD(self))
+30820>>>>>    Set Server to (Ctypkin_DD(self))
+30821>>>>>
+30821>>>>>    //AB-DDOEnd
+30821>>>>>
+30821>>>>>    Object oSelList is a dbListSub
+30823>>>>>        Set Main_File to Ctypkin.File_Number
+30824>>>>>        Set Size to 105 335
+30825>>>>>        Set Location to 6 6
+30826>>>>>
+30826>>>>>        Begin_Row
+30829>>>>>            Entry_Item Ctypkin.Ctypkin_code
+30830>>>>>            Entry_Item Ctypkin.Ctypkin_descr
+30831>>>>>        End_Row
+30836>>>>>
+30836>>>>>        Set Form_Width    item 0 to 71
+30837>>>>>        Set Header_Label  item 0 to "‰à› ¡æª ‰ ¤ã©œàª"
+30838>>>>>        
+30838>>>>>        Set Form_Width    item 1 to 255
+30839>>>>>        Set Header_Label  item 1 to "œ¨ š¨˜­ã ‰ ¤ã©œàª"
+30840>>>>>        
+30840>>>>>
+30840>>>>>        //AB-StoreStart
+30840>>>>>                    
+30840>>>>>                    
+30840>>>>>        Procedure Activate
+30842>>>>>            Forward Send Activate
+30844>>>>>            Send Beginning_Of_Data to oSelList True
+30845>>>>>        End_Procedure
+30846>>>>>        
+30846>>>>>        
+30846>>>>>        
+30846>>>>>        
+30846>>>>>        //AB-StoreEnd
+30846>>>>>
+30846>>>>>    End_Object    // oSelList
+30847>>>>>
+30847>>>>>    Object oOK_bn is a ButtonSub
+30849>>>>>        Set Label to "&„§ ¢¦šã"
+30850>>>>>        Set Location to 113 171
+30851>>>>>
+30851>>>>>        //AB-StoreStart
+30851>>>>>        Procedure OnClick
+30853>>>>>            Send OK To (oSelList(current_object))
+30854>>>>>        End_Procedure
+30855>>>>>        //AB-StoreEnd
+30855>>>>>
+30855>>>>>    End_Object    // oOK_bn
+30856>>>>>
+30856>>>>>    Object oCancel_bn is a ButtonSub
+30858>>>>>        Set Label to "&€¡ç¨à©ž"
+30859>>>>>        Set Location to 113 226
+30860>>>>>
+30860>>>>>        //AB-StoreStart
+30860>>>>>        Procedure OnClick
+30862>>>>>            Send Cancel To (oSelList(current_object))
+30863>>>>>        End_Procedure
+30864>>>>>        //AB-StoreEnd
+30864>>>>>
+30864>>>>>    End_Object    // oCancel_bn
+30865>>>>>
+30865>>>>>    Object oSearch_bn is a ButtonSub
+30867>>>>>        Set Label to "€&¤˜ã«ž©ž"
+30868>>>>>        Set Location to 113 281
+30869>>>>>
+30869>>>>>        //AB-StoreStart
+30869>>>>>        Procedure OnClick
+30871>>>>>            Send Search To (oSelList(current_object))
+30872>>>>>        End_Procedure
+30873>>>>>        //AB-StoreEnd
+30873>>>>>
+30873>>>>>    End_Object    // oSearch_bn
+30874>>>>>
+30874>>>>>
+30874>>>>>    //AB-StoreStart
+30874>>>>>    On_Key Key_Alt+Key_E Send KeyAction To (oOk_bn(current_object))
+30875>>>>>    On_Key Key_Alt+Key_A Send KeyAction To (oCancel_bn(current_object))
+30876>>>>>    On_Key Key_Alt+Key_N Send KeyAction To (oSearch_bn(current_object))
+30877>>>>>    
+30877>>>>>    Procedure Activate Returns Integer
+30879>>>>>        Integer rVal
+30880>>>>>        Send Rebuild_Constraints to Ctypkin_DD
+30881>>>>>        Forward Get Msg_Activate to rVal
+30883>>>>>        Procedure_Return rVal
+30884>>>>>    End_Procedure
+30885>>>>>    
+30885>>>>>    //AB-StoreEnd
+30885>>>>>
+30885>>>>>End_Object    // sl007
+30886>>>>>
+30886>>>>>//AB/ End_Object    // prj
+30886>>>use hmgio.sl
+INCLUDING FILE: HMGIO.SL
+30886>>>>>//AB/ Project Hmgio:Lookup
+30886>>>>>//AB/ Object prj is a Lookup_Project
+30886>>>>>//AB/     Set ProjectName to "Hmgio:Lookup"
+30886>>>>>//AB/     Set ProjectFileName to "Hmgio.SL"
+30886>>>>>//AB/     Set GenerateFileName to "NONAME"
+30886>>>>>
+30886>>>>>// Project Object Structure
+30886>>>>>//   Hmgio is a dbModalPanelSub
+30886>>>>>//     Hmgio_DD is a DataDictionary
+30886>>>>>//     oSelList is a dbListSub
+30886>>>>>//     oOK_bn is a ButtonSub
+30886>>>>>//     oCancel_bn is a ButtonSub
+30886>>>>>//     oSearch_bn is a ButtonSub
+30886>>>>>
+30886>>>>>// Register all objects
+30886>>>>>Register_Object Hmgio
+30886>>>>>Register_Object Hmgio_DD
+30886>>>>>Register_Object oCancel_bn
+30886>>>>>Register_Object oOK_bn
+30886>>>>>Register_Object oSearch_bn
+30886>>>>>Register_Object oSelList
+30886>>>>>
+30886>>>>>
+30886>>>>>//AB-IgnoreStart
+30886>>>>>
+30886>>>>>Use DFAllEnt.pkg
+30886>>>>>Use dbList.Sub
+30886>>>>>Use Button.Sub
+30886>>>>>
+30886>>>>>
+30886>>>>>Use HMGIO.DD
+INCLUDING FILE: HMGIO.DD
+30886>>>>>>>//DDB-FileStart
+30886>>>>>>>//DDB-HeaderStart
+30886>>>>>>>
+30886>>>>>>>// File Name : HMGIO.DD
+30886>>>>>>>// Class Name: Hmgio_DataDictionary
+30886>>>>>>>// Revision  : 8
+30886>>>>>>>// Version   : 2
+30886>>>>>>>
+30886>>>>>>>Use  Windows           // Basic Definitions
+30886>>>>>>>Use  DataDict          // DataDictionary Class Definition
+30886>>>>>>>Use  DDvalTbl          // Validation Table Class Definitions
+30886>>>>>>>
+30886>>>>>>>Open Hmgio
+INCLUDING FILE: HMGIO.FD
+30888>>>>>>>Open Hmctyp
+30890>>>>>>>Open Sysrecc
+30892>>>>>>>
+30892>>>>>>>//DDB-HeaderEnd
+30892>>>>>>>//DDB-ValidationStart
+30892>>>>>>>
+30892>>>>>>>Register_Object Hmgio_Hmgio_Module_VT
+30892>>>>>>>
+30892>>>>>>>Object Hmgio_Hmgio_Module_VT  is a CodeValidationTable
+30894>>>>>>>    Set Type_Value        To "MODULE"
+30895>>>>>>>    Set Validate_State    To FALSE
+30896>>>>>>>    Set Allow_Blank_State To TRUE
+30897>>>>>>>    //DDB-ValidationCustomStart
+30897>>>>>>>    //DDB-ValidationCustomEnd
+30897>>>>>>>End_Object   // Hmgio_Hmgio_Module_VT
+30898>>>>>>>//DDB-ValidationEnd
+30898>>>>>>>//DDB-SelectionStart
+30898>>>>>>>//DDB/ ExternalSelectionList Hmgio  Hmgio.SL
+30898>>>>>>>Register_Object Hmgio
+30898>>>>>>>//DDB-SelectionEnd
+30898>>>>>>>
+30898>>>>>>>Class Hmgio_DataDictionary  is a DataDictionary_Sec
+ERROR: 4345 Type check error U_DATADICTIONARY_SEC, U_DATADICTIONARY_SEC,  ON LINE: 35 (30898) OF FILE: L:\Vdf6\Develop\Empor\DDSrc\HMGIO.DD
+ERROR: 4328 Undefined symbol in argument U_DATADICTIONARY_SEC ON LINE: 35 (30898) OF FILE: L:\Vdf6\Develop\Empor\DDSrc\HMGIO.DD
+30899>>>>>>>
+30899>>>>>>>    // Define_Fields:
+30899>>>>>>>    // This procedure is used to set up all data-dictionary rules.
+30899>>>>>>>
+30899>>>>>>>    Procedure Define_Fields
+30900>>>>>>>        Forward Send Define_Fields
+30902>>>>>>>        //DDB-Generated-Code-Location
+30902>>>>>>>        //DDB-DefineFieldStart
+30902>>>>>>>
+30902>>>>>>>        Set Main_File            To Hmgio.File_Number
+30903>>>>>>>        Set Cascade_Delete_State To FALSE
+30904>>>>>>>
+30904>>>>>>>        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ    
+30905>>>>>>>        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ    
+30906>>>>>>>        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+30907>>>>>>>
+30907>>>>>>>        // Child (Client) file structure................
+30907>>>>>>>        Send Add_Client_File  Hmctyp.File_Number
+30908>>>>>>>
+30908>>>>>>>        // External (System) file structure.............
+30908>>>>>>>        Send Add_System_File  Sysrecc.File_Number  DD_LOCK_ON_ALL
+30909>>>>>>>
+30909>>>>>>>        Define_Auto_Increment  Sysrecc.Hmgio_Code  To Hmgio.Hmgio_Code
+30912>>>>>>>
+30912>>>>>>>        // Field-based properties.......................
+30912>>>>>>>
+30912>>>>>>>        // Hmgio.Hmgio_Code
+30912>>>>>>>        Set Field_Options          Field Hmgio.Hmgio_Code To DD_AUTOFIND   
+30913>>>>>>>        Set Field_Prompt_Object    Field Hmgio.Hmgio_Code To (Hmgio(Self))
+30914>>>>>>>        Set Key_Field_State        Field Hmgio.Hmgio_Code To TRUE
+30915>>>>>>>
+30915>>>>>>>        // Hmgio.Hmgio_Descr
+30915>>>>>>>        Set Field_Prompt_Object    Field Hmgio.Hmgio_Descr To (Hmgio(Self))
+30916>>>>>>>
+30916>>>>>>>        // Hmgio.Hmgio_Module
+30916>>>>>>>        Set Field_Value_Table      Field Hmgio.Hmgio_Module To (Hmgio_Hmgio_Module_VT(Self))
+30917>>>>>>>
+30917>>>>>>>        //DDB-DefineFieldEnd
+30917>>>>>>>    End_Procedure    // Define_Fields
+30918>>>>>>>
+30918>>>>>>>    // Field_Defaults:
+30918>>>>>>>    // This procedure is used to establish default field values.
+30918>>>>>>>
+30918>>>>>>>    Procedure Field_Defaults
+30919>>>>>>>        Forward Send Field_Defaults
+30921>>>>>>>        //DDB-Generated-Code-Location
+30921>>>>>>>        //DDB-FieldDefaultStart
+30921>>>>>>>        //DDB-FieldDefaultEnd
+30921>>>>>>>    End_Procedure    // Field_Defaults
+30922>>>>>>>
+30922>>>>>>>End_Class    // Hmgio_DataDictionary
+30923>>>>>>>//DDB-Selection-pkg-Start
+30923>>>>>>>
+30923>>>>>>>Use Hmgio.SL         // Hmgio
+30923>>>>>>>
+30923>>>>>>>//DDB-Selection-pkg-End
+30923>>>>>>>//DDB-FileEnd
+30923>>>>>
+30923>>>>>//AB-IgnoreEnd
+30923>>>>>
+30923>>>>>Object Hmgio is a dbModalPanelSub
+30925>>>>>
+30925>>>>>    //AB-StoreTopStart
+30925>>>>>    Property String psModule Public ''
+30927>>>>>    
+30927>>>>>    //AB-StoreTopEnd
+30927>>>>>
+30927>>>>>    Set Label to "†£œ¨¦¢æš ˜"
+30928>>>>>    Set Size to 200 297
+30929>>>>>    Set Location to 4 5
+30930>>>>>    Set Exit_Application_Local_State to FALSE
+30931>>>>>    Set Modal_State to FALSE
+30932>>>>>
+30932>>>>>    //AB-DDOStart
+30932>>>>>
+30932>>>>>    Object Hmgio_DD is a Hmgio_DataDictionary
+30934>>>>>
+30934>>>>>        //AB-StoreStart
+30934>>>>>        Function fiEggrafh_OK Returns Integer
+30936>>>>>            Integer rVal
+30937>>>>>            String sModule
+30937>>>>>            Get psModule to sModule
+30938>>>>>            If ((hmgio.Hmgio_Module=smodule) Or (hmgio.Hmgio_Module='04')) Move 1 to rVal
+30941>>>>>            Function_Return rVal
+30942>>>>>        End_Function
+30943>>>>>        
+30943>>>>>        Begin_Constraints
+30945>>>>>             Constrain hmgio as (fiEggrafh_OK(Self)=1)
+30946>>>>>        End_Constraints
+30949>>>>>        
+30949>>>>>        
+30949>>>>>        
+30949>>>>>        
+30949>>>>>        
+30949>>>>>        //AB-StoreEnd
+30949>>>>>
+30949>>>>>    End_Object    // Hmgio_DD
+30950>>>>>
+30950>>>>>    Set Main_DD to (Hmgio_DD(self))
+30951>>>>>    Set Server to (Hmgio_DD(self))
+30952>>>>>
+30952>>>>>    //AB-DDOEnd
+30952>>>>>
+30952>>>>>    Object oSelList is a dbListSub
+30954>>>>>        Set Main_File to Hmgio.File_Number
+30955>>>>>        Set Size to 161 280
+30956>>>>>        Set Location to 6 6
+30957>>>>>        Set Auto_Index_State to FALSE
+30958>>>>>
+30958>>>>>        Begin_Row
+30961>>>>>            Entry_Item Hmgio.Hmgio_code
+30962>>>>>            Entry_Item Hmgio.Hmgio_descr
+30963>>>>>        End_Row
+30968>>>>>
+30968>>>>>        Set Form_Width    item 0 to 84
+30969>>>>>        Set Header_Label  item 0 to "‰à› ¡æª"
+30970>>>>>        
+30970>>>>>        Set Form_Width    item 1 to 188
+30971>>>>>        Set Header_Label  item 1 to "œ¨ š¨˜­ã"
+30972>>>>>        
+30972>>>>>
+30972>>>>>        //AB-StoreStart
+30972>>>>>                                    
+30972>>>>>        Procedure Activate
+30974>>>>>            Forward Send Activate
+30976>>>>>            Send Rebuild_Constraints to Hmgio_DD
+30977>>>>>            Send Beginning_Of_Data to oSelList True
+30978>>>>>        End_Procedure
+30979>>>>>        
+30979>>>>>        //AB-StoreEnd
+30979>>>>>
+30979>>>>>    End_Object    // oSelList
+30980>>>>>
+30980>>>>>    Object oOK_bn is a ButtonSub
+30982>>>>>        Set Label to "&„§ ¢¦šã"
+30983>>>>>        Set Location to 169 131
+30984>>>>>
+30984>>>>>        //AB-StoreStart
+30984>>>>>        Procedure OnClick
+30986>>>>>            Send OK To (oSelList(current_object))
+30987>>>>>        End_Procedure
+30988>>>>>        //AB-StoreEnd
+30988>>>>>
+30988>>>>>    End_Object    // oOK_bn
+30989>>>>>
+30989>>>>>    Object oCancel_bn is a ButtonSub
+30991>>>>>        Set Label to "&€¡ç¨à©ž"
+30992>>>>>        Set Location to 169 185
+30993>>>>>
+30993>>>>>        //AB-StoreStart
+30993>>>>>        Procedure OnClick
+30995>>>>>            Send Cancel To (oSelList(current_object))
+30996>>>>>        End_Procedure
+30997>>>>>        //AB-StoreEnd
+30997>>>>>
+30997>>>>>    End_Object    // oCancel_bn
+30998>>>>>
+30998>>>>>    Object oSearch_bn is a ButtonSub
+31000>>>>>        Set Label to "€&¤˜ã«ž©ž"
+31001>>>>>        Set Location to 169 241
+31002>>>>>
+31002>>>>>        //AB-StoreStart
+31002>>>>>        Procedure OnClick
+31004>>>>>            Send Search To (oSelList(current_object))
+31005>>>>>        End_Procedure
+31006>>>>>        //AB-StoreEnd
+31006>>>>>
+31006>>>>>    End_Object    // oSearch_bn
+31007>>>>>
+31007>>>>>
+31007>>>>>    //AB-StoreStart
+31007>>>>>    On_Key Key_Alt+Key_E Send KeyAction To (oOk_bn(current_object))
+31008>>>>>    On_Key Key_Alt+Key_A Send KeyAction To (oCancel_bn(current_object))
+31009>>>>>    On_Key Key_Alt+Key_N Send KeyAction To (oSearch_bn(current_object))
+31010>>>>>    
+31010>>>>>    //AB-StoreEnd
+31010>>>>>
+31010>>>>>End_Object    // Hmgio
+31011>>>>>
+31011>>>>>//AB/ End_Object    // prj
+31011>>>use r101.rv
+INCLUDING FILE: R101.RV
+31011>>>>>//AB/ Project R101:ektyposh hmerologion foreon
+31011>>>>>//AB/     Object prj is a Report_Project
+31011>>>>>//AB/         Set ProjectName to "R101:ektyposh hmerologion foreon"
+31011>>>>>//AB/         Set ProjectFileName to "r101.RV"
+31011>>>>>
+31011>>>>>// Project Object Structure
+31011>>>>>//   r101 is a ReportView
+31011>>>>>//     DestRadio is a RadioGroup
+31011>>>>>//       WindowRadio is a Radio
+31011>>>>>//     ButtonSub1 is a Button
+31011>>>>>//     ButtonSub3 is a ButtonSub
+31011>>>>>//     parWQLReport is a CrystalReportSubSQL
+31011>>>>>
+31011>>>>>// Register all objects
+31011>>>>>Register_Object ButtonSub1
+31011>>>>>Register_Object ButtonSub3
+31011>>>>>Register_Object DestRadio
+31011>>>>>Register_Object parWQLReport
+31011>>>>>Register_Object r101
+31011>>>>>Register_Object WindowRadio
+31011>>>>>
+31011>>>>>
+31011>>>>>//AB/     Report View
+31011>>>>>
+31011>>>>>
+31011>>>>>    //AB-StoreTopStart
+31011>>>>>    Use dfallrpt
+31011>>>>>
+31011>>>>>
+31011>>>>>
+31011>>>>>    //AB-StoreTopEnd
+31011>>>>>
+31011>>>>>    //AB-IgnoreStart
+31011>>>>>
+31011>>>>>    Use DFAllEnt.pkg
+31011>>>>>    Use Button.Sub
+31011>>>>>
+31011>>>>>    //AB-IgnoreEnd
+31011>>>>>
+31011>>>>>    ACTIVATE_VIEW Activate_r101 FOR r101
+31015>>>>>
+31015>>>>>    Object r101 is a ReportView
+31017>>>>>
+31017>>>>>        //AB-StoreTopStart
+31017>>>>>        property number pnhmgio     public 0
+31019>>>>>        property string psmodule    public ''
+31021>>>>>        //AB-StoreTopEnd
+31021>>>>>
+31021>>>>>        Set Label to "„¡«ç§à©ž †£œ¨¦¢¦šåà¤ ”¦¨âà¤"
+31022>>>>>        Set Size to 48 177
+31023>>>>>        Set Location to 10 167
+31024>>>>>
+31024>>>>>        //AB-DDOStart
+31024>>>>>
+31024>>>>>
+31024>>>>>        //AB-DDOEnd
+31024>>>>>
+31024>>>>>        Object DestRadio is a RadioGroup
+31026>>>>>
+31026>>>>>            //AB-StoreTopStart
+31026>>>>>
+31026>>>>>            //AB-StoreTopEnd
+31026>>>>>
+31026>>>>>            Set Label to "„¡«ç§à©ž"
+31027>>>>>            Set Size to 29 49
+31028>>>>>            Set Location to 2 1
+31029>>>>>            Object WindowRadio is a Radio
+31031>>>>>                Set Size to 13 30
+31032>>>>>                Set Location to 12 12
+31033>>>>>                Set Bitmap to "screen4.bmp"
+31034>>>>>            End_Object    // WindowRadio
+31035>>>>>
+31035>>>>>
+31035>>>>>            //AB-StoreStart
+31035>>>>>            set visible_state of (destradio(self)) to false
+31036>>>>>            Set Output_Device_Mode To WQL_PRINT_TO_WINDOW
+31037>>>>>
+31037>>>>>
+31037>>>>>
+31037>>>>>
+31037>>>>>
+31037>>>>>            //AB-StoreEnd
+31037>>>>>
+31037>>>>>        End_Object    // DestRadio
+31038>>>>>
+31038>>>>>        Object ButtonSub1 is a Button
+31040>>>>>
+31040>>>>>            //AB-StoreTopStart
+31040>>>>>
+31040>>>>>            //AB-StoreTopEnd
+31040>>>>>
+31040>>>>>            Set Bitmap to "RUNPROG.BMP"
+31041>>>>>            Set Size to 18 29
+31042>>>>>            Set Location to 6 55
+31043>>>>>
+31043>>>>>            //AB-StoreStart
+31043>>>>>            Procedure OnClick
+31045>>>>>               Send RunparReport To (parWQLReport(Current_Object))
+31046>>>>>            End_Procedure
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>
+31047>>>>>            //AB-StoreEnd
+31047>>>>>
+31047>>>>>        End_Object    // ButtonSub1
+31048>>>>>
+31048>>>>>        Object ButtonSub3 is a ButtonSub
+31050>>>>>
+31050>>>>>            //AB-StoreTopStart
+31050>>>>>
+31050>>>>>            //AB-StoreTopEnd
+31050>>>>>
+31050>>>>>            Set Bitmap to "CANCEL.BMP"
+31051>>>>>            Set Size to 18 29
+31052>>>>>            Set Location to 6 89
+31053>>>>>
+31053>>>>>            //AB-StoreStart
+31053>>>>>            Procedure OnClick
+31055>>>>>                Send Request_Cancel
+31056>>>>>            End_Procedure
+31057>>>>>
+31057>>>>>
+31057>>>>>
+31057>>>>>
+31057>>>>>            //AB-StoreEnd
+31057>>>>>
+31057>>>>>        End_Object    // ButtonSub3
+31058>>>>>
+31058>>>>>
+31058>>>>>        //AB-StoreStart
+31058>>>>>        Object parWQLReport Is A CrystalReportSubSQL
+ERROR: 4345 Type check error U_CRYSTALREPORTSUBSQL, U_CRYSTALREPORTSUBSQL,  ON LINE: 166 (31058) OF FILE: L:\Vdf6\Develop\Empor\AppSrc\R101.RV
+ERROR: 4328 Undefined symbol in argument U_CRYSTALREPORTSUBSQL ON LINE: 166 (31058) OF FILE: L:\Vdf6\Develop\Empor\AppSrc\R101.RV
+31060>>>>>            Property Integer ReportReady Public False
+31062>>>>>            set Report_name    To "r101.rpt"
+31063>>>>>            Set Report_View_id To (Parent(Current_object))
+31064>>>>>
+31064>>>>>             Procedure OnStartPrinting
+31066>>>>>                Local String  Selection FileName smodule lsdate  wrecr
+31067>>>>>                Local Integer FileType Destination SortOrder NumSortFields CurSortField
+31067>>>>>                Local Integer SortDirection
+31067>>>>>                local number nhmgio
+31067>>>>>                Move "" To Selection
+31068>>>>>                get pnhmgio to nhmgio
+31069>>>>>                get psmodule to smodule
+31070>>>>>                Append Selection  "{hmgio.hmgio_module} = " '"' (trim(smodule)) '"'
+31074>>>>>                if (nhmgio<>0);                   Append Selection (If(Selection <> "", " and ", "")) "{hmgio.hmgio_code} = " '' (nhmgio) ''
+31081>>>>>                Set SelectionFormula To Selection
+31082>>>>>                Get NSortFields To NumSortFields
+31083>>>>>                For CurSortField From 0 To (NumSortFields - 1)
+31089>>>>>>
+31089>>>>>                Send DeleteNthSortField 0
+31090>>>>>                Loop
+31091>>>>>>
+31091>>>>>                If Selection Eq "" ;                    Set Formula "SelTxt" To ('"' + "NONE" + '"')
+31094>>>>>                Else ;                    Set Formula "SelTxt" To ('"' + (Replaces('"', Selection, "")) + '"')
+31096>>>>>                set formula "fmodule" to (winql_string(smodule))
+31097>>>>>                move WQL_PRINT_TO_WINDOW to destination
+31098>>>>>                If Destination EQ WQL_PRINT_TO_WINDOW ;                    Set ReportReady To False
+31101>>>>>                Else ;                    Set ReportReady To True
+31103>>>>>            End_procedure // OnStartPrinting
+31104>>>>>            Procedure RunparReport
+31106>>>>>                Send Cursor_Wait To (Cursor_Control(Current_Object))
+31107>>>>>                Send Run_report
+31108>>>>>                Send Cursor_Ready To (Cursor_Control(Current_Object))
+31109>>>>>                If (ReportReady(Current_object)) ;                    Send Info_box "WinQL report ready."
+31112>>>>>            End_procedure // RunCustReport
+31113>>>>>
+31113>>>>>        End_object
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        
+31114>>>>>        //AB-StoreEnd
+31114>>>>>
+31114>>>>>    End_Object    // r101
+31115>>>>>
+31115>>>>>
+31115>>>>>    //AB-StoreStart
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>                                
+31115>>>>>    //AB-StoreEnd
+31115>>>>>
+31115>>>>>//AB/     End_Object    // prj
+31115>>>//AB-StoreTopEnd
+31115>>>
+31115>>>//AB-IgnoreStart
+31115>>>
+31115>>>Use dbView.Sub
+31115>>>Use DFAllEnt.pkg
+31115>>>Use dbForm.Sub
+31115>>>Use dbCmbfrm.Sub
+31115>>>Use dbGrid.Sub
+31115>>>Use Txtbox.Sub
+31115>>>Use dbGroup.Sub
+31115>>>Use Button.Sub
+31115>>>
+31115>>>Use CTYPKIN.DD
+31115>>>Use SYSCURXR.DD
+INCLUDING FILE: SYSCURXR.DD
+31115>>>>>//DDB-FileStart
+31115>>>>>//DDB-HeaderStart
+31115>>>>>
+31115>>>>>// File Name : SYSCURXR.DD
+31115>>>>>// Class Name: Syscurxr_DataDictionary
+31115>>>>>// Revision  : 8
+31115>>>>>// Version   : 2
+31115>>>>>
+31115>>>>>Use  Windows           // Basic Definitions
+31115>>>>>Use  DataDict          // DataDictionary Class Definition
+31115>>>>>Use  DDvalTbl          // Validation Table Class Definitions
+31115>>>>>
+31115>>>>>Open Syscurxr
+31117>>>>>
+31117>>>>>//DDB-HeaderEnd
+31117>>>>>
+31117>>>>>Class Syscurxr_DataDictionary  is a DataDictionary_Sec
+ERROR: 4345 Type check error U_DATADICTIONARY_SEC, U_DATADICTIONARY_SEC,  ON LINE: 17 (31117) OF FILE: L:\Vdf6\Develop\Empor\DDSrc\SYSCURXR.DD
+ERROR: 4328 Undefined symbol in argument U_DATADICTIONARY_SEC ON LINE: 17 (31117) OF FILE: L:\Vdf6\Develop\Empor\DDSrc\SYSCURXR.DD
+31118>>>>>
+31118>>>>>    // Define_Fields:
+31118>>>>>    // This procedure is used to set up all data-dictionary rules.
+31118>>>>>
+31118>>>>>    Procedure Define_Fields
+31119>>>>>        Forward Send Define_Fields
+31121>>>>>        //DDB-Generated-Code-Location
+31121>>>>>        //DDB-DefineFieldStart
+31121>>>>>
+31121>>>>>        Set Main_File            To Syscurxr.File_Number
+31122>>>>>
+31122>>>>>        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+31123>>>>>        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+31124>>>>>        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+31125>>>>>
+31125>>>>>        // Field-based properties.......................
+31125>>>>>
+31125>>>>>        // Syscurxr.Company_Code
+31125>>>>>
+31125>>>>>        // Syscurxr.Branch_Code
+31125>>>>>
+31125>>>>>        // Syscurxr.Year_Year
+31125>>>>>
+31125>>>>>        // Syscurxr.Branch_Site
+31125>>>>>
+31125>>>>>        // Syscurxr.Year_Recr
+31125>>>>>
+31125>>>>>        // Syscurxr.Company_Name
+31125>>>>>
+31125>>>>>        // Syscurxr.Branch_Name
+31125>>>>>
+31125>>>>>        // Syscurxr.Year_Descr
+31125>>>>>
+31125>>>>>        // Syscurxr.C_Code0
+31125>>>>>
+31125>>>>>        // Syscurxr.C_Code00
+31125>>>>>
+31125>>>>>        // Syscurxr.C_Coder
+31125>>>>>
+31125>>>>>        // Syscurxr.Year_Xrhshfrom
+31125>>>>>
+31125>>>>>        // Syscurxr.Year_Xrhshto
+31125>>>>>
+31125>>>>>        // Syscurxr.Beto_Site
+31125>>>>>
+31125>>>>>        // Syscurxr.Euro_Code
+31125>>>>>
+31125>>>>>        //DDB-DefineFieldEnd
+31125>>>>>    End_Procedure    // Define_Fields
+31126>>>>>
+31126>>>>>    // Field_Defaults:
+31126>>>>>    // This procedure is used to establish default field values.
+31126>>>>>
+31126>>>>>    Procedure Field_Defaults
+31127>>>>>        Forward Send Field_Defaults
+31129>>>>>        //DDB-Generated-Code-Location
+31129>>>>>        //DDB-FieldDefaultStart
+31129>>>>>        //DDB-FieldDefaultEnd
+31129>>>>>    End_Procedure    // Field_Defaults
+31130>>>>>
+31130>>>>>End_Class    // Syscurxr_DataDictionary
+31131>>>>>//DDB-FileEnd
+31131>>>Use HMGIO.DD
+31131>>>Use HMCTYP.DD
+INCLUDING FILE: HMCTYP.DD
+31131>>>>>//DDB-FileStart
+31131>>>>>//DDB-HeaderStart
+31131>>>>>
+31131>>>>>// File Name : HMCTYP.DD
+31131>>>>>// Class Name: Hmctyp_DataDictionary
+31131>>>>>// Revision  : 4
+31131>>>>>// Version   : 2
+31131>>>>>
+31131>>>>>Use  Windows           // Basic Definitions
+31131>>>>>Use  DataDict          // DataDictionary Class Definition
+31131>>>>>Use  DDvalTbl          // Validation Table Class Definitions
+31131>>>>>
+31131>>>>>Open Hmctyp
+31133>>>>>Open Hmgio
+31135>>>>>Open Ctypkin
+31137>>>>>
+31137>>>>>//DDB-HeaderEnd
+31137>>>>>
+31137>>>>>Class Hmctyp_DataDictionary  is a DataDictionary_Sec
+ERROR: 4345 Type check error U_DATADICTIONARY_SEC, U_DATADICTIONARY_SEC,  ON LINE: 19 (31137) OF FILE: L:\Vdf6\Develop\Empor\DDSrc\HMCTYP.DD
+ERROR: 4328 Undefined symbol in argument U_DATADICTIONARY_SEC ON LINE: 19 (31137) OF FILE: L:\Vdf6\Develop\Empor\DDSrc\HMCTYP.DD
+31138>>>>>
+31138>>>>>    // Update:
+31138>>>>>
+31138>>>>>    Procedure Update
+31139>>>>>        Forward Send Update
+31141>>>>>        // Insert Code Here
+31141>>>>>        Move SysCurXR.Company_Code  to HmCtyp.Company_Code
+31142>>>>>        Move SysCurXR.Branch_Code   to HmCtyp.Branch_Code
+31143>>>>>        Move SysCurXR.Year_Year     to HmCtyp.Year_Year
+31144>>>>>        Move Ctypkin.Ctypkin_Code   to HmCtyp.Ctypkin_Code
+31145>>>>>    End_Procedure   // Update
+31146>>>>>
+31146>>>>>
+31146>>>>>    // Define_Fields:
+31146>>>>>    // This procedure is used to set up all data-dictionary rules.
+31146>>>>>
+31146>>>>>    Procedure Define_Fields
+31147>>>>>        Forward Send Define_Fields
+31149>>>>>        //DDB-Generated-Code-Location
+31149>>>>>        //DDB-DefineFieldStart
+31149>>>>>
+31149>>>>>        Set Main_File            To Hmctyp.File_Number
+31150>>>>>        Set Cascade_Delete_State To FALSE
+31151>>>>>
+31151>>>>>        Set Foreign_Field_Options  DD_KEYFIELD   To DD_AUTOFIND    DD_NOPUT       DD_FINDREQ
+31152>>>>>        Set Foreign_Field_Options  DD_INDEXFIELD To DD_NOPUT       DD_FINDREQ
+31153>>>>>        Set Foreign_Field_Options  DD_DEFAULT    To DD_DISPLAYONLY
+31154>>>>>
+31154>>>>>        // Parent (Server) file structure...............
+31154>>>>>        Send Add_Server_File  Hmgio.File_Number
+31155>>>>>        Send Add_Server_File  Ctypkin.File_Number
+31156>>>>>
+31156>>>>>        // Field-based properties.......................
+31156>>>>>
+31156>>>>>        // Hmctyp.Hmgio_Code
+31156>>>>>
+31156>>>>>        // Hmctyp.Ctypkin_Recr
+31156>>>>>
+31156>>>>>        // Hmctyp.Company_Code
+31156>>>>>
+31156>>>>>        // Hmctyp.Branch_Code
+31156>>>>>
+31156>>>>>        // Hmctyp.Year_Year
+31156>>>>>
+31156>>>>>        // Hmctyp.Ctypkin_Code
+31156>>>>>
+31156>>>>>        //DDB-DefineFieldEnd
+31156>>>>>    End_Procedure    // Define_Fields
+31157>>>>>
+31157>>>>>    // Field_Defaults:
+31157>>>>>    // This procedure is used to establish default field values.
+31157>>>>>
+31157>>>>>    Procedure Field_Defaults
+31158>>>>>        Forward Send Field_Defaults
+31160>>>>>        //DDB-Generated-Code-Location
+31160>>>>>        //DDB-FieldDefaultStart
+31160>>>>>        //DDB-FieldDefaultEnd
+31160>>>>>    End_Procedure    // Field_Defaults
+31161>>>>>
+31161>>>>>End_Class    // Hmctyp_DataDictionary
+31162>>>>>//DDB-FileEnd
+31162>>>
+31162>>>//AB-IgnoreEnd
+31162>>>
+31162>>>DEFERRED_VIEW Activate_Hmgio FOR ;;Object Hmgio is a dbViewSub
+31181>>>
+31181>>>    //AB-StoreTopStart
+31181>>>    Property String psModule Public ''
+31183>>>    property number nhmgio   public 0
+31185>>>    //AB-StoreTopEnd
+31185>>>
+31185>>>    Set Label to "Ž¨ ©£æª †£œ¨¦¢¦šåà¤ ¡˜  ‰ ¤ã©œà¤"
+31186>>>    Set Size to 247 449
+31187>>>    Set Location to 3 3
+31188>>>
+31188>>>    //AB-DDOStart
+31188>>>
+31188>>>    Object Ctypkin_DD is a Ctypkin_DataDictionary
+31190>>>
+31190>>>        //AB-StoreStart
+31190>>>                
+31190>>>        Begin_Constraints
+31192>>>            If (psModule(Self)<>'04') Constrain Ctypkin.Ctypkin_Module eq (psModule(Self))
+31196>>>        End_Constraints
+31199>>>        
+31199>>>        
+31199>>>        
+31199>>>        //AB-StoreEnd
+31199>>>
+31199>>>    End_Object    // Ctypkin_DD
+31200>>>
+31200>>>    Object Syscurxr_DD is a Syscurxr_DataDictionary
+31202>>>    End_Object    // Syscurxr_DD
+31203>>>
+31203>>>    Object Hmgio_DD is a Hmgio_DataDictionary
+31205>>>
+31205>>>        //AB-StoreTopStart
+31205>>>                
+31205>>>        //AB-StoreTopEnd
+31205>>>
+31205>>>
+31205>>>        //AB-StoreStart
+31205>>>                
+31205>>>        Begin_Constraints
+31207>>>            If (psModule(Self)<>'') Constrain Hmgio.Hmgio_Module eq (psModule(Self))
+31211>>>        End_Constraints
+31214>>>        
+31214>>>        Procedure Update
+31216>>>            String sModule sDescr
+31217>>>            Forward Send Update
+31219>>>            Move (psModule(Self)) to sModule
+31220>>>            Get gsfCode_Mast "MODULE" sModule   to sDescr
+31221>>>            Move (Trim(sDescr))                 to sDescr
+31222>>>            If (Trim(Hmgio.Hmgio_Module)='') Move sModule to Hmgio.Hmgio_Module
+31225>>>        End_Procedure
+31226>>>        
+31226>>>        
+31226>>>        
+31226>>>        
+31226>>>        
+31226>>>        
+31226>>>        
+31226>>>        
+31226>>>        
+31226>>>        //AB-StoreEnd
+31226>>>
+31226>>>    End_Object    // Hmgio_DD
+31227>>>
+31227>>>    Object Hmctyp_DD is a Hmctyp_DataDictionary
+31229>>>        Set DDO_Server to (Hmgio_DD(self))
+31230>>>        Set DDO_Server to (Ctypkin_DD(self))
+31231>>>        Set Constrain_File to Hmgio.File_Number
+31232>>>    End_Object    // Hmctyp_DD
+31233>>>
+31233>>>    Set Main_DD to (Hmgio_DD(self))
+31234>>>    Set Server to (Hmgio_DD(self))
+31235>>>
+31235>>>    //AB-DDOEnd
+31235>>>
+31235>>>    Object Hmgio_Hmgio_Code is a dbFormSub
+31237>>>        Entry_Item Hmgio.Hmgio_code
+31238>>>        Set Size to 13 97
+31239>>>        Set Location to 3 93
+31240>>>        Set Label_Col_Offset to 2
+31241>>>        Set Label_Justification_Mode to jMode_Right
+31242>>>
+31242>>>        //AB-StoreStart
+31242>>>                                                                                                
+31242>>>        procedure prompt
+31244>>>            if (psmodule(self)<>'') set psmodule of (hmgio(self)) to (psmodule(self))
+31247>>>            forward send prompt
+31249>>>        end_procedure
+31250>>>        
+31250>>>        
+31250>>>        
+31250>>>        
+31250>>>        //AB-StoreEnd
+31250>>>
+31250>>>    End_Object    // Hmgio_Hmgio_Code
+31251>>>
+31251>>>    Object Hmgio_Hmgio_Descr is a dbFormSub
+31253>>>        Entry_Item Hmgio.Hmgio_descr
+31254>>>        Set Size to 13 237
+31255>>>        Set Location to 3 199
+31256>>>        Set Label_Col_Offset to 2
+31257>>>        Set Label_Justification_Mode to jMode_Right
+31258>>>    End_Object    // Hmgio_Hmgio_Descr
+31259>>>
+31259>>>    Object Hmgio_Hmgio_Module is a dbComboFormSub
+31261>>>        Entry_Item Hmgio.Hmgio_module
+31262>>>        Set Size to 13 97
+31263>>>        Set Location to 18 93
+31264>>>        Set Label_Col_Offset to 2
+31265>>>        Set Label_Justification_Mode to jMode_Right
+31266>>>
+31266>>>        //AB-StoreStart
+31266>>>                                                    
+31266>>>                                                    
+31266>>>                                                    
+31266>>>        //AB-StoreEnd
+31266>>>
+31266>>>    End_Object    // Hmgio_Hmgio_Module
+31267>>>
+31267>>>    Object Hmctyp_ is a dbGridSub
+31269>>>        Set Main_File to Hmctyp.File_Number
+31270>>>        Set Server to (Hmctyp_DD(self))
+31271>>>        Set Size to 186 437
+31272>>>        Set Location to 41 2
+31273>>>        Set Wrap_State to TRUE
+31274>>>        Set Prompt_Button_Mode to pb_PromptOn
+31275>>>
+31275>>>        Begin_Row
+31278>>>            Entry_Item Ctypkin.Ctypkin_code
+31279>>>            Entry_Item Ctypkin.Ctypkin_descr
+31280>>>        End_Row
+31285>>>
+31285>>>        Set Form_Width    item 0 to 85
+31286>>>        Set Header_Label  item 0 to "‰à› ¡æª ‰å¤ž©žª"
+31287>>>        
+31287>>>        Set Form_Width    item 1 to 344
+31288>>>        Set Header_Label  item 1 to "œ¨ š¨˜­ã ‰å¤ž©žª"
+31289>>>        
+31289>>>
+31289>>>        //AB-StoreStart
+31289>>>                
+31289>>>        Set Column_Prompt_Object Item 0 to (sl007(Self))
+31290>>>        Set Column_Prompt_Object Item 1 to (sl007(Self))
+31291>>>        
+31291>>>        Procedure Prompt
+31293>>>            IF (psModule(Self)<>'') Set psModule Of (sl007(Self)) to (psModule(Self))
+31296>>>            IF (psModule(Self)='04') Set psModule Of (sl007(Self)) to ''
+31299>>>            Forward Send Prompt
+31301>>>        End_procedure
+31302>>>        
+31302>>>        
+31302>>>        
+31302>>>        
+31302>>>        
+31302>>>        
+31302>>>        
+31302>>>        
+31302>>>        //AB-StoreEnd
+31302>>>
+31302>>>    End_Object    // Hmctyp_
+31303>>>
+31303>>>    Object TextBoxSub1 is a TextBoxSub
+31305>>>        Set Label to "‰à› ¡æª †£œ¨¦¢¦šå¦¬"
+31306>>>        Set Location to 4 7
+31307>>>        Set Size to 10 80
+31308>>>    End_Object    // TextBoxSub1
+31309>>>
+31309>>>    Object TextBoxSub2 is a TextBoxSub
+31311>>>        Set Label to "‰ç¡¢à£˜"
+31312>>>        Set Location to 18 7
+31313>>>        Set Size to 10 29
+31314>>>    End_Object    // TextBoxSub2
+31315>>>
+31315>>>    Object dbGroupSub1 is a dbGroupSub
+31317>>>        Set Size to 26 437
+31318>>>        Set Location to 0 3
+31319>>>        Set Visible_State to FALSE
+31320>>>        Object Company_Company_Name is a dbFormSub
+31322>>>            Entry_Item Syscurxr.Company_name
+31323>>>            Set Server to (Syscurxr_DD(self))
+31324>>>            Set Size to 13 91
+31325>>>            Set Location to 9 54
+31326>>>            Set Label_Col_Offset to 2
+31327>>>            Set Label_Justification_Mode to jMode_Right
+31328>>>
+31328>>>            //AB-StoreStart
+31328>>>            SET ENABLED_STATE TO FALSE
+31329>>>            //AB-StoreEnd
+31329>>>
+31329>>>        End_Object    // Company_Company_Name
+31330>>>
+31330>>>        Object Branch_Branch_Name is a dbFormSub
+31332>>>            Entry_Item Syscurxr.Branch_name
+31333>>>            Set Server to (Syscurxr_DD(self))
+31334>>>            Set Size to 13 103
+31335>>>            Set Location to 9 203
+31336>>>            Set Label_Col_Offset to 2
+31337>>>            Set Label_Justification_Mode to jMode_Right
+31338>>>
+31338>>>            //AB-StoreStart
+31338>>>            SET ENABLED_STATE TO FALSE
+31339>>>            //AB-StoreEnd
+31339>>>
+31339>>>        End_Object    // Branch_Branch_Name
+31340>>>
+31340>>>        Object Year_Year_Year is a dbFormSub
+31342>>>
+31342>>>            //AB-StoreTopStart
+31342>>>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+31342>>>            //AB-StoreTopEnd
+31342>>>
+31342>>>            Entry_Item Syscurxr.Year_descr
+31343>>>            Set Server to (Syscurxr_DD(self))
+31344>>>            Set Size to 13 61
+31345>>>            Set Location to 9 371
+31346>>>            Set Label_Col_Offset to 2
+31347>>>            Set Label_Justification_Mode to jMode_Right
+31348>>>
+31348>>>            //AB-StoreStart
+31348>>>            Set enabled_state to false
+31349>>>            
+31349>>>            //AB-StoreEnd
+31349>>>
+31349>>>        End_Object    // Year_Year_Year
+31350>>>
+31350>>>        Object TextBoxSub3 is a TextBoxSub
+31352>>>            Set Label to "„«˜ ¨œå˜"
+31353>>>            Set Auto_Size_State to FALSE
+31354>>>            Set TextColor to clNavy
+31355>>>            Set FontSize to 4 0
+31356>>>            Set Location to 10 10
+31357>>>            Set Size to 10 31
+31358>>>            Set FontWeight to 800
+31359>>>            Set Justification_Mode to jMode_Right
+31360>>>            Set TypeFace to "MS Sans Serif"
+31361>>>            Set Enabled_State to TRUE
+31362>>>
+31362>>>            //AB-StoreStart
+31362>>>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+31362>>>            //AB-StoreEnd
+31362>>>
+31362>>>        End_Object    // TextBoxSub3
+31363>>>
+31363>>>        Object TextBoxSub4 is a TextBoxSub
+31365>>>            Set Label to "“§¦¡/£˜ :"
+31366>>>            Set Auto_Size_State to FALSE
+31367>>>            Set TextColor to clNavy
+31368>>>            Set FontSize to 4 0
+31369>>>            Set Location to 10 153
+31370>>>            Set Size to 10 39
+31371>>>            Set FontWeight to 800
+31372>>>            Set Justification_Mode to jMode_Right
+31373>>>            Set TypeFace to "MS Sans Serif"
+31374>>>            Set Enabled_State to TRUE
+31375>>>        End_Object    // TextBoxSub4
+31376>>>
+31376>>>        Object TextBoxSub5 is a TextBoxSub
+31378>>>            Set Label to "•¨ã©ž :          "
+31379>>>            Set Auto_Size_State to FALSE
+31380>>>            Set TextColor to clNavy
+31381>>>            Set FontSize to 4 0
+31382>>>            Set Location to 11 322
+31383>>>            Set Size to 10 40
+31384>>>            Set FontWeight to 800
+31385>>>            Set Justification_Mode to jMode_Right
+31386>>>            Set TypeFace to "MS Sans Serif"
+31387>>>            Set Enabled_State to TRUE
+31388>>>        End_Object    // TextBoxSub5
+31389>>>
+31389>>>    End_Object    // dbGroupSub1
+31390>>>
+31390>>>    Object btnEktyposh is a ButtonSub
+31392>>>        Set Label to "„¡«ç&§à©ž"
+31393>>>        Set Bitmap to "Print17.bmp"
+31394>>>        Set Size to 21 23
+31395>>>        Set Location to 18 413
+31396>>>        Set Focus_Mode to Pointer_Only
+31397>>>        Set Form_FontHeight Item 0 to 12
+31398>>>        Set Form_FontWeight Item 0 to 600
+31399>>>        Set Form_TypeFace Item 0 to "MS Sans Serif"
+31400>>>
+31400>>>        //AB-StoreStart
+31400>>>        Set TooltipValue to "„¡«ç§à©ž †£œ¨¦¢¦šåà¤"
+31401>>>        
+31401>>>        Procedure OnClick
+31403>>>           integer ncode
+31404>>>           get field_current_value of hmgio_dd field hmgio.hmgio_code  to ncode
+31405>>>           Set pnhmgio  of (r101(self)) to ncode
+31406>>>           Set psmodule of (r101(self)) to (psmodule(self))
+31407>>>           Send runparReport to (parWQLReport(r101(Self)))
+31408>>>        End_Procedure // OnClick
+31409>>>        
+31409>>>        
+31409>>>        
+31409>>>        
+31409>>>        
+31409>>>        
+31409>>>        
+31409>>>        
+31409>>>        
+31409>>>        
+31409>>>        
+31409>>>        
+31409>>>        
+31409>>>        
+31409>>>        
+31409>>>        
+31409>>>        
+31409>>>        
+31409>>>        //AB-StoreEnd
+31409>>>
+31409>>>    End_Object    // btnEktyposh
+31410>>>
+31410>>>
+31410>>>    //AB-StoreStart
+31410>>>                                            
+31410>>>    Procedure Activate_View Returns Integer
+31412>>>        Integer rVal
+31413>>>        String sModule sDescr
+31413>>>        Forward Get Msg_Activate_View   to rVal
+31415>>>    
+31415>>>        Get psMenuModule  Of Main_Menu  to sModule
+31416>>>        Get gsfCode_Mast "MODULE" sModule to sDescr
+31417>>>        Move (Trim(sDescr)) to sDescr
+31418>>>        Set psModule                    to sModule
+31419>>>    
+31419>>>        Send Clear to Hmgio_DD
+31420>>>        Send Rebuild_Constraints        to Hmgio_DD
+31421>>>        Send Rebuild_Constraints        to Ctypkin_DD
+31422>>>        Send Rebuild_Constraints        to Hmctyp_DD
+31423>>>        Send Beginning_Of_Data          to HmCtyp_ True
+31424>>>    
+31424>>>             If (psModule(Self)='01')   ;                Set label of hmgio to "†£œ¨¦¢æš ˜ ¡˜  ¡ ¤ã©œ ª œ¢˜«é¤ / à¢ã©œà¤    "
+31427>>>        Else If (psModule(Self)='02')   ;                set label of hmgio to "†£œ¨¦¢æš ˜ ¡˜  ¡ ¤ã©œ ª ¨¦£žŸœ¬«é¤ / €š¦¨é¤    "
+31431>>>    
+31431>>>        Procedure_Return rVal
+31432>>>    End_procedure
+31433>>>    
+31433>>>    
+31433>>>    
+31433>>>    
+31433>>>    
+31433>>>    
+31433>>>    
+31433>>>    
+31433>>>    
+31433>>>    
+31433>>>    
+31433>>>    
+31433>>>    
+31433>>>    //AB-StoreEnd
+31433>>>
+31433>>>CD_End_Object    // Hmgio
+31435>>>>
+31435>>>
+31435>>>
+31435>>>//AB-StoreStart
+31435>>>                
+31435>>>                
+31435>>>                
+31435>>>//AB-StoreEnd
+31435>>>
+31435>>>//AB/ End_Object    // prj
+31435>
+31435>    End_Object
+31436>
+31436>    On_Key Key_Ctrl+Key_1 Send Activate_Hmgio To Client_Area
+31437>
+31437>    Use DFStdSbr.pkg
+INCLUDING FILE: DFSTDSBR.PKG
+31437>>>// 07/23/96 JJT - New Class names
+31437>>>// Very prototype global status bar
+31437>>>//
+31437>>>Use dfMainSt.pkg
+INCLUDING FILE: DFMAINST.PKG
+31437>>>>>// 07/23/96 JJT - New Class names
+31437>>>>>Use dfAstbar.pkg
+31437>>>>>
+31437>>>>>Class StatusBar is a AppStatusBar
+31438>>>>>
+31438>>>>>    Procedure Construct_Object
+31439>>>>>       Forward Send Construct_Object
+31441>>>>>       //
+31441>>>>>       Send Add_Item 350  ''     // micro-help
+31442>>>>>       Send Add_Item  40  'View:'
+31443>>>>>       Set Item_Display_Style To sbNORMAL
+31444>>>>>       Send Add_Item 200  ''     // view name
+31445>>>>>       Send Add_Item   0  ''     // spring 'normal' to end
+31446>>>>>       Set Item_Display_Style To sbNORMAL
+31447>>>>>    End_Procedure // Construct_Object
+31448>>>>>
+31448>>>>>    Procedure Show_View_Name String sName
+31449>>>>>        Set Value item 2 to sName
+31450>>>>>    End_Procedure
+31451>>>>>
+31451>>>>>End_Class
+31452>>>
+31452>>>If (Wait(Self)) Send Deactivate to (Wait(Self))
+ERROR: 54 Invalid symbol in expression WAIT ON LINE: 6 (31452) OF FILE: C:\Vdf6\Pkg\DFSTDSBR.PKG
+31455>>>
+31455>>>Object oStatusBarSub  is a StatusBar
+31457>>>    Use DFTimer // DfTimer Manager Must Have a WindowHandle
+31457>>>    
+31457>>>    Property Integer piStdPanes Public (PaneCount(Self))
+31459>>>    
+31459>>>    //Set Value     Item 1 to (ToANSI("„§ ¢¦šã:"))
+31459>>>    Set PaneWidth item 1 to 50
+31460>>>    
+31460>>>    Send AddPane 55  ""        sbLOWERED
+31461>>>    Send AddPane 70  ""        sbLOWERED
+31462>>>    Send AddPane 55  ""        sbLOWERED
+31463>>>    
+31463>>>    Procedure pTimer
+31465>>>        String lsDay lsHour lsHH lsMM lsSS
+31466>>>        Integer liStdPanes lbState
+31466>>>    
+31466>>>        Get piStdPanes to liStdPanes
+31467>>>        Sysdate lsDay lsHH lsMM lsSS
+31471>>>        If (Length(lsHH)=1) Insert "0" In lsHH At 1
+31475>>>        If (Length(lsMM)=1) Insert "0" In lsMM At 1
+31479>>>        If (Length(lsSS)=1) Insert "0" In lsSS At 1
+31483>>>        Move (lsHH+":"+lsMM+":"+lsSS) to lsHour
+31484>>>        Get Simple_state to lbState
+31485>>>        If  Not (lbState) Begin
+31487>>>            Set Value Item liStdPanes     to lsHour
+31488>>>            Set Value Item (liStdPanes+1) to lsDay
+31489>>>        End
+31489>>>>
+31489>>>    
+31489>>>    End_Procedure // pTimer
+31490>>>    
+31490>>>    
+31490>>>    Object oTimerObj Is A DFTimer
+31492>>>        Set Timeout to 1000
+31493>>>        Set Timer_Active_State to TRUE
+31494>>>        Set Timer_Object to (oStatusBarSub(Current_Object))
+31495>>>        Set Timer_Message to pTimer
+31496>>>    End_Object // oTimerOdj
+31497>>>End_Object // oStatusBar
+31498>>>
+31498>>>
+31498>
+31498>End_Object
+31499>
+31499>Send Activate_Hmgio To (Client_Area(main(desktop)))
+31500>
+31500>Start_UI
+31501>
+ERROR: 4306 Forward reference not resolved  MSG_ACTIVATE_ABOUT ON LINE: 93 (30638) OF FILE: C:\Vdf6\VDF6.SUB\SUBCLASS\HELP_PM.INC
+ERROR: 4306 Forward reference not resolved  GET_GSFCODE_MAST ON LINE: 126 (31219) OF FILE: L:\Vdf6\Develop\Empor\AppSrc\HMGIO.VW
+ERROR: 4306 Forward reference not resolved  GET_PSMENUMODULE ON LINE: 400 (31414) OF FILE: L:\Vdf6\Develop\Empor\AppSrc\HMGIO.VW
+ERROR: 4306 Forward reference not resolved  GET_GSFCODE_MAST ON LINE: 401 (31415) OF FILE: L:\Vdf6\Develop\Empor\AppSrc\HMGIO.VW
+Summary
+Memory Available: 2147483647
+Total Errors   : 13
+Total Symbols  : 18622
+Total Resources: 0
+Total Commands : 31500
+Total Windows  : 1
+Total Pages    : 1
+Static Data    : 214919
+Message area   : 159160
+Total Blocks   : 10498
+13 ERRORS HAVE BEEN FOUND.

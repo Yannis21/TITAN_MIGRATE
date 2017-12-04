@@ -1,0 +1,92 @@
+#REM DS208.PKG               : dataset for ANTPARAS.dat
+
+USE COMPONEN.PKG\DLL000
+
+CLASS ANTPARAS_DATA_SET IS A DATA_SET0_EW
+
+USE COMPONEN.PKG\DLL208
+
+PROCEDURE CONSTRUCT_OBJECT INTEGER IMG#
+          FORWARD SEND CONSTRUCT_OBJECT IMG#
+          SET MAIN_FILE TO ANTPARAS.FILE_NUMBER
+
+//--------------------------------------------------------------------------
+          SET DSO_NAME##              TO "DC208" //«¦ ¦¤¦£˜ «¦¬ dso, ã «žª ¡¢á©©žª
+//--------------------------------------------------------------------------
+          SET MAIN_KEY_FIELD##        TO 0  //§¦ æ œå¤˜  «¦ unique §œ›å¦ «¦¬ ˜¨®œå¦¬;
+//--------------------------------------------------------------------------
+          SET PARENT_FILES_FILENUMBERS##    TO "207" //anhmgio
+          SET PARENT_FILES_FIELDNUMBERS##   TO "0"   //anhmgio.recnum
+          SET PARENT_FILES_INDEXNUMBERS##   TO "0"   //index.0= anhmgio: recnum
+          SET PARENT_FILE_FIELDNUMBERS##    TO "19"  //anhmgio_pkid
+
+//--------------------------------------------------------------------------
+          SET CHILD_FILES_FILENUMBERS##     TO "165,167,209" //anarticl
+          SET CHILD_FILES_FIELDNUMBERS##    TO "17,16,21"  //andivh.antparas_pkid,
+                                                           //anglh.antparas_pkid,
+                                                           //anarticl.antparas_pkid
+          SET CHILD_FILES_INDEXNUMBERS##    TO "15,15,15"  //index.15=
+                                                           //     andivh  :antparas_pkid+
+                                                           //              andivh_comp+
+                                                           //              andivh_branch+
+                                                           //              andivh_year+
+                                                           //              andivh_no
+                                                           //     anglh   :antparas_pkid+
+                                                           //              anglh_comp+
+                                                           //              anglh_branch+
+                                                           //              anglh_year+
+                                                           //              anglh_apo_log
+                                                           //              anglh_eos_log
+                                                           //     antparas:anparas_pkid+
+                                                           //              anart_comp+
+                                                           //              anart_branch+
+                                                           //              anart_year+
+                                                           //              anart_diary+
+                                                           //              anart_tparast+
+                                                           //              anart_number+
+                                                           //              anart_dare
+          SET MAIN_FILE_FIELDNUMBERS##      TO "0,0,0"  //antparas.recnum,antparas.recnum, antparas.recnum
+END_PROCEDURE  // construct_object
+
+//‹¦¤¦ œšš¨˜­âª š ˜ ©¬š¡œ¡¨ £â¤ž œ«˜ ¨å˜ - ¬§¦¡˜«á©«ž£˜ - â«¦ª
+PROCEDURE CONSTRAIN
+     CONSTRAIN ANTPARAS.ANTPAR_COMP   EQ GS_COMPANY_CODE //Ä¿
+     CONSTRAIN ANTPARAS.ANTPAR_BRANCH EQ GS_BRANCH_CODE  // ³- ‚œ¤ ¡âª £œ«˜™¢ž«âª
+     CONSTRAIN ANTPARAS.ANTPAR_YEAR   EQ GS_YEAR         //ÄÙ
+END_PROCEDURE //constrain
+
+
+PROCEDURE CREATING
+    FORWARD SEND CREATING
+    LOCAL NUMBER LN_HMNIA## LN_HH## LN_MM## LN_SS##
+    SYSDATE LN_HMNIA## LN_HH## LN_MM## LN_SS##
+    MOVE (LN_HMNIA##+693975) TO ANTPARAS.FUP_DATE
+    MOVE LN_HH##             TO ANTPARAS.FUP_HH
+    MOVE LN_MM##             TO ANTPARAS.FUP_MM
+    MOVE LN_SS##             TO ANTPARAS.FUP_SS
+    MOVE GS_USER             TO ANTPARAS.FUP_USER
+    //„¤ž£â¨à©ž «à¤ §œ›åà¤ š ˜ «ž¤ œ«˜ ¨å˜, «˜ ¬§¦¡˜«˜©«ã£˜«˜ ¡˜  «ž ®¨ã©ž
+    MOVE GS_COMPANY_CODE TO ANTPARAS.ANTPAR_COMP
+    MOVE GS_BRANCH_CODE  TO ANTPARAS.ANTPAR_BRANCH
+    MOVE GS_YEAR         TO ANTPARAS.ANTPAR_YEAR
+    //„¤ž£â¨à©ž §œ›åà¤ ˜§æ parent ˜¨®œå¦
+    MOVE ANHMGIO.ANHMGIO_CODE TO ANTPARAS.ANTPAR_HMGIO
+END_PROCEDURE //creating
+
+PROCEDURE UPDATE
+    FORWARD SEND UPDATE
+    LOCAL NUMBER LN_HMNIA## LN_HH## LN_MM## LN_SS##
+    SYSDATE LN_HMNIA## LN_HH## LN_MM## LN_SS##
+    MOVE (LN_HMNIA##+693975) TO ANTPARAS.LUP_DATE
+    MOVE LN_HH##             TO ANTPARAS.LUP_HH
+    MOVE LN_MM##             TO ANTPARAS.LUP_MM
+    MOVE LN_SS##             TO ANTPARAS.LUP_SS
+    MOVE GS_USER             TO ANTPARAS.LUP_USER
+END_PROCEDURE //update
+
+PROCEDURE SAVE_MAIN_FILE
+     SEND DS208_MILLENIUM
+     FORWARD SEND SAVE_MAIN_FILE
+END_PROCEDURE
+
+END_CLASS //ANTPARAS_ds

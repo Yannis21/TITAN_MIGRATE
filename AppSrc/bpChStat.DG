@@ -1,0 +1,245 @@
+//AB/ Project bpChStat
+//AB/     Object prj is a Dialog_Project
+//AB/         Set ProjectName to "bpChStat"
+//AB/         Set ProjectFileName to "bpChStat.DG"
+
+// Project Object Structure
+//   bpChStat is a BusinessProcessSub
+//     Ctypkin_DD is a DataDictionary
+//     Wtypkin_DD is a DataDictionary
+//     Ptyppar_DD is a DataDictionary
+//     Country_DD is a DataDictionary
+//     Towns_DD is a DataDictionary
+//     Cities_DD is a DataDictionary
+//     Areas_DD is a DataDictionary
+//     Payresp_DD is a DataDictionary
+//     Clients_DD is a DataDictionary
+//     Nomisma_DD is a DataDictionary
+//     Particle_DD is a DataDictionary
+//     Wapokat_DD is a DataDictionary
+//     Wapomast_DD is a DataDictionary
+//     Wax_DD is a DataDictionary
+//     Units_DD is a DataDictionary
+//     Witemkat_DD is a DataDictionary
+//     Fpa_DD is a DataDictionary
+//     Item_DD is a DataDictionary
+//     Witemx_DD is a DataDictionary
+//     Pmoves_DD is a DataDictionary
+
+// Register all objects
+Register_Object Areas_DD
+Register_Object bpChStat
+Register_Object Cities_DD
+Register_Object Clients_DD
+Register_Object Country_DD
+Register_Object Ctypkin_DD
+Register_Object Fpa_DD
+Register_Object Item_DD
+Register_Object Nomisma_DD
+Register_Object Particle_DD
+Register_Object Payresp_DD
+Register_Object Pmoves_DD
+Register_Object Ptyppar_DD
+Register_Object Towns_DD
+Register_Object Units_DD
+Register_Object Wapokat_DD
+Register_Object Wapomast_DD
+Register_Object Wax_DD
+Register_Object Witemkat_DD
+Register_Object Witemx_DD
+Register_Object Wtypkin_DD
+
+
+
+    //AB-StoreTopStart
+
+    //AB-StoreTopEnd
+
+    //AB-IgnoreStart
+
+    Use Bproces.Sub
+    Use DFAllEnt.pkg
+
+
+    Use CTYPKIN.DD
+    Use WTYPKIN.DD
+    Use PTYPPAR.DD
+    Use COUNTRY.DD
+    Use TOWNS.DD
+    Use CITIES.DD
+    Use AREAS.DD
+    Use PAYRESP.DD
+    Use CLIENTS.DD
+    Use NOMISMA.DD
+    Use PARTICLE.DD
+    Use WAPOKAT.DD
+    Use WAPOMAST.DD
+    Use WAX.DD
+    Use UNITS.DD
+    Use WITEMKAT.DD
+    Use FPA.DD
+    Use ITEM.DD
+    Use WITEMX.DD
+    Use PMOVES.DD
+
+    //AB-IgnoreEnd
+
+    Object bpChStat is a BusinessProcessSub
+
+        //AB-StoreTopStart
+        Property String     piParticleRecr  Public ''
+        Property Integer    piLathos        Public  0
+        Property Integer    piStatus        Public  0
+
+        Set Status_Panel_State to False
+        //Set Allow_Cancel_State  to True
+        Set Display_Error_State to True
+        //Set Process_Title to "               "
+        //Set Status_Log_id to (status_log(Self)) //Use statlog.pkg
+        //Set Status_log_state to True
+
+        //AB-StoreTopEnd
+
+        Set Size to 60 100
+        Set Location to 10 9
+
+        //AB-DDOStart
+
+        Object Ctypkin_DD is a Ctypkin_DataDictionary
+        End_Object    // Ctypkin_DD
+
+        Object Wtypkin_DD is a Wtypkin_DataDictionary
+        End_Object    // Wtypkin_DD
+
+        Object Ptyppar_DD is a Ptyppar_DataDictionary
+            Set DDO_Server to (Ctypkin_DD(self))
+            Set DDO_Server to (Wtypkin_DD(self))
+        End_Object    // Ptyppar_DD
+
+        Object Country_DD is a Country_DataDictionary
+        End_Object    // Country_DD
+
+        Object Towns_DD is a Towns_DataDictionary
+            Set DDO_Server to (Country_DD(self))
+        End_Object    // Towns_DD
+
+        Object Cities_DD is a Cities_DataDictionary
+            Set DDO_Server to (Towns_DD(self))
+        End_Object    // Cities_DD
+
+        Object Areas_DD is a Areas_DataDictionary
+        End_Object    // Areas_DD
+
+        Object Payresp_DD is a Payresp_DataDictionary
+        End_Object    // Payresp_DD
+
+        Object Clients_DD is a Clients_DataDictionary
+            Set DDO_Server to (Cities_DD(self))
+            Set DDO_Server to (Areas_DD(self))
+            Set DDO_Server to (Payresp_DD(self))
+        End_Object    // Clients_DD
+
+        Object Nomisma_DD is a Nomisma_DataDictionary
+        End_Object    // Nomisma_DD
+
+        Object Particle_DD is a Particle_DataDictionary
+            Set DDO_Server to (Clients_DD(self))
+            Set DDO_Server to (Ptyppar_DD(self))
+            Set DDO_Server to (Nomisma_DD(self))
+        End_Object    // Particle_DD
+
+        Object Wapokat_DD is a Wapokat_DataDictionary
+        End_Object    // Wapokat_DD
+
+        Object Wapomast_DD is a Wapomast_DataDictionary
+            Set DDO_Server to (Wapokat_DD(self))
+        End_Object    // Wapomast_DD
+
+        Object Wax_DD is a Wax_DataDictionary
+            Set DDO_Server to (Wapomast_DD(self))
+        End_Object    // Wax_DD
+
+        Object Units_DD is a Units_DataDictionary
+        End_Object    // Units_DD
+
+        Object Witemkat_DD is a Witemkat_DataDictionary
+        End_Object    // Witemkat_DD
+
+        Object Fpa_DD is a Fpa_DataDictionary
+        End_Object    // Fpa_DD
+
+        Object Item_DD is a Item_DataDictionary
+            Set DDO_Server to (Units_DD(self))
+            Set DDO_Server to (Witemkat_DD(self))
+            Set DDO_Server to (Fpa_DD(self))
+        End_Object    // Item_DD
+
+        Object Witemx_DD is a Witemx_DataDictionary
+            Set DDO_Server to (Item_DD(self))
+        End_Object    // Witemx_DD
+
+        Object Pmoves_DD is a Pmoves_DataDictionary
+            Set DDO_Server to (Wax_DD(self))
+            Set DDO_Server to (Witemx_DD(self))
+            Set DDO_Server to (Particle_DD(self))
+            Set Constrain_File to Particle.File_Number
+        End_Object    // Pmoves_DD
+
+        //AB-DDOEnd
+
+
+        //AB-StoreStart
+
+        Procedure OnProcess
+            Integer iStatus iOne iLathos
+            String  sParticleRecr
+
+            Move 0 to iOne
+
+            Get psParticleRecr          to sParticleRecr
+            Move (Trim(sParticleRecr))  to sParticleRecr
+
+            If (sParticleRecr='') Begin
+                Set piLathos to 4000
+                Procedure_return
+            End
+
+            Send Clear to Pmoves_DD
+            Move sParticleRecr  to Pmoves.Partl_Recr
+            Send Request_Find   to Pmoves_DD First_Record Pmoves.File_Number 3
+            While (Found=1)
+                If (Pmoves.Qty_Ypol>0) Begin
+                    Move 1 to iOne
+                End
+                Send Request_Find   to Pmoves_DD Next_Record Pmoves.File_Number 3
+            Loop
+
+            Set piStatus to (iOne=0) Set piStatus to Sysfile.Hold
+
+        End_Procedure
+
+        Procedure OnError integer error_info string errMsg
+        End_Procedure
+
+        Procedure Start_Process
+            Forward Send Start_Process
+        End_Procedure
+
+        Procedure End_Process
+            Forward Send End_Process
+        End_Procedure
+
+
+
+
+
+        //AB-StoreEnd
+
+    End_Object    // bpChStat
+
+
+    //AB-StoreStart
+
+    //AB-StoreEnd
+
+//AB/     End_Object    // prj

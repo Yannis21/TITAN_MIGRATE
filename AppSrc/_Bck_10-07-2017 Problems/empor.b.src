@@ -1,0 +1,949 @@
+Use AllEntSc
+
+#REPLACE CURRENT$WORKSPACE   "Empor"
+Register_Object Client_Area
+
+//AB-StoreTopStart
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+//------- v.5.0.3a/b  08/04/2016 -------
+// + Telika den tha ginei parametriko to ektyppotiko axiografon
+//   giati texnika den ylopoieite all tha ginoun 2 version, mia
+//   me to palio ektypotiko (v5.0.3a 08/04/2016) kai mia me to
+//   kainourgio (v5.0.3b 08/04/2016)
+//------------------------------------------------------------------------
+// + v3 Etairies/Ypokat/Xrhseis  Prostethike to pedio Company.Beto_Site
+//      san checkbox kai antiprosopeyei to switch gia xrhsh tou eniaiou
+//      entypou eisprajeon / plhromon
+// + vw061 Programmatismos - Mphke kodikas gia allagh komma kai teleias
+//   giati klotsaei to pro
+//   ---
+// + vSapDomikh - Gefyres SAP, prostethikan sto FI1 oi stoxoi HPAL & HPSO
+//   ---
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+//------- v.5.0.2  15/03/2016 -------
+// + Allagh tou Item.Item_Orio apo to Item sto witemx arxeio
+//   etsi oste na filtrarei kai DEOP, Paraggelies ktl...
+//   Epireazontai ola ta parakato....
+//   ---
+//   v193 Deop - vw051 Paraggelies - sl22s sl22search
+//   v182s Metasxhmatismoi - Particle.vw - Pmoves.DD
+//   ---
+// + *** SOS *** Allagh arxeiou WITEMX >>> Bash KORINTHOS ston PIS2003DEV
+//   ---- Prosthikh Pediou Not_to_be_used N2 + Index.8 & Index.9
+//   ---- #8 = Not_To_Be_Used + witex_code + Comp + br + Year
+//   ---- #9 = Comp + Br + Year + Not_To_Be_Used + witex_code
+//
+//
+//------- v.5.0.1  01/03/2016 -------
+// + Neo compile me debug kodika gia Ntina Thess
+//   O debug kodikas efyge kai emeine to version
+//   me ayth thn hmeromhnia
+//
+//------- v.5.0.0  01/10/15 -------
+// + Geniko Flag stous Pelates gia 0 FPA sthn timologhsh
+//   kai se ola ta eidh, xrhshs tou pediou Clients.CLient_Pelprom
+//
+//------- v.4.9.9  28/07/15 -------
+// + Enhmerosh Ypeythynon plhromon
+//
+//------- v.4.9.8  08/07/15 -------
+// + Aytomath dhmiourgia eggrafon sto tmpSap gia eggrafes pou tha leipoun apo to arxeio
+//   logo tou prohgoumenou provlhmatos. Tha ftiaxnei aytomata eggrafes mexri telos Iouniou
+//
+//------- v.4.9.7  22/06/15 -------
+// + Epanafora tou arxeiou tmpsap se MH temp arxeio alla kanoniko sto filelist
+//
+//------- v.4.9.6  27/05/15 -------
+// + Prosthikh elegxou path sta DED / PDF tou v182s (Diakinhseis) + r182_1.rv & r182_2.rv
+//   Eixe stamathsei na vgazei ta PDF giati me tis allages diskon kai win 7
+//   to TotalDocConverter sthnotan sto Program Files eno h efarmogh to epsaxne sto C:\TotalDocConverter
+// + Allagh ton path tou forologikou apo C:\ sto C:\DNS_TMP
+// + Diorthosh tou enoxlhtikou mhnymatos sto bhma 1 pou xtypage Get_psAud_Old_PmsRecr
+//   (sto DD htan dhlomeno psAud_Old_Pms_Recr - me thn pavla anamesa sto Pms kai to Recr
+// + Epanafora tou report Proypologismou Tzirou sta arxika constrain hmeromhnion t6hs othonhs
+//   H logikh tou report einai mono na deixnei ta kybika sta kainourgia erga pou anoixthkan
+//   apokleistika kai mono anamesa stis hmeromhnies epiloghs
+//---------------------------------
+//---------------------------------
+//  Sfhna gia timologia tokon. Epeidh den mporoun na allaxoun
+//  xeirokinhta to FPA sto parastatiko, prepei na anoixoun mia
+//  nea kathgoria FPA san Xartoshmo 3.6% (Apothikes - Kathgories FPA)
+//---------------------------------
+//---------------------------------
+//
+//------- v.4.9.5  12/05/15 -------
+// + Debug to sfalma tou volou me ton folrologiko sto FEM PKG
+//   (DES Sto topiko C tou DEV02)
+//
+//------- v.4.9.5  08/04/15 -------
+// + Diorthosh sthn ektyposh Proypologismou Tzirou Ergon (Erga >> ProypTzirou) Pollaploi Tropoi Plhromhs
+// + Sthn klash tou btnemp yphrxe ena property ek paradromhs to opoio den eprepe na yparxei kai den
+//   yphrxe dhlosh tou sthn Create Object. Tora giati pote xtypage kai pote oxi mallon exei na kanei
+//   me thn diadikasia diagrafhs kai epanadhmioyrgias tou DEOP otan to antigrafoyme gia na prosthesoume kati
+//
+//------- v4.9.4  27/03/2015 -------
+// + Nea othonh back door parastatikou Alt+o
+//   me prosthiki Psifiakhs ypografhs Forologikou sto PartleditNEW
+// + Prosthikh Flag piso portas sto pmove gia to flag apo metasxhmatismo me Alt+q
+// + Elegxos sto pedio kodikos sap sta eidh an yparxei hdh kataxorhmenos vgazei mhnyma apodoxhs
+// + Prosthiki elegxou sthn kataxorhsh eidous, ean einai kathgorias 05 - Antlies,
+//   to pedio sygkentrotika sto metasxhmatismo (iTem.group) ginetai aytomatos 1
+// + Prosthiki poiothtas sto ektypotiko
+//
+//------- v4.9.3  02/03/2015 -------
+// + Prosthiki Showln sto VsapDomikh gia provlhma Stayroulas
+//
+//------- v4.9.3  11/02/2015 -------
+// + Diorthosh sthn ektyposh Proypologismou Tzirou Ergon (Erga >> ProypTzirou)
+//
+//------- v4.9.2  03/02/2015 -------
+// + ¨¦©Ÿã¡ Auditing ©«¦ ã£˜ 1,  ˜¨®œå¦ BTNEMP
+//
+//------- v4.9.1  17/12/2014 -------
+// + ƒ æ¨Ÿà© ©«¤ › æ¨Ÿà© ©«¦¤ â¢œš®¦ ¡¢œ ›à£á«à¤ ™á© £œ¨¦£¤å˜ª SAP
+//
+//------- v4.9.1  11/12/2014 -------
+// + ƒ æ¨Ÿà© ©«¦¤ â¢œš®¦ ¡¢œ ›à£á«à¤ ™á© £œ¨¦£¤å˜ª SAP
+//   “§ã¨®œ ¢áŸ¦ª ©«¦¤ ¡é› ¡˜ œ™˜œ 31/12/99 ©«¤ £œ¨¦£¤ ˜ SAP
+//   ¡˜  â¡˜¤œ find GE ˜¤«å š ˜ LE š ˜ ¤˜ ™¨œ  «¤ «œ¢œ¬«˜å˜ ˜§¦©«¦¢ã
+//
+//------- v4.9.0  08/12/2014 -------
+// + ¨¦©Ÿã¡ log file š ˜ £ œ¬¨œ© ˜¤˜¢à©œà¤ ©« ª œ¤›¦› ˜¡ ¤©œ ª
+// + ‘«˜ 3 ¡¬¡¢à£˜«˜ €¥ ¦, ’ £¦¢ ¡˜  ƒ ˜¡ ¤ £§˜å¤œ  â¢œš®¦ª ˜§˜šæ¨œ¬©ª
+//   ¤œ˜ª œšš¨˜­ãª ˜¤ £¤ ˜ <= «œ¢ £¤ ˜ª SAP  (tmpSap.Date)
+//
+//------- v4.9.0  02/12/2014 -------
+// + ƒ ¦¨Ÿà© ©«¤ œ¤£œ¨à© §œ¢˜«à¤ £œ ¬§. §¢¨à£à¤ ENHPRESPID
+//
+//------- v4.8.9  16/09/2014 -------
+// + ‰¢œå›à£˜ †£¤ ˜ª œ¡«¬§à©ª ¡˜  ’œ¢ ¨ ©« ¡¦§¦å©ª ©«¦ Branch
+//   œ› ˜ Branch.Date_Locked & Branch.Last_Hmnia_Ekt £œ«˜ ˜§¦ œ¥˜šàšã
+//   ‚â­¬¨˜ª ©«¦ SAP.
+// + œ¡¢œå›à£˜ (1 £œ¨˜ §å©à) «à¤ å› à¤ §œ›åà¤ ©«¤ €¤˜å¨œ© ‚œ­¬¨é¤
+//   (TELIKA AYTO DEN EGINE, AN XREIASTEI THA ANOIGOUME APO TIS
+//    EPIMEROUS PISO PORTES KAI OXI AYTOMATA ME THN ANAIRESH THS GEFYRAS
+// + ¨¦©Ÿã¡ „¢œš®¦¬ - ‹ã¤¬£˜ & ‰à› ¡æª (05091960) - œ˜¤ «¦ flag §¦¬
+//   §˜¨˜¡á£§«œ  «¦¤ â¢œš®¦ «à¤ ’œ®¤ ¡é¤ ¨¦› ˜š¨˜­é¤ œå¤˜  œ¤œ¨šæ ¡˜ 
+//   ¬§á¨®œ  §˜¨á¡˜£¯ «¤ é¨˜ §¦¬ ›£ ¦¬¨š¦ç¤«˜  ¦  ‚â­¬¨œª SAP.
+// + „¢œš®¦ª ©«¤ ›£ ¦¬¨šå˜ „¤›¦› ˜¡å¤©ª œ˜¤  £œ¨¦£¤å˜ §¦¬ §áœ 
+//   ¤˜ ›£ ¦¬¨šŸœå œå¤˜  ã› ¡¢œ ›à£â¤ (§œ›å˜ «¦¬ Branch ˜§¦ §á¤à)
+//   ˜§¦ «¤ œ¥˜šàšã šâ­¬¨˜ª «¦¬ SAP.
+//------- v4.8.8  03/06/2014 -------
+// + ƒ ¦¨Ÿà© ©«¤ ¤œ˜ „¤£â¨à© “§.¢¨à£à¤
+//   š ˜ ¢ç© §¨¦™¢ã£˜«¦ª ‹˜¤é¢ ©«¤ ’¨˜¤ª
+//------- v4.8.7  21/03/2014 -------
+// + ‰¢œ ›é¤¦¬£œ «¦ ”€ ©«˜ ˜¨˜©«˜« ¡á é¢©ª
+//   ¡˜  £§˜ ¤œ  £ ˜ § ©à §¦¨«˜ š ˜ ˜©­á¢œ ˜
+//------- v4.8.6  17/03/2014 -------
+// + €¢¢˜šã ©«˜ ˜¥ ¦š¨˜­˜ «¦ §œ›å¦ Barticl_Pae_Arithm
+//   œš ¤œ «à¨˜ String š ˜ ¤˜ §˜å¨¤œ  «¦ „ §¦¬ Ÿâ¢œ  ¦ ’ «á¤˜ª
+// + Prostethike mono gia Timologish Mazikh timolghsh
+//   ektyposh Sxolia pelath sthn Dieythynsh Ergou sto parastatiko
+//   Axaia timologhs me grouparisma ergon. Allaxtikan kai ta 3
+//   rmhtrtitan, rmhtrtitana,rmhtrtitanola
+//------------------------
+
+Use AllEntSc
+
+Use Workspc.pkg
+
+//  Set date attributes as needed
+Set_Date_Attribute sysdate4_State to (TRUE)
+Set_Date_Attribute Date4_State    to (TRUE)
+Set_Date_Attribute epoch_value    to 30
+
+Object ProgramWorkspace is a WorkspaceSub
+    Set WorkspaceName to CURRENT$WORKSPACE
+    Set kEnter_Next_State to TRUE
+//    Set ModuleName    to 'ProgramName' // Special module name.
+//    Set HelpName      to 'HelpName.hlp'// Please provide the name of your Windows help file.
+End_Object
+
+Use Help_Ids.inc // Developer should provide this file of help context links.
+Use Std_Help.pkg
+
+Use WinQlSQL.Sub
+Integer giWait_Obj
+string sXrhs sKodi sDeCryptoPassw
+String gsMyStr
+//-----
+
+Open Sysrec
+//Open Sysrecg
+Open Users
+
+// General Functions-Procedures and Variables
+Use Globals.Inc
+Use Calendar.sl
+Use Dates.Utl
+Use Roundfn.Fnc
+
+use checkafm.pkg
+use checklog.pkg
+
+Use Menu_Sec.Sub
+Use DD_Sec.Sub
+
+Function GetTheWorkSpace returns String
+    String lsWorkSpace
+    get_profile_string "WorkSpaces" "CurrentWorkspace" to lsWorkSpace
+    If lsWorkSpace eq "" Get WorkspaceName of (ProgramWorkspace(Self)) to lsWorkSpace
+    insert "WorkSpaces\" in lsWorkSpace at 1
+    Function_Return lsWorkSpace
+End_Function
+
+Function GetTheAppPath Returns String
+   String lsWorkSpace lsModule lsTheAppPath
+   Move (GetTheWorkSpace(Self)) to lsWorkSpace
+   Move (Module_Name(Self)) to lsModule
+   Move (lsWorkSpace + "\" + lsModule) to lsTheAppPath
+   Function_Return lsTheAppPath
+End_Function
+
+
+////Integer iStPan
+////Move (Status_Panel(Self)) To iStPan
+////Set Allow_Cancel_State Of iStPan To False
+////Send Initialize_StatusPanel To iStPan '„¢œš®¦ª €¨®œåà¤ „­˜¨£¦šãª                ' '    ' '˜¨˜¡˜¢é œ¨ £â¤œ«œ....           '
+////
+////Send Start_StatusPanel To iStPan
+
+Use Menu_Sec.Sub
+
+//------------------------------
+Use Flexole
+Use DPDlg    // Full Path Directory Picker
+Use RasxDll  // Ras Package
+Use Xfind    // Recursive Directory FILE FINDER
+Use EZFTP    // Ftp Package
+Use dvFTP    // Ftp Package
+Use DVDIALER // Vdf6 Dialer
+//------------------------------
+
+
+//===========================================================
+//===========================================================
+Integer iMetrhthsProsp iHasAPassword
+Integer iMax00 iApotel iCountRemain iMustResetPass iAnenergos
+//--
+
+Open Sysrec
+//Open Sysreg
+Open Users
+
+Register_Procedure ChangeMyPassword
+
+//--
+Use PasswVerif.pkg
+//--
+
+Use Connect.dg
+//use checkafm.pkg
+//use checklog.pkg
+
+Reread Sysrec
+Unlock
+Move Sysrec.TIKANEI_CODE    to iMax00
+Move 1                      to iMetrhthsProsp
+
+Use PASSDLG2.DG
+
+Procedure ChangeMyPassword
+    Integer iResult
+    Get ConfirmNewCustomPass of oNewPassDlg to iResult
+         If (iResult=0) Send Info_Box   " ¡à› ¡æª ©˜ª «¨¦§¦§¦ ãŸ¡œ œ§ «¬®éª"                              "¢¨¦­¦¨å˜"
+    Else If (iResult=1) Send Info_Box   "€¡¬¨éŸ¡œ ˜§¦ «¦¤ ®¨ã©«"                                          " ¡à› ¡æª ©˜ª ƒ„Œ âš ¤œ ›œ¡«æª"
+    Else If (iResult=2) Send Info_Box   " ¤â¦ª ¡à› ¡æª œå¤˜  å› ¦ª £œ «¦¤ §˜¢ æ"                           " ¡à› ¡æª ©˜ª ƒ„Œ âš ¤œ ›œ¡«æª"
+    Else If (iResult=3) Send Info_Box   " ¡à› ¡æª œ ©æ›¦¬ œå¤˜  ¢áŸ¦ª"                                     " ¡à› ¡æª ©˜ª ƒ„Œ âš ¤œ ›œ¡«æª"
+    Else If (iResult=4) Send Info_Box   " ¡à› ¡æª œ§ ™œ™˜åà©ª › ˜­â¨œ  ˜§¦ «¦¤ ¡à› ¡æ œ ©æ›¦¬"            " ¡à› ¡æª ©˜ª ƒ„Œ âš ¤œ ›œ¡«æª"
+    Else If (iResult=5) Send Info_Box   " ¡à› ¡æª œå¤˜  ¡œ¤æª"                                             " ¡à› ¡æª ©˜ª ƒ„Œ âš ¤œ ›œ¡«æª"
+    Else If (iResult=6) Send Info_Box   " §˜¢ æª ¡à› ¡æª œå˜¤  ¢áŸ¦ª"                                      " ¡à› ¡æª ©˜ª ƒ„Œ âš ¤œ ›œ¡«æª"
+    Else If (iResult=7) Send Info_Box   " ¡à› ¡æª â®œ  ã› ¥˜¤˜®¨© £¦§¦ Ÿœå ©« ª 5 «œ¢œ¬«˜åœª ˜¢¢˜šâª"   " ¡à› ¡æª ©˜ª ƒ„Œ âš ¤œ ›œ¡«æª"
+    Else                Send Info_Box   "êš¤à©«¦ ‘­á¢£˜"                                                    " ¡à› ¡æª ©˜ª ƒ„Œ âš ¤œ ›œ¡«æª"
+    Move iResult to iApotel
+End_Procedure
+
+
+Move 0 to iMetrhthsProsp
+
+//=======================
+Start_Entry_Validation:
+//-----------------------
+Move 0 to iMustResetPass
+Move 0 to iAnenergos
+Move 0 to iApotel
+
+Move (iMax00-iMetrhthsProsp+1)  to iCountRemain
+If (iMetrhthsProsp>=iMax00)     Send Exit_Application
+
+Send Login
+
+If (iHasAPassword=0) Send ChangeMyPassword
+If (iAnenergos   =1) Goto Start_Entry_Validation
+If (iApotel      >0) Goto Start_Entry_Validation
+
+Move 0 to iApotel
+Move 0 to iMetrhthsProsp
+Move 0 to iAnenergos
+Move 0 to iMustResetPass
+//=======================
+
+Use Xrhsh.pkg
+
+Use TranLock
+Set Button_State    of (Wait(Self)) to False
+Set BarVisibleState of (Wait(Self)) to '' False
+Send Popup                          to (Wait(Self))
+Send UpdateWait to (Wait(Self))     '˜¨˜¡˜¢é §œ¨ £â¤œ«œ. „¢œš®¦ª ˜¨®œåà¤ œ­˜¨£¦šãª'
+
+
+//AB-StoreTopEnd
+
+
+Object Main is a Panelsub
+
+    //AB-PanelStoreTopStart
+    
+    
+    
+    //AB-PanelStoreTopEnd
+
+    Set Label To "Betolink Enterprise V.5.0.3b 08/04/16"
+    Use empor.mn //  Menu package.
+    
+    Use Ewbtnbar.pkg //  Tool-Bar object.
+    
+    Object Client_Area is a AppClientAreasub
+
+        //AB-ClientStoreTopStart
+        
+        // ‘•† ‚„Œˆ‰„‘ ‹„’€Š†’„‘ //
+        String Plhktro_BIP  Plhktro_Esc  Plhktro_N11  Plhktro_N00  Plhktro_FS  Plhktro_AAA  Plhktro_DSI
+        String Plhktro_SO   Plhktro_DC4     //expanded for 1 line
+        String Plhktro_SI   Plhktro_DC2     //condesed
+        String Plhktro_PAV                  //underline
+        String Plhktro_EEE  Plhktro_FFF     //emphasized
+        String Plhktro_GGG  Plhktro_HHH     //double strike
+        String Plhktro_WWW                  //expanded
+        string Plhktro_Q Plhktro_160
+        Integer giViewID
+        String  gsViewName
+        // ‘•† ‚„Œˆ‰„‘ ‹„’€Š†’„‘ //
+        
+        Open Sysfile
+        Open Sysrec
+        Open Clients
+        
+        Use Clients.DD
+        
+        Use dbViews.Sub
+        Use dbForms.Sub
+        Use dbTabDlg.Sub
+        Use dbtabdlgs.Sub
+        Use DD_Sec.Sub
+        Use Listes.pkg
+        use bpMakeSx.dg
+        Use GrpPed00.vw
+        Use GrpPedia.vw
+        Use GrpView0.vw
+        Use GrpViews.vw
+        Use GrpOth0.vw
+        Use GrpOth.vw
+        Use Users.vw
+        Use UserGrps.vw
+        Use Departm.vw
+        Use Othon.vw
+        Use Views.vw
+        Use Arxeia.vw
+        Use Pedia.vw
+        Use Viewflds.vw
+        
+        Use Cflagkin.vw
+        Use Wflagkin.vw
+        
+        
+        
+        Open Nomisma
+        Open Isotimia
+        
+        //Use Property.vw
+        
+        Use OBarray2d
+        
+        Object xxx is a c2dArray
+            Set piNumColumns to 2
+        
+            Procedure Fill_PayTerms
+                Integer iArx
+        
+                For iArx From 0 to 12
+                    Case Begin
+                        Case (iArx=0)
+                            Set Cell_Value Of xxx 0 iArx to "K000"
+                            Set Cell_Value Of xxx 1 iArx to "Š†—’„ €‹„‘€"
+                            Case Break
+                        Case (iArx=1)
+                            Set Cell_Value Of xxx 0 iArx to "K030"
+                            Set Cell_Value Of xxx 1 iArx to "30 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                            Case Break
+                        Case (iArx=2)
+                            Set Cell_Value Of xxx 0 iArx to "K060"
+                            Set Cell_Value Of xxx 1 iArx to "60 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                            Case Break
+                        Case (iArx=3)
+                            Set Cell_Value Of xxx 0 iArx to "K090"
+                            Set Cell_Value Of xxx 1 iArx to "90 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                            Case Break
+                        Case (iArx=4)
+                            Set Cell_Value Of xxx 0 iArx to "K120"
+                            Set Cell_Value Of xxx 1 iArx to "120 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                            Case Break
+                        Case (iArx=5)
+                            Set Cell_Value Of xxx 0 iArx to "K150"
+                            Set Cell_Value Of xxx 1 iArx to "150 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                            Case Break
+                        Case (iArx=6)
+                            Set Cell_Value Of xxx 0 iArx to "K180"
+                            Set Cell_Value Of xxx 1 iArx to "180 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                            Case Break
+                        Case (iArx=7)
+                            Set Cell_Value Of xxx 0 iArx to "K210"
+                            Set Cell_Value Of xxx 1 iArx to "210 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                            Case Break
+                        Case (iArx=8)
+                            Set Cell_Value Of xxx 0 iArx to "K240"
+                            Set Cell_Value Of xxx 1 iArx to "240 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                            Case Break
+                        Case (iArx=9)
+                            Set Cell_Value Of xxx 0 iArx to "K270"
+                            Set Cell_Value Of xxx 1 iArx to "270 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                            Case Break
+                        Case (iArx=10)
+                            Set Cell_Value Of xxx 0 iArx to "K300"
+                            Set Cell_Value Of xxx 1 iArx to "300 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                            Case Break
+                        Case (iArx=11)
+                            Set Cell_Value Of xxx 0 iArx to "K330"
+                            Set Cell_Value Of xxx 1 iArx to "330 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                            Case Break
+                        Case (iArx=12)
+                            Set Cell_Value Of xxx 0 iArx to "K360"
+                            Set Cell_Value Of xxx 1 iArx to "360 ‹„„‘ € ’„Š‘ ‹†Œ€"
+                            Case Break
+                    Case End
+                Loop
+        
+            End_Procedure
+        
+            Procedure End_Construct_Object
+                Forward Send End_Construct_Object
+                Send Fill_PayTerms
+            End_Procedure
+        
+        End_Object
+        
+        
+        
+        Function fngConvertPoso Global String asNomismaCodeApo Number anPoso ;
+                                       String asNomismaCodeSe  Date   adHmnia;
+                                       Number nIsotimia  Returns Number
+        
+            Number rVal nApo_Euro_Isot nSe_Euro_Isot
+            Integer iApo_Einai_Euro_Zone iApo_Einai_DRX iApo_Einai_Euro iDekadika_Apo
+            Integer iSe_Einai_Euro_Zone  iSe_Einai_DRX  iSe_Einai_Euro  iDekadika_Se
+            String  sCode
+        
+            If (asNomismaCodeApo=asNomismaCodeSe) Function_Return anPoso
+        
+            Clear Nomisma
+            Move (Trim(asNomismaCodeApo)) to Nomisma.Nomisma_Code
+            Find eq Nomisma By Index.1 // Nomisma:Index.1:Nomisma_Code
+            Move Nomisma.Euro_Zone      to iApo_Einai_Euro_Zone
+            Move Nomisma.Einai_DRX      to iApo_Einai_DRX
+            Move Nomisma.Einai_EURO     to iApo_Einai_Euro
+            Move Nomisma.KL_ISOT_EURO   to nApo_Euro_Isot
+            Move Nomisma.Dekadika       to iDekadika_Apo
+            // 1. An to nomisma APO den einai ths zonhs euro prepei na vrethei h isotimia tou
+            If ((NOT(iApo_Einai_Euro_Zone)) And (nApo_Euro_Isot=0))  Begin
+                If (adHmnia='') Sysdate            adHmnia
+                Move (Trim(asNomismaCodeApo))   to sCode
+                Clear Isotimia
+                Move sCode                      to Isotimia.Nomisma_Code
+                Move (adHmnia+1)                to Isotimia.Isotimia_Hmnia
+                Find lt Isotimia by Index.1 // Isotimia:Index.1:Nomisma_Code+Isotimia_Hmnia
+                Move Isotimia.Isotimia_Euro     to nApo_Euro_Isot
+            End
+        
+            Clear Nomisma
+            Move (Trim(asNomismaCodeSe)) to Nomisma.Nomisma_Code
+            Find eq Nomisma By Index.1 // Nomisma:Index.1:Nomisma_Code
+            Move Nomisma.Euro_Zone      to iSe_Einai_Euro_Zone
+            Move Nomisma.Einai_DRX      to iSe_Einai_DRX
+            Move Nomisma.Einai_EURO     to iSe_Einai_Euro
+            Move Nomisma.KL_ISOT_EURO   to nSe_Euro_Isot
+            Move Nomisma.Dekadika       to iDekadika_Se
+            // 2. An to nomisma SE den einai ths zonhs euro prepei na vrethei h isotimia tou
+            If ((NOT(iSe_Einai_Euro_Zone)) And (nSe_Euro_Isot=0)) Begin
+                If (adHmnia='') Sysdate            adHmnia
+                Move (Trim(asNomismaCodeSe))    to sCode
+                Clear Isotimia
+                Move sCode                      to Isotimia.Nomisma_Code
+                Move (adHmnia+1)                to Isotimia.Isotimia_Hmnia
+                Find lt Isotimia by Index.1 // Isotimia:Index.1:Nomisma_Code+Isotimia_Hmnia
+                Move Isotimia.Isotimia_Euro     to nSe_Euro_Isot
+            End
+        
+            Calc (anPoso/nApo_Euro_Isot) to rVal
+            Move (Round_Number(rVal,6)) to rVal
+            Calc (rVal*nSe_Euro_Isot) to rVal
+            Move (Round_Number(rVal,iDekadika_Se)) to rVal
+        
+            Function_Return rVal
+        End_Function
+        
+        Open Syscurxr
+        Open SysFile
+        Open Sysrecc
+        Open Sysrecb
+        Open Sysrecw
+        
+        Procedure Reset_All_Files_Except_System
+            Local Integer File# Open# File_Number# liInt iMax iWait isSystem
+            Local String Physicalname# DisplayName# Logicalname# Rootname#
+            Move 0 To File#
+            Repeat
+              Get_Attribute Df_File_Next_Opened Of File# To File#
+              If (File#) Begin
+                Get_Attribute DF_FILE_IS_SYSTEM_FILE    Of File# To isSystem
+                If (NOT(isSystem)) Clear File#
+              End
+            Until File# Eq 0
+        End_Procedure
+        
+        #Include FEM.pkg
+        
+        
+        Procedure Check_Sap
+            Integer iVal
+            string  lsTheAppPath
+        //    Move (GetTheAppPath(Self))                  to lsTheAppPath
+        //    Get_profile_string lsTheAppPath "ShowPAE"   to iVal
+            reread sysfile
+            unlock
+            move sysfile.mhdeniko_partl to ival
+            If (iVal<>1)    Send Activate_Vsap          to (Client_Area(Self))
+            Else            Send Activate_VsapDomikh    to (Client_Area(Self))   // <== EDO PAIZEI O TITANAS
+        End_Procedure
+        
+        
+        //AB-ClientStoreTopEnd
+
+        //  Include all views
+        Use vwCmoves.VW                                                                     
+        Use Particle.VW                                                                     
+        Use Hmgio.VW                                                                        
+        Use Units.vw                                                                        
+        Use V031.VW                                                                         
+        Use V034.VW                                                                         
+        Use V036.VW                                                                         
+        Use V037.VW                                                                         
+        Use VWCLIENTS.vw                                                                    
+        Use CN.VW                                                                           
+        Use Fpa.vw                                                                          
+        Use HmgioW.vw                                                                       
+        Use Item.VW                                                                         
+        Use Nomism.vw                                                                       
+        Use Nomisot.vw                                                                      
+        Use PartlFpa.VW                                                                     
+        Use Ptyppar.VW                                                                      
+        Use VWKARTEL.VW                                                                     
+        Use Wax.VW                                                                          
+        Use Wflagkin.VW                                                                     
+        Use Witemkat.vw                                                                     
+
+        //  Include all reports
+        Use r044.RV                                                                         
+        Use r18_1.RV                                                                        
+        Use R18_2.RV                                                                        
+        Use r18_3.RV                                                                        
+        Use r18_3b.RV                                                                       
+        Use r18_4.RV                                                                        
+        Use r22_1.RV                                                                        
+        Use R6_1.rv                                                                         
+        Use R6_2b.rv                                                                        
+        Use R6_3.RV                                                                         
+        Use r6_4G.RV                                                                        
+        Use r6_1c.RV                                                                        
+        Use V109.VW                                                                         
+        Use V111.VW                                                                         
+        Use v108.VW                                                                         
+        Use r109_0.rv                                                                       
+        Use r108_0.RV                                                                       
+        Use R111.RV                                                                         
+        Use r26_1.RV                                                                        
+        Use v192.vw                                                                         
+        Use V014.VW                                                                         
+        Use v198.vw                                                                         
+        Use r109_1.RV                                                                       
+        Use r109_2.RV                                                                       
+        Use r41_0.RV                                                                        
+        Use r111_2.RV                                                                       
+        Use R108_2.RV                                                                       
+        Use r111_3.RV                                                                       
+        Use r9_1.RV                                                                         
+        Use r9_2.RV                                                                         
+        Use r100_0.RV                                                                       
+        Use r100_1.RV                                                                       
+        Use r100_2.RV                                                                       
+        Use r26_2.RV                                                                        
+        Use R9_3.rv                                                                         
+        Use r108_3.RV                                                                       
+        Use V193.vw                                                                         
+        Use V052.VW                                                                         
+        Use V053.VW                                                                         
+        Use V054.VW                                                                         
+        Use v055.VW                                                                         
+        Use V041.VW                                                                         
+        Use r052_0.RV                                                                       
+        Use v057.VW                                                                         
+        Use v058.VW                                                                         
+        Use V197.vw                                                                         
+        Use v064.VW                                                                         
+        Use R55_0.rv                                                                        
+        Use v065.VW                                                                         
+        Use R55_1.RV                                                                        
+        Use r55_2.RV                                                                        
+        Use TPArticl.VW                                                                     
+        Use r70_0.RV                                                                        
+        Use KinApoth.VW                                                                     
+        Use r6_5.RV                                                                         
+        Use r26_3.RV                                                                        
+        Use R186_0.RV                                                                       
+        Use R186_1.RV                                                                       
+        Use r7_0.RV                                                                         
+        Use r29_0.RV                                                                        
+        Use r54_0.RV                                                                        
+        Use r53_0.RV                                                                        
+        Use V185.vw                                                                         
+        Use R185_0.RV                                                                       
+        Use V94.vw                                                                          
+        Use v94_1.VW                                                                        
+        Use r94_1.rv                                                                        
+        Use R94_3.rv                                                                        
+        Use R94_2.rv                                                                        
+        Use Cdtypent.vw                                                                     
+        Use Cflagkin.vw                                                                     
+        Use Othon.VW                                                                        
+        Use GrpPed00.VW                                                                     
+        Use GrpPedia.VW                                                                     
+        Use GrpView0.VW                                                                     
+        Use Grpviews.vw                                                                     
+        Use Users.vw                                                                        
+        Use Usergrps.vw                                                                     
+        Use Departm.VW                                                                      
+        Use Arxeia.vw                                                                       
+        Use Pedia.VW                                                                        
+        Use r18_5.RV                                                                        
+        Use rv037C.RV                                                                       
+        Use V3.vw                                                                           
+        Use r3_1.rv                                                                         
+        Use r17_1.RV                                                                        
+        Use AxioStat.VW                                                                     
+        Use v14_1.VW                                                                        
+        Use PtypMet.VW                                                                      
+        Use EnBaxioIs.VW                                                                    
+        Use EnhCmvs.VW                                                                      
+        Use EnhFlags.VW                                                                     
+        Use EnhMeso.VW                                                                      
+        Use EnhPms.VW                                                                       
+        Use EnhWcmv.VW                                                                      
+        Use EnhApog.VW                                                                      
+        Use Enhclitem.VW                                                                    
+        Use R17_2.RV                                                                        
+        Use R109_3.RV                                                                       
+        Use R100_3.RV                                                                       
+        Use R111_4.RV                                                                       
+        Use R109_4.RV                                                                       
+        Use R111_5.RV                                                                       
+        Use r36.rv                                                                          
+        Use R36a.RV                                                                         
+        Use Copen.vw                                                                        
+        Use Axiored.VW                                                                      
+        Use Axioexofl.VW                                                                    
+        Use Vwtimol.VW                                                                      
+        Use V182s.VW                                                                        
+        Use r108_4.RV                                                                       
+        Use r6_3a.RV                                                                        
+        Use vw051.VW                                                                        
+        Use vw062.VW                                                                        
+        Use V00.VW                                                                          
+        Use V193c.VW                                                                        
+        Use v193a.VW                                                                        
+        Use R193.RV                                                                         
+        Use rvDorder.RV                                                                     
+        Use rvHmProg.RV                                                                     
+        Use V14A.VW                                                                         
+        Use V193d.VW                                                                        
+        Use rNoDeop.RV                                                                      
+        Use R14.rv                                                                          
+        Use R54_1.RV                                                                        
+        Use R53_1.RV                                                                        
+        Use tAxio.VW                                                                        
+        Use FtpView.VW                                                                      
+        Use Vrep.vw                                                                         
+        Use r100_a.RV                                                                       
+        Use vwexport.VW                                                                     
+        Use tOpItem.VW                                                                      
+        Use tOpItDel.VW                                                                     
+        Use r105.RV                                                                         
+        Use r26_1B.RV                                                                       
+        Use RMHTRTITAN.RV                                                                   
+        Use R108_6.RV                                                                       
+        Use r108_10.RV                                                                      
+        Use R26_6.RV                                                                        
+        Use r100s.RV                                                                        
+        Use R41_1.RV                                                                        
+        Use Hpal.RV                                                                         
+        Use R00.RV                                                                          
+        Use r100_34.RV                                                                      
+        Use r100_E.RV                                                                       
+        Use r108_1.RV                                                                       
+        Use r111_1.RV                                                                       
+        Use R41_2.RV                                                                        
+        Use R91_2.rv                                                                        
+        Use rvApotEr.RV                                                                     
+        Use SAP1.VW                                                                         
+        Use Enbstatus.VW                                                                    
+        Use V17x.VW                                                                         
+        Use HpalPr.RV                                                                       
+        Use Rypol.RV                                                                        
+        Use EnhSlsId.VW                                                                     
+        Use FixIt.VW                                                                        
+        Use FtpRDisk.VW                                                                     
+        Use releip.rv                                                                       
+        Use RMHTRAXIO1.RV                                                                   
+        Use r31.RV                                                                          
+        Use EnhPumps.VW                                                                     
+        Use Show_Ctl.VW                                                                     
+        Use vwZ.VW                                                                          
+        Use tOpFix.VW                                                                       
+        Use R193_p.RV                                                                       
+        Use r111_ep.RV                                                                      
+        Use V192a.VW                                                                        
+        Use EnhCmBm.VW                                                                      
+        Use tOpDMetX.VW                                                                     
+        Use enhaxstatus.VW                                                                  
+        Use R041cn.RV                                                                       
+        Use Rtropoi.RV                                                                      
+        Use R41.RV                                                                          
+        Use r36b.RV                                                                         
+        Use R6_1hm.RV                                                                       
+        Use R6_2.rv                                                                         
+        Use rmetafyp.RV                                                                     
+        Use Vanprod.VW                                                                      
+        Use Vsap.VW                                                                         
+        Use rtehn.RV                                                                        
+        Use Vwsap.vw                                                                        
+        Use ranal.RV                                                                        
+        Use R182_0.RV                                                                       
+        Use R193_1.RV                                                                       
+        Use ranprod.RV                                                                      
+        Use Rclsap.RV                                                                       
+        Use R144.RV                                                                         
+        Use Enhclients.VW                                                                   
+        Use renhypol.RV                                                                     
+        Use rdiakin.RV                                                                      
+        Use R36k.RV                                                                         
+        Use StoixEmp2.RV                                                                    
+        Use Partledit.vw                                                                    
+        Use ranal90.RV                                                                      
+        Use ranald.RV                                                                       
+        Use vwMyf.VW                                                                        
+        Use Unmark.VW                                                                       
+        Use Rmetafth.RV                                                                     
+        Use vallagh.VW                                                                      
+        Use V193v.VW                                                                        
+        Use R100_ab.RV                                                                      
+        Use enhdeopsls.VW                                                                   
+        Use Rapoth.RV                                                                       
+        Use Enhprespid.VW                                                                   
+        Use enhcnid.VW                                                                      
+        Use R193A.RV                                                                        
+        Use Enhbrzones.VW                                                                   
+        Use r111_6.RV                                                                       
+        Use Saprep.RV                                                                       
+        Use Deltia.RV                                                                       
+        Use Deltia1.RV                                                                      
+        Use Enhcarid.VW                                                                     
+        Use enhcnzones.VW                                                                   
+        Use r65_1.RV                                                                        
+        Use r65_2.RV                                                                        
+        Use R36m.RV                                                                         
+        Use vwParAsc.vw                                                                     
+        Use vaxio.VW                                                                        
+        Use RCHEK.RV                                                                        
+        Use vkatagrafh.VW                                                                   
+        Use rkatagrafh.RV                                                                   
+        Use rAudit.RV                                                                       
+        Use vwBartNo.VW                                                                     
+        Use Vsapdomikh.VW                                                                   
+        Use gefyres.VW                                                                      
+        Use rvbtnordh.RV                                                                    
+        Use Rparticle.RV                                                                    
+        Use vsapexp.VW                                                                      
+        Use rmetafypapog.RV                                                                 
+        Use vsapdom.VW                                                                      
+        Use GrpAct.VW                                                                       
+        Use GrpAct0.VW                                                                      
+        Use GrpOth.VW                                                                       
+        Use GrpOth0.VW                                                                      
+        Use GrpTab.VW                                                                       
+        Use GrpTab0.VW                                                                      
+        Use RMHTRTITANA.RV                                                                  
+        Use V014ola.VW                                                                      
+        Use V14Aola.VW                                                                      
+        Use RMHTRTITANOLA.RV                                                                
+        Use ShowSx.VW                                                                       
+        Use changePump.VW                                                                   
+        Use enhanprod.VW                                                                    
+        Use r182_1.RV                                                                       
+        Use r182_2.RV                                                                       
+        Use rAuditTr.vw                                                                     
+        Use rAuditH.RV                                                                      
+        Use rSecure.RV                                                                      
+        Use Delivery.RV                                                                     
+        Use ranprod1.RV                                                                     
+        Use DeliveryReportNew.RV                                                            
+        Use AntlisiReport.RV                                                                
+        Use ProypTzirou.RV                                                                  
+        Use PolEidikon2.RV                                                                  
+        Use PosostaDeop.RV                                                                  
+        Use EnhPrespNew.VW                                                                  
+        Use vwBanks.VW                                                                      
+        Use vwBankEnhm.VW                                                                   
+        Use vwPayTerms.VW                                                                   
+        Use vwPayTermsEnhm.VW                                                               
+        Use vwMkKinhseis.VW                                                                 
+        Use vwPayTermsEnhmNEW2.VW                                                           
+        Use vwPayTermsEnhmNEW3.VW                                                           
+        Use CompareTP.VW                                                                    
+        Use vwBanks2.VW                                                                     
+        Use PartleditNew.VW                                                                 
+        Use EnhClientsCurrStat.VW                                                           
+        Use EnhWitemxNoUse.VW                                                               
+
+        //AB-ClientStoreStart
+        
+        
+        
+        //// 21/06/2011 v4.6.7
+        //Use PASSDLG2.DG
+        
+        On_Key Key_Ctrl+Key_W Send ChangeMyPassword
+        
+        //Procedure ChangeMyPassword
+        //    Integer iResult
+        //    Get ConfirmNewCustomPass of oNewPassDlg to iResult
+        //         If (iResult=0) Send Info_Box " ¡à› ¡æª ©˜ª «¨¦§¦§¦ ãŸ¡œ œ§ «¬®éª"    "¢¨¦­¦¨å˜"
+        //    Else If (iResult=1) Send Info_Box " ¡à› ¡æª ©˜ª ƒ„Œ «¨¦§¦§¦ ãŸ¡œ"         "€¡¬¨éŸ¡œ ˜§¦ «¦¤ •¨ã©«"
+        //    Else If (iResult=2) Send Info_Box " ¡à› ¡æª ©˜ª ƒ„Œ «¨¦§¦§¦ ãŸ¡œ"         "¢¡«¨¦¢¦šãŸ¡œ í› ¦ª ‰à› ¡æª"
+        //    Else If (iResult=3) Send Info_Box " ¡à› ¡æª ©˜ª ƒ„Œ «¨¦§¦§¦ ãŸ¡œ"         "€¤ç§˜¨¡«¦ª ‰à› ¡æª §¨¦ª ˜¢¢˜šã"
+        //    Else If (iResult=4) Send Info_Box " ¡à› ¡æª ©˜ª ƒ„Œ «¨¦§¦§¦ ãŸ¡œ"         "‰à› ¡æª „§ ™œ™˜åà©ª › ˜­¦¨œ« ¡æª"
+        //    Else                Send Info_Box " ¡à› ¡æª ©˜ª ƒ„Œ «¨¦§¦§¦ ãŸ¡œ"         "êš¤à©«¦ ‘­á¢£˜"
+        //End_Procedure
+        //// 21/06/2011 v4.6.7
+        
+        
+        
+        if (Wait(Self)) send deactivate to (Wait(Self))
+        //Send Stop_StatusPanel To (Status_Panel(Self))
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //AB-ClientStoreEnd
+
+
+    End_Object  // Client_Area
+    
+    Use DFStdSbr.pkg //  Status-Bar object.
+
+    //AB-PanelStoreStart
+    
+    Procedure Exit_Application
+        Integer iYes
+        Move (YesNo_Box("‡â¢œ«œ ¤˜ «œ¨£˜«å©œ«œ «¤ œ­˜¨£¦šã ? ", ;
+                             "¨¦©¦®ã",  MB_DEFBUTTON2) ) to iYes
+        If (iYes=MBR_YES) Forward Send Exit_Application
+    End_Procedure
+    
+    Use StdAbout.pkg // Standard "About" package.
+    
+    
+    
+    
+    Use Tooltip.Inc
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //AB-PanelStoreEnd
+
+
+End_Object
+
+
+//AB-StoreStart
+
+set bitmap of (client_area(main(self))) to "protem1.bmp"
+
+Send DoStoreFileModeInfo to ghoFileModeInfo
+
+Start_UI
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//AB-StoreEnd
+
